@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "target": "ES5",
+        "outDir": "test/system",
+        "noImplicitAny": true,
+        "noLib": false,
+        "removeComments": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "moduleResolution": "classic",
+        "sourceMap": false,
+        "inlineSourceMap": false,
+        "inlineSources": false
+    },
+    "files": [
+        //        "src/davinci-newton/visual/Turtle.spec.ts",
+        "typings/jasmine/jasmine.d.ts"
+    ]
+}
