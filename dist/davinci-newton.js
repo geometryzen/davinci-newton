@@ -553,7 +553,6 @@ define('davinci-newton/math/Vector',["require", "exports", "../util/veryDifferen
     "use strict";
     var Vector = (function () {
         function Vector(x_, y_, z_) {
-            if (z_ === void 0) { z_ = 0; }
             this.x_ = x_;
             this.y_ = y_;
             this.z_ = z_;
@@ -568,44 +567,44 @@ define('davinci-newton/math/Vector',["require", "exports", "../util/veryDifferen
             return this.z_;
         };
         Vector.prototype.add = function (rhs) {
-            return void 0;
+            throw new Error("TODO: add");
         };
         Vector.prototype.subtract = function (rhs) {
-            return void 0;
+            throw new Error("TODO: subtract");
         };
         Vector.prototype.multiply = function (alpha) {
-            return void 0;
+            throw new Error("TODO: multiply");
         };
         Vector.prototype.distanceTo = function (rhs) {
-            return 0;
+            throw new Error("TODO: distanceTo");
         };
         Vector.prototype.immutable = function () {
             return this;
         };
         Vector.prototype.length = function () {
-            return 0;
+            throw new Error("TODO: length");
         };
-        Vector.prototype.nearEqual = function (vector, opt_tolerance) {
-            if (veryDifferent_1.default(this.x_, vector.getX(), opt_tolerance)) {
+        Vector.prototype.nearEqual = function (vector, tolerance) {
+            if (veryDifferent_1.default(this.x_, vector.getX(), tolerance)) {
                 return false;
             }
-            if (veryDifferent_1.default(this.y_, vector.getY(), opt_tolerance)) {
+            if (veryDifferent_1.default(this.y_, vector.getY(), tolerance)) {
                 return false;
             }
-            if (veryDifferent_1.default(this.z_, vector.getZ(), opt_tolerance)) {
+            if (veryDifferent_1.default(this.z_, vector.getZ(), tolerance)) {
                 return false;
             }
             return true;
         };
         Vector.prototype.normalize = function () {
-            return void 0;
+            throw new Error("TODO: normalize");
         };
         Vector.prototype.rotate = function (cosAngle, sinAngle) {
-            return void 0;
+            throw new Error("TODO: rotate");
         };
         return Vector;
     }());
-    Vector.ORIGIN = new Vector(0, 0);
+    Vector.ORIGIN = new Vector(0, 0, 0);
     exports.Vector = Vector;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Vector;
@@ -633,14 +632,16 @@ define('davinci-newton/objects/AbstractMassObject',["require", "exports", "./Abs
         AbstractMassObject.prototype.bodyToWorld = function (p_body) {
             var rx = p_body.getX() - this.cm_body_.getX();
             var ry = p_body.getY() - this.cm_body_.getY();
-            var vx = this.loc_world_.getX() + (rx * this.cosAngle_ - ry * this.sinAngle_);
-            var vy = this.loc_world_.getY() + (rx * this.sinAngle_ + ry * this.cosAngle_);
-            return new Vector_1.default(vx, vy);
+            var x = this.loc_world_.getX() + (rx * this.cosAngle_ - ry * this.sinAngle_);
+            var y = this.loc_world_.getY() + (rx * this.sinAngle_ + ry * this.cosAngle_);
+            return new Vector_1.default(x, y, 0);
         };
         AbstractMassObject.prototype.getVelocity = function (p_body) {
             if (p_body) {
                 var r = this.rotateBodyToWorld(p_body.immutable().subtract(this.cm_body_));
-                return new Vector_1.default(this.velocity_.getX() - r.getY() * this.angular_velocity_, this.velocity_.getY() + r.getX() * this.angular_velocity_);
+                var vx = this.velocity_.getX() - r.getY() * this.angular_velocity_;
+                var vy = this.velocity_.getY() + r.getX() * this.angular_velocity_;
+                return new Vector_1.default(vx, vy, 0);
             }
             else {
                 return this.velocity_;
@@ -1158,6 +1159,7 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         'potential energy',
         'total energy'
     ];
+    var NUM_VARS_IN_STATE = 8;
     var RigidBodySim = (function (_super) {
         __extends(RigidBodySim, _super);
         function RigidBodySim(name) {
@@ -1172,11 +1174,11 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         RigidBodySim.prototype.addBody = function (body) {
             if (!contains_1.default(this.bods_, body)) {
                 var names = [];
-                for (var k = 0; k < 6; k++) {
+                for (var k = 0; k < NUM_VARS_IN_STATE; k++) {
                     names.push(body.getVarName(k, false));
                 }
                 var localNames = [];
-                for (var k = 0; k < 6; k++) {
+                for (var k = 0; k < NUM_VARS_IN_STATE; k++) {
                     localNames.push(body.getVarName(k, true));
                 }
                 var idx = this.varsList_.addVariables(names, localNames);
@@ -1191,7 +1193,7 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         };
         RigidBodySim.prototype.removeBody = function (body) {
             if (contains_1.default(this.bods_, body)) {
-                this.varsList_.deleteVariables(body.getVarsIndex(), 6);
+                this.varsList_.deleteVariables(body.getVarsIndex(), NUM_VARS_IN_STATE);
                 remove_1.default(this.bods_, body);
                 body.setVarsIndex(-1);
             }
@@ -1216,8 +1218,14 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                 if (idx < 0) {
                     return;
                 }
-                b.setPosition(new Vector_1.default(vars[idx + RigidBodySim.X_], vars[idx + RigidBodySim.Y_]), vars[idx + RigidBodySim.W_]);
-                b.setVelocity(new Vector_1.default(vars[idx + RigidBodySim.VX_], vars[idx + RigidBodySim.VY_]), vars[idx + RigidBodySim.VW_]);
+                var x = vars[idx + RigidBodySim.X_];
+                var y = vars[idx + RigidBodySim.Y_];
+                var z = vars[idx + RigidBodySim.Z_];
+                b.setPosition(new Vector_1.default(x, y, z), vars[idx + RigidBodySim.W_]);
+                var vx = vars[idx + RigidBodySim.VX_];
+                var vy = vars[idx + RigidBodySim.VY_];
+                var vz = vars[idx + RigidBodySim.VZ_];
+                b.setVelocity(new Vector_1.default(vx, vy, vz), vars[idx + RigidBodySim.VW_]);
             });
         };
         RigidBodySim.prototype.evaluate = function (vars, change, time) {
@@ -1229,15 +1237,17 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                     return;
                 var mass = body.getMass();
                 if (mass === Number.POSITIVE_INFINITY) {
-                    for (var k = 0; k < 6; k++)
+                    for (var k = 0; k < NUM_VARS_IN_STATE; k++)
                         change[idx + k] = 0;
                 }
                 else {
                     change[idx + RigidBodySim.X_] = vars[idx + RigidBodySim.VX_];
                     change[idx + RigidBodySim.Y_] = vars[idx + RigidBodySim.VY_];
+                    change[idx + RigidBodySim.Z_] = vars[idx + RigidBodySim.VZ_];
                     change[idx + RigidBodySim.W_] = vars[idx + RigidBodySim.VW_];
                     change[idx + RigidBodySim.VX_] = 0;
                     change[idx + RigidBodySim.VY_] = 0;
+                    change[idx + RigidBodySim.VZ_] = 0;
                     change[idx + RigidBodySim.VW_] = 0;
                 }
             });
@@ -1265,6 +1275,7 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             var mass = body.getMass();
             change[idx + RigidBodySim.VX_] += forceDir.getX() / mass;
             change[idx + RigidBodySim.VY_] += forceDir.getY() / mass;
+            change[idx + RigidBodySim.VZ_] += forceDir.getZ() / mass;
             var rx = forceLoc.getX() - body.getPosition().getX();
             var ry = forceLoc.getY() - body.getPosition().getY();
             change[idx + RigidBodySim.VW_] += (rx * forceDir.getY() - ry * forceDir.getX()) / body.momentAboutCM();
@@ -1287,9 +1298,11 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                 var va = this.varsList_;
                 va.setValue(RigidBodySim.X_ + idx, body.getPosition().getX());
                 va.setValue(RigidBodySim.Y_ + idx, body.getPosition().getY());
+                va.setValue(RigidBodySim.Z_ + idx, body.getPosition().getZ());
                 va.setValue(RigidBodySim.W_ + idx, body.getAngle());
                 va.setValue(RigidBodySim.VX_ + idx, body.getVelocity().getX());
                 va.setValue(RigidBodySim.VY_ + idx, body.getVelocity().getY());
+                va.setValue(RigidBodySim.VZ_ + idx, body.getVelocity().getZ());
                 va.setValue(RigidBodySim.VW_ + idx, body.getAngularVelocity());
             }
             this.getVarsList().incrSequence(1, 2, 3);
@@ -1303,7 +1316,6 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             va.setValue(2, einfo.getPotential(), true);
             va.setValue(3, einfo.getTotalEnergy(), true);
         };
-        ;
         RigidBodySim.prototype.getSimList = function () {
             return this.simList_;
         };
@@ -1345,11 +1357,13 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         return RigidBodySim;
     }(AbstractSubject_1.default));
     RigidBodySim.X_ = 0;
-    RigidBodySim.VX_ = 1;
-    RigidBodySim.Y_ = 2;
-    RigidBodySim.VY_ = 3;
-    RigidBodySim.W_ = 4;
-    RigidBodySim.VW_ = 5;
+    RigidBodySim.Y_ = 1;
+    RigidBodySim.Z_ = 2;
+    RigidBodySim.VX_ = 3;
+    RigidBodySim.VY_ = 4;
+    RigidBodySim.VZ_ = 5;
+    RigidBodySim.W_ = 6;
+    RigidBodySim.VW_ = 7;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = RigidBodySim;
 });

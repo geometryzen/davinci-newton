@@ -83,7 +83,7 @@ declare module NEWTON {
 
     class Vector implements GenericVector {
         static ORIGIN: Vector;
-        constructor(x_: number, y_: number, z?: number);
+        constructor(x_: number, y_: number, z: number);
         getX(): number;
         getY(): number;
         getZ(): number;

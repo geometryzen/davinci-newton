@@ -25,16 +25,20 @@ const i18n_names = [
     'total energy'
 ];
 
+const NUM_VARS_IN_STATE = 8;
+
 /**
  * 
  */
 export default class RigidBodySim extends AbstractSubject implements Simulation {
     private static X_ = 0;
-    private static VX_ = 1;
-    private static Y_ = 2;
-    private static VY_ = 3;
-    private static W_ = 4;
-    private static VW_ = 5;
+    private static Y_ = 1;
+    private static Z_ = 2;
+    private static VX_ = 3;
+    private static VY_ = 4;
+    private static VZ_ = 5;
+    private static W_ = 6;
+    private static VW_ = 7;
     private simList_ = new SimList();
     private varsList_ = new VarsList(var_names, i18n_names, this.getName() + '_VARS');
     //
@@ -48,18 +52,26 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     private showForces_: boolean;
     private potentialOffset_: number;
     private recentState_: number[];
+
+    /**
+     * 
+     */
     constructor(name = 'SIM') {
         super(name);
     }
+
+    /**
+     * 
+     */
     addBody(body: RigidBody): void {
         if (!contains(this.bods_, body)) {
-            // create 6 variables in vars array for this body
+            // create variables in vars array for this body
             const names = [];
-            for (let k = 0; k < 6; k++) {
+            for (let k = 0; k < NUM_VARS_IN_STATE; k++) {
                 names.push(body.getVarName(k, false));
             }
             const localNames = [];
-            for (let k = 0; k < 6; k++) {
+            for (let k = 0; k < NUM_VARS_IN_STATE; k++) {
                 localNames.push(body.getVarName(k, true));
             }
             const idx = this.varsList_.addVariables(names, localNames);
@@ -73,9 +85,13 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             b.eraseOldCopy();
         });
     }
+
+    /**
+     * 
+     */
     removeBody(body: RigidBody): void {
         if (contains(this.bods_, body)) {
-            this.varsList_.deleteVariables(body.getVarsIndex(), 6);
+            this.varsList_.deleteVariables(body.getVarsIndex(), NUM_VARS_IN_STATE);
             remove(this.bods_, body);
             body.setVarsIndex(-1);
         }
@@ -83,6 +99,10 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
         this.getVarsList().incrSequence(1, 2, 3);
     }
+
+    /**
+     * 
+     */
     addForceLaw(forceLaw: ForceLaw) {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
@@ -90,6 +110,10 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
         this.getVarsList().incrSequence(1, 2, 3);
     }
+
+    /**
+     * 
+     */
     removeForceLaw(forceLaw: ForceLaw) {
         forceLaw.disconnect();
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
@@ -97,6 +121,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         return remove(this.forceLaws_, forceLaw);
     };
 
+    /**
+     * 
+     */
     private moveObjects(vars: number[]) {
         this.bods_.forEach(function (b) {
             const idx = b.getVarsIndex();
@@ -104,15 +131,16 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
                 return;
             }
             // This actually sets position and attitude.
-            b.setPosition(new Vector(vars[idx + RigidBodySim.X_], vars[idx + RigidBodySim.Y_]), vars[idx + RigidBodySim.W_]);
+            const x = vars[idx + RigidBodySim.X_];
+            const y = vars[idx + RigidBodySim.Y_];
+            const z = vars[idx + RigidBodySim.Z_];
+            b.setPosition(new Vector(x, y, z), vars[idx + RigidBodySim.W_]);
             // This actually sets velocity and angular velocity.
-            b.setVelocity(new Vector(vars[idx + RigidBodySim.VX_], vars[idx + RigidBodySim.VY_]), vars[idx + RigidBodySim.VW_]);
+            const vx = vars[idx + RigidBodySim.VX_];
+            const vy = vars[idx + RigidBodySim.VY_];
+            const vz = vars[idx + RigidBodySim.VZ_];
+            b.setVelocity(new Vector(vx, vy, vz), vars[idx + RigidBodySim.VW_]);
         });
-        /*
-        if (this.debugPaint_ != null) {
-            this.debugPaint_();
-        }
-        */
     }
 
     /**
@@ -129,18 +157,21 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
                 return;
             const mass = body.getMass();
             if (mass === Number.POSITIVE_INFINITY) {
-                for (var k = 0; k < 6; k++)
+                for (var k = 0; k < NUM_VARS_IN_STATE; k++)
                     change[idx + k] = 0;  // infinite mass objects don't move
             }
             else {
                 // The change in position is the velocity.
                 change[idx + RigidBodySim.X_] = vars[idx + RigidBodySim.VX_];
                 change[idx + RigidBodySim.Y_] = vars[idx + RigidBodySim.VY_];
+                change[idx + RigidBodySim.Z_] = vars[idx + RigidBodySim.VZ_];
                 // The change in attitude is the angular velocity.
                 change[idx + RigidBodySim.W_] = vars[idx + RigidBodySim.VW_];
                 // The change in linear and angular momentum are set to zero, ready for accumulation.
                 change[idx + RigidBodySim.VX_] = 0;
                 change[idx + RigidBodySim.VY_] = 0;
+                change[idx + RigidBodySim.VZ_] = 0;
+
                 change[idx + RigidBodySim.VW_] = 0;
             }
         });
@@ -177,9 +208,12 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
 
         change[idx + RigidBodySim.VX_] += forceDir.getX() / mass;
         change[idx + RigidBodySim.VY_] += forceDir.getY() / mass;
+        change[idx + RigidBodySim.VZ_] += forceDir.getZ() / mass;
+
         // w'' = R x F / I
         const rx = forceLoc.getX() - body.getPosition().getX();
         const ry = forceLoc.getY() - body.getPosition().getY();
+        // const rz = forceLoc.getZ() - body.getPosition().getZ();
         change[idx + RigidBodySim.VW_] += (rx * forceDir.getY() - ry * forceDir.getX()) / body.momentAboutCM();
         const torque = force.getTorque();
         if (torque !== 0) {
@@ -191,10 +225,16 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         }
     }
 
+    /**
+     * 
+     */
     getTime() {
         return this.varsList_.getTime();
     }
 
+    /**
+     * 
+     */
     private initializeFromBody(body: RigidBody): void {
         body.eraseOldCopy();
         const idx = body.getVarsIndex();
@@ -202,15 +242,21 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             const va = this.varsList_;
             va.setValue(RigidBodySim.X_ + idx, body.getPosition().getX());
             va.setValue(RigidBodySim.Y_ + idx, body.getPosition().getY());
+            va.setValue(RigidBodySim.Z_ + idx, body.getPosition().getZ());
             va.setValue(RigidBodySim.W_ + idx, body.getAngle());
             va.setValue(RigidBodySim.VX_ + idx, body.getVelocity().getX());
             va.setValue(RigidBodySim.VY_ + idx, body.getVelocity().getY());
+            va.setValue(RigidBodySim.VZ_ + idx, body.getVelocity().getZ());
             va.setValue(RigidBodySim.VW_ + idx, body.getAngularVelocity());
         }
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
         this.getVarsList().incrSequence(1, 2, 3);
     }
-    modifyObjects() {
+
+    /**
+     * 
+     */
+    modifyObjects(): void {
         const va = this.varsList_;
         const vars = va.getValues();
         this.moveObjects(vars);
@@ -219,13 +265,25 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         va.setValue(1, einfo.getTranslational() + einfo.getRotational(), true);
         va.setValue(2, einfo.getPotential(), true);
         va.setValue(3, einfo.getTotalEnergy(), true);
-    };
+    }
+
+    /**
+     * 
+     */
     getSimList(): SimList {
         return this.simList_;
     }
+
+    /**
+     * 
+     */
     getVarsList(): VarsList {
         return this.varsList_;
     }
+
+    /**
+     * 
+     */
     private getEnergyInfo_(vars: number[]): EnergyInfo {
         // assumes bodies match current vars
         let pe = 0;
@@ -242,12 +300,20 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         });
         return new EnergyInfo(pe + this.potentialOffset_, te, re);
     }
+
+    /**
+     * 
+     */
     saveState(): void {
         this.recentState_ = this.varsList_.getValues();
         this.bods_.forEach(function (b) {
             b.saveOldCopy();
         });
     }
+
+    /**
+     * 
+     */
     restoreState(): void {
         if (this.recentState_ != null) {
             this.varsList_.setValues(this.recentState_, true);
