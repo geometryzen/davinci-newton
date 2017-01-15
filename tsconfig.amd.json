@@ -4,7 +4,7 @@
     "target": "ES5",
     "outDir": "amd",
     "noImplicitAny": true,
-    "noLib": true,
+    "noLib": false,
     "removeComments": true,
     "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "classic",

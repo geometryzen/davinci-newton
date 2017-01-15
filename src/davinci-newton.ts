@@ -5,6 +5,7 @@ import RungeKutta from './davinci-newton/model/RungeKutta';
 import SimpleAdvance from './davinci-newton/strategy/SimpleAdvance';
 import SimRunner from './davinci-newton/runner/SimRunner';
 import Spring from './davinci-newton/objects/Spring';
+import Vector from './davinci-newton/math/Vector';
 
 /**
  *
@@ -42,6 +43,10 @@ const newton = {
      * 
      */
     get Spring() { return Spring; },
+    /**
+     * 
+     */
+    get Vector() { return Vector; },
 }
 
 export default newton;

@@ -1,3 +1,4 @@
+import AbstractSimObject from './AbstractSimObject';
 import CoordType from '../model/CoordType';
 import Force from '../model/Force';
 import ForceLaw from '../model/ForceLaw';
@@ -6,10 +7,19 @@ import Line from './Line';
 import MassObject from '../model/MassObject';
 import Vector from '../math/Vector';
 
-export class Spring implements ForceLaw, Line {
+/**
+ * 
+ */
+export class Spring extends AbstractSimObject implements ForceLaw, Line {
+    /**
+     * 
+     */
     private damping_ = 0;
+    /**
+     * 
+     */
     constructor(name: string, private body1_: MassObject, private attach1_: GenericVector, private body2_: MassObject, private attach2_: GenericVector, private restLength_: number, private stiffness_ = 0, private compressOnly_ = false) {
-        // Do nothing yet.
+        super(name);
     }
     getStartPoint(): Vector {
         if (this.attach1_ == null || this.body1_ == null) {

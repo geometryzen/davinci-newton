@@ -4,7 +4,7 @@
     "target": "es5",
     "outDir": "system",
     "noImplicitAny": true,
-    "noLib": true,
+    "noLib": false,
     "removeComments": true,
     "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "classic",

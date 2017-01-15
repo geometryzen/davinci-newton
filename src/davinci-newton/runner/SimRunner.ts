@@ -1,15 +1,42 @@
 import AdvanceStrategy from './AdvanceStrategy';
 import Clock from './Clock';
 
+/**
+ * 
+ */
 export class SimRunner {
+
+    /**
+     * 
+     */
     private timeStep_: number;
+
+    /**
+     * 
+     */
+
     private clock_ = new Clock();
+
+    /**
+     * 
+     */
     constructor(private advanceStrategy_: AdvanceStrategy, name?: string) {
         this.timeStep_ = advanceStrategy_.getTimeStep();
     }
+
+    /**
+     * 
+     */
+    getClock(): Clock {
+        return this.clock_;
+    }
+
     private advanceToTargetTime(strategy: AdvanceStrategy, targetTime: number) {
         let simTime = strategy.getTime();
         while (simTime < targetTime) {
+            // console.log(`simTime => ${simTime}`);
+            // console.log(`targetTime => ${targetTime}`);
+            // console.log(`timeStep => ${this.timeStep_}`);
             // the AdvanceStrategy is what actually calls `memorize`
             strategy.advance(this.timeStep_, this);
             // Prevent infinite loop when time doesn't advance.
@@ -18,16 +45,6 @@ export class SimRunner {
             if (simTime - lastSimTime <= 1e-15) {
                 throw new Error('SimRunner time did not advance');
             }
-            /*
-            if (this.debugTiming_ && goog.DEBUG) {
-              var clockTime = this.clock_.getTime();
-              console.log(NF(strategy.getTime())
-                +' now='+NF(clockTime)
-                +' targetTime='+NF(targetTime)
-                +' timeStep='+NF(this.timeStep_)
-                );
-            }
-            */
         }
     }
 
@@ -51,11 +68,12 @@ export class SimRunner {
         const targetTime = startTime - this.timeStep_ / 10;
         this.advanceToTargetTime(this.advanceStrategy_, targetTime);
     }
+
     /**
      * 
      */
     memorize(): void {
-        throw new Error("SimRunner.memorize()");
+        // Do nothing yet.
     }
 }
 

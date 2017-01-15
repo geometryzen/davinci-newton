@@ -7,14 +7,27 @@ import VarsList from '../core/VarsList';
  * 
  */
 export class ConcreteVariable implements Variable {
+
     /**
      * 
      */
     private value_ = 0;
+
     /**
      * 
      */
     private name_: string;
+
+    /**
+     * Sequence numbers, to detect discontinuity in a variable.
+     */
+    private seq_ = 0;
+
+    /**
+     * 
+     */
+    private doesBroadcast_ = false;
+
     /**
      * 
      */
@@ -25,8 +38,46 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
+    getName(localized?: boolean) {
+        return localized ? this.localName_ : this.name_;
+    }
+
+    /**
+     * 
+     */
+    getSubject(): VarsList {
+        return this.varsList_;
+    }
+
+    /**
+     * 
+     */
     getValue(): number {
         return this.value_;
+    }
+
+    /**
+     * 
+     */
+    setValue(value: number): void {
+        if (this.value_ !== value) {
+            this.value_ = value;
+            this.seq_++;
+            if (this.doesBroadcast_) {
+                this.varsList_.broadcast(this);
+            }
+        }
+    }
+
+    setValueSmooth(value: number): void {
+        this.value_ = value;
+    }
+
+    /**
+     * 
+     */
+    incrSequence(): void {
+        this.seq_++;
     }
 }
 

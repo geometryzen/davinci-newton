@@ -10,9 +10,9 @@ export class SimpleAdvance implements AdvanceStrategy {
     }
     advance(timeStep: number, memoList?: MemoList) {
         this.sim_.getSimList().removeTemporary(this.sim_.getTime());
-        var err = this.odeSolver_.step(timeStep);
+        const err = this.odeSolver_.step(timeStep);
         if (err != null) {
-            throw new Error('error during advance ' + err);
+            throw new Error(`error during advance ${err}`);
         }
         this.sim_.modifyObjects();
         if (memoList !== undefined) {

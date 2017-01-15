@@ -48,26 +48,6 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
         }
     };
 });
-System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var AbstractSimObject;
-    return {
-        setters: [],
-        execute: function () {
-            AbstractSimObject = function () {
-                function AbstractSimObject(name, localName) {}
-                AbstractSimObject.prototype.isMassObject = function () {
-                    return false;
-                };
-                return AbstractSimObject;
-            }();
-            exports_1("AbstractSimObject", AbstractSimObject);
-            exports_1("default", AbstractSimObject);
-        }
-    };
-});
 System.register("davinci-newton/objects/AbstractMassObject.js", ["./AbstractSimObject", "../math/Vector"], function (exports_1, context_1) {
     "use strict";
 
@@ -153,19 +133,6 @@ System.register("davinci-newton/objects/PointMass.js", ["./AbstractMassObject"],
         }
     };
 });
-System.register("davinci-newton/util/contains.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function contains(xs, x) {
-        return true;
-    }
-    exports_1("default", contains);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/model/EnergyInfo.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -200,7 +167,7 @@ System.register("davinci-newton/util/remove.js", [], function (exports_1, contex
 
     var __moduleName = context_1 && context_1.id;
     function remove(xs, x) {
-        throw new Error("TODO");
+        throw new Error("TODO: remove");
     }
     exports_1("default", remove);
     return {
@@ -208,27 +175,167 @@ System.register("davinci-newton/util/remove.js", [], function (exports_1, contex
         execute: function () {}
     };
 });
-System.register("davinci-newton/core/SimList.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/util/contains.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var SimList;
+    function contains(xs, x) {
+        var length = xs.length;
+        for (var i = 0; i < length; i++) {
+            if (xs[i] === x) {
+                return true;
+            }
+        }
+        return false;
+    }
+    exports_1("default", contains);
     return {
         setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustSatisfy.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
+        if (!condition) {
+            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
+            var context = contextBuilder ? " in " + contextBuilder() : "";
+            throw new Error(name + " must " + message + context + ".");
+        }
+    }
+    exports_1("default", mustSatisfy);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isNull.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function default_1(x) {
+        return x === null;
+    }
+    exports_1("default", default_1);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isObject.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isObject(x) {
+        return typeof x === 'object';
+    }
+    exports_1("default", isObject);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function beObject() {
+        return "be a non-null `object`";
+    }
+    function mustBeObject(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
+        return value;
+    }
+    exports_1("default", mustBeObject);
+    var mustSatisfy_1, isNull_1, isObject_1;
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isNull_1_1) {
+            isNull_1 = isNull_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", "../util/contains", "../util/GenericEvent", "../checks/mustBeNonNullObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __moduleName = context_1 && context_1.id;
+    var AbstractSubject_1, contains_1, GenericEvent_1, mustBeNonNullObject_1, SimList;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }],
         execute: function () {
-            SimList = function () {
-                function SimList() {}
+            SimList = function (_super) {
+                __extends(SimList, _super);
+                function SimList() {
+                    var _this = _super.call(this, 'SIM_LIST') || this;
+                    _this.elements_ = [];
+                    _this.tolerance_ = 0.1;
+                    return _this;
+                }
                 SimList.prototype.add = function (simObj) {
-                    throw new Error("TODO");
+                    for (var i = 0; i < arguments.length; i++) {
+                        var element = arguments[i];
+                        mustBeNonNullObject_1.default('element', element);
+                        var expire = element.getExpireTime();
+                        if (isFinite(expire)) {
+                            var similar;
+                            while (similar = this.getSimilar(element)) {
+                                this.remove(similar);
+                            }
+                        }
+                        if (!contains_1.default(this.elements_, element)) {
+                            this.elements_.push(element);
+                            this.broadcast(new GenericEvent_1.default(this, SimList.OBJECT_ADDED, element));
+                        }
+                    }
                 };
                 SimList.prototype.remove = function (simObj) {
                     throw new Error("TODO");
                 };
                 SimList.prototype.removeTemporary = function (time) {
-                    throw new Error("TODO");
+                    for (var i = this.elements_.length - 1; i >= 0; i--) {
+                        var simobj = this.elements_[i];
+                        if (simobj.getExpireTime() < time) {
+                            this.elements_.splice(i, 1);
+                            this.broadcast(new GenericEvent_1.default(this, SimList.OBJECT_REMOVED, simobj));
+                        }
+                    }
+                };
+                SimList.prototype.getSimilar = function (simObj, tolerance) {
+                    var tol = tolerance === undefined ? this.tolerance_ : tolerance;
+                    var len = this.elements_.length;
+                    for (var i = 0; i < len; i++) {
+                        var candidate = this.elements_[i];
+                        if (candidate.similar(simObj, tol)) {
+                            return candidate;
+                        }
+                    }
+                    return null;
                 };
                 return SimList;
-            }();
+            }(AbstractSubject_1.default);
+            SimList.OBJECT_ADDED = 'OBJECT_ADDED';
+            SimList.OBJECT_REMOVED = 'OBJECT_REMOVED';
             exports_1("SimList", SimList);
             exports_1("default", SimList);
         }
@@ -251,16 +358,88 @@ System.register("davinci-newton/model/ConcreteVariable.js", ["../util/toName", "
                     this.varsList_ = varsList_;
                     this.localName_ = localName_;
                     this.value_ = 0;
+                    this.seq_ = 0;
+                    this.doesBroadcast_ = false;
                     this.name_ = validName_1.default(toName_1.default(name));
                 }
+                ConcreteVariable.prototype.getName = function (localized) {
+                    return localized ? this.localName_ : this.name_;
+                };
+                ConcreteVariable.prototype.getSubject = function () {
+                    return this.varsList_;
+                };
                 ConcreteVariable.prototype.getValue = function () {
                     return this.value_;
+                };
+                ConcreteVariable.prototype.setValue = function (value) {
+                    if (this.value_ !== value) {
+                        this.value_ = value;
+                        this.seq_++;
+                        if (this.doesBroadcast_) {
+                            this.varsList_.broadcast(this);
+                        }
+                    }
+                };
+                ConcreteVariable.prototype.setValueSmooth = function (value) {
+                    this.value_ = value;
+                };
+                ConcreteVariable.prototype.incrSequence = function () {
+                    this.seq_++;
                 };
                 return ConcreteVariable;
             }();
             exports_1("ConcreteVariable", ConcreteVariable);
             exports_1("default", ConcreteVariable);
         }
+    };
+});
+System.register("davinci-newton/checks/isArray.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isArray(x) {
+        return Object.prototype.toString.call(x) === '[object Array]';
+    }
+    exports_1("default", isArray);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function extendArray(array, quantity, value) {
+        if (quantity === 0) {
+            return;
+        }
+        if (quantity < 0) {
+            throw new Error();
+        }
+        var startIdx = array.length;
+        array.length = startIdx + quantity;
+        if (isArray_1.default(value)) {
+            var vs = value;
+            if (vs.length !== quantity) {
+                throw new Error();
+            }
+            for (var i = startIdx, n = array.length; i < n; i++) {
+                array[i] = value[i - startIdx];
+            }
+        } else {
+            for (var i = startIdx, n = array.length; i < n; i++) {
+                array[i] = value;
+            }
+        }
+    }
+    exports_1("default", extendArray);
+    var isArray_1;
+    return {
+        setters: [function (isArray_1_1) {
+            isArray_1 = isArray_1_1;
+        }],
+        execute: function () {}
     };
 });
 System.register("davinci-newton/checks/isString.js", [], function (exports_1, context_1) {
@@ -276,7 +455,7 @@ System.register("davinci-newton/checks/isString.js", [], function (exports_1, co
         execute: function () {}
     };
 });
-System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "../model/ConcreteVariable", "../checks/isString", "../util/toName", "../util/validName"], function (exports_1, context_1) {
+System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "../model/ConcreteVariable", "../util/extendArray", "../util/GenericEvent", "../checks/isString", "../util/toName", "../util/validName"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -287,12 +466,16 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var AbstractSubject_1, ConcreteVariable_1, isString_1, toName_1, validName_1, TIME, VarsList;
+    var AbstractSubject_1, ConcreteVariable_1, extendArray_1, GenericEvent_1, isString_1, toName_1, validName_1, VarsList;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
         }, function (ConcreteVariable_1_1) {
             ConcreteVariable_1 = ConcreteVariable_1_1;
+        }, function (extendArray_1_1) {
+            extendArray_1 = extendArray_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
         }, function (isString_1_1) {
             isString_1 = isString_1_1;
         }, function (toName_1_1) {
@@ -301,7 +484,6 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
             validName_1 = validName_1_1;
         }],
         execute: function () {
-            TIME = 'TIME';
             VarsList = function (_super) {
                 __extends(VarsList, _super);
                 function VarsList(varNames, localNames, name) {
@@ -321,7 +503,7 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                         }
                         s = validName_1.default(toName_1.default(s));
                         varNames[i] = s;
-                        if (s === TIME) {
+                        if (s === VarsList.TIME) {
                             _this.timeIdx_ = i;
                         }
                     }
@@ -330,8 +512,59 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                     }
                     return _this;
                 }
+                VarsList.prototype.findOpenSlot_ = function (quantity) {
+                    var found = 0;
+                    var startIdx = -1;
+                    for (var i = 0, n = this.varList_.length; i < n; i++) {
+                        if (this.varList_[i].getName() === VarsList.DELETED) {
+                            if (startIdx === -1) {
+                                startIdx = i;
+                            }
+                            found++;
+                            if (found >= quantity) {
+                                return startIdx;
+                            }
+                        } else {
+                            startIdx = -1;
+                            found = 0;
+                        }
+                    }
+                    var expand;
+                    if (found > 0) {
+                        expand = quantity - found;
+                    } else {
+                        startIdx = this.varList_.length;
+                        expand = quantity;
+                    }
+                    var newVars = [];
+                    for (i = 0; i < expand; i++) {
+                        newVars.push(new ConcreteVariable_1.default(this, VarsList.DELETED, VarsList.DELETED));
+                    }
+                    extendArray_1.default(this.varList_, expand, newVars);
+                    return startIdx;
+                };
                 VarsList.prototype.addVariables = function (names, localNames) {
-                    throw new Error("TODO");
+                    var howMany = names.length;
+                    if (howMany === 0) {
+                        throw new Error();
+                    }
+                    if (names.length !== localNames.length) {
+                        throw new Error('names and localNames are different lengths');
+                    }
+                    var position = this.findOpenSlot_(howMany);
+                    for (var i = 0; i < howMany; i++) {
+                        var name_1 = validName_1.default(toName_1.default(names[i]));
+                        if (name_1 === VarsList.DELETED) {
+                            throw new Error("variable cannot be named ''+VarsList.DELETED+''");
+                        }
+                        var idx = position + i;
+                        this.varList_[idx] = new ConcreteVariable_1.default(this, name_1, localNames[i]);
+                        if (name_1 === VarsList.TIME) {
+                            this.timeIdx_ = idx;
+                        }
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+                    return position;
                 };
                 VarsList.prototype.deleteVariables = function (index, howMany) {
                     throw new Error("TODO");
@@ -341,26 +574,56 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                     for (var _i = 0; _i < arguments.length; _i++) {
                         indexes[_i] = arguments[_i];
                     }
-                    throw new Error("TODO");
+                    if (arguments.length === 0) {
+                        for (var i = 0, n = this.varList_.length; i < n; i++) {
+                            this.varList_[i].incrSequence();
+                        }
+                    } else {
+                        for (var i = 0, n = arguments.length; i < n; i++) {
+                            var idx = arguments[i];
+                            this.checkIndex_(idx);
+                            this.varList_[idx].incrSequence();
+                        }
+                    }
                 };
                 VarsList.prototype.getValue = function (index) {
                     this.checkIndex_(index);
                     return this.varList_[index].getValue();
                 };
                 VarsList.prototype.getValues = function () {
-                    throw new Error("TODO");
+                    return this.varList_.map(function (v) {
+                        return v.getValue();
+                    });
                 };
-                VarsList.prototype.setValues = function (values, continuous) {
+                VarsList.prototype.setValues = function (vars, continuous) {
                     if (continuous === void 0) {
                         continuous = false;
                     }
-                    throw new Error("TODO");
+                    var N = this.varList_.length;
+                    var n = vars.length;
+                    if (n > N) {
+                        throw new Error("setValues bad length n = " + n + " > N = " + N);
+                    }
+                    for (var i = 0; i < N; i++) {
+                        if (i < n) {
+                            this.setValue(i, vars[i], continuous);
+                        }
+                    }
                 };
                 VarsList.prototype.setValue = function (index, value, continuous) {
                     if (continuous === void 0) {
                         continuous = false;
                     }
-                    throw new Error("TODO");
+                    this.checkIndex_(index);
+                    var variable = this.varList_[index];
+                    if (isNaN(value)) {
+                        throw new Error('cannot set variable ' + variable.getName() + ' to NaN');
+                    }
+                    if (continuous) {
+                        variable.setValueSmooth(value);
+                    } else {
+                        variable.setValue(value);
+                    }
                 };
                 VarsList.prototype.getTime = function () {
                     if (this.timeIdx_ < 0) {
@@ -369,7 +632,7 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                     return this.getValue(this.timeIdx_);
                 };
                 VarsList.prototype.timeIndex = function () {
-                    throw new Error("TODO");
+                    return this.timeIdx_;
                 };
                 VarsList.prototype.checkIndex_ = function (index) {
                     if (index < 0 || index >= this.varList_.length) {
@@ -378,6 +641,9 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                 };
                 return VarsList;
             }(AbstractSubject_1.default);
+            VarsList.DELETED = 'DELETED';
+            VarsList.TIME = 'TIME';
+            VarsList.VARS_MODIFIED = 'VARS_MODIFIED';
             exports_1("VarsList", VarsList);
             exports_1("default", VarsList);
         }
@@ -471,7 +737,9 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                 RigidBodySim.prototype.moveObjects = function (vars) {
                     this.bods_.forEach(function (b) {
                         var idx = b.getVarsIndex();
-                        if (idx < 0) return;
+                        if (idx < 0) {
+                            return;
+                        }
                         b.setPosition(new Vector_1.default(vars[idx + RigidBodySim.X_], vars[idx + RigidBodySim.Y_]), vars[idx + RigidBodySim.W_]);
                         b.setVelocity(new Vector_1.default(vars[idx + RigidBodySim.VX_], vars[idx + RigidBodySim.VY_]), vars[idx + RigidBodySim.VW_]);
                     });
@@ -612,8 +880,8 @@ System.register("davinci-newton/util/zeroArray.js", [], function (exports_1, con
 
     var __moduleName = context_1 && context_1.id;
     function zeroArray(xs) {
-        var n = xs.length;
-        for (var i = 0; i < n; i++) {
+        var length = xs.length;
+        for (var i = 0; i < length; i++) {
             xs[i] = 0;
         }
     }
@@ -722,7 +990,7 @@ System.register("davinci-newton/strategy/SimpleAdvance.js", [], function (export
                     this.sim_.getSimList().removeTemporary(this.sim_.getTime());
                     var err = this.odeSolver_.step(timeStep);
                     if (err != null) {
-                        throw new Error('error during advance ' + err);
+                        throw new Error("error during advance " + err);
                     }
                     this.sim_.modifyObjects();
                     if (memoList !== undefined) {
@@ -739,6 +1007,239 @@ System.register("davinci-newton/strategy/SimpleAdvance.js", [], function (export
             }();
             exports_1("SimpleAdvance", SimpleAdvance);
             exports_1("default", SimpleAdvance);
+        }
+    };
+});
+System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var toName_1, validName_1, AbstractSubject;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            AbstractSubject = function () {
+                function AbstractSubject(name) {
+                    this.doBroadcast_ = true;
+                    this.observers_ = [];
+                    if (!name) {
+                        throw new Error('no name');
+                    }
+                    this.name_ = validName_1.default(toName_1.default(name));
+                }
+                AbstractSubject.prototype.getName = function () {
+                    return this.name_;
+                };
+                AbstractSubject.prototype.broadcast = function (event) {
+                    if (this.doBroadcast_) {
+                        var len = this.observers_.length;
+                        for (var i = 0; i < len; i++) {
+                            this.observers_[i].observe(event);
+                        }
+                    }
+                };
+                return AbstractSubject;
+            }();
+            exports_1("AbstractSubject", AbstractSubject);
+            exports_1("default", AbstractSubject);
+        }
+    };
+});
+System.register("davinci-newton/util/GenericEvent.js", ["./toName", "./validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var toName_1, validName_1, GenericEvent;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            GenericEvent = function () {
+                function GenericEvent(subject_, name, value_) {
+                    this.subject_ = subject_;
+                    this.value_ = value_;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                }
+                GenericEvent.prototype.getName = function (localized) {
+                    return this.name_;
+                };
+                GenericEvent.prototype.getSubject = function () {
+                    return this.subject_;
+                };
+                return GenericEvent;
+            }();
+            exports_1("GenericEvent", GenericEvent);
+            exports_1("default", GenericEvent);
+        }
+    };
+});
+System.register("davinci-newton/util/getSystemTime.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function getSystemTime() {
+        return Date.now() * 1E-3;
+    }
+    exports_1("default", getSystemTime);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/runner/Clock.js", ["../util/AbstractSubject", "../util/GenericEvent", "../util/getSystemTime"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __moduleName = context_1 && context_1.id;
+    var AbstractSubject_1, GenericEvent_1, getSystemTime_1, Clock;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (getSystemTime_1_1) {
+            getSystemTime_1 = getSystemTime_1_1;
+        }],
+        execute: function () {
+            Clock = function (_super) {
+                __extends(Clock, _super);
+                function Clock(name) {
+                    if (name === void 0) {
+                        name = 'CLOCK';
+                    }
+                    var _this = _super.call(this, name) || this;
+                    _this.clockStart_sys_secs_ = getSystemTime_1.default();
+                    _this.isRunning_ = false;
+                    _this.saveTime_secs_ = 0;
+                    _this.saveRealTime_secs_ = 0;
+                    _this.stepMode_ = false;
+                    _this.tasks_ = [];
+                    _this.timeRate_ = 1;
+                    _this.realStart_sys_secs_ = _this.clockStart_sys_secs_;
+                    return _this;
+                }
+                Clock.prototype.clearStepMode = function () {
+                    this.stepMode_ = false;
+                };
+                Clock.prototype.getTime = function () {
+                    if (this.isRunning_) {
+                        return (getSystemTime_1.default() - this.clockStart_sys_secs_) * this.timeRate_;
+                    } else {
+                        return this.saveTime_secs_;
+                    }
+                };
+                Clock.prototype.resume = function () {
+                    this.clearStepMode();
+                    if (!this.isRunning_) {
+                        this.isRunning_ = true;
+                        this.setTimePrivate(this.saveTime_secs_);
+                        this.setRealTime(this.saveRealTime_secs_);
+                        this.broadcast(new GenericEvent_1.default(this, Clock.CLOCK_RESUME));
+                    }
+                };
+                Clock.prototype.setTime = function (time) {
+                    throw new Error("TODO");
+                };
+                Clock.prototype.setTimePrivate = function (time_secs) {
+                    var _this = this;
+                    if (this.isRunning_) {
+                        this.clockStart_sys_secs_ = getSystemTime_1.default() - time_secs / this.timeRate_;
+                        this.tasks_.forEach(function (task) {
+                            _this.scheduleTask(task);
+                        });
+                    } else {
+                        this.saveTime_secs_ = time_secs;
+                    }
+                };
+                Clock.prototype.scheduleTask = function (task) {
+                    task.cancel();
+                    if (this.isRunning_) {
+                        var nowTime = this.clockToSystem(this.getTime());
+                        var taskTime = this.clockToSystem(task.getTime());
+                        if (taskTime >= nowTime) {
+                            task.schedule(taskTime - nowTime);
+                        }
+                    }
+                };
+                Clock.prototype.setRealTime = function (time_secs) {
+                    if (this.isRunning_) {
+                        this.realStart_sys_secs_ = getSystemTime_1.default() - time_secs / this.timeRate_;
+                    } else {
+                        this.saveRealTime_secs_ = time_secs;
+                    }
+                };
+                Clock.prototype.clockToSystem = function (clockTime) {
+                    return clockTime / this.timeRate_ + this.clockStart_sys_secs_;
+                };
+                return Clock;
+            }(AbstractSubject_1.default);
+            Clock.CLOCK_RESUME = 'CLOCK_RESUME';
+            exports_1("Clock", Clock);
+            exports_1("default", Clock);
+        }
+    };
+});
+System.register("davinci-newton/runner/SimRunner.js", ["./Clock"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var Clock_1, SimRunner;
+    return {
+        setters: [function (Clock_1_1) {
+            Clock_1 = Clock_1_1;
+        }],
+        execute: function () {
+            SimRunner = function () {
+                function SimRunner(advanceStrategy_, name) {
+                    this.advanceStrategy_ = advanceStrategy_;
+                    this.clock_ = new Clock_1.default();
+                    this.timeStep_ = advanceStrategy_.getTimeStep();
+                }
+                SimRunner.prototype.getClock = function () {
+                    return this.clock_;
+                };
+                SimRunner.prototype.advanceToTargetTime = function (strategy, targetTime) {
+                    var simTime = strategy.getTime();
+                    while (simTime < targetTime) {
+                        strategy.advance(this.timeStep_, this);
+                        var lastSimTime = simTime;
+                        simTime = strategy.getTime();
+                        if (simTime - lastSimTime <= 1e-15) {
+                            throw new Error('SimRunner time did not advance');
+                        }
+                    }
+                };
+                SimRunner.prototype.update = function () {
+                    var clockTime = this.clock_.getTime();
+                    var simTime = this.advanceStrategy_.getTime();
+                    if (clockTime > simTime + 1 || clockTime < simTime - 1) {
+                        var t = simTime + this.timeStep_;
+                        this.clock_.setTime(t);
+                        this.clock_.setRealTime(t);
+                        clockTime = t;
+                    }
+                    var startTime = clockTime;
+                    var targetTime = startTime - this.timeStep_ / 10;
+                    this.advanceToTargetTime(this.advanceStrategy_, targetTime);
+                };
+                SimRunner.prototype.memorize = function () {};
+                return SimRunner;
+            }();
+            exports_1("SimRunner", SimRunner);
+            exports_1("default", SimRunner);
         }
     };
 });
@@ -771,11 +1272,11 @@ System.register("davinci-newton/util/validName.js", [], function (exports_1, con
         execute: function () {}
     };
 });
-System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
+System.register("davinci-newton/objects/AbstractSimObject.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var toName_1, validName_1, AbstractSubject;
+    var toName_1, validName_1, AbstractSimObject;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -783,135 +1284,29 @@ System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "..
             validName_1 = validName_1_1;
         }],
         execute: function () {
-            AbstractSubject = function () {
-                function AbstractSubject(name) {
-                    if (!name) {
-                        throw new Error('no name');
-                    }
-                    this.name_ = validName_1.default(toName_1.default(name));
+            AbstractSimObject = function () {
+                function AbstractSimObject(name, localName) {
+                    this.expireTime_ = Number.POSITIVE_INFINITY;
+                    this.name_ = validName_1.default(toName_1.default(name || "SIM_OBJ" + AbstractSimObject.ID++));
+                    this.localName_ = localName || this.name_;
                 }
-                AbstractSubject.prototype.getName = function () {
-                    return this.name_;
+                AbstractSimObject.prototype.getExpireTime = function () {
+                    return this.expireTime_;
                 };
-                return AbstractSubject;
+                AbstractSimObject.prototype.getName = function (localized) {
+                    return localized ? this.localName_ : this.name_;
+                };
+                AbstractSimObject.prototype.isMassObject = function () {
+                    return false;
+                };
+                AbstractSimObject.prototype.similar = function (obj, tolerance) {
+                    return obj === this;
+                };
+                return AbstractSimObject;
             }();
-            exports_1("AbstractSubject", AbstractSubject);
-            exports_1("default", AbstractSubject);
-        }
-    };
-});
-System.register("davinci-newton/util/getSystemTime.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function getSystemTime() {
-        return Date.now() * 1E-3;
-    }
-    exports_1("default", getSystemTime);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/runner/Clock.js", ["../util/AbstractSubject", "../util/getSystemTime"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() {
-            this.constructor = d;
-        }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var __moduleName = context_1 && context_1.id;
-    var AbstractSubject_1, getSystemTime_1, Clock;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (getSystemTime_1_1) {
-            getSystemTime_1 = getSystemTime_1_1;
-        }],
-        execute: function () {
-            Clock = function (_super) {
-                __extends(Clock, _super);
-                function Clock(name) {
-                    if (name === void 0) {
-                        name = 'CLOCK';
-                    }
-                    var _this = _super.call(this, name) || this;
-                    _this.clockStart_sys_secs_ = getSystemTime_1.default();
-                    _this.isRunning_ = false;
-                    _this.saveTime_secs_ = 0;
-                    _this.timeRate_ = 1;
-                    return _this;
-                }
-                Clock.prototype.getTime = function () {
-                    if (this.isRunning_) {
-                        return (getSystemTime_1.default() - this.clockStart_sys_secs_) * this.timeRate_;
-                    } else {
-                        return this.saveTime_secs_;
-                    }
-                };
-                Clock.prototype.setTime = function (time) {
-                    throw new Error("TODO");
-                };
-                Clock.prototype.setRealTime = function (time) {
-                    throw new Error("TODO");
-                };
-                return Clock;
-            }(AbstractSubject_1.default);
-            exports_1("Clock", Clock);
-            exports_1("default", Clock);
-        }
-    };
-});
-System.register("davinci-newton/runner/SimRunner.js", ["./Clock"], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var Clock_1, SimRunner;
-    return {
-        setters: [function (Clock_1_1) {
-            Clock_1 = Clock_1_1;
-        }],
-        execute: function () {
-            SimRunner = function () {
-                function SimRunner(advanceStrategy_, name) {
-                    this.advanceStrategy_ = advanceStrategy_;
-                    this.clock_ = new Clock_1.default();
-                    this.timeStep_ = advanceStrategy_.getTimeStep();
-                }
-                SimRunner.prototype.advanceToTargetTime = function (strategy, targetTime) {
-                    var simTime = strategy.getTime();
-                    while (simTime < targetTime) {
-                        strategy.advance(this.timeStep_, this);
-                        var lastSimTime = simTime;
-                        simTime = strategy.getTime();
-                        if (simTime - lastSimTime <= 1e-15) {
-                            throw new Error('SimRunner time did not advance');
-                        }
-                    }
-                };
-                SimRunner.prototype.update = function () {
-                    var clockTime = this.clock_.getTime();
-                    var simTime = this.advanceStrategy_.getTime();
-                    if (clockTime > simTime + 1 || clockTime < simTime - 1) {
-                        var t = simTime + this.timeStep_;
-                        this.clock_.setTime(t);
-                        this.clock_.setRealTime(t);
-                        clockTime = t;
-                    }
-                    var startTime = clockTime;
-                    var targetTime = startTime - this.timeStep_ / 10;
-                    this.advanceToTargetTime(this.advanceStrategy_, targetTime);
-                };
-                SimRunner.prototype.memorize = function () {
-                    throw new Error("SimRunner.memorize()");
-                };
-                return SimRunner;
-            }();
-            exports_1("SimRunner", SimRunner);
-            exports_1("default", SimRunner);
+            AbstractSimObject.ID = 1;
+            exports_1("AbstractSimObject", AbstractSimObject);
+            exports_1("default", AbstractSimObject);
         }
     };
 });
@@ -931,27 +1326,39 @@ System.register("davinci-newton/model/CoordType.js", [], function (exports_1, co
         }
     };
 });
-System.register("davinci-newton/model/Force.js", ["./CoordType"], function (exports_1, context_1) {
+System.register("davinci-newton/model/Force.js", ["../objects/AbstractSimObject", "./CoordType"], function (exports_1, context_1) {
     "use strict";
 
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     var __moduleName = context_1 && context_1.id;
-    var CoordType_1, Force;
+    var AbstractSimObject_1, CoordType_1, Force;
     return {
-        setters: [function (CoordType_1_1) {
+        setters: [function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
         }],
         execute: function () {
-            Force = function () {
+            Force = function (_super) {
+                __extends(Force, _super);
                 function Force(name, body_, location_, locationCoordType_, direction_, directionCoordType_, torque_) {
                     if (torque_ === void 0) {
                         torque_ = 0;
                     }
-                    this.body_ = body_;
-                    this.location_ = location_;
-                    this.locationCoordType_ = locationCoordType_;
-                    this.direction_ = direction_;
-                    this.directionCoordType_ = directionCoordType_;
-                    this.torque_ = torque_;
+                    var _this = _super.call(this, name) || this;
+                    _this.body_ = body_;
+                    _this.location_ = location_;
+                    _this.locationCoordType_ = locationCoordType_;
+                    _this.direction_ = direction_;
+                    _this.directionCoordType_ = directionCoordType_;
+                    _this.torque_ = torque_;
+                    return _this;
                 }
                 Force.prototype.getBody = function () {
                     return this.body_;
@@ -962,6 +1369,9 @@ System.register("davinci-newton/model/Force.js", ["./CoordType"], function (expo
                 Force.prototype.getStartPoint = function () {
                     return this.locationCoordType_ === CoordType_1.default.BODY ? this.body_.bodyToWorld(this.location_) : this.location_;
                 };
+                Force.prototype.getEndPoint = function () {
+                    return this.getStartPoint().add(this.getVector());
+                };
                 Force.prototype.getTorque = function () {
                     return this.torque_;
                 };
@@ -971,75 +1381,42 @@ System.register("davinci-newton/model/Force.js", ["./CoordType"], function (expo
                 Force.prototype.setExpireTime = function (time) {
                     throw new Error("TODO");
                 };
+                Force.prototype.similar = function (obj, tolerance) {
+                    if (!(obj instanceof this.constructor)) {
+                        return false;
+                    }
+                    if (obj.getName() !== this.getName()) {
+                        return false;
+                    }
+                    var f = obj;
+                    if (!this.getStartPoint().nearEqual(f.getStartPoint(), tolerance)) {
+                        return false;
+                    }
+                    return this.getVector().nearEqual(f.getVector(), tolerance);
+                };
                 return Force;
-            }();
+            }(AbstractSimObject_1.default);
             exports_1("Force", Force);
             exports_1("default", Force);
         }
     };
 });
-System.register("davinci-newton/math/Vector.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../model/CoordType", "../model/Force", "../math/Vector"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
-    var Vector;
-    return {
-        setters: [],
-        execute: function () {
-            Vector = function () {
-                function Vector(x_, y_, z_) {
-                    if (z_ === void 0) {
-                        z_ = 0;
-                    }
-                    this.x_ = x_;
-                    this.y_ = y_;
-                    this.z_ = z_;
-                }
-                Vector.prototype.getX = function () {
-                    return this.x_;
-                };
-                Vector.prototype.getY = function () {
-                    return this.y_;
-                };
-                Vector.prototype.add = function (rhs) {
-                    return void 0;
-                };
-                Vector.prototype.subtract = function (rhs) {
-                    return void 0;
-                };
-                Vector.prototype.multiply = function (alpha) {
-                    return void 0;
-                };
-                Vector.prototype.distanceTo = function (rhs) {
-                    return 0;
-                };
-                Vector.prototype.immutable = function () {
-                    return this;
-                };
-                Vector.prototype.length = function () {
-                    return 0;
-                };
-                Vector.prototype.normalize = function () {
-                    return void 0;
-                };
-                Vector.prototype.rotate = function (cosAngle, sinAngle) {
-                    return void 0;
-                };
-                return Vector;
-            }();
-            Vector.ORIGIN = new Vector(0, 0);
-            exports_1("Vector", Vector);
-            exports_1("default", Vector);
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
         }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-});
-System.register("davinci-newton/objects/Spring.js", ["../model/CoordType", "../model/Force", "../math/Vector"], function (exports_1, context_1) {
-    "use strict";
-
     var __moduleName = context_1 && context_1.id;
-    var CoordType_1, Force_1, Vector_1, Spring;
+    var AbstractSimObject_1, CoordType_1, Force_1, Vector_1, Spring;
     return {
-        setters: [function (CoordType_1_1) {
+        setters: [function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
         }, function (Force_1_1) {
             Force_1 = Force_1_1;
@@ -1047,7 +1424,8 @@ System.register("davinci-newton/objects/Spring.js", ["../model/CoordType", "../m
             Vector_1 = Vector_1_1;
         }],
         execute: function () {
-            Spring = function () {
+            Spring = function (_super) {
+                __extends(Spring, _super);
                 function Spring(name, body1_, attach1_, body2_, attach2_, restLength_, stiffness_, compressOnly_) {
                     if (stiffness_ === void 0) {
                         stiffness_ = 0;
@@ -1055,14 +1433,16 @@ System.register("davinci-newton/objects/Spring.js", ["../model/CoordType", "../m
                     if (compressOnly_ === void 0) {
                         compressOnly_ = false;
                     }
-                    this.body1_ = body1_;
-                    this.attach1_ = attach1_;
-                    this.body2_ = body2_;
-                    this.attach2_ = attach2_;
-                    this.restLength_ = restLength_;
-                    this.stiffness_ = stiffness_;
-                    this.compressOnly_ = compressOnly_;
-                    this.damping_ = 0;
+                    var _this = _super.call(this, name) || this;
+                    _this.body1_ = body1_;
+                    _this.attach1_ = attach1_;
+                    _this.body2_ = body2_;
+                    _this.attach2_ = attach2_;
+                    _this.restLength_ = restLength_;
+                    _this.stiffness_ = stiffness_;
+                    _this.compressOnly_ = compressOnly_;
+                    _this.damping_ = 0;
+                    return _this;
                 }
                 Spring.prototype.getStartPoint = function () {
                     if (this.attach1_ == null || this.body1_ == null) {
@@ -1119,17 +1499,116 @@ System.register("davinci-newton/objects/Spring.js", ["../model/CoordType", "../m
                     return this.getEndPoint().subtract(this.getStartPoint());
                 };
                 return Spring;
-            }();
+            }(AbstractSimObject_1.default);
             exports_1("Spring", Spring);
             exports_1("default", Spring);
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/objects/PointMass", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring"], function (exports_1, context_1) {
+System.register("davinci-newton/util/veryDifferent.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var config_1, PointMass_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, newton;
+    function veryDifferent(arg1, arg2, epsilon, magnitude) {
+        if (epsilon === void 0) {
+            epsilon = 1E-14;
+        }
+        if (magnitude === void 0) {
+            magnitude = 1;
+        }
+        if (epsilon <= 0) {
+            throw new Error("epsilon (" + epsilon + ") must be positive.");
+        }
+        if (magnitude <= 0) {
+            throw new Error("magnitude (" + magnitude + ") must be positive.");
+        }
+        var maxArg = Math.max(Math.abs(arg1), Math.abs(arg2));
+        var max = maxArg > magnitude ? maxArg : magnitude;
+        return Math.abs(arg1 - arg2) > max * epsilon;
+    }
+    exports_1("default", veryDifferent);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var veryDifferent_1, Vector;
+    return {
+        setters: [function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            Vector = function () {
+                function Vector(x_, y_, z_) {
+                    if (z_ === void 0) {
+                        z_ = 0;
+                    }
+                    this.x_ = x_;
+                    this.y_ = y_;
+                    this.z_ = z_;
+                }
+                Vector.prototype.getX = function () {
+                    return this.x_;
+                };
+                Vector.prototype.getY = function () {
+                    return this.y_;
+                };
+                Vector.prototype.getZ = function () {
+                    return this.z_;
+                };
+                Vector.prototype.add = function (rhs) {
+                    return void 0;
+                };
+                Vector.prototype.subtract = function (rhs) {
+                    return void 0;
+                };
+                Vector.prototype.multiply = function (alpha) {
+                    return void 0;
+                };
+                Vector.prototype.distanceTo = function (rhs) {
+                    return 0;
+                };
+                Vector.prototype.immutable = function () {
+                    return this;
+                };
+                Vector.prototype.length = function () {
+                    return 0;
+                };
+                Vector.prototype.nearEqual = function (vector, opt_tolerance) {
+                    if (veryDifferent_1.default(this.x_, vector.getX(), opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.y_, vector.getY(), opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.z_, vector.getZ(), opt_tolerance)) {
+                        return false;
+                    }
+                    return true;
+                };
+                Vector.prototype.normalize = function () {
+                    return void 0;
+                };
+                Vector.prototype.rotate = function (cosAngle, sinAngle) {
+                    return void 0;
+                };
+                return Vector;
+            }();
+            Vector.ORIGIN = new Vector(0, 0);
+            exports_1("Vector", Vector);
+            exports_1("default", Vector);
+        }
+    };
+});
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/objects/PointMass", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var config_1, PointMass_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1, newton;
     return {
         setters: [function (config_1_1) {
             config_1 = config_1_1;
@@ -1145,6 +1624,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             SimRunner_1 = SimRunner_1_1;
         }, function (Spring_1_1) {
             Spring_1 = Spring_1_1;
+        }, function (Vector_1_1) {
+            Vector_1 = Vector_1_1;
         }],
         execute: function () {
             newton = {
@@ -1171,6 +1652,9 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get Spring() {
                     return Spring_1.default;
+                },
+                get Vector() {
+                    return Vector_1.default;
                 }
             };
             exports_1("default", newton);

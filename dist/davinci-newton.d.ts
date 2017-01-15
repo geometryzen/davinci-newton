@@ -11,7 +11,24 @@
 declare module NEWTON {
 
     interface SimObject {
+        /**
+         * 
+         */
+        getExpireTime(): number;
+        /**
+         * 
+         */
+        getName(localized?: boolean): string;
+        /**
+         * 
+         */
         isMassObject(): boolean;
+        /**
+         * Returns true if the given SimObject is similar to this SimObject for display purposes.
+         * SimObjects are similar when they are the same type and nearly the same size and location.
+         * Mainly used when showing forces - to avoid adding too many objects to the display.
+         */
+        similar(obj: SimObject, tolerance?: number): boolean;
     }
 
     class SimList {
@@ -69,6 +86,7 @@ declare module NEWTON {
         constructor(x_: number, y_: number, z?: number);
         getX(): number;
         getY(): number;
+        getZ(): number;
         add(rhs: GenericVector): Vector;
         subtract(rhs: GenericVector): Vector;
         multiply(alpha: number): Vector;
@@ -82,6 +100,7 @@ declare module NEWTON {
     interface GenericVector {
         getX(): number;
         getY(): number;
+        getZ(): number;
         immutable(): Vector;
     }
 
@@ -129,12 +148,15 @@ declare module NEWTON {
             direction: Vector,
             directionCoordType: CoordType,
             torque?: number);
+        getName(): string;
         getBody(): MassObject;
         getVector(): Vector;
         getStartPoint(): Vector;
         getTorque(): number;
         isMassObject(): boolean;
+        getExpireTime(): number;
         setExpireTime(time: number): void;
+        similar(obj: SimObject, tolerance?: number): boolean;
     }
 
     interface ForceLaw {
@@ -197,11 +219,31 @@ declare module NEWTON {
         getTimeStep(): number;
     }
 
+    /**
+     * 
+     */
+    class Clock {
+
+        /**
+         * 
+         */
+        constructor();
+
+        /**
+         * 
+         */
+        resume(): void;
+    }
+
     class SimRunner {
         /**
          * 
          */
         constructor(advanceStrategy: AdvanceStrategy, name?: string);
+        /**
+         * 
+         */
+        getClock(): Clock;
         /**
          * 
          */

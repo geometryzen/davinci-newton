@@ -100,8 +100,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     private moveObjects(vars: number[]) {
         this.bods_.forEach(function (b) {
             const idx = b.getVarsIndex();
-            if (idx < 0)
+            if (idx < 0) {
                 return;
+            }
             // This actually sets position and attitude.
             b.setPosition(new Vector(vars[idx + RigidBodySim.X_], vars[idx + RigidBodySim.Y_]), vars[idx + RigidBodySim.W_]);
             // This actually sets velocity and angular velocity.
@@ -120,7 +121,8 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      * If anything it could be passed to forceLaw.calculateForces.
      */
     evaluate(vars: number[], change: number[], time: number): void {
-        this.moveObjects(vars);  // so that rigid body objects know their current state.
+        // Move objects so that rigid body objects know their current state.
+        this.moveObjects(vars);
         this.bods_.forEach(function (body) {
             const idx = body.getVarsIndex();
             if (idx < 0)
@@ -209,29 +211,26 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         this.getVarsList().incrSequence(1, 2, 3);
     }
     modifyObjects() {
-        var va = this.varsList_;
-        var vars = va.getValues();
+        const va = this.varsList_;
+        const vars = va.getValues();
         this.moveObjects(vars);
         // update the variables that track energy
-        var einfo = this.getEnergyInfo_(vars);
+        const einfo = this.getEnergyInfo_(vars);
         va.setValue(1, einfo.getTranslational() + einfo.getRotational(), true);
         va.setValue(2, einfo.getPotential(), true);
         va.setValue(3, einfo.getTotalEnergy(), true);
     };
-    getSimList() {
+    getSimList(): SimList {
         return this.simList_;
     }
-    getVarsList() {
+    getVarsList(): VarsList {
         return this.varsList_;
     }
-    private getEnergyInfo_(vars: number[]) {
+    private getEnergyInfo_(vars: number[]): EnergyInfo {
         // assumes bodies match current vars
-        /** @type {number} */
-        var pe = 0;
-        /** @type {number} */
-        var re = 0;
-        /** @type {number} */
-        var te = 0;
+        let pe = 0;
+        let re = 0;
+        let te = 0;
         this.bods_.forEach(function (b) {
             if (isFinite(b.getMass())) {
                 re += b.rotationalEnergy();
@@ -251,14 +250,17 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     }
     restoreState(): void {
         if (this.recentState_ != null) {
-            this.varsList_.setValues(this.recentState_, /*continuous=*/true);
+            this.varsList_.setValues(this.recentState_, true);
         }
         this.bods_.forEach(function (b) {
             b.eraseOldCopy();
         });
     }
+
+    /**
+     * 
+     */
     findCollisions(collisions: Collision[], vars: number[], stepSize: number): void {
         throw new Error("TODO: findCollisions");
     }
-
 }
