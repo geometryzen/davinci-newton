@@ -219,7 +219,7 @@ module.exports = function (grunt) {
                     target: 'ES5',
                     out: 'documentation/',
                     mode: 'file',
-                    name: 'EIGHT <%= pkg.version %>',
+                    name: 'NEWTON <%= pkg.version %>',
                     exclude: '**/*.spec.ts',
                     excludeExternals: false,
                     excludeNotExported: true,

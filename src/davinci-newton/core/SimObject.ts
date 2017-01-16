@@ -1,7 +1,7 @@
 /**
  * 
  */
-interface SimObject {
+export interface SimObject {
     /**
      * 
      */

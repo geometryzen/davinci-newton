@@ -1,6 +1,6 @@
 import Vector from './Vector';
 
-interface GenericVector {
+export interface GenericVector {
     getX(): number;
     getY(): number;
     getZ(): number;

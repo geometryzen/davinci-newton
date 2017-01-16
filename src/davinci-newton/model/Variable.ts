@@ -1,6 +1,6 @@
 import Parameter from '../util/Parameter';
 
-interface Variable extends Parameter {
+export interface Variable extends Parameter {
     /**
      * Returns the value of this variable.
      */

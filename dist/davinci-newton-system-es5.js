@@ -9,9 +9,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-01-08';
+                    this.LAST_MODIFIED = '2017-01-15';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '6.0.0';
+                    this.VERSION = '0.0.1';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -1337,6 +1337,7 @@ System.register("davinci-newton/model/CoordType.js", [], function (exports_1, co
                 CoordType[CoordType["BODY"] = 0] = "BODY";
                 CoordType[CoordType["WORLD"] = 1] = "WORLD";
             })(CoordType || (CoordType = {}));
+            exports_1("CoordType", CoordType);
             exports_1("default", CoordType);
         }
     };

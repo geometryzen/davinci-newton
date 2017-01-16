@@ -1,4 +1,7 @@
-interface DiffEqSolver {
+/**
+ * 
+ */
+export interface DiffEqSolver {
     step(stepSize: number): void;
 }
 

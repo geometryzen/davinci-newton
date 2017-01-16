@@ -1,7 +1,10 @@
 import SimList from './SimList';
 import VarsList from './VarsList';
 
-interface Simulation {
+/**
+ * 
+ */
+export interface Simulation {
     /**
      * 
      */

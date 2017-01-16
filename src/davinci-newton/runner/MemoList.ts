@@ -1,4 +1,4 @@
-interface MemoList {
+export interface MemoList {
     memorize(): void;
 }
 

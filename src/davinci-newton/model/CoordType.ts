@@ -1,4 +1,4 @@
-enum CoordType {
+export enum CoordType {
     BODY = 0,
     WORLD = 1
 }

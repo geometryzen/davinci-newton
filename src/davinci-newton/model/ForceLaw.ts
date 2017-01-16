@@ -1,6 +1,6 @@
 import Force from './Force';
 
-interface ForceLaw {
+export interface ForceLaw {
     calculateForces(): Force[];
     disconnect(): void;
     getPotentialEnergy(): number;

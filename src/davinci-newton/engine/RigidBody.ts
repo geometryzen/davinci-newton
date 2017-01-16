@@ -1,7 +1,7 @@
 import GenericVector from '../math/GenericVector';
 import SimObject from '../core/SimObject';
 
-interface RigidBody extends SimObject {
+export interface RigidBody extends SimObject {
     eraseOldCopy(): void;
     getVarsIndex(): number;
     setVarsIndex(index: number): void;

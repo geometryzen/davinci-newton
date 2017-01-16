@@ -1,6 +1,6 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "WebGL library for mathematical physics using Geometric Algebra",
   "author": {
     "name": "David Holmes",

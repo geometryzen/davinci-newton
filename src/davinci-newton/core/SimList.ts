@@ -35,6 +35,10 @@ export class SimList extends AbstractSubject {
     constructor() {
         super('SIM_LIST');
     }
+
+    /**
+     * 
+     */
     add(simObj: SimObject): void {
         for (let i = 0; i < arguments.length; i++) {
             const element = <SimObject>arguments[i];
@@ -52,9 +56,14 @@ export class SimList extends AbstractSubject {
             }
         }
     }
+
+    /**
+     * 
+     */
     remove(simObj: SimObject): void {
         throw new Error("TODO");
     }
+
     /**
      * Removes SimObjects from this SimList whose *expiration time* is less than the given time.
      * Notifies Observers by broadcasting the {@link #OBJECT_REMOVED} event for each SimObject removed.

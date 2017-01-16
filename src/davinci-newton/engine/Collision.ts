@@ -1,4 +1,4 @@
-interface Collision {
+export interface Collision {
 
 }
 

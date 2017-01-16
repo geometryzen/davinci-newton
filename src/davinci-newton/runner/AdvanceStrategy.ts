@@ -1,6 +1,6 @@
 import MemoList from './MemoList';
 
-interface AdvanceStrategy {
+export interface AdvanceStrategy {
     /**
      * 
      */
