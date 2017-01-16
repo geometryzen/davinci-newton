@@ -27,11 +27,6 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    private tolerance_ = 0.1;
-
-    /**
-     * 
-     */
     constructor() {
         super('SIM_LIST');
     }
@@ -43,13 +38,6 @@ export class SimList extends AbstractSubject {
         for (let i = 0; i < arguments.length; i++) {
             const element = <SimObject>arguments[i];
             mustBeNonNullObject('element', element);
-            var expire = element.getExpireTime();
-            if (isFinite(expire)) {
-                var similar;
-                while (similar = this.getSimilar(element)) {
-                    this.remove(similar);
-                }
-            }
             if (!contains(this.elements_, element)) {
                 this.elements_.push(element);
                 this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
@@ -78,21 +66,6 @@ export class SimList extends AbstractSubject {
                 this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simobj));
             }
         }
-    }
-
-    /**
-     * Returns a similar SimObject already in this SimList, or `null` if there isn't one.
-     */
-    getSimilar(simObj: SimObject, tolerance?: number): SimObject {
-        const tol = (tolerance === undefined) ? this.tolerance_ : tolerance;
-        const len = this.elements_.length;
-        for (let i = 0; i < len; i++) {
-            const candidate = this.elements_[i];
-            if (candidate.similar(simObj, tol)) {
-                return candidate;
-            }
-        }
-        return null;
     }
 }
 

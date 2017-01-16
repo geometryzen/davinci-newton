@@ -9,7 +9,6 @@ import RigidBody from './RigidBody';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
-import Vector from '../math/Vector';
 
 const var_names = [
     'time',
@@ -40,7 +39,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     private static W_ = 6;
     private static VW_ = 7;
     private simList_ = new SimList();
-    private varsList_ = new VarsList(var_names, i18n_names, this.getName() + '_VARS');
+    private varsList_: VarsList;
     //
     // What is the difference between the simList and the list of RigidBody?
     //
@@ -58,6 +57,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     constructor(name = 'SIM') {
         super(name);
+        this.varsList_ = new VarsList(var_names, i18n_names, this.getName() + '_VARS');
     }
 
     /**
@@ -134,12 +134,14 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             const x = vars[idx + RigidBodySim.X_];
             const y = vars[idx + RigidBodySim.Y_];
             const z = vars[idx + RigidBodySim.Z_];
-            b.setPosition(new Vector(x, y, z), vars[idx + RigidBodySim.W_]);
+            b.setPosition(x, y, z);
+            b.setAttitude(vars[idx + RigidBodySim.W_]);
             // This actually sets velocity and angular velocity.
             const vx = vars[idx + RigidBodySim.VX_];
             const vy = vars[idx + RigidBodySim.VY_];
             const vz = vars[idx + RigidBodySim.VZ_];
-            b.setVelocity(new Vector(vx, vy, vz), vars[idx + RigidBodySim.VW_]);
+            b.setVelocity(vx, vy, vz);
+            b.setAngularVelocity(vars[idx + RigidBodySim.VW_]);
         });
     }
 
@@ -153,8 +155,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         this.moveObjects(vars);
         this.bods_.forEach(function (body) {
             const idx = body.getVarsIndex();
-            if (idx < 0)
+            if (idx < 0) {
                 return;
+            }
             const mass = body.getMass();
             if (mass === Number.POSITIVE_INFINITY) {
                 for (var k = 0; k < NUM_VARS_IN_STATE; k++)
@@ -211,8 +214,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         change[idx + RigidBodySim.VZ_] += forceDir.getZ() / mass;
 
         // w'' = R x F / I
-        const rx = forceLoc.getX() - body.getPosition().getX();
-        const ry = forceLoc.getY() - body.getPosition().getY();
+        const position = body.getPosition();
+        const rx = forceLoc.getX() - position.x;
+        const ry = forceLoc.getY() - position.y;
         // const rz = forceLoc.getZ() - body.getPosition().getZ();
         change[idx + RigidBodySim.VW_] += (rx * forceDir.getY() - ry * forceDir.getX()) / body.momentAboutCM();
         const torque = force.getTorque();
@@ -240,13 +244,19 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         const idx = body.getVarsIndex();
         if (idx > -1) {
             const va = this.varsList_;
-            va.setValue(RigidBodySim.X_ + idx, body.getPosition().getX());
-            va.setValue(RigidBodySim.Y_ + idx, body.getPosition().getY());
-            va.setValue(RigidBodySim.Z_ + idx, body.getPosition().getZ());
-            va.setValue(RigidBodySim.W_ + idx, body.getAngle());
-            va.setValue(RigidBodySim.VX_ + idx, body.getVelocity().getX());
-            va.setValue(RigidBodySim.VY_ + idx, body.getVelocity().getY());
-            va.setValue(RigidBodySim.VZ_ + idx, body.getVelocity().getZ());
+
+            const position = body.getPosition();
+            va.setValue(RigidBodySim.X_ + idx, position.x);
+            va.setValue(RigidBodySim.Y_ + idx, position.y);
+            va.setValue(RigidBodySim.Z_ + idx, position.z);
+
+            va.setValue(RigidBodySim.W_ + idx, body.getAttitude());
+
+            const velocity = body.getVelocity();
+            va.setValue(RigidBodySim.VX_ + idx, velocity.x);
+            va.setValue(RigidBodySim.VY_ + idx, velocity.y);
+            va.setValue(RigidBodySim.VZ_ + idx, velocity.z);
+
             va.setValue(RigidBodySim.VW_ + idx, body.getAngularVelocity());
         }
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE

@@ -1,5 +1,5 @@
 import config from './davinci-newton/config';
-import PointMass from './davinci-newton/objects/PointMass';
+import RigidBody from './davinci-newton/engine/RigidBody';
 import RigidBodySim from './davinci-newton/engine/RigidBodySim';
 import RungeKutta from './davinci-newton/model/RungeKutta';
 import SimpleAdvance from './davinci-newton/strategy/SimpleAdvance';
@@ -22,7 +22,7 @@ const newton = {
     /**
      * 
      */
-    get PointMass() { return PointMass; },
+    get RigidBody() { return RigidBody; },
     /**
      * 
      */

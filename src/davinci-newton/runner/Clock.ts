@@ -40,6 +40,10 @@ export class Clock extends AbstractSubject {
     /**
      * 
      */
+    static CLOCK_SET_TIME = 'CLOCK_SET_TIME';
+    /**
+     * 
+     */
     constructor(name = 'CLOCK') {
         super(name);
         this.realStart_sys_secs_ = this.clockStart_sys_secs_;
@@ -74,22 +78,35 @@ export class Clock extends AbstractSubject {
         }
     }
 
-    setTime(time: number): void {
-        throw new Error("TODO");
+    /**
+     * 
+     */
+    setTime(time_secs: number): void {
+        this.setTimePrivate(time_secs);
+        this.broadcast(new GenericEvent(this, Clock.CLOCK_SET_TIME));
     }
+
     /**
      * 
      */
     private setTimePrivate(time_secs: number) {
         if (this.isRunning_) {
             this.clockStart_sys_secs_ = getSystemTime() - time_secs / this.timeRate_;
-            // schedule all ClockTasks
-            this.tasks_.forEach((task) => { this.scheduleTask(task); });
+
+            this.scheduleAllClockTasks();
         }
         else {
             this.saveTime_secs_ = time_secs;
         }
     }
+
+    /**
+     * 
+     */
+    private scheduleAllClockTasks(): void {
+        this.tasks_.forEach((task) => { this.scheduleTask(task); });
+    }
+
     /**
      * 
      */

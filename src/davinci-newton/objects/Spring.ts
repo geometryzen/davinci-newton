@@ -3,14 +3,13 @@ import CoordType from '../model/CoordType';
 import Force from '../model/Force';
 import ForceLaw from '../model/ForceLaw';
 import GenericVector from '../math/GenericVector';
-import Line from './Line';
-import MassObject from '../model/MassObject';
+import RigidBody from '../engine/RigidBody';
 import Vector from '../math/Vector';
 
 /**
  * 
  */
-export class Spring extends AbstractSimObject implements ForceLaw, Line {
+export class Spring extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
@@ -18,7 +17,7 @@ export class Spring extends AbstractSimObject implements ForceLaw, Line {
     /**
      * 
      */
-    constructor(name: string, private body1_: MassObject, private attach1_: GenericVector, private body2_: MassObject, private attach2_: GenericVector, private restLength_: number, private stiffness_ = 0, private compressOnly_ = false) {
+    constructor(name: string, private body1_: RigidBody, private attach1_: GenericVector, private body2_: RigidBody, private attach2_: GenericVector, private restLength_: number, private stiffness_ = 0, private compressOnly_ = false) {
         super(name);
     }
     getStartPoint(): Vector {
@@ -59,16 +58,17 @@ export class Spring extends AbstractSimObject implements ForceLaw, Line {
         // force on body 1 is in direction of v
         // amount of force is proportional to stretch of spring
         // spring force is - stiffness * stretch
-        var sf = -this.stiffness_ * (len - this.restLength_);
-        var fx = -sf * (v.getX() / len);
-        var fy = -sf * (v.getY() / len);
-        var f = new Vector(fx, fy, 0);
+        const sf = -this.stiffness_ * (len - this.restLength_);
+        const fx = -sf * (v.getX() / len);
+        const fy = -sf * (v.getY() / len);
+        const fz = -sf * (v.getZ() / len);
+        let f = new Vector(fx, fy, fz);
         if (this.damping_ !== 0) {
             // damping does not happen for 'compress only' when uncompressed
             if (!this.compressOnly_ || len < this.restLength_ - 1E-10) {
-                var v1 = this.body1_.getVelocity(this.attach1_);
-                var v2 = this.body2_.getVelocity(this.attach2_);
-                var df = v1.subtract(v2).multiply(-this.damping_);
+                const v1 = this.body1_.worldVelocityOfBodyPoint(this.attach1_);
+                const v2 = this.body2_.worldVelocityOfBodyPoint(this.attach2_);
+                const df = v1.subtract(v2).multiply(-this.damping_);
                 f = f.add(df);
             }
         }
@@ -79,9 +79,6 @@ export class Spring extends AbstractSimObject implements ForceLaw, Line {
     }
     disconnect(): void {
         // Does nothing
-    }
-    isMassObject(): boolean {
-        return false;
     }
     getPotentialEnergy(): number {
         return 0;

@@ -21,6 +21,26 @@ export class Vector implements GenericVector {
     /**
      * 
      */
+    get x(): number {
+        return this.x_;
+    }
+
+    /**
+     * 
+     */
+    get y(): number {
+        return this.y_;
+    }
+    /**
+     * 
+     */
+    get z(): number {
+        return this.z_;
+    }
+
+    /**
+     * 
+     */
     getX(): number {
         return this.x_;
     }

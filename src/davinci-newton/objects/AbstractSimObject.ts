@@ -26,14 +26,8 @@ export class AbstractSimObject implements SimObject {
     /**
      * 
      */
-    private localName_: string;
-
-    /**
-     * 
-     */
-    constructor(name?: string, localName?: string) {
+    constructor(name?: string) {
         this.name_ = validName(toName(name || `SIM_OBJ${AbstractSimObject.ID++}`));
-        this.localName_ = localName || this.name_;
     }
 
     /**
@@ -46,24 +40,9 @@ export class AbstractSimObject implements SimObject {
     /**
      * 
      */
-    getName(localized?: boolean): string {
-        return localized ? this.localName_ : this.name_;
+    getName(): string {
+        return this.name_;
     }
-
-    /**
-     * 
-     */
-    isMassObject(): boolean {
-        return false;
-    }
-
-    /**
-     * 
-     */
-    similar(obj: SimObject, tolerance?: number): boolean {
-        return obj === this;
-    }
-
 }
 
 export default AbstractSimObject;

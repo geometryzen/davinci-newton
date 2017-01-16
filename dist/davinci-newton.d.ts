@@ -19,16 +19,6 @@ declare module NEWTON {
          * 
          */
         getName(localized?: boolean): string;
-        /**
-         * 
-         */
-        isMassObject(): boolean;
-        /**
-         * Returns true if the given SimObject is similar to this SimObject for display purposes.
-         * SimObjects are similar when they are the same type and nearly the same size and location.
-         * Mainly used when showing forces - to avoid adding too many objects to the display.
-         */
-        similar(obj: SimObject, tolerance?: number): boolean;
     }
 
     class SimList {
@@ -97,6 +87,12 @@ declare module NEWTON {
         rotate(cosAngle: number, sinAngle: number): Vector;
     }
 
+    interface VectorE3 {
+        x: number;
+        y: number;
+        z: number;
+    }
+
     interface GenericVector {
         getX(): number;
         getY(): number;
@@ -104,17 +100,22 @@ declare module NEWTON {
         immutable(): Vector;
     }
 
-    interface RigidBody extends SimObject {
+    class RigidBody implements SimObject {
+        constructor(name: string);
         eraseOldCopy(): void;
+        getName(): string;
+        getExpireTime(): number;
         getVarsIndex(): number;
         setVarsIndex(index: number): void;
         getVarName(index: number, localized: boolean): string;
-        getAngle(): number;
+        getPosition(): VectorE3;
+        setPosition(x: number, y: number, z: number): void;
+        getAttitude(): number;
+        setAttitude(angle?: number): void;
+        getVelocity(): VectorE3;
+        setVelocity(x: number, y: number, z: number): void;
         getAngularVelocity(): number;
-        getPosition(): GenericVector;
-        setPosition(worldLocation: GenericVector, angle?: number): void;
-        getVelocity(): GenericVector;
-        setVelocity(worldVelocity: GenericVector, angularVelocity?: number): void;
+        setAngularVelocity(angularVelocity?: number): void;
         getMass(): number;
         momentAboutCM(): number;
         rotationalEnergy(): number;
@@ -124,12 +125,6 @@ declare module NEWTON {
 
     interface Collision {
 
-    }
-
-    interface MassObject {
-        bodyToWorld(point: GenericVector): Vector;
-        getVelocity(point: GenericVector): Vector;
-        rotateBodyToWorld(body: GenericVector): Vector;
     }
 
     enum CoordType {
@@ -142,21 +137,19 @@ declare module NEWTON {
          * 
          */
         constructor(name: string,
-            body: MassObject,
+            body: RigidBody,
             location: Vector,
             locationCoordType: CoordType,
             direction: Vector,
             directionCoordType: CoordType,
             torque?: number);
         getName(): string;
-        getBody(): MassObject;
+        getBody(): RigidBody;
         getVector(): Vector;
         getStartPoint(): Vector;
         getTorque(): number;
-        isMassObject(): boolean;
         getExpireTime(): number;
         setExpireTime(time: number): void;
-        similar(obj: SimObject, tolerance?: number): boolean;
     }
 
     interface ForceLaw {
@@ -252,6 +245,24 @@ declare module NEWTON {
          * 
          */
         memorize(): void;
+    }
+
+    /**
+     * 
+     */
+    class Spring implements ForceLaw {
+        /**
+         * 
+         */
+        constructor(name: string, body1: RigidBody, attach1: GenericVector, body2: RigidBody, attach2: GenericVector, restLength: number, stiffness?: number, compressOnly?: boolean);
+        getName(): string;
+        getStartPoint(): Vector;
+        getEndPoint(): Vector;
+        getExpireTime(): number;
+        calculateForces(): Force[];
+        disconnect(): void;
+        getPotentialEnergy(): number;
+        getVector(): Vector;
     }
 }
 

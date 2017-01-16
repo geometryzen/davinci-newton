@@ -1,14 +1,12 @@
 import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from './CoordType';
-import Line from '../objects/Line';
 import MassObject from './MassObject';
-import SimObject from '../core/SimObject';
 import Vector from '../math/Vector';
 
 /**
  * 
  */
-export class Force extends AbstractSimObject implements Line {
+export class Force extends AbstractSimObject {
     /**
      * 
      */
@@ -36,25 +34,8 @@ export class Force extends AbstractSimObject implements Line {
     getTorque(): number {
         return this.torque_;
     }
-    isMassObject(): boolean {
-        return false;
-    }
     setExpireTime(time: number): void {
         throw new Error("TODO");
-    }
-    similar(obj: SimObject, tolerance?: number): boolean {
-        if (!(obj instanceof this.constructor)) {
-            return false;
-        }
-        // require same name: fixes thrust force not appearing when gravity is at same place
-        if (obj.getName() !== this.getName()) {
-            return false;
-        }
-        const f: Force = <Force>obj;
-        if (!this.getStartPoint().nearEqual(f.getStartPoint(), tolerance)) {
-            return false;
-        }
-        return this.getVector().nearEqual(f.getVector(), tolerance);
     }
 }
 
