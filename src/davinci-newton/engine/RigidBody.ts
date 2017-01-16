@@ -1,5 +1,4 @@
 import AbstractSimObject from '../objects/AbstractSimObject';
-import GenericVector from '../math/GenericVector';
 import Vector from '../math/Vector';
 import VectorE3 from '../math/VectorE3';
 
@@ -19,7 +18,7 @@ export class RigidBody extends AbstractSimObject {
     private varsIndex_ = -1;
 
     /**
-     * 
+     * Position (in world coordinates)
      */
     private x = 0;
     private y = 0;
@@ -46,11 +45,6 @@ export class RigidBody extends AbstractSimObject {
      * Mass.
      */
     protected mass_ = 1;
-
-    /**
-     * 
-     */
-    protected loc_world_ = Vector.ORIGIN;
 
     /**
      * 
@@ -186,6 +180,13 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
+    setMass(mass: number): void {
+        this.mass_ = mass;
+    }
+
+    /**
+     * 
+     */
     momentAboutCM(): number {
         return 1;
     }
@@ -214,29 +215,29 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    bodyToWorld(bodyPoint: GenericVector): Vector {
-        const rx = bodyPoint.getX() - this.cm_body_.getX();  // vector from cm to bodyPoint
-        const ry = bodyPoint.getY() - this.cm_body_.getY();
-        const x = this.loc_world_.getX() + (rx * this.cosAngle_ - ry * this.sinAngle_);
-        const y = this.loc_world_.getY() + (rx * this.sinAngle_ + ry * this.cosAngle_);
+    bodyToWorld(bodyPoint: VectorE3): Vector {
+        const rx = bodyPoint.x - this.cm_body_.x;  // vector from cm to bodyPoint
+        const ry = bodyPoint.y - this.cm_body_.y;
+        const x = this.x + (rx * this.cosAngle_ - ry * this.sinAngle_);
+        const y = this.y + (rx * this.sinAngle_ + ry * this.cosAngle_);
         return new Vector(x, y, 0);
     }
 
     /**
      * 
      */
-    worldVelocityOfBodyPoint(bodyPoint: GenericVector): Vector {
-        const r = this.rotateBodyToWorld(bodyPoint.immutable().subtract(this.cm_body_));
-        const vx = this.vx - r.getY() * this.omega_;
-        const vy = this.vy + r.getX() * this.omega_;
+    worldVelocityOfBodyPoint(bodyPoint: VectorE3): Vector {
+        const r = this.rotateBodyToWorld(Vector.fromVector(bodyPoint).subtract(this.cm_body_));
+        const vx = this.vx - r.y * this.omega_;
+        const vy = this.vy + r.x * this.omega_;
         return new Vector(vx, vy, 0);
     }
 
     /**
      * 
      */
-    rotateBodyToWorld(bodyPoint: GenericVector): Vector {
-        return bodyPoint.immutable().rotate(this.cosAngle_, this.sinAngle_);
+    rotateBodyToWorld(bodyPoint: VectorE3): Vector {
+        return Vector.fromVector(bodyPoint).rotate(this.cosAngle_, this.sinAngle_);
     }
 }
 

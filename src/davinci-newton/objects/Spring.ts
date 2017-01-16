@@ -2,9 +2,9 @@ import AbstractSimObject from './AbstractSimObject';
 import CoordType from '../model/CoordType';
 import Force from '../model/Force';
 import ForceLaw from '../model/ForceLaw';
-import GenericVector from '../math/GenericVector';
 import RigidBody from '../engine/RigidBody';
 import Vector from '../math/Vector';
+import VectorE3 from '../math/VectorE3';
 
 /**
  * 
@@ -14,10 +14,15 @@ export class Spring extends AbstractSimObject implements ForceLaw {
      * 
      */
     private damping_ = 0;
+    private compressOnly_ = false;
+    private restLength_ = 1;
+    private stiffness_ = 1;
+    private attach1_: VectorE3 = Vector.ORIGIN;
+    private attach2_: VectorE3 = Vector.ORIGIN;
     /**
      * 
      */
-    constructor(name: string, private body1_: RigidBody, private attach1_: GenericVector, private body2_: RigidBody, private attach2_: GenericVector, private restLength_: number, private stiffness_ = 0, private compressOnly_ = false) {
+    constructor(name: string, private body1_: RigidBody, private body2_: RigidBody) {
         super(name);
     }
     getStartPoint(): Vector {
@@ -43,10 +48,11 @@ export class Spring extends AbstractSimObject implements ForceLaw {
             else {
                 // spring is not compressed, so the end is restLength from p1
                 // in the direction towards p2.
-                const n = p2.subtract(p1).normalize();
+                const n = p2.subtract(p1).direction();
                 return p1.add(n.multiply(rlen));
             }
-        } else {
+        }
+        else {
             return p2;
         }
     }
@@ -54,14 +60,14 @@ export class Spring extends AbstractSimObject implements ForceLaw {
         const point1 = this.getStartPoint();
         const point2 = this.getEndPoint();
         const v = point2.subtract(point1);
-        const len = v.length();
+        const len = v.magnitude();
         // force on body 1 is in direction of v
         // amount of force is proportional to stretch of spring
         // spring force is - stiffness * stretch
         const sf = -this.stiffness_ * (len - this.restLength_);
-        const fx = -sf * (v.getX() / len);
-        const fy = -sf * (v.getY() / len);
-        const fz = -sf * (v.getZ() / len);
+        const fx = -sf * (v.x / len);
+        const fy = -sf * (v.y / len);
+        const fz = -sf * (v.z / len);
         let f = new Vector(fx, fy, fz);
         if (this.damping_ !== 0) {
             // damping does not happen for 'compress only' when uncompressed

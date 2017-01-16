@@ -1,10 +1,10 @@
-import GenericVector from './GenericVector';
+import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
 
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
  */
-export class Vector implements GenericVector {
+export class Vector implements VectorE3 {
 
     /**
      * 
@@ -41,50 +41,32 @@ export class Vector implements GenericVector {
     /**
      * 
      */
-    getX(): number {
-        return this.x_;
+    add(rhs: VectorE3): Vector {
+        return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
     }
 
     /**
      * 
      */
-    getY(): number {
-        return this.y_;
-    }
-
-    /**
-     * 
-     */
-    getZ(): number {
-        return this.z_;
-    }
-
-    /**
-     * 
-     */
-    add(rhs: GenericVector): Vector {
-        throw new Error("TODO: add");
-    }
-
-    /**
-     * 
-     */
-    subtract(rhs: GenericVector): Vector {
-        throw new Error("TODO: subtract");
+    subtract(rhs: VectorE3): Vector {
+        return new Vector(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
     }
 
     /**
      * 
      */
     multiply(alpha: number): Vector {
-        throw new Error("TODO: multiply");
+        return new Vector(alpha * this.x, alpha * this.y, alpha * this.z);
     }
 
     /**
      * 
      */
-    distanceTo(rhs: GenericVector): number {
-        throw new Error("TODO: distanceTo");
+    distanceTo(rhs: VectorE3): number {
+        const Δx = this.x - rhs.x;
+        const Δy = this.y - rhs.y;
+        const Δz = this.z - rhs.z;
+        return Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
     }
 
     /**
@@ -97,21 +79,24 @@ export class Vector implements GenericVector {
     /**
      * 
      */
-    length(): number {
-        throw new Error("TODO: length");
+    magnitude(): number {
+        const x = this.x;
+        const y = this.y;
+        const z = this.z;
+        return Math.sqrt(x * x + y * y + z * z);
     }
 
     /**
      * 
      */
-    nearEqual(vector: GenericVector, tolerance?: number): boolean {
-        if (veryDifferent(this.x_, vector.getX(), tolerance)) {
+    nearEqual(vector: VectorE3, tolerance?: number): boolean {
+        if (veryDifferent(this.x_, vector.x, tolerance)) {
             return false;
         }
-        if (veryDifferent(this.y_, vector.getY(), tolerance)) {
+        if (veryDifferent(this.y_, vector.y, tolerance)) {
             return false;
         }
-        if (veryDifferent(this.z_, vector.getZ(), tolerance)) {
+        if (veryDifferent(this.z_, vector.z, tolerance)) {
             return false;
         }
         return true;
@@ -120,8 +105,20 @@ export class Vector implements GenericVector {
     /**
      * 
      */
-    normalize(): Vector {
-        throw new Error("TODO: normalize");
+    direction(): Vector {
+        const magnitude = this.magnitude();
+        if (magnitude !== 1) {
+            if (magnitude === 0) {
+                throw new Error("direction is undefined.");
+                // return void 0;
+            }
+            else {
+                return this.multiply(1 / magnitude);
+            }
+        }
+        else {
+            return this;
+        }
     }
 
     /**
@@ -129,6 +126,10 @@ export class Vector implements GenericVector {
      */
     rotate(cosAngle: number, sinAngle: number): Vector {
         throw new Error("TODO: rotate");
+    }
+
+    static fromVector(v: VectorE3): Vector {
+        return new Vector(v.x, v.y, v.z);
     }
 }
 

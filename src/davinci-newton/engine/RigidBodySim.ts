@@ -209,16 +209,16 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         const forceLoc = force.getStartPoint();
         const mass = body.getMass();
 
-        change[idx + RigidBodySim.VX_] += forceDir.getX() / mass;
-        change[idx + RigidBodySim.VY_] += forceDir.getY() / mass;
-        change[idx + RigidBodySim.VZ_] += forceDir.getZ() / mass;
+        change[idx + RigidBodySim.VX_] += forceDir.x / mass;
+        change[idx + RigidBodySim.VY_] += forceDir.y / mass;
+        change[idx + RigidBodySim.VZ_] += forceDir.z / mass;
 
         // w'' = R x F / I
         const position = body.getPosition();
-        const rx = forceLoc.getX() - position.x;
-        const ry = forceLoc.getY() - position.y;
+        const rx = forceLoc.x - position.x;
+        const ry = forceLoc.y - position.y;
         // const rz = forceLoc.getZ() - body.getPosition().getZ();
-        change[idx + RigidBodySim.VW_] += (rx * forceDir.getY() - ry * forceDir.getX()) / body.momentAboutCM();
+        change[idx + RigidBodySim.VW_] += (rx * forceDir.y - ry * forceDir.x) / body.momentAboutCM();
         const torque = force.getTorque();
         if (torque !== 0) {
             change[idx + RigidBodySim.VW_] += torque / body.momentAboutCM();

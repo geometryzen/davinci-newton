@@ -71,18 +71,18 @@ declare module NEWTON {
         timeIndex(): number;
     }
 
-    class Vector implements GenericVector {
+    class Vector implements VectorE3 {
+        x: number;
+        y: number;
+        z: number;
         static ORIGIN: Vector;
         constructor(x_: number, y_: number, z: number);
-        getX(): number;
-        getY(): number;
-        getZ(): number;
-        add(rhs: GenericVector): Vector;
-        subtract(rhs: GenericVector): Vector;
+        add(rhs: VectorE3): Vector;
+        subtract(rhs: VectorE3): Vector;
         multiply(alpha: number): Vector;
-        distanceTo(rhs: GenericVector): number;
+        distanceTo(rhs: VectorE3): number;
         immutable(): Vector;
-        length(): number;
+        magnitude(): number;
         normalize(): Vector;
         rotate(cosAngle: number, sinAngle: number): Vector;
     }
@@ -91,13 +91,6 @@ declare module NEWTON {
         x: number;
         y: number;
         z: number;
-    }
-
-    interface GenericVector {
-        getX(): number;
-        getY(): number;
-        getZ(): number;
-        immutable(): Vector;
     }
 
     class RigidBody implements SimObject {
@@ -117,6 +110,7 @@ declare module NEWTON {
         getAngularVelocity(): number;
         setAngularVelocity(angularVelocity?: number): void;
         getMass(): number;
+        setMass(mass: number): void;
         momentAboutCM(): number;
         rotationalEnergy(): number;
         translationalEnergy(): number;
@@ -254,7 +248,7 @@ declare module NEWTON {
         /**
          * 
          */
-        constructor(name: string, body1: RigidBody, attach1: GenericVector, body2: RigidBody, attach2: GenericVector, restLength: number, stiffness?: number, compressOnly?: boolean);
+        constructor(name: string, body1: RigidBody, body2: RigidBody);
         getName(): string;
         getStartPoint(): Vector;
         getEndPoint(): Vector;

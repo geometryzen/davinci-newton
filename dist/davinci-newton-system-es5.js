@@ -9,9 +9,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-01-15';
+                    this.LAST_MODIFIED = '2017-01-16';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.2';
+                    this.VERSION = '0.0.3';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -81,7 +81,6 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
                     _this.angle = 0;
                     _this.omega_ = 0;
                     _this.mass_ = 1;
-                    _this.loc_world_ = Vector_1.default.ORIGIN;
                     _this.sinAngle_ = 0;
                     _this.cosAngle_ = 1;
                     _this.cm_body_ = Vector_1.default.ORIGIN;
@@ -153,6 +152,9 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
                 RigidBody.prototype.getMass = function () {
                     return this.mass_;
                 };
+                RigidBody.prototype.setMass = function (mass) {
+                    this.mass_ = mass;
+                };
                 RigidBody.prototype.momentAboutCM = function () {
                     return 1;
                 };
@@ -164,20 +166,20 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
                 };
                 RigidBody.prototype.saveOldCopy = function () {};
                 RigidBody.prototype.bodyToWorld = function (bodyPoint) {
-                    var rx = bodyPoint.getX() - this.cm_body_.getX();
-                    var ry = bodyPoint.getY() - this.cm_body_.getY();
-                    var x = this.loc_world_.getX() + (rx * this.cosAngle_ - ry * this.sinAngle_);
-                    var y = this.loc_world_.getY() + (rx * this.sinAngle_ + ry * this.cosAngle_);
+                    var rx = bodyPoint.x - this.cm_body_.x;
+                    var ry = bodyPoint.y - this.cm_body_.y;
+                    var x = this.x + (rx * this.cosAngle_ - ry * this.sinAngle_);
+                    var y = this.y + (rx * this.sinAngle_ + ry * this.cosAngle_);
                     return new Vector_1.default(x, y, 0);
                 };
                 RigidBody.prototype.worldVelocityOfBodyPoint = function (bodyPoint) {
-                    var r = this.rotateBodyToWorld(bodyPoint.immutable().subtract(this.cm_body_));
-                    var vx = this.vx - r.getY() * this.omega_;
-                    var vy = this.vy + r.getX() * this.omega_;
+                    var r = this.rotateBodyToWorld(Vector_1.default.fromVector(bodyPoint).subtract(this.cm_body_));
+                    var vx = this.vx - r.y * this.omega_;
+                    var vy = this.vy + r.x * this.omega_;
                     return new Vector_1.default(vx, vy, 0);
                 };
                 RigidBody.prototype.rotateBodyToWorld = function (bodyPoint) {
-                    return bodyPoint.immutable().rotate(this.cosAngle_, this.sinAngle_);
+                    return Vector_1.default.fromVector(bodyPoint).rotate(this.cosAngle_, this.sinAngle_);
                 };
                 return RigidBody;
             }(AbstractSimObject_1.default);
@@ -829,13 +831,13 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                     var forceDir = force.getVector();
                     var forceLoc = force.getStartPoint();
                     var mass = body.getMass();
-                    change[idx + RigidBodySim.VX_] += forceDir.getX() / mass;
-                    change[idx + RigidBodySim.VY_] += forceDir.getY() / mass;
-                    change[idx + RigidBodySim.VZ_] += forceDir.getZ() / mass;
+                    change[idx + RigidBodySim.VX_] += forceDir.x / mass;
+                    change[idx + RigidBodySim.VY_] += forceDir.y / mass;
+                    change[idx + RigidBodySim.VZ_] += forceDir.z / mass;
                     var position = body.getPosition();
-                    var rx = forceLoc.getX() - position.x;
-                    var ry = forceLoc.getY() - position.y;
-                    change[idx + RigidBodySim.VW_] += (rx * forceDir.getY() - ry * forceDir.getX()) / body.momentAboutCM();
+                    var rx = forceLoc.x - position.x;
+                    var ry = forceLoc.y - position.y;
+                    change[idx + RigidBodySim.VW_] += (rx * forceDir.y - ry * forceDir.x) / body.momentAboutCM();
                     var torque = force.getTorque();
                     if (torque !== 0) {
                         change[idx + RigidBodySim.VW_] += torque / body.momentAboutCM();
@@ -1461,22 +1463,16 @@ System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../
         execute: function () {
             Spring = function (_super) {
                 __extends(Spring, _super);
-                function Spring(name, body1_, attach1_, body2_, attach2_, restLength_, stiffness_, compressOnly_) {
-                    if (stiffness_ === void 0) {
-                        stiffness_ = 0;
-                    }
-                    if (compressOnly_ === void 0) {
-                        compressOnly_ = false;
-                    }
+                function Spring(name, body1_, body2_) {
                     var _this = _super.call(this, name) || this;
                     _this.body1_ = body1_;
-                    _this.attach1_ = attach1_;
                     _this.body2_ = body2_;
-                    _this.attach2_ = attach2_;
-                    _this.restLength_ = restLength_;
-                    _this.stiffness_ = stiffness_;
-                    _this.compressOnly_ = compressOnly_;
                     _this.damping_ = 0;
+                    _this.compressOnly_ = false;
+                    _this.restLength_ = 1;
+                    _this.stiffness_ = 1;
+                    _this.attach1_ = Vector_1.default.ORIGIN;
+                    _this.attach2_ = Vector_1.default.ORIGIN;
                     return _this;
                 }
                 Spring.prototype.getStartPoint = function () {
@@ -1497,7 +1493,7 @@ System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../
                         if (dist <= rlen) {
                             return p2;
                         } else {
-                            var n = p2.subtract(p1).normalize();
+                            var n = p2.subtract(p1).direction();
                             return p1.add(n.multiply(rlen));
                         }
                     } else {
@@ -1508,11 +1504,11 @@ System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../
                     var point1 = this.getStartPoint();
                     var point2 = this.getEndPoint();
                     var v = point2.subtract(point1);
-                    var len = v.length();
+                    var len = v.magnitude();
                     var sf = -this.stiffness_ * (len - this.restLength_);
-                    var fx = -sf * (v.getX() / len);
-                    var fy = -sf * (v.getY() / len);
-                    var fz = -sf * (v.getZ() / len);
+                    var fx = -sf * (v.x / len);
+                    var fy = -sf * (v.y / len);
+                    var fz = -sf * (v.z / len);
                     var f = new Vector_1.default(fx, fy, fz);
                     if (this.damping_ !== 0) {
                         if (!this.compressOnly_ || len < this.restLength_ - 1E-10) {
@@ -1602,50 +1598,59 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
                     enumerable: true,
                     configurable: true
                 });
-                Vector.prototype.getX = function () {
-                    return this.x_;
-                };
-                Vector.prototype.getY = function () {
-                    return this.y_;
-                };
-                Vector.prototype.getZ = function () {
-                    return this.z_;
-                };
                 Vector.prototype.add = function (rhs) {
-                    throw new Error("TODO: add");
+                    return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
                 };
                 Vector.prototype.subtract = function (rhs) {
-                    throw new Error("TODO: subtract");
+                    return new Vector(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
                 };
                 Vector.prototype.multiply = function (alpha) {
-                    throw new Error("TODO: multiply");
+                    return new Vector(alpha * this.x, alpha * this.y, alpha * this.z);
                 };
                 Vector.prototype.distanceTo = function (rhs) {
-                    throw new Error("TODO: distanceTo");
+                    var Δx = this.x - rhs.x;
+                    var Δy = this.y - rhs.y;
+                    var Δz = this.z - rhs.z;
+                    return Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
                 };
                 Vector.prototype.immutable = function () {
                     return this;
                 };
-                Vector.prototype.length = function () {
-                    throw new Error("TODO: length");
+                Vector.prototype.magnitude = function () {
+                    var x = this.x;
+                    var y = this.y;
+                    var z = this.z;
+                    return Math.sqrt(x * x + y * y + z * z);
                 };
                 Vector.prototype.nearEqual = function (vector, tolerance) {
-                    if (veryDifferent_1.default(this.x_, vector.getX(), tolerance)) {
+                    if (veryDifferent_1.default(this.x_, vector.x, tolerance)) {
                         return false;
                     }
-                    if (veryDifferent_1.default(this.y_, vector.getY(), tolerance)) {
+                    if (veryDifferent_1.default(this.y_, vector.y, tolerance)) {
                         return false;
                     }
-                    if (veryDifferent_1.default(this.z_, vector.getZ(), tolerance)) {
+                    if (veryDifferent_1.default(this.z_, vector.z, tolerance)) {
                         return false;
                     }
                     return true;
                 };
-                Vector.prototype.normalize = function () {
-                    throw new Error("TODO: normalize");
+                Vector.prototype.direction = function () {
+                    var magnitude = this.magnitude();
+                    if (magnitude !== 1) {
+                        if (magnitude === 0) {
+                            throw new Error("direction is undefined.");
+                        } else {
+                            return this.multiply(1 / magnitude);
+                        }
+                    } else {
+                        return this;
+                    }
                 };
                 Vector.prototype.rotate = function (cosAngle, sinAngle) {
                     throw new Error("TODO: rotate");
+                };
+                Vector.fromVector = function (v) {
+                    return new Vector(v.x, v.y, v.z);
                 };
                 return Vector;
             }();
