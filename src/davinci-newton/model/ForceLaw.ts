@@ -1,7 +1,7 @@
-import Force from './Force';
+import ForceApp from './ForceApp';
 
 export interface ForceLaw {
-    calculateForces(): Force[];
+    calculateForces(): ForceApp[];
     disconnect(): void;
     getPotentialEnergy(): number;
 }

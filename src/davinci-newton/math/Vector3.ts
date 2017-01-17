@@ -15,11 +15,23 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
-     * 
+     * Pre-multiplies the column vector corresponding to this vector by the matrix.
+     * The result is applied to this vector.
+     *
+     * @param σ The 3x3 matrix that pre-multiplies this column vector.
      */
-    apply(matrix: Matrix3): this {
-        throw new Error("TODO");
-        // return this;
+    applyMatrix(σ: Matrix3): this {
+        const x = this.x;
+        const y = this.y;
+        const z = this.z;
+
+        const e = σ.elements;
+
+        this.x = e[0x0] * x + e[0x3] * y + e[0x6] * z;
+        this.y = e[0x1] * x + e[0x4] * y + e[0x7] * z;
+        this.z = e[0x2] * x + e[0x5] * y + e[0x8] * z;
+
+        return this;
     }
 
     /**

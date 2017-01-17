@@ -1,6 +1,6 @@
 import AbstractSimObject from './AbstractSimObject';
 import CoordType from '../model/CoordType';
-import Force from '../model/Force';
+import ForceApp from '../model/ForceApp';
 import ForceLaw from '../model/ForceLaw';
 import RigidBody from '../engine/RigidBody';
 import Vector from '../math/Vector';
@@ -56,7 +56,7 @@ export class Spring extends AbstractSimObject implements ForceLaw {
             return p2;
         }
     }
-    calculateForces(): Force[] {
+    calculateForces(): ForceApp[] {
         const point1 = this.getStartPoint();
         const point2 = this.getEndPoint();
         const v = point2.subtract(point1);
@@ -79,8 +79,8 @@ export class Spring extends AbstractSimObject implements ForceLaw {
             }
         }
         return [
-            new Force('spring', this.body1_, point1, CoordType.WORLD, f, CoordType.WORLD),
-            new Force('spring', this.body2_, point2, CoordType.WORLD, f.multiply(-1), CoordType.WORLD)
+            new ForceApp('spring', this.body1_, point1, CoordType.WORLD, f, CoordType.WORLD),
+            new ForceApp('spring', this.body2_, point2, CoordType.WORLD, f.multiply(-1), CoordType.WORLD)
         ];
     }
     disconnect(): void {

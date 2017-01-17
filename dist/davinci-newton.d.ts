@@ -23,8 +23,9 @@ declare module NEWTON {
 
     class SimList {
         constructor();
-        add(simObj: SimObject): void;
-        remove(simObj: SimObject): void;
+        add(simObject: SimObject): void;
+        forEach(callBack: (simObject: SimObject, index: number) => any): void;
+        remove(simObject: SimObject): void;
         removeTemporary(time: number): void;
     }
 
@@ -142,7 +143,18 @@ declare module NEWTON {
         WORLD = 1
     }
 
-    class Force implements SimObject {
+    /**
+     * The application of a force to a particle in a rigid body.
+     */
+    class ForceApp implements SimObject {
+        /**
+         * 
+         */
+        F: Vector;
+        /**
+         * 
+         */
+        x: Vector;
         /**
          * 
          */
@@ -151,24 +163,24 @@ declare module NEWTON {
             location: Vector,
             locationCoordType: CoordType,
             direction: Vector,
-            directionCoordType: CoordType,
-            torque?: number);
+            directionCoordType: CoordType);
         getName(): string;
         getBody(): RigidBody;
-        getVector(): Vector;
-        getStartPoint(): Vector;
-        getTorque(): number;
         getExpireTime(): number;
         setExpireTime(time: number): void;
     }
 
     interface ForceLaw {
-        calculateForces(): Force[];
+        calculateForces(): ForceApp[];
         disconnect(): void;
         getPotentialEnergy(): number;
     }
 
     class RigidBodySim implements Simulation {
+        /**
+         * Determines whether calculated forces will be added to the simulation list.
+         */
+        showForces: boolean;
         constructor();
         addBody(body: RigidBody): void;
         removeBody(body: RigidBody): void;
@@ -269,7 +281,7 @@ declare module NEWTON {
         getStartPoint(): Vector;
         getEndPoint(): Vector;
         getExpireTime(): number;
-        calculateForces(): Force[];
+        calculateForces(): ForceApp[];
         disconnect(): void;
         getPotentialEnergy(): number;
         getVector(): Vector;

@@ -34,7 +34,7 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    add(simObj: SimObject): void {
+    add(simObject: SimObject): void {
         for (let i = 0; i < arguments.length; i++) {
             const element = <SimObject>arguments[i];
             mustBeNonNullObject('element', element);
@@ -48,7 +48,14 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    remove(simObj: SimObject): void {
+    forEach(callBack: (simObject: SimObject, index: number) => any): void {
+        return this.elements_.forEach(callBack);
+    }
+
+    /**
+     * 
+     */
+    remove(simObject: SimObject): void {
         throw new Error("TODO");
     }
 
