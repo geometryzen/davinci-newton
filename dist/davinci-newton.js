@@ -523,6 +523,64 @@ define('davinci-newton/objects/AbstractSimObject',["require", "exports", "../uti
     exports.default = AbstractSimObject;
 });
 
+define('davinci-newton/math/MutableSpinor',["require", "exports"], function (require, exports) {
+    "use strict";
+    var MutableSpinor = (function () {
+        function MutableSpinor(a, xy, yz, zx) {
+            if (a === void 0) { a = 1; }
+            if (xy === void 0) { xy = 0; }
+            if (yz === void 0) { yz = 0; }
+            if (zx === void 0) { zx = 0; }
+            this.a = a;
+            this.xy = xy;
+            this.yz = yz;
+            this.zx = zx;
+        }
+        MutableSpinor.prototype.copy = function (spinor) {
+            this.a = spinor.a;
+            this.xy = spinor.xy;
+            this.yz = spinor.yz;
+            this.zx = spinor.zx;
+            return this;
+        };
+        MutableSpinor.prototype.one = function () {
+            this.a = 1;
+            this.xy = 0;
+            this.yz = 0;
+            this.zx = 0;
+            return this;
+        };
+        return MutableSpinor;
+    }());
+    exports.MutableSpinor = MutableSpinor;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = MutableSpinor;
+});
+
+define('davinci-newton/math/MutableVector',["require", "exports"], function (require, exports) {
+    "use strict";
+    var MutableVector = (function () {
+        function MutableVector(x, y, z) {
+            if (x === void 0) { x = 0; }
+            if (y === void 0) { y = 0; }
+            if (z === void 0) { z = 0; }
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        MutableVector.prototype.copy = function (v) {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
+            return this;
+        };
+        return MutableVector;
+    }());
+    exports.MutableVector = MutableVector;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = MutableVector;
+});
+
 define('davinci-newton/util/veryDifferent',["require", "exports"], function (require, exports) {
     "use strict";
     function veryDifferent(arg1, arg2, epsilon, magnitude) {
@@ -580,6 +638,18 @@ define('davinci-newton/math/Vector',["require", "exports", "../util/veryDifferen
         Vector.prototype.multiply = function (alpha) {
             return new Vector(alpha * this.x, alpha * this.y, alpha * this.z);
         };
+        Vector.prototype.cross = function (rhs) {
+            var ax = this.x;
+            var ay = this.y;
+            var az = this.z;
+            var bx = rhs.x;
+            var by = rhs.y;
+            var bz = rhs.z;
+            var x = ay * bz - az * by;
+            var y = az * bx - ax * bz;
+            var z = ax * by - ay * bx;
+            return new Vector(x, y, z);
+        };
         Vector.prototype.distanceTo = function (rhs) {
             var Δx = this.x - rhs.x;
             var Δy = this.y - rhs.y;
@@ -621,8 +691,13 @@ define('davinci-newton/math/Vector',["require", "exports", "../util/veryDifferen
                 return this;
             }
         };
-        Vector.prototype.rotate = function (cosAngle, sinAngle) {
-            throw new Error("TODO: rotate");
+        Vector.prototype.rotate = function (spinor) {
+            if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
+                return this;
+            }
+            else {
+                throw new Error("TODO: rotate(spinor)");
+            }
         };
         Vector.fromVector = function (v) {
             return new Vector(v.x, v.y, v.z);
@@ -640,81 +715,59 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('davinci-newton/engine/RigidBody',["require", "exports", "../objects/AbstractSimObject", "../math/Vector"], function (require, exports, AbstractSimObject_1, Vector_1) {
+define('davinci-newton/engine/RigidBody',["require", "exports", "../objects/AbstractSimObject", "../math/MutableSpinor", "../math/MutableVector", "../math/Vector"], function (require, exports, AbstractSimObject_1, MutableSpinor_1, MutableVector_1, Vector_1) {
     "use strict";
     var RigidBody = (function (_super) {
         __extends(RigidBody, _super);
         function RigidBody(name) {
             var _this = _super.call(this, name) || this;
             _this.varsIndex_ = -1;
-            _this.x = 0;
-            _this.y = 0;
-            _this.z = 0;
-            _this.vx = 0;
-            _this.vy = 0;
-            _this.vz = 0;
-            _this.angle = 0;
-            _this.omega_ = 0;
+            _this.position_ = new MutableVector_1.default();
+            _this.attitude_ = new MutableSpinor_1.default();
+            _this.momentum_ = new MutableVector_1.default();
+            _this.Ω = { xy: 0, yz: 0, zx: 0 };
             _this.mass_ = 1;
-            _this.sinAngle_ = 0;
-            _this.cosAngle_ = 1;
             _this.cm_body_ = Vector_1.default.ORIGIN;
             return _this;
         }
+        Object.defineProperty(RigidBody.prototype, "X", {
+            get: function () {
+                return this.position_;
+            },
+            set: function (position) {
+                this.position_.copy(position);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "R", {
+            get: function () {
+                return this.attitude_;
+            },
+            set: function (attitude) {
+                this.attitude_.copy(attitude);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "P", {
+            get: function () {
+                return this.momentum_;
+            },
+            set: function (momentum) {
+                this.momentum_.copy(momentum);
+            },
+            enumerable: true,
+            configurable: true
+        });
         RigidBody.prototype.getExpireTime = function () {
             return Number.POSITIVE_INFINITY;
-        };
-        RigidBody.prototype.eraseOldCopy = function () {
-            this.body_old_ = null;
         };
         RigidBody.prototype.getVarsIndex = function () {
             return this.varsIndex_;
         };
         RigidBody.prototype.setVarsIndex = function (index) {
             this.varsIndex_ = index;
-        };
-        RigidBody.prototype.getVarName = function (index, localized) {
-            switch (index) {
-                case 0: return "position x";
-                case 1: return "position y";
-                case 2: return "position z";
-                case 3: return "velocity x";
-                case 4: return "velocity y";
-                case 5: return "velocity z";
-                case 6: return "angle";
-                case 7: return "omega";
-            }
-            throw new Error("getVarName(" + index + ")");
-        };
-        RigidBody.prototype.getAttitude = function () {
-            return this.angle;
-        };
-        RigidBody.prototype.getAngularVelocity = function () {
-            return this.omega_;
-        };
-        RigidBody.prototype.getPosition = function () {
-            return new Vector_1.default(this.x, this.y, this.z);
-        };
-        RigidBody.prototype.setPosition = function (x, y, z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        };
-        RigidBody.prototype.setAttitude = function (angle) {
-            this.angle = angle;
-            this.cosAngle_ = Math.cos(angle);
-            this.sinAngle_ = Math.sin(angle);
-        };
-        RigidBody.prototype.getVelocity = function () {
-            return new Vector_1.default(this.vx, this.vy, this.vz);
-        };
-        RigidBody.prototype.setVelocity = function (vx, vy, vz) {
-            this.vx = vx;
-            this.vy = vy;
-            this.vz = vz;
-        };
-        RigidBody.prototype.setAngularVelocity = function (omega) {
-            this.omega_ = omega;
         };
         RigidBody.prototype.getMass = function () {
             return this.mass_;
@@ -731,23 +784,17 @@ define('davinci-newton/engine/RigidBody',["require", "exports", "../objects/Abst
         RigidBody.prototype.translationalEnergy = function () {
             return 0;
         };
-        RigidBody.prototype.saveOldCopy = function () {
-        };
         RigidBody.prototype.bodyToWorld = function (bodyPoint) {
-            var rx = bodyPoint.x - this.cm_body_.x;
-            var ry = bodyPoint.y - this.cm_body_.y;
-            var x = this.x + (rx * this.cosAngle_ - ry * this.sinAngle_);
-            var y = this.y + (rx * this.sinAngle_ + ry * this.cosAngle_);
-            return new Vector_1.default(x, y, 0);
+            var r = Vector_1.default.fromVector(bodyPoint).subtract(this.cm_body_);
+            return r.rotate(this.R).add(this.X);
         };
         RigidBody.prototype.worldVelocityOfBodyPoint = function (bodyPoint) {
             var r = this.rotateBodyToWorld(Vector_1.default.fromVector(bodyPoint).subtract(this.cm_body_));
-            var vx = this.vx - r.y * this.omega_;
-            var vy = this.vy + r.x * this.omega_;
-            return new Vector_1.default(vx, vy, 0);
+            var ω = new Vector_1.default(-this.Ω.yz, -this.Ω.zx, -this.Ω.xy);
+            return ω.cross(r).add(this.P).multiply(1 / this.mass_);
         };
         RigidBody.prototype.rotateBodyToWorld = function (bodyPoint) {
-            return Vector_1.default.fromVector(bodyPoint).rotate(this.cosAngle_, this.sinAngle_);
+            return Vector_1.default.fromVector(bodyPoint).rotate(this.R);
         };
         return RigidBody;
     }(AbstractSimObject_1.default));
@@ -1220,7 +1267,41 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         'potential energy',
         'total energy'
     ];
-    var NUM_VARS_IN_STATE = 8;
+    var Offset;
+    (function (Offset) {
+        Offset[Offset["POSITION_X"] = 0] = "POSITION_X";
+        Offset[Offset["POSITION_Y"] = 1] = "POSITION_Y";
+        Offset[Offset["POSITION_Z"] = 2] = "POSITION_Z";
+        Offset[Offset["ATTITUDE_A"] = 3] = "ATTITUDE_A";
+        Offset[Offset["ATTITUDE_YZ"] = 4] = "ATTITUDE_YZ";
+        Offset[Offset["ATTITUDE_ZX"] = 5] = "ATTITUDE_ZX";
+        Offset[Offset["ATTITUDE_XY"] = 6] = "ATTITUDE_XY";
+        Offset[Offset["LINEAR_MOMENTUM_X"] = 7] = "LINEAR_MOMENTUM_X";
+        Offset[Offset["LINEAR_MOMENTUM_Y"] = 8] = "LINEAR_MOMENTUM_Y";
+        Offset[Offset["LINEAR_MOMENTUM_Z"] = 9] = "LINEAR_MOMENTUM_Z";
+        Offset[Offset["ANGULAR_VELOCITY_YZ"] = 10] = "ANGULAR_VELOCITY_YZ";
+        Offset[Offset["ANGULAR_VELOCITY_ZX"] = 11] = "ANGULAR_VELOCITY_ZX";
+        Offset[Offset["ANGULAR_VELOCITY_XY"] = 12] = "ANGULAR_VELOCITY_XY";
+    })(Offset || (Offset = {}));
+    function getVarName(index, localized) {
+        switch (index) {
+            case Offset.POSITION_X: return "position x";
+            case Offset.POSITION_Y: return "position y";
+            case Offset.POSITION_Z: return "position z";
+            case Offset.ATTITUDE_A: return "attitude a";
+            case Offset.ATTITUDE_YZ: return "attitude yz";
+            case Offset.ATTITUDE_ZX: return "attitude zx";
+            case Offset.ATTITUDE_XY: return "attitude xy";
+            case Offset.LINEAR_MOMENTUM_X: return "momentum x";
+            case Offset.LINEAR_MOMENTUM_Y: return "momentum y";
+            case Offset.LINEAR_MOMENTUM_Z: return "momentum z";
+            case Offset.ANGULAR_VELOCITY_YZ: return "angular velocity yz";
+            case Offset.ANGULAR_VELOCITY_ZX: return "angular velocity zx";
+            case Offset.ANGULAR_VELOCITY_XY: return "angular velocity xy";
+        }
+        throw new Error("getVarName(" + index + ")");
+    }
+    var NUM_VARS_IN_STATE = 13;
     var RigidBodySim = (function (_super) {
         __extends(RigidBodySim, _super);
         function RigidBodySim(name) {
@@ -1236,11 +1317,11 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             if (!contains_1.default(this.bods_, body)) {
                 var names = [];
                 for (var k = 0; k < NUM_VARS_IN_STATE; k++) {
-                    names.push(body.getVarName(k, false));
+                    names.push(getVarName(k, false));
                 }
                 var localNames = [];
                 for (var k = 0; k < NUM_VARS_IN_STATE; k++) {
-                    localNames.push(body.getVarName(k, true));
+                    localNames.push(getVarName(k, true));
                 }
                 var idx = this.varsList_.addVariables(names, localNames);
                 body.setVarsIndex(idx);
@@ -1249,7 +1330,6 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             }
             this.initializeFromBody(body);
             this.bods_.forEach(function (b) {
-                b.eraseOldCopy();
             });
         };
         RigidBodySim.prototype.removeBody = function (body) {
@@ -1279,16 +1359,19 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                 if (idx < 0) {
                     return;
                 }
-                var x = vars[idx + RigidBodySim.X_];
-                var y = vars[idx + RigidBodySim.Y_];
-                var z = vars[idx + RigidBodySim.Z_];
-                b.setPosition(x, y, z);
-                b.setAttitude(vars[idx + RigidBodySim.W_]);
-                var vx = vars[idx + RigidBodySim.VX_];
-                var vy = vars[idx + RigidBodySim.VY_];
-                var vz = vars[idx + RigidBodySim.VZ_];
-                b.setVelocity(vx, vy, vz);
-                b.setAngularVelocity(vars[idx + RigidBodySim.VW_]);
+                b.X.x = vars[idx + Offset.POSITION_X];
+                b.X.y = vars[idx + Offset.POSITION_Y];
+                b.X.z = vars[idx + Offset.POSITION_Z];
+                b.R.a = vars[idx + Offset.ATTITUDE_A];
+                b.R.xy = vars[idx + Offset.ATTITUDE_XY];
+                b.R.yz = vars[idx + Offset.ATTITUDE_YZ];
+                b.R.zx = vars[idx + Offset.ATTITUDE_ZX];
+                b.P.x = vars[idx + Offset.LINEAR_MOMENTUM_X];
+                b.P.y = vars[idx + Offset.LINEAR_MOMENTUM_Y];
+                b.P.z = vars[idx + Offset.LINEAR_MOMENTUM_Z];
+                b.Ω.xy = vars[idx + Offset.ANGULAR_VELOCITY_XY];
+                b.Ω.yz = vars[idx + Offset.ANGULAR_VELOCITY_YZ];
+                b.Ω.zx = vars[idx + Offset.ANGULAR_VELOCITY_ZX];
             });
         };
         RigidBodySim.prototype.evaluate = function (vars, change, time) {
@@ -1305,14 +1388,26 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                         change[idx + k] = 0;
                 }
                 else {
-                    change[idx + RigidBodySim.X_] = vars[idx + RigidBodySim.VX_];
-                    change[idx + RigidBodySim.Y_] = vars[idx + RigidBodySim.VY_];
-                    change[idx + RigidBodySim.Z_] = vars[idx + RigidBodySim.VZ_];
-                    change[idx + RigidBodySim.W_] = vars[idx + RigidBodySim.VW_];
-                    change[idx + RigidBodySim.VX_] = 0;
-                    change[idx + RigidBodySim.VY_] = 0;
-                    change[idx + RigidBodySim.VZ_] = 0;
-                    change[idx + RigidBodySim.VW_] = 0;
+                    change[idx + Offset.POSITION_X] = vars[idx + Offset.LINEAR_MOMENTUM_X] / mass;
+                    change[idx + Offset.POSITION_Y] = vars[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
+                    change[idx + Offset.POSITION_Z] = vars[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
+                    var Ωxy = vars[idx + Offset.ANGULAR_VELOCITY_XY];
+                    var Ωyz = vars[idx + Offset.ANGULAR_VELOCITY_YZ];
+                    var Ωzx = vars[idx + Offset.ANGULAR_VELOCITY_ZX];
+                    var Ra = vars[idx + Offset.ATTITUDE_A];
+                    var Rxy = vars[idx + Offset.ATTITUDE_XY];
+                    var Ryz = vars[idx + Offset.ATTITUDE_YZ];
+                    var Rzx = vars[idx + Offset.ATTITUDE_ZX];
+                    change[idx + Offset.ATTITUDE_A] = -0.5 * (Ωxy * Rxy + Ωyz * Ryz + Ωzx * Rzx);
+                    change[idx + Offset.ATTITUDE_XY] = 0.5 * Ωxy * Ra;
+                    change[idx + Offset.ATTITUDE_YZ] = 0.5 * Ωyz * Ra;
+                    change[idx + Offset.ATTITUDE_ZX] = 0.5 * Ωzx * Ra;
+                    change[idx + Offset.LINEAR_MOMENTUM_X] = 0;
+                    change[idx + Offset.LINEAR_MOMENTUM_Y] = 0;
+                    change[idx + Offset.LINEAR_MOMENTUM_Z] = 0;
+                    change[idx + Offset.ANGULAR_VELOCITY_XY] = 0;
+                    change[idx + Offset.ANGULAR_VELOCITY_YZ] = 0;
+                    change[idx + Offset.ANGULAR_VELOCITY_ZX] = 0;
                 }
             });
             this.forceLaws_.forEach(function (forceLaw) {
@@ -1334,19 +1429,17 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             if (idx < 0) {
                 return;
             }
-            var forceDir = force.getVector();
+            var F = force.getVector();
             var forceLoc = force.getStartPoint();
-            var mass = body.getMass();
-            change[idx + RigidBodySim.VX_] += forceDir.x / mass;
-            change[idx + RigidBodySim.VY_] += forceDir.y / mass;
-            change[idx + RigidBodySim.VZ_] += forceDir.z / mass;
-            var position = body.getPosition();
-            var rx = forceLoc.x - position.x;
-            var ry = forceLoc.y - position.y;
-            change[idx + RigidBodySim.VW_] += (rx * forceDir.y - ry * forceDir.x) / body.momentAboutCM();
+            change[idx + Offset.LINEAR_MOMENTUM_X] += F.x;
+            change[idx + Offset.LINEAR_MOMENTUM_Y] += F.y;
+            change[idx + Offset.LINEAR_MOMENTUM_Z] += F.z;
+            var r = forceLoc.subtract(body.X);
+            var rF = r.cross(F);
+            change[idx + Offset.ANGULAR_VELOCITY_XY] += rF.z;
+            change[idx + Offset.ANGULAR_VELOCITY_XY] += 0;
             var torque = force.getTorque();
             if (torque !== 0) {
-                change[idx + RigidBodySim.VW_] += torque / body.momentAboutCM();
             }
             if (this.showForces_) {
                 force.setExpireTime(this.getTime());
@@ -1357,20 +1450,22 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
             return this.varsList_.getTime();
         };
         RigidBodySim.prototype.initializeFromBody = function (body) {
-            body.eraseOldCopy();
             var idx = body.getVarsIndex();
             if (idx > -1) {
                 var va = this.varsList_;
-                var position = body.getPosition();
-                va.setValue(RigidBodySim.X_ + idx, position.x);
-                va.setValue(RigidBodySim.Y_ + idx, position.y);
-                va.setValue(RigidBodySim.Z_ + idx, position.z);
-                va.setValue(RigidBodySim.W_ + idx, body.getAttitude());
-                var velocity = body.getVelocity();
-                va.setValue(RigidBodySim.VX_ + idx, velocity.x);
-                va.setValue(RigidBodySim.VY_ + idx, velocity.y);
-                va.setValue(RigidBodySim.VZ_ + idx, velocity.z);
-                va.setValue(RigidBodySim.VW_ + idx, body.getAngularVelocity());
+                va.setValue(Offset.POSITION_X + idx, body.X.x);
+                va.setValue(Offset.POSITION_Y + idx, body.X.y);
+                va.setValue(Offset.POSITION_Z + idx, body.X.z);
+                va.setValue(Offset.ATTITUDE_A + idx, body.R.a);
+                va.setValue(Offset.ATTITUDE_XY + idx, body.R.xy);
+                va.setValue(Offset.ATTITUDE_YZ + idx, body.R.yz);
+                va.setValue(Offset.ATTITUDE_ZX + idx, body.R.zx);
+                va.setValue(Offset.LINEAR_MOMENTUM_X + idx, body.P.x);
+                va.setValue(Offset.LINEAR_MOMENTUM_Y + idx, body.P.y);
+                va.setValue(Offset.LINEAR_MOMENTUM_Z + idx, body.P.z);
+                va.setValue(Offset.ANGULAR_VELOCITY_XY + idx, body.Ω.xy);
+                va.setValue(Offset.ANGULAR_VELOCITY_YZ + idx, body.Ω.yz);
+                va.setValue(Offset.ANGULAR_VELOCITY_ZX + idx, body.Ω.zx);
             }
             this.getVarsList().incrSequence(1, 2, 3);
         };
@@ -1407,7 +1502,6 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         RigidBodySim.prototype.saveState = function () {
             this.recentState_ = this.varsList_.getValues();
             this.bods_.forEach(function (b) {
-                b.saveOldCopy();
             });
         };
         RigidBodySim.prototype.restoreState = function () {
@@ -1415,7 +1509,6 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
                 this.varsList_.setValues(this.recentState_, true);
             }
             this.bods_.forEach(function (b) {
-                b.eraseOldCopy();
             });
         };
         RigidBodySim.prototype.findCollisions = function (collisions, vars, stepSize) {
@@ -1423,14 +1516,6 @@ define('davinci-newton/engine/RigidBodySim',["require", "exports", "../util/Abst
         };
         return RigidBodySim;
     }(AbstractSubject_1.default));
-    RigidBodySim.X_ = 0;
-    RigidBodySim.Y_ = 1;
-    RigidBodySim.Z_ = 2;
-    RigidBodySim.VX_ = 3;
-    RigidBodySim.VY_ = 4;
-    RigidBodySim.VZ_ = 5;
-    RigidBodySim.W_ = 6;
-    RigidBodySim.VW_ = 7;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = RigidBodySim;
 });

@@ -1,3 +1,4 @@
+import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
 
@@ -57,6 +58,22 @@ export class Vector implements VectorE3 {
      */
     multiply(alpha: number): Vector {
         return new Vector(alpha * this.x, alpha * this.y, alpha * this.z);
+    }
+
+    /**
+     * 
+     */
+    cross(rhs: VectorE3): Vector {
+        const ax = this.x;
+        const ay = this.y;
+        const az = this.z;
+        const bx = rhs.x;
+        const by = rhs.y;
+        const bz = rhs.z;
+        const x = ay * bz - az * by;
+        const y = az * bx - ax * bz;
+        const z = ax * by - ay * bx;
+        return new Vector(x, y, z);
     }
 
     /**
@@ -124,8 +141,13 @@ export class Vector implements VectorE3 {
     /**
      * 
      */
-    rotate(cosAngle: number, sinAngle: number): Vector {
-        throw new Error("TODO: rotate");
+    rotate(spinor: SpinorE3): Vector {
+        if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
+            return this;
+        }
+        else {
+            throw new Error("TODO: rotate(spinor)");
+        }
     }
 
     static fromVector(v: VectorE3): Vector {

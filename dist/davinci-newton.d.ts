@@ -93,20 +93,37 @@ declare module NEWTON {
         z: number;
     }
 
+    interface BivectorE3 {
+        yz: number;
+        zx: number;
+        xy: number;
+    }
+
+    interface SpinorE3 extends BivectorE3 {
+        a: number;
+    }
+
     class RigidBody implements SimObject {
+        /**
+         * Position.
+         */
+        X: VectorE3;
+        /**
+         * Attitude (spinor)
+         */
+        R: SpinorE3;
+        /**
+         * Linear Momentum.
+         */
+        P: VectorE3;
+        /**
+         * 
+         */
         constructor(name: string);
-        eraseOldCopy(): void;
         getName(): string;
         getExpireTime(): number;
         getVarsIndex(): number;
         setVarsIndex(index: number): void;
-        getVarName(index: number, localized: boolean): string;
-        getPosition(): VectorE3;
-        setPosition(x: number, y: number, z: number): void;
-        getAttitude(): number;
-        setAttitude(angle?: number): void;
-        getVelocity(): VectorE3;
-        setVelocity(x: number, y: number, z: number): void;
         getAngularVelocity(): number;
         setAngularVelocity(angularVelocity?: number): void;
         getMass(): number;
@@ -114,7 +131,6 @@ declare module NEWTON {
         momentAboutCM(): number;
         rotationalEnergy(): number;
         translationalEnergy(): number;
-        saveOldCopy(): void;
     }
 
     interface Collision {
