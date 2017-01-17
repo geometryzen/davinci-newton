@@ -1,34 +1,50 @@
 import AbstractSimObject from '../objects/AbstractSimObject';
+import Bivector3 from '../math/Bivector3';
 import BivectorE3 from '../math/BivectorE3';
-import MutableSpinor from '../math/MutableSpinor';
-import MutableVector from '../math/MutableVector';
+import Matrix3 from '../math/Matrix3';
+import Spinor3 from '../math/Spinor3';
 import SpinorE3 from '../math/SpinorE3';
 import Vector from '../math/Vector';
+import Vector3 from '../math/Vector3';
 import VectorE3 from '../math/VectorE3';
 
 /**
  * 
  */
 export class RigidBody extends AbstractSimObject {
+    /**
+     * Mass, M.
+     * This quantity is considered to be constant.
+     */
+    private mass_ = 1;
+    /**
+     * Inertia tensor.
+     */
+    public Ibody = Matrix3.one();
+    public Ibodyinv = Matrix3.one();
 
     /**
      * the index into the variables array for this Block, or -1 if not in vars array.
      */
     private varsIndex_ = -1;
 
-    private readonly position_ = new MutableVector();
-    private readonly attitude_ = new MutableSpinor();
-    private readonly momentum_ = new MutableVector();
-
+    private readonly position_ = new Vector3();
+    private readonly attitude_ = new Spinor3();
+    private readonly linearMomentum_ = new Vector3();
+    private readonly angularMomentum_ = new Bivector3();
     /**
-     * Angular Velocity.
+     * Derived quantity (auxiliary variable).
      */
-    public readonly Ω: BivectorE3 = { xy: 0, yz: 0, zx: 0 };
-
+    public readonly V = new Vector3();
     /**
-     * Mass.
+     * Derived quantity (auxiliary variable).
      */
-    protected mass_ = 1;
+    public Iinv = Matrix3.one();
+    /**
+     * 
+     */
+    public ω = new Vector3();
+    public Ω = new Bivector3();
 
     /**
      * center of mass in body coordinates.
@@ -42,28 +58,44 @@ export class RigidBody extends AbstractSimObject {
         super(name);
     }
 
+    /**
+     * Position (vector).
+     */
     get X(): VectorE3 {
         return this.position_;
     }
-
     set X(position: VectorE3) {
         this.position_.copy(position);
     }
 
+    /**
+     * Attitude (spinor).
+     */
     get R(): SpinorE3 {
         return this.attitude_;
     }
-
     set R(attitude: SpinorE3) {
         this.attitude_.copy(attitude);
     }
 
+    /**
+     * Linear momentum (vector).
+     */
     get P(): VectorE3 {
-        return this.momentum_;
+        return this.linearMomentum_;
+    }
+    set P(momentum: VectorE3) {
+        this.linearMomentum_.copy(momentum);
     }
 
-    set P(momentum: VectorE3) {
-        this.momentum_.copy(momentum);
+    /**
+     * Angular momentum (bivector).
+     */
+    get L(): BivectorE3 {
+        return this.angularMomentum_;
+    }
+    set L(angularMomentum: BivectorE3) {
+        this.angularMomentum_.copy(angularMomentum);
     }
 
     /**
@@ -88,16 +120,12 @@ export class RigidBody extends AbstractSimObject {
     }
 
     /**
-     * 
+     * Mass (scalar)
      */
-    getMass(): number {
+    get M(): number {
         return this.mass_;
     }
-
-    /**
-     * 
-     */
-    setMass(mass: number): void {
+    set M(mass: number) {
         this.mass_ = mass;
     }
 
@@ -144,14 +172,14 @@ export class RigidBody extends AbstractSimObject {
      * unit pseudoscalar.
      * 
      * Using the identity, ω x r = r << Ω, enables us to calculate directly.
+     * 
+     * This method is most often used to calculate damping.
      */
     worldVelocityOfBodyPoint(bodyPoint: VectorE3): Vector {
         // r = R(t) * [bodyPoint relative to body center of mass]
         const r = this.rotateBodyToWorld(Vector.fromVector(bodyPoint).subtract(this.cm_body_));
-        // ω = - I * Ω
-        const ω = new Vector(-this.Ω.yz, -this.Ω.zx, -this.Ω.xy);
         // dx/dt = ω x r + dX/dt
-        return ω.cross(r).add(this.P).multiply(1 / this.mass_);
+        return Vector.fromVector(this.ω).cross(r).add(this.V);
     }
 
     /**

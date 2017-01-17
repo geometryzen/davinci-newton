@@ -1,3 +1,4 @@
+import BivectorE3 from './BivectorE3';
 import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
@@ -148,6 +149,10 @@ export class Vector implements VectorE3 {
         else {
             throw new Error("TODO: rotate(spinor)");
         }
+    }
+
+    static dual(B: BivectorE3): Vector {
+        return new Vector(-B.yz, -B.zx, -B.xy);
     }
 
     static fromVector(v: VectorE3): Vector {

@@ -3,7 +3,7 @@ import SpinorE3 from './SpinorE3';
 /**
  * 
  */
-export class MutableSpinor implements SpinorE3 {
+export class Spinor3 implements SpinorE3 {
     /**
      * 
      */
@@ -34,4 +34,4 @@ export class MutableSpinor implements SpinorE3 {
     }
 }
 
-export default MutableSpinor;
+export default Spinor3;

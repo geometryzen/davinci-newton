@@ -9,7 +9,7 @@ export interface MassObject extends SimObject {
     /**
      * 
      */
-    getMass(): number;
+    M: number;
     /**
      * Returns the world coordinates of the given body coordinates point,
      * based on current position of this object.

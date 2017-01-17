@@ -9,6 +9,7 @@ import RigidBody from './RigidBody';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
+import { wedgeYZ, wedgeZX, wedgeXY } from '../math/wedge';
 
 const var_names = [
     'time',
@@ -35,9 +36,9 @@ enum Offset {
     LINEAR_MOMENTUM_X = 7,
     LINEAR_MOMENTUM_Y = 8,
     LINEAR_MOMENTUM_Z = 9,
-    ANGULAR_VELOCITY_YZ = 10,
-    ANGULAR_VELOCITY_ZX = 11,
-    ANGULAR_VELOCITY_XY = 12
+    ANGULAR_MOMENTUM_YZ = 10,
+    ANGULAR_MOMENTUM_ZX = 11,
+    ANGULAR_MOMENTUM_XY = 12
 }
 
 /**
@@ -55,9 +56,9 @@ function getVarName(index: number, localized: boolean): string {
         case Offset.LINEAR_MOMENTUM_X: return "momentum x";
         case Offset.LINEAR_MOMENTUM_Y: return "momentum y";
         case Offset.LINEAR_MOMENTUM_Z: return "momentum z";
-        case Offset.ANGULAR_VELOCITY_YZ: return "angular velocity yz";
-        case Offset.ANGULAR_VELOCITY_ZX: return "angular velocity zx";
-        case Offset.ANGULAR_VELOCITY_XY: return "angular velocity xy";
+        case Offset.ANGULAR_MOMENTUM_YZ: return "angular momentum yz";
+        case Offset.ANGULAR_MOMENTUM_ZX: return "angular momentum zx";
+        case Offset.ANGULAR_MOMENTUM_XY: return "angular momentum xy";
     }
     throw new Error(`getVarName(${index})`);
 }
@@ -158,35 +159,39 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     };
 
     /**
-     * 
+     * Transfer state vector back to the rigid bodies.
+     * Also takes care of updating auxiliary variables, which are also mutable.
      */
     private moveObjects(vars: number[]) {
-        this.bods_.forEach(function (b) {
-            const idx = b.getVarsIndex();
+        this.bods_.forEach(function (body) {
+            const idx = body.getVarsIndex();
             if (idx < 0) {
                 return;
             }
 
-            // position, X (vector).
-            b.X.x = vars[idx + Offset.POSITION_X];
-            b.X.y = vars[idx + Offset.POSITION_Y];
-            b.X.z = vars[idx + Offset.POSITION_Z];
+            // Update state variables.
+            body.X.x = vars[idx + Offset.POSITION_X];
+            body.X.y = vars[idx + Offset.POSITION_Y];
+            body.X.z = vars[idx + Offset.POSITION_Z];
 
-            // attitude, R (spinor).
-            b.R.a = vars[idx + Offset.ATTITUDE_A];
-            b.R.xy = vars[idx + Offset.ATTITUDE_XY];
-            b.R.yz = vars[idx + Offset.ATTITUDE_YZ];
-            b.R.zx = vars[idx + Offset.ATTITUDE_ZX];
+            body.R.a = vars[idx + Offset.ATTITUDE_A];
+            body.R.xy = vars[idx + Offset.ATTITUDE_XY];
+            body.R.yz = vars[idx + Offset.ATTITUDE_YZ];
+            body.R.zx = vars[idx + Offset.ATTITUDE_ZX];
 
-            // velocity, V (vector).
-            b.P.x = vars[idx + Offset.LINEAR_MOMENTUM_X];
-            b.P.y = vars[idx + Offset.LINEAR_MOMENTUM_Y];
-            b.P.z = vars[idx + Offset.LINEAR_MOMENTUM_Z];
+            body.P.x = vars[idx + Offset.LINEAR_MOMENTUM_X];
+            body.P.y = vars[idx + Offset.LINEAR_MOMENTUM_Y];
+            body.P.z = vars[idx + Offset.LINEAR_MOMENTUM_Z];
 
-            // angular velocity, Ω (bivector).
-            b.Ω.xy = vars[idx + Offset.ANGULAR_VELOCITY_XY];
-            b.Ω.yz = vars[idx + Offset.ANGULAR_VELOCITY_YZ];
-            b.Ω.zx = vars[idx + Offset.ANGULAR_VELOCITY_ZX];
+            body.L.xy = vars[idx + Offset.ANGULAR_MOMENTUM_XY];
+            body.L.yz = vars[idx + Offset.ANGULAR_MOMENTUM_YZ];
+            body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
+
+            // Update derived quantities (auxiliary variables).
+            body.V.copy(body.P).divByScalar(body.M);
+            body.ω.dual(body.L).neg().apply(body.Iinv);
+            body.Ω.dual(body.ω);
+            // TODO: body.Iinv = R(t) * Ibodyinv * transpose(R(t))
         });
     }
 
@@ -203,7 +208,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             if (idx < 0) {
                 return;
             }
-            const mass = body.getMass();
+            const mass = body.M;
             if (mass === Number.POSITIVE_INFINITY) {
                 for (var k = 0; k < NUM_VARS_IN_STATE; k++)
                     change[idx + k] = 0;  // infinite mass objects don't move
@@ -214,29 +219,24 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
                 change[idx + Offset.POSITION_X] = vars[idx + Offset.LINEAR_MOMENTUM_X] / mass;
                 change[idx + Offset.POSITION_Y] = vars[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
                 change[idx + Offset.POSITION_Z] = vars[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
-                // The rate of change of attitude is given by the formula.
-                // dR/dt = (1/2) * Ω * R
-                const Ωxy = vars[idx + Offset.ANGULAR_VELOCITY_XY];
-                const Ωyz = vars[idx + Offset.ANGULAR_VELOCITY_YZ];
-                const Ωzx = vars[idx + Offset.ANGULAR_VELOCITY_ZX];
-                const Ra = vars[idx + Offset.ATTITUDE_A];
-                const Rxy = vars[idx + Offset.ATTITUDE_XY];
-                const Ryz = vars[idx + Offset.ATTITUDE_YZ];
-                const Rzx = vars[idx + Offset.ATTITUDE_ZX];
 
-                change[idx + Offset.ATTITUDE_A] = -0.5 * (Ωxy * Rxy + Ωyz * Ryz + Ωzx * Rzx);
-                change[idx + Offset.ATTITUDE_XY] = 0.5 * Ωxy * Ra;
-                change[idx + Offset.ATTITUDE_YZ] = 0.5 * Ωyz * Ra;
-                change[idx + Offset.ATTITUDE_ZX] = 0.5 * Ωzx * Ra;
+                // The rate of change of attitude is given by: dR/dt = (1/2) * Ω * R
+                // Ω and R are auxiliary variables that have already been computed.
+                const R = body.R;
+                const Ω = body.Ω;
+                change[idx + Offset.ATTITUDE_A] = -0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+                change[idx + Offset.ATTITUDE_XY] = 0.5 * Ω.xy * R.a;
+                change[idx + Offset.ATTITUDE_YZ] = 0.5 * Ω.yz * R.a;
+                change[idx + Offset.ATTITUDE_ZX] = 0.5 * Ω.zx * R.a;
 
                 // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
                 change[idx + Offset.LINEAR_MOMENTUM_X] = 0;
                 change[idx + Offset.LINEAR_MOMENTUM_Y] = 0;
                 change[idx + Offset.LINEAR_MOMENTUM_Z] = 0;
 
-                change[idx + Offset.ANGULAR_VELOCITY_XY] = 0;
-                change[idx + Offset.ANGULAR_VELOCITY_YZ] = 0;
-                change[idx + Offset.ANGULAR_VELOCITY_ZX] = 0;
+                change[idx + Offset.ANGULAR_MOMENTUM_XY] = 0;
+                change[idx + Offset.ANGULAR_MOMENTUM_YZ] = 0;
+                change[idx + Offset.ANGULAR_MOMENTUM_ZX] = 0;
             }
         });
         this.forceLaws_.forEach((forceLaw) => {
@@ -275,22 +275,21 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         change[idx + Offset.LINEAR_MOMENTUM_Y] += F.y;
         change[idx + Offset.LINEAR_MOMENTUM_Z] += F.z;
 
-        // TODO
-        // The rate of change of angular velocity (bivector) is given by
-        // dΩ/dt = I * dω/dt, where I is the unit pseudoscalar.
-        // ω'' = r x F / I
-        // const position = body.X;
+        // The rate of change of angular momentum (bivector) is given by
+        // dL/dt = r ^ F
         const r = forceLoc.subtract(body.X);
-        const rF = r.cross(F);
-        // const rx = forceLoc.x - position.x;
-        // const ry = forceLoc.y - position.y;
-        // const rz = forceLoc.getZ() - body.getPosition().getZ();
-        change[idx + Offset.ANGULAR_VELOCITY_XY] += rF.z; // not correct
-        change[idx + Offset.ANGULAR_VELOCITY_XY] += 0;
-        // change[idx + RigidBodySim.VW_] += (rx * forceDir.y - ry * forceDir.x) / body.momentAboutCM();
+        change[idx + Offset.ANGULAR_MOMENTUM_YZ] += wedgeYZ(r, F);
+        change[idx + Offset.ANGULAR_MOMENTUM_ZX] += wedgeZX(r, F);
+        change[idx + Offset.ANGULAR_MOMENTUM_XY] += wedgeXY(r, F);
         const torque = force.getTorque();
-        if (torque !== 0) {
-            // change[idx + RigidBodySim.VW_] += torque / body.momentAboutCM();
+        if (torque.yz !== 0) {
+            change[idx + Offset.ANGULAR_MOMENTUM_YZ] += torque.yz;
+        }
+        if (torque.zx !== 0) {
+            change[idx + Offset.ANGULAR_MOMENTUM_ZX] += torque.zx;
+        }
+        if (torque.xy !== 0) {
+            change[idx + Offset.ANGULAR_MOMENTUM_XY] += torque.xy;
         }
         if (this.showForces_) {
             force.setExpireTime(this.getTime());
@@ -327,9 +326,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             va.setValue(Offset.LINEAR_MOMENTUM_Y + idx, body.P.y);
             va.setValue(Offset.LINEAR_MOMENTUM_Z + idx, body.P.z);
 
-            va.setValue(Offset.ANGULAR_VELOCITY_XY + idx, body.Ω.xy);
-            va.setValue(Offset.ANGULAR_VELOCITY_YZ + idx, body.Ω.yz);
-            va.setValue(Offset.ANGULAR_VELOCITY_ZX + idx, body.Ω.zx);
+            va.setValue(Offset.ANGULAR_MOMENTUM_XY + idx, body.L.xy);
+            va.setValue(Offset.ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
+            va.setValue(Offset.ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
         }
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
         this.getVarsList().incrSequence(1, 2, 3);
@@ -372,7 +371,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         let re = 0;
         let te = 0;
         this.bods_.forEach(function (b) {
-            if (isFinite(b.getMass())) {
+            if (isFinite(b.M)) {
                 re += b.rotationalEnergy();
                 te += b.translationalEnergy();
             }
