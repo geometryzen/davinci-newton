@@ -146,9 +146,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-01-17';
+                    this.LAST_MODIFIED = '2017-01-18';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.4';
+                    this.VERSION = '0.0.5';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -214,117 +214,6 @@ System.register("davinci-newton/util/repeat.js", [], function (exports_1, contex
     return {
         setters: [],
         execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isFunction(x) {
-        return typeof x === 'function';
-    }
-    exports_1("default", isFunction);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var isFunction_1, veryDifferent_1, ScreenRect;
-    return {
-        setters: [function (isFunction_1_1) {
-            isFunction_1 = isFunction_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
-        execute: function () {
-            ScreenRect = function () {
-                function ScreenRect(left, top_, width, height) {
-                    if (width < 0 || height < 0) {
-                        throw new Error();
-                    }
-                    this.left_ = left;
-                    this.top_ = top_;
-                    this.width_ = width;
-                    this.height_ = height;
-                }
-                ScreenRect.clone = function (rect) {
-                    return new ScreenRect(rect.left_, rect.top_, rect.width_, rect.height_);
-                };
-                ScreenRect.prototype.equals = function (otherRect) {
-                    return this.left_ === otherRect.left_ && this.top_ === otherRect.top_ && this.width_ === otherRect.width_ && this.height_ === otherRect.height_;
-                };
-                ScreenRect.isDuckType = function (obj) {
-                    if (obj instanceof ScreenRect) {
-                        return true;
-                    }
-                    return obj.getLeft !== undefined && obj.getTop !== undefined && obj.getWidth !== undefined && obj.getHeight !== undefined && obj.isEmpty !== undefined && obj.equals !== undefined && obj.nearEqual !== undefined;
-                };
-                ScreenRect.prototype.getCenterX = function () {
-                    return this.left_ + this.width_ / 2;
-                };
-                ScreenRect.prototype.getCenterY = function () {
-                    return this.top_ + this.height_ / 2;
-                };
-                ScreenRect.prototype.getHeight = function () {
-                    return this.height_;
-                };
-                ScreenRect.prototype.getLeft = function () {
-                    return this.left_;
-                };
-                ScreenRect.prototype.getTop = function () {
-                    return this.top_;
-                };
-                ScreenRect.prototype.getWidth = function () {
-                    return this.width_;
-                };
-                ScreenRect.prototype.isEmpty = function (tolerance) {
-                    if (tolerance === void 0) {
-                        tolerance = 1E-14;
-                    }
-                    return this.width_ < tolerance || this.height_ < tolerance;
-                };
-                ScreenRect.prototype.makeOval = function (context) {
-                    var w = this.width_ / 2;
-                    var h = this.height_ / 2;
-                    if (isFunction_1.default(context.ellipse)) {
-                        context.beginPath();
-                        context.moveTo(this.left_ + this.width_, this.top_ + h);
-                        context.ellipse(this.left_ + w, this.top_ + h, w, h, 0, 0, 2 * Math.PI, false);
-                    } else {
-                        var min = Math.min(w, h);
-                        context.beginPath();
-                        context.moveTo(this.left_ + this.width_, this.top_);
-                        context.arc(this.left_ + w, this.top_ + h, min, 0, 2 * Math.PI, false);
-                        context.closePath();
-                    }
-                };
-                ScreenRect.prototype.makeRect = function (context) {
-                    context.rect(this.left_, this.top_, this.width_, this.height_);
-                };
-                ScreenRect.prototype.nearEqual = function (otherRect, opt_tolerance) {
-                    if (veryDifferent_1.default(this.left_, otherRect.left_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.top_, otherRect.top_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.width_, otherRect.width_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.height_, otherRect.height_, opt_tolerance)) {
-                        return false;
-                    }
-                    return true;
-                };
-                return ScreenRect;
-            }();
-            ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
-            exports_1("default", ScreenRect);
-        }
     };
 });
 System.register("davinci-newton/graph/DisplayGraph.js", ["../view/DrawingMode", "../util/repeat", "../view/ScreenRect"], function (exports_1, context_1) {
@@ -470,6 +359,368 @@ System.register("davinci-newton/graph/DisplayGraph.js", ["../view/DrawingMode", 
                 return DisplayGraph;
             }();
             exports_1("default", DisplayGraph);
+        }
+    };
+});
+System.register("davinci-newton/util/clone.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function clone(xs) {
+        throw new Error("TODO: clone");
+    }
+    exports_1("default", clone);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/isEmpty.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isEmpty(xs) {
+        return xs.length === 0;
+    }
+    exports_1("default", isEmpty);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isFunction(x) {
+        return typeof x === 'function';
+    }
+    exports_1("default", isFunction);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var isFunction_1, veryDifferent_1, ScreenRect;
+    return {
+        setters: [function (isFunction_1_1) {
+            isFunction_1 = isFunction_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            ScreenRect = function () {
+                function ScreenRect(left, top_, width, height) {
+                    if (width < 0 || height < 0) {
+                        throw new Error();
+                    }
+                    this.left_ = left;
+                    this.top_ = top_;
+                    this.width_ = width;
+                    this.height_ = height;
+                }
+                ScreenRect.clone = function (rect) {
+                    return new ScreenRect(rect.left_, rect.top_, rect.width_, rect.height_);
+                };
+                ScreenRect.prototype.equals = function (otherRect) {
+                    return this.left_ === otherRect.left_ && this.top_ === otherRect.top_ && this.width_ === otherRect.width_ && this.height_ === otherRect.height_;
+                };
+                ScreenRect.isDuckType = function (obj) {
+                    if (obj instanceof ScreenRect) {
+                        return true;
+                    }
+                    return obj.getLeft !== undefined && obj.getTop !== undefined && obj.getWidth !== undefined && obj.getHeight !== undefined && obj.isEmpty !== undefined && obj.equals !== undefined && obj.nearEqual !== undefined;
+                };
+                ScreenRect.prototype.getCenterX = function () {
+                    return this.left_ + this.width_ / 2;
+                };
+                ScreenRect.prototype.getCenterY = function () {
+                    return this.top_ + this.height_ / 2;
+                };
+                ScreenRect.prototype.getHeight = function () {
+                    return this.height_;
+                };
+                ScreenRect.prototype.getLeft = function () {
+                    return this.left_;
+                };
+                ScreenRect.prototype.getTop = function () {
+                    return this.top_;
+                };
+                ScreenRect.prototype.getWidth = function () {
+                    return this.width_;
+                };
+                ScreenRect.prototype.isEmpty = function (tolerance) {
+                    if (tolerance === void 0) {
+                        tolerance = 1E-14;
+                    }
+                    return this.width_ < tolerance || this.height_ < tolerance;
+                };
+                ScreenRect.prototype.makeOval = function (context) {
+                    var w = this.width_ / 2;
+                    var h = this.height_ / 2;
+                    if (isFunction_1.default(context.ellipse)) {
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_ + h);
+                        context.ellipse(this.left_ + w, this.top_ + h, w, h, 0, 0, 2 * Math.PI, false);
+                    } else {
+                        var min = Math.min(w, h);
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_);
+                        context.arc(this.left_ + w, this.top_ + h, min, 0, 2 * Math.PI, false);
+                        context.closePath();
+                    }
+                };
+                ScreenRect.prototype.makeRect = function (context) {
+                    context.rect(this.left_, this.top_, this.width_, this.height_);
+                };
+                ScreenRect.prototype.nearEqual = function (otherRect, opt_tolerance) {
+                    if (veryDifferent_1.default(this.left_, otherRect.left_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.top_, otherRect.top_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.width_, otherRect.width_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.height_, otherRect.height_, opt_tolerance)) {
+                        return false;
+                    }
+                    return true;
+                };
+                return ScreenRect;
+            }();
+            ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
+            exports_1("default", ScreenRect);
+        }
+    };
+});
+System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", "../util/clone", "../util/contains", "../util/GenericEvent", "../util/isEmpty", "../checks/isNumber", "../checks/mustBeNonNullObject", "../util/remove", "./ScreenRect", "../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __moduleName = context_1 && context_1.id;
+    var AbstractSubject_1, clone_1, contains_1, GenericEvent_1, isEmpty_1, isNumber_1, mustBeNonNullObject_1, remove_1, ScreenRect_1, veryDifferent_1, WIDTH, HEIGHT, ALPHA, BACKGROUND, LabCanvas;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (clone_1_1) {
+            clone_1 = clone_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (isEmpty_1_1) {
+            isEmpty_1 = isEmpty_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }, function (remove_1_1) {
+            remove_1 = remove_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            WIDTH = 'width';
+            HEIGHT = 'height';
+            ALPHA = 'alpha';
+            BACKGROUND = 'background';
+            LabCanvas = function (_super) {
+                __extends(LabCanvas, _super);
+                function LabCanvas(canvas, name) {
+                    var _this = _super.call(this, name) || this;
+                    _this.labViews_ = [];
+                    _this.memorizables_ = [];
+                    _this.focusView_ = null;
+                    _this.alpha_ = 1;
+                    _this.background_ = '';
+                    _this.canvas_ = canvas;
+                    canvas.contentEditable = 'false';
+                    return _this;
+                }
+                LabCanvas.prototype.addMemo = function (memorizable) {
+                    if (!contains_1.default(this.memorizables_, memorizable)) {
+                        this.memorizables_.push(memorizable);
+                    }
+                };
+                LabCanvas.prototype.addView = function (view) {
+                    mustBeNonNullObject_1.default('view', view);
+                    if (this.getWidth() > 0 && this.getHeight() > 0) {
+                        var sr = new ScreenRect_1.default(0, 0, this.getWidth(), this.getHeight());
+                        view.setScreenRect(sr);
+                    }
+                    this.labViews_.push(view);
+                    this.addMemo(view);
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_ADDED, view));
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+                    if (this.focusView_ == null) {
+                        this.setFocusView(view);
+                    }
+                };
+                LabCanvas.prototype.focus = function () {
+                    this.canvas_.focus();
+                };
+                LabCanvas.prototype.getAlpha = function () {
+                    return this.alpha_;
+                };
+                LabCanvas.prototype.getBackground = function () {
+                    return this.background_;
+                };
+                LabCanvas.prototype.getCanvas = function () {
+                    return this.canvas_;
+                };
+                LabCanvas.prototype.getContext = function () {
+                    return this.canvas_.getContext('2d');
+                };
+                LabCanvas.prototype.getFocusView = function () {
+                    return this.focusView_;
+                };
+                LabCanvas.prototype.getHeight = function () {
+                    return this.canvas_.height;
+                };
+                LabCanvas.prototype.getMemos = function () {
+                    return clone_1.default(this.memorizables_);
+                };
+                LabCanvas.prototype.getScreenRect = function () {
+                    return new ScreenRect_1.default(0, 0, this.canvas_.width, this.canvas_.height);
+                };
+                LabCanvas.prototype.getViews = function () {
+                    return clone_1.default(this.labViews_);
+                };
+                LabCanvas.prototype.getWidth = function () {
+                    return this.canvas_.width;
+                };
+                LabCanvas.prototype.memorize = function () {
+                    for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                        this.memorizables_[i].memorize();
+                    }
+                };
+                LabCanvas.prototype.notifySizeChanged = function () {
+                    var r = this.getScreenRect();
+                    this.labViews_.forEach(function (view) {
+                        view.setScreenRect(r);
+                    });
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.SIZE_CHANGED));
+                };
+                LabCanvas.prototype.paint = function () {
+                    if (this.canvas_.offsetParent != null) {
+                        var context = this.canvas_.getContext('2d');
+                        context.save();
+                        try {
+                            if (this.background_ !== '') {
+                                context.globalAlpha = this.alpha_;
+                                context.fillStyle = this.background_;
+                                context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                                context.globalAlpha = 1;
+                            } else {
+                                context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
+                            }
+                            this.labViews_.forEach(function (view) {
+                                view.paint(context);
+                            });
+                        } finally {
+                            context.restore();
+                        }
+                    }
+                };
+                ;
+                LabCanvas.prototype.removeMemo = function (memorizable) {
+                    remove_1.default(this.memorizables_, memorizable);
+                };
+                LabCanvas.prototype.removeView = function (view) {
+                    mustBeNonNullObject_1.default('view', view);
+                    remove_1.default(this.labViews_, view);
+                    this.removeMemo(view);
+                    if (this.focusView_ === view) {
+                        this.setFocusView(isEmpty_1.default(this.labViews_) ? null : this.labViews_[0]);
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_REMOVED, view));
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+                };
+                LabCanvas.prototype.setAlpha = function (value) {
+                    if (veryDifferent_1.default(this.alpha_, value)) {
+                        this.alpha_ = value;
+                        if (veryDifferent_1.default(value, 1) && this.background_ === '') {
+                            this.setBackground('white');
+                        }
+                        this.broadcastParameter(ALPHA);
+                    }
+                };
+                LabCanvas.prototype.setBackground = function (value) {
+                    if (this.background_ !== value) {
+                        this.background_ = value;
+                        this.broadcastParameter(BACKGROUND);
+                    }
+                };
+                LabCanvas.prototype.setFocusView = function (view) {
+                    if (view != null && !contains_1.default(this.labViews_, view)) throw new Error('cannot set focus to unknown view ' + view);
+                    if (this.focusView_ !== view) {
+                        if (this.focusView_ != null) {
+                            this.focusView_.loseFocus();
+                        }
+                        this.focusView_ = view;
+                        if (view != null) {
+                            view.gainFocus();
+                        }
+                        this.broadcast(new GenericEvent_1.default(this, LabCanvas.FOCUS_VIEW_CHANGED, view));
+                    }
+                };
+                LabCanvas.prototype.setHeight = function (value) {
+                    if (veryDifferent_1.default(value, this.canvas_.height)) {
+                        this.canvas_.height = value;
+                    }
+                    this.notifySizeChanged();
+                    this.broadcastParameter(HEIGHT);
+                };
+                LabCanvas.prototype.setScreenRect = function (sr) {
+                    if (!ScreenRect_1.default.isDuckType(sr)) {
+                        throw new Error('not a ScreenRect ' + sr);
+                    }
+                    if (sr.getTop() !== 0 || sr.getLeft() !== 0) {
+                        throw new Error('top left must be 0,0, was: ' + sr);
+                    }
+                    this.setSize(sr.getWidth(), sr.getHeight());
+                };
+                LabCanvas.prototype.setSize = function (width, height) {
+                    if (!isNumber_1.default(width) || width <= 0 || !isNumber_1.default(height) || height <= 0) {
+                        throw new Error('bad size ' + width + ', ' + height);
+                    }
+                    this.canvas_.width = width;
+                    this.canvas_.height = height;
+                    this.notifySizeChanged();
+                    this.broadcastParameter(WIDTH);
+                    this.broadcastParameter(HEIGHT);
+                };
+                ;
+                LabCanvas.prototype.setWidth = function (value) {
+                    if (veryDifferent_1.default(value, this.canvas_.width)) {
+                        this.canvas_.width = value;
+                    }
+                    this.notifySizeChanged();
+                    this.broadcastParameter(WIDTH);
+                };
+                return LabCanvas;
+            }(AbstractSubject_1.default);
+            LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
+            LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
+            LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
+            LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
+            LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
+            exports_1("LabCanvas", LabCanvas);
+            exports_1("default", LabCanvas);
         }
     };
 });
@@ -2022,13 +2273,28 @@ System.register("davinci-newton/strategy/SimpleAdvance.js", [], function (export
         }
     };
 });
-System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
+System.register("davinci-newton/util/find.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var toName_1, validName_1, AbstractSubject;
+    function find(xs, predicate) {
+        throw new Error("TODO");
+    }
+    exports_1("default", find);
     return {
-        setters: [function (toName_1_1) {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/AbstractSubject.js", ["./find", "../util/toName", "../util/validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var find_1, toName_1, validName_1, AbstractSubject;
+    return {
+        setters: [function (find_1_1) {
+            find_1 = find_1_1;
+        }, function (toName_1_1) {
             toName_1 = toName_1_1;
         }, function (validName_1_1) {
             validName_1 = validName_1_1;
@@ -2038,6 +2304,7 @@ System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "..
                 function AbstractSubject(name) {
                     this.doBroadcast_ = true;
                     this.observers_ = [];
+                    this.paramList_ = [];
                     if (!name) {
                         throw new Error('no name');
                     }
@@ -2046,6 +2313,19 @@ System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "..
                 AbstractSubject.prototype.getName = function () {
                     return this.name_;
                 };
+                AbstractSubject.prototype.getParam = function (name) {
+                    name = toName_1.default(name);
+                    return find_1.default(this.paramList_, function (p) {
+                        return p.getName() === name;
+                    });
+                };
+                AbstractSubject.prototype.getParameter = function (name) {
+                    var p = this.getParam(name);
+                    if (p != null) {
+                        return p;
+                    }
+                    throw new Error('Parameter not found ' + name);
+                };
                 AbstractSubject.prototype.broadcast = function (event) {
                     if (this.doBroadcast_) {
                         var len = this.observers_.length;
@@ -2053,6 +2333,13 @@ System.register("davinci-newton/util/AbstractSubject.js", ["../util/toName", "..
                             this.observers_[i].observe(event);
                         }
                     }
+                };
+                AbstractSubject.prototype.broadcastParameter = function (name) {
+                    var p = this.getParam(name);
+                    if (p === null) {
+                        throw new Error('unknown Parameter ' + name);
+                    }
+                    this.broadcast(p);
                 };
                 return AbstractSubject;
             }();
@@ -2717,11 +3004,11 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var CircularList_1, config_1, DisplayGraph_1, ForceApp_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1, newton;
+    var CircularList_1, config_1, DisplayGraph_1, ForceApp_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1, newton;
     return {
         setters: [function (CircularList_1_1) {
             CircularList_1 = CircularList_1_1;
@@ -2731,6 +3018,8 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
             DisplayGraph_1 = DisplayGraph_1_1;
         }, function (ForceApp_1_1) {
             ForceApp_1 = ForceApp_1_1;
+        }, function (LabCanvas_1_1) {
+            LabCanvas_1 = LabCanvas_1_1;
         }, function (RigidBody_1_1) {
             RigidBody_1 = RigidBody_1_1;
         }, function (RigidBodySim_1_1) {
@@ -2762,6 +3051,9 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
                 },
                 get ForceApp() {
                     return ForceApp_1.default;
+                },
+                get LabCanvas() {
+                    return LabCanvas_1.default;
                 },
                 get RigidBody() {
                     return RigidBody_1.default;

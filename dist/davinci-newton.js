@@ -575,9 +575,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-01-17';
+            this.LAST_MODIFIED = '2017-01-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.4';
+            this.VERSION = '0.0.5';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -1067,6 +1067,128 @@ define('davinci-newton/model/ForceApp',["require", "exports", "../objects/Abstra
     exports.default = ForceApp;
 });
 
+define('davinci-newton/util/find',["require", "exports"], function (require, exports) {
+    "use strict";
+    function find(xs, predicate) {
+        throw new Error("TODO");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = find;
+});
+
+define('davinci-newton/util/AbstractSubject',["require", "exports", "./find", "../util/toName", "../util/validName"], function (require, exports, find_1, toName_1, validName_1) {
+    "use strict";
+    var AbstractSubject = (function () {
+        function AbstractSubject(name) {
+            this.doBroadcast_ = true;
+            this.observers_ = [];
+            this.paramList_ = [];
+            if (!name) {
+                throw new Error('no name');
+            }
+            this.name_ = validName_1.default(toName_1.default(name));
+        }
+        AbstractSubject.prototype.getName = function () {
+            return this.name_;
+        };
+        AbstractSubject.prototype.getParam = function (name) {
+            name = toName_1.default(name);
+            return find_1.default(this.paramList_, function (p) {
+                return p.getName() === name;
+            });
+        };
+        AbstractSubject.prototype.getParameter = function (name) {
+            var p = this.getParam(name);
+            if (p != null) {
+                return p;
+            }
+            throw new Error('Parameter not found ' + name);
+        };
+        AbstractSubject.prototype.broadcast = function (event) {
+            if (this.doBroadcast_) {
+                var len = this.observers_.length;
+                for (var i = 0; i < len; i++) {
+                    this.observers_[i].observe(event);
+                }
+            }
+        };
+        AbstractSubject.prototype.broadcastParameter = function (name) {
+            var p = this.getParam(name);
+            if (p === null) {
+                throw new Error('unknown Parameter ' + name);
+            }
+            this.broadcast(p);
+        };
+        return AbstractSubject;
+    }());
+    exports.AbstractSubject = AbstractSubject;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AbstractSubject;
+});
+
+define('davinci-newton/util/clone',["require", "exports"], function (require, exports) {
+    "use strict";
+    function clone(xs) {
+        throw new Error("TODO: clone");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = clone;
+});
+
+define('davinci-newton/util/contains',["require", "exports"], function (require, exports) {
+    "use strict";
+    function contains(xs, x) {
+        var length = xs.length;
+        for (var i = 0; i < length; i++) {
+            if (xs[i] === x) {
+                return true;
+            }
+        }
+        return false;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = contains;
+});
+
+define('davinci-newton/util/GenericEvent',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
+    "use strict";
+    var GenericEvent = (function () {
+        function GenericEvent(subject_, name, value_) {
+            this.subject_ = subject_;
+            this.value_ = value_;
+            this.name_ = validName_1.default(toName_1.default(name));
+        }
+        GenericEvent.prototype.getName = function (localized) {
+            return this.name_;
+        };
+        GenericEvent.prototype.getSubject = function () {
+            return this.subject_;
+        };
+        return GenericEvent;
+    }());
+    exports.GenericEvent = GenericEvent;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = GenericEvent;
+});
+
+define('davinci-newton/util/isEmpty',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isEmpty(xs) {
+        return xs.length === 0;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isEmpty;
+});
+
+define('davinci-newton/checks/isNumber',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isNumber(x) {
+        return (typeof x === 'number');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isNumber;
+});
+
 define('davinci-newton/checks/mustSatisfy',["require", "exports"], function (require, exports) {
     "use strict";
     function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
@@ -1078,6 +1200,246 @@ define('davinci-newton/checks/mustSatisfy',["require", "exports"], function (req
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = mustSatisfy;
+});
+
+define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
+    "use strict";
+    function default_1(x) {
+        return x === null;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_1;
+});
+
+define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isObject(x) {
+        return (typeof x === 'object');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isObject;
+});
+
+define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
+    "use strict";
+    function beObject() {
+        return "be a non-null `object`";
+    }
+    function mustBeObject(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeObject;
+});
+
+define('davinci-newton/util/remove',["require", "exports"], function (require, exports) {
+    "use strict";
+    function remove(xs, x) {
+        throw new Error("TODO: remove");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = remove;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractSubject", "../util/clone", "../util/contains", "../util/GenericEvent", "../util/isEmpty", "../checks/isNumber", "../checks/mustBeNonNullObject", "../util/remove", "./ScreenRect", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, clone_1, contains_1, GenericEvent_1, isEmpty_1, isNumber_1, mustBeNonNullObject_1, remove_1, ScreenRect_1, veryDifferent_1) {
+    "use strict";
+    var WIDTH = 'width';
+    var HEIGHT = 'height';
+    var ALPHA = 'alpha';
+    var BACKGROUND = 'background';
+    var LabCanvas = (function (_super) {
+        __extends(LabCanvas, _super);
+        function LabCanvas(canvas, name) {
+            var _this = _super.call(this, name) || this;
+            _this.labViews_ = [];
+            _this.memorizables_ = [];
+            _this.focusView_ = null;
+            _this.alpha_ = 1;
+            _this.background_ = '';
+            _this.canvas_ = canvas;
+            canvas.contentEditable = 'false';
+            return _this;
+        }
+        LabCanvas.prototype.addMemo = function (memorizable) {
+            if (!contains_1.default(this.memorizables_, memorizable)) {
+                this.memorizables_.push(memorizable);
+            }
+        };
+        LabCanvas.prototype.addView = function (view) {
+            mustBeNonNullObject_1.default('view', view);
+            if (this.getWidth() > 0 && this.getHeight() > 0) {
+                var sr = new ScreenRect_1.default(0, 0, this.getWidth(), this.getHeight());
+                view.setScreenRect(sr);
+            }
+            this.labViews_.push(view);
+            this.addMemo(view);
+            this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_ADDED, view));
+            this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+            if (this.focusView_ == null) {
+                this.setFocusView(view);
+            }
+        };
+        LabCanvas.prototype.focus = function () {
+            this.canvas_.focus();
+        };
+        LabCanvas.prototype.getAlpha = function () {
+            return this.alpha_;
+        };
+        LabCanvas.prototype.getBackground = function () {
+            return this.background_;
+        };
+        LabCanvas.prototype.getCanvas = function () {
+            return this.canvas_;
+        };
+        LabCanvas.prototype.getContext = function () {
+            return this.canvas_.getContext('2d');
+        };
+        LabCanvas.prototype.getFocusView = function () {
+            return this.focusView_;
+        };
+        LabCanvas.prototype.getHeight = function () {
+            return this.canvas_.height;
+        };
+        LabCanvas.prototype.getMemos = function () {
+            return clone_1.default(this.memorizables_);
+        };
+        LabCanvas.prototype.getScreenRect = function () {
+            return new ScreenRect_1.default(0, 0, this.canvas_.width, this.canvas_.height);
+        };
+        LabCanvas.prototype.getViews = function () {
+            return clone_1.default(this.labViews_);
+        };
+        LabCanvas.prototype.getWidth = function () {
+            return this.canvas_.width;
+        };
+        LabCanvas.prototype.memorize = function () {
+            for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                this.memorizables_[i].memorize();
+            }
+        };
+        LabCanvas.prototype.notifySizeChanged = function () {
+            var r = this.getScreenRect();
+            this.labViews_.forEach(function (view) {
+                view.setScreenRect(r);
+            });
+            this.broadcast(new GenericEvent_1.default(this, LabCanvas.SIZE_CHANGED));
+        };
+        LabCanvas.prototype.paint = function () {
+            if (this.canvas_.offsetParent != null) {
+                var context = (this.canvas_.getContext('2d'));
+                context.save();
+                try {
+                    if (this.background_ !== '') {
+                        context.globalAlpha = this.alpha_;
+                        context.fillStyle = this.background_;
+                        context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                        context.globalAlpha = 1;
+                    }
+                    else {
+                        context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
+                    }
+                    this.labViews_.forEach(function (view) {
+                        view.paint(context);
+                    });
+                }
+                finally {
+                    context.restore();
+                }
+            }
+        };
+        ;
+        LabCanvas.prototype.removeMemo = function (memorizable) {
+            remove_1.default(this.memorizables_, memorizable);
+        };
+        LabCanvas.prototype.removeView = function (view) {
+            mustBeNonNullObject_1.default('view', view);
+            remove_1.default(this.labViews_, view);
+            this.removeMemo(view);
+            if (this.focusView_ === view) {
+                this.setFocusView(isEmpty_1.default(this.labViews_) ? null : this.labViews_[0]);
+            }
+            this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_REMOVED, view));
+            this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+        };
+        LabCanvas.prototype.setAlpha = function (value) {
+            if (veryDifferent_1.default(this.alpha_, value)) {
+                this.alpha_ = value;
+                if (veryDifferent_1.default(value, 1) && this.background_ === '') {
+                    this.setBackground('white');
+                }
+                this.broadcastParameter(ALPHA);
+            }
+        };
+        LabCanvas.prototype.setBackground = function (value) {
+            if (this.background_ !== value) {
+                this.background_ = value;
+                this.broadcastParameter(BACKGROUND);
+            }
+        };
+        LabCanvas.prototype.setFocusView = function (view) {
+            if (view != null && !contains_1.default(this.labViews_, view))
+                throw new Error('cannot set focus to unknown view ' + view);
+            if (this.focusView_ !== view) {
+                if (this.focusView_ != null) {
+                    this.focusView_.loseFocus();
+                }
+                this.focusView_ = view;
+                if (view != null) {
+                    view.gainFocus();
+                }
+                this.broadcast(new GenericEvent_1.default(this, LabCanvas.FOCUS_VIEW_CHANGED, view));
+            }
+        };
+        LabCanvas.prototype.setHeight = function (value) {
+            if (veryDifferent_1.default(value, this.canvas_.height)) {
+                this.canvas_.height = value;
+            }
+            this.notifySizeChanged();
+            this.broadcastParameter(HEIGHT);
+        };
+        LabCanvas.prototype.setScreenRect = function (sr) {
+            if (!ScreenRect_1.default.isDuckType(sr)) {
+                throw new Error('not a ScreenRect ' + sr);
+            }
+            if (sr.getTop() !== 0 || sr.getLeft() !== 0) {
+                throw new Error('top left must be 0,0, was: ' + sr);
+            }
+            this.setSize(sr.getWidth(), sr.getHeight());
+        };
+        LabCanvas.prototype.setSize = function (width, height) {
+            if (!isNumber_1.default(width) || width <= 0 || !isNumber_1.default(height) || height <= 0) {
+                throw new Error('bad size ' + width + ', ' + height);
+            }
+            this.canvas_.width = width;
+            this.canvas_.height = height;
+            this.notifySizeChanged();
+            this.broadcastParameter(WIDTH);
+            this.broadcastParameter(HEIGHT);
+        };
+        ;
+        LabCanvas.prototype.setWidth = function (value) {
+            if (veryDifferent_1.default(value, this.canvas_.width)) {
+                this.canvas_.width = value;
+            }
+            this.notifySizeChanged();
+            this.broadcastParameter(WIDTH);
+        };
+        return LabCanvas;
+    }(AbstractSubject_1.default));
+    LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
+    LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
+    LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
+    LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
+    LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
+    exports.LabCanvas = LabCanvas;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = LabCanvas;
 });
 
 define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
@@ -1100,15 +1462,6 @@ define('davinci-newton/checks/mustBeDefined',["require", "exports", "../checks/m
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = mustBeDefined;
-});
-
-define('davinci-newton/checks/isNumber',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isNumber(x) {
-        return (typeof x === 'number');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isNumber;
 });
 
 define('davinci-newton/checks/isInteger',["require", "exports", "../checks/isNumber"], function (require, exports, isNumber_1) {
@@ -1692,50 +2045,6 @@ define('davinci-newton/engine/RigidBody',["require", "exports", "../objects/Abst
     exports.default = RigidBody;
 });
 
-define('davinci-newton/util/AbstractSubject',["require", "exports", "../util/toName", "../util/validName"], function (require, exports, toName_1, validName_1) {
-    "use strict";
-    var AbstractSubject = (function () {
-        function AbstractSubject(name) {
-            this.doBroadcast_ = true;
-            this.observers_ = [];
-            if (!name) {
-                throw new Error('no name');
-            }
-            this.name_ = validName_1.default(toName_1.default(name));
-        }
-        AbstractSubject.prototype.getName = function () {
-            return this.name_;
-        };
-        AbstractSubject.prototype.broadcast = function (event) {
-            if (this.doBroadcast_) {
-                var len = this.observers_.length;
-                for (var i = 0; i < len; i++) {
-                    this.observers_[i].observe(event);
-                }
-            }
-        };
-        return AbstractSubject;
-    }());
-    exports.AbstractSubject = AbstractSubject;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = AbstractSubject;
-});
-
-define('davinci-newton/util/contains',["require", "exports"], function (require, exports) {
-    "use strict";
-    function contains(xs, x) {
-        var length = xs.length;
-        for (var i = 0; i < length; i++) {
-            if (xs[i] === x) {
-                return true;
-            }
-        }
-        return false;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = contains;
-});
-
 define('davinci-newton/model/EnergyInfo',["require", "exports"], function (require, exports) {
     "use strict";
     var EnergyInfo = (function () {
@@ -1758,67 +2067,6 @@ define('davinci-newton/model/EnergyInfo',["require", "exports"], function (requi
     exports.EnergyInfo = EnergyInfo;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = EnergyInfo;
-});
-
-define('davinci-newton/util/remove',["require", "exports"], function (require, exports) {
-    "use strict";
-    function remove(xs, x) {
-        throw new Error("TODO: remove");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = remove;
-});
-
-define('davinci-newton/util/GenericEvent',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
-    "use strict";
-    var GenericEvent = (function () {
-        function GenericEvent(subject_, name, value_) {
-            this.subject_ = subject_;
-            this.value_ = value_;
-            this.name_ = validName_1.default(toName_1.default(name));
-        }
-        GenericEvent.prototype.getName = function (localized) {
-            return this.name_;
-        };
-        GenericEvent.prototype.getSubject = function () {
-            return this.subject_;
-        };
-        return GenericEvent;
-    }());
-    exports.GenericEvent = GenericEvent;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = GenericEvent;
-});
-
-define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
-    "use strict";
-    function default_1(x) {
-        return x === null;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = default_1;
-});
-
-define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isObject(x) {
-        return (typeof x === 'object');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isObject;
-});
-
-define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
-    "use strict";
-    function beObject() {
-        return "be a non-null `object`";
-    }
-    function mustBeObject(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
-        return value;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = mustBeObject;
 });
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -2747,7 +2995,7 @@ define('davinci-newton/objects/Spring',["require", "exports", "./AbstractSimObje
     exports.default = Spring;
 });
 
-define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1) {
+define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1) {
     "use strict";
     var newton = {
         get LAST_MODIFIED() { return config_1.default.LAST_MODIFIED; },
@@ -2755,6 +3003,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularLi
         get CircularList() { return CircularList_1.default; },
         get DisplayGraph() { return DisplayGraph_1.default; },
         get ForceApp() { return ForceApp_1.default; },
+        get LabCanvas() { return LabCanvas_1.default; },
         get RigidBody() { return RigidBody_1.default; },
         get RigidBodySim() { return RigidBodySim_1.default; },
         get RungeKutta() { return RungeKutta_1.default; },

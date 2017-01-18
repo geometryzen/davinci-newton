@@ -2,6 +2,7 @@ import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
 import ForceApp from './davinci-newton/model/ForceApp';
+import LabCanvas from './davinci-newton/view/LabCanvas';
 import RigidBody from './davinci-newton/engine/RigidBody';
 import RigidBodySim from './davinci-newton/engine/RigidBodySim';
 import RungeKutta from './davinci-newton/model/RungeKutta';
@@ -34,6 +35,10 @@ const newton = {
      * 
      */
     get ForceApp() { return ForceApp; },
+    /**
+     * 
+     */
+    get LabCanvas() { return LabCanvas; },
     /**
      * 
      */

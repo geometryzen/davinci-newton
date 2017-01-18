@@ -1,1 +1,0 @@
-"/home/david/dev/geometryzen/davinci-newton/src/davinci-newton.ts" "/home/david/dev/geometryzen/davinci-newton/src/.baseDir.ts" --removeComments --noImplicitAny --suppressImplicitAnyIndexErrors --noImplicitReturns --target ES5 --module system --outDir system
