@@ -1,3 +1,140 @@
+System.register("davinci-newton/util/UtilityCore.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var UtilityCore;
+    return {
+        setters: [],
+        execute: function () {
+            UtilityCore = function () {
+                function UtilityCore() {}
+                return UtilityCore;
+            }();
+            UtilityCore.MAX_INTEGER = Math.pow(2, 53);
+            exports_1("default", UtilityCore);
+        }
+    };
+});
+System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var UtilityCore_1, MAX_INDEX_ERROR, CircularListIterator, CircularList;
+    return {
+        setters: [function (UtilityCore_1_1) {
+            UtilityCore_1 = UtilityCore_1_1;
+        }],
+        execute: function () {
+            MAX_INDEX_ERROR = 'exceeded max int';
+            CircularListIterator = function () {
+                function CircularListIterator(cList_, startIndex) {
+                    this.cList_ = cList_;
+                    this.first_ = cList_.size_ > 0;
+                    this.index_ = startIndex;
+                    this.pointer_ = cList_.indexToPointer(startIndex);
+                }
+                CircularListIterator.prototype.getIndex = function () {
+                    if (this.cList_.size_ === 0) {
+                        throw new Error('no data');
+                    }
+                    return this.index_;
+                };
+                CircularListIterator.prototype.getValue = function () {
+                    if (this.cList_.size_ === 0) {
+                        throw new Error('no data');
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                CircularListIterator.prototype.hasNext = function () {
+                    return this.first_ || this.index_ < this.cList_.getEndIndex();
+                };
+                CircularListIterator.prototype.hasPrevious = function () {
+                    return this.first_ || this.index_ > this.cList_.getStartIndex();
+                };
+                CircularListIterator.prototype.nextValue = function () {
+                    if (this.cList_.size_ === 0) throw new Error('no data');
+                    if (this.first_) {
+                        this.first_ = false;
+                    } else {
+                        if (this.index_ + 1 > this.cList_.getEndIndex()) {
+                            throw new Error('cannot iterate past end of list');
+                        }
+                        this.index_++;
+                        this.pointer_ = this.cList_.indexToPointer(this.index_);
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                CircularListIterator.prototype.previousValue = function () {
+                    if (this.cList_.size_ === 0) throw new Error('no data');
+                    if (this.first_) {
+                        this.first_ = false;
+                    } else {
+                        if (this.index_ - 1 < this.cList_.getStartIndex()) {
+                            throw new Error('cannot iterate prior to start of list');
+                        }
+                        this.index_--;
+                        this.pointer_ = this.cList_.indexToPointer(this.index_);
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                return CircularListIterator;
+            }();
+            CircularList = function () {
+                function CircularList(capacity_) {
+                    if (capacity_ === void 0) {
+                        capacity_ = 3000;
+                    }
+                    this.capacity_ = capacity_;
+                    this.size_ = 0;
+                    this.cycles_ = 0;
+                    this.nextPtr_ = 0;
+                    this.lastPtr_ = -1;
+                    this.values_ = new Array(this.capacity_);
+                }
+                CircularList.prototype.getEndIndex = function () {
+                    if (this.size_ === 0) {
+                        return -1;
+                    }
+                    var idx;
+                    if (this.nextPtr_ === 0) idx = this.pointerToIndex(this.size_ - 1);else idx = this.pointerToIndex(this.nextPtr_ - 1);
+                    return idx;
+                };
+                CircularList.prototype.getEndValue = function () {
+                    var idx = this.getEndIndex();
+                    return idx === -1 ? null : this.values_[this.indexToPointer(idx)];
+                };
+                CircularList.prototype.getIterator = function (index) {
+                    return new CircularListIterator(this, index);
+                };
+                CircularList.prototype.getSize = function () {
+                    return this.size_;
+                };
+                CircularList.prototype.getStartIndex = function () {
+                    var idx = this.size_ < this.capacity_ ? 0 : this.pointerToIndex(this.nextPtr_);
+                    return idx;
+                };
+                CircularList.prototype.getValue = function (index) {
+                    var i = this.indexToPointer(index);
+                    return this.values_[i];
+                };
+                CircularList.prototype.indexToPointer = function (index) {
+                    if (this.size_ < this.capacity_) return index;
+                    var p = index % this.capacity_;
+                    var idx = index - (this.cycles_ - (p < this.nextPtr_ ? 0 : 1)) * this.capacity_;
+                    return idx;
+                };
+                CircularList.prototype.pointerToIndex = function (pointer) {
+                    if (this.size_ < this.capacity_) return pointer;
+                    var idx = pointer + (this.cycles_ - (pointer < this.nextPtr_ ? 0 : 1)) * this.capacity_;
+                    if (idx >= UtilityCore_1.default.MAX_INTEGER) throw new Error(MAX_INDEX_ERROR);
+                    return idx;
+                };
+                return CircularList;
+            }();
+            exports_1("default", CircularList);
+        }
+    };
+});
 System.register('davinci-newton/config.js', [], function (exports_1, context_1) {
     "use strict";
 
@@ -45,6 +182,294 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             }();
             config = new Newton();
             exports_1("default", config);
+        }
+    };
+});
+System.register('davinci-newton/view/DrawingMode.js', [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var DrawingMode;
+    return {
+        setters: [],
+        execute: function () {
+            DrawingMode = function () {
+                function DrawingMode() {}
+                return DrawingMode;
+            }();
+            DrawingMode.DOTS = 'dots';
+            DrawingMode.LINES = 'lines';
+            exports_1("default", DrawingMode);
+        }
+    };
+});
+System.register("davinci-newton/util/repeat.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function repeat(value, times) {
+        throw new Error("TODO");
+    }
+    exports_1("default", repeat);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isFunction(x) {
+        return typeof x === 'function';
+    }
+    exports_1("default", isFunction);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var isFunction_1, veryDifferent_1, ScreenRect;
+    return {
+        setters: [function (isFunction_1_1) {
+            isFunction_1 = isFunction_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            ScreenRect = function () {
+                function ScreenRect(left, top_, width, height) {
+                    if (width < 0 || height < 0) {
+                        throw new Error();
+                    }
+                    this.left_ = left;
+                    this.top_ = top_;
+                    this.width_ = width;
+                    this.height_ = height;
+                }
+                ScreenRect.clone = function (rect) {
+                    return new ScreenRect(rect.left_, rect.top_, rect.width_, rect.height_);
+                };
+                ScreenRect.prototype.equals = function (otherRect) {
+                    return this.left_ === otherRect.left_ && this.top_ === otherRect.top_ && this.width_ === otherRect.width_ && this.height_ === otherRect.height_;
+                };
+                ScreenRect.isDuckType = function (obj) {
+                    if (obj instanceof ScreenRect) {
+                        return true;
+                    }
+                    return obj.getLeft !== undefined && obj.getTop !== undefined && obj.getWidth !== undefined && obj.getHeight !== undefined && obj.isEmpty !== undefined && obj.equals !== undefined && obj.nearEqual !== undefined;
+                };
+                ScreenRect.prototype.getCenterX = function () {
+                    return this.left_ + this.width_ / 2;
+                };
+                ScreenRect.prototype.getCenterY = function () {
+                    return this.top_ + this.height_ / 2;
+                };
+                ScreenRect.prototype.getHeight = function () {
+                    return this.height_;
+                };
+                ScreenRect.prototype.getLeft = function () {
+                    return this.left_;
+                };
+                ScreenRect.prototype.getTop = function () {
+                    return this.top_;
+                };
+                ScreenRect.prototype.getWidth = function () {
+                    return this.width_;
+                };
+                ScreenRect.prototype.isEmpty = function (tolerance) {
+                    if (tolerance === void 0) {
+                        tolerance = 1E-14;
+                    }
+                    return this.width_ < tolerance || this.height_ < tolerance;
+                };
+                ScreenRect.prototype.makeOval = function (context) {
+                    var w = this.width_ / 2;
+                    var h = this.height_ / 2;
+                    if (isFunction_1.default(context.ellipse)) {
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_ + h);
+                        context.ellipse(this.left_ + w, this.top_ + h, w, h, 0, 0, 2 * Math.PI, false);
+                    } else {
+                        var min = Math.min(w, h);
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_);
+                        context.arc(this.left_ + w, this.top_ + h, min, 0, 2 * Math.PI, false);
+                        context.closePath();
+                    }
+                };
+                ScreenRect.prototype.makeRect = function (context) {
+                    context.rect(this.left_, this.top_, this.width_, this.height_);
+                };
+                ScreenRect.prototype.nearEqual = function (otherRect, opt_tolerance) {
+                    if (veryDifferent_1.default(this.left_, otherRect.left_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.top_, otherRect.top_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.width_, otherRect.width_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.height_, otherRect.height_, opt_tolerance)) {
+                        return false;
+                    }
+                    return true;
+                };
+                return ScreenRect;
+            }();
+            ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
+            exports_1("default", ScreenRect);
+        }
+    };
+});
+System.register("davinci-newton/graph/DisplayGraph.js", ["../view/DrawingMode", "../util/repeat", "../view/ScreenRect"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var DrawingMode_1, repeat_1, ScreenRect_1, DisplayGraph;
+    return {
+        setters: [function (DrawingMode_1_1) {
+            DrawingMode_1 = DrawingMode_1_1;
+        }, function (repeat_1_1) {
+            repeat_1 = repeat_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }],
+        execute: function () {
+            DisplayGraph = function () {
+                function DisplayGraph() {
+                    this.graphLines_ = [];
+                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
+                    this.offScreen_ = null;
+                    this.lastMap_ = null;
+                    this.screenRect_ = ScreenRect_1.default.EMPTY_RECT;
+                    this.needRedraw_ = false;
+                    this.useBuffer_ = false;
+                }
+                DisplayGraph.prototype.draw = function (context, map) {
+                    if (this.screenRect_.isEmpty()) {
+                        return;
+                    }
+                    context.save();
+                    if (this.lastMap_ == null || this.lastMap_ !== map) {
+                        this.lastMap_ = map;
+                        this.needRedraw_ = true;
+                    }
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        if (this.memDraw_[i] > this.graphLines_[i].getGraphPoints().getEndIndex()) {
+                            this.reset();
+                            break;
+                        }
+                    }
+                    if (!this.useBuffer_) {
+                        this.needRedraw_ = true;
+                        if (this.needRedraw_) {
+                            this.fullDraw(context, map);
+                            this.needRedraw_ = false;
+                        } else {
+                            this.incrementalDraw(context, map);
+                        }
+                    } else {
+                        var w = this.screenRect_.getWidth();
+                        var h = this.screenRect_.getHeight();
+                        if (this.offScreen_ == null) {
+                            this.offScreen_ = document.createElement('canvas');
+                            this.offScreen_.width = w;
+                            this.offScreen_.height = h;
+                            this.needRedraw_ = true;
+                        }
+                        var osb = this.offScreen_.getContext('2d');
+                        if (this.needRedraw_) {
+                            osb.clearRect(0, 0, w, h);
+                            this.fullDraw(osb, map);
+                            this.needRedraw_ = false;
+                        } else {
+                            this.incrementalDraw(osb, map);
+                        }
+                        context.drawImage(this.offScreen_, 0, 0, w, h);
+                    }
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        this.drawHotSpot(context, map, this.graphLines_[i]);
+                    }
+                    context.restore();
+                };
+                DisplayGraph.prototype.drawHotSpot = function (context, coordMap, graphLine) {
+                    var p = graphLine.getGraphPoints().getEndValue();
+                    if (p != null) {
+                        var x = coordMap.simToScreenX(p.x);
+                        var y = coordMap.simToScreenY(p.y);
+                        var color = graphLine.getHotSpotColor();
+                        if (color) {
+                            context.fillStyle = color;
+                            context.fillRect(x - 2, y - 2, 5, 5);
+                        }
+                    }
+                };
+                DisplayGraph.prototype.drawPoints = function (context, coordMap, from, graphLine) {
+                    var simRect = coordMap.screenToSimRect(this.screenRect_);
+                    var iter = graphLine.getGraphPoints().getIterator(from);
+                    if (!iter.hasNext()) return from;
+                    var next = iter.nextValue();
+                    var style = graphLine.getGraphStyle(iter.getIndex());
+                    if (style.drawMode === DrawingMode_1.default.DOTS) {
+                        var x = coordMap.simToScreenX(next.x);
+                        var y = coordMap.simToScreenY(next.y);
+                        var w = style.lineWidth;
+                        context.fillStyle = style.color_;
+                        context.fillRect(x, y, w, w);
+                    }
+                    while (iter.hasNext()) {
+                        var last = next;
+                        next = iter.nextValue();
+                        if (next.x === last.x && next.y === last.y) continue;
+                        style = graphLine.getGraphStyle(iter.getIndex());
+                        var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
+                        if (style.drawMode === DrawingMode_1.default.DOTS || !continuous) {
+                            if (!simRect.contains(next)) continue;
+                            var x = coordMap.simToScreenX(next.x);
+                            var y = coordMap.simToScreenY(next.y);
+                            var w = style.lineWidth;
+                            context.fillStyle = style.color_;
+                            context.fillRect(x, y, w, w);
+                        } else {
+                            if (!simRect.maybeVisible(last, next)) {
+                                continue;
+                            }
+                            var x1 = coordMap.simToScreenX(last.x);
+                            var y1 = coordMap.simToScreenY(last.y);
+                            var x2 = coordMap.simToScreenX(next.x);
+                            var y2 = coordMap.simToScreenY(next.y);
+                            context.strokeStyle = style.color_;
+                            context.lineWidth = style.lineWidth;
+                            context.beginPath();
+                            context.moveTo(x1, y1);
+                            context.lineTo(x2, y2);
+                            context.stroke();
+                        }
+                    }
+                    return iter.getIndex();
+                };
+                DisplayGraph.prototype.fullDraw = function (context, coordMap) {
+                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
+                    this.incrementalDraw(context, coordMap);
+                };
+                DisplayGraph.prototype.incrementalDraw = function (context, coordMap) {
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
+                    }
+                };
+                DisplayGraph.prototype.reset = function () {
+                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
+                    this.needRedraw_ = true;
+                };
+                return DisplayGraph;
+            }();
+            exports_1("default", DisplayGraph);
         }
     };
 });
@@ -2292,14 +2717,18 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/model/ForceApp", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var config_1, ForceApp_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1, newton;
+    var CircularList_1, config_1, DisplayGraph_1, ForceApp_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1, newton;
     return {
-        setters: [function (config_1_1) {
+        setters: [function (CircularList_1_1) {
+            CircularList_1 = CircularList_1_1;
+        }, function (config_1_1) {
             config_1 = config_1_1;
+        }, function (DisplayGraph_1_1) {
+            DisplayGraph_1 = DisplayGraph_1_1;
         }, function (ForceApp_1_1) {
             ForceApp_1 = ForceApp_1_1;
         }, function (RigidBody_1_1) {
@@ -2324,6 +2753,12 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get VERSION() {
                     return config_1.default.VERSION;
+                },
+                get CircularList() {
+                    return CircularList_1.default;
+                },
+                get DisplayGraph() {
+                    return DisplayGraph_1.default;
                 },
                 get ForceApp() {
                     return ForceApp_1.default;

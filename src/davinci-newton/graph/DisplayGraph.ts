@@ -1,0 +1,225 @@
+import CoordMap from '../view/CoordMap';
+import DrawingMode from '../view/DrawingMode';
+import GraphLine from './GraphLine';
+import repeat from '../util/repeat';
+import ScreenRect from '../view/ScreenRect';
+
+/**
+ * 
+ */
+export default class DisplayGraph {
+
+    /**
+     * The GraphLines to draw.
+     */
+    graphLines_: GraphLine[] = [];
+
+    /**
+     * 
+     */
+    memDraw_ = repeat(-1, this.graphLines_.length);
+
+    /**
+     * 
+     */
+    offScreen_: HTMLCanvasElement = null;
+
+    /**
+     * to detect when redraw needed;  when the coordmap changes, we need to redraw.
+     */
+    lastMap_: CoordMap = null;
+
+    /**
+     * 
+     */
+    screenRect_ = ScreenRect.EMPTY_RECT;
+
+    /**
+     * set when the entire graph needs to be redrawn.
+     */
+    needRedraw_ = false;
+
+    /**
+     * set when the entire graph needs to be redrawn.
+     */
+    useBuffer_ = false;
+
+    /**
+     * 
+     */
+    constructor() {
+        // Do nothing yet.
+    }
+
+    /**
+     * 
+     */
+    draw(context: CanvasRenderingContext2D, map: CoordMap): void {
+        if (this.screenRect_.isEmpty()) {
+            return;
+        }
+        context.save();
+        if (this.lastMap_ == null || this.lastMap_ !== map) {
+            this.lastMap_ = map;
+            this.needRedraw_ = true;
+        }
+        for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+            // Detect when graphLine has been reset.
+            if (this.memDraw_[i] > this.graphLines_[i].getGraphPoints().getEndIndex()) {
+                this.reset();
+                break;
+            }
+        }
+        if (!this.useBuffer_) {
+            // without offscreen buffer, always need to redraw
+            this.needRedraw_ = true;
+            // draw without offscreen buffer.
+            if (this.needRedraw_) {
+                this.fullDraw(context, map);
+                this.needRedraw_ = false;
+            } else {
+                // this is only useful for debugging, to see the incrementalDraw happening.
+                this.incrementalDraw(context, map);
+            }
+        } else {
+            var w = this.screenRect_.getWidth();
+            var h = this.screenRect_.getHeight();
+            if (this.offScreen_ == null) {
+                // make the offscreen buffer that has an alpha channel.
+                this.offScreen_ = /** @type {!HTMLCanvasElement} */
+                    (document.createElement('canvas'));
+                this.offScreen_.width = w;
+                this.offScreen_.height = h;
+                this.needRedraw_ = true;
+            }
+            // osb = off screen buffer
+            var osb = this.offScreen_.getContext('2d');
+            if (this.needRedraw_) {
+                // Clear image with transparent alpha by drawing a rectangle
+                // 'clearRect fills with transparent black'
+                osb.clearRect(0, 0, w, h);
+                // The offscreen buffer has all transparent pixels at this point.
+                // Draw into offscreen buffer, but using opaque ink (alpha = 1.0).
+                this.fullDraw(osb, map);
+                this.needRedraw_ = false;
+            } else {
+                this.incrementalDraw(osb, map);
+            }
+            // Copy the entire offscreen buffer onto the screen.
+            // Note that the LabCanvas needs to actually clear the screen to white
+            // at the start of each paint operation, because this draw() method never clears,
+            // it does a sort of 'transparent image copy'.
+            context.drawImage(this.offScreen_, 0, 0, w, h);
+        }
+        for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+            this.drawHotSpot(context, map, this.graphLines_[i]);
+        }
+        context.restore();
+    }
+
+    /**
+     * 
+     */
+    drawHotSpot(context: CanvasRenderingContext2D, coordMap: CoordMap, graphLine: GraphLine): void {
+        var p = graphLine.getGraphPoints().getEndValue();
+        if (p != null) {
+            var x = coordMap.simToScreenX(p.x);
+            var y = coordMap.simToScreenY(p.y);
+            var color = graphLine.getHotSpotColor();
+            if (color) {
+                context.fillStyle = color;
+                context.fillRect(x - 2, y - 2, 5, 5);
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    drawPoints(context: CanvasRenderingContext2D, coordMap: CoordMap, from: number, graphLine: GraphLine): number {
+        var simRect = coordMap.screenToSimRect(this.screenRect_);
+        var iter = graphLine.getGraphPoints().getIterator(from);
+        if (!iter.hasNext())
+            return from;
+        /** @type {!lab.graph.GraphPoint} */
+        var next = iter.nextValue();  // move to first point
+        // Draw first point.
+        // Find the GraphStyle corresponding to this point.
+        var style = graphLine.getGraphStyle(iter.getIndex());
+        if (style.drawMode === DrawingMode.DOTS) {
+            const x = coordMap.simToScreenX(next.x);
+            const y = coordMap.simToScreenY(next.y);
+            const w = style.lineWidth;
+            context.fillStyle = style.color_;
+            context.fillRect(x, y, w, w);
+        }
+        while (iter.hasNext()) {
+            /** @type {!lab.graph.GraphPoint} */
+            var last = next;
+            next = iter.nextValue();
+            // if same point then don't draw again
+            if (next.x === last.x && next.y === last.y)
+                continue;
+            // find the GraphStyle corresponding to this point
+            style = graphLine.getGraphStyle(iter.getIndex());
+            // Avoid drawing nonsense lines in a graph, like when the pendulum
+            // moves over the 0 to 2Pi boundary.  The sequence number changes
+            // when there is a discontinuity, so don't draw a line in this case.
+            var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
+            if (style.drawMode === DrawingMode.DOTS || !continuous) {
+                // Only draw points that are visible.
+                if (!simRect.contains(next))
+                    continue;
+                const x = coordMap.simToScreenX(next.x);
+                const y = coordMap.simToScreenY(next.y);
+                const w = style.lineWidth;
+                context.fillStyle = style.color_;
+                context.fillRect(x, y, w, w);
+            } else {
+                // Don't draw lines that are not possibly visible.
+                if (!simRect.maybeVisible(last, next)) {
+                    continue;
+                }
+                var x1 = coordMap.simToScreenX(last.x);
+                var y1 = coordMap.simToScreenY(last.y);
+                var x2 = coordMap.simToScreenX(next.x);
+                var y2 = coordMap.simToScreenY(next.y);
+                context.strokeStyle = style.color_;
+                context.lineWidth = style.lineWidth;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x2, y2);
+                context.stroke();
+            }
+        }
+        return iter.getIndex();
+    }
+
+    fullDraw(context: CanvasRenderingContext2D, coordMap: CoordMap): void {
+        // Redraw entire memory list by drawing from oldest point in list
+        this.memDraw_ = repeat(-1, this.graphLines_.length);
+        this.incrementalDraw(context, coordMap);
+    }
+
+    /**
+     * 
+     */
+    incrementalDraw(context: CanvasRenderingContext2D, coordMap: CoordMap): void {
+        // draw points from the last drawn (=memDraw) up to the current latest point
+        // experiment: fade the graph by drawing a translucent white rectangle
+        // var r = this.getScreenRect();
+        // context.fillStyle = 'rgba(255,255,255,0.02)';
+        // context.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
+            this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
+        }
+    }
+
+    /**
+     * Causes entire graph to be redrawn, when {@link #draw} is next called.
+     */
+    reset(): void {
+        this.memDraw_ = repeat(-1, this.graphLines_.length);
+        this.needRedraw_ = true;
+    }
+}
