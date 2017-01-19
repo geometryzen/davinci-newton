@@ -19,41 +19,68 @@ import VerticalAlign from '../view/VerticalAlign';
  * 
  * This class is a user interface control. It may manipulate the DOM, adding controls.
  */
-export class TimeGraph extends AbstractSubject {
+export class Graph extends AbstractSubject {
     private readonly view = new SimView('TIME_GRAPH_VIEW', new DoubleRect(0, 0, 1, 1));
-    private line1: GraphLine;
     private autoScale: AutoScale;
     private displayGraph: DisplayGraph;
-    constructor(varsList: VarsList, labCanvas: LabCanvas) {
+    private labCanvas: LabCanvas;
+    /**
+     * The index for the time variable in the varsList.
+     */
+    private timeIdx_: number;
+    /**
+     * 
+     */
+    constructor(canvasId: string, private varsList: VarsList) {
         super('TIME_GRAPH_LAYOUT');
+        const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
+        this.labCanvas = new LabCanvas(canvas, 'GRAPH_CANVAS');
 
         this.view.setHorizAlign(HorizAlign.FULL);
         this.view.setVerticalAlign(VerticalAlign.FULL);
-        labCanvas.addView(this.view);
-
+        this.labCanvas.addView(this.view);
 
         this.displayGraph = new DisplayGraph();
         this.displayGraph.setScreenRect(this.view.getScreenRect());
 
+        this.view.getDisplayList().prepend(this.displayGraph);
+
         // Find out where the time is stored in the list of variables.
-        const timeIdx = varsList.timeIndex();
+        this.timeIdx_ = varsList.timeIndex();
+    }
 
-        // Add as many lines as you want...
-        this.line1 = new GraphLine('TIME_GRAPH_LINE_1', varsList);
-        this.view.addMemo(this.line1);
-        this.line1.setXVariable(timeIdx);
-        this.line1.setYVariable(1);
-        this.line1.setColor('lime');
-        this.displayGraph.addGraphLine(this.line1);
-
-        // Crate an AutoScale based upon one of the lines.
-        this.autoScale = new AutoScale('TIME_GRAPH_AUTO_SCALE', this.line1, this.view);
-        this.autoScale.extraMargin = 0.05;
-
+    /**
+     * 
+     */
+    addTrace(name: string): GraphLine {
+        const trace = new GraphLine(name, this.varsList);
+        this.view.addMemo(trace);
+        // trace.setXVariable(timeIdx);
+        // trace.setYVariable(1);
+        trace.setColor('black');
+        this.displayGraph.addGraphLine(trace);
         // Don't use off-screen buffer with time variable because the auto-scale causes
         // graph to redraw every frame.
-        this.displayGraph.setUseBuffer(this.line1.getXVariable() !== timeIdx);
+        this.displayGraph.setUseBuffer(trace.getXVariable() !== this.timeIdx_);
+        return trace;
+    }
+
+    memorize(): void {
+        this.labCanvas.memorize();
+    }
+
+    render(): void {
+        this.labCanvas.paint();
+    }
+
+    /**
+     * 
+     */
+    setAutoScale(trace: GraphLine): void {
+        // Crate an AutoScale based upon one of the lines.
+        this.autoScale = new AutoScale('TIME_GRAPH_AUTO_SCALE', trace, this.view);
+        this.autoScale.extraMargin = 0.05;
     }
 }
 
-export default TimeGraph;
+export default Graph;

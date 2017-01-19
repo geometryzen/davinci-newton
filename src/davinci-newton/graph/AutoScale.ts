@@ -215,7 +215,6 @@ export default class AutoScale extends AbstractSubject {
             graphPts = this.graphLines_[i].getGraphPoints();
             var iter = graphPts.getIterator(this.lastIndex_[i]);
             while (iter.hasNext()) {
-                /** @type {!myphysicslab.lab.graph.GraphPoint} */
                 var gp = iter.nextValue();
                 this.updateRange_(this.graphLines_[i], gp.x, gp.y);
                 this.lastIndex_[i] = iter.getIndex();
@@ -234,11 +233,11 @@ export default class AutoScale extends AbstractSubject {
                 }
             }
         } else if (contains(this.graphLines_, event.getSubject())) {
-            if (event.nameEquals(GraphLine.X_VARIABLE) ||
-                event.nameEquals(GraphLine.Y_VARIABLE)) {
+            if (event.nameEquals(GraphLine.PARAM_NAME_X_VARIABLE) || event.nameEquals(GraphLine.PARAM_NAME_Y_VARIABLE)) {
                 // the GraphLine's X or Y variable has changed
                 this.reset();
-            } else if (event.nameEquals(GraphLine.RESET)) {
+            }
+            else if (event.nameEquals(GraphLine.RESET)) {
                 // This has the effect of turning AutoScale back on
                 // after clicking the 'clear graph' button.
                 this.setActive(true);
@@ -251,32 +250,30 @@ export default class AutoScale extends AbstractSubject {
      * `AutoScale.AUTO_SCALE`.
      */
     private rangeCheck_() {
-        var avg, incr;
-        var e = this.minSize;
+        const e = this.minSize;
         // set range rectangle to minimum size, when range is very tiny
         // (but choose an increment that is big enough to make hi & lo different numbers)
         if (this.rangeXHi_ - this.rangeXLo_ < e) {
-            avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
-            incr = Math.max(avg * e, e);
+            const avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
+            const incr = Math.max(avg * e, e);
             this.rangeXHi_ = avg + incr;
             this.rangeXLo_ = avg - incr;
         }
         if (this.rangeYHi_ - this.rangeYLo_ < e) {
-            avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
-            incr = Math.max(avg * e, e);
+            const avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
+            const incr = Math.max(avg * e, e);
             this.rangeYHi_ = avg + incr;
             this.rangeYLo_ = avg - incr;
         }
-        var nr = this.getRangeRect();
-        var sr = this.simView_.getSimRect();
+        let nr = this.getRangeRect();
+        const sr = this.simView_.getSimRect();
         if (this.axis_ === AutoScale.VERTICAL) {
             // set vertical range, but retain existing horiz range
-            nr = new DoubleRect(sr.getLeft(), nr.getBottom(),
-                sr.getRight(), nr.getTop());
-        } else if (this.axis_ === AutoScale.HORIZONTAL) {
+            nr = new DoubleRect(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
+        }
+        else if (this.axis_ === AutoScale.HORIZONTAL) {
             // set horizontal range, but retain existing vertical range
-            nr = new DoubleRect(nr.getLeft(), sr.getBottom(),
-                nr.getRight(), sr.getTop());
+            nr = new DoubleRect(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
         }
         if (this.isActive_ && !nr.nearEqual(sr)) {
             this.ownEvent_ = true;
@@ -362,7 +359,7 @@ export default class AutoScale extends AbstractSubject {
      * @param value whether this AutoScale is computing the Parameter values
      */
     private setComputed(value: boolean): void {
-        const names = [SimView.WIDTH, SimView.HEIGHT, SimView.CENTER_X, SimView.CENTER_Y];
+        const names = [SimView.PARAM_NAME_WIDTH, SimView.PARAM_NAME_HEIGHT, SimView.PARAM_NAME_CENTER_X, SimView.PARAM_NAME_CENTER_Y];
         names.forEach((name) => {
             const p = this.simView_.getParameter(name);
             p.setComputed(value);

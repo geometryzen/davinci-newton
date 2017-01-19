@@ -61,6 +61,20 @@ export class AbstractSubject implements Subject {
     }
 
     /**
+     * Adds the Parameter to the list of this Subject's available Parameters.
+     * @throws if a Parameter with the same name already exists.
+     * @param parameter the Parameter to add
+     */
+    addParameter(parameter: Parameter): void {
+        var name = parameter.getName();
+        var p = this.getParam(name);
+        if (p != null) {
+            throw new Error('parameter ' + name + ' already exists: ' + p);
+        }
+        this.paramList_.push(parameter);
+    }
+
+    /**
      * Returns the Parameter with the given name, or null if not found
      * @param name name of parameter to search for
      * @return the Parameter with the given name, or null if not found

@@ -2,6 +2,7 @@ import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
 import ForceApp from './davinci-newton/model/ForceApp';
+import Graph from './davinci-newton/graph/Graph';
 import LabCanvas from './davinci-newton/view/LabCanvas';
 import RigidBody from './davinci-newton/engine/RigidBody';
 import RigidBodySim from './davinci-newton/engine/RigidBodySim';
@@ -10,7 +11,6 @@ import SimpleAdvance from './davinci-newton/strategy/SimpleAdvance';
 import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
 import Spring from './davinci-newton/objects/Spring';
-import TimeGraph from './davinci-newton/graph/TimeGraph';
 import Vector from './davinci-newton/math/Vector';
 
 /**
@@ -37,6 +37,10 @@ const newton = {
      * 
      */
     get ForceApp() { return ForceApp; },
+    /**
+     * 
+     */
+    get Graph() { return Graph; },
     /**
      * 
      */
@@ -69,10 +73,6 @@ const newton = {
      * 
      */
     get Spring() { return Spring; },
-    /**
-     * 
-     */
-    get TimeGraph() { return TimeGraph; },
     /**
      * 
      */

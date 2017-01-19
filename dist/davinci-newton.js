@@ -452,73 +452,28 @@ define('davinci-newton/util/UtilityCore',["require", "exports"], function (requi
 define('davinci-newton/util/CircularList',["require", "exports", "./UtilityCore"], function (require, exports, UtilityCore_1) {
     "use strict";
     var MAX_INDEX_ERROR = 'exceeded max int';
-    var CircularListIterator = (function () {
-        function CircularListIterator(cList_, startIndex) {
-            this.cList_ = cList_;
-            this.first_ = cList_.size_ > 0;
-            this.index_ = startIndex;
-            this.pointer_ = cList_.indexToPointer(startIndex);
-        }
-        CircularListIterator.prototype.getIndex = function () {
-            if (this.cList_.size_ === 0) {
-                throw new Error('no data');
-            }
-            return this.index_;
-        };
-        CircularListIterator.prototype.getValue = function () {
-            if (this.cList_.size_ === 0) {
-                throw new Error('no data');
-            }
-            return this.cList_.values_[this.pointer_];
-        };
-        CircularListIterator.prototype.hasNext = function () {
-            return this.first_ || this.index_ < this.cList_.getEndIndex();
-        };
-        CircularListIterator.prototype.hasPrevious = function () {
-            return this.first_ || this.index_ > this.cList_.getStartIndex();
-        };
-        CircularListIterator.prototype.nextValue = function () {
-            if (this.cList_.size_ === 0)
-                throw new Error('no data');
-            if (this.first_) {
-                this.first_ = false;
-            }
-            else {
-                if (this.index_ + 1 > this.cList_.getEndIndex()) {
-                    throw new Error('cannot iterate past end of list');
-                }
-                this.index_++;
-                this.pointer_ = this.cList_.indexToPointer(this.index_);
-            }
-            return this.cList_.values_[this.pointer_];
-        };
-        CircularListIterator.prototype.previousValue = function () {
-            if (this.cList_.size_ === 0)
-                throw new Error('no data');
-            if (this.first_) {
-                this.first_ = false;
-            }
-            else {
-                if (this.index_ - 1 < this.cList_.getStartIndex()) {
-                    throw new Error('cannot iterate prior to start of list');
-                }
-                this.index_--;
-                this.pointer_ = this.cList_.indexToPointer(this.index_);
-            }
-            return this.cList_.values_[this.pointer_];
-        };
-        return CircularListIterator;
-    }());
     var CircularList = (function () {
-        function CircularList(capacity_) {
-            if (capacity_ === void 0) { capacity_ = 3000; }
-            this.capacity_ = capacity_;
+        function CircularList(capacity) {
+            if (capacity === void 0) { capacity = 3000; }
+            this.size_ = 0;
+            this.cycles_ = 0;
+            this.nextPtr_ = 0;
+            this.lastPtr_ = -1;
+            this.capacity_ = capacity || 3000;
+            if (this.capacity_ < 2) {
+                throw new Error();
+            }
             this.size_ = 0;
             this.cycles_ = 0;
             this.nextPtr_ = 0;
             this.lastPtr_ = -1;
             this.values_ = new Array(this.capacity_);
+            this.lastValue_ = null;
         }
+        CircularList.prototype.causeMaxIntError = function () {
+            this.size_ = this.capacity_;
+            this.cycles_ = Math.floor(UtilityCore_1.default.MAX_INTEGER / this.capacity_) - 1;
+        };
         CircularList.prototype.getEndIndex = function () {
             if (this.size_ === 0) {
                 return -1;
@@ -532,7 +487,7 @@ define('davinci-newton/util/CircularList',["require", "exports", "./UtilityCore"
         };
         CircularList.prototype.getEndValue = function () {
             var idx = this.getEndIndex();
-            return idx === -1 ? null : this.values_[this.indexToPointer(idx)];
+            return idx === -1 ? null : this.values_[this.indexToPointer_(idx)];
         };
         CircularList.prototype.getIterator = function (index) {
             return new CircularListIterator(this, index);
@@ -545,10 +500,10 @@ define('davinci-newton/util/CircularList',["require", "exports", "./UtilityCore"
             return idx;
         };
         CircularList.prototype.getValue = function (index) {
-            var i = this.indexToPointer(index);
+            var i = this.indexToPointer_(index);
             return this.values_[i];
         };
-        CircularList.prototype.indexToPointer = function (index) {
+        CircularList.prototype.indexToPointer_ = function (index) {
             if (this.size_ < this.capacity_)
                 return index;
             var p = index % this.capacity_;
@@ -585,6 +540,71 @@ define('davinci-newton/util/CircularList',["require", "exports", "./UtilityCore"
     }());
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = CircularList;
+    var CircularListIterator = (function () {
+        function CircularListIterator(cList, startIndex) {
+            this.cList = cList;
+            this.first_ = cList.size_ > 0;
+            this.cList_ = cList;
+            if (startIndex === undefined || startIndex < 0) {
+                startIndex = cList.getStartIndex();
+            }
+            if (cList.size_ > 0 &&
+                (startIndex < cList.getStartIndex() || startIndex > cList.getEndIndex())) {
+                throw new Error('out of range startIndex=' + startIndex);
+            }
+            this.index_ = startIndex;
+            this.pointer_ = cList.indexToPointer_(startIndex);
+        }
+        CircularListIterator.prototype.getIndex = function () {
+            if (this.cList_.size_ === 0) {
+                throw new Error('no data');
+            }
+            return this.index_;
+        };
+        CircularListIterator.prototype.getValue = function () {
+            if (this.cList_.size_ === 0) {
+                throw new Error('no data');
+            }
+            return this.cList_.values_[this.pointer_];
+        };
+        CircularListIterator.prototype.hasNext = function () {
+            return this.first_ || this.index_ < this.cList_.getEndIndex();
+        };
+        CircularListIterator.prototype.hasPrevious = function () {
+            return this.first_ || this.index_ > this.cList_.getStartIndex();
+        };
+        CircularListIterator.prototype.nextValue = function () {
+            if (this.cList_.size_ === 0)
+                throw new Error('no data');
+            if (this.first_) {
+                this.first_ = false;
+            }
+            else {
+                if (this.index_ + 1 > this.cList_.getEndIndex()) {
+                    throw new Error('cannot iterate past end of list');
+                }
+                this.index_++;
+                this.pointer_ = this.cList_.indexToPointer_(this.index_);
+            }
+            return this.cList_.values_[this.pointer_];
+        };
+        CircularListIterator.prototype.previousValue = function () {
+            if (this.cList_.size_ === 0)
+                throw new Error('no data');
+            if (this.first_) {
+                this.first_ = false;
+            }
+            else {
+                if (this.index_ - 1 < this.cList_.getStartIndex()) {
+                    throw new Error('cannot iterate prior to start of list');
+                }
+                this.index_--;
+                this.pointer_ = this.cList_.indexToPointer_(this.index_);
+            }
+            return this.cList_.values_[this.pointer_];
+        };
+        return CircularListIterator;
+    }());
 });
 
 define('davinci-newton/config',["require", "exports"], function (require, exports) {
@@ -592,9 +612,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-01-18';
+            this.LAST_MODIFIED = '2017-01-19';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.5';
+            this.VERSION = '0.0.6';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -634,8 +654,8 @@ define('davinci-newton/config',["require", "exports"], function (require, export
 define('davinci-newton/util/contains',["require", "exports"], function (require, exports) {
     "use strict";
     function contains(xs, x) {
-        var length = xs.length;
-        for (var i = 0; i < length; i++) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
             if (xs[i] === x) {
                 return true;
             }
@@ -668,19 +688,50 @@ define('davinci-newton/util/clone',["require", "exports"], function (require, ex
     exports.default = clone;
 });
 
-define('davinci-newton/util/find',["require", "exports"], function (require, exports) {
+define('davinci-newton/util/findIndex',["require", "exports"], function (require, exports) {
     "use strict";
-    function find(xs, predicate) {
-        throw new Error("TODO");
+    function findIndex(xs, test) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
+            var x = xs[i];
+            if (test(x, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = findIndex;
+});
+
+define('davinci-newton/util/find',["require", "exports", "./findIndex"], function (require, exports, findIndex_1) {
+    "use strict";
+    function find(xs, test) {
+        var i = findIndex_1.default(xs, test);
+        return i < 0 ? null : xs[i];
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = find;
 });
 
-define('davinci-newton/util/remove',["require", "exports"], function (require, exports) {
+define('davinci-newton/util/removeAt',["require", "exports"], function (require, exports) {
+    "use strict";
+    function removeAt(xs, index) {
+        return Array.prototype.splice.call(xs, index, 1).length === 1;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = removeAt;
+});
+
+define('davinci-newton/util/remove',["require", "exports", "./removeAt"], function (require, exports, removeAt_1) {
     "use strict";
     function remove(xs, x) {
-        throw new Error("TODO: remove");
+        var i = xs.indexOf(x);
+        var rv;
+        if ((rv = i >= 0)) {
+            removeAt_1.default(xs, i);
+        }
+        return rv;
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = remove;
@@ -729,6 +780,14 @@ define('davinci-newton/util/AbstractSubject',["require", "exports", "./clone", "
         };
         AbstractSubject.prototype.removeObserver = function (observer) {
             remove_1.default(this.observers_, observer);
+        };
+        AbstractSubject.prototype.addParameter = function (parameter) {
+            var name = parameter.getName();
+            var p = this.getParam(name);
+            if (p != null) {
+                throw new Error('parameter ' + name + ' already exists: ' + p);
+            }
+            this.paramList_.push(parameter);
         };
         AbstractSubject.prototype.getParam = function (name) {
             name = toName_1.default(name);
@@ -882,6 +941,87 @@ define('davinci-newton/checks/mustBeObject',["require", "exports", "../checks/mu
     exports.default = mustBeObject;
 });
 
+define('davinci-newton/util/ParameterNumber',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
+    "use strict";
+    var ParameterNumber = (function () {
+        function ParameterNumber(subject, name, getter, setter, choices, values) {
+            this.subject_ = subject;
+            this.name_ = validName_1.default(toName_1.default(name));
+            this.getter_ = getter;
+            this.setter_ = setter;
+            this.isComputed_ = false;
+            this.signifDigits_ = 3;
+            this.decimalPlaces_ = -1;
+            this.lowerLimit_ = 0;
+            this.upperLimit_ = Number.POSITIVE_INFINITY;
+            this.choices_ = [];
+            this.values_ = [];
+        }
+        ParameterNumber.prototype.getName = function () {
+            return this.name_;
+        };
+        ParameterNumber.prototype.getSubject = function () {
+            return this.subject_;
+        };
+        ParameterNumber.prototype.getValue = function () {
+            return this.getter_();
+        };
+        ParameterNumber.prototype.nameEquals = function (name) {
+            return this.name_ === toName_1.default(name);
+        };
+        ParameterNumber.prototype.setComputed = function (value) {
+            this.isComputed_ = value;
+        };
+        ParameterNumber.prototype.setLowerLimit = function (lowerLimit) {
+            if (lowerLimit > this.getValue() || lowerLimit > this.upperLimit_)
+                throw new Error('out of range');
+            this.lowerLimit_ = lowerLimit;
+            return this;
+        };
+        return ParameterNumber;
+    }());
+    exports.ParameterNumber = ParameterNumber;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ParameterNumber;
+});
+
+define('davinci-newton/util/ParameterString',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
+    "use strict";
+    var ParameterString = (function () {
+        function ParameterString(subject, name, getter, setter, choices, values) {
+            this.subject_ = subject;
+            this.name_ = validName_1.default(toName_1.default(name));
+            this.getter_ = getter;
+            this.setter_ = setter;
+            this.isComputed_ = false;
+            this.suggestedLength_ = 20;
+            this.maxLength_ = Number.POSITIVE_INFINITY;
+            this.choices_ = [];
+            this.values_ = [];
+            this.inputFunction_ = null;
+        }
+        ParameterString.prototype.getName = function () {
+            return this.name_;
+        };
+        ParameterString.prototype.getSubject = function () {
+            return this.subject_;
+        };
+        ParameterString.prototype.getValue = function () {
+            return this.getter_();
+        };
+        ParameterString.prototype.nameEquals = function (name) {
+            return this.name_ === toName_1.default(name);
+        };
+        ParameterString.prototype.setComputed = function (value) {
+            this.isComputed_ = value;
+        };
+        return ParameterString;
+    }());
+    exports.ParameterString = ParameterString;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ParameterString;
+});
+
 define('davinci-newton/util/veryDifferent',["require", "exports"], function (require, exports) {
     "use strict";
     function veryDifferent(arg1, arg2, epsilon, magnitude) {
@@ -906,11 +1046,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('davinci-newton/graph/GraphLine',["require", "exports", "../util/AbstractSubject", "../util/CircularList", "../view/DrawingMode", "../util/GenericEvent", "./GraphPoint", "./GraphStyle", "../checks/isObject", "../checks/mustBeLE", "../checks/mustBeObject", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, CircularList_1, DrawingMode_1, GenericEvent_1, GraphPoint_1, GraphStyle_1, isObject_1, mustBeLE_1, mustBeObject_1, veryDifferent_1) {
+define('davinci-newton/graph/GraphLine',["require", "exports", "../util/AbstractSubject", "../util/CircularList", "../view/DrawingMode", "../util/GenericEvent", "./GraphPoint", "./GraphStyle", "../checks/isObject", "../checks/mustBeLE", "../checks/mustBeObject", "../util/ParameterNumber", "../util/ParameterString", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, CircularList_1, DrawingMode_1, GenericEvent_1, GraphPoint_1, GraphStyle_1, isObject_1, mustBeLE_1, mustBeObject_1, ParameterNumber_1, ParameterString_1, veryDifferent_1) {
     "use strict";
-    var DRAWING_MODE = 'draw mode';
-    var GRAPH_COLOR = 'graph color';
-    var LINE_WIDTH = 'draw width';
     var GraphLine = (function (_super) {
         __extends(GraphLine, _super);
         function GraphLine(name, varsList, capacity) {
@@ -922,12 +1059,21 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
             varsList.addObserver(_this);
             _this.xVar_ = -1;
             _this.yVar_ = -1;
+            _this.xVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_X_VARIABLE, function () { return _this.getXVariable(); }, function (index) { return _this.setXVariable(index); });
+            _this.xVarParam_.setLowerLimit(-1);
+            _this.addParameter(_this.xVarParam_);
+            _this.yVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_Y_VARIABLE, function () { return _this.getYVariable(); }, function (index) { return _this.setYVariable(index); });
+            _this.yVarParam_.setLowerLimit(-1);
+            _this.addParameter(_this.yVarParam_);
             _this.dataPoints_ = new CircularList_1.default(capacity || 100000);
             _this.drawColor_ = 'lime';
             _this.drawMode_ = DrawingMode_1.default.LINES;
             _this.addGraphStyle();
             _this.xTransform = function (x, y) { return x; };
             _this.yTransform = function (x, y) { return y; };
+            _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_LINE_WIDTH, function () { return _this.getLineWidth(); }, function (lineWidth) { return _this.setLineWidth(lineWidth); }));
+            _this.addParameter(new ParameterString_1.default(_this, GraphLine.PARAM_NAME_DRAWING_MODE, function () { return _this.getDrawingMode(); }, function (drawingMode) { return _this.setDrawingMode(drawingMode); }));
+            _this.addParameter(new ParameterString_1.default(_this, GraphLine.PARAM_NAME_COLOR, function () { return _this.getColor(); }, function (color) { return _this.setColor(color); }));
             return _this;
         }
         GraphLine.prototype.addGraphStyle = function () {
@@ -1024,7 +1170,7 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
             if (this.drawColor_ !== color) {
                 this.drawColor_ = color;
                 this.addGraphStyle();
-                this.broadcastParameter(GRAPH_COLOR);
+                this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
             }
         };
         GraphLine.prototype.setDrawingMode = function (dm) {
@@ -1032,7 +1178,7 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
                 this.drawMode_ = dm;
                 this.addGraphStyle();
             }
-            this.broadcastParameter(DRAWING_MODE);
+            this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
         };
         GraphLine.prototype.setHotSpotColor = function (color) {
             this.hotSpotColor_ = color;
@@ -1041,7 +1187,7 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
             if (veryDifferent_1.default(value, this.lineWidth_)) {
                 this.lineWidth_ = value;
                 this.addGraphStyle();
-                this.broadcastParameter(LINE_WIDTH);
+                this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
             }
         };
         GraphLine.prototype.setXVariable = function (xVar) {
@@ -1051,7 +1197,7 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
             if (xVar !== this.xVar_) {
                 this.xVar_ = xVar;
                 this.reset();
-                this.broadcastParameter(GraphLine.X_VARIABLE);
+                this.broadcastParameter(GraphLine.PARAM_NAME_X_VARIABLE);
             }
         };
         GraphLine.prototype.setYVariable = function (yVar) {
@@ -1061,13 +1207,16 @@ define('davinci-newton/graph/GraphLine',["require", "exports", "../util/Abstract
             if (yVar !== this.yVar_) {
                 this.yVar_ = yVar;
                 this.reset();
-                this.broadcastParameter(GraphLine.Y_VARIABLE);
+                this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
             }
         };
         return GraphLine;
     }(AbstractSubject_1.default));
-    GraphLine.X_VARIABLE = 'X variable';
-    GraphLine.Y_VARIABLE = 'Y variable';
+    GraphLine.PARAM_NAME_X_VARIABLE = 'X variable';
+    GraphLine.PARAM_NAME_Y_VARIABLE = 'Y variable';
+    GraphLine.PARAM_NAME_LINE_WIDTH = 'line width';
+    GraphLine.PARAM_NAME_COLOR = 'color';
+    GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
     GraphLine.RESET = 'RESET';
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = GraphLine;
@@ -1082,19 +1231,36 @@ define('davinci-newton/checks/isDefined',["require", "exports"], function (requi
     exports.default = isDefined;
 });
 
-define('davinci-newton/util/removeAt',["require", "exports"], function (require, exports) {
+define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
     "use strict";
-    function removeAt(xs, index) {
-        throw new Error("removeAt");
+    function default_1(x) {
+        return x === null;
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = removeAt;
+    exports.default = default_1;
+});
+
+define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
+    "use strict";
+    function beObject() {
+        return "be a non-null `object`";
+    }
+    function mustBeObject(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeObject;
 });
 
 define('davinci-newton/util/repeat',["require", "exports"], function (require, exports) {
     "use strict";
-    function repeat(value, times) {
-        throw new Error("TODO");
+    function repeat(value, N) {
+        var xs = [];
+        for (var i = 0; i < N; i++) {
+            xs[i] = value;
+        }
+        return xs;
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = repeat;
@@ -1205,7 +1371,7 @@ define('davinci-newton/view/ScreenRect',["require", "exports", "../checks/isFunc
     exports.default = ScreenRect;
 });
 
-define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/contains", "../view/DrawingMode", "./GraphLine", "../checks/isDefined", "../util/removeAt", "../util/repeat", "../view/ScreenRect"], function (require, exports, contains_1, DrawingMode_1, GraphLine_1, isDefined_1, removeAt_1, repeat_1, ScreenRect_1) {
+define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/contains", "../view/DrawingMode", "./GraphLine", "../checks/isDefined", "../checks/mustBeNonNullObject", "../util/removeAt", "../util/repeat", "../view/ScreenRect"], function (require, exports, contains_1, DrawingMode_1, GraphLine_1, isDefined_1, mustBeNonNullObject_1, removeAt_1, repeat_1, ScreenRect_1) {
     "use strict";
     var DisplayGraph = (function () {
         function DisplayGraph() {
@@ -1284,9 +1450,11 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/conta
         DisplayGraph.prototype.drawPoints = function (context, coordMap, from, graphLine) {
             var simRect = coordMap.screenToSimRect(this.screenRect_);
             var iter = graphLine.getGraphPoints().getIterator(from);
-            if (!iter.hasNext())
+            if (!iter.hasNext()) {
                 return from;
+            }
             var next = iter.nextValue();
+            mustBeNonNullObject_1.default('first', next);
             var style = graphLine.getGraphStyle(iter.getIndex());
             if (style.drawMode === DrawingMode_1.default.DOTS) {
                 var x = coordMap.simToScreenX(next.x);
@@ -1298,17 +1466,20 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/conta
             while (iter.hasNext()) {
                 var last = next;
                 next = iter.nextValue();
-                if (next.x === last.x && next.y === last.y)
+                mustBeNonNullObject_1.default('next', next);
+                if (next.x === last.x && next.y === last.y) {
                     continue;
-                style = graphLine.getGraphStyle(iter.getIndex());
+                }
+                var style_1 = graphLine.getGraphStyle(iter.getIndex());
                 var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
-                if (style.drawMode === DrawingMode_1.default.DOTS || !continuous) {
-                    if (!simRect.contains(next))
+                if (style_1.drawMode === DrawingMode_1.default.DOTS || !continuous) {
+                    if (!simRect.contains(next)) {
                         continue;
+                    }
                     var x = coordMap.simToScreenX(next.x);
                     var y = coordMap.simToScreenY(next.y);
-                    var w = style.lineWidth;
-                    context.fillStyle = style.color_;
+                    var w = style_1.lineWidth;
+                    context.fillStyle = style_1.color_;
                     context.fillRect(x, y, w, w);
                 }
                 else {
@@ -1319,8 +1490,8 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/conta
                     var y1 = coordMap.simToScreenY(last.y);
                     var x2 = coordMap.simToScreenX(next.x);
                     var y2 = coordMap.simToScreenY(next.y);
-                    context.strokeStyle = style.color_;
-                    context.lineWidth = style.lineWidth;
+                    context.strokeStyle = style_1.color_;
+                    context.lineWidth = style_1.lineWidth;
                     context.beginPath();
                     context.moveTo(x1, y1);
                     context.lineTo(x2, y2);
@@ -1535,6 +1706,1130 @@ define('davinci-newton/model/ForceApp',["require", "exports", "../objects/Abstra
     exports.default = ForceApp;
 });
 
+define('davinci-newton/view/Point',["require", "exports"], function (require, exports) {
+    "use strict";
+    var Point = (function () {
+        function Point(x_, y_) {
+            this.x_ = x_;
+            this.y_ = y_;
+        }
+        Object.defineProperty(Point.prototype, "x", {
+            get: function () {
+                return this.x_;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Point.prototype, "y", {
+            get: function () {
+                return this.y_;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Point;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Point;
+});
+
+define('davinci-newton/view/DoubleRect',["require", "exports", "./Point", "../util/veryDifferent"], function (require, exports, Point_1, veryDifferent_1) {
+    "use strict";
+    var DoubleRect = (function () {
+        function DoubleRect(left, bottom, right, top) {
+            this.left_ = left;
+            this.right_ = right;
+            this.bottom_ = bottom;
+            this.top_ = top;
+            if (left > right) {
+                throw new Error('DoubleRect: left > right ' + left + ' > ' + right);
+            }
+            if (bottom > top) {
+                throw new Error('DoubleRect: bottom > top ' + bottom + ' > ' + top);
+            }
+        }
+        DoubleRect.clone = function (rect) {
+            return new DoubleRect(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
+        };
+        DoubleRect.isDuckType = function (obj) {
+            if (obj instanceof DoubleRect) {
+                return true;
+            }
+            return obj.getLeft !== undefined
+                && obj.getRight !== undefined
+                && obj.getTop !== undefined
+                && obj.getBottom !== undefined
+                && obj.translate !== undefined
+                && obj.scale !== undefined;
+        };
+        DoubleRect.make = function (point1, point2) {
+            var left = Math.min(point1.x, point2.x);
+            var right = Math.max(point1.x, point2.x);
+            var bottom = Math.min(point1.y, point2.y);
+            var top_ = Math.max(point1.y, point2.y);
+            return new DoubleRect(left, bottom, right, top_);
+        };
+        DoubleRect.makeCentered = function (center, width, height) {
+            var x = center.x;
+            var y = center.y;
+            return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
+        };
+        ;
+        DoubleRect.makeCentered2 = function (center, size) {
+            var x = center.x;
+            var y = center.y;
+            var w = size.x;
+            var h = size.y;
+            return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
+        };
+        DoubleRect.prototype.contains = function (point) {
+            return point.x >= this.left_ &&
+                point.x <= this.right_ &&
+                point.y >= this.bottom_ &&
+                point.y <= this.top_;
+        };
+        DoubleRect.prototype.equals = function (obj) {
+            if (obj === this)
+                return true;
+            if (obj instanceof DoubleRect) {
+                return obj.getLeft() === this.left_ && obj.getRight() === this.right_ &&
+                    obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
+            }
+            else {
+                return false;
+            }
+        };
+        DoubleRect.prototype.expand = function (marginX, marginY) {
+            marginY = (marginY === undefined) ? marginX : marginY;
+            return new DoubleRect(this.getLeft() - marginX, this.getBottom() - marginY, this.getRight() + marginX, this.getTop() + marginX);
+        };
+        DoubleRect.prototype.getBottom = function () {
+            return this.bottom_;
+        };
+        DoubleRect.prototype.getCenter = function () {
+            return new Point_1.default(this.getCenterX(), this.getCenterY());
+        };
+        DoubleRect.prototype.getCenterX = function () {
+            return (this.left_ + this.right_) / 2.0;
+        };
+        DoubleRect.prototype.getCenterY = function () {
+            return (this.bottom_ + this.top_) / 2.0;
+        };
+        DoubleRect.prototype.getHeight = function () {
+            return this.top_ - this.bottom_;
+        };
+        DoubleRect.prototype.getLeft = function () {
+            return this.left_;
+        };
+        DoubleRect.prototype.getRight = function () {
+            return this.right_;
+        };
+        DoubleRect.prototype.getTop = function () {
+            return this.top_;
+        };
+        DoubleRect.prototype.getWidth = function () {
+            return this.right_ - this.left_;
+        };
+        DoubleRect.prototype.isEmpty = function (tolerance) {
+            if (tolerance === void 0) { tolerance = 1E-16; }
+            return this.getWidth() < tolerance || this.getHeight() < tolerance;
+        };
+        DoubleRect.prototype.maybeVisible = function (p1, p2) {
+            if (this.contains(p1) || this.contains(p2)) {
+                return true;
+            }
+            var p1x = p1.x;
+            var p1y = p1.y;
+            var p2x = p2.x;
+            var p2y = p2.y;
+            var d = this.left_;
+            if (p1x < d && p2x < d) {
+                return false;
+            }
+            d = this.right_;
+            if (p1x > d && p2x > d) {
+                return false;
+            }
+            d = this.bottom_;
+            if (p1y < d && p2y < d) {
+                return false;
+            }
+            d = this.top_;
+            if (p1y > d && p2y > d) {
+                return false;
+            }
+            return true;
+        };
+        DoubleRect.prototype.nearEqual = function (rect, opt_tolerance) {
+            if (veryDifferent_1.default(this.left_, rect.getLeft(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.bottom_, rect.getBottom(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.right_, rect.getRight(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.top_, rect.getTop(), opt_tolerance)) {
+                return false;
+            }
+            return true;
+        };
+        DoubleRect.prototype.scale = function (factorX, factorY) {
+            factorY = (factorY === undefined) ? factorX : factorY;
+            var x0 = this.getCenterX();
+            var y0 = this.getCenterY();
+            var w = this.getWidth();
+            var h = this.getHeight();
+            return new DoubleRect(x0 - (factorX * w) / 2, y0 - (factorY * h) / 2, x0 + (factorX * w) / 2, y0 + (factorY * h) / 2);
+        };
+        DoubleRect.prototype.translate = function (x, y) {
+            return new DoubleRect(this.left_ + x, this.bottom_ + y, this.right_ + x, this.top_ + y);
+        };
+        DoubleRect.prototype.union = function (rect) {
+            return new DoubleRect(Math.min(this.left_, rect.getLeft()), Math.min(this.bottom_, rect.getBottom()), Math.max(this.right_, rect.getRight()), Math.max(this.top_, rect.getTop()));
+        };
+        DoubleRect.prototype.unionPoint = function (point) {
+            return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
+        };
+        return DoubleRect;
+    }());
+    DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = DoubleRect;
+});
+
+define('davinci-newton/view/AffineTransform',["require", "exports", "./Point"], function (require, exports, Point_1) {
+    "use strict";
+    var AffineTransform = (function () {
+        function AffineTransform(m11, m12, m21, m22, dx, dy) {
+            this.m11_ = m11;
+            this.m12_ = m12;
+            this.m21_ = m21;
+            this.m22_ = m22;
+            this.dx_ = dx;
+            this.dy_ = dy;
+        }
+        AffineTransform.prototype.applyTransform = function (context) {
+            context.transform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+            return this;
+        };
+        AffineTransform.prototype.concatenate = function (at) {
+            var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
+            var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
+            var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
+            var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
+            var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
+            var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
+            return new AffineTransform(m11, m12, m21, m22, dx, dy);
+        };
+        AffineTransform.prototype.lineTo = function (x, y, context) {
+            var p = this.transform(x, y);
+            context.lineTo(p.x, p.y);
+            return this;
+        };
+        AffineTransform.prototype.moveTo = function (x, y, context) {
+            var p = this.transform(x, y);
+            context.moveTo(p.x, p.y);
+            return this;
+        };
+        AffineTransform.prototype.rotate = function (angle) {
+            var c = Math.cos(angle);
+            var s = Math.sin(angle);
+            var m11 = c * this.m11_ + s * this.m21_;
+            var m12 = c * this.m12_ + s * this.m22_;
+            var m21 = -s * this.m11_ + c * this.m21_;
+            var m22 = -s * this.m12_ + c * this.m22_;
+            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+        };
+        AffineTransform.prototype.scale = function (x, y) {
+            var m11 = this.m11_ * x;
+            var m12 = this.m12_ * x;
+            var m21 = this.m21_ * y;
+            var m22 = this.m22_ * y;
+            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+        };
+        AffineTransform.prototype.setTransform = function (context) {
+            context.setTransform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+            return this;
+        };
+        AffineTransform.prototype.transform = function (x, y) {
+            var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
+            var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
+            return new Point_1.default(x2, y2);
+        };
+        AffineTransform.prototype.translate = function (x, y) {
+            var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
+            var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
+            return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
+        };
+        return AffineTransform;
+    }());
+    AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AffineTransform;
+});
+
+define('davinci-newton/view/HorizAlign',["require", "exports"], function (require, exports) {
+    "use strict";
+    var HorizAlign;
+    (function (HorizAlign) {
+        HorizAlign[HorizAlign["LEFT"] = 0] = "LEFT";
+        HorizAlign[HorizAlign["MIDDLE"] = 1] = "MIDDLE";
+        HorizAlign[HorizAlign["RIGHT"] = 2] = "RIGHT";
+        HorizAlign[HorizAlign["FULL"] = 3] = "FULL";
+    })(HorizAlign = exports.HorizAlign || (exports.HorizAlign = {}));
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = HorizAlign;
+});
+
+define('davinci-newton/checks/mustBeFinite',["require", "exports"], function (require, exports) {
+    "use strict";
+    function mustBeFinite(value) {
+        if (typeof value !== 'number' || !isFinite(value)) {
+            throw new Error('not a finite number ' + value);
+        }
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeFinite;
+});
+
+define('davinci-newton/view/VerticalAlign',["require", "exports"], function (require, exports) {
+    "use strict";
+    var VerticalAlign;
+    (function (VerticalAlign) {
+        VerticalAlign[VerticalAlign["TOP"] = 0] = "TOP";
+        VerticalAlign[VerticalAlign["MIDDLE"] = 1] = "MIDDLE";
+        VerticalAlign[VerticalAlign["BOTTOM"] = 2] = "BOTTOM";
+        VerticalAlign[VerticalAlign["FULL"] = 3] = "FULL";
+    })(VerticalAlign = exports.VerticalAlign || (exports.VerticalAlign = {}));
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = VerticalAlign;
+});
+
+define('davinci-newton/view/CoordMap',["require", "exports", "./AffineTransform", "./DoubleRect", "./HorizAlign", "../checks/mustBeFinite", "./Point", "./ScreenRect", "./VerticalAlign"], function (require, exports, AffineTransform_1, DoubleRect_1, HorizAlign_1, mustBeFinite_1, Point_1, ScreenRect_1, VerticalAlign_1) {
+    "use strict";
+    var MIN_SIZE = 1E-15;
+    var CoordMap = (function () {
+        function CoordMap(screen_left, screen_bottom, sim_left, sim_bottom, pixel_per_unit_x, pixel_per_unit_y) {
+            this.screen_left_ = mustBeFinite_1.default(screen_left);
+            this.screen_bottom_ = mustBeFinite_1.default(screen_bottom);
+            this.sim_left_ = mustBeFinite_1.default(sim_left);
+            this.sim_bottom_ = mustBeFinite_1.default(sim_bottom);
+            this.pixel_per_unit_x_ = mustBeFinite_1.default(pixel_per_unit_x);
+            this.pixel_per_unit_y_ = mustBeFinite_1.default(pixel_per_unit_y);
+            var at = AffineTransform_1.default.IDENTITY;
+            at = at.translate(this.screen_left_, this.screen_bottom_);
+            at = at.scale(this.pixel_per_unit_x_, -this.pixel_per_unit_y_);
+            at = at.translate(-this.sim_left_, -this.sim_bottom_);
+            this.transform_ = at;
+        }
+        CoordMap.make = function (screenRect, simRect, horizAlign, verticalAlign, aspectRatio) {
+            if (horizAlign === void 0) { horizAlign = HorizAlign_1.default.MIDDLE; }
+            if (verticalAlign === void 0) { verticalAlign = VerticalAlign_1.default.MIDDLE; }
+            if (aspectRatio === void 0) { aspectRatio = 1; }
+            if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
+                throw new Error('bad aspectRatio ' + aspectRatio);
+            }
+            var simLeft = simRect.getLeft();
+            var simBottom = simRect.getBottom();
+            var sim_width = simRect.getRight() - simLeft;
+            var sim_height = simRect.getTop() - simBottom;
+            if (sim_width < MIN_SIZE || sim_height < MIN_SIZE) {
+                throw new Error('simRect cannot be empty ' + simRect);
+            }
+            var screen_top = screenRect.getTop();
+            var screen_left = screenRect.getLeft();
+            var screen_width = screenRect.getWidth();
+            var screen_height = screenRect.getHeight();
+            var offset_x = 0;
+            var offset_y = 0;
+            var pixel_per_unit_x = 0;
+            var pixel_per_unit_y = 0;
+            if (horizAlign === HorizAlign_1.default.FULL) {
+                pixel_per_unit_x = screen_width / sim_width;
+                offset_x = 0;
+            }
+            if (verticalAlign === VerticalAlign_1.default.FULL) {
+                pixel_per_unit_y = screen_height / sim_height;
+                offset_y = 0;
+            }
+            if (horizAlign !== HorizAlign_1.default.FULL || verticalAlign !== VerticalAlign_1.default.FULL) {
+                var horizFull;
+                if (horizAlign === HorizAlign_1.default.FULL) {
+                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                    horizFull = true;
+                }
+                else if (verticalAlign === VerticalAlign_1.default.FULL) {
+                    pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                    horizFull = false;
+                }
+                else {
+                    pixel_per_unit_x = screen_width / sim_width;
+                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                    horizFull = true;
+                    var ideal_height = Math.floor(0.5 + pixel_per_unit_y * sim_height);
+                    if (screen_height < ideal_height) {
+                        pixel_per_unit_y = screen_height / sim_height;
+                        pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                        horizFull = false;
+                    }
+                }
+                if (!horizFull) {
+                    offset_y = 0;
+                    var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
+                    switch (horizAlign) {
+                        case HorizAlign_1.default.LEFT:
+                            offset_x = 0;
+                            break;
+                        case HorizAlign_1.default.MIDDLE:
+                            offset_x = (screen_width - ideal_width) / 2;
+                            break;
+                        case HorizAlign_1.default.RIGHT:
+                            offset_x = screen_width - ideal_width;
+                            break;
+                        default: throw new Error();
+                    }
+                }
+                else {
+                    offset_x = 0;
+                    var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
+                    switch (verticalAlign) {
+                        case VerticalAlign_1.default.BOTTOM:
+                            offset_y = 0;
+                            break;
+                        case VerticalAlign_1.default.MIDDLE:
+                            offset_y = (screen_height - ideal_height) / 2;
+                            break;
+                        case VerticalAlign_1.default.TOP:
+                            offset_y = screen_height - ideal_height;
+                            break;
+                        default: {
+                            throw new Error();
+                        }
+                    }
+                }
+            }
+            var coordMap = new CoordMap(screen_left, screen_top + screen_height, simLeft - offset_x / pixel_per_unit_x, simBottom - offset_y / pixel_per_unit_y, pixel_per_unit_x, pixel_per_unit_y);
+            return coordMap;
+        };
+        CoordMap.isDuckType = function (obj) {
+            if (obj instanceof CoordMap) {
+                return true;
+            }
+            return obj.getAffineTransform !== undefined
+                && obj.simToScreenX !== undefined
+                && obj.simToScreenY !== undefined
+                && obj.screenToSimX !== undefined
+                && obj.screenToSimY !== undefined
+                && obj.getScaleX !== undefined
+                && obj.getScaleY !== undefined;
+        };
+        CoordMap.prototype.getAffineTransform = function () {
+            return this.transform_;
+        };
+        CoordMap.prototype.getScaleX = function () {
+            return this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.getScaleY = function () {
+            return this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.screenToSim = function (scr_x, scr_y) {
+            return new Point_1.default(this.screenToSimX(scr_x), this.screenToSimY(scr_y));
+        };
+        CoordMap.prototype.screenToSimRect = function (rect) {
+            return new DoubleRect_1.default(this.screenToSimX(rect.getLeft()), this.screenToSimY(rect.getTop() + rect.getHeight()), this.screenToSimX(rect.getLeft() + rect.getWidth()), this.screenToSimY(rect.getTop()));
+        };
+        CoordMap.prototype.screenToSimScaleX = function (scr_x) {
+            return scr_x / this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.screenToSimScaleY = function (scr_y) {
+            return scr_y / this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.screenToSimX = function (scr_x) {
+            return this.sim_left_ + (scr_x - this.screen_left_) / this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.screenToSimY = function (scr_y) {
+            return this.sim_bottom_ + (this.screen_bottom_ - scr_y) / this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.simToScreen = function (p_sim) {
+            return new Point_1.default(this.simToScreenX(p_sim.x), this.simToScreenY(p_sim.y));
+        };
+        CoordMap.prototype.simToScreenRect = function (r) {
+            return new ScreenRect_1.default(this.simToScreenX(r.getLeft()), this.simToScreenY(r.getTop()), this.simToScreenScaleX(r.getWidth()), this.simToScreenScaleY(r.getHeight()));
+        };
+        CoordMap.prototype.simToScreenScaleX = function (length_x) {
+            return length_x * this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.simToScreenScaleY = function (length_y) {
+            return length_y * this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.simToScreenX = function (sim_x) {
+            return this.screen_left_ + (sim_x - this.sim_left_) * this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.simToScreenY = function (sim_y) {
+            return this.screen_bottom_ - (sim_y - this.sim_bottom_) * this.pixel_per_unit_y_;
+        };
+        return CoordMap;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CoordMap;
+});
+
+define('davinci-newton/util/insertAt',["require", "exports"], function (require, exports) {
+    "use strict";
+    function slice(xs, start, opt_end) {
+        if (arguments.length <= 2) {
+            return Array.prototype.slice.call(xs, start);
+        }
+        else {
+            return Array.prototype.slice.call(xs, start, opt_end);
+        }
+    }
+    function splice(xs, index, howMany, var_args) {
+        return Array.prototype.splice.apply(xs, slice(arguments, 1));
+    }
+    function insertAt(xs, x, index) {
+        if (index === void 0) { index = 0; }
+        splice(xs, index, 0, x);
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = insertAt;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/view/DisplayList',["require", "exports", "../util/AbstractSubject", "../util/GenericEvent", "../util/insertAt", "../checks/isObject"], function (require, exports, AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1) {
+    "use strict";
+    var DisplayList = (function (_super) {
+        __extends(DisplayList, _super);
+        function DisplayList(name) {
+            var _this = _super.call(this, name || 'DISPLAY_LIST_' + (DisplayList.NAME_ID++)) || this;
+            _this.drawables_ = [];
+            return _this;
+        }
+        DisplayList.prototype.add = function (dispObj) {
+            if (!isObject_1.default(dispObj)) {
+                throw new Error('non-object passed to DisplayList.add');
+            }
+            var zIndex = dispObj.getZIndex();
+            this.sort();
+            for (var i = 0, n = this.drawables_.length; i < n; i++) {
+                var z = this.drawables_[i].getZIndex();
+                if (zIndex < z) {
+                    break;
+                }
+            }
+            insertAt_1.default(this.drawables_, dispObj, i);
+            this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
+        };
+        DisplayList.prototype.draw = function (context, coordMap) {
+            this.sort();
+            var ds = this.drawables_;
+            var N = ds.length;
+            for (var i = 0; i < N; i++) {
+                ds[i].draw(context, coordMap);
+            }
+        };
+        DisplayList.prototype.prepend = function (dispObj) {
+            if (!isObject_1.default(dispObj)) {
+                throw new Error('non-object passed to DisplayList.add');
+            }
+            var zIndex = dispObj.getZIndex();
+            this.sort();
+            var N = this.drawables_.length;
+            for (var i = N; i > 0; i--) {
+                var z = this.drawables_[i - 1].getZIndex();
+                if (zIndex > z) {
+                    break;
+                }
+            }
+            insertAt_1.default(this.drawables_, dispObj, i);
+            this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
+        };
+        DisplayList.prototype.sort = function () {
+        };
+        return DisplayList;
+    }(AbstractSubject_1.default));
+    DisplayList.NAME_ID = 1;
+    DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
+    DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
+    exports.DisplayList = DisplayList;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = DisplayList;
+});
+
+define('davinci-newton/util/ParameterBoolean',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
+    "use strict";
+    var ParameterBoolean = (function () {
+        function ParameterBoolean(subject, name, getter, setter, choices, values) {
+            this.subject_ = subject;
+            this.name_ = validName_1.default(toName_1.default(name));
+            this.getter_ = getter;
+            this.setter_ = setter;
+            this.isComputed_ = false;
+            this.choices_ = [];
+            this.values_ = [];
+        }
+        ParameterBoolean.prototype.getName = function () {
+            return this.name_;
+        };
+        ParameterBoolean.prototype.getSubject = function () {
+            return this.subject_;
+        };
+        ParameterBoolean.prototype.nameEquals = function (name) {
+            return this.name_ === toName_1.default(name);
+        };
+        ParameterBoolean.prototype.setComputed = function (value) {
+            this.isComputed_ = value;
+        };
+        return ParameterBoolean;
+    }());
+    exports.ParameterBoolean = ParameterBoolean;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = ParameterBoolean;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/view/SimView',["require", "exports", "../util/AbstractSubject", "../util/clone", "../util/contains", "./CoordMap", "./DisplayList", "./DoubleRect", "../util/GenericEvent", "./HorizAlign", "../util/ParameterBoolean", "../util/ParameterNumber", "../util/remove", "./ScreenRect", "./VerticalAlign", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, clone_1, contains_1, CoordMap_1, DisplayList_1, DoubleRect_1, GenericEvent_1, HorizAlign_1, ParameterBoolean_1, ParameterNumber_1, remove_1, ScreenRect_1, VerticalAlign_1, veryDifferent_1) {
+    "use strict";
+    var COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
+    var SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
+    var SimView = (function (_super) {
+        __extends(SimView, _super);
+        function SimView(name, simRect) {
+            var _this = _super.call(this, name) || this;
+            _this.panX = 0.05;
+            _this.panY = 0.05;
+            _this.zoom = 1.1;
+            _this.screenRect_ = new ScreenRect_1.default(0, 0, 800, 600);
+            _this.horizAlign_ = HorizAlign_1.default.MIDDLE;
+            _this.verticalAlign_ = VerticalAlign_1.default.MIDDLE;
+            _this.aspectRatio_ = 1.0;
+            _this.displayList_ = new DisplayList_1.default();
+            _this.scaleTogether_ = true;
+            _this.opaqueness = 1.0;
+            _this.memorizables_ = [];
+            if (!(simRect instanceof DoubleRect_1.default) || simRect.isEmpty()) {
+                throw new Error('bad simRect: ' + simRect);
+            }
+            _this.simRect_ = simRect;
+            _this.coordMap_ = CoordMap_1.default.make(_this.screenRect_, _this.simRect_, _this.horizAlign_, _this.verticalAlign_, _this.aspectRatio_);
+            _this.width_ = simRect.getWidth();
+            _this.height_ = simRect.getHeight();
+            _this.centerX_ = simRect.getCenterX();
+            _this.centerY_ = simRect.getCenterY();
+            _this.ratio_ = _this.height_ / _this.width_;
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_WIDTH, function () { return _this.getWidth(); }, function (width) { return _this.setWidth(width); }));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HEIGHT, function () { return _this.getHeight(); }, function (height) { return _this.setHeight(height); }));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_X, function () { return _this.getCenterX(); }, function (centerX) { return _this.setCenterX(centerX); }).setLowerLimit(Number.NEGATIVE_INFINITY));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_Y, function () { return _this.getCenterY(); }, function (centerY) { return _this.setCenterY(centerY); }).setLowerLimit(Number.NEGATIVE_INFINITY));
+            _this.addParameter(new ParameterBoolean_1.default(_this, SimView.PARAM_NAME_SCALE_TOGETHER, function () { return _this.getScaleTogether(); }, function (scaleTogether) { return _this.setScaleTogether(scaleTogether); }));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_VERTICAL_ALIGN, function () { return _this.getVerticalAlign(); }, function (verticalAlign) { return _this.setVerticalAlign(verticalAlign); }));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, function () { return _this.getHorizAlign(); }, function (horizAlign) { return _this.setHorizAlign(horizAlign); }));
+            _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_ASPECT_RATIO, function () { return _this.getAspectRatio(); }, function (aspectRatio) { return _this.setAspectRatio(aspectRatio); }));
+            return _this;
+        }
+        ;
+        SimView.prototype.addMemo = function (memorizable) {
+            if (!contains_1.default(this.memorizables_, memorizable)) {
+                this.memorizables_.push(memorizable);
+            }
+        };
+        SimView.prototype.gainFocus = function () {
+        };
+        SimView.prototype.getAspectRatio = function () {
+            return this.aspectRatio_;
+        };
+        SimView.prototype.getCenterX = function () {
+            return this.centerX_;
+        };
+        SimView.prototype.getCenterY = function () {
+            return this.centerY_;
+        };
+        SimView.prototype.getCoordMap = function () {
+            return this.coordMap_;
+        };
+        SimView.prototype.getDisplayList = function () {
+            return this.displayList_;
+        };
+        SimView.prototype.getHeight = function () {
+            return this.height_;
+        };
+        SimView.prototype.getHorizAlign = function () {
+            return this.horizAlign_;
+        };
+        SimView.prototype.getMemos = function () {
+            return clone_1.default(this.memorizables_);
+        };
+        SimView.prototype.getScaleTogether = function () {
+            return this.scaleTogether_;
+        };
+        SimView.prototype.getScreenRect = function () {
+            return this.screenRect_;
+        };
+        SimView.prototype.getSimRect = function () {
+            return this.simRect_;
+        };
+        SimView.prototype.getVerticalAlign = function () {
+            return this.verticalAlign_;
+        };
+        SimView.prototype.getWidth = function () {
+            return this.width_;
+        };
+        SimView.prototype.loseFocus = function () {
+        };
+        SimView.prototype.paint = function (context) {
+            context.save();
+            context.globalAlpha = this.opaqueness;
+            this.displayList_.draw(context, this.coordMap_);
+            context.restore();
+        };
+        SimView.prototype.setCoordMap = function (map) {
+            if (!CoordMap_1.default.isDuckType(map))
+                throw new Error('not a CoordMap: ' + map);
+            this.coordMap_ = map;
+            this.broadcast(new GenericEvent_1.default(this, COORD_MAP_CHANGED));
+        };
+        SimView.prototype.setScreenRect = function (screenRect) {
+            if (!ScreenRect_1.default.isDuckType(screenRect))
+                throw new Error('not a ScreenRect: ' + screenRect);
+            if (screenRect.isEmpty()) {
+                throw new Error('empty screenrect');
+            }
+            if (!this.screenRect_.equals(screenRect)) {
+                this.screenRect_ = screenRect;
+                this.realign();
+                this.broadcast(new GenericEvent_1.default(this, SCREEN_RECT_CHANGED));
+            }
+        };
+        SimView.prototype.setSimRect = function (simRect) {
+            if (!DoubleRect_1.default.isDuckType(simRect))
+                throw new Error('not a DoubleRect: ' + simRect);
+            if (!simRect.equals(this.simRect_)) {
+                this.simRect_ = simRect;
+                this.realign();
+                this.broadcastParameter(SimView.PARAM_NAME_WIDTH);
+                this.broadcastParameter(SimView.PARAM_NAME_HEIGHT);
+                this.broadcastParameter(SimView.PARAM_NAME_CENTER_X);
+                this.broadcastParameter(SimView.PARAM_NAME_CENTER_Y);
+                this.broadcast(new GenericEvent_1.default(this, SimView.SIM_RECT_CHANGED));
+            }
+        };
+        SimView.prototype.memorize = function () {
+            for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                this.memorizables_[i].memorize();
+            }
+        };
+        SimView.prototype.realign = function () {
+            this.setCoordMap(CoordMap_1.default.make(this.screenRect_, this.simRect_, this.horizAlign_, this.verticalAlign_, this.aspectRatio_));
+            this.width_ = this.simRect_.getWidth();
+            this.height_ = this.simRect_.getHeight();
+            this.centerX_ = this.simRect_.getCenterX();
+            this.centerY_ = this.simRect_.getCenterY();
+            this.ratio_ = this.height_ / this.width_;
+        };
+        SimView.prototype.modifySimRect = function () {
+            var left = this.centerX_ - this.width_ / 2.0;
+            var bottom = this.centerY_ - this.height_ / 2.0;
+            var r = new DoubleRect_1.default(left, bottom, left + this.width_, bottom + this.height_);
+            this.setSimRect(r);
+        };
+        SimView.prototype.panDown = function () {
+            this.setCenterY(this.centerY_ - this.panY * this.height_);
+        };
+        SimView.prototype.panLeft = function () {
+            this.setCenterX(this.centerX_ - this.panX * this.width_);
+        };
+        SimView.prototype.panRight = function () {
+            this.setCenterX(this.centerX_ + this.panX * this.width_);
+        };
+        SimView.prototype.panUp = function () {
+            this.setCenterY(this.centerY_ + this.panY * this.height_);
+        };
+        SimView.prototype.removeMemo = function (memorizable) {
+            remove_1.default(this.memorizables_, memorizable);
+        };
+        SimView.prototype.setAspectRatio = function (aspectRatio) {
+            if (veryDifferent_1.default(this.aspectRatio_, aspectRatio)) {
+                this.aspectRatio_ = aspectRatio;
+                this.realign();
+                this.broadcastParameter(SimView.PARAM_NAME_ASPECT_RATIO);
+            }
+        };
+        SimView.prototype.setCenterX = function (centerX) {
+            if (veryDifferent_1.default(this.centerX_, centerX)) {
+                this.centerX_ = centerX;
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setCenterY = function (value) {
+            if (veryDifferent_1.default(this.centerY_, value)) {
+                this.centerY_ = value;
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setHeight = function (value) {
+            if (veryDifferent_1.default(this.height_, value)) {
+                this.height_ = value;
+                if (this.scaleTogether_) {
+                    this.width_ = this.height_ / this.ratio_;
+                }
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setHorizAlign = function (alignHoriz) {
+            this.horizAlign_ = alignHoriz;
+            this.realign();
+            this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
+        };
+        SimView.prototype.setScaleTogether = function (value) {
+            if (this.scaleTogether_ !== value) {
+                this.scaleTogether_ = value;
+                if (this.scaleTogether_) {
+                    this.ratio_ = this.height_ / this.width_;
+                }
+                this.broadcastParameter(SimView.PARAM_NAME_SCALE_TOGETHER);
+            }
+        };
+        SimView.prototype.setVerticalAlign = function (alignVert) {
+            this.verticalAlign_ = alignVert;
+            this.realign();
+            this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
+        };
+        SimView.prototype.setWidth = function (value) {
+            if (veryDifferent_1.default(this.width_, value)) {
+                this.width_ = value;
+                if (this.scaleTogether_) {
+                    this.height_ = this.width_ * this.ratio_;
+                }
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.zoomIn = function () {
+            this.setHeight(this.height_ / this.zoom);
+        };
+        SimView.prototype.zoomOut = function () {
+            this.setHeight(this.height_ * this.zoom);
+        };
+        return SimView;
+    }(AbstractSubject_1.default));
+    SimView.PARAM_NAME_WIDTH = 'width';
+    SimView.PARAM_NAME_HEIGHT = 'height';
+    SimView.PARAM_NAME_CENTER_X = 'center-x';
+    SimView.PARAM_NAME_CENTER_Y = 'center-y';
+    SimView.PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
+    SimView.PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
+    SimView.PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
+    SimView.PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
+    SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
+    exports.SimView = SimView;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = SimView;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/graph/AutoScale',["require", "exports", "../util/AbstractSubject", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../checks/isDefined", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, isDefined_1, repeat_1, SimView_1, veryDifferent_1) {
+    "use strict";
+    var AutoScale = (function (_super) {
+        __extends(AutoScale, _super);
+        function AutoScale(name, graphLine, simView) {
+            var _this = _super.call(this, name) || this;
+            _this.graphLines_ = [];
+            _this.enabled_ = true;
+            _this.isActive_ = true;
+            _this.ownEvent_ = false;
+            _this.rangeSetX_ = false;
+            _this.rangeSetY_ = false;
+            _this.rangeXHi_ = 0;
+            _this.rangeXLo_ = 0;
+            _this.rangeYHi_ = 0;
+            _this.rangeYLo_ = 0;
+            _this.timeWindow_ = 10;
+            _this.extraMargin = 0.01;
+            _this.minSize = 1E-14;
+            _this.axis_ = AutoScale.BOTH_AXES;
+            if (isDefined_1.default(graphLine) && !GraphLine_1.default.isDuckType(graphLine)) {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                _this.graphLines_.push(graphLine);
+                graphLine.addObserver(_this);
+            }
+            _this.simView_ = simView;
+            simView.addMemo(_this);
+            simView.addObserver(_this);
+            _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
+            _this.setComputed(_this.isActive_);
+            return _this;
+        }
+        AutoScale.prototype.addGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                if (!contains_1.default(this.graphLines_, graphLine)) {
+                    this.graphLines_.push(graphLine);
+                    this.lastIndex_.push(-1);
+                }
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        AutoScale.prototype.clearRange = function () {
+            this.rangeXLo_ = 0;
+            this.rangeXHi_ = 0;
+            this.rangeSetX_ = false;
+            this.rangeYLo_ = 0;
+            this.rangeYHi_ = 0;
+            this.rangeSetY_ = false;
+        };
+        AutoScale.prototype.getActive = function () {
+            return this.isActive_;
+        };
+        AutoScale.prototype.getAxis = function () {
+            return this.axis_;
+        };
+        AutoScale.prototype.getEnabled = function () {
+            return this.enabled_;
+        };
+        AutoScale.prototype.getRangeRect = function () {
+            return new DoubleRect_1.default(this.rangeXLo_, this.rangeYLo_, this.rangeXHi_, this.rangeYHi_);
+        };
+        AutoScale.prototype.getTimeWindow = function () {
+            return this.timeWindow_;
+        };
+        AutoScale.prototype.memorize = function () {
+            for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                var graphPts = this.graphLines_[i].getGraphPoints();
+                if (this.lastIndex_[i] > graphPts.getEndIndex()) {
+                    this.reset();
+                }
+            }
+            for (i = 0, n = this.graphLines_.length; i < n; i++) {
+                graphPts = this.graphLines_[i].getGraphPoints();
+                var iter = graphPts.getIterator(this.lastIndex_[i]);
+                while (iter.hasNext()) {
+                    var gp = iter.nextValue();
+                    this.updateRange_(this.graphLines_[i], gp.x, gp.y);
+                    this.lastIndex_[i] = iter.getIndex();
+                }
+            }
+            this.rangeCheck_();
+        };
+        AutoScale.prototype.observe = function (event) {
+            if (event.getSubject() === this.simView_) {
+                if (event.nameEquals(SimView_1.default.SIM_RECT_CHANGED)) {
+                    if (!this.ownEvent_) {
+                        this.setActive(false);
+                    }
+                }
+            }
+            else if (contains_1.default(this.graphLines_, event.getSubject())) {
+                if (event.nameEquals(GraphLine_1.default.PARAM_NAME_X_VARIABLE) || event.nameEquals(GraphLine_1.default.PARAM_NAME_Y_VARIABLE)) {
+                    this.reset();
+                }
+                else if (event.nameEquals(GraphLine_1.default.RESET)) {
+                    this.setActive(true);
+                }
+            }
+        };
+        AutoScale.prototype.rangeCheck_ = function () {
+            var e = this.minSize;
+            if (this.rangeXHi_ - this.rangeXLo_ < e) {
+                var avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
+                var incr = Math.max(avg * e, e);
+                this.rangeXHi_ = avg + incr;
+                this.rangeXLo_ = avg - incr;
+            }
+            if (this.rangeYHi_ - this.rangeYLo_ < e) {
+                var avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
+                var incr = Math.max(avg * e, e);
+                this.rangeYHi_ = avg + incr;
+                this.rangeYLo_ = avg - incr;
+            }
+            var nr = this.getRangeRect();
+            var sr = this.simView_.getSimRect();
+            if (this.axis_ === AutoScale.VERTICAL) {
+                nr = new DoubleRect_1.default(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
+            }
+            else if (this.axis_ === AutoScale.HORIZONTAL) {
+                nr = new DoubleRect_1.default(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
+            }
+            if (this.isActive_ && !nr.nearEqual(sr)) {
+                this.ownEvent_ = true;
+                this.simView_.setSimRect(nr);
+                this.ownEvent_ = false;
+                this.broadcast(new GenericEvent_1.default(this, AutoScale.AUTO_SCALE, nr));
+            }
+        };
+        AutoScale.prototype.removeGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                var idx = this.graphLines_.indexOf(graphLine);
+                removeAt_1.default(this.graphLines_, idx);
+                removeAt_1.default(this.lastIndex_, idx);
+                this.reset();
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        AutoScale.prototype.reset = function () {
+            this.clearRange();
+            for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
+                this.lastIndex_[i] = -1;
+            }
+        };
+        AutoScale.prototype.setActive = function (value) {
+            if (this.isActive_ !== value) {
+                if (value) {
+                    if (this.enabled_) {
+                        this.reset();
+                        this.simView_.addMemo(this);
+                        this.setComputed(true);
+                        this.isActive_ = true;
+                        this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
+                    }
+                }
+                else {
+                    this.simView_.removeMemo(this);
+                    this.setComputed(false);
+                    this.isActive_ = false;
+                    this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
+                }
+            }
+        };
+        AutoScale.prototype.setAxis = function (value) {
+            if (value === AutoScale.VERTICAL || value === AutoScale.HORIZONTAL || value === AutoScale.BOTH_AXES) {
+                this.axis_ = value;
+                this.broadcastParameter(AutoScale.AXIS);
+            }
+            else {
+                throw new Error('unknown ' + value);
+            }
+        };
+        AutoScale.prototype.setComputed = function (value) {
+            var _this = this;
+            var names = [SimView_1.default.PARAM_NAME_WIDTH, SimView_1.default.PARAM_NAME_HEIGHT, SimView_1.default.PARAM_NAME_CENTER_X, SimView_1.default.PARAM_NAME_CENTER_Y];
+            names.forEach(function (name) {
+                var p = _this.simView_.getParameter(name);
+                p.setComputed(value);
+            });
+        };
+        AutoScale.prototype.setEnabled = function (value) {
+            if (this.enabled_ !== value) {
+                this.enabled_ = value;
+                this.setActive(value);
+                this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
+            }
+        };
+        AutoScale.prototype.setTimeWindow = function (value) {
+            if (veryDifferent_1.default(value, this.timeWindow_)) {
+                this.timeWindow_ = value;
+                this.reset();
+                this.setActive(true);
+                this.broadcastParameter(AutoScale.TIME_WINDOW);
+            }
+        };
+        AutoScale.prototype.updateRange_ = function (line, nowX, nowY) {
+            if (!isFinite(nowX)) {
+                if (nowX === Number.POSITIVE_INFINITY) {
+                    nowX = 1e308;
+                }
+                else if (nowX === Number.NEGATIVE_INFINITY) {
+                    nowX = -1e308;
+                }
+            }
+            if (!isFinite(nowY)) {
+                if (nowY === Number.POSITIVE_INFINITY) {
+                    nowY = 1e308;
+                }
+                else if (nowY === Number.NEGATIVE_INFINITY) {
+                    nowY = -1e308;
+                }
+            }
+            var timeIdx = line.getVarsList().timeIndex();
+            var xIsTimeVar = line.getXVariable() === timeIdx;
+            var yIsTimeVar = line.getYVariable() === timeIdx;
+            if (!this.rangeSetX_) {
+                this.rangeXLo_ = nowX;
+                this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
+                this.rangeSetX_ = true;
+            }
+            else {
+                if (nowX < this.rangeXLo_) {
+                    if (xIsTimeVar) {
+                        this.rangeXLo_ = nowX;
+                        this.rangeXHi_ = nowX + this.timeWindow_;
+                    }
+                    else {
+                        this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
+                    }
+                }
+                if (xIsTimeVar) {
+                    if (nowX > this.rangeXHi_ - this.extraMargin * this.timeWindow_) {
+                        this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
+                        this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
+                    }
+                }
+                else {
+                    if (nowX > this.rangeXHi_) {
+                        this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
+                    }
+                }
+            }
+            if (!this.rangeSetY_) {
+                this.rangeYLo_ = nowY;
+                this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
+                this.rangeSetY_ = true;
+            }
+            else {
+                if (nowY < this.rangeYLo_) {
+                    if (yIsTimeVar) {
+                        this.rangeYLo_ = nowY;
+                        this.rangeYHi_ = nowY + this.timeWindow_;
+                    }
+                    else {
+                        this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                    }
+                }
+                if (yIsTimeVar) {
+                    if (nowY > this.rangeYHi_ - this.extraMargin * this.timeWindow_) {
+                        this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
+                        this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
+                    }
+                }
+                else {
+                    if (nowY > this.rangeYHi_) {
+                        this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                    }
+                }
+            }
+        };
+        return AutoScale;
+    }(AbstractSubject_1.default));
+    AutoScale.AXIS = 'AXIS';
+    AutoScale.TIME_WINDOW = 'TIME_WINDOW';
+    AutoScale.ACTIVE = 'ACTIVE';
+    AutoScale.AUTO_SCALE = 'AUTO_SCALE';
+    AutoScale.BOTH_AXES = 'BOTH_AXES';
+    AutoScale.ENABLED = 'ENABLED';
+    AutoScale.HORIZONTAL = 'HORIZONTAL';
+    AutoScale.VERTICAL = 'VERTICAL';
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AutoScale;
+});
+
 define('davinci-newton/util/isEmpty',["require", "exports"], function (require, exports) {
     "use strict";
     function isEmpty(xs) {
@@ -1551,28 +2846,6 @@ define('davinci-newton/checks/isNumber',["require", "exports"], function (requir
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = isNumber;
-});
-
-define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
-    "use strict";
-    function default_1(x) {
-        return x === null;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = default_1;
-});
-
-define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
-    "use strict";
-    function beObject() {
-        return "be a non-null `object`";
-    }
-    function mustBeObject(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
-        return value;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = mustBeObject;
 });
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1665,25 +2938,23 @@ define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractS
         };
         LabCanvas.prototype.paint = function () {
             if (this.canvas_.offsetParent != null) {
-                var context_1 = this.canvas_.getContext('2d');
-                context_1.save();
-                try {
-                    if (this.background_ !== '') {
-                        context_1.globalAlpha = this.alpha_;
-                        context_1.fillStyle = this.background_;
-                        context_1.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
-                        context_1.globalAlpha = 1;
-                    }
-                    else {
-                        context_1.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
-                    }
-                    this.labViews_.forEach(function (view) {
-                        view.paint(context_1);
-                    });
+                var context = this.canvas_.getContext('2d');
+                context.save();
+                if (this.background_ !== '') {
+                    context.globalAlpha = this.alpha_;
+                    context.fillStyle = this.background_;
+                    context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                    context.globalAlpha = 1;
                 }
-                finally {
-                    context_1.restore();
+                else {
+                    context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
                 }
+                var vs = this.labViews_;
+                var N = vs.length;
+                for (var i = 0; i < N; i++) {
+                    vs[i].paint(context);
+                }
+                context.restore();
             }
         };
         LabCanvas.prototype.removeMemo = function (memorizable) {
@@ -1772,6 +3043,55 @@ define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractS
     exports.LabCanvas = LabCanvas;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = LabCanvas;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/graph/Graph',["require", "exports", "../util/AbstractSubject", "./AutoScale", "./DisplayGraph", "../view/DoubleRect", "./GraphLine", "../view/HorizAlign", "../view/LabCanvas", "../view/SimView", "../view/VerticalAlign"], function (require, exports, AbstractSubject_1, AutoScale_1, DisplayGraph_1, DoubleRect_1, GraphLine_1, HorizAlign_1, LabCanvas_1, SimView_1, VerticalAlign_1) {
+    "use strict";
+    var Graph = (function (_super) {
+        __extends(Graph, _super);
+        function Graph(canvasId, varsList) {
+            var _this = _super.call(this, 'TIME_GRAPH_LAYOUT') || this;
+            _this.varsList = varsList;
+            _this.view = new SimView_1.default('TIME_GRAPH_VIEW', new DoubleRect_1.default(0, 0, 1, 1));
+            var canvas = document.getElementById(canvasId);
+            _this.labCanvas = new LabCanvas_1.default(canvas, 'GRAPH_CANVAS');
+            _this.view.setHorizAlign(HorizAlign_1.default.FULL);
+            _this.view.setVerticalAlign(VerticalAlign_1.default.FULL);
+            _this.labCanvas.addView(_this.view);
+            _this.displayGraph = new DisplayGraph_1.default();
+            _this.displayGraph.setScreenRect(_this.view.getScreenRect());
+            _this.view.getDisplayList().prepend(_this.displayGraph);
+            _this.timeIdx_ = varsList.timeIndex();
+            return _this;
+        }
+        Graph.prototype.addTrace = function (name) {
+            var trace = new GraphLine_1.default(name, this.varsList);
+            this.view.addMemo(trace);
+            trace.setColor('black');
+            this.displayGraph.addGraphLine(trace);
+            this.displayGraph.setUseBuffer(trace.getXVariable() !== this.timeIdx_);
+            return trace;
+        };
+        Graph.prototype.memorize = function () {
+            this.labCanvas.memorize();
+        };
+        Graph.prototype.render = function () {
+            this.labCanvas.paint();
+        };
+        Graph.prototype.setAutoScale = function (trace) {
+            this.autoScale = new AutoScale_1.default('TIME_GRAPH_AUTO_SCALE', trace, this.view);
+            this.autoScale.extraMargin = 0.05;
+        };
+        return Graph;
+    }(AbstractSubject_1.default));
+    exports.Graph = Graph;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Graph;
 });
 
 define('davinci-newton/checks/mustBeDefined',["require", "exports", "../checks/mustSatisfy", "../checks/isDefined"], function (require, exports, mustSatisfy_1, isDefined_1) {
@@ -2535,15 +3855,6 @@ define('davinci-newton/util/extendArray',["require", "exports", "../checks/isArr
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = extendArray;
-});
-
-define('davinci-newton/util/findIndex',["require", "exports"], function (require, exports) {
-    "use strict";
-    function findIndex(xs, predicate) {
-        throw new Error("");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = findIndex;
 });
 
 define('davinci-newton/checks/isString',["require", "exports"], function (require, exports) {
@@ -3348,768 +4659,6 @@ define('davinci-newton/runner/SimRunner',["require", "exports", "./Clock"], func
     exports.default = SimRunner;
 });
 
-define('davinci-newton/view/Point',["require", "exports"], function (require, exports) {
-    "use strict";
-    var Point = (function () {
-        function Point(x_, y_) {
-            this.x_ = x_;
-            this.y_ = y_;
-        }
-        Object.defineProperty(Point.prototype, "x", {
-            get: function () {
-                return this.x_;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Point.prototype, "y", {
-            get: function () {
-                return this.y_;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return Point;
-    }());
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = Point;
-});
-
-define('davinci-newton/view/AffineTransform',["require", "exports", "./Point"], function (require, exports, Point_1) {
-    "use strict";
-    var AffineTransform = (function () {
-        function AffineTransform(m11, m12, m21, m22, dx, dy) {
-            this.m11_ = m11;
-            this.m12_ = m12;
-            this.m21_ = m21;
-            this.m22_ = m22;
-            this.dx_ = dx;
-            this.dy_ = dy;
-        }
-        AffineTransform.prototype.applyTransform = function (context) {
-            context.transform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
-            return this;
-        };
-        AffineTransform.prototype.concatenate = function (at) {
-            var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
-            var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
-            var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
-            var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
-            var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
-            var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
-            return new AffineTransform(m11, m12, m21, m22, dx, dy);
-        };
-        AffineTransform.prototype.lineTo = function (x, y, context) {
-            var p = this.transform(x, y);
-            context.lineTo(p.x, p.y);
-            return this;
-        };
-        AffineTransform.prototype.moveTo = function (x, y, context) {
-            var p = this.transform(x, y);
-            context.moveTo(p.x, p.y);
-            return this;
-        };
-        AffineTransform.prototype.rotate = function (angle) {
-            var c = Math.cos(angle);
-            var s = Math.sin(angle);
-            var m11 = c * this.m11_ + s * this.m21_;
-            var m12 = c * this.m12_ + s * this.m22_;
-            var m21 = -s * this.m11_ + c * this.m21_;
-            var m22 = -s * this.m12_ + c * this.m22_;
-            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
-        };
-        AffineTransform.prototype.scale = function (x, y) {
-            var m11 = this.m11_ * x;
-            var m12 = this.m12_ * x;
-            var m21 = this.m21_ * y;
-            var m22 = this.m22_ * y;
-            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
-        };
-        AffineTransform.prototype.setTransform = function (context) {
-            context.setTransform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
-            return this;
-        };
-        AffineTransform.prototype.transform = function (x, y) {
-            var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
-            var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
-            return new Point_1.default(x2, y2);
-        };
-        AffineTransform.prototype.translate = function (x, y) {
-            var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
-            var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
-            return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
-        };
-        return AffineTransform;
-    }());
-    AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = AffineTransform;
-});
-
-define('davinci-newton/view/DoubleRect',["require", "exports", "./Point", "../util/veryDifferent"], function (require, exports, Point_1, veryDifferent_1) {
-    "use strict";
-    var DoubleRect = (function () {
-        function DoubleRect(left, bottom, right, top) {
-            this.left_ = left;
-            this.right_ = right;
-            this.bottom_ = bottom;
-            this.top_ = top;
-            if (left > right) {
-                throw new Error('DoubleRect: left > right ' + left + ' > ' + right);
-            }
-            if (bottom > top) {
-                throw new Error('DoubleRect: bottom > top ' + bottom + ' > ' + top);
-            }
-        }
-        DoubleRect.clone = function (rect) {
-            return new DoubleRect(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
-        };
-        DoubleRect.isDuckType = function (obj) {
-            if (obj instanceof DoubleRect) {
-                return true;
-            }
-            return obj.getLeft !== undefined
-                && obj.getRight !== undefined
-                && obj.getTop !== undefined
-                && obj.getBottom !== undefined
-                && obj.translate !== undefined
-                && obj.scale !== undefined;
-        };
-        DoubleRect.make = function (point1, point2) {
-            var left = Math.min(point1.x, point2.x);
-            var right = Math.max(point1.x, point2.x);
-            var bottom = Math.min(point1.y, point2.y);
-            var top_ = Math.max(point1.y, point2.y);
-            return new DoubleRect(left, bottom, right, top_);
-        };
-        DoubleRect.makeCentered = function (center, width, height) {
-            var x = center.x;
-            var y = center.y;
-            return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
-        };
-        ;
-        DoubleRect.makeCentered2 = function (center, size) {
-            var x = center.x;
-            var y = center.y;
-            var w = size.x;
-            var h = size.y;
-            return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
-        };
-        DoubleRect.prototype.contains = function (point) {
-            return point.x >= this.left_ &&
-                point.x <= this.right_ &&
-                point.y >= this.bottom_ &&
-                point.y <= this.top_;
-        };
-        DoubleRect.prototype.equals = function (obj) {
-            if (obj === this)
-                return true;
-            if (obj instanceof DoubleRect) {
-                return obj.getLeft() === this.left_ && obj.getRight() === this.right_ &&
-                    obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
-            }
-            else {
-                return false;
-            }
-        };
-        DoubleRect.prototype.expand = function (marginX, marginY) {
-            marginY = (marginY === undefined) ? marginX : marginY;
-            return new DoubleRect(this.getLeft() - marginX, this.getBottom() - marginY, this.getRight() + marginX, this.getTop() + marginX);
-        };
-        DoubleRect.prototype.getBottom = function () {
-            return this.bottom_;
-        };
-        DoubleRect.prototype.getCenter = function () {
-            return new Point_1.default(this.getCenterX(), this.getCenterY());
-        };
-        DoubleRect.prototype.getCenterX = function () {
-            return (this.left_ + this.right_) / 2.0;
-        };
-        DoubleRect.prototype.getCenterY = function () {
-            return (this.bottom_ + this.top_) / 2.0;
-        };
-        DoubleRect.prototype.getHeight = function () {
-            return this.top_ - this.bottom_;
-        };
-        DoubleRect.prototype.getLeft = function () {
-            return this.left_;
-        };
-        DoubleRect.prototype.getRight = function () {
-            return this.right_;
-        };
-        DoubleRect.prototype.getTop = function () {
-            return this.top_;
-        };
-        DoubleRect.prototype.getWidth = function () {
-            return this.right_ - this.left_;
-        };
-        DoubleRect.prototype.isEmpty = function (tolerance) {
-            if (tolerance === void 0) { tolerance = 1E-16; }
-            return this.getWidth() < tolerance || this.getHeight() < tolerance;
-        };
-        DoubleRect.prototype.maybeVisible = function (p1, p2) {
-            if (this.contains(p1) || this.contains(p2)) {
-                return true;
-            }
-            var p1x = p1.x;
-            var p1y = p1.y;
-            var p2x = p2.x;
-            var p2y = p2.y;
-            var d = this.left_;
-            if (p1x < d && p2x < d) {
-                return false;
-            }
-            d = this.right_;
-            if (p1x > d && p2x > d) {
-                return false;
-            }
-            d = this.bottom_;
-            if (p1y < d && p2y < d) {
-                return false;
-            }
-            d = this.top_;
-            if (p1y > d && p2y > d) {
-                return false;
-            }
-            return true;
-        };
-        DoubleRect.prototype.nearEqual = function (rect, opt_tolerance) {
-            if (veryDifferent_1.default(this.left_, rect.getLeft(), opt_tolerance)) {
-                return false;
-            }
-            if (veryDifferent_1.default(this.bottom_, rect.getBottom(), opt_tolerance)) {
-                return false;
-            }
-            if (veryDifferent_1.default(this.right_, rect.getRight(), opt_tolerance)) {
-                return false;
-            }
-            if (veryDifferent_1.default(this.top_, rect.getTop(), opt_tolerance)) {
-                return false;
-            }
-            return true;
-        };
-        DoubleRect.prototype.scale = function (factorX, factorY) {
-            factorY = (factorY === undefined) ? factorX : factorY;
-            var x0 = this.getCenterX();
-            var y0 = this.getCenterY();
-            var w = this.getWidth();
-            var h = this.getHeight();
-            return new DoubleRect(x0 - (factorX * w) / 2, y0 - (factorY * h) / 2, x0 + (factorX * w) / 2, y0 + (factorY * h) / 2);
-        };
-        DoubleRect.prototype.translate = function (x, y) {
-            return new DoubleRect(this.left_ + x, this.bottom_ + y, this.right_ + x, this.top_ + y);
-        };
-        DoubleRect.prototype.union = function (rect) {
-            return new DoubleRect(Math.min(this.left_, rect.getLeft()), Math.min(this.bottom_, rect.getBottom()), Math.max(this.right_, rect.getRight()), Math.max(this.top_, rect.getTop()));
-        };
-        DoubleRect.prototype.unionPoint = function (point) {
-            return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
-        };
-        return DoubleRect;
-    }());
-    DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = DoubleRect;
-});
-
-define('davinci-newton/view/HorizAlign',["require", "exports"], function (require, exports) {
-    "use strict";
-    var HorizAlign;
-    (function (HorizAlign) {
-        HorizAlign[HorizAlign["LEFT"] = 0] = "LEFT";
-        HorizAlign[HorizAlign["MIDDLE"] = 1] = "MIDDLE";
-        HorizAlign[HorizAlign["RIGHT"] = 2] = "RIGHT";
-        HorizAlign[HorizAlign["FULL"] = 3] = "FULL";
-    })(HorizAlign = exports.HorizAlign || (exports.HorizAlign = {}));
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = HorizAlign;
-});
-
-define('davinci-newton/checks/mustBeFinite',["require", "exports"], function (require, exports) {
-    "use strict";
-    function mustBeFinite(value) {
-        if (typeof value !== 'number' || !isFinite(value)) {
-            throw new Error('not a finite number ' + value);
-        }
-        return value;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = mustBeFinite;
-});
-
-define('davinci-newton/view/VerticalAlign',["require", "exports"], function (require, exports) {
-    "use strict";
-    var VerticalAlign;
-    (function (VerticalAlign) {
-        VerticalAlign[VerticalAlign["TOP"] = 0] = "TOP";
-        VerticalAlign[VerticalAlign["MIDDLE"] = 1] = "MIDDLE";
-        VerticalAlign[VerticalAlign["BOTTOM"] = 2] = "BOTTOM";
-        VerticalAlign[VerticalAlign["FULL"] = 3] = "FULL";
-    })(VerticalAlign = exports.VerticalAlign || (exports.VerticalAlign = {}));
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = VerticalAlign;
-});
-
-define('davinci-newton/view/CoordMap',["require", "exports", "./AffineTransform", "./DoubleRect", "./HorizAlign", "../checks/mustBeFinite", "./Point", "./ScreenRect", "./VerticalAlign"], function (require, exports, AffineTransform_1, DoubleRect_1, HorizAlign_1, mustBeFinite_1, Point_1, ScreenRect_1, VerticalAlign_1) {
-    "use strict";
-    var MIN_SIZE = 1E-15;
-    var CoordMap = (function () {
-        function CoordMap(screen_left, screen_bottom, sim_left, sim_bottom, pixel_per_unit_x, pixel_per_unit_y) {
-            this.screen_left_ = mustBeFinite_1.default(screen_left);
-            this.screen_bottom_ = mustBeFinite_1.default(screen_bottom);
-            this.sim_left_ = mustBeFinite_1.default(sim_left);
-            this.sim_bottom_ = mustBeFinite_1.default(sim_bottom);
-            this.pixel_per_unit_x_ = mustBeFinite_1.default(pixel_per_unit_x);
-            this.pixel_per_unit_y_ = mustBeFinite_1.default(pixel_per_unit_y);
-            var at = AffineTransform_1.default.IDENTITY;
-            at = at.translate(this.screen_left_, this.screen_bottom_);
-            at = at.scale(this.pixel_per_unit_x_, -this.pixel_per_unit_y_);
-            at = at.translate(-this.sim_left_, -this.sim_bottom_);
-            this.transform_ = at;
-        }
-        CoordMap.make = function (screenRect, simRect, horizAlign, verticalAlign, aspectRatio) {
-            if (horizAlign === void 0) { horizAlign = HorizAlign_1.default.MIDDLE; }
-            if (verticalAlign === void 0) { verticalAlign = VerticalAlign_1.default.MIDDLE; }
-            if (aspectRatio === void 0) { aspectRatio = 1; }
-            if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
-                throw new Error('bad aspectRatio ' + aspectRatio);
-            }
-            var simLeft = simRect.getLeft();
-            var simBottom = simRect.getBottom();
-            var sim_width = simRect.getRight() - simLeft;
-            var sim_height = simRect.getTop() - simBottom;
-            if (sim_width < MIN_SIZE || sim_height < MIN_SIZE) {
-                throw new Error('simRect cannot be empty ' + simRect);
-            }
-            var screen_top = screenRect.getTop();
-            var screen_left = screenRect.getLeft();
-            var screen_width = screenRect.getWidth();
-            var screen_height = screenRect.getHeight();
-            var offset_x = 0;
-            var offset_y = 0;
-            var pixel_per_unit_x = 0;
-            var pixel_per_unit_y = 0;
-            if (horizAlign === HorizAlign_1.default.FULL) {
-                pixel_per_unit_x = screen_width / sim_width;
-                offset_x = 0;
-            }
-            if (verticalAlign === VerticalAlign_1.default.FULL) {
-                pixel_per_unit_y = screen_height / sim_height;
-                offset_y = 0;
-            }
-            if (horizAlign !== HorizAlign_1.default.FULL || verticalAlign !== VerticalAlign_1.default.FULL) {
-                var horizFull;
-                if (horizAlign === HorizAlign_1.default.FULL) {
-                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
-                    horizFull = true;
-                }
-                else if (verticalAlign === VerticalAlign_1.default.FULL) {
-                    pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
-                    horizFull = false;
-                }
-                else {
-                    pixel_per_unit_x = screen_width / sim_width;
-                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
-                    horizFull = true;
-                    var ideal_height = Math.floor(0.5 + pixel_per_unit_y * sim_height);
-                    if (screen_height < ideal_height) {
-                        pixel_per_unit_y = screen_height / sim_height;
-                        pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
-                        horizFull = false;
-                    }
-                }
-                if (!horizFull) {
-                    offset_y = 0;
-                    var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
-                    switch (horizAlign) {
-                        case HorizAlign_1.default.LEFT:
-                            offset_x = 0;
-                            break;
-                        case HorizAlign_1.default.MIDDLE:
-                            offset_x = (screen_width - ideal_width) / 2;
-                            break;
-                        case HorizAlign_1.default.RIGHT:
-                            offset_x = screen_width - ideal_width;
-                            break;
-                        default: throw new Error();
-                    }
-                }
-                else {
-                    offset_x = 0;
-                    var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
-                    switch (verticalAlign) {
-                        case VerticalAlign_1.default.BOTTOM:
-                            offset_y = 0;
-                            break;
-                        case VerticalAlign_1.default.MIDDLE:
-                            offset_y = (screen_height - ideal_height) / 2;
-                            break;
-                        case VerticalAlign_1.default.TOP:
-                            offset_y = screen_height - ideal_height;
-                            break;
-                        default: {
-                            throw new Error();
-                        }
-                    }
-                }
-            }
-            var coordMap = new CoordMap(screen_left, screen_top + screen_height, simLeft - offset_x / pixel_per_unit_x, simBottom - offset_y / pixel_per_unit_y, pixel_per_unit_x, pixel_per_unit_y);
-            return coordMap;
-        };
-        CoordMap.isDuckType = function (obj) {
-            if (obj instanceof CoordMap) {
-                return true;
-            }
-            return obj.getAffineTransform !== undefined
-                && obj.simToScreenX !== undefined
-                && obj.simToScreenY !== undefined
-                && obj.screenToSimX !== undefined
-                && obj.screenToSimY !== undefined
-                && obj.getScaleX !== undefined
-                && obj.getScaleY !== undefined;
-        };
-        CoordMap.prototype.getAffineTransform = function () {
-            return this.transform_;
-        };
-        CoordMap.prototype.getScaleX = function () {
-            return this.pixel_per_unit_x_;
-        };
-        CoordMap.prototype.getScaleY = function () {
-            return this.pixel_per_unit_y_;
-        };
-        CoordMap.prototype.screenToSim = function (scr_x, scr_y) {
-            return new Point_1.default(this.screenToSimX(scr_x), this.screenToSimY(scr_y));
-        };
-        CoordMap.prototype.screenToSimRect = function (rect) {
-            return new DoubleRect_1.default(this.screenToSimX(rect.getLeft()), this.screenToSimY(rect.getTop() + rect.getHeight()), this.screenToSimX(rect.getLeft() + rect.getWidth()), this.screenToSimY(rect.getTop()));
-        };
-        CoordMap.prototype.screenToSimScaleX = function (scr_x) {
-            return scr_x / this.pixel_per_unit_x_;
-        };
-        CoordMap.prototype.screenToSimScaleY = function (scr_y) {
-            return scr_y / this.pixel_per_unit_y_;
-        };
-        CoordMap.prototype.screenToSimX = function (scr_x) {
-            return this.sim_left_ + (scr_x - this.screen_left_) / this.pixel_per_unit_x_;
-        };
-        CoordMap.prototype.screenToSimY = function (scr_y) {
-            return this.sim_bottom_ + (this.screen_bottom_ - scr_y) / this.pixel_per_unit_y_;
-        };
-        CoordMap.prototype.simToScreen = function (p_sim) {
-            return new Point_1.default(this.simToScreenX(p_sim.x), this.simToScreenY(p_sim.y));
-        };
-        CoordMap.prototype.simToScreenRect = function (r) {
-            return new ScreenRect_1.default(this.simToScreenX(r.getLeft()), this.simToScreenY(r.getTop()), this.simToScreenScaleX(r.getWidth()), this.simToScreenScaleY(r.getHeight()));
-        };
-        CoordMap.prototype.simToScreenScaleX = function (length_x) {
-            return length_x * this.pixel_per_unit_x_;
-        };
-        CoordMap.prototype.simToScreenScaleY = function (length_y) {
-            return length_y * this.pixel_per_unit_y_;
-        };
-        CoordMap.prototype.simToScreenX = function (sim_x) {
-            return this.screen_left_ + (sim_x - this.sim_left_) * this.pixel_per_unit_x_;
-        };
-        CoordMap.prototype.simToScreenY = function (sim_y) {
-            return this.screen_bottom_ - (sim_y - this.sim_bottom_) * this.pixel_per_unit_y_;
-        };
-        return CoordMap;
-    }());
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = CoordMap;
-});
-
-define('davinci-newton/util/insertAt',["require", "exports"], function (require, exports) {
-    "use strict";
-    function insertAt(xs, value, index) {
-        throw new Error("TODO");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = insertAt;
-});
-
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-define('davinci-newton/view/DisplayList',["require", "exports", "../util/AbstractSubject", "../util/GenericEvent", "../util/insertAt", "../checks/isObject"], function (require, exports, AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1) {
-    "use strict";
-    var DisplayList = (function (_super) {
-        __extends(DisplayList, _super);
-        function DisplayList(name) {
-            var _this = _super.call(this, name || 'DISPLAY_LIST_' + (DisplayList.NAME_ID++)) || this;
-            _this.drawables_ = [];
-            return _this;
-        }
-        DisplayList.prototype.add = function (dispObj) {
-            if (!isObject_1.default(dispObj)) {
-                throw new Error('non-object passed to DisplayList.add');
-            }
-            var zIndex = dispObj.getZIndex();
-            this.sort();
-            for (var i = 0, n = this.drawables_.length; i < n; i++) {
-                var z = this.drawables_[i].getZIndex();
-                if (zIndex < z) {
-                    break;
-                }
-            }
-            insertAt_1.default(this.drawables_, dispObj, i);
-            this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
-        };
-        DisplayList.prototype.draw = function (context, map) {
-            this.sort();
-            this.drawables_.forEach(function (dispObj) {
-                dispObj.draw(context, map);
-            });
-        };
-        ;
-        DisplayList.prototype.sort = function () {
-        };
-        return DisplayList;
-    }(AbstractSubject_1.default));
-    DisplayList.NAME_ID = 1;
-    DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
-    DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
-    exports.DisplayList = DisplayList;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = DisplayList;
-});
-
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-define('davinci-newton/view/SimView',["require", "exports", "../util/AbstractSubject", "../util/clone", "../util/contains", "./CoordMap", "./DisplayList", "./DoubleRect", "../util/GenericEvent", "./HorizAlign", "../util/remove", "./ScreenRect", "./VerticalAlign", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, clone_1, contains_1, CoordMap_1, DisplayList_1, DoubleRect_1, GenericEvent_1, HorizAlign_1, remove_1, ScreenRect_1, VerticalAlign_1, veryDifferent_1) {
-    "use strict";
-    var COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
-    var SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
-    var SCALE_TOGETHER = 'scale X-Y together';
-    var VERTICAL_ALIGN = 'vertical-align';
-    var HORIZONTAL_ALIGN = 'horizontal-align';
-    var ASPECT_RATIO = 'aspect-ratio';
-    var SimView = (function (_super) {
-        __extends(SimView, _super);
-        function SimView(name, simRect) {
-            var _this = _super.call(this, name) || this;
-            _this.panX = 0.05;
-            _this.panY = 0.05;
-            _this.zoom = 1.1;
-            _this.screenRect_ = new ScreenRect_1.default(0, 0, 800, 600);
-            _this.horizAlign_ = HorizAlign_1.default.MIDDLE;
-            _this.verticalAlign_ = VerticalAlign_1.default.MIDDLE;
-            _this.aspectRatio_ = 1.0;
-            _this.displayList_ = new DisplayList_1.default();
-            _this.scaleTogether_ = true;
-            _this.opaqueness = 1.0;
-            _this.memorizables_ = [];
-            if (!(simRect instanceof DoubleRect_1.default) || simRect.isEmpty()) {
-                throw new Error('bad simRect: ' + simRect);
-            }
-            _this.simRect_ = simRect;
-            _this.coordMap_ = CoordMap_1.default.make(_this.screenRect_, _this.simRect_, _this.horizAlign_, _this.verticalAlign_, _this.aspectRatio_);
-            _this.width_ = simRect.getWidth();
-            _this.height_ = simRect.getHeight();
-            _this.centerX_ = simRect.getCenterX();
-            _this.centerY_ = simRect.getCenterY();
-            _this.ratio_ = _this.height_ / _this.width_;
-            return _this;
-        }
-        ;
-        SimView.prototype.addMemo = function (memorizable) {
-            if (!contains_1.default(this.memorizables_, memorizable)) {
-                this.memorizables_.push(memorizable);
-            }
-        };
-        SimView.prototype.gainFocus = function () {
-        };
-        SimView.prototype.getAspectRatio = function () {
-            return this.aspectRatio_;
-        };
-        SimView.prototype.getCenterX = function () {
-            return this.centerX_;
-        };
-        SimView.prototype.getCenterY = function () {
-            return this.centerY_;
-        };
-        SimView.prototype.getCoordMap = function () {
-            return this.coordMap_;
-        };
-        SimView.prototype.getDisplayList = function () {
-            return this.displayList_;
-        };
-        SimView.prototype.getHeight = function () {
-            return this.height_;
-        };
-        SimView.prototype.getHorizAlign = function () {
-            return this.horizAlign_;
-        };
-        SimView.prototype.getMemos = function () {
-            return clone_1.default(this.memorizables_);
-        };
-        SimView.prototype.getScaleTogether = function () {
-            return this.scaleTogether_;
-        };
-        SimView.prototype.getScreenRect = function () {
-            return this.screenRect_;
-        };
-        SimView.prototype.getSimRect = function () {
-            return this.simRect_;
-        };
-        SimView.prototype.getVerticalAlign = function () {
-            return this.verticalAlign_;
-        };
-        SimView.prototype.getWidth = function () {
-            return this.width_;
-        };
-        SimView.prototype.loseFocus = function () {
-        };
-        SimView.prototype.paint = function (context) {
-            context.save();
-            context.globalAlpha = this.opaqueness;
-            this.displayList_.draw(context, this.coordMap_);
-            context.restore();
-        };
-        SimView.prototype.setCoordMap = function (map) {
-            if (!CoordMap_1.default.isDuckType(map))
-                throw new Error('not a CoordMap: ' + map);
-            this.coordMap_ = map;
-            this.broadcast(new GenericEvent_1.default(this, COORD_MAP_CHANGED));
-        };
-        SimView.prototype.setScreenRect = function (screenRect) {
-            if (!ScreenRect_1.default.isDuckType(screenRect))
-                throw new Error('not a ScreenRect: ' + screenRect);
-            if (screenRect.isEmpty()) {
-                throw new Error('empty screenrect');
-            }
-            if (!this.screenRect_.equals(screenRect)) {
-                this.screenRect_ = screenRect;
-                this.realign();
-                this.broadcast(new GenericEvent_1.default(this, SCREEN_RECT_CHANGED));
-            }
-        };
-        SimView.prototype.setSimRect = function (simRect) {
-            if (!DoubleRect_1.default.isDuckType(simRect))
-                throw new Error('not a DoubleRect: ' + simRect);
-            if (!simRect.equals(this.simRect_)) {
-                this.simRect_ = simRect;
-                this.realign();
-                this.broadcastParameter(SimView.WIDTH);
-                this.broadcastParameter(SimView.HEIGHT);
-                this.broadcastParameter(SimView.CENTER_X);
-                this.broadcastParameter(SimView.CENTER_Y);
-                this.broadcast(new GenericEvent_1.default(this, SimView.SIM_RECT_CHANGED));
-            }
-        };
-        SimView.prototype.memorize = function () {
-            for (var i = 0, n = this.memorizables_.length; i < n; i++) {
-                this.memorizables_[i].memorize();
-            }
-        };
-        SimView.prototype.realign = function () {
-            this.setCoordMap(CoordMap_1.default.make(this.screenRect_, this.simRect_, this.horizAlign_, this.verticalAlign_, this.aspectRatio_));
-            this.width_ = this.simRect_.getWidth();
-            this.height_ = this.simRect_.getHeight();
-            this.centerX_ = this.simRect_.getCenterX();
-            this.centerY_ = this.simRect_.getCenterY();
-            this.ratio_ = this.height_ / this.width_;
-        };
-        SimView.prototype.modifySimRect = function () {
-            var left = this.centerX_ - this.width_ / 2.0;
-            var bottom = this.centerY_ - this.height_ / 2.0;
-            var r = new DoubleRect_1.default(left, bottom, left + this.width_, bottom + this.height_);
-            this.setSimRect(r);
-        };
-        SimView.prototype.panDown = function () {
-            this.setCenterY(this.centerY_ - this.panY * this.height_);
-        };
-        SimView.prototype.panLeft = function () {
-            this.setCenterX(this.centerX_ - this.panX * this.width_);
-        };
-        SimView.prototype.panRight = function () {
-            this.setCenterX(this.centerX_ + this.panX * this.width_);
-        };
-        SimView.prototype.panUp = function () {
-            this.setCenterY(this.centerY_ + this.panY * this.height_);
-        };
-        SimView.prototype.removeMemo = function (memorizable) {
-            remove_1.default(this.memorizables_, memorizable);
-        };
-        SimView.prototype.setAspectRatio = function (aspectRatio) {
-            if (veryDifferent_1.default(this.aspectRatio_, aspectRatio)) {
-                this.aspectRatio_ = aspectRatio;
-                this.realign();
-                this.broadcastParameter(ASPECT_RATIO);
-            }
-        };
-        SimView.prototype.setCenterX = function (centerX) {
-            if (veryDifferent_1.default(this.centerX_, centerX)) {
-                this.centerX_ = centerX;
-                this.modifySimRect();
-            }
-        };
-        SimView.prototype.setCenterY = function (value) {
-            if (veryDifferent_1.default(this.centerY_, value)) {
-                this.centerY_ = value;
-                this.modifySimRect();
-            }
-        };
-        SimView.prototype.setHeight = function (value) {
-            if (veryDifferent_1.default(this.height_, value)) {
-                this.height_ = value;
-                if (this.scaleTogether_) {
-                    this.width_ = this.height_ / this.ratio_;
-                }
-                this.modifySimRect();
-            }
-        };
-        SimView.prototype.setHorizAlign = function (alignHoriz) {
-            this.horizAlign_ = alignHoriz;
-            this.realign();
-            this.broadcastParameter(HORIZONTAL_ALIGN);
-        };
-        SimView.prototype.setScaleTogether = function (value) {
-            if (this.scaleTogether_ !== value) {
-                this.scaleTogether_ = value;
-                if (this.scaleTogether_) {
-                    this.ratio_ = this.height_ / this.width_;
-                }
-                this.broadcastParameter(SCALE_TOGETHER);
-            }
-        };
-        SimView.prototype.setVerticalAlign = function (alignVert) {
-            this.verticalAlign_ = alignVert;
-            this.realign();
-            this.broadcastParameter(VERTICAL_ALIGN);
-        };
-        SimView.prototype.setWidth = function (value) {
-            if (veryDifferent_1.default(this.width_, value)) {
-                this.width_ = value;
-                if (this.scaleTogether_) {
-                    this.height_ = this.width_ * this.ratio_;
-                }
-                this.modifySimRect();
-            }
-        };
-        SimView.prototype.zoomIn = function () {
-            this.setHeight(this.height_ / this.zoom);
-        };
-        SimView.prototype.zoomOut = function () {
-            this.setHeight(this.height_ * this.zoom);
-        };
-        return SimView;
-    }(AbstractSubject_1.default));
-    SimView.WIDTH = 'width';
-    SimView.HEIGHT = 'height';
-    SimView.CENTER_X = 'center-x';
-    SimView.CENTER_Y = 'center-y';
-    SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
-    exports.SimView = SimView;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = SimView;
-});
-
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -4196,339 +4745,7 @@ define('davinci-newton/objects/Spring',["require", "exports", "./AbstractSimObje
     exports.default = Spring;
 });
 
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-define('davinci-newton/graph/AutoScale',["require", "exports", "../util/AbstractSubject", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../checks/isDefined", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, isDefined_1, repeat_1, SimView_1, veryDifferent_1) {
-    "use strict";
-    var AutoScale = (function (_super) {
-        __extends(AutoScale, _super);
-        function AutoScale(name, graphLine, simView) {
-            var _this = _super.call(this, name) || this;
-            _this.graphLines_ = [];
-            _this.enabled_ = true;
-            _this.isActive_ = true;
-            _this.ownEvent_ = false;
-            _this.rangeSetX_ = false;
-            _this.rangeSetY_ = false;
-            _this.rangeXHi_ = 0;
-            _this.rangeXLo_ = 0;
-            _this.rangeYHi_ = 0;
-            _this.rangeYLo_ = 0;
-            _this.timeWindow_ = 10;
-            _this.extraMargin = 0.01;
-            _this.minSize = 1E-14;
-            _this.axis_ = AutoScale.BOTH_AXES;
-            if (isDefined_1.default(graphLine) && !GraphLine_1.default.isDuckType(graphLine)) {
-                throw new Error('not a GraphLine ' + graphLine);
-            }
-            if (GraphLine_1.default.isDuckType(graphLine)) {
-                _this.graphLines_.push(graphLine);
-                graphLine.addObserver(_this);
-            }
-            _this.simView_ = simView;
-            simView.addMemo(_this);
-            simView.addObserver(_this);
-            _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
-            _this.setComputed(_this.isActive_);
-            return _this;
-        }
-        AutoScale.prototype.addGraphLine = function (graphLine) {
-            if (GraphLine_1.default.isDuckType(graphLine)) {
-                if (!contains_1.default(this.graphLines_, graphLine)) {
-                    this.graphLines_.push(graphLine);
-                    this.lastIndex_.push(-1);
-                }
-            }
-            else {
-                throw new Error('not a GraphLine ' + graphLine);
-            }
-        };
-        AutoScale.prototype.clearRange = function () {
-            this.rangeXLo_ = 0;
-            this.rangeXHi_ = 0;
-            this.rangeSetX_ = false;
-            this.rangeYLo_ = 0;
-            this.rangeYHi_ = 0;
-            this.rangeSetY_ = false;
-        };
-        AutoScale.prototype.getActive = function () {
-            return this.isActive_;
-        };
-        AutoScale.prototype.getAxis = function () {
-            return this.axis_;
-        };
-        AutoScale.prototype.getEnabled = function () {
-            return this.enabled_;
-        };
-        AutoScale.prototype.getRangeRect = function () {
-            return new DoubleRect_1.default(this.rangeXLo_, this.rangeYLo_, this.rangeXHi_, this.rangeYHi_);
-        };
-        AutoScale.prototype.getTimeWindow = function () {
-            return this.timeWindow_;
-        };
-        AutoScale.prototype.memorize = function () {
-            for (var i = 0, n = this.graphLines_.length; i < n; i++) {
-                var graphPts = this.graphLines_[i].getGraphPoints();
-                if (this.lastIndex_[i] > graphPts.getEndIndex()) {
-                    this.reset();
-                }
-            }
-            for (i = 0, n = this.graphLines_.length; i < n; i++) {
-                graphPts = this.graphLines_[i].getGraphPoints();
-                var iter = graphPts.getIterator(this.lastIndex_[i]);
-                while (iter.hasNext()) {
-                    var gp = iter.nextValue();
-                    this.updateRange_(this.graphLines_[i], gp.x, gp.y);
-                    this.lastIndex_[i] = iter.getIndex();
-                }
-            }
-            this.rangeCheck_();
-        };
-        AutoScale.prototype.observe = function (event) {
-            if (event.getSubject() === this.simView_) {
-                if (event.nameEquals(SimView_1.default.SIM_RECT_CHANGED)) {
-                    if (!this.ownEvent_) {
-                        this.setActive(false);
-                    }
-                }
-            }
-            else if (contains_1.default(this.graphLines_, event.getSubject())) {
-                if (event.nameEquals(GraphLine_1.default.X_VARIABLE) ||
-                    event.nameEquals(GraphLine_1.default.Y_VARIABLE)) {
-                    this.reset();
-                }
-                else if (event.nameEquals(GraphLine_1.default.RESET)) {
-                    this.setActive(true);
-                }
-            }
-        };
-        AutoScale.prototype.rangeCheck_ = function () {
-            var avg, incr;
-            var e = this.minSize;
-            if (this.rangeXHi_ - this.rangeXLo_ < e) {
-                avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
-                incr = Math.max(avg * e, e);
-                this.rangeXHi_ = avg + incr;
-                this.rangeXLo_ = avg - incr;
-            }
-            if (this.rangeYHi_ - this.rangeYLo_ < e) {
-                avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
-                incr = Math.max(avg * e, e);
-                this.rangeYHi_ = avg + incr;
-                this.rangeYLo_ = avg - incr;
-            }
-            var nr = this.getRangeRect();
-            var sr = this.simView_.getSimRect();
-            if (this.axis_ === AutoScale.VERTICAL) {
-                nr = new DoubleRect_1.default(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
-            }
-            else if (this.axis_ === AutoScale.HORIZONTAL) {
-                nr = new DoubleRect_1.default(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
-            }
-            if (this.isActive_ && !nr.nearEqual(sr)) {
-                this.ownEvent_ = true;
-                this.simView_.setSimRect(nr);
-                this.ownEvent_ = false;
-                this.broadcast(new GenericEvent_1.default(this, AutoScale.AUTO_SCALE, nr));
-            }
-        };
-        AutoScale.prototype.removeGraphLine = function (graphLine) {
-            if (GraphLine_1.default.isDuckType(graphLine)) {
-                var idx = this.graphLines_.indexOf(graphLine);
-                removeAt_1.default(this.graphLines_, idx);
-                removeAt_1.default(this.lastIndex_, idx);
-                this.reset();
-            }
-            else {
-                throw new Error('not a GraphLine ' + graphLine);
-            }
-        };
-        AutoScale.prototype.reset = function () {
-            this.clearRange();
-            for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
-                this.lastIndex_[i] = -1;
-            }
-        };
-        AutoScale.prototype.setActive = function (value) {
-            if (this.isActive_ !== value) {
-                if (value) {
-                    if (this.enabled_) {
-                        this.reset();
-                        this.simView_.addMemo(this);
-                        this.setComputed(true);
-                        this.isActive_ = true;
-                        this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
-                    }
-                }
-                else {
-                    this.simView_.removeMemo(this);
-                    this.setComputed(false);
-                    this.isActive_ = false;
-                    this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
-                }
-            }
-        };
-        AutoScale.prototype.setAxis = function (value) {
-            if (value === AutoScale.VERTICAL || value === AutoScale.HORIZONTAL || value === AutoScale.BOTH_AXES) {
-                this.axis_ = value;
-                this.broadcastParameter(AutoScale.AXIS);
-            }
-            else {
-                throw new Error('unknown ' + value);
-            }
-        };
-        AutoScale.prototype.setComputed = function (value) {
-            var _this = this;
-            var names = [SimView_1.default.WIDTH, SimView_1.default.HEIGHT, SimView_1.default.CENTER_X, SimView_1.default.CENTER_Y];
-            names.forEach(function (name) {
-                var p = _this.simView_.getParameter(name);
-                p.setComputed(value);
-            });
-        };
-        AutoScale.prototype.setEnabled = function (value) {
-            if (this.enabled_ !== value) {
-                this.enabled_ = value;
-                this.setActive(value);
-                this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
-            }
-        };
-        AutoScale.prototype.setTimeWindow = function (value) {
-            if (veryDifferent_1.default(value, this.timeWindow_)) {
-                this.timeWindow_ = value;
-                this.reset();
-                this.setActive(true);
-                this.broadcastParameter(AutoScale.TIME_WINDOW);
-            }
-        };
-        AutoScale.prototype.updateRange_ = function (line, nowX, nowY) {
-            if (!isFinite(nowX)) {
-                if (nowX === Number.POSITIVE_INFINITY) {
-                    nowX = 1e308;
-                }
-                else if (nowX === Number.NEGATIVE_INFINITY) {
-                    nowX = -1e308;
-                }
-            }
-            if (!isFinite(nowY)) {
-                if (nowY === Number.POSITIVE_INFINITY) {
-                    nowY = 1e308;
-                }
-                else if (nowY === Number.NEGATIVE_INFINITY) {
-                    nowY = -1e308;
-                }
-            }
-            var timeIdx = line.getVarsList().timeIndex();
-            var xIsTimeVar = line.getXVariable() === timeIdx;
-            var yIsTimeVar = line.getYVariable() === timeIdx;
-            if (!this.rangeSetX_) {
-                this.rangeXLo_ = nowX;
-                this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
-                this.rangeSetX_ = true;
-            }
-            else {
-                if (nowX < this.rangeXLo_) {
-                    if (xIsTimeVar) {
-                        this.rangeXLo_ = nowX;
-                        this.rangeXHi_ = nowX + this.timeWindow_;
-                    }
-                    else {
-                        this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
-                    }
-                }
-                if (xIsTimeVar) {
-                    if (nowX > this.rangeXHi_ - this.extraMargin * this.timeWindow_) {
-                        this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
-                        this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
-                    }
-                }
-                else {
-                    if (nowX > this.rangeXHi_) {
-                        this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
-                    }
-                }
-            }
-            if (!this.rangeSetY_) {
-                this.rangeYLo_ = nowY;
-                this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
-                this.rangeSetY_ = true;
-            }
-            else {
-                if (nowY < this.rangeYLo_) {
-                    if (yIsTimeVar) {
-                        this.rangeYLo_ = nowY;
-                        this.rangeYHi_ = nowY + this.timeWindow_;
-                    }
-                    else {
-                        this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
-                    }
-                }
-                if (yIsTimeVar) {
-                    if (nowY > this.rangeYHi_ - this.extraMargin * this.timeWindow_) {
-                        this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
-                        this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
-                    }
-                }
-                else {
-                    if (nowY > this.rangeYHi_) {
-                        this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
-                    }
-                }
-            }
-        };
-        return AutoScale;
-    }(AbstractSubject_1.default));
-    AutoScale.AXIS = 'AXIS';
-    AutoScale.TIME_WINDOW = 'TIME_WINDOW';
-    AutoScale.ACTIVE = 'ACTIVE';
-    AutoScale.AUTO_SCALE = 'AUTO_SCALE';
-    AutoScale.BOTH_AXES = 'BOTH_AXES';
-    AutoScale.ENABLED = 'ENABLED';
-    AutoScale.HORIZONTAL = 'HORIZONTAL';
-    AutoScale.VERTICAL = 'VERTICAL';
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = AutoScale;
-});
-
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-define('davinci-newton/graph/TimeGraph',["require", "exports", "../util/AbstractSubject", "./AutoScale", "./DisplayGraph", "../view/DoubleRect", "./GraphLine", "../view/HorizAlign", "../view/SimView", "../view/VerticalAlign"], function (require, exports, AbstractSubject_1, AutoScale_1, DisplayGraph_1, DoubleRect_1, GraphLine_1, HorizAlign_1, SimView_1, VerticalAlign_1) {
-    "use strict";
-    var TimeGraph = (function (_super) {
-        __extends(TimeGraph, _super);
-        function TimeGraph(varsList, labCanvas) {
-            var _this = _super.call(this, 'TIME_GRAPH_LAYOUT') || this;
-            _this.view = new SimView_1.default('TIME_GRAPH_VIEW', new DoubleRect_1.default(0, 0, 1, 1));
-            _this.view.setHorizAlign(HorizAlign_1.default.FULL);
-            _this.view.setVerticalAlign(VerticalAlign_1.default.FULL);
-            labCanvas.addView(_this.view);
-            _this.displayGraph = new DisplayGraph_1.default();
-            _this.displayGraph.setScreenRect(_this.view.getScreenRect());
-            var timeIdx = varsList.timeIndex();
-            _this.line1 = new GraphLine_1.default('TIME_GRAPH_LINE_1', varsList);
-            _this.view.addMemo(_this.line1);
-            _this.line1.setXVariable(timeIdx);
-            _this.line1.setYVariable(1);
-            _this.line1.setColor('lime');
-            _this.displayGraph.addGraphLine(_this.line1);
-            _this.autoScale = new AutoScale_1.default('TIME_GRAPH_AUTO_SCALE', _this.line1, _this.view);
-            _this.autoScale.extraMargin = 0.05;
-            _this.displayGraph.setUseBuffer(_this.line1.getXVariable() !== timeIdx);
-            return _this;
-        }
-        return TimeGraph;
-    }(AbstractSubject_1.default));
-    exports.TimeGraph = TimeGraph;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = TimeGraph;
-});
-
-define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/graph/TimeGraph", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, TimeGraph_1, Vector_1) {
+define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/graph/Graph", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, Graph_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, Vector_1) {
     "use strict";
     var newton = {
         get LAST_MODIFIED() { return config_1.default.LAST_MODIFIED; },
@@ -4536,6 +4753,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularLi
         get CircularList() { return CircularList_1.default; },
         get DisplayGraph() { return DisplayGraph_1.default; },
         get ForceApp() { return ForceApp_1.default; },
+        get Graph() { return Graph_1.default; },
         get LabCanvas() { return LabCanvas_1.default; },
         get RigidBody() { return RigidBody_1.default; },
         get RigidBodySim() { return RigidBodySim_1.default; },
@@ -4544,7 +4762,6 @@ define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularLi
         get SimRunner() { return SimRunner_1.default; },
         get SimView() { return SimView_1.default; },
         get Spring() { return Spring_1.default; },
-        get TimeGraph() { return TimeGraph_1.default; },
         get Vector() { return Vector_1.default; },
     };
     Object.defineProperty(exports, "__esModule", { value: true });

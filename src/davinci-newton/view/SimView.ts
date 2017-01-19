@@ -8,6 +8,8 @@ import GenericEvent from '../util/GenericEvent';
 import HorizAlign from './HorizAlign';
 import LabView from './LabView';
 import Memorizable from '../util/Memorizable';
+import ParameterBoolean from '../util/ParameterBoolean';
+import ParameterNumber from '../util/ParameterNumber';
 import remove from '../util/remove';
 import ScreenRect from './ScreenRect';
 import VerticalAlign from './VerticalAlign';
@@ -23,16 +25,15 @@ const COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
  */
 const SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
 
-const SCALE_TOGETHER = 'scale X-Y together';
-const VERTICAL_ALIGN = 'vertical-align';
-const HORIZONTAL_ALIGN = 'horizontal-align';
-const ASPECT_RATIO = 'aspect-ratio';
-
 export class SimView extends AbstractSubject implements LabView {
-    public static readonly WIDTH = 'width';
-    public static readonly HEIGHT = 'height';
-    public static readonly CENTER_X = 'center-x';
-    public static readonly CENTER_Y = 'center-y';
+    public static readonly PARAM_NAME_WIDTH = 'width';
+    public static readonly PARAM_NAME_HEIGHT = 'height';
+    public static readonly PARAM_NAME_CENTER_X = 'center-x';
+    public static readonly PARAM_NAME_CENTER_Y = 'center-y';
+    public static readonly PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
+    public static readonly PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
+    public static readonly PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
+    public static readonly PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
     /**
      * Name of event broadcast when the simulation rectangle size changes, see
      */
@@ -98,6 +99,14 @@ export class SimView extends AbstractSubject implements LabView {
         this.centerX_ = simRect.getCenterX();
         this.centerY_ = simRect.getCenterY();
         this.ratio_ = this.height_ / this.width_;
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_WIDTH, () => this.getWidth(), (width: number) => this.setWidth(width)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_HEIGHT, () => this.getHeight(), (height: number) => this.setHeight(height)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_CENTER_X, () => this.getCenterX(), (centerX: number) => this.setCenterX(centerX)).setLowerLimit(Number.NEGATIVE_INFINITY));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_CENTER_Y, () => this.getCenterY(), (centerY: number) => this.setCenterY(centerY)).setLowerLimit(Number.NEGATIVE_INFINITY));
+        this.addParameter(new ParameterBoolean(this, SimView.PARAM_NAME_SCALE_TOGETHER, () => this.getScaleTogether(), (scaleTogether: boolean) => this.setScaleTogether(scaleTogether)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_VERTICAL_ALIGN, () => this.getVerticalAlign(), (verticalAlign: number) => this.setVerticalAlign(verticalAlign)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, () => this.getHorizAlign(), (horizAlign: number) => this.setHorizAlign(horizAlign)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_ASPECT_RATIO, () => this.getAspectRatio(), (aspectRatio: number) => this.setAspectRatio(aspectRatio)));
     }
 
     addMemo(memorizable: Memorizable) {
@@ -229,10 +238,10 @@ export class SimView extends AbstractSubject implements LabView {
         if (!simRect.equals(this.simRect_)) {
             this.simRect_ = simRect;
             this.realign();
-            this.broadcastParameter(SimView.WIDTH);
-            this.broadcastParameter(SimView.HEIGHT);
-            this.broadcastParameter(SimView.CENTER_X);
-            this.broadcastParameter(SimView.CENTER_Y);
+            this.broadcastParameter(SimView.PARAM_NAME_WIDTH);
+            this.broadcastParameter(SimView.PARAM_NAME_HEIGHT);
+            this.broadcastParameter(SimView.PARAM_NAME_CENTER_X);
+            this.broadcastParameter(SimView.PARAM_NAME_CENTER_Y);
             this.broadcast(new GenericEvent(this, SimView.SIM_RECT_CHANGED));
         }
     }
@@ -311,14 +320,13 @@ export class SimView extends AbstractSubject implements LabView {
     /**
      * Sets the ratio of 'pixels per simulation unit along y axis' divided
      * by 'pixels per simulation unit along x axis' used when displaying this LabView.
-     * See {@link myphysicslab.lab.view.CoordMap}.
      * @param {number} aspectRatio the aspect ratio used when displaying this LabView
      */
     setAspectRatio(aspectRatio: number) {
         if (veryDifferent(this.aspectRatio_, aspectRatio)) {
             this.aspectRatio_ = aspectRatio;
             this.realign();
-            this.broadcastParameter(ASPECT_RATIO);
+            this.broadcastParameter(SimView.PARAM_NAME_ASPECT_RATIO);
         }
     }
 
@@ -364,15 +372,13 @@ export class SimView extends AbstractSubject implements LabView {
     /**
      * Sets the horizontal alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
-     * See {@link myphysicslab.lab.view.CoordMap}.
-     * @param {!myphysicslab.lab.view.HorizAlign} alignHoriz the horizontal alignment to use
-     * for aligning the simulation rectangle within the screen rectangle,
-     * from {@link myphysicslab.lab.view.HorizAlign}
+     * @param alignHoriz the horizontal alignment to use
+     * for aligning the simulation rectangle within the screen rectangle.
      */
     setHorizAlign(alignHoriz: HorizAlign) {
         this.horizAlign_ = alignHoriz;
         this.realign();
-        this.broadcastParameter(HORIZONTAL_ALIGN);
+        this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
     }
 
     /**
@@ -386,22 +392,20 @@ export class SimView extends AbstractSubject implements LabView {
             if (this.scaleTogether_) {
                 this.ratio_ = this.height_ / this.width_;
             }
-            this.broadcastParameter(SCALE_TOGETHER);
+            this.broadcastParameter(SimView.PARAM_NAME_SCALE_TOGETHER);
         }
     }
 
     /**
      * Sets the vertical alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
-     * See {@link myphysicslab.lab.view.CoordMap}.
-     * @param {!myphysicslab.lab.view.VerticalAlign} alignVert the vertical alignment to use
-     * for aligning the simulation rectangle within the screen rectangle,
-     * from {@link myphysicslab.lab.view.VerticalAlign}
+     * @param alignVert the vertical alignment to use
+     * for aligning the simulation rectangle within the screen rectangle.
      */
     setVerticalAlign(alignVert: VerticalAlign): void {
         this.verticalAlign_ = alignVert;
         this.realign();
-        this.broadcastParameter(VERTICAL_ALIGN);
+        this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
     }
 
     /**

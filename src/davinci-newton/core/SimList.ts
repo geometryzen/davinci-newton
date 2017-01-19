@@ -62,7 +62,6 @@ export class SimList extends AbstractSubject {
     /**
      * Removes SimObjects from this SimList whose *expiration time* is less than the given time.
      * Notifies Observers by broadcasting the {@link #OBJECT_REMOVED} event for each SimObject removed.
-     * See {@link myphysicslab.lab.model.SimObject#getExpireTime}
      * @param time the current simulation time
      */
     removeTemporary(time: number): void {

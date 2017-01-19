@@ -1,3 +1,10 @@
-export default function repeat(value: number, times: number): number[] {
-    throw new Error("TODO");
+/**
+ * Returns an array consisting of the given `value` repeated `N` times.
+ */
+export default function repeat<T>(value: T, N: number): T[] {
+    const xs: T[] = [];
+    for (let i = 0; i < N; i++) {
+        xs[i] = value;
+    }
+    return xs;
 }

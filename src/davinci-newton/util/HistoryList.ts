@@ -8,7 +8,7 @@ import HistoryIterator from './HistoryIterator';
  * values whose index is between {@link #getStartIndex} and {@link #getEndIndex}
  * (inclusive).
  * 
- * Designed to represent a {@link myphysicslab.lab.util.CircularList} where new values are
+ * Designed to represent a CircularList where new values are
  * written over old values. Therefore the starting index can change when writing a new
  * value to the list, because the new value might overwrite an old value.
  */
@@ -29,11 +29,11 @@ export interface HistoryList<T> {
     getEndValue(): T;
 
     /**
-     * Returns a {@link myphysicslab.lab.util.HistoryIterator} which begins at the
+     * Returns a HistoryIterator which begins at the
      * given index in this HistoryList.
-     * @param {number=} index the index to start the iterator at;  if undefined or -1, then
+     * @param index the index to start the iterator at;  if undefined or -1, then
      * starts at beginning of this HistoryList
-     * @return {!myphysicslab.lab.util.HistoryIterator<T>} a HistoryIterator which begins
+     * @return a HistoryIterator which begins
      * at the given index in this HistoryList.
      */
     getIterator(index?: number): HistoryIterator<T>;

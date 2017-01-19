@@ -48,9 +48,6 @@ const MIN_SIZE = 1E-15;
  * as desired. Here we ignore *display* coordinates and regard *screen coordinates* to be
  * what is called *model coordinates* in the above quote.
  * 
- * See also 'Coordinate System When Drawing An Image' in
- * {@link myphysicslab.lab.view.DisplayShape}.
- * 
  * @param screen_left  the left edge of the canvas in screen coordinates
  * @param screen_bottom the bottom edge of the canvas in screen coordinates
  * @param sim_left  the simulation coordinate corresponding to screen_left
@@ -363,7 +360,7 @@ export default class CoordMap {
     /**
      * Translates the given screen coordinates rectangle into simulation coordinates.
      * @param rect the rectangle in screen coordinates
-     * @return {!myphysicslab.lab.util.DoubleRect} the equivalent rectangle in simulation coordinates
+     * @return the equivalent rectangle in simulation coordinates
      */
     screenToSimRect(rect: ScreenRect): DoubleRect {
         return new DoubleRect(

@@ -64,7 +64,7 @@ export interface LabView extends Memorizable {
      * Sets the bounding rectangle for this LabView, ensures this rectangle
      * is visible, and turns off auto-scaling. The result is to generate a new CoordMap for
      * this SimView so that the simulation rectangle maps to the current screen rectangle.
-     * @param {!myphysicslab.lab.util.DoubleRect} simRect the bounding rectangle for this
+     * @param simRect the bounding rectangle for this
      * LabView in simulation coordinates.
      */
     setSimRect(simRect: DoubleRect): void;

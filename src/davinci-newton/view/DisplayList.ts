@@ -15,17 +15,17 @@ import isObject from '../checks/isObject';
  * The DisplayList is sorted by `zIndex`.
  */
 export class DisplayList extends AbstractSubject {
-    static NAME_ID = 1;
+    private static NAME_ID = 1;
 
     /**
      * Name of event broadcast when a DisplayObject is added.
      */
-    static OBJECT_ADDED = 'OBJECT_ADDED';
+    public static readonly OBJECT_ADDED = 'OBJECT_ADDED';
 
     /**
      * Name of event broadcast when a DisplayObject is removed.
      */
-    static OBJECT_REMOVED = 'OBJECT_REMOVED';
+    public static readonly OBJECT_REMOVED = 'OBJECT_REMOVED';
 
     /**
      * 
@@ -69,12 +69,40 @@ export class DisplayList extends AbstractSubject {
      * @param context the canvas's context to draw this object into
      * @param map the mapping to use for translating between simulation and screen coordinates
      */
-    draw(context: CanvasRenderingContext2D, map: CoordMap) {
+    draw(context: CanvasRenderingContext2D, coordMap: CoordMap) {
         this.sort();
-        this.drawables_.forEach(function (dispObj) {
-            dispObj.draw(context, map);
-        });
-    };
+        const ds = this.drawables_;
+        const N = ds.length;
+        for (let i = 0; i < N; i++) {
+            ds[i].draw(context, coordMap);
+        }
+    }
+
+    /**
+     * Adds the DisplayObject, inserting it at the front of the group of DisplayObjects
+     * with the same zIndex; the item will appear visually under objects that have
+     * the same (or higher) `zIndex`.
+     * @param dispObj the DisplayObject to prepend
+     */
+    prepend(dispObj: DisplayObject): void {
+        if (!isObject(dispObj)) {
+            throw new Error('non-object passed to DisplayList.add');
+        }
+        const zIndex = dispObj.getZIndex();
+        this.sort();
+        // Objects in drawables_ array should be sorted by zIndex.
+        // Starting at back of drawables_ array, find the object with smaller
+        // zIndex, insert dispObj just after that object.
+        const N = this.drawables_.length;
+        for (var i = N; i > 0; i--) {
+            const z = this.drawables_[i - 1].getZIndex();
+            if (zIndex > z) {
+                break;
+            }
+        }
+        insertAt(this.drawables_, dispObj, i);
+        this.broadcast(new GenericEvent(this, DisplayList.OBJECT_ADDED, dispObj));
+    }
 
     private sort(): void {
         // TODO

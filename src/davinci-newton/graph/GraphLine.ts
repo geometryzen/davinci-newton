@@ -9,21 +9,24 @@ import Memorizable from '../util/Memorizable';
 import mustBeLE from '../checks/mustBeLE';
 import mustBeObject from '../checks/mustBeObject';
 import Observer from '../util/Observer';
+import ParameterNumber from '../util/ParameterNumber';
+import ParameterString from '../util/ParameterString';
 import SubjectEvent from '../util/SubjectEvent';
 import VarsList from '../core/VarsList';
 import veryDifferent from '../util/veryDifferent';
 
-const DRAWING_MODE = 'draw mode';
-const GRAPH_COLOR = 'graph color';
 // const GRAPH_DRAW_MODE = 'graph draw mode';
 // const GRAPH_POINTS = 'graph points';
-const LINE_WIDTH = 'draw width';
 // const CLEAR_GRAPH = 'clear graph';
 // const NONE = '-none-';
 
 export default class GraphLine extends AbstractSubject implements Memorizable, Observer {
-    public static readonly X_VARIABLE = 'X variable';
-    public static readonly Y_VARIABLE = 'Y variable';
+    public static readonly PARAM_NAME_X_VARIABLE = 'X variable';
+    public static readonly PARAM_NAME_Y_VARIABLE = 'Y variable';
+
+    public static readonly PARAM_NAME_LINE_WIDTH = 'line width';
+    public static readonly PARAM_NAME_COLOR = 'color';
+    public static readonly PARAM_NAME_DRAWING_MODE = 'drawing mode';
     /**
      * Event broadcasted when reset is called.
      */
@@ -40,6 +43,14 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * index of vertical variable in simulation's variables, or -1 to not collect any X variable data
      */
     private yVar_: number;
+    /**
+     * Parameter that represents which variable is shown on x-axis, and the available choices of variables.
+     */
+    private xVarParam_: ParameterNumber;
+    /**
+     * Parameter that represents which variable is shown on y-axis, and the available choices of variables.
+     */
+    private yVarParam_: ParameterNumber;
     /**
      * Holds the most recent data points drawn, to enable redrawing when needed.
      */
@@ -86,6 +97,15 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         varsList.addObserver(this);
         this.xVar_ = -1;
         this.yVar_ = -1;
+
+        this.xVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_X_VARIABLE, () => this.getXVariable(), (index: number) => this.setXVariable(index));
+        this.xVarParam_.setLowerLimit(-1);
+        this.addParameter(this.xVarParam_);
+
+        this.yVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_Y_VARIABLE, () => this.getYVariable(), (index: number) => this.setYVariable(index));
+        this.yVarParam_.setLowerLimit(-1);
+        this.addParameter(this.yVarParam_);
+
         this.dataPoints_ = new CircularList<GraphPoint>(capacity || 100000);
         this.drawColor_ = 'lime';
         this.drawMode_ = DrawingMode.LINES;
@@ -93,6 +113,9 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         this.addGraphStyle();
         this.xTransform = function (x, y) { return x; };
         this.yTransform = function (x, y) { return y; };
+        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_LINE_WIDTH, () => this.getLineWidth(), (lineWidth: number) => this.setLineWidth(lineWidth)));
+        this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_DRAWING_MODE, () => this.getDrawingMode(), (drawingMode: string) => this.setDrawingMode(drawingMode)));
+        this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_COLOR, () => this.getColor(), (color: string) => this.setColor(color)));
     }
 
     /**
@@ -133,7 +156,6 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
 
     /**
      * Returns the drawing mode of the graph: dots or lines.
-     * See {@link myphysicslab.lab.view.DrawingMode}.
      * @return the DrawingMode to draw this graph with
      */
     getDrawingMode(): string {
@@ -195,7 +217,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
 
     /**
      * Returns the index in the VarsList of the X variable being collected.
-     * @return {number} the index of X variable in the VarsList, or  -1 if no X variable
+     * @return the index of X variable in the VarsList, or  -1 if no X variable
      * is being collected.
      */
     getXVariable(): number {
@@ -267,8 +289,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
 
     /**
      * Forgets any memorized styles, records the current color, draw mode, and line width
-     * as the single starting style. Note that you may need to call
-     * {@link myphysicslab.lab.graph.DisplayGraph#reset} to see this change take effect.
+     * as the single starting style.
      */
     resetStyle(): void {
         this.styles_ = [];
@@ -285,7 +306,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         if (this.drawColor_ !== color) {
             this.drawColor_ = color;
             this.addGraphStyle();
-            this.broadcastParameter(GRAPH_COLOR);
+            this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
         }
     }
 
@@ -301,7 +322,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
             this.drawMode_ = dm;
             this.addGraphStyle();
         }
-        this.broadcastParameter(DRAWING_MODE);
+        this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
     }
 
     /**
@@ -322,7 +343,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         if (veryDifferent(value, this.lineWidth_)) {
             this.lineWidth_ = value;
             this.addGraphStyle();
-            this.broadcastParameter(LINE_WIDTH);
+            this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
         }
     }
 
@@ -340,7 +361,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         if (xVar !== this.xVar_) {
             this.xVar_ = xVar;
             this.reset();
-            this.broadcastParameter(GraphLine.X_VARIABLE);
+            this.broadcastParameter(GraphLine.PARAM_NAME_X_VARIABLE);
         }
     }
 
@@ -358,7 +379,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         if (yVar !== this.yVar_) {
             this.yVar_ = yVar;
             this.reset();
-            this.broadcastParameter(GraphLine.Y_VARIABLE);
+            this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
         }
     }
 }

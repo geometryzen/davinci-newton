@@ -4,6 +4,7 @@ import DisplayObject from '../view/DisplayObject';
 import DrawingMode from '../view/DrawingMode';
 import GraphLine from './GraphLine';
 import isDefined from '../checks/isDefined';
+import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import ScreenRect from '../view/ScreenRect';
@@ -143,18 +144,25 @@ export default class DisplayGraph implements DisplayObject {
     }
 
     /**
-     * 
+     * Draws the points starting from the specified point to the most recent point;
+     * returns the index of last point drawn.
+     * @param context the canvas's context to draw into
+     * @param coordMap the CoordMap specifying sim to screen conversion
+     * @param from the index of the the point to start from, within the datapoints
+     * @param graphLine
+     * @return the index of the last point drawn.
      */
-    drawPoints(context: CanvasRenderingContext2D, coordMap: CoordMap, from: number, graphLine: GraphLine): number {
-        var simRect = coordMap.screenToSimRect(this.screenRect_);
-        var iter = graphLine.getGraphPoints().getIterator(from);
-        if (!iter.hasNext())
+    private drawPoints(context: CanvasRenderingContext2D, coordMap: CoordMap, from: number, graphLine: GraphLine): number {
+        const simRect = coordMap.screenToSimRect(this.screenRect_);
+        const iter = graphLine.getGraphPoints().getIterator(from);
+        if (!iter.hasNext()) {
             return from;
-        /** @type {!lab.graph.GraphPoint} */
-        var next = iter.nextValue();  // move to first point
+        }
+        let next = iter.nextValue();  // move to first point
+        mustBeNonNullObject('first', next);
         // Draw first point.
         // Find the GraphStyle corresponding to this point.
-        var style = graphLine.getGraphStyle(iter.getIndex());
+        const style = graphLine.getGraphStyle(iter.getIndex());
         if (style.drawMode === DrawingMode.DOTS) {
             const x = coordMap.simToScreenX(next.x);
             const y = coordMap.simToScreenY(next.y);
@@ -163,36 +171,39 @@ export default class DisplayGraph implements DisplayObject {
             context.fillRect(x, y, w, w);
         }
         while (iter.hasNext()) {
-            /** @type {!lab.graph.GraphPoint} */
-            var last = next;
+            const last = next;
             next = iter.nextValue();
+            mustBeNonNullObject('next', next);
             // if same point then don't draw again
-            if (next.x === last.x && next.y === last.y)
+            if (next.x === last.x && next.y === last.y) {
                 continue;
+            }
             // find the GraphStyle corresponding to this point
-            style = graphLine.getGraphStyle(iter.getIndex());
+            const style = graphLine.getGraphStyle(iter.getIndex());
             // Avoid drawing nonsense lines in a graph, like when the pendulum
             // moves over the 0 to 2Pi boundary.  The sequence number changes
             // when there is a discontinuity, so don't draw a line in this case.
-            var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
+            const continuous = next.seqX === last.seqX && next.seqY === last.seqY;
             if (style.drawMode === DrawingMode.DOTS || !continuous) {
                 // Only draw points that are visible.
-                if (!simRect.contains(next))
+                if (!simRect.contains(next)) {
                     continue;
+                }
                 const x = coordMap.simToScreenX(next.x);
                 const y = coordMap.simToScreenY(next.y);
                 const w = style.lineWidth;
                 context.fillStyle = style.color_;
                 context.fillRect(x, y, w, w);
-            } else {
+            }
+            else {
                 // Don't draw lines that are not possibly visible.
                 if (!simRect.maybeVisible(last, next)) {
                     continue;
                 }
-                var x1 = coordMap.simToScreenX(last.x);
-                var y1 = coordMap.simToScreenY(last.y);
-                var x2 = coordMap.simToScreenX(next.x);
-                var y2 = coordMap.simToScreenY(next.y);
+                const x1 = coordMap.simToScreenX(last.x);
+                const y1 = coordMap.simToScreenY(last.y);
+                const x2 = coordMap.simToScreenX(next.x);
+                const y2 = coordMap.simToScreenY(next.y);
                 context.strokeStyle = style.color_;
                 context.lineWidth = style.lineWidth;
                 context.beginPath();
@@ -272,7 +283,6 @@ export default class DisplayGraph implements DisplayObject {
 
     /**
      * Sets the screen rectangle that this DisplayGraph should occupy within the
-     * {@link myphysicslab.lab.view.SimView SimView}, in screen coordinates.
      * @param screenRect the screen coordinates of the
      * area this DisplayGraph should occupy.
      */

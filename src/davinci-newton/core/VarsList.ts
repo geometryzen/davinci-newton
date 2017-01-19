@@ -116,7 +116,6 @@ export class VarsList extends AbstractSubject {
      * Add a continguous block of ConcreteVariables.
      * @param {!Array<string>} names language-independent names of variables; these will be
      * underscorized so the English name can be passed in here.
-     * See {@link myphysicslab.lab.util.UtilityCore#toName}.
      * @param {!Array<string>} localNames localized names of variables
      * @return {number} index index of first Variable that was added
      * @throws {Error} if any of the variable names is 'DELETED', or array of names is empty
@@ -171,8 +170,7 @@ export class VarsList extends AbstractSubject {
     /**
      * Increments the sequence number for the specified variable(s), which indicates a
      * discontinuity has occurred in the value of this variable. This information is used in a
-     * graph to prevent drawing a line between points that have a discontinuity. See
-     * {@link myphysicslab.lab.model.Variable#getSequence}.
+     * graph to prevent drawing a line between points that have a discontinuity.
      * @param {...number} indexes  the indexes of the variables;
      * if no index given then all variable's sequence numbers are incremented
      */
@@ -378,7 +376,6 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Indicates the specified Variables are being automatically computed.
-     * See {@link myphysicslab.lab.util.Parameter#isComputed}.
      * @param {...number} indexes  the indexes of the variables
      */
     setComputed(...indexes: number[]) {

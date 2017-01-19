@@ -37,9 +37,7 @@ const BACKGROUND = 'background';
  * Focus View
  * 
  * The first LabView that is added becomes the **focus view**. The focus view is treated
- * specially by some classes, for example {@link myphysicslab.lab.app.SimController} will
- * pan the focus LabView when a particular set of modifier keys are pressed during a mouse
- * drag. The focus view can be changed via {@link #setFocusView}.
+ * specially by some classes.
  * 
  * Background Color
  * 
@@ -58,7 +56,7 @@ const BACKGROUND = 'background';
  * 
  * A visual effect where moving objects leave behind a smeared out trail can be done by
  * setting the background color and the *alpha* transparency, see {@link #setAlpha}.
- * Here are example settings, which can be done in a {@link myphysicslab.lab.util.Terminal} session:
+ * Here are example settings:
  * 
  * simCanvas.setBackground('black');
  * simCanvas.setAlpha(0.05);
@@ -80,7 +78,7 @@ const BACKGROUND = 'background';
  * 
  * ### Events Broadcast
  * 
- * LabCanvas broadcasts these {@link myphysicslab.lab.util.GenericEvent}s to its Observers:
+ * LabCanvas broadcasts these GenericEvent(s) to its Observers:
  * 
  * + {@link #VIEW_ADDED} the value of the GenericEvent is the LabView being added
  * 
@@ -255,7 +253,7 @@ export class LabCanvas extends AbstractSubject {
 
     /**
      * Returns the focus LabView which is the main focus of the LabCanvas.
-     * @return {?myphysicslab.lab.view.LabView} the focus LabView, or `null` when there is no focus LabView
+     * @return the focus LabView, or `null` when there is no focus LabView
      */
     getFocusView(): LabView {
         return this.focusView_;
@@ -322,33 +320,32 @@ export class LabCanvas extends AbstractSubject {
         if (this.canvas_.offsetParent != null) {
             const context = this.canvas_.getContext('2d');
             context.save();
-            try {
-                if (this.background_ !== '') {
-                    // Notes Nov 22, 2016:
-                    // Setting a fillStyle color with transparency doesn't work here.
-                    // For example rgb(0,0,0,0.05). Only setting globalAlpha works.
-                    // Does fillRect() always ignore the alpha value of the color?
-                    // That does not seem to be according to spec.
-                    // Note also that globalAlpha has no effect on fill() because in that
-                    // case the fillStyle's alpha is always used, and if not specified then
-                    // it seems to assume alpha = 1.
-                    context.globalAlpha = this.alpha_;
-                    context.fillStyle = this.background_;
-                    context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
-                    context.globalAlpha = 1;
-                }
-                else {
-                    // clearRect sets all pixels in the rectangle to transparent black,
-                    // erasing any previously drawn content.
-                    // clearRect is supposed to be faster than fillRect.
-                    context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
-                }
-                this.labViews_.forEach(function (view) {
-                    view.paint(context);
-                });
-            } finally {
-                context.restore();
+            if (this.background_ !== '') {
+                // Notes Nov 22, 2016:
+                // Setting a fillStyle color with transparency doesn't work here.
+                // For example rgb(0,0,0,0.05). Only setting globalAlpha works.
+                // Does fillRect() always ignore the alpha value of the color?
+                // That does not seem to be according to spec.
+                // Note also that globalAlpha has no effect on fill() because in that
+                // case the fillStyle's alpha is always used, and if not specified then
+                // it seems to assume alpha = 1.
+                context.globalAlpha = this.alpha_;
+                context.fillStyle = this.background_;
+                context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                context.globalAlpha = 1;
             }
+            else {
+                // clearRect sets all pixels in the rectangle to transparent black,
+                // erasing any previously drawn content.
+                // clearRect is supposed to be faster than fillRect.
+                context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
+            }
+            const vs = this.labViews_;
+            const N = vs.length;
+            for (let i = 0; i < N; i++) {
+                vs[i].paint(context);
+            }
+            context.restore();
         }
     }
 
