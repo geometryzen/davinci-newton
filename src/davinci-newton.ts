@@ -8,7 +8,9 @@ import RigidBodySim from './davinci-newton/engine/RigidBodySim';
 import RungeKutta from './davinci-newton/model/RungeKutta';
 import SimpleAdvance from './davinci-newton/strategy/SimpleAdvance';
 import SimRunner from './davinci-newton/runner/SimRunner';
+import SimView from './davinci-newton/view/SimView';
 import Spring from './davinci-newton/objects/Spring';
+import TimeGraph from './davinci-newton/graph/TimeGraph';
 import Vector from './davinci-newton/math/Vector';
 
 /**
@@ -62,7 +64,15 @@ const newton = {
     /**
      * 
      */
+    get SimView() { return SimView; },
+    /**
+     * 
+     */
     get Spring() { return Spring; },
+    /**
+     * 
+     */
+    get TimeGraph() { return TimeGraph; },
     /**
      * 
      */

@@ -9,6 +9,10 @@ export interface SubjectEvent {
      * 
      */
     getName(): string;
+    /**
+     * 
+     */
+    nameEquals(name: string): boolean;
 }
 
 export default SubjectEvent;

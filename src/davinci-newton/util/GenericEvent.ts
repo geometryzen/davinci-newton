@@ -31,6 +31,14 @@ export class GenericEvent implements SubjectEvent {
     getSubject(): Subject {
         return this.subject_;
     }
+
+    /**
+     * 
+     */
+    nameEquals(name: string): boolean {
+        return this.name_ === toName(name);
+    }
+
 }
 
 export default GenericEvent;

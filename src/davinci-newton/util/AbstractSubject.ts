@@ -1,6 +1,9 @@
+import clone from './clone';
+import contains from './contains';
 import find from './find';
 import Observer from './Observer';
 import Parameter from './Parameter';
+import remove from './remove';
 import Subject from './Subject';
 import SubjectEvent from './SubjectEvent';
 import toName from '../util/toName';
@@ -47,6 +50,16 @@ export class AbstractSubject implements Subject {
         return this.name_;
     }
 
+    addObserver(observer: Observer) {
+        if (!contains(this.observers_, observer)) {
+            this.observers_.push(observer);
+        }
+    }
+
+    removeObserver(observer: Observer) {
+        remove(this.observers_, observer);
+    }
+
     /**
      * Returns the Parameter with the given name, or null if not found
      * @param name name of parameter to search for
@@ -85,6 +98,21 @@ export class AbstractSubject implements Subject {
             throw new Error('unknown Parameter ' + name);
         }
         this.broadcast(p);
+    }
+
+    /**
+     * Returns whether this Subject is broadcasting events.
+     * @return {boolean} whether this Subject is broadcasting events
+     */
+    protected getBroadcast(): boolean {
+        return this.doBroadcast_;
+    }
+
+    /**
+     * 
+     */
+    getObservers() {
+        return clone(this.observers_);
     }
 
 }

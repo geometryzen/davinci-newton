@@ -174,4 +174,22 @@ export default class CircularList<T> implements HistoryList<T> {
         return idx;
     }
 
+    reset(): void {
+        this.nextPtr_ = this.size_ = 0;  // clear out the memory
+        this.cycles_ = 0;
+        this.lastPtr_ = -1;
+    }
+
+    store(value: T): number {
+        this.lastPtr_ = this.nextPtr_;
+        this.values_[this.nextPtr_] = value;
+        this.nextPtr_++;
+        if (this.size_ < this.capacity_)
+            this.size_++;
+        if (this.nextPtr_ >= this.capacity_) {  // wrap around at end
+            this.cycles_++;
+            this.nextPtr_ = 0;
+        }
+        return this.pointerToIndex(this.lastPtr_);
+    }
 }

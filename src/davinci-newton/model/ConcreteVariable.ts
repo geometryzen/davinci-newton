@@ -26,6 +26,11 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
+    private isComputed_ = false;
+
+    /**
+     * 
+     */
     private doesBroadcast_ = false;
 
     /**
@@ -35,11 +40,19 @@ export class ConcreteVariable implements Variable {
         this.name_ = validName(toName(name));
     }
 
+    getBroadcast(): boolean {
+        return this.doesBroadcast_;
+    }
+
     /**
      * 
      */
     getName(localized?: boolean) {
         return localized ? this.localName_ : this.name_;
+    }
+
+    getSequence(): number {
+        return this.seq_;
     }
 
     /**
@@ -54,6 +67,18 @@ export class ConcreteVariable implements Variable {
      */
     getValue(): number {
         return this.value_;
+    }
+
+    nameEquals(name: string): boolean {
+        return this.name_ === toName(name);
+    }
+
+    setBroadcast(value: boolean): void {
+        this.doesBroadcast_ = value;
+    }
+
+    setComputed(value: boolean) {
+        this.isComputed_ = value;
     }
 
     /**

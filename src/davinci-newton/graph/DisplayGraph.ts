@@ -1,13 +1,17 @@
+import contains from '../util/contains';
 import CoordMap from '../view/CoordMap';
+import DisplayObject from '../view/DisplayObject';
 import DrawingMode from '../view/DrawingMode';
 import GraphLine from './GraphLine';
+import isDefined from '../checks/isDefined';
+import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import ScreenRect from '../view/ScreenRect';
 
 /**
  * 
  */
-export default class DisplayGraph {
+export default class DisplayGraph implements DisplayObject {
 
     /**
      * The GraphLines to draw.
@@ -43,6 +47,11 @@ export default class DisplayGraph {
      * set when the entire graph needs to be redrawn.
      */
     useBuffer_ = false;
+
+    /**
+     * 
+     */
+    zIndex = 0;
 
     /**
      * 
@@ -201,6 +210,14 @@ export default class DisplayGraph {
         this.incrementalDraw(context, coordMap);
     }
 
+    getZIndex(): number {
+        return this.zIndex;
+    }
+
+    setZIndex(zIndex: number): void {
+        this.zIndex = isDefined(zIndex) ? zIndex : 0;
+    }
+
     /**
      * 
      */
@@ -212,6 +229,67 @@ export default class DisplayGraph {
         // context.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
         for (let i = 0, n = this.graphLines_.length; i < n; i++) {
             this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
+        }
+    }
+
+    isDragable(): boolean {
+        return false;
+    }
+
+    /**
+     * Add a GraphLine to be displayed.
+     * @param graphLine the GraphLine to be display
+     */
+    addGraphLine(graphLine: GraphLine) {
+        if (GraphLine.isDuckType(graphLine)) {
+            if (!contains(this.graphLines_, graphLine)) {
+                this.graphLines_.push(graphLine);
+                this.memDraw_.push(-1);
+            }
+        } else {
+            throw new Error('not a GraphLine ' + graphLine);
+        }
+    }
+
+    /**
+     * Remove a GraphLine from set of those to display.
+     * @param graphLine the GraphLine to not display
+     */
+    removeGraphLine(graphLine: GraphLine) {
+        if (GraphLine.isDuckType(graphLine)) {
+            var idx = this.graphLines_.indexOf(graphLine);
+            removeAt(this.graphLines_, idx);
+            removeAt(this.memDraw_, idx);
+            this.needRedraw_ = true;
+        } else {
+            throw new Error('not a GraphLine ' + graphLine);
+        }
+    }
+
+    setDragable(dragable: boolean): void {
+        // Do nothing.
+    }
+
+    /**
+     * Sets the screen rectangle that this DisplayGraph should occupy within the
+     * {@link myphysicslab.lab.view.SimView SimView}, in screen coordinates.
+     * @param screenRect the screen coordinates of the
+     * area this DisplayGraph should occupy.
+     */
+    setScreenRect(screenRect: ScreenRect): void {
+        this.screenRect_ = screenRect;
+        this.offScreen_ = null; // force reallocation of offscreen
+    }
+
+    /**
+     * Whether to draw into an offscreen buffer.  A *time graph* must redraw every
+     * frame, so it saves time to *not* use an offscreen buffer in that case.
+     * @param value Whether to draw into an offscreen buffer
+     */
+    setUseBuffer(value: boolean): void {
+        this.useBuffer_ = value;
+        if (!this.useBuffer_) {
+            this.offScreen_ = null;
         }
     }
 

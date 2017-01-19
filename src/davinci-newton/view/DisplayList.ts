@@ -1,4 +1,5 @@
 import AbstractSubject from '../util/AbstractSubject';
+import CoordMap from './CoordMap';
 import DisplayObject from './DisplayObject';
 import GenericEvent from '../util/GenericEvent';
 import insertAt from '../util/insertAt';
@@ -61,6 +62,20 @@ export class DisplayList extends AbstractSubject {
         insertAt(this.drawables_, dispObj, i);
         this.broadcast(new GenericEvent(this, DisplayList.OBJECT_ADDED, dispObj));
     }
+
+    /**
+     * Draws the DisplayObjects in order, which means that DisplayObjects drawn later (at
+     * the end of the list) will appear to be on top of those drawn earlier (at start of the list).
+     * @param context the canvas's context to draw this object into
+     * @param map the mapping to use for translating between simulation and screen coordinates
+     */
+    draw(context: CanvasRenderingContext2D, map: CoordMap) {
+        this.sort();
+        this.drawables_.forEach(function (dispObj) {
+            dispObj.draw(context, map);
+        });
+    };
+
     private sort(): void {
         // TODO
     }

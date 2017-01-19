@@ -1,7 +1,12 @@
+import CoordMap from './CoordMap';
 /**
  * 
  */
 export interface DisplayObject {
+    /**
+     * 
+     */
+    draw(context: CanvasRenderingContext2D, coordMap: CoordMap): void;
 
     /**
      * Sets the z-index which specifies front-to-back ordering of objects;

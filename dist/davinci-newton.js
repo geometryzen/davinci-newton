@@ -564,6 +564,23 @@ define('davinci-newton/util/CircularList',["require", "exports", "./UtilityCore"
                 throw new Error(MAX_INDEX_ERROR);
             return idx;
         };
+        CircularList.prototype.reset = function () {
+            this.nextPtr_ = this.size_ = 0;
+            this.cycles_ = 0;
+            this.lastPtr_ = -1;
+        };
+        CircularList.prototype.store = function (value) {
+            this.lastPtr_ = this.nextPtr_;
+            this.values_[this.nextPtr_] = value;
+            this.nextPtr_++;
+            if (this.size_ < this.capacity_)
+                this.size_++;
+            if (this.nextPtr_ >= this.capacity_) {
+                this.cycles_++;
+                this.nextPtr_ = 0;
+            }
+            return this.pointerToIndex(this.lastPtr_);
+        };
         return CircularList;
     }());
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -614,6 +631,21 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     exports.default = config;
 });
 
+define('davinci-newton/util/contains',["require", "exports"], function (require, exports) {
+    "use strict";
+    function contains(xs, x) {
+        var length = xs.length;
+        for (var i = 0; i < length; i++) {
+            if (xs[i] === x) {
+                return true;
+            }
+        }
+        return false;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = contains;
+});
+
 define('davinci-newton/view/DrawingMode',["require", "exports"], function (require, exports) {
     "use strict";
     var DrawingMode = (function () {
@@ -627,22 +659,227 @@ define('davinci-newton/view/DrawingMode',["require", "exports"], function (requi
     exports.default = DrawingMode;
 });
 
-define('davinci-newton/util/repeat',["require", "exports"], function (require, exports) {
+define('davinci-newton/util/clone',["require", "exports"], function (require, exports) {
     "use strict";
-    function repeat(value, times) {
+    function clone(xs) {
+        throw new Error("TODO: clone");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = clone;
+});
+
+define('davinci-newton/util/find',["require", "exports"], function (require, exports) {
+    "use strict";
+    function find(xs, predicate) {
         throw new Error("TODO");
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = repeat;
+    exports.default = find;
 });
 
-define('davinci-newton/checks/isFunction',["require", "exports"], function (require, exports) {
+define('davinci-newton/util/remove',["require", "exports"], function (require, exports) {
     "use strict";
-    function isFunction(x) {
-        return (typeof x === 'function');
+    function remove(xs, x) {
+        throw new Error("TODO: remove");
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isFunction;
+    exports.default = remove;
+});
+
+define('davinci-newton/util/toName',["require", "exports"], function (require, exports) {
+    "use strict";
+    function toName(text) {
+        return text.toUpperCase().replace(/[ -]/g, '_');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = toName;
+});
+
+define('davinci-newton/util/validName',["require", "exports"], function (require, exports) {
+    "use strict";
+    function validName(text) {
+        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
+            throw new Error('not a valid name: ' + text);
+        }
+        return text;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = validName;
+});
+
+define('davinci-newton/util/AbstractSubject',["require", "exports", "./clone", "./contains", "./find", "./remove", "../util/toName", "../util/validName"], function (require, exports, clone_1, contains_1, find_1, remove_1, toName_1, validName_1) {
+    "use strict";
+    var AbstractSubject = (function () {
+        function AbstractSubject(name) {
+            this.doBroadcast_ = true;
+            this.observers_ = [];
+            this.paramList_ = [];
+            if (!name) {
+                throw new Error('no name');
+            }
+            this.name_ = validName_1.default(toName_1.default(name));
+        }
+        AbstractSubject.prototype.getName = function () {
+            return this.name_;
+        };
+        AbstractSubject.prototype.addObserver = function (observer) {
+            if (!contains_1.default(this.observers_, observer)) {
+                this.observers_.push(observer);
+            }
+        };
+        AbstractSubject.prototype.removeObserver = function (observer) {
+            remove_1.default(this.observers_, observer);
+        };
+        AbstractSubject.prototype.getParam = function (name) {
+            name = toName_1.default(name);
+            return find_1.default(this.paramList_, function (p) {
+                return p.getName() === name;
+            });
+        };
+        AbstractSubject.prototype.getParameter = function (name) {
+            var p = this.getParam(name);
+            if (p != null) {
+                return p;
+            }
+            throw new Error('Parameter not found ' + name);
+        };
+        AbstractSubject.prototype.broadcast = function (event) {
+            if (this.doBroadcast_) {
+                var len = this.observers_.length;
+                for (var i = 0; i < len; i++) {
+                    this.observers_[i].observe(event);
+                }
+            }
+        };
+        AbstractSubject.prototype.broadcastParameter = function (name) {
+            var p = this.getParam(name);
+            if (p === null) {
+                throw new Error('unknown Parameter ' + name);
+            }
+            this.broadcast(p);
+        };
+        AbstractSubject.prototype.getBroadcast = function () {
+            return this.doBroadcast_;
+        };
+        AbstractSubject.prototype.getObservers = function () {
+            return clone_1.default(this.observers_);
+        };
+        return AbstractSubject;
+    }());
+    exports.AbstractSubject = AbstractSubject;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AbstractSubject;
+});
+
+define('davinci-newton/util/GenericEvent',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
+    "use strict";
+    var GenericEvent = (function () {
+        function GenericEvent(subject_, name, value_) {
+            this.subject_ = subject_;
+            this.value_ = value_;
+            this.name_ = validName_1.default(toName_1.default(name));
+        }
+        GenericEvent.prototype.getName = function (localized) {
+            return this.name_;
+        };
+        GenericEvent.prototype.getSubject = function () {
+            return this.subject_;
+        };
+        GenericEvent.prototype.nameEquals = function (name) {
+            return this.name_ === toName_1.default(name);
+        };
+        return GenericEvent;
+    }());
+    exports.GenericEvent = GenericEvent;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = GenericEvent;
+});
+
+define('davinci-newton/graph/GraphPoint',["require", "exports"], function (require, exports) {
+    "use strict";
+    var GraphPoint = (function () {
+        function GraphPoint(x, y, seqX, seqY) {
+            this.x = x;
+            this.y = y;
+            this.seqX = seqX;
+            this.seqY = seqY;
+        }
+        GraphPoint.prototype.equals = function (other) {
+            return this.x === other.x && this.y === other.y && this.seqX === other.seqX && this.seqY === other.seqY;
+        };
+        return GraphPoint;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = GraphPoint;
+});
+
+define('davinci-newton/graph/GraphStyle',["require", "exports"], function (require, exports) {
+    "use strict";
+    var GraphStyle = (function () {
+        function GraphStyle(index_, drawMode, color_, lineWidth) {
+            this.index_ = index_;
+            this.drawMode = drawMode;
+            this.color_ = color_;
+            this.lineWidth = lineWidth;
+        }
+        return GraphStyle;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = GraphStyle;
+});
+
+define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isObject(x) {
+        return (typeof x === 'object');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isObject;
+});
+
+define('davinci-newton/checks/mustSatisfy',["require", "exports"], function (require, exports) {
+    "use strict";
+    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
+        if (!condition) {
+            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
+            var context = contextBuilder ? " in " + contextBuilder() : "";
+            throw new Error(name + " must " + message + context + ".");
+        }
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustSatisfy;
+});
+
+define('davinci-newton/checks/isLE',["require", "exports"], function (require, exports) {
+    "use strict";
+    function default_1(value, limit) {
+        return value <= limit;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_1;
+});
+
+define('davinci-newton/checks/mustBeLE',["require", "exports", "../checks/mustSatisfy", "../checks/isLE"], function (require, exports, mustSatisfy_1, isLE_1) {
+    "use strict";
+    function default_1(name, value, limit, contextBuilder) {
+        mustSatisfy_1.default(name, isLE_1.default(value, limit), function () { return "be less than or equal to " + limit; }, contextBuilder);
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_1;
+});
+
+define('davinci-newton/checks/mustBeObject',["require", "exports", "../checks/mustSatisfy", "../checks/isObject"], function (require, exports, mustSatisfy_1, isObject_1) {
+    "use strict";
+    function beObject() {
+        return "be an `object`";
+    }
+    function mustBeObject(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isObject_1.default(value), beObject, contextBuilder);
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeObject;
 });
 
 define('davinci-newton/util/veryDifferent',["require", "exports"], function (require, exports) {
@@ -662,6 +899,214 @@ define('davinci-newton/util/veryDifferent',["require", "exports"], function (req
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = veryDifferent;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/graph/GraphLine',["require", "exports", "../util/AbstractSubject", "../util/CircularList", "../view/DrawingMode", "../util/GenericEvent", "./GraphPoint", "./GraphStyle", "../checks/isObject", "../checks/mustBeLE", "../checks/mustBeObject", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, CircularList_1, DrawingMode_1, GenericEvent_1, GraphPoint_1, GraphStyle_1, isObject_1, mustBeLE_1, mustBeObject_1, veryDifferent_1) {
+    "use strict";
+    var DRAWING_MODE = 'draw mode';
+    var GRAPH_COLOR = 'graph color';
+    var LINE_WIDTH = 'draw width';
+    var GraphLine = (function (_super) {
+        __extends(GraphLine, _super);
+        function GraphLine(name, varsList, capacity) {
+            var _this = _super.call(this, name) || this;
+            _this.lineWidth_ = 1.0;
+            _this.hotSpotColor_ = 'red';
+            _this.styles_ = [];
+            _this.varsList_ = varsList;
+            varsList.addObserver(_this);
+            _this.xVar_ = -1;
+            _this.yVar_ = -1;
+            _this.dataPoints_ = new CircularList_1.default(capacity || 100000);
+            _this.drawColor_ = 'lime';
+            _this.drawMode_ = DrawingMode_1.default.LINES;
+            _this.addGraphStyle();
+            _this.xTransform = function (x, y) { return x; };
+            _this.yTransform = function (x, y) { return y; };
+            return _this;
+        }
+        GraphLine.prototype.addGraphStyle = function () {
+            this.styles_.push(new GraphStyle_1.default(this.dataPoints_.getEndIndex() + 1, this.drawMode_, this.drawColor_, this.lineWidth_));
+        };
+        GraphLine.isDuckType = function (obj) {
+            if (obj instanceof GraphLine) {
+                return true;
+            }
+            return isObject_1.default(obj) && obj.setXVariable !== undefined
+                && obj.setYVariable !== undefined
+                && obj.setColor !== undefined
+                && obj.setLineWidth !== undefined
+                && obj.setAxes !== undefined
+                && obj.getVarsList !== undefined
+                && obj.reset !== undefined
+                && obj.getGraphStyle !== undefined;
+        };
+        GraphLine.prototype.getColor = function () {
+            return this.drawColor_;
+        };
+        GraphLine.prototype.getDrawingMode = function () {
+            return this.drawMode_;
+        };
+        GraphLine.prototype.getGraphPoints = function () {
+            return this.dataPoints_;
+        };
+        GraphLine.prototype.getGraphStyle = function (index) {
+            var styles = this.styles_;
+            if (styles.length === 0) {
+                throw new Error('graph styles list is empty');
+            }
+            var last = styles[0];
+            for (var i = 1, len = styles.length; i < len; i++) {
+                var s = styles[i];
+                mustBeLE_1.default('', last.index_, s.index_);
+                if (s.index_ > index)
+                    break;
+                last = s;
+            }
+            mustBeObject_1.default('last', last);
+            return last;
+        };
+        GraphLine.prototype.getHotSpotColor = function () {
+            return this.hotSpotColor_;
+        };
+        GraphLine.prototype.getLineWidth = function () {
+            return this.lineWidth_;
+        };
+        GraphLine.prototype.getVarsList = function () {
+            return this.varsList_;
+        };
+        GraphLine.prototype.getXVariable = function () {
+            return this.xVar_;
+        };
+        GraphLine.prototype.getXVarName = function () {
+            return this.xVar_ > -1 ? this.varsList_.getVariable(this.xVar_).getName() : '';
+        };
+        GraphLine.prototype.getYVariable = function () {
+            return this.yVar_;
+        };
+        GraphLine.prototype.getYVarName = function () {
+            return this.yVar_ > -1 ? this.varsList_.getVariable(this.yVar_).getName() : '';
+        };
+        GraphLine.prototype.memorize = function () {
+            if (this.xVar_ > -1 && this.yVar_ > -1) {
+                var xVar = this.varsList_.getVariable(this.xVar_);
+                var yVar = this.varsList_.getVariable(this.yVar_);
+                var x = xVar.getValue();
+                var y = yVar.getValue();
+                var nextX = this.xTransform(x, y);
+                var nextY = this.yTransform(x, y);
+                var seqX = xVar.getSequence();
+                var seqY = yVar.getSequence();
+                var newPoint = new GraphPoint_1.default(nextX, nextY, seqX, seqY);
+                var last = this.dataPoints_.getEndValue();
+                if (last == null || !last.equals(newPoint)) {
+                    this.dataPoints_.store(newPoint);
+                }
+            }
+        };
+        GraphLine.prototype.observe = function (event) {
+        };
+        GraphLine.prototype.reset = function () {
+            this.dataPoints_.reset();
+            this.resetStyle();
+            this.broadcast(new GenericEvent_1.default(this, GraphLine.RESET));
+        };
+        GraphLine.prototype.resetStyle = function () {
+            this.styles_ = [];
+            this.addGraphStyle();
+        };
+        GraphLine.prototype.setColor = function (color) {
+            if (this.drawColor_ !== color) {
+                this.drawColor_ = color;
+                this.addGraphStyle();
+                this.broadcastParameter(GRAPH_COLOR);
+            }
+        };
+        GraphLine.prototype.setDrawingMode = function (dm) {
+            if (this.drawMode_ !== dm) {
+                this.drawMode_ = dm;
+                this.addGraphStyle();
+            }
+            this.broadcastParameter(DRAWING_MODE);
+        };
+        GraphLine.prototype.setHotSpotColor = function (color) {
+            this.hotSpotColor_ = color;
+        };
+        GraphLine.prototype.setLineWidth = function (value) {
+            if (veryDifferent_1.default(value, this.lineWidth_)) {
+                this.lineWidth_ = value;
+                this.addGraphStyle();
+                this.broadcastParameter(LINE_WIDTH);
+            }
+        };
+        GraphLine.prototype.setXVariable = function (xVar) {
+            if (xVar < -1 || xVar > this.varsList_.numVariables() - 1) {
+                throw new Error('setXVariable bad index ' + xVar);
+            }
+            if (xVar !== this.xVar_) {
+                this.xVar_ = xVar;
+                this.reset();
+                this.broadcastParameter(GraphLine.X_VARIABLE);
+            }
+        };
+        GraphLine.prototype.setYVariable = function (yVar) {
+            if (yVar < -1 || yVar > this.varsList_.numVariables() - 1) {
+                throw new Error('setYVariable bad index ' + yVar);
+            }
+            if (yVar !== this.yVar_) {
+                this.yVar_ = yVar;
+                this.reset();
+                this.broadcastParameter(GraphLine.Y_VARIABLE);
+            }
+        };
+        return GraphLine;
+    }(AbstractSubject_1.default));
+    GraphLine.X_VARIABLE = 'X variable';
+    GraphLine.Y_VARIABLE = 'Y variable';
+    GraphLine.RESET = 'RESET';
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = GraphLine;
+});
+
+define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isDefined;
+});
+
+define('davinci-newton/util/removeAt',["require", "exports"], function (require, exports) {
+    "use strict";
+    function removeAt(xs, index) {
+        throw new Error("removeAt");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = removeAt;
+});
+
+define('davinci-newton/util/repeat',["require", "exports"], function (require, exports) {
+    "use strict";
+    function repeat(value, times) {
+        throw new Error("TODO");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = repeat;
+});
+
+define('davinci-newton/checks/isFunction',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isFunction(x) {
+        return (typeof x === 'function');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isFunction;
 });
 
 define('davinci-newton/view/ScreenRect',["require", "exports", "../checks/isFunction", "../util/veryDifferent"], function (require, exports, isFunction_1, veryDifferent_1) {
@@ -760,7 +1205,7 @@ define('davinci-newton/view/ScreenRect',["require", "exports", "../checks/isFunc
     exports.default = ScreenRect;
 });
 
-define('davinci-newton/graph/DisplayGraph',["require", "exports", "../view/DrawingMode", "../util/repeat", "../view/ScreenRect"], function (require, exports, DrawingMode_1, repeat_1, ScreenRect_1) {
+define('davinci-newton/graph/DisplayGraph',["require", "exports", "../util/contains", "../view/DrawingMode", "./GraphLine", "../checks/isDefined", "../util/removeAt", "../util/repeat", "../view/ScreenRect"], function (require, exports, contains_1, DrawingMode_1, GraphLine_1, isDefined_1, removeAt_1, repeat_1, ScreenRect_1) {
     "use strict";
     var DisplayGraph = (function () {
         function DisplayGraph() {
@@ -771,6 +1216,7 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../view/Drawi
             this.screenRect_ = ScreenRect_1.default.EMPTY_RECT;
             this.needRedraw_ = false;
             this.useBuffer_ = false;
+            this.zIndex = 0;
         }
         DisplayGraph.prototype.draw = function (context, map) {
             if (this.screenRect_.isEmpty()) {
@@ -887,9 +1333,52 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../view/Drawi
             this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
             this.incrementalDraw(context, coordMap);
         };
+        DisplayGraph.prototype.getZIndex = function () {
+            return this.zIndex;
+        };
+        DisplayGraph.prototype.setZIndex = function (zIndex) {
+            this.zIndex = isDefined_1.default(zIndex) ? zIndex : 0;
+        };
         DisplayGraph.prototype.incrementalDraw = function (context, coordMap) {
             for (var i = 0, n = this.graphLines_.length; i < n; i++) {
                 this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
+            }
+        };
+        DisplayGraph.prototype.isDragable = function () {
+            return false;
+        };
+        DisplayGraph.prototype.addGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                if (!contains_1.default(this.graphLines_, graphLine)) {
+                    this.graphLines_.push(graphLine);
+                    this.memDraw_.push(-1);
+                }
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        DisplayGraph.prototype.removeGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                var idx = this.graphLines_.indexOf(graphLine);
+                removeAt_1.default(this.graphLines_, idx);
+                removeAt_1.default(this.memDraw_, idx);
+                this.needRedraw_ = true;
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        DisplayGraph.prototype.setDragable = function (dragable) {
+        };
+        DisplayGraph.prototype.setScreenRect = function (screenRect) {
+            this.screenRect_ = screenRect;
+            this.offScreen_ = null;
+        };
+        DisplayGraph.prototype.setUseBuffer = function (value) {
+            this.useBuffer_ = value;
+            if (!this.useBuffer_) {
+                this.offScreen_ = null;
             }
         };
         DisplayGraph.prototype.reset = function () {
@@ -900,27 +1389,6 @@ define('davinci-newton/graph/DisplayGraph',["require", "exports", "../view/Drawi
     }());
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = DisplayGraph;
-});
-
-define('davinci-newton/util/toName',["require", "exports"], function (require, exports) {
-    "use strict";
-    function toName(text) {
-        return text.toUpperCase().replace(/[ -]/g, '_');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = toName;
-});
-
-define('davinci-newton/util/validName',["require", "exports"], function (require, exports) {
-    "use strict";
-    function validName(text) {
-        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
-            throw new Error('not a valid name: ' + text);
-        }
-        return text;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = validName;
 });
 
 define('davinci-newton/objects/AbstractSimObject',["require", "exports", "../util/toName", "../util/validName"], function (require, exports, toName_1, validName_1) {
@@ -1067,110 +1535,6 @@ define('davinci-newton/model/ForceApp',["require", "exports", "../objects/Abstra
     exports.default = ForceApp;
 });
 
-define('davinci-newton/util/find',["require", "exports"], function (require, exports) {
-    "use strict";
-    function find(xs, predicate) {
-        throw new Error("TODO");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = find;
-});
-
-define('davinci-newton/util/AbstractSubject',["require", "exports", "./find", "../util/toName", "../util/validName"], function (require, exports, find_1, toName_1, validName_1) {
-    "use strict";
-    var AbstractSubject = (function () {
-        function AbstractSubject(name) {
-            this.doBroadcast_ = true;
-            this.observers_ = [];
-            this.paramList_ = [];
-            if (!name) {
-                throw new Error('no name');
-            }
-            this.name_ = validName_1.default(toName_1.default(name));
-        }
-        AbstractSubject.prototype.getName = function () {
-            return this.name_;
-        };
-        AbstractSubject.prototype.getParam = function (name) {
-            name = toName_1.default(name);
-            return find_1.default(this.paramList_, function (p) {
-                return p.getName() === name;
-            });
-        };
-        AbstractSubject.prototype.getParameter = function (name) {
-            var p = this.getParam(name);
-            if (p != null) {
-                return p;
-            }
-            throw new Error('Parameter not found ' + name);
-        };
-        AbstractSubject.prototype.broadcast = function (event) {
-            if (this.doBroadcast_) {
-                var len = this.observers_.length;
-                for (var i = 0; i < len; i++) {
-                    this.observers_[i].observe(event);
-                }
-            }
-        };
-        AbstractSubject.prototype.broadcastParameter = function (name) {
-            var p = this.getParam(name);
-            if (p === null) {
-                throw new Error('unknown Parameter ' + name);
-            }
-            this.broadcast(p);
-        };
-        return AbstractSubject;
-    }());
-    exports.AbstractSubject = AbstractSubject;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = AbstractSubject;
-});
-
-define('davinci-newton/util/clone',["require", "exports"], function (require, exports) {
-    "use strict";
-    function clone(xs) {
-        throw new Error("TODO: clone");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = clone;
-});
-
-define('davinci-newton/util/contains',["require", "exports"], function (require, exports) {
-    "use strict";
-    function contains(xs, x) {
-        var length = xs.length;
-        for (var i = 0; i < length; i++) {
-            if (xs[i] === x) {
-                return true;
-            }
-        }
-        return false;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = contains;
-});
-
-define('davinci-newton/util/GenericEvent',["require", "exports", "./toName", "./validName"], function (require, exports, toName_1, validName_1) {
-    "use strict";
-    var GenericEvent = (function () {
-        function GenericEvent(subject_, name, value_) {
-            this.subject_ = subject_;
-            this.value_ = value_;
-            this.name_ = validName_1.default(toName_1.default(name));
-        }
-        GenericEvent.prototype.getName = function (localized) {
-            return this.name_;
-        };
-        GenericEvent.prototype.getSubject = function () {
-            return this.subject_;
-        };
-        return GenericEvent;
-    }());
-    exports.GenericEvent = GenericEvent;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = GenericEvent;
-});
-
 define('davinci-newton/util/isEmpty',["require", "exports"], function (require, exports) {
     "use strict";
     function isEmpty(xs) {
@@ -1189,19 +1553,6 @@ define('davinci-newton/checks/isNumber',["require", "exports"], function (requir
     exports.default = isNumber;
 });
 
-define('davinci-newton/checks/mustSatisfy',["require", "exports"], function (require, exports) {
-    "use strict";
-    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
-        if (!condition) {
-            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
-            var context = contextBuilder ? " in " + contextBuilder() : "";
-            throw new Error(name + " must " + message + context + ".");
-        }
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = mustSatisfy;
-});
-
 define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
     "use strict";
     function default_1(x) {
@@ -1209,15 +1560,6 @@ define('davinci-newton/checks/isNull',["require", "exports"], function (require,
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = default_1;
-});
-
-define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isObject(x) {
-        return (typeof x === 'object');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isObject;
 });
 
 define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
@@ -1231,15 +1573,6 @@ define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../ch
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = mustBeObject;
-});
-
-define('davinci-newton/util/remove',["require", "exports"], function (require, exports) {
-    "use strict";
-    function remove(xs, x) {
-        throw new Error("TODO: remove");
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = remove;
 });
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1332,28 +1665,27 @@ define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractS
         };
         LabCanvas.prototype.paint = function () {
             if (this.canvas_.offsetParent != null) {
-                var context = (this.canvas_.getContext('2d'));
-                context.save();
+                var context_1 = this.canvas_.getContext('2d');
+                context_1.save();
                 try {
                     if (this.background_ !== '') {
-                        context.globalAlpha = this.alpha_;
-                        context.fillStyle = this.background_;
-                        context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
-                        context.globalAlpha = 1;
+                        context_1.globalAlpha = this.alpha_;
+                        context_1.fillStyle = this.background_;
+                        context_1.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                        context_1.globalAlpha = 1;
                     }
                     else {
-                        context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
+                        context_1.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
                     }
                     this.labViews_.forEach(function (view) {
-                        view.paint(context);
+                        view.paint(context_1);
                     });
                 }
                 finally {
-                    context.restore();
+                    context_1.restore();
                 }
             }
         };
-        ;
         LabCanvas.prototype.removeMemo = function (memorizable) {
             remove_1.default(this.memorizables_, memorizable);
         };
@@ -1440,15 +1772,6 @@ define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractS
     exports.LabCanvas = LabCanvas;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = LabCanvas;
-});
-
-define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isDefined;
 });
 
 define('davinci-newton/checks/mustBeDefined',["require", "exports", "../checks/mustSatisfy", "../checks/isDefined"], function (require, exports, mustSatisfy_1, isDefined_1) {
@@ -2125,17 +2448,33 @@ define('davinci-newton/model/ConcreteVariable',["require", "exports", "../util/t
             this.localName_ = localName_;
             this.value_ = 0;
             this.seq_ = 0;
+            this.isComputed_ = false;
             this.doesBroadcast_ = false;
             this.name_ = validName_1.default(toName_1.default(name));
         }
+        ConcreteVariable.prototype.getBroadcast = function () {
+            return this.doesBroadcast_;
+        };
         ConcreteVariable.prototype.getName = function (localized) {
             return localized ? this.localName_ : this.name_;
+        };
+        ConcreteVariable.prototype.getSequence = function () {
+            return this.seq_;
         };
         ConcreteVariable.prototype.getSubject = function () {
             return this.varsList_;
         };
         ConcreteVariable.prototype.getValue = function () {
             return this.value_;
+        };
+        ConcreteVariable.prototype.nameEquals = function (name) {
+            return this.name_ === toName_1.default(name);
+        };
+        ConcreteVariable.prototype.setBroadcast = function (value) {
+            this.doesBroadcast_ = value;
+        };
+        ConcreteVariable.prototype.setComputed = function (value) {
+            this.isComputed_ = value;
         };
         ConcreteVariable.prototype.setValue = function (value) {
             if (this.value_ !== value) {
@@ -2198,6 +2537,15 @@ define('davinci-newton/util/extendArray',["require", "exports", "../checks/isArr
     exports.default = extendArray;
 });
 
+define('davinci-newton/util/findIndex',["require", "exports"], function (require, exports) {
+    "use strict";
+    function findIndex(xs, predicate) {
+        throw new Error("");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = findIndex;
+});
+
 define('davinci-newton/checks/isString',["require", "exports"], function (require, exports) {
     "use strict";
     function isString(s) {
@@ -2212,7 +2560,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('davinci-newton/core/VarsList',["require", "exports", "../util/AbstractSubject", "../model/ConcreteVariable", "../util/extendArray", "../util/GenericEvent", "../checks/isString", "../util/toName", "../util/validName"], function (require, exports, AbstractSubject_1, ConcreteVariable_1, extendArray_1, GenericEvent_1, isString_1, toName_1, validName_1) {
+define('davinci-newton/core/VarsList',["require", "exports", "../util/AbstractSubject", "../util/clone", "../model/ConcreteVariable", "../util/extendArray", "../util/find", "../util/findIndex", "../util/GenericEvent", "../checks/isNumber", "../checks/isString", "../util/toName", "../util/validName"], function (require, exports, AbstractSubject_1, clone_1, ConcreteVariable_1, extendArray_1, find_1, findIndex_1, GenericEvent_1, isNumber_1, isString_1, toName_1, validName_1) {
     "use strict";
     var VarsList = (function (_super) {
         __extends(VarsList, _super);
@@ -2221,6 +2569,8 @@ define('davinci-newton/core/VarsList',["require", "exports", "../util/AbstractSu
             var _this = _super.call(this, name) || this;
             _this.timeIdx_ = -1;
             _this.varList_ = [];
+            _this.history_ = true;
+            _this.histArray_ = [];
             if (varNames.length !== localNames.length) {
                 throw new Error('varNames and localNames are different lengths');
             }
@@ -2297,7 +2647,16 @@ define('davinci-newton/core/VarsList',["require", "exports", "../util/AbstractSu
             return position;
         };
         VarsList.prototype.deleteVariables = function (index, howMany) {
-            throw new Error("TODO");
+            if (howMany === 0) {
+                return;
+            }
+            if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
+                throw new Error('deleteVariables');
+            }
+            for (var i = index; i < index + howMany; i++) {
+                this.varList_[i] = new ConcreteVariable_1.default(this, VarsList.DELETED, VarsList.DELETED);
+            }
+            this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
         };
         VarsList.prototype.incrSequence = function () {
             var indexes = [];
@@ -2351,19 +2710,99 @@ define('davinci-newton/core/VarsList',["require", "exports", "../util/AbstractSu
                 variable.setValue(value);
             }
         };
+        VarsList.prototype.checkIndex_ = function (index) {
+            if (index < 0 || index >= this.varList_.length) {
+                throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
+            }
+        };
+        VarsList.prototype.addVariable = function (variable) {
+            var name = variable.getName();
+            if (name === VarsList.DELETED) {
+                throw new Error('variable cannot be named "' + VarsList.DELETED + '"');
+            }
+            var position = this.findOpenSlot_(1);
+            this.varList_[position] = variable;
+            if (name === VarsList.TIME) {
+                this.timeIdx_ = position;
+            }
+            this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+            return position;
+        };
+        VarsList.prototype.getHistory = function () {
+            return this.history_;
+        };
+        VarsList.prototype.getParameter = function (name) {
+            name = toName_1.default(name);
+            var p = find_1.default(this.varList_, function (p) {
+                return p.getName() === name;
+            });
+            if (p != null) {
+                return p;
+            }
+            throw new Error('Parameter not found ' + name);
+        };
+        VarsList.prototype.getParameters = function () {
+            return clone_1.default(this.varList_);
+        };
         VarsList.prototype.getTime = function () {
             if (this.timeIdx_ < 0) {
                 throw new Error('no time variable');
             }
             return this.getValue(this.timeIdx_);
         };
+        VarsList.prototype.getVariable = function (id) {
+            var index;
+            if (isNumber_1.default(id)) {
+                index = id;
+            }
+            else if (isString_1.default(id)) {
+                id = toName_1.default(id);
+                index = findIndex_1.default(this.varList_, function (v) { return v.getName() === id; });
+                if (index < 0) {
+                    throw new Error('unknown variable name ' + id);
+                }
+            }
+            else {
+                throw new Error();
+            }
+            this.checkIndex_(index);
+            return this.varList_[index];
+        };
+        VarsList.prototype.numVariables = function () {
+            return this.varList_.length;
+        };
+        VarsList.prototype.saveHistory = function () {
+            if (this.history_) {
+                var v = this.getValues();
+                v.push(this.getTime());
+                this.histArray_.push(v);
+                if (this.histArray_.length > 20) {
+                    this.histArray_.shift();
+                }
+            }
+        };
+        VarsList.prototype.setComputed = function () {
+            var indexes = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                indexes[_i] = arguments[_i];
+            }
+            for (var i = 0, n = arguments.length; i < n; i++) {
+                var idx = arguments[i];
+                this.checkIndex_(idx);
+                this.varList_[idx].setComputed(true);
+            }
+        };
+        VarsList.prototype.setHistory = function (value) {
+            this.history_ = value;
+        };
+        VarsList.prototype.setTime = function (time) {
+            this.setValue(this.timeIdx_, time);
+        };
         VarsList.prototype.timeIndex = function () {
             return this.timeIdx_;
         };
-        VarsList.prototype.checkIndex_ = function (index) {
-            if (index < 0 || index >= this.varList_.length) {
-                throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
-            }
+        VarsList.prototype.toArray = function () {
+            return clone_1.default(this.varList_);
         };
         return VarsList;
     }(AbstractSubject_1.default));
@@ -2909,6 +3348,768 @@ define('davinci-newton/runner/SimRunner',["require", "exports", "./Clock"], func
     exports.default = SimRunner;
 });
 
+define('davinci-newton/view/Point',["require", "exports"], function (require, exports) {
+    "use strict";
+    var Point = (function () {
+        function Point(x_, y_) {
+            this.x_ = x_;
+            this.y_ = y_;
+        }
+        Object.defineProperty(Point.prototype, "x", {
+            get: function () {
+                return this.x_;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Point.prototype, "y", {
+            get: function () {
+                return this.y_;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return Point;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Point;
+});
+
+define('davinci-newton/view/AffineTransform',["require", "exports", "./Point"], function (require, exports, Point_1) {
+    "use strict";
+    var AffineTransform = (function () {
+        function AffineTransform(m11, m12, m21, m22, dx, dy) {
+            this.m11_ = m11;
+            this.m12_ = m12;
+            this.m21_ = m21;
+            this.m22_ = m22;
+            this.dx_ = dx;
+            this.dy_ = dy;
+        }
+        AffineTransform.prototype.applyTransform = function (context) {
+            context.transform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+            return this;
+        };
+        AffineTransform.prototype.concatenate = function (at) {
+            var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
+            var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
+            var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
+            var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
+            var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
+            var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
+            return new AffineTransform(m11, m12, m21, m22, dx, dy);
+        };
+        AffineTransform.prototype.lineTo = function (x, y, context) {
+            var p = this.transform(x, y);
+            context.lineTo(p.x, p.y);
+            return this;
+        };
+        AffineTransform.prototype.moveTo = function (x, y, context) {
+            var p = this.transform(x, y);
+            context.moveTo(p.x, p.y);
+            return this;
+        };
+        AffineTransform.prototype.rotate = function (angle) {
+            var c = Math.cos(angle);
+            var s = Math.sin(angle);
+            var m11 = c * this.m11_ + s * this.m21_;
+            var m12 = c * this.m12_ + s * this.m22_;
+            var m21 = -s * this.m11_ + c * this.m21_;
+            var m22 = -s * this.m12_ + c * this.m22_;
+            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+        };
+        AffineTransform.prototype.scale = function (x, y) {
+            var m11 = this.m11_ * x;
+            var m12 = this.m12_ * x;
+            var m21 = this.m21_ * y;
+            var m22 = this.m22_ * y;
+            return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+        };
+        AffineTransform.prototype.setTransform = function (context) {
+            context.setTransform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+            return this;
+        };
+        AffineTransform.prototype.transform = function (x, y) {
+            var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
+            var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
+            return new Point_1.default(x2, y2);
+        };
+        AffineTransform.prototype.translate = function (x, y) {
+            var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
+            var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
+            return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
+        };
+        return AffineTransform;
+    }());
+    AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AffineTransform;
+});
+
+define('davinci-newton/view/DoubleRect',["require", "exports", "./Point", "../util/veryDifferent"], function (require, exports, Point_1, veryDifferent_1) {
+    "use strict";
+    var DoubleRect = (function () {
+        function DoubleRect(left, bottom, right, top) {
+            this.left_ = left;
+            this.right_ = right;
+            this.bottom_ = bottom;
+            this.top_ = top;
+            if (left > right) {
+                throw new Error('DoubleRect: left > right ' + left + ' > ' + right);
+            }
+            if (bottom > top) {
+                throw new Error('DoubleRect: bottom > top ' + bottom + ' > ' + top);
+            }
+        }
+        DoubleRect.clone = function (rect) {
+            return new DoubleRect(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
+        };
+        DoubleRect.isDuckType = function (obj) {
+            if (obj instanceof DoubleRect) {
+                return true;
+            }
+            return obj.getLeft !== undefined
+                && obj.getRight !== undefined
+                && obj.getTop !== undefined
+                && obj.getBottom !== undefined
+                && obj.translate !== undefined
+                && obj.scale !== undefined;
+        };
+        DoubleRect.make = function (point1, point2) {
+            var left = Math.min(point1.x, point2.x);
+            var right = Math.max(point1.x, point2.x);
+            var bottom = Math.min(point1.y, point2.y);
+            var top_ = Math.max(point1.y, point2.y);
+            return new DoubleRect(left, bottom, right, top_);
+        };
+        DoubleRect.makeCentered = function (center, width, height) {
+            var x = center.x;
+            var y = center.y;
+            return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
+        };
+        ;
+        DoubleRect.makeCentered2 = function (center, size) {
+            var x = center.x;
+            var y = center.y;
+            var w = size.x;
+            var h = size.y;
+            return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
+        };
+        DoubleRect.prototype.contains = function (point) {
+            return point.x >= this.left_ &&
+                point.x <= this.right_ &&
+                point.y >= this.bottom_ &&
+                point.y <= this.top_;
+        };
+        DoubleRect.prototype.equals = function (obj) {
+            if (obj === this)
+                return true;
+            if (obj instanceof DoubleRect) {
+                return obj.getLeft() === this.left_ && obj.getRight() === this.right_ &&
+                    obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
+            }
+            else {
+                return false;
+            }
+        };
+        DoubleRect.prototype.expand = function (marginX, marginY) {
+            marginY = (marginY === undefined) ? marginX : marginY;
+            return new DoubleRect(this.getLeft() - marginX, this.getBottom() - marginY, this.getRight() + marginX, this.getTop() + marginX);
+        };
+        DoubleRect.prototype.getBottom = function () {
+            return this.bottom_;
+        };
+        DoubleRect.prototype.getCenter = function () {
+            return new Point_1.default(this.getCenterX(), this.getCenterY());
+        };
+        DoubleRect.prototype.getCenterX = function () {
+            return (this.left_ + this.right_) / 2.0;
+        };
+        DoubleRect.prototype.getCenterY = function () {
+            return (this.bottom_ + this.top_) / 2.0;
+        };
+        DoubleRect.prototype.getHeight = function () {
+            return this.top_ - this.bottom_;
+        };
+        DoubleRect.prototype.getLeft = function () {
+            return this.left_;
+        };
+        DoubleRect.prototype.getRight = function () {
+            return this.right_;
+        };
+        DoubleRect.prototype.getTop = function () {
+            return this.top_;
+        };
+        DoubleRect.prototype.getWidth = function () {
+            return this.right_ - this.left_;
+        };
+        DoubleRect.prototype.isEmpty = function (tolerance) {
+            if (tolerance === void 0) { tolerance = 1E-16; }
+            return this.getWidth() < tolerance || this.getHeight() < tolerance;
+        };
+        DoubleRect.prototype.maybeVisible = function (p1, p2) {
+            if (this.contains(p1) || this.contains(p2)) {
+                return true;
+            }
+            var p1x = p1.x;
+            var p1y = p1.y;
+            var p2x = p2.x;
+            var p2y = p2.y;
+            var d = this.left_;
+            if (p1x < d && p2x < d) {
+                return false;
+            }
+            d = this.right_;
+            if (p1x > d && p2x > d) {
+                return false;
+            }
+            d = this.bottom_;
+            if (p1y < d && p2y < d) {
+                return false;
+            }
+            d = this.top_;
+            if (p1y > d && p2y > d) {
+                return false;
+            }
+            return true;
+        };
+        DoubleRect.prototype.nearEqual = function (rect, opt_tolerance) {
+            if (veryDifferent_1.default(this.left_, rect.getLeft(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.bottom_, rect.getBottom(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.right_, rect.getRight(), opt_tolerance)) {
+                return false;
+            }
+            if (veryDifferent_1.default(this.top_, rect.getTop(), opt_tolerance)) {
+                return false;
+            }
+            return true;
+        };
+        DoubleRect.prototype.scale = function (factorX, factorY) {
+            factorY = (factorY === undefined) ? factorX : factorY;
+            var x0 = this.getCenterX();
+            var y0 = this.getCenterY();
+            var w = this.getWidth();
+            var h = this.getHeight();
+            return new DoubleRect(x0 - (factorX * w) / 2, y0 - (factorY * h) / 2, x0 + (factorX * w) / 2, y0 + (factorY * h) / 2);
+        };
+        DoubleRect.prototype.translate = function (x, y) {
+            return new DoubleRect(this.left_ + x, this.bottom_ + y, this.right_ + x, this.top_ + y);
+        };
+        DoubleRect.prototype.union = function (rect) {
+            return new DoubleRect(Math.min(this.left_, rect.getLeft()), Math.min(this.bottom_, rect.getBottom()), Math.max(this.right_, rect.getRight()), Math.max(this.top_, rect.getTop()));
+        };
+        DoubleRect.prototype.unionPoint = function (point) {
+            return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
+        };
+        return DoubleRect;
+    }());
+    DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = DoubleRect;
+});
+
+define('davinci-newton/view/HorizAlign',["require", "exports"], function (require, exports) {
+    "use strict";
+    var HorizAlign;
+    (function (HorizAlign) {
+        HorizAlign[HorizAlign["LEFT"] = 0] = "LEFT";
+        HorizAlign[HorizAlign["MIDDLE"] = 1] = "MIDDLE";
+        HorizAlign[HorizAlign["RIGHT"] = 2] = "RIGHT";
+        HorizAlign[HorizAlign["FULL"] = 3] = "FULL";
+    })(HorizAlign = exports.HorizAlign || (exports.HorizAlign = {}));
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = HorizAlign;
+});
+
+define('davinci-newton/checks/mustBeFinite',["require", "exports"], function (require, exports) {
+    "use strict";
+    function mustBeFinite(value) {
+        if (typeof value !== 'number' || !isFinite(value)) {
+            throw new Error('not a finite number ' + value);
+        }
+        return value;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeFinite;
+});
+
+define('davinci-newton/view/VerticalAlign',["require", "exports"], function (require, exports) {
+    "use strict";
+    var VerticalAlign;
+    (function (VerticalAlign) {
+        VerticalAlign[VerticalAlign["TOP"] = 0] = "TOP";
+        VerticalAlign[VerticalAlign["MIDDLE"] = 1] = "MIDDLE";
+        VerticalAlign[VerticalAlign["BOTTOM"] = 2] = "BOTTOM";
+        VerticalAlign[VerticalAlign["FULL"] = 3] = "FULL";
+    })(VerticalAlign = exports.VerticalAlign || (exports.VerticalAlign = {}));
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = VerticalAlign;
+});
+
+define('davinci-newton/view/CoordMap',["require", "exports", "./AffineTransform", "./DoubleRect", "./HorizAlign", "../checks/mustBeFinite", "./Point", "./ScreenRect", "./VerticalAlign"], function (require, exports, AffineTransform_1, DoubleRect_1, HorizAlign_1, mustBeFinite_1, Point_1, ScreenRect_1, VerticalAlign_1) {
+    "use strict";
+    var MIN_SIZE = 1E-15;
+    var CoordMap = (function () {
+        function CoordMap(screen_left, screen_bottom, sim_left, sim_bottom, pixel_per_unit_x, pixel_per_unit_y) {
+            this.screen_left_ = mustBeFinite_1.default(screen_left);
+            this.screen_bottom_ = mustBeFinite_1.default(screen_bottom);
+            this.sim_left_ = mustBeFinite_1.default(sim_left);
+            this.sim_bottom_ = mustBeFinite_1.default(sim_bottom);
+            this.pixel_per_unit_x_ = mustBeFinite_1.default(pixel_per_unit_x);
+            this.pixel_per_unit_y_ = mustBeFinite_1.default(pixel_per_unit_y);
+            var at = AffineTransform_1.default.IDENTITY;
+            at = at.translate(this.screen_left_, this.screen_bottom_);
+            at = at.scale(this.pixel_per_unit_x_, -this.pixel_per_unit_y_);
+            at = at.translate(-this.sim_left_, -this.sim_bottom_);
+            this.transform_ = at;
+        }
+        CoordMap.make = function (screenRect, simRect, horizAlign, verticalAlign, aspectRatio) {
+            if (horizAlign === void 0) { horizAlign = HorizAlign_1.default.MIDDLE; }
+            if (verticalAlign === void 0) { verticalAlign = VerticalAlign_1.default.MIDDLE; }
+            if (aspectRatio === void 0) { aspectRatio = 1; }
+            if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
+                throw new Error('bad aspectRatio ' + aspectRatio);
+            }
+            var simLeft = simRect.getLeft();
+            var simBottom = simRect.getBottom();
+            var sim_width = simRect.getRight() - simLeft;
+            var sim_height = simRect.getTop() - simBottom;
+            if (sim_width < MIN_SIZE || sim_height < MIN_SIZE) {
+                throw new Error('simRect cannot be empty ' + simRect);
+            }
+            var screen_top = screenRect.getTop();
+            var screen_left = screenRect.getLeft();
+            var screen_width = screenRect.getWidth();
+            var screen_height = screenRect.getHeight();
+            var offset_x = 0;
+            var offset_y = 0;
+            var pixel_per_unit_x = 0;
+            var pixel_per_unit_y = 0;
+            if (horizAlign === HorizAlign_1.default.FULL) {
+                pixel_per_unit_x = screen_width / sim_width;
+                offset_x = 0;
+            }
+            if (verticalAlign === VerticalAlign_1.default.FULL) {
+                pixel_per_unit_y = screen_height / sim_height;
+                offset_y = 0;
+            }
+            if (horizAlign !== HorizAlign_1.default.FULL || verticalAlign !== VerticalAlign_1.default.FULL) {
+                var horizFull;
+                if (horizAlign === HorizAlign_1.default.FULL) {
+                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                    horizFull = true;
+                }
+                else if (verticalAlign === VerticalAlign_1.default.FULL) {
+                    pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                    horizFull = false;
+                }
+                else {
+                    pixel_per_unit_x = screen_width / sim_width;
+                    pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                    horizFull = true;
+                    var ideal_height = Math.floor(0.5 + pixel_per_unit_y * sim_height);
+                    if (screen_height < ideal_height) {
+                        pixel_per_unit_y = screen_height / sim_height;
+                        pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                        horizFull = false;
+                    }
+                }
+                if (!horizFull) {
+                    offset_y = 0;
+                    var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
+                    switch (horizAlign) {
+                        case HorizAlign_1.default.LEFT:
+                            offset_x = 0;
+                            break;
+                        case HorizAlign_1.default.MIDDLE:
+                            offset_x = (screen_width - ideal_width) / 2;
+                            break;
+                        case HorizAlign_1.default.RIGHT:
+                            offset_x = screen_width - ideal_width;
+                            break;
+                        default: throw new Error();
+                    }
+                }
+                else {
+                    offset_x = 0;
+                    var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
+                    switch (verticalAlign) {
+                        case VerticalAlign_1.default.BOTTOM:
+                            offset_y = 0;
+                            break;
+                        case VerticalAlign_1.default.MIDDLE:
+                            offset_y = (screen_height - ideal_height) / 2;
+                            break;
+                        case VerticalAlign_1.default.TOP:
+                            offset_y = screen_height - ideal_height;
+                            break;
+                        default: {
+                            throw new Error();
+                        }
+                    }
+                }
+            }
+            var coordMap = new CoordMap(screen_left, screen_top + screen_height, simLeft - offset_x / pixel_per_unit_x, simBottom - offset_y / pixel_per_unit_y, pixel_per_unit_x, pixel_per_unit_y);
+            return coordMap;
+        };
+        CoordMap.isDuckType = function (obj) {
+            if (obj instanceof CoordMap) {
+                return true;
+            }
+            return obj.getAffineTransform !== undefined
+                && obj.simToScreenX !== undefined
+                && obj.simToScreenY !== undefined
+                && obj.screenToSimX !== undefined
+                && obj.screenToSimY !== undefined
+                && obj.getScaleX !== undefined
+                && obj.getScaleY !== undefined;
+        };
+        CoordMap.prototype.getAffineTransform = function () {
+            return this.transform_;
+        };
+        CoordMap.prototype.getScaleX = function () {
+            return this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.getScaleY = function () {
+            return this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.screenToSim = function (scr_x, scr_y) {
+            return new Point_1.default(this.screenToSimX(scr_x), this.screenToSimY(scr_y));
+        };
+        CoordMap.prototype.screenToSimRect = function (rect) {
+            return new DoubleRect_1.default(this.screenToSimX(rect.getLeft()), this.screenToSimY(rect.getTop() + rect.getHeight()), this.screenToSimX(rect.getLeft() + rect.getWidth()), this.screenToSimY(rect.getTop()));
+        };
+        CoordMap.prototype.screenToSimScaleX = function (scr_x) {
+            return scr_x / this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.screenToSimScaleY = function (scr_y) {
+            return scr_y / this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.screenToSimX = function (scr_x) {
+            return this.sim_left_ + (scr_x - this.screen_left_) / this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.screenToSimY = function (scr_y) {
+            return this.sim_bottom_ + (this.screen_bottom_ - scr_y) / this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.simToScreen = function (p_sim) {
+            return new Point_1.default(this.simToScreenX(p_sim.x), this.simToScreenY(p_sim.y));
+        };
+        CoordMap.prototype.simToScreenRect = function (r) {
+            return new ScreenRect_1.default(this.simToScreenX(r.getLeft()), this.simToScreenY(r.getTop()), this.simToScreenScaleX(r.getWidth()), this.simToScreenScaleY(r.getHeight()));
+        };
+        CoordMap.prototype.simToScreenScaleX = function (length_x) {
+            return length_x * this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.simToScreenScaleY = function (length_y) {
+            return length_y * this.pixel_per_unit_y_;
+        };
+        CoordMap.prototype.simToScreenX = function (sim_x) {
+            return this.screen_left_ + (sim_x - this.sim_left_) * this.pixel_per_unit_x_;
+        };
+        CoordMap.prototype.simToScreenY = function (sim_y) {
+            return this.screen_bottom_ - (sim_y - this.sim_bottom_) * this.pixel_per_unit_y_;
+        };
+        return CoordMap;
+    }());
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = CoordMap;
+});
+
+define('davinci-newton/util/insertAt',["require", "exports"], function (require, exports) {
+    "use strict";
+    function insertAt(xs, value, index) {
+        throw new Error("TODO");
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = insertAt;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/view/DisplayList',["require", "exports", "../util/AbstractSubject", "../util/GenericEvent", "../util/insertAt", "../checks/isObject"], function (require, exports, AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1) {
+    "use strict";
+    var DisplayList = (function (_super) {
+        __extends(DisplayList, _super);
+        function DisplayList(name) {
+            var _this = _super.call(this, name || 'DISPLAY_LIST_' + (DisplayList.NAME_ID++)) || this;
+            _this.drawables_ = [];
+            return _this;
+        }
+        DisplayList.prototype.add = function (dispObj) {
+            if (!isObject_1.default(dispObj)) {
+                throw new Error('non-object passed to DisplayList.add');
+            }
+            var zIndex = dispObj.getZIndex();
+            this.sort();
+            for (var i = 0, n = this.drawables_.length; i < n; i++) {
+                var z = this.drawables_[i].getZIndex();
+                if (zIndex < z) {
+                    break;
+                }
+            }
+            insertAt_1.default(this.drawables_, dispObj, i);
+            this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
+        };
+        DisplayList.prototype.draw = function (context, map) {
+            this.sort();
+            this.drawables_.forEach(function (dispObj) {
+                dispObj.draw(context, map);
+            });
+        };
+        ;
+        DisplayList.prototype.sort = function () {
+        };
+        return DisplayList;
+    }(AbstractSubject_1.default));
+    DisplayList.NAME_ID = 1;
+    DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
+    DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
+    exports.DisplayList = DisplayList;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = DisplayList;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/view/SimView',["require", "exports", "../util/AbstractSubject", "../util/clone", "../util/contains", "./CoordMap", "./DisplayList", "./DoubleRect", "../util/GenericEvent", "./HorizAlign", "../util/remove", "./ScreenRect", "./VerticalAlign", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, clone_1, contains_1, CoordMap_1, DisplayList_1, DoubleRect_1, GenericEvent_1, HorizAlign_1, remove_1, ScreenRect_1, VerticalAlign_1, veryDifferent_1) {
+    "use strict";
+    var COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
+    var SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
+    var SCALE_TOGETHER = 'scale X-Y together';
+    var VERTICAL_ALIGN = 'vertical-align';
+    var HORIZONTAL_ALIGN = 'horizontal-align';
+    var ASPECT_RATIO = 'aspect-ratio';
+    var SimView = (function (_super) {
+        __extends(SimView, _super);
+        function SimView(name, simRect) {
+            var _this = _super.call(this, name) || this;
+            _this.panX = 0.05;
+            _this.panY = 0.05;
+            _this.zoom = 1.1;
+            _this.screenRect_ = new ScreenRect_1.default(0, 0, 800, 600);
+            _this.horizAlign_ = HorizAlign_1.default.MIDDLE;
+            _this.verticalAlign_ = VerticalAlign_1.default.MIDDLE;
+            _this.aspectRatio_ = 1.0;
+            _this.displayList_ = new DisplayList_1.default();
+            _this.scaleTogether_ = true;
+            _this.opaqueness = 1.0;
+            _this.memorizables_ = [];
+            if (!(simRect instanceof DoubleRect_1.default) || simRect.isEmpty()) {
+                throw new Error('bad simRect: ' + simRect);
+            }
+            _this.simRect_ = simRect;
+            _this.coordMap_ = CoordMap_1.default.make(_this.screenRect_, _this.simRect_, _this.horizAlign_, _this.verticalAlign_, _this.aspectRatio_);
+            _this.width_ = simRect.getWidth();
+            _this.height_ = simRect.getHeight();
+            _this.centerX_ = simRect.getCenterX();
+            _this.centerY_ = simRect.getCenterY();
+            _this.ratio_ = _this.height_ / _this.width_;
+            return _this;
+        }
+        ;
+        SimView.prototype.addMemo = function (memorizable) {
+            if (!contains_1.default(this.memorizables_, memorizable)) {
+                this.memorizables_.push(memorizable);
+            }
+        };
+        SimView.prototype.gainFocus = function () {
+        };
+        SimView.prototype.getAspectRatio = function () {
+            return this.aspectRatio_;
+        };
+        SimView.prototype.getCenterX = function () {
+            return this.centerX_;
+        };
+        SimView.prototype.getCenterY = function () {
+            return this.centerY_;
+        };
+        SimView.prototype.getCoordMap = function () {
+            return this.coordMap_;
+        };
+        SimView.prototype.getDisplayList = function () {
+            return this.displayList_;
+        };
+        SimView.prototype.getHeight = function () {
+            return this.height_;
+        };
+        SimView.prototype.getHorizAlign = function () {
+            return this.horizAlign_;
+        };
+        SimView.prototype.getMemos = function () {
+            return clone_1.default(this.memorizables_);
+        };
+        SimView.prototype.getScaleTogether = function () {
+            return this.scaleTogether_;
+        };
+        SimView.prototype.getScreenRect = function () {
+            return this.screenRect_;
+        };
+        SimView.prototype.getSimRect = function () {
+            return this.simRect_;
+        };
+        SimView.prototype.getVerticalAlign = function () {
+            return this.verticalAlign_;
+        };
+        SimView.prototype.getWidth = function () {
+            return this.width_;
+        };
+        SimView.prototype.loseFocus = function () {
+        };
+        SimView.prototype.paint = function (context) {
+            context.save();
+            context.globalAlpha = this.opaqueness;
+            this.displayList_.draw(context, this.coordMap_);
+            context.restore();
+        };
+        SimView.prototype.setCoordMap = function (map) {
+            if (!CoordMap_1.default.isDuckType(map))
+                throw new Error('not a CoordMap: ' + map);
+            this.coordMap_ = map;
+            this.broadcast(new GenericEvent_1.default(this, COORD_MAP_CHANGED));
+        };
+        SimView.prototype.setScreenRect = function (screenRect) {
+            if (!ScreenRect_1.default.isDuckType(screenRect))
+                throw new Error('not a ScreenRect: ' + screenRect);
+            if (screenRect.isEmpty()) {
+                throw new Error('empty screenrect');
+            }
+            if (!this.screenRect_.equals(screenRect)) {
+                this.screenRect_ = screenRect;
+                this.realign();
+                this.broadcast(new GenericEvent_1.default(this, SCREEN_RECT_CHANGED));
+            }
+        };
+        SimView.prototype.setSimRect = function (simRect) {
+            if (!DoubleRect_1.default.isDuckType(simRect))
+                throw new Error('not a DoubleRect: ' + simRect);
+            if (!simRect.equals(this.simRect_)) {
+                this.simRect_ = simRect;
+                this.realign();
+                this.broadcastParameter(SimView.WIDTH);
+                this.broadcastParameter(SimView.HEIGHT);
+                this.broadcastParameter(SimView.CENTER_X);
+                this.broadcastParameter(SimView.CENTER_Y);
+                this.broadcast(new GenericEvent_1.default(this, SimView.SIM_RECT_CHANGED));
+            }
+        };
+        SimView.prototype.memorize = function () {
+            for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                this.memorizables_[i].memorize();
+            }
+        };
+        SimView.prototype.realign = function () {
+            this.setCoordMap(CoordMap_1.default.make(this.screenRect_, this.simRect_, this.horizAlign_, this.verticalAlign_, this.aspectRatio_));
+            this.width_ = this.simRect_.getWidth();
+            this.height_ = this.simRect_.getHeight();
+            this.centerX_ = this.simRect_.getCenterX();
+            this.centerY_ = this.simRect_.getCenterY();
+            this.ratio_ = this.height_ / this.width_;
+        };
+        SimView.prototype.modifySimRect = function () {
+            var left = this.centerX_ - this.width_ / 2.0;
+            var bottom = this.centerY_ - this.height_ / 2.0;
+            var r = new DoubleRect_1.default(left, bottom, left + this.width_, bottom + this.height_);
+            this.setSimRect(r);
+        };
+        SimView.prototype.panDown = function () {
+            this.setCenterY(this.centerY_ - this.panY * this.height_);
+        };
+        SimView.prototype.panLeft = function () {
+            this.setCenterX(this.centerX_ - this.panX * this.width_);
+        };
+        SimView.prototype.panRight = function () {
+            this.setCenterX(this.centerX_ + this.panX * this.width_);
+        };
+        SimView.prototype.panUp = function () {
+            this.setCenterY(this.centerY_ + this.panY * this.height_);
+        };
+        SimView.prototype.removeMemo = function (memorizable) {
+            remove_1.default(this.memorizables_, memorizable);
+        };
+        SimView.prototype.setAspectRatio = function (aspectRatio) {
+            if (veryDifferent_1.default(this.aspectRatio_, aspectRatio)) {
+                this.aspectRatio_ = aspectRatio;
+                this.realign();
+                this.broadcastParameter(ASPECT_RATIO);
+            }
+        };
+        SimView.prototype.setCenterX = function (centerX) {
+            if (veryDifferent_1.default(this.centerX_, centerX)) {
+                this.centerX_ = centerX;
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setCenterY = function (value) {
+            if (veryDifferent_1.default(this.centerY_, value)) {
+                this.centerY_ = value;
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setHeight = function (value) {
+            if (veryDifferent_1.default(this.height_, value)) {
+                this.height_ = value;
+                if (this.scaleTogether_) {
+                    this.width_ = this.height_ / this.ratio_;
+                }
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.setHorizAlign = function (alignHoriz) {
+            this.horizAlign_ = alignHoriz;
+            this.realign();
+            this.broadcastParameter(HORIZONTAL_ALIGN);
+        };
+        SimView.prototype.setScaleTogether = function (value) {
+            if (this.scaleTogether_ !== value) {
+                this.scaleTogether_ = value;
+                if (this.scaleTogether_) {
+                    this.ratio_ = this.height_ / this.width_;
+                }
+                this.broadcastParameter(SCALE_TOGETHER);
+            }
+        };
+        SimView.prototype.setVerticalAlign = function (alignVert) {
+            this.verticalAlign_ = alignVert;
+            this.realign();
+            this.broadcastParameter(VERTICAL_ALIGN);
+        };
+        SimView.prototype.setWidth = function (value) {
+            if (veryDifferent_1.default(this.width_, value)) {
+                this.width_ = value;
+                if (this.scaleTogether_) {
+                    this.height_ = this.width_ * this.ratio_;
+                }
+                this.modifySimRect();
+            }
+        };
+        SimView.prototype.zoomIn = function () {
+            this.setHeight(this.height_ / this.zoom);
+        };
+        SimView.prototype.zoomOut = function () {
+            this.setHeight(this.height_ * this.zoom);
+        };
+        return SimView;
+    }(AbstractSubject_1.default));
+    SimView.WIDTH = 'width';
+    SimView.HEIGHT = 'height';
+    SimView.CENTER_X = 'center-x';
+    SimView.CENTER_Y = 'center-y';
+    SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
+    exports.SimView = SimView;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = SimView;
+});
+
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2995,7 +4196,339 @@ define('davinci-newton/objects/Spring',["require", "exports", "./AbstractSimObje
     exports.default = Spring;
 });
 
-define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, Spring_1, Vector_1) {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/graph/AutoScale',["require", "exports", "../util/AbstractSubject", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../checks/isDefined", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (require, exports, AbstractSubject_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, isDefined_1, repeat_1, SimView_1, veryDifferent_1) {
+    "use strict";
+    var AutoScale = (function (_super) {
+        __extends(AutoScale, _super);
+        function AutoScale(name, graphLine, simView) {
+            var _this = _super.call(this, name) || this;
+            _this.graphLines_ = [];
+            _this.enabled_ = true;
+            _this.isActive_ = true;
+            _this.ownEvent_ = false;
+            _this.rangeSetX_ = false;
+            _this.rangeSetY_ = false;
+            _this.rangeXHi_ = 0;
+            _this.rangeXLo_ = 0;
+            _this.rangeYHi_ = 0;
+            _this.rangeYLo_ = 0;
+            _this.timeWindow_ = 10;
+            _this.extraMargin = 0.01;
+            _this.minSize = 1E-14;
+            _this.axis_ = AutoScale.BOTH_AXES;
+            if (isDefined_1.default(graphLine) && !GraphLine_1.default.isDuckType(graphLine)) {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                _this.graphLines_.push(graphLine);
+                graphLine.addObserver(_this);
+            }
+            _this.simView_ = simView;
+            simView.addMemo(_this);
+            simView.addObserver(_this);
+            _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
+            _this.setComputed(_this.isActive_);
+            return _this;
+        }
+        AutoScale.prototype.addGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                if (!contains_1.default(this.graphLines_, graphLine)) {
+                    this.graphLines_.push(graphLine);
+                    this.lastIndex_.push(-1);
+                }
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        AutoScale.prototype.clearRange = function () {
+            this.rangeXLo_ = 0;
+            this.rangeXHi_ = 0;
+            this.rangeSetX_ = false;
+            this.rangeYLo_ = 0;
+            this.rangeYHi_ = 0;
+            this.rangeSetY_ = false;
+        };
+        AutoScale.prototype.getActive = function () {
+            return this.isActive_;
+        };
+        AutoScale.prototype.getAxis = function () {
+            return this.axis_;
+        };
+        AutoScale.prototype.getEnabled = function () {
+            return this.enabled_;
+        };
+        AutoScale.prototype.getRangeRect = function () {
+            return new DoubleRect_1.default(this.rangeXLo_, this.rangeYLo_, this.rangeXHi_, this.rangeYHi_);
+        };
+        AutoScale.prototype.getTimeWindow = function () {
+            return this.timeWindow_;
+        };
+        AutoScale.prototype.memorize = function () {
+            for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                var graphPts = this.graphLines_[i].getGraphPoints();
+                if (this.lastIndex_[i] > graphPts.getEndIndex()) {
+                    this.reset();
+                }
+            }
+            for (i = 0, n = this.graphLines_.length; i < n; i++) {
+                graphPts = this.graphLines_[i].getGraphPoints();
+                var iter = graphPts.getIterator(this.lastIndex_[i]);
+                while (iter.hasNext()) {
+                    var gp = iter.nextValue();
+                    this.updateRange_(this.graphLines_[i], gp.x, gp.y);
+                    this.lastIndex_[i] = iter.getIndex();
+                }
+            }
+            this.rangeCheck_();
+        };
+        AutoScale.prototype.observe = function (event) {
+            if (event.getSubject() === this.simView_) {
+                if (event.nameEquals(SimView_1.default.SIM_RECT_CHANGED)) {
+                    if (!this.ownEvent_) {
+                        this.setActive(false);
+                    }
+                }
+            }
+            else if (contains_1.default(this.graphLines_, event.getSubject())) {
+                if (event.nameEquals(GraphLine_1.default.X_VARIABLE) ||
+                    event.nameEquals(GraphLine_1.default.Y_VARIABLE)) {
+                    this.reset();
+                }
+                else if (event.nameEquals(GraphLine_1.default.RESET)) {
+                    this.setActive(true);
+                }
+            }
+        };
+        AutoScale.prototype.rangeCheck_ = function () {
+            var avg, incr;
+            var e = this.minSize;
+            if (this.rangeXHi_ - this.rangeXLo_ < e) {
+                avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
+                incr = Math.max(avg * e, e);
+                this.rangeXHi_ = avg + incr;
+                this.rangeXLo_ = avg - incr;
+            }
+            if (this.rangeYHi_ - this.rangeYLo_ < e) {
+                avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
+                incr = Math.max(avg * e, e);
+                this.rangeYHi_ = avg + incr;
+                this.rangeYLo_ = avg - incr;
+            }
+            var nr = this.getRangeRect();
+            var sr = this.simView_.getSimRect();
+            if (this.axis_ === AutoScale.VERTICAL) {
+                nr = new DoubleRect_1.default(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
+            }
+            else if (this.axis_ === AutoScale.HORIZONTAL) {
+                nr = new DoubleRect_1.default(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
+            }
+            if (this.isActive_ && !nr.nearEqual(sr)) {
+                this.ownEvent_ = true;
+                this.simView_.setSimRect(nr);
+                this.ownEvent_ = false;
+                this.broadcast(new GenericEvent_1.default(this, AutoScale.AUTO_SCALE, nr));
+            }
+        };
+        AutoScale.prototype.removeGraphLine = function (graphLine) {
+            if (GraphLine_1.default.isDuckType(graphLine)) {
+                var idx = this.graphLines_.indexOf(graphLine);
+                removeAt_1.default(this.graphLines_, idx);
+                removeAt_1.default(this.lastIndex_, idx);
+                this.reset();
+            }
+            else {
+                throw new Error('not a GraphLine ' + graphLine);
+            }
+        };
+        AutoScale.prototype.reset = function () {
+            this.clearRange();
+            for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
+                this.lastIndex_[i] = -1;
+            }
+        };
+        AutoScale.prototype.setActive = function (value) {
+            if (this.isActive_ !== value) {
+                if (value) {
+                    if (this.enabled_) {
+                        this.reset();
+                        this.simView_.addMemo(this);
+                        this.setComputed(true);
+                        this.isActive_ = true;
+                        this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
+                    }
+                }
+                else {
+                    this.simView_.removeMemo(this);
+                    this.setComputed(false);
+                    this.isActive_ = false;
+                    this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
+                }
+            }
+        };
+        AutoScale.prototype.setAxis = function (value) {
+            if (value === AutoScale.VERTICAL || value === AutoScale.HORIZONTAL || value === AutoScale.BOTH_AXES) {
+                this.axis_ = value;
+                this.broadcastParameter(AutoScale.AXIS);
+            }
+            else {
+                throw new Error('unknown ' + value);
+            }
+        };
+        AutoScale.prototype.setComputed = function (value) {
+            var _this = this;
+            var names = [SimView_1.default.WIDTH, SimView_1.default.HEIGHT, SimView_1.default.CENTER_X, SimView_1.default.CENTER_Y];
+            names.forEach(function (name) {
+                var p = _this.simView_.getParameter(name);
+                p.setComputed(value);
+            });
+        };
+        AutoScale.prototype.setEnabled = function (value) {
+            if (this.enabled_ !== value) {
+                this.enabled_ = value;
+                this.setActive(value);
+                this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
+            }
+        };
+        AutoScale.prototype.setTimeWindow = function (value) {
+            if (veryDifferent_1.default(value, this.timeWindow_)) {
+                this.timeWindow_ = value;
+                this.reset();
+                this.setActive(true);
+                this.broadcastParameter(AutoScale.TIME_WINDOW);
+            }
+        };
+        AutoScale.prototype.updateRange_ = function (line, nowX, nowY) {
+            if (!isFinite(nowX)) {
+                if (nowX === Number.POSITIVE_INFINITY) {
+                    nowX = 1e308;
+                }
+                else if (nowX === Number.NEGATIVE_INFINITY) {
+                    nowX = -1e308;
+                }
+            }
+            if (!isFinite(nowY)) {
+                if (nowY === Number.POSITIVE_INFINITY) {
+                    nowY = 1e308;
+                }
+                else if (nowY === Number.NEGATIVE_INFINITY) {
+                    nowY = -1e308;
+                }
+            }
+            var timeIdx = line.getVarsList().timeIndex();
+            var xIsTimeVar = line.getXVariable() === timeIdx;
+            var yIsTimeVar = line.getYVariable() === timeIdx;
+            if (!this.rangeSetX_) {
+                this.rangeXLo_ = nowX;
+                this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
+                this.rangeSetX_ = true;
+            }
+            else {
+                if (nowX < this.rangeXLo_) {
+                    if (xIsTimeVar) {
+                        this.rangeXLo_ = nowX;
+                        this.rangeXHi_ = nowX + this.timeWindow_;
+                    }
+                    else {
+                        this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
+                    }
+                }
+                if (xIsTimeVar) {
+                    if (nowX > this.rangeXHi_ - this.extraMargin * this.timeWindow_) {
+                        this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
+                        this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
+                    }
+                }
+                else {
+                    if (nowX > this.rangeXHi_) {
+                        this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
+                    }
+                }
+            }
+            if (!this.rangeSetY_) {
+                this.rangeYLo_ = nowY;
+                this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
+                this.rangeSetY_ = true;
+            }
+            else {
+                if (nowY < this.rangeYLo_) {
+                    if (yIsTimeVar) {
+                        this.rangeYLo_ = nowY;
+                        this.rangeYHi_ = nowY + this.timeWindow_;
+                    }
+                    else {
+                        this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                    }
+                }
+                if (yIsTimeVar) {
+                    if (nowY > this.rangeYHi_ - this.extraMargin * this.timeWindow_) {
+                        this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
+                        this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
+                    }
+                }
+                else {
+                    if (nowY > this.rangeYHi_) {
+                        this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                    }
+                }
+            }
+        };
+        return AutoScale;
+    }(AbstractSubject_1.default));
+    AutoScale.AXIS = 'AXIS';
+    AutoScale.TIME_WINDOW = 'TIME_WINDOW';
+    AutoScale.ACTIVE = 'ACTIVE';
+    AutoScale.AUTO_SCALE = 'AUTO_SCALE';
+    AutoScale.BOTH_AXES = 'BOTH_AXES';
+    AutoScale.ENABLED = 'ENABLED';
+    AutoScale.HORIZONTAL = 'HORIZONTAL';
+    AutoScale.VERTICAL = 'VERTICAL';
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = AutoScale;
+});
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+define('davinci-newton/graph/TimeGraph',["require", "exports", "../util/AbstractSubject", "./AutoScale", "./DisplayGraph", "../view/DoubleRect", "./GraphLine", "../view/HorizAlign", "../view/SimView", "../view/VerticalAlign"], function (require, exports, AbstractSubject_1, AutoScale_1, DisplayGraph_1, DoubleRect_1, GraphLine_1, HorizAlign_1, SimView_1, VerticalAlign_1) {
+    "use strict";
+    var TimeGraph = (function (_super) {
+        __extends(TimeGraph, _super);
+        function TimeGraph(varsList, labCanvas) {
+            var _this = _super.call(this, 'TIME_GRAPH_LAYOUT') || this;
+            _this.view = new SimView_1.default('TIME_GRAPH_VIEW', new DoubleRect_1.default(0, 0, 1, 1));
+            _this.view.setHorizAlign(HorizAlign_1.default.FULL);
+            _this.view.setVerticalAlign(VerticalAlign_1.default.FULL);
+            labCanvas.addView(_this.view);
+            _this.displayGraph = new DisplayGraph_1.default();
+            _this.displayGraph.setScreenRect(_this.view.getScreenRect());
+            var timeIdx = varsList.timeIndex();
+            _this.line1 = new GraphLine_1.default('TIME_GRAPH_LINE_1', varsList);
+            _this.view.addMemo(_this.line1);
+            _this.line1.setXVariable(timeIdx);
+            _this.line1.setYVariable(1);
+            _this.line1.setColor('lime');
+            _this.displayGraph.addGraphLine(_this.line1);
+            _this.autoScale = new AutoScale_1.default('TIME_GRAPH_AUTO_SCALE', _this.line1, _this.view);
+            _this.autoScale.extraMargin = 0.05;
+            _this.displayGraph.setUseBuffer(_this.line1.getXVariable() !== timeIdx);
+            return _this;
+        }
+        return TimeGraph;
+    }(AbstractSubject_1.default));
+    exports.TimeGraph = TimeGraph;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = TimeGraph;
+});
+
+define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/graph/TimeGraph", "./davinci-newton/math/Vector"], function (require, exports, CircularList_1, config_1, DisplayGraph_1, ForceApp_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, TimeGraph_1, Vector_1) {
     "use strict";
     var newton = {
         get LAST_MODIFIED() { return config_1.default.LAST_MODIFIED; },
@@ -3009,7 +4542,9 @@ define('davinci-newton',["require", "exports", "./davinci-newton/util/CircularLi
         get RungeKutta() { return RungeKutta_1.default; },
         get SimpleAdvance() { return SimpleAdvance_1.default; },
         get SimRunner() { return SimRunner_1.default; },
+        get SimView() { return SimView_1.default; },
         get Spring() { return Spring_1.default; },
+        get TimeGraph() { return TimeGraph_1.default; },
         get Vector() { return Vector_1.default; },
     };
     Object.defineProperty(exports, "__esModule", { value: true });
