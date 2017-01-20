@@ -1,3 +1,18 @@
+// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2016 Erik Neumann.  All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the 'License');
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import AbstractSubject from '../util/AbstractSubject';
 import clone from '../util/clone';
 import ConcreteVariable from '../model/ConcreteVariable';
@@ -147,7 +162,7 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Delete several variables, but leaves those places in the array as empty spots that
-     * can be allocated in future with {@link #addVariables}. Until an empty spot is
+     * can be allocated in future with `addVariables`. Until an empty spot is
      * reallocated, the name of the variable at that spot has the reserved name 'DELETED' and
      * should not be used.
      * @param {number} index index of first variable to delete
@@ -288,7 +303,7 @@ export class VarsList extends AbstractSubject {
     }
 
     /**
-     * Whether recent history is being stored, see {@link #saveHistory}.
+     * Whether recent history is being stored, see `saveHistory`.
      * @return true if recent history is being stored
      */
     getHistory() {
@@ -360,7 +375,7 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Saves the current variables in a 'history' set, for debugging, to be able to
-     * reproduce an error condition. See {@link #printHistory}.
+     * reproduce an error condition. See `printHistory`.
      */
     saveHistory(): void {
         if (this.history_) {

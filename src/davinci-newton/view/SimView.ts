@@ -1,3 +1,18 @@
+// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2016 Erik Neumann.  All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the 'License');
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import AbstractSubject from '../util/AbstractSubject';
 import clone from '../util/clone';
 import contains from '../util/contains';
@@ -15,16 +30,6 @@ import ScreenRect from './ScreenRect';
 import VerticalAlign from './VerticalAlign';
 import veryDifferent from '../util/veryDifferent';
 
-/**
- * Name of event broadcast when the CoordMap changes, see {@link #setCoordMap}.
- */
-const COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
-
-/**
- * Name of event broadcast when the screen rectangle size changes, see
- */
-const SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
-
 export class SimView extends AbstractSubject implements LabView {
     public static readonly PARAM_NAME_WIDTH = 'width';
     public static readonly PARAM_NAME_HEIGHT = 'height';
@@ -34,6 +39,14 @@ export class SimView extends AbstractSubject implements LabView {
     public static readonly PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
     public static readonly PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
     public static readonly PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
+    /**
+     * Name of event broadcast when the CoordMap changes, see {@link #setCoordMap}.
+     */
+    public static readonly COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
+    /**
+     * Name of event broadcast when the screen rectangle size changes, see
+     */
+    public static readonly SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
     /**
      * Name of event broadcast when the simulation rectangle size changes, see
      */
@@ -216,7 +229,7 @@ export class SimView extends AbstractSubject implements LabView {
         if (!CoordMap.isDuckType(map))
             throw new Error('not a CoordMap: ' + map);
         this.coordMap_ = map;
-        this.broadcast(new GenericEvent(this, COORD_MAP_CHANGED));
+        this.broadcast(new GenericEvent(this, SimView.COORD_MAP_CHANGED));
     }
 
     setScreenRect(screenRect: ScreenRect): void {
@@ -228,7 +241,7 @@ export class SimView extends AbstractSubject implements LabView {
         if (!this.screenRect_.equals(screenRect)) {
             this.screenRect_ = screenRect;
             this.realign();
-            this.broadcast(new GenericEvent(this, SCREEN_RECT_CHANGED));
+            this.broadcast(new GenericEvent(this, SimView.SCREEN_RECT_CHANGED));
         }
     }
 

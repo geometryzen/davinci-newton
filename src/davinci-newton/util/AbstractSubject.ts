@@ -1,8 +1,26 @@
+// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2016 Erik Neumann.  All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the 'License');
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import clone from './clone';
 import contains from './contains';
 import find from './find';
 import Observer from './Observer';
 import Parameter from './Parameter';
+import ParameterBoolean from './ParameterBoolean';
+import ParameterNumber from './ParameterNumber';
+import ParameterString from './ParameterString';
 import remove from './remove';
 import Subject from './Subject';
 import SubjectEvent from './SubjectEvent';
@@ -92,6 +110,34 @@ export class AbstractSubject implements Subject {
             return p;
         }
         throw new Error('Parameter not found ' + name);
+    }
+
+    getParameterBoolean(name: string): ParameterBoolean {
+        const p = this.getParam(name);
+        if (p instanceof ParameterBoolean) {
+            return p;
+        }
+        throw new Error('ParameterBoolean not found ' + name);
+    }
+
+    getParameterNumber(name: string): ParameterNumber {
+        const p = this.getParam(name);
+        if (p instanceof ParameterNumber) {
+            return p;
+        }
+        throw new Error('ParameterNumber not found ' + name);
+    }
+
+    getParameterString(name: string): ParameterString {
+        const p = this.getParam(name);
+        if (p instanceof ParameterString) {
+            return p;
+        }
+        throw new Error('ParameterString not found ' + name);
+    }
+
+    getParameters(): Parameter[] {
+        return clone(this.paramList_);
     }
 
     /**

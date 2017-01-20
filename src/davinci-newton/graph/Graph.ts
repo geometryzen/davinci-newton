@@ -1,7 +1,24 @@
+// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2016 Erik Neumann.  All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the 'License');
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import AbstractSubject from '../util/AbstractSubject';
 import AutoScale from './AutoScale';
+import DisplayAxes from './DisplayAxes';
 import DisplayGraph from './DisplayGraph';
 import DoubleRect from '../view/DoubleRect';
+import GenericObserver from '../util/GenericObserver';
 import GraphLine from './GraphLine';
 import HorizAlign from '../view/HorizAlign';
 import LabCanvas from '../view/LabCanvas';
@@ -47,6 +64,15 @@ export class Graph extends AbstractSubject {
 
         // Find out where the time is stored in the list of variables.
         this.timeIdx_ = varsList.timeIndex();
+
+        const axes = new DisplayAxes(this.view.getSimRect());
+        new GenericObserver(this.view, (event) => {
+            if (event.nameEquals(SimView.COORD_MAP_CHANGED)) {
+                const simRect = this.view.getCoordMap().screenToSimRect(this.view.getScreenRect());
+                axes.setSimRect(simRect);
+            }
+        });
+        this.view.getDisplayList().add(axes);
     }
 
     /**
@@ -55,8 +81,7 @@ export class Graph extends AbstractSubject {
     addTrace(name: string): GraphLine {
         const trace = new GraphLine(name, this.varsList);
         this.view.addMemo(trace);
-        // trace.setXVariable(timeIdx);
-        // trace.setYVariable(1);
+        trace.setXVariable(this.timeIdx_);
         trace.setColor('black');
         this.displayGraph.addGraphLine(trace);
         // Don't use off-screen buffer with time variable because the auto-scale causes

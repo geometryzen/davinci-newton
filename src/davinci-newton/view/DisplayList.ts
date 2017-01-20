@@ -1,3 +1,18 @@
+// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2016 Erik Neumann.  All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the 'License');
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import AbstractSubject from '../util/AbstractSubject';
 import CoordMap from './CoordMap';
 import DisplayObject from './DisplayObject';
@@ -48,13 +63,13 @@ export class DisplayList extends AbstractSubject {
         if (!isObject(dispObj)) {
             throw new Error('non-object passed to DisplayList.add');
         }
-        var zIndex = dispObj.getZIndex();
+        const zIndex = dispObj.getZIndex();
         this.sort();
         // Objects in drawables_ array should be sorted by zIndex.
         // Starting at front of drawables_ array, find the object with bigger
         // zIndex, insert dispObj just before that object.
         for (var i = 0, n = this.drawables_.length; i < n; i++) {
-            var z = this.drawables_[i].getZIndex();
+            const z = this.drawables_[i].getZIndex();
             if (zIndex < z) {
                 break;
             }
