@@ -40,12 +40,14 @@ export class Spring extends AbstractSimObject implements ForceLaw {
     constructor(name: string, private body1_: RigidBody, private body2_: RigidBody) {
         super(name);
     }
+
     getStartPoint(): Vector {
         if (this.attach1_ == null || this.body1_ == null) {
             throw new Error();
         }
         return this.body1_.bodyToWorld(this.attach1_);
     }
+
     getEndPoint(): Vector {
         if (this.attach2_ == null || this.body2_ == null) {
             throw new Error();
@@ -71,6 +73,7 @@ export class Spring extends AbstractSimObject implements ForceLaw {
             return p2;
         }
     }
+
     calculateForces(): ForceApp[] {
         const point1 = this.getStartPoint();
         const point2 = this.getEndPoint();
@@ -98,12 +101,33 @@ export class Spring extends AbstractSimObject implements ForceLaw {
             new ForceApp('spring', this.body2_, point2, CoordType.WORLD, f.multiply(-1), CoordType.WORLD)
         ];
     }
+
     disconnect(): void {
         // Does nothing
     }
-    getPotentialEnergy(): number {
-        return 0;
+
+    /**
+     * Returns the distance between start and end points of this spring
+     * @return the distance between start and end points of this spring
+     */
+    getLength(): number {
+        return this.getEndPoint().distanceTo(this.getStartPoint());
     }
+
+    getPotentialEnergy(): number {
+        // spring potential energy = 0.5 * stiffness * (stretch ^ 2)
+        const stretch = this.getStretch();
+        return 0.5 * this.stiffness_ * stretch * stretch;
+    }
+
+    /**
+     * Positive stretch means the spring is expanded, negative stretch means compressed.
+     * @return the amount that this line is stretched from its rest length
+     */
+    getStretch() {
+        return this.getLength() - this.restLength_;
+    }
+
     getVector(): Vector {
         return this.getEndPoint().subtract(this.getStartPoint());
     }

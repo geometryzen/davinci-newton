@@ -147,13 +147,6 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    momentAboutCM(): number {
-        return 1;
-    }
-
-    /**
-     * 
-     */
     rotationalEnergy(): number {
         return 0;
     }
@@ -162,7 +155,9 @@ export class RigidBody extends AbstractSimObject {
      * 
      */
     translationalEnergy(): number {
-        return 0;
+        const P = this.linearMomentum_;
+        const m = this.mass_;
+        return 0.5 * P.quadrance() / m;
     }
 
     /**

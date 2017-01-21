@@ -79,6 +79,17 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
+     * Computes the square of this vector.
+     */
+    quadrance(): number {
+        const x = this.x;
+        const y = this.y;
+        const z = this.z;
+
+        return x * x + y * y + z * z;
+    }
+
+    /**
      * Constructs a vector by computing the dual of a bivector.
      */
     static dual(B: BivectorE3): Vector3 {

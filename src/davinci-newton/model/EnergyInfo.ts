@@ -14,20 +14,28 @@
 // limitations under the License.
 
 export class EnergyInfo {
-    constructor(potential: number, translational: number, rotational: number) {
-        // Do nothing yet.
+    constructor(private readonly potential_: number, private readonly translational_: number, public readonly rotational_: number) {
+        if (isNaN(potential_)) {
+            throw new Error(`potential energy ${potential_} must be a number.`);
+        }
+        if (isNaN(translational_)) {
+            throw new Error(`translational energy ${translational_} must be a number.`);
+        }
+        if (isNaN(rotational_)) {
+            throw new Error(`rotational energy ${rotational_} must be a number.`);
+        }
     }
     getPotential(): number {
-        return 0;
+        return this.potential_;
     }
     getTranslational(): number {
-        return 0;
+        return this.translational_;
     }
     getRotational(): number {
-        return 0;
+        return this.rotational_;
     }
     getTotalEnergy(): number {
-        return 0;
+        return this.potential_ + this.translational_ + this.rotational_;
     }
 }
 

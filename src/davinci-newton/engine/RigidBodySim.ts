@@ -105,7 +105,14 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     private showForces_ = false;
 
-    private potentialOffset_: number;
+    /**
+     * 
+     */
+    private potentialOffset_ = 0;
+
+    /**
+     * 
+     */
     private recentState_: number[];
 
     /**
