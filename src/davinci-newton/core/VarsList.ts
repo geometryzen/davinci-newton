@@ -87,8 +87,8 @@ export class VarsList extends AbstractSubject {
     /**
      * Returns index to put a contiguous group of variables.  Expands the set of variables
      * if necessary.
-     * @param {number} quantity number of contiguous variables to allocate
-     * @return {number} index of first variable
+     * @param quantity number of contiguous variables to allocate
+     * @return index of first variable
      */
     private findOpenSlot_(quantity: number): number {
         var found = 0;
@@ -129,11 +129,11 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Add a continguous block of ConcreteVariables.
-     * @param {!Array<string>} names language-independent names of variables; these will be
+     * @param names language-independent names of variables; these will be
      * underscorized so the English name can be passed in here.
-     * @param {!Array<string>} localNames localized names of variables
-     * @return {number} index index of first Variable that was added
-     * @throws {Error} if any of the variable names is 'DELETED', or array of names is empty
+     * @param localNames localized names of variables
+     * @return index index of first Variable that was added
+     * @throws if any of the variable names is 'DELETED', or array of names is empty
      */
     addVariables(names: string[], localNames: string[]): number {
         const howMany = names.length;
@@ -165,8 +165,8 @@ export class VarsList extends AbstractSubject {
      * can be allocated in future with `addVariables`. Until an empty spot is
      * reallocated, the name of the variable at that spot has the reserved name 'DELETED' and
      * should not be used.
-     * @param {number} index index of first variable to delete
-     * @param {number} howMany number of variables to delete
+     * @param index index of first variable to delete
+     * @param howMany number of variables to delete
      */
     deleteVariables(index: number, howMany: number): void {
         if (howMany === 0) {
@@ -186,7 +186,7 @@ export class VarsList extends AbstractSubject {
      * Increments the sequence number for the specified variable(s), which indicates a
      * discontinuity has occurred in the value of this variable. This information is used in a
      * graph to prevent drawing a line between points that have a discontinuity.
-     * @param {...number} indexes  the indexes of the variables;
+     * @param indexes  the indexes of the variables;
      * if no index given then all variable's sequence numbers are incremented
      */
     incrSequence(...indexes: number[]) {
@@ -207,8 +207,8 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Returns the current value of the variable with the given index.
-     * @param {number} index the index of the variable of interest
-     * @return {number} the current value of the variable of interest
+     * @param index the index of the variable of interest
+     * @return the current value of the variable of interest
      */
     getValue(index: number) {
         this.checkIndex_(index);
@@ -227,11 +227,11 @@ export class VarsList extends AbstractSubject {
      * `vars` is less than length of VarsList then the remaining variables are not modified.
      * Assumes this is a discontinous change, so the sequence number is incremented
      * unless you specify that this is a continuous change in the variable.
-     * @param {!Array<number>} vars array of state variables
-     * @param {boolean=} continuous `true` means this new value is continuous with
+     * @param vars array of state variables
+     * @param continuous `true` means this new value is continuous with
      * previous values; `false` (the default) means the new value is discontinuous with
      * previous values, so the sequence number for the variable is incremented
-     * @throws {Error} if length of `vars` exceeds length of VarsList
+     * @throws if length of `vars` exceeds length of VarsList
      */
     setValues(vars: number[], continuous = false) {
         // NOTE: vars.length can be less than this.varList_.length
@@ -251,12 +251,12 @@ export class VarsList extends AbstractSubject {
      * Sets the specified variable to the given value. Variables are numbered starting at
      * zero. Assumes this is a discontinous change, so the sequence number is incremented
      * unless you specify that this is a continuous change in the variable.
-     * @param {number} index  the index of the variable within the array of variables
-     * @param {number} value  the value to set the variable to
-     * @param {boolean=} continuous `true` means this new value is continuous with
+     * @param index  the index of the variable within the array of variables
+     * @param value  the value to set the variable to
+     * @param continuous `true` means this new value is continuous with
      * previous values; `false` (the default) means the new value is discontinuous with
      * previous values, so the sequence number for the variable is incremented
-     * @throws {Error} if value is `NaN`
+     * @throws if value is `NaN`
      */
     setValue(index: number, value: number, continuous = false) {
         this.checkIndex_(index);
@@ -284,7 +284,7 @@ export class VarsList extends AbstractSubject {
      * Add a Variable to this VarsList.
      * @param variable the Variable to add
      * @return the index number of the variable
-     * @throws {Error} if name if the Variable is 'DELETED'
+     * @throws if name if the Variable is 'DELETED'
      */
     addVariable(variable: Variable): number {
         var name = variable.getName();
@@ -330,8 +330,8 @@ export class VarsList extends AbstractSubject {
      * 
      * There are no explicit units for the time, so you can regard a time unit as any length
      * of time, as long as it is consistent with other units.
-     * @return {number} the current simulation time
-     * @throws {Error} if there is no time variable
+     * @return the current simulation time
+     * @throws if there is no time variable
      */
     getTime(): number {
         if (this.timeIdx_ < 0) {
@@ -342,7 +342,7 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Returns the Variable object at the given index or with the given name
-     * @param {number|string} id the index or name of the variable; the name can be the
+     * @param id the index or name of the variable; the name can be the
      * English or language independent version of the name
      * @return the Variable object at the given index or with the given name
      */
@@ -391,7 +391,7 @@ export class VarsList extends AbstractSubject {
 
     /**
      * Indicates the specified Variables are being automatically computed.
-     * @param {...number} indexes  the indexes of the variables
+     * @param indexes  the indexes of the variables
      */
     setComputed(...indexes: number[]) {
         for (let i = 0, n = arguments.length; i < n; i++) {
@@ -410,9 +410,7 @@ export class VarsList extends AbstractSubject {
     }
 
     /**
-     * Sets the current simulation time.  There are no explicit units for the time, so
-     * you can regard a time unit as seconds or years as desired. See [About Units Of
-     * Measurement](Architecture.html#aboutunitsofmeasurement).
+     * Sets the current simulation time.
      * @param time the current simulation time.
      * @throws {Error} if there is no time variable
      */

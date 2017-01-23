@@ -1,5 +1,6 @@
 import BivectorE3 from './BivectorE3';
 import Matrix3 from './Matrix3';
+import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 
 /**
@@ -14,6 +15,15 @@ export class Vector3 implements VectorE3 {
 
     }
 
+    /**
+     * 
+     */
+    add(rhs: VectorE3): this {
+        this.x += rhs.x;
+        this.y += rhs.y;
+        this.z += rhs.z;
+        return this;
+    }
     /**
      * Pre-multiplies the column vector corresponding to this vector by the matrix.
      * The result is applied to this vector.
@@ -37,11 +47,18 @@ export class Vector3 implements VectorE3 {
     /**
      * 
      */
-    copy(v: VectorE3): this {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
+    copy(source: VectorE3): this {
+        this.x = source.x;
+        this.y = source.y;
+        this.z = source.z;
         return this;
+    }
+
+    /**
+     * 
+     */
+    distanceTo(rhs: VectorE3): number {
+        return Math.sqrt(this.quadranceTo(rhs));
     }
 
     /**
@@ -54,6 +71,11 @@ export class Vector3 implements VectorE3 {
         return this;
     }
 
+    direction(): this {
+        const m = this.magnitude();
+        return this.divByScalar(m);
+    }
+
     /**
      * 
      */
@@ -62,6 +84,10 @@ export class Vector3 implements VectorE3 {
         this.y /= alpha;
         this.z /= alpha;
         return this;
+    }
+
+    magnitude(): number {
+        return Math.sqrt(this.quadrance());
     }
 
     /**
@@ -79,6 +105,16 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
+     * 
+     */
+    write(destination: VectorE3): this {
+        destination.x = this.x;
+        destination.y = this.y;
+        destination.z = this.z;
+        return this;
+    }
+
+    /**
      * Computes the square of this vector.
      */
     quadrance(): number {
@@ -87,6 +123,42 @@ export class Vector3 implements VectorE3 {
         const z = this.z;
 
         return x * x + y * y + z * z;
+    }
+
+    /**
+     * 
+     */
+    quadranceTo(rhs: VectorE3): number {
+        const Δx = this.x - rhs.x;
+        const Δy = this.y - rhs.y;
+        const Δz = this.z - rhs.z;
+        return Δx * Δx + Δy * Δy + Δz * Δz;
+    }
+
+    /**
+     * 
+     */
+    rotate(spinor: SpinorE3): this {
+        if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
+            return this;
+        }
+        else {
+            throw new Error("TODO: rotate(spinor)");
+        }
+    }
+
+    /**
+     * 
+     */
+    subtract(rhs: VectorE3): this {
+        this.x -= rhs.x;
+        this.y -= rhs.y;
+        this.z -= rhs.z;
+        return this;
+    }
+
+    __neg__(): Vector3 {
+        return new Vector3(-this.x, -this.y, -this.z);
     }
 
     /**

@@ -13,10 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import ForceApp from './ForceApp';
+import Force from './Force';
+import SimObject from '../core/SimObject';
 
-export interface ForceLaw {
-    calculateForces(): ForceApp[];
+/**
+ * 
+ */
+export interface ForceLaw extends SimObject {
+    calculateForces(): Force[];
     disconnect(): void;
     getPotentialEnergy(): number;
 }

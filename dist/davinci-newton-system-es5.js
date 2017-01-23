@@ -9,9 +9,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-01-20';
+                    this.LAST_MODIFIED = '2017-01-23';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.8';
+                    this.VERSION = '0.0.9';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -45,6 +45,53 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             }();
             config = new Newton();
             exports_1("default", config);
+        }
+    };
+});
+System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var zeroArray_1, EulerMethod;
+    return {
+        setters: [function (zeroArray_1_1) {
+            zeroArray_1 = zeroArray_1_1;
+        }],
+        execute: function () {
+            EulerMethod = function () {
+                function EulerMethod(ode_) {
+                    this.ode_ = ode_;
+                    this.inp_ = [];
+                    this.k1_ = [];
+                }
+                EulerMethod.prototype.step = function (stepSize) {
+                    var va = this.ode_.getVarsList();
+                    var vars = va.getValues();
+                    var N = vars.length;
+                    if (this.inp_.length !== N) {
+                        this.inp_ = new Array(N);
+                        this.k1_ = new Array(N);
+                    }
+                    var inp = this.inp_;
+                    var k1 = this.k1_;
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i];
+                    }
+                    zeroArray_1.default(k1);
+                    var error = this.ode_.evaluate(inp, k1, 0);
+                    if (error !== null) {
+                        return error;
+                    }
+                    for (var i = 0; i < N; i++) {
+                        vars[i] += k1[i] * stepSize;
+                    }
+                    va.setValues(vars, true);
+                    return null;
+                };
+                return EulerMethod;
+            }();
+            exports_1("EulerMethod", EulerMethod);
+            exports_1("default", EulerMethod);
         }
     };
 });
@@ -155,8 +202,8 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                             this.reset();
                         }
                     }
-                    for (i = 0, n = this.graphLines_.length; i < n; i++) {
-                        graphPts = this.graphLines_[i].getGraphPoints();
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        var graphPts = this.graphLines_[i].getGraphPoints();
                         var iter = graphPts.getIterator(this.lastIndex_[i]);
                         while (iter.hasNext()) {
                             var gp = iter.nextValue();
@@ -1444,6 +1491,69 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "./
         }
     };
 });
+System.register("davinci-newton/objects/GravitationLaw.js", ["./AbstractSimObject", "../model/CoordType", "../model/Force"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __moduleName = context_1 && context_1.id;
+    var AbstractSimObject_1, CoordType_1, Force_1, GravitationLaw;
+    return {
+        setters: [function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
+        }],
+        execute: function () {
+            GravitationLaw = function (_super) {
+                __extends(GravitationLaw, _super);
+                function GravitationLaw(body1_, body2_) {
+                    var _this = _super.call(this) || this;
+                    _this.body1_ = body1_;
+                    _this.body2_ = body2_;
+                    _this.G = 1;
+                    _this.forces = [];
+                    _this.F1 = new Force_1.default(_this.body1_);
+                    _this.F1.locationCoordType = CoordType_1.default.WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.F2 = new Force_1.default(_this.body2_);
+                    _this.F2.locationCoordType = CoordType_1.default.WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.forces = [_this.F1, _this.F2];
+                    return _this;
+                }
+                GravitationLaw.prototype.calculateForces = function () {
+                    this.F1.location.copy(this.body1_.X);
+                    this.F2.location.copy(this.body2_.X);
+                    var m1 = this.body1_.M;
+                    var m2 = this.body2_.M;
+                    var r2 = this.F1.location.quadranceTo(this.F2.location);
+                    var sf = this.G * m1 * m2 / r2;
+                    this.F1.vector.copy(this.F2.location).subtract(this.F1.location).direction().mulByScalar(sf);
+                    this.F2.vector.copy(this.F1.vector).neg();
+                    return this.forces;
+                };
+                GravitationLaw.prototype.disconnect = function () {};
+                GravitationLaw.prototype.getPotentialEnergy = function () {
+                    var m1 = this.body1_.M;
+                    var m2 = this.body2_.M;
+                    var r = this.F1.location.distanceTo(this.F2.location);
+                    return -this.G * m1 * m2 / r;
+                };
+                return GravitationLaw;
+            }(AbstractSimObject_1.default);
+            exports_1("GravitationLaw", GravitationLaw);
+            exports_1("default", GravitationLaw);
+        }
+    };
+});
 System.register("davinci-newton/util/isEmpty.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -1680,6 +1790,57 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
         }
     };
 });
+System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var zeroArray_1, ModifiedEuler;
+    return {
+        setters: [function (zeroArray_1_1) {
+            zeroArray_1 = zeroArray_1_1;
+        }],
+        execute: function () {
+            ModifiedEuler = function () {
+                function ModifiedEuler(ode_) {
+                    this.ode_ = ode_;
+                    this.inp_ = [];
+                    this.k1_ = [];
+                    this.k2_ = [];
+                }
+                ModifiedEuler.prototype.step = function (stepSize) {
+                    var va = this.ode_.getVarsList();
+                    var vars = va.getValues();
+                    var N = vars.length;
+                    if (this.inp_.length !== N) {
+                        this.inp_ = new Array(N);
+                        this.k1_ = new Array(N);
+                        this.k2_ = new Array(N);
+                    }
+                    var inp = this.inp_;
+                    var k1 = this.k1_;
+                    var k2 = this.k2_;
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i];
+                    }
+                    zeroArray_1.default(k1);
+                    this.ode_.evaluate(inp, k1, 0);
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i] + k1[i] * stepSize;
+                    }
+                    zeroArray_1.default(k2);
+                    this.ode_.evaluate(inp, k2, stepSize);
+                    for (var i = 0; i < N; i++) {
+                        vars[i] += (k1[i] + k2[i]) * stepSize / 2;
+                    }
+                    va.setValues(vars, true);
+                };
+                return ModifiedEuler;
+            }();
+            exports_1("ModifiedEuler", ModifiedEuler);
+            exports_1("default", ModifiedEuler);
+        }
+    };
+});
 System.register("davinci-newton/checks/isDefined.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -1763,28 +1924,6 @@ System.register("davinci-newton/checks/isUndefined.js", [], function (exports_1,
     exports_1("default", isUndefined);
     return {
         setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy", "../checks/isNumber"], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function beANumber() {
-        return "be a `number`";
-    }
-    function default_1(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isNumber_1.default(value), beANumber, contextBuilder);
-        return value;
-    }
-    exports_1("default", default_1);
-    var mustSatisfy_1, isNumber_1;
-    return {
-        setters: [function (mustSatisfy_1_1) {
-            mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }],
         execute: function () {}
     };
 });
@@ -2036,6 +2175,28 @@ System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix"], function
         }
     };
 });
+System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy", "../checks/isNumber"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function beANumber() {
+        return "be a `number`";
+    }
+    function default_1(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isNumber_1.default(value), beANumber, contextBuilder);
+        return value;
+    }
+    exports_1("default", default_1);
+    var mustSatisfy_1, isNumber_1;
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }],
+        execute: function () {}
+    };
+});
 System.register("davinci-newton/math/Spinor3.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -2084,83 +2245,7 @@ System.register("davinci-newton/math/Spinor3.js", [], function (exports_1, conte
         }
     };
 });
-System.register("davinci-newton/math/Vector3.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var Vector3;
-    return {
-        setters: [],
-        execute: function () {
-            Vector3 = function () {
-                function Vector3(x, y, z) {
-                    if (x === void 0) {
-                        x = 0;
-                    }
-                    if (y === void 0) {
-                        y = 0;
-                    }
-                    if (z === void 0) {
-                        z = 0;
-                    }
-                    this.x = x;
-                    this.y = y;
-                    this.z = z;
-                }
-                Vector3.prototype.applyMatrix = function (σ) {
-                    var x = this.x;
-                    var y = this.y;
-                    var z = this.z;
-                    var e = σ.elements;
-                    this.x = e[0x0] * x + e[0x3] * y + e[0x6] * z;
-                    this.y = e[0x1] * x + e[0x4] * y + e[0x7] * z;
-                    this.z = e[0x2] * x + e[0x5] * y + e[0x8] * z;
-                    return this;
-                };
-                Vector3.prototype.copy = function (v) {
-                    this.x = v.x;
-                    this.y = v.y;
-                    this.z = v.z;
-                    return this;
-                };
-                Vector3.prototype.dual = function (B) {
-                    this.x = -B.yz;
-                    this.y = -B.zx;
-                    this.z = -B.xy;
-                    return this;
-                };
-                Vector3.prototype.divByScalar = function (alpha) {
-                    this.x /= alpha;
-                    this.y /= alpha;
-                    this.z /= alpha;
-                    return this;
-                };
-                Vector3.prototype.mulByScalar = function (alpha) {
-                    this.x *= alpha;
-                    this.y *= alpha;
-                    this.z *= alpha;
-                    return this;
-                };
-                Vector3.prototype.neg = function () {
-                    return this.mulByScalar(-1);
-                };
-                Vector3.prototype.quadrance = function () {
-                    var x = this.x;
-                    var y = this.y;
-                    var z = this.z;
-                    return x * x + y * y + z * z;
-                };
-                Vector3.dual = function (B) {
-                    return new Vector3().dual(B);
-                };
-                return Vector3;
-            }();
-            exports_1("Vector3", Vector3);
-            exports_1("default", Vector3);
-        }
-    };
-});
-System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimObject", "../math/Bivector3", "../math/Matrix3", "../math/Spinor3", "../math/Vector", "../math/Vector3"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/RigidBody.js", ["../objects/AbstractSimObject", "../math/Bivector3", "../math/Matrix3", "../checks/mustBeNumber", "../math/Spinor3", "../math/Vector", "../math/Vector3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -2171,7 +2256,7 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var AbstractSimObject_1, Bivector3_1, Matrix3_1, Spinor3_1, Vector_1, Vector3_1, RigidBody;
+    var AbstractSimObject_1, Bivector3_1, Matrix3_1, mustBeNumber_1, Spinor3_1, Vector_1, Vector3_1, RigidBody;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -2179,6 +2264,8 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
             Bivector3_1 = Bivector3_1_1;
         }, function (Matrix3_1_1) {
             Matrix3_1 = Matrix3_1_1;
+        }, function (mustBeNumber_1_1) {
+            mustBeNumber_1 = mustBeNumber_1_1;
         }, function (Spinor3_1_1) {
             Spinor3_1 = Spinor3_1_1;
         }, function (Vector_1_1) {
@@ -2189,8 +2276,8 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
         execute: function () {
             RigidBody = function (_super) {
                 __extends(RigidBody, _super);
-                function RigidBody(name) {
-                    var _this = _super.call(this, name) || this;
+                function RigidBody() {
+                    var _this = _super.call(this) || this;
                     _this.mass_ = 1;
                     _this.Ibody = Matrix3_1.default.one();
                     _this.Ibodyinv = Matrix3_1.default.one();
@@ -2199,13 +2286,21 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
                     _this.attitude_ = new Spinor3_1.default();
                     _this.linearMomentum_ = new Vector3_1.default();
                     _this.angularMomentum_ = new Bivector3_1.default();
-                    _this.V = new Vector3_1.default();
                     _this.Iinv = Matrix3_1.default.one();
-                    _this.ω = new Vector3_1.default();
                     _this.Ω = new Bivector3_1.default();
                     _this.cm_body_ = Vector_1.default.ORIGIN;
                     return _this;
                 }
+                Object.defineProperty(RigidBody.prototype, "M", {
+                    get: function () {
+                        return this.mass_;
+                    },
+                    set: function (mass) {
+                        this.mass_ = mustBeNumber_1.default('mass', mass);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(RigidBody.prototype, "X", {
                     get: function () {
                         return this.position_;
@@ -2249,40 +2344,32 @@ System.register("davinci-newton/engine/RigidBody.js", ["../objects/AbstractSimOb
                 RigidBody.prototype.getExpireTime = function () {
                     return Number.POSITIVE_INFINITY;
                 };
-                RigidBody.prototype.getVarsIndex = function () {
-                    return this.varsIndex_;
-                };
-                RigidBody.prototype.setVarsIndex = function (index) {
-                    this.varsIndex_ = index;
-                };
-                Object.defineProperty(RigidBody.prototype, "M", {
+                Object.defineProperty(RigidBody.prototype, "varsIndex", {
                     get: function () {
-                        return this.mass_;
+                        return this.varsIndex_;
                     },
-                    set: function (mass) {
-                        this.mass_ = mass;
+                    set: function (index) {
+                        this.varsIndex_ = index;
                     },
                     enumerable: true,
                     configurable: true
                 });
                 RigidBody.prototype.rotationalEnergy = function () {
-                    return 0;
+                    var Ω = this.Ω;
+                    var L = this.L;
+                    return 0.5 * (Ω.xy * L.xy + Ω.yz * L.yz + Ω.zx * L.zx);
                 };
                 RigidBody.prototype.translationalEnergy = function () {
                     var P = this.linearMomentum_;
                     var m = this.mass_;
                     return 0.5 * P.quadrance() / m;
                 };
-                RigidBody.prototype.bodyToWorld = function (bodyPoint) {
+                RigidBody.prototype.bodyToWorld = function (bodyPoint, out) {
                     var r = Vector_1.default.fromVector(bodyPoint).subtract(this.cm_body_);
-                    return r.rotate(this.R).add(this.X);
-                };
-                RigidBody.prototype.worldVelocityOfBodyPoint = function (bodyPoint) {
-                    var r = this.rotateBodyToWorld(Vector_1.default.fromVector(bodyPoint).subtract(this.cm_body_));
-                    return Vector_1.default.fromVector(this.ω).cross(r).add(this.V);
-                };
-                RigidBody.prototype.rotateBodyToWorld = function (bodyPoint) {
-                    return Vector_1.default.fromVector(bodyPoint).rotate(this.R);
+                    var result = r.rotate(this.R).add(this.X);
+                    out.x = result.x;
+                    out.y = result.y;
+                    out.z = result.z;
                 };
                 return RigidBody;
             }(AbstractSimObject_1.default);
@@ -2887,7 +2974,7 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
         }
     };
 });
-System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubject", "../util/contains", "../model/EnergyInfo", "../util/remove", "../core/SimList", "../core/VarsList"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/RigidBodySim.js", ["../util/AbstractSubject", "../math/Bivector3", "../util/contains", "../model/EnergyInfo", "../util/remove", "../core/SimList", "../core/VarsList", "../math/Vector3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -2929,10 +3016,12 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
         }
         throw new Error("getVarName(" + index + ")");
     }
-    var AbstractSubject_1, contains_1, EnergyInfo_1, remove_1, SimList_1, VarsList_1, var_names, i18n_names, Offset, NUM_VARS_IN_STATE, RigidBodySim;
+    var AbstractSubject_1, Bivector3_1, contains_1, EnergyInfo_1, remove_1, SimList_1, VarsList_1, Vector3_1, var_names, i18n_names, Offset, NUM_VARS_IN_STATE, RigidBodySim;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (Bivector3_1_1) {
+            Bivector3_1 = Bivector3_1_1;
         }, function (contains_1_1) {
             contains_1 = contains_1_1;
         }, function (EnergyInfo_1_1) {
@@ -2943,6 +3032,8 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
             SimList_1 = SimList_1_1;
         }, function (VarsList_1_1) {
             VarsList_1 = VarsList_1_1;
+        }, function (Vector3_1_1) {
+            Vector3_1 = Vector3_1_1;
         }],
         execute: function () {
             var_names = ['time', 'kinetic enetry', 'potential energy', 'total energy'];
@@ -2975,6 +3066,8 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                     _this.forceLaws_ = [];
                     _this.showForces_ = false;
                     _this.potentialOffset_ = 0;
+                    _this.force_ = new Vector3_1.default(0, 0, 0);
+                    _this.torque_ = new Bivector3_1.default();
                     _this.varsList_ = new VarsList_1.default(var_names, i18n_names, _this.getName() + '_VARS');
                     return _this;
                 }
@@ -2998,8 +3091,7 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                         for (var k = 0; k < NUM_VARS_IN_STATE; k++) {
                             localNames.push(getVarName(k, true));
                         }
-                        var idx = this.varsList_.addVariables(names, localNames);
-                        body.setVarsIndex(idx);
+                        body.varsIndex = this.varsList_.addVariables(names, localNames);
                         this.bodies_.push(body);
                         this.getSimList().add(body);
                     }
@@ -3008,9 +3100,9 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                 };
                 RigidBodySim.prototype.removeBody = function (body) {
                     if (contains_1.default(this.bodies_, body)) {
-                        this.varsList_.deleteVariables(body.getVarsIndex(), NUM_VARS_IN_STATE);
+                        this.varsList_.deleteVariables(body.varsIndex, NUM_VARS_IN_STATE);
                         remove_1.default(this.bodies_, body);
-                        body.setVarsIndex(-1);
+                        body.varsIndex = -1;
                     }
                     this.getSimList().remove(body);
                     this.getVarsList().incrSequence(1, 2, 3);
@@ -3029,7 +3121,7 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                 ;
                 RigidBodySim.prototype.moveObjects = function (vars) {
                     this.bodies_.forEach(function (body) {
-                        var idx = body.getVarsIndex();
+                        var idx = body.varsIndex;
                         if (idx < 0) {
                             return;
                         }
@@ -3046,16 +3138,14 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                         body.L.xy = vars[idx + Offset.ANGULAR_MOMENTUM_XY];
                         body.L.yz = vars[idx + Offset.ANGULAR_MOMENTUM_YZ];
                         body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
-                        body.V.copy(body.P).divByScalar(body.M);
-                        body.ω.dual(body.L).neg().applyMatrix(body.Iinv);
-                        body.Ω.dual(body.ω);
+                        body.Ω.applyMatrix(body.Iinv);
                     });
                 };
                 RigidBodySim.prototype.evaluate = function (vars, change, time) {
                     var _this = this;
                     this.moveObjects(vars);
                     this.bodies_.forEach(function (body) {
-                        var idx = body.getVarsIndex();
+                        var idx = body.varsIndex;
                         if (idx < 0) {
                             return;
                         }
@@ -3094,15 +3184,17 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                     if (!contains_1.default(this.bodies_, body)) {
                         return;
                     }
-                    var idx = body.getVarsIndex();
+                    var idx = body.varsIndex;
                     if (idx < 0) {
                         return;
                     }
-                    var F = forceApp.F,
-                        Γ = forceApp.Γ;
+                    forceApp.computeForce(this.force_);
+                    var F = this.force_;
                     change[idx + Offset.LINEAR_MOMENTUM_X] += F.x;
                     change[idx + Offset.LINEAR_MOMENTUM_Y] += F.y;
                     change[idx + Offset.LINEAR_MOMENTUM_Z] += F.z;
+                    forceApp.computeTorque(this.torque_);
+                    var Γ = this.torque_;
                     change[idx + Offset.ANGULAR_MOMENTUM_YZ] += Γ.yz;
                     change[idx + Offset.ANGULAR_MOMENTUM_ZX] += Γ.zx;
                     change[idx + Offset.ANGULAR_MOMENTUM_XY] += Γ.xy;
@@ -3115,7 +3207,7 @@ System.register("davinci-newton/engine/RigidBodySim.js", ["../util/AbstractSubje
                     return this.varsList_.getTime();
                 };
                 RigidBodySim.prototype.initializeFromBody = function (body) {
-                    var idx = body.getVarsIndex();
+                    var idx = body.varsIndex;
                     if (idx > -1) {
                         var va = this.varsList_;
                         va.setValue(Offset.POSITION_X + idx, body.X.x);
@@ -3199,7 +3291,7 @@ System.register("davinci-newton/util/zeroArray.js", [], function (exports_1, con
         execute: function () {}
     };
 });
-System.register("davinci-newton/model/RungeKutta.js", ["../util/zeroArray"], function (exports_1, context_1) {
+System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
@@ -4418,6 +4510,35 @@ System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./valid
         }
     };
 });
+System.register("davinci-newton/util/toName.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function toName(text) {
+        return text.toUpperCase().replace(/[ -]/g, '_');
+    }
+    exports_1("default", toName);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/validName.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function validName(text) {
+        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
+            throw new Error('not a valid name: ' + text);
+        }
+        return text;
+    }
+    exports_1("default", validName);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
 System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validName"], function (exports_1, context_1) {
     "use strict";
 
@@ -4940,51 +5061,17 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton/util/toName.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function toName(text) {
-        return text.toUpperCase().replace(/[ -]/g, '_');
-    }
-    exports_1("default", toName);
+    var AbstractSimObject;
     return {
         setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/validName.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function validName(text) {
-        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
-            throw new Error('not a valid name: ' + text);
-        }
-        return text;
-    }
-    exports_1("default", validName);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/objects/AbstractSimObject.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var toName_1, validName_1, AbstractSimObject;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
         execute: function () {
             AbstractSimObject = function () {
-                function AbstractSimObject(name) {
+                function AbstractSimObject() {
                     this.expireTime_ = Number.POSITIVE_INFINITY;
-                    this.name_ = validName_1.default(toName_1.default(name || "SIM_OBJ" + AbstractSimObject.ID++));
                 }
                 AbstractSimObject.prototype.getExpireTime = function () {
                     return this.expireTime_;
@@ -4992,12 +5079,8 @@ System.register("davinci-newton/objects/AbstractSimObject.js", ["../util/toName"
                 AbstractSimObject.prototype.setExpireTime = function (expireTime) {
                     this.expireTime_ = expireTime;
                 };
-                AbstractSimObject.prototype.getName = function () {
-                    return this.name_;
-                };
                 return AbstractSimObject;
             }();
-            AbstractSimObject.ID = 1;
             exports_1("AbstractSimObject", AbstractSimObject);
             exports_1("default", AbstractSimObject);
         }
@@ -5040,6 +5123,16 @@ System.register("davinci-newton/math/Bivector3.js", ["./wedge"], function (expor
                     this.zx = 0;
                     this.xy = 0;
                 }
+                Bivector3.prototype.applyMatrix = function (σ) {
+                    var x = this.yz;
+                    var y = this.zx;
+                    var z = this.xy;
+                    var e = σ.elements;
+                    this.yz = e[0x0] * x + e[0x3] * y + e[0x6] * z;
+                    this.zx = e[0x1] * x + e[0x4] * y + e[0x7] * z;
+                    this.xy = e[0x2] * x + e[0x5] * y + e[0x8] * z;
+                    return this;
+                };
                 Bivector3.prototype.copy = function (B) {
                     this.yz = B.yz;
                     this.zx = B.zx;
@@ -5056,6 +5149,12 @@ System.register("davinci-newton/math/Bivector3.js", ["./wedge"], function (expor
                     this.yz = wedge_1.wedgeYZ(a, b);
                     this.zx = wedge_1.wedgeZX(a, b);
                     this.xy = wedge_1.wedgeXY(a, b);
+                    return this;
+                };
+                Bivector3.prototype.write = function (B) {
+                    B.xy = this.xy;
+                    B.yz = this.yz;
+                    B.zx = this.zx;
                     return this;
                 };
                 Bivector3.prototype.zero = function () {
@@ -5088,7 +5187,127 @@ System.register("davinci-newton/model/CoordType.js", [], function (exports_1, co
         }
     };
 });
-System.register("davinci-newton/model/ForceApp.js", ["../objects/AbstractSimObject", "../math/Bivector3", "./CoordType"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Vector3.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var Vector3;
+    return {
+        setters: [],
+        execute: function () {
+            Vector3 = function () {
+                function Vector3(x, y, z) {
+                    if (x === void 0) {
+                        x = 0;
+                    }
+                    if (y === void 0) {
+                        y = 0;
+                    }
+                    if (z === void 0) {
+                        z = 0;
+                    }
+                    this.x = x;
+                    this.y = y;
+                    this.z = z;
+                }
+                Vector3.prototype.add = function (rhs) {
+                    this.x += rhs.x;
+                    this.y += rhs.y;
+                    this.z += rhs.z;
+                    return this;
+                };
+                Vector3.prototype.applyMatrix = function (σ) {
+                    var x = this.x;
+                    var y = this.y;
+                    var z = this.z;
+                    var e = σ.elements;
+                    this.x = e[0x0] * x + e[0x3] * y + e[0x6] * z;
+                    this.y = e[0x1] * x + e[0x4] * y + e[0x7] * z;
+                    this.z = e[0x2] * x + e[0x5] * y + e[0x8] * z;
+                    return this;
+                };
+                Vector3.prototype.copy = function (source) {
+                    this.x = source.x;
+                    this.y = source.y;
+                    this.z = source.z;
+                    return this;
+                };
+                Vector3.prototype.distanceTo = function (rhs) {
+                    return Math.sqrt(this.quadranceTo(rhs));
+                };
+                Vector3.prototype.dual = function (B) {
+                    this.x = -B.yz;
+                    this.y = -B.zx;
+                    this.z = -B.xy;
+                    return this;
+                };
+                Vector3.prototype.direction = function () {
+                    var m = this.magnitude();
+                    return this.divByScalar(m);
+                };
+                Vector3.prototype.divByScalar = function (alpha) {
+                    this.x /= alpha;
+                    this.y /= alpha;
+                    this.z /= alpha;
+                    return this;
+                };
+                Vector3.prototype.magnitude = function () {
+                    return Math.sqrt(this.quadrance());
+                };
+                Vector3.prototype.mulByScalar = function (alpha) {
+                    this.x *= alpha;
+                    this.y *= alpha;
+                    this.z *= alpha;
+                    return this;
+                };
+                Vector3.prototype.neg = function () {
+                    return this.mulByScalar(-1);
+                };
+                Vector3.prototype.write = function (destination) {
+                    destination.x = this.x;
+                    destination.y = this.y;
+                    destination.z = this.z;
+                    return this;
+                };
+                Vector3.prototype.quadrance = function () {
+                    var x = this.x;
+                    var y = this.y;
+                    var z = this.z;
+                    return x * x + y * y + z * z;
+                };
+                Vector3.prototype.quadranceTo = function (rhs) {
+                    var Δx = this.x - rhs.x;
+                    var Δy = this.y - rhs.y;
+                    var Δz = this.z - rhs.z;
+                    return Δx * Δx + Δy * Δy + Δz * Δz;
+                };
+                Vector3.prototype.rotate = function (spinor) {
+                    if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
+                        return this;
+                    } else {
+                        throw new Error("TODO: rotate(spinor)");
+                    }
+                };
+                Vector3.prototype.subtract = function (rhs) {
+                    this.x -= rhs.x;
+                    this.y -= rhs.y;
+                    this.z -= rhs.z;
+                    return this;
+                };
+                Vector3.prototype.__neg__ = function () {
+                    return new Vector3(-this.x, -this.y, -this.z);
+                };
+                Vector3.dual = function (B) {
+                    return new Vector3().dual(B);
+                };
+                return Vector3;
+            }();
+            exports_1("Vector3", Vector3);
+            exports_1("default", Vector3);
+        }
+    };
+});
+System.register("davinci-newton/model/Force.js", ["../objects/AbstractSimObject", "../math/Bivector3", "./CoordType", "../math/Vector", "../math/Vector3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -5099,7 +5318,7 @@ System.register("davinci-newton/model/ForceApp.js", ["../objects/AbstractSimObje
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var AbstractSimObject_1, Bivector3_1, CoordType_1, ForceApp;
+    var AbstractSimObject_1, Bivector3_1, CoordType_1, Vector_1, Vector3_1, Force;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -5107,56 +5326,92 @@ System.register("davinci-newton/model/ForceApp.js", ["../objects/AbstractSimObje
             Bivector3_1 = Bivector3_1_1;
         }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
+        }, function (Vector_1_1) {
+            Vector_1 = Vector_1_1;
+        }, function (Vector3_1_1) {
+            Vector3_1 = Vector3_1_1;
         }],
         execute: function () {
-            ForceApp = function (_super) {
-                __extends(ForceApp, _super);
-                function ForceApp(name, body_, location_, locationCoordType_, direction_, directionCoordType_) {
-                    var _this = _super.call(this, name) || this;
+            Force = function (_super) {
+                __extends(Force, _super);
+                function Force(body_) {
+                    var _this = _super.call(this) || this;
                     _this.body_ = body_;
-                    _this.location_ = location_;
-                    _this.locationCoordType_ = locationCoordType_;
-                    _this.direction_ = direction_;
-                    _this.directionCoordType_ = directionCoordType_;
+                    _this.location = new Vector3_1.default();
+                    _this.vector = new Vector3_1.default();
+                    _this.position_ = new Vector3_1.default();
+                    _this.force_ = new Vector3_1.default();
                     _this.torque_ = new Bivector3_1.default();
                     return _this;
                 }
-                ForceApp.prototype.getBody = function () {
+                Force.prototype.getBody = function () {
                     return this.body_;
                 };
-                Object.defineProperty(ForceApp.prototype, "F", {
-                    get: function () {
-                        return this.directionCoordType_ === CoordType_1.default.BODY ? this.body_.rotateBodyToWorld(this.direction_) : this.direction_;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(ForceApp.prototype, "x", {
-                    get: function () {
-                        return this.locationCoordType_ === CoordType_1.default.BODY ? this.body_.bodyToWorld(this.location_) : this.location_;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                ForceApp.prototype.getTorqueAboutCenterOfMass = function () {
-                    var r = this.x.subtract(this.body_.X);
-                    return this.torque_.wedge(r, this.F);
+                Force.prototype.computeForce = function (force) {
+                    switch (this.vectorCoordType) {
+                        case CoordType_1.default.BODY:
+                            {
+                                this.force_.copy(this.vector);
+                                this.force_.rotate(this.body_.R);
+                                this.force_.write(force);
+                                break;
+                            }
+                        case CoordType_1.default.WORLD:
+                            {
+                                this.force_.copy(this.vector);
+                                this.force_.write(force);
+                                break;
+                            }
+                    }
                 };
-                Object.defineProperty(ForceApp.prototype, "\u0393", {
+                Object.defineProperty(Force.prototype, "F", {
                     get: function () {
-                        return this.getTorqueAboutCenterOfMass();
+                        this.computeForce(this.force_);
+                        return Vector_1.default.fromVector(this.force_);
                     },
                     enumerable: true,
                     configurable: true
                 });
-                return ForceApp;
+                Object.defineProperty(Force.prototype, "x", {
+                    get: function () {
+                        this.computePosition(this.position_);
+                        return Vector_1.default.fromVector(this.position_);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Force.prototype.computePosition = function (position) {
+                    switch (this.locationCoordType) {
+                        case CoordType_1.default.BODY:
+                            {
+                                this.position_.copy(this.location);
+                                this.position_.rotate(this.body_.R);
+                                this.position_.add(this.body_.X);
+                                this.position_.write(position);
+                                break;
+                            }
+                        case CoordType_1.default.WORLD:
+                            {
+                                this.position_.copy(this.location);
+                                this.position_.write(position);
+                                break;
+                            }
+                    }
+                };
+                Force.prototype.computeTorque = function (torque) {
+                    this.computePosition(this.position_);
+                    this.computeForce(this.force_);
+                    this.torque_.wedge(this.position_.subtract(this.body_.X), this.force_);
+                    this.torque_.write(torque);
+                };
+                return Force;
             }(AbstractSimObject_1.default);
-            exports_1("ForceApp", ForceApp);
-            exports_1("default", ForceApp);
+            exports_1("Force", Force);
+            exports_1("default", Force);
         }
     };
 });
-System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../model/CoordType", "../model/ForceApp", "../math/Vector"], function (exports_1, context_1) {
+System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../model/CoordType", "../model/Force", "../math/Vector"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -5167,90 +5422,63 @@ System.register("davinci-newton/objects/Spring.js", ["./AbstractSimObject", "../
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var AbstractSimObject_1, CoordType_1, ForceApp_1, Vector_1, Spring;
+    var AbstractSimObject_1, CoordType_1, Force_1, Vector_1, Spring;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
         }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
-        }, function (ForceApp_1_1) {
-            ForceApp_1 = ForceApp_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
         }, function (Vector_1_1) {
             Vector_1 = Vector_1_1;
         }],
         execute: function () {
             Spring = function (_super) {
                 __extends(Spring, _super);
-                function Spring(name, body1_, body2_) {
-                    var _this = _super.call(this, name) || this;
+                function Spring(body1_, body2_) {
+                    var _this = _super.call(this) || this;
                     _this.body1_ = body1_;
                     _this.body2_ = body2_;
-                    _this.damping_ = 0;
-                    _this.compressOnly_ = false;
                     _this.restLength_ = 1;
                     _this.stiffness_ = 1;
                     _this.attach1_ = Vector_1.default.ORIGIN;
                     _this.attach2_ = Vector_1.default.ORIGIN;
+                    _this.forces = [];
+                    _this.F12 = new Force_1.default(_this.body1_);
+                    _this.F12.locationCoordType = CoordType_1.default.WORLD;
+                    _this.F12.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.F21 = new Force_1.default(_this.body2_);
+                    _this.F21.locationCoordType = CoordType_1.default.WORLD;
+                    _this.F21.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.forces = [_this.F12, _this.F21];
                     return _this;
                 }
-                Spring.prototype.getStartPoint = function () {
+                Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
                     if (this.attach1_ == null || this.body1_ == null) {
                         throw new Error();
                     }
-                    return this.body1_.bodyToWorld(this.attach1_);
+                    this.body1_.bodyToWorld(this.attach1_, x);
                 };
-                Spring.prototype.getEndPoint = function () {
+                Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
                     if (this.attach2_ == null || this.body2_ == null) {
                         throw new Error();
                     }
-                    var p2 = this.body2_.bodyToWorld(this.attach2_);
-                    if (this.compressOnly_) {
-                        var p1 = this.getStartPoint();
-                        var dist = p1.distanceTo(p2);
-                        var rlen = this.restLength_;
-                        if (dist <= rlen) {
-                            return p2;
-                        } else {
-                            var n = p2.subtract(p1).direction();
-                            return p1.add(n.multiply(rlen));
-                        }
-                    } else {
-                        return p2;
-                    }
+                    this.body2_.bodyToWorld(this.attach2_, x);
                 };
                 Spring.prototype.calculateForces = function () {
-                    var point1 = this.getStartPoint();
-                    var point2 = this.getEndPoint();
-                    var v = point2.subtract(point1);
-                    var len = v.magnitude();
-                    var sf = -this.stiffness_ * (len - this.restLength_);
-                    var fx = -sf * (v.x / len);
-                    var fy = -sf * (v.y / len);
-                    var fz = -sf * (v.z / len);
-                    var f = new Vector_1.default(fx, fy, fz);
-                    if (this.damping_ !== 0) {
-                        if (!this.compressOnly_ || len < this.restLength_ - 1E-10) {
-                            var v1 = this.body1_.worldVelocityOfBodyPoint(this.attach1_);
-                            var v2 = this.body2_.worldVelocityOfBodyPoint(this.attach2_);
-                            var df = v1.subtract(v2).multiply(-this.damping_);
-                            f = f.add(df);
-                        }
-                    }
-                    return [new ForceApp_1.default('spring', this.body1_, point1, CoordType_1.default.WORLD, f, CoordType_1.default.WORLD), new ForceApp_1.default('spring', this.body2_, point2, CoordType_1.default.WORLD, f.multiply(-1), CoordType_1.default.WORLD)];
+                    this.computeBody1AttachPointInWorldCoords(this.F12.location);
+                    this.computeBody2AttachPointInWorldCoords(this.F21.location);
+                    var length = this.F12.location.distanceTo(this.F21.location);
+                    var sf = this.stiffness_ * (length - this.restLength_) / length;
+                    this.F12.vector.copy(this.F21.location).subtract(this.F12.location).mulByScalar(sf);
+                    this.F21.vector.copy(this.F12.vector).neg();
+                    return this.forces;
                 };
                 Spring.prototype.disconnect = function () {};
-                Spring.prototype.getLength = function () {
-                    return this.getEndPoint().distanceTo(this.getStartPoint());
-                };
                 Spring.prototype.getPotentialEnergy = function () {
-                    var stretch = this.getStretch();
+                    var stretch = this.F21.location.distanceTo(this.F12.location) - this.restLength_;
                     return 0.5 * this.stiffness_ * stretch * stretch;
-                };
-                Spring.prototype.getStretch = function () {
-                    return this.getLength() - this.restLength_;
-                };
-                Spring.prototype.getVector = function () {
-                    return this.getEndPoint().subtract(this.getStartPoint());
                 };
                 return Spring;
             }(AbstractSimObject_1.default);
@@ -5325,6 +5553,18 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
                 });
                 Vector.prototype.add = function (rhs) {
                     return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+                };
+                Vector.prototype.lco = function (B) {
+                    var ax = B.yz;
+                    var ay = B.zx;
+                    var az = B.xy;
+                    var bx = this.x;
+                    var by = this.y;
+                    var bz = this.z;
+                    var x = ay * bz - az * by;
+                    var y = az * bx - ax * bz;
+                    var z = ax * by - ay * bx;
+                    return new Vector(x, y, z);
                 };
                 Vector.prototype.subtract = function (rhs) {
                     return new Vector(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
@@ -5404,11 +5644,11 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/model/ForceApp", "./davinci-newton/graph/Graph", "./davinci-newton/view/LabCanvas", "./davinci-newton/engine/RigidBody", "./davinci-newton/engine/RigidBodySim", "./davinci-newton/model/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/model/Force", "./davinci-newton/graph/Graph", "./davinci-newton/objects/GravitationLaw", "./davinci-newton/view/LabCanvas", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/engine3D/RigidBody", "./davinci-newton/engine3D/RigidBodySim", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var CircularList_1, config_1, DisplayGraph_1, ForceApp_1, Graph_1, LabCanvas_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, Vector_1, newton;
+    var CircularList_1, config_1, DisplayGraph_1, EulerMethod_1, Force_1, Graph_1, GravitationLaw_1, LabCanvas_1, ModifiedEuler_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, Vector_1, newton;
     return {
         setters: [function (CircularList_1_1) {
             CircularList_1 = CircularList_1_1;
@@ -5416,12 +5656,18 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
             config_1 = config_1_1;
         }, function (DisplayGraph_1_1) {
             DisplayGraph_1 = DisplayGraph_1_1;
-        }, function (ForceApp_1_1) {
-            ForceApp_1 = ForceApp_1_1;
+        }, function (EulerMethod_1_1) {
+            EulerMethod_1 = EulerMethod_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
         }, function (Graph_1_1) {
             Graph_1 = Graph_1_1;
+        }, function (GravitationLaw_1_1) {
+            GravitationLaw_1 = GravitationLaw_1_1;
         }, function (LabCanvas_1_1) {
             LabCanvas_1 = LabCanvas_1_1;
+        }, function (ModifiedEuler_1_1) {
+            ModifiedEuler_1 = ModifiedEuler_1_1;
         }, function (RigidBody_1_1) {
             RigidBody_1 = RigidBody_1_1;
         }, function (RigidBodySim_1_1) {
@@ -5453,14 +5699,23 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
                 get DisplayGraph() {
                     return DisplayGraph_1.default;
                 },
-                get ForceApp() {
-                    return ForceApp_1.default;
+                get EulerMethod() {
+                    return EulerMethod_1.default;
+                },
+                get Force() {
+                    return Force_1.default;
                 },
                 get Graph() {
                     return Graph_1.default;
                 },
+                get GravitationLaw() {
+                    return GravitationLaw_1.default;
+                },
                 get LabCanvas() {
                     return LabCanvas_1.default;
+                },
+                get ModifiedEuler() {
+                    return ModifiedEuler_1.default;
                 },
                 get RigidBody() {
                     return RigidBody_1.default;

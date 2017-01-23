@@ -14,16 +14,18 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
+import Bivector3 from '../math/Bivector3';
 import Collision from './Collision';
 import contains from '../util/contains';
 import EnergyInfo from '../model/EnergyInfo';
-import ForceApp from '../model/ForceApp';
+import Force from '../model/Force';
 import ForceLaw from '../model/ForceLaw';
 import remove from '../util/remove';
 import RigidBody from './RigidBody';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
+import Vector3 from '../math/Vector3';
 
 const var_names = [
     'time',
@@ -116,6 +118,15 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     private recentState_: number[];
 
     /**
+     * Scratch variable for computing force.
+     */
+    private force_ = new Vector3(0, 0, 0);
+    /**
+     * Scratch variable for computing torque.
+     */
+    private torque_ = new Bivector3();
+
+    /**
      * 
      */
     constructor(name = 'SIM') {
@@ -147,8 +158,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             for (let k = 0; k < NUM_VARS_IN_STATE; k++) {
                 localNames.push(getVarName(k, true));
             }
-            const idx = this.varsList_.addVariables(names, localNames);
-            body.setVarsIndex(idx);
+            body.varsIndex = this.varsList_.addVariables(names, localNames);
             // add body to end of list of bodies
             this.bodies_.push(body);
             this.getSimList().add(body);
@@ -164,9 +174,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     removeBody(body: RigidBody): void {
         if (contains(this.bodies_, body)) {
-            this.varsList_.deleteVariables(body.getVarsIndex(), NUM_VARS_IN_STATE);
+            this.varsList_.deleteVariables(body.varsIndex, NUM_VARS_IN_STATE);
             remove(this.bodies_, body);
-            body.setVarsIndex(-1);
+            body.varsIndex = -1;
         }
         this.getSimList().remove(body);
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
@@ -200,7 +210,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     private moveObjects(vars: number[]) {
         this.bodies_.forEach(function (body) {
-            const idx = body.getVarsIndex();
+            const idx = body.varsIndex;
             if (idx < 0) {
                 return;
             }
@@ -224,11 +234,10 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
 
             // Update derived quantities (auxiliary variables).
-            body.V.copy(body.P).divByScalar(body.M);
+            // body.V.copy(body.P).divByScalar(body.M);
             // We must compute Iinv before computing ω!
             // TODO: body.Iinv = R(t) * Ibodyinv * transpose(R(t))
-            body.ω.dual(body.L).neg().applyMatrix(body.Iinv);
-            body.Ω.dual(body.ω);
+            body.Ω.applyMatrix(body.Iinv);
         });
     }
 
@@ -241,7 +250,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         // Move objects so that rigid body objects know their current state.
         this.moveObjects(vars);
         this.bodies_.forEach(function (body) {
-            const idx = body.getVarsIndex();
+            const idx = body.varsIndex;
             if (idx < 0) {
                 return;
             }
@@ -290,26 +299,28 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * Applying forces gives rise to linear and angular momentum.
      */
-    private applyForce(change: number[], forceApp: ForceApp) {
+    private applyForce(change: number[], forceApp: Force) {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
         }
-        const idx = body.getVarsIndex();
+        const idx = body.varsIndex;
         if (idx < 0) {
             return;
         }
 
-        const {F, Γ} = forceApp;
-
         // The rate of change of momentum is force.
         // dP/dt = F
+        forceApp.computeForce(this.force_);
+        const F = this.force_;
         change[idx + Offset.LINEAR_MOMENTUM_X] += F.x;
         change[idx + Offset.LINEAR_MOMENTUM_Y] += F.y;
         change[idx + Offset.LINEAR_MOMENTUM_Z] += F.z;
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
+        forceApp.computeTorque(this.torque_);
+        const Γ = this.torque_;
         change[idx + Offset.ANGULAR_MOMENTUM_YZ] += Γ.yz;
         change[idx + Offset.ANGULAR_MOMENTUM_ZX] += Γ.zx;
         change[idx + Offset.ANGULAR_MOMENTUM_XY] += Γ.xy;
@@ -332,7 +343,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     private initializeFromBody(body: RigidBody): void {
         // eraseOldCopy(body);
-        const idx = body.getVarsIndex();
+        const idx = body.varsIndex;
         if (idx > -1) {
             const va = this.varsList_;
 

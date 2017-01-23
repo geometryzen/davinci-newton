@@ -48,6 +48,22 @@ export class Vector implements VectorE3 {
     }
 
     /**
+     * this << B
+     */
+    lco(B: BivectorE3): Vector {
+        const ax = B.yz;
+        const ay = B.zx;
+        const az = B.xy;
+        const bx = this.x;
+        const by = this.y;
+        const bz = this.z;
+        const x = ay * bz - az * by;
+        const y = az * bx - ax * bz;
+        const z = ax * by - ay * bx;
+        return new Vector(x, y, z);
+    }
+
+    /**
      * 
      */
     subtract(rhs: VectorE3): Vector {

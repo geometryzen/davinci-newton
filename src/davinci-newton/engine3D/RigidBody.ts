@@ -15,10 +15,9 @@
 
 import AbstractSimObject from '../objects/AbstractSimObject';
 import Bivector3 from '../math/Bivector3';
-import BivectorE3 from '../math/BivectorE3';
 import Matrix3 from '../math/Matrix3';
+import mustBeNumber from '../checks/mustBeNumber';
 import Spinor3 from '../math/Spinor3';
-import SpinorE3 from '../math/SpinorE3';
 import Vector from '../math/Vector';
 import Vector3 from '../math/Vector3';
 import VectorE3 from '../math/VectorE3';
@@ -29,7 +28,6 @@ import VectorE3 from '../math/VectorE3';
 export class RigidBody extends AbstractSimObject {
     /**
      * Mass, M.
-     * This quantity is considered to be constant.
      */
     private mass_ = 1;
     /**
@@ -39,7 +37,7 @@ export class RigidBody extends AbstractSimObject {
     public Ibodyinv = Matrix3.one();
 
     /**
-     * the index into the variables array for this Block, or -1 if not in vars array.
+     * the index into the variables array for this rigid body, or -1 if not in vars array.
      */
     private varsIndex_ = -1;
 
@@ -50,15 +48,10 @@ export class RigidBody extends AbstractSimObject {
     /**
      * Derived quantity (auxiliary variable).
      */
-    public readonly V = new Vector3();
-    /**
-     * Derived quantity (auxiliary variable).
-     */
     public Iinv = Matrix3.one();
     /**
-     * 
+     * Angular velocity (bivector).
      */
-    public ω = new Vector3();
     public Ω = new Bivector3();
 
     /**
@@ -69,47 +62,57 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    constructor(name: string) {
-        super(name);
+    constructor() {
+        super();
+    }
+
+    /**
+     * Mass (scalar)
+     */
+    get M(): number {
+        return this.mass_;
+    }
+    set M(mass: number) {
+        this.mass_ = mustBeNumber('mass', mass);
     }
 
     /**
      * Position (vector).
      */
-    get X(): VectorE3 {
+    get X(): Vector3 {
         return this.position_;
     }
-    set X(position: VectorE3) {
+    set X(position: Vector3) {
         this.position_.copy(position);
     }
 
     /**
      * Attitude (spinor).
      */
-    get R(): SpinorE3 {
+    get R(): Spinor3 {
         return this.attitude_;
     }
-    set R(attitude: SpinorE3) {
+    set R(attitude: Spinor3) {
         this.attitude_.copy(attitude);
     }
 
     /**
      * Linear momentum (vector).
      */
-    get P(): VectorE3 {
+    get P(): Vector3 {
         return this.linearMomentum_;
     }
-    set P(momentum: VectorE3) {
+    set P(momentum: Vector3) {
         this.linearMomentum_.copy(momentum);
     }
 
     /**
      * Angular momentum (bivector).
      */
-    get L(): BivectorE3 {
+    get L(): Bivector3 {
         return this.angularMomentum_;
     }
-    set L(angularMomentum: BivectorE3) {
+    set L(angularMomentum: Bivector3) {
         this.angularMomentum_.copy(angularMomentum);
     }
 
@@ -123,36 +126,24 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    getVarsIndex(): number {
+    get varsIndex(): number {
         return this.varsIndex_;
     }
-
-    /**
-     * 
-     */
-    setVarsIndex(index: number) {
+    set varsIndex(index: number) {
         this.varsIndex_ = index;
     }
 
     /**
-     * Mass (scalar)
-     */
-    get M(): number {
-        return this.mass_;
-    }
-    set M(mass: number) {
-        this.mass_ = mass;
-    }
-
-    /**
-     * 
+     * (1/2) Ω * L(Ω) = (1/2) ω * J(ω)
      */
     rotationalEnergy(): number {
-        return 0;
+        const Ω = this.Ω;
+        const L = this.L;
+        return 0.5 * (Ω.xy * L.xy + Ω.yz * L.yz + Ω.zx * L.zx);
     }
 
     /**
-     * 
+     * (1/2) P^2 / M
      */
     translationalEnergy(): number {
         const P = this.linearMomentum_;
@@ -163,14 +154,12 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    bodyToWorld(bodyPoint: VectorE3): Vector {
+    bodyToWorld(bodyPoint: VectorE3, out: VectorE3): void {
         const r = Vector.fromVector(bodyPoint).subtract(this.cm_body_);
-        return r.rotate(this.R).add(this.X);
-        // const rx = bodyPoint.x - this.cm_body_.x;  // vector from cm to bodyPoint
-        // const ry = bodyPoint.y - this.cm_body_.y;
-        // const x = this.X.x + (rx * this.cosAngle_ - ry * this.sinAngle_);
-        // const y = this.X.y + (rx * this.sinAngle_ + ry * this.cosAngle_);
-        // return new Vector(x, y, 0);
+        const result = r.rotate(this.R).add(this.X);
+        out.x = result.x;
+        out.y = result.y;
+        out.z = result.z;
     }
 
     /**
@@ -185,19 +174,18 @@ export class RigidBody extends AbstractSimObject {
      * 
      * This method is most often used to calculate damping.
      */
+    /*
     worldVelocityOfBodyPoint(bodyPoint: VectorE3): Vector {
         // r = R(t) * [bodyPoint relative to body center of mass]
-        const r = this.rotateBodyToWorld(Vector.fromVector(bodyPoint).subtract(this.cm_body_));
+        const s = new Vector3().copy(bodyPoint).subtract(this.cm_body_).rotate(this.R);
+        const r = Vector.fromVector(bodyPoint).subtract(this.cm_body_).rotate(this.R);
+        // TODO: ω x r => r << Ω
+        // dx/dt = r << Ω + dX/dt
+        return r.lco(this.Ω).add(this.V);
         // dx/dt = ω x r + dX/dt
-        return Vector.fromVector(this.ω).cross(r).add(this.V);
+        // return Vector.fromVector(this.ω).cross(r).add(this.V);
     }
-
-    /**
-     * 
-     */
-    rotateBodyToWorld(bodyPoint: VectorE3): Vector {
-        return Vector.fromVector(bodyPoint).rotate(this.R);
-    }
+    */
 }
 
 export default RigidBody;

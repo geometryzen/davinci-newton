@@ -1,12 +1,15 @@
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
-import ForceApp from './davinci-newton/model/ForceApp';
+import EulerMethod from './davinci-newton/solvers/EulerMethod';
+import Force from './davinci-newton/model/Force';
 import Graph from './davinci-newton/graph/Graph';
+import GravitationLaw from './davinci-newton/objects/GravitationLaw';
 import LabCanvas from './davinci-newton/view/LabCanvas';
-import RigidBody from './davinci-newton/engine/RigidBody';
-import RigidBodySim from './davinci-newton/engine/RigidBodySim';
-import RungeKutta from './davinci-newton/model/RungeKutta';
+import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
+import RigidBody from './davinci-newton/engine3D/RigidBody';
+import RigidBodySim from './davinci-newton/engine3D/RigidBodySim';
+import RungeKutta from './davinci-newton/solvers/RungeKutta';
 import SimpleAdvance from './davinci-newton/strategy/SimpleAdvance';
 import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
@@ -36,7 +39,11 @@ const newton = {
     /**
      * 
      */
-    get ForceApp() { return ForceApp; },
+    get EulerMethod() { return EulerMethod; },
+    /**
+     * 
+     */
+    get Force() { return Force; },
     /**
      * 
      */
@@ -44,7 +51,15 @@ const newton = {
     /**
      * 
      */
+    get GravitationLaw() { return GravitationLaw; },
+    /**
+     * 
+     */
     get LabCanvas() { return LabCanvas; },
+    /**
+     * 
+     */
+    get ModifiedEuler() { return ModifiedEuler; },
     /**
      * 
      */

@@ -16,7 +16,7 @@
 import AdvanceStrategy from '../runner/AdvanceStrategy';
 import DiffEqSolver from '../core/DiffEqSolver';
 import MemoList from '../runner/MemoList';
-import RigidBodySim from '../engine/RigidBodySim';
+import RigidBodySim from '../engine3D/RigidBodySim';
 
 export class CollisionAdvance implements AdvanceStrategy {
     constructor(private sim_: RigidBodySim, private odeSolver_: DiffEqSolver) {

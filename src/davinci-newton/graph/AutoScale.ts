@@ -219,18 +219,18 @@ export default class AutoScale extends AbstractSubject {
     }
 
     memorize(): void {
-        for (var i = 0, n = this.graphLines_.length; i < n; i++) {
-            var graphPts = this.graphLines_[i].getGraphPoints();
+        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
+            const graphPts = this.graphLines_[i].getGraphPoints();
             // Detect when graphLine has been reset.
             if (this.lastIndex_[i] > graphPts.getEndIndex()) {
                 this.reset();
             }
         }
-        for (i = 0, n = this.graphLines_.length; i < n; i++) {
-            graphPts = this.graphLines_[i].getGraphPoints();
-            var iter = graphPts.getIterator(this.lastIndex_[i]);
+        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
+            const graphPts = this.graphLines_[i].getGraphPoints();
+            const iter = graphPts.getIterator(this.lastIndex_[i]);
             while (iter.hasNext()) {
-                var gp = iter.nextValue();
+                const gp = iter.nextValue();
                 this.updateRange_(this.graphLines_[i], gp.x, gp.y);
                 this.lastIndex_[i] = iter.getIndex();
             }

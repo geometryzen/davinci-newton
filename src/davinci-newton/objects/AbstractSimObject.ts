@@ -14,20 +14,11 @@
 // limitations under the License.
 
 import SimObject from '../core/SimObject';
-import toName from '../util/toName';
-import validName from '../util/validName';
-
 
 /**
  * 
  */
 export class AbstractSimObject implements SimObject {
-
-    /**
-     * 
-     */
-    private static ID = 1;
-
     /**
      * 
      */
@@ -36,13 +27,8 @@ export class AbstractSimObject implements SimObject {
     /**
      * 
      */
-    private name_: string;
-
-    /**
-     * 
-     */
-    constructor(name?: string) {
-        this.name_ = validName(toName(name || `SIM_OBJ${AbstractSimObject.ID++}`));
+    constructor() {
+        // Do nothing yet.
     }
 
     /**
@@ -53,13 +39,6 @@ export class AbstractSimObject implements SimObject {
     }
     setExpireTime(expireTime: number): void {
         this.expireTime_ = expireTime;
-    }
-
-    /**
-     * 
-     */
-    getName(): string {
-        return this.name_;
     }
 }
 
