@@ -100,8 +100,8 @@ export class SimView extends AbstractSubject implements LabView {
     /**
      * 
      */
-    constructor(name: string, simRect: DoubleRect) {
-        super(name);
+    constructor(simRect: DoubleRect) {
+        super();
         if (!(simRect instanceof DoubleRect) || simRect.isEmpty()) {
             throw new Error('bad simRect: ' + simRect);
         }

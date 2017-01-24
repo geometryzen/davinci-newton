@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import DrawingMode from '../view/DrawingMode';
+
 /**
  * 
  */
@@ -20,7 +22,7 @@ export default class GraphStyle {
     /**
      * 
      */
-    constructor(public index_: number, public drawMode: string, public color_: string, public lineWidth: number) {
+    constructor(public index_: number, public drawingMode: DrawingMode, public color_: string, public lineWidth: number) {
         // Do nothing yet.
     }
 }

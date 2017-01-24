@@ -43,7 +43,7 @@ export class SimList extends AbstractSubject {
      * 
      */
     constructor() {
-        super('SIM_LIST');
+        super();
     }
 
     /**

@@ -129,9 +129,9 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    constructor(name = 'SIM') {
-        super(name);
-        this.varsList_ = new VarsList(var_names, i18n_names, this.getName() + '_VARS');
+    constructor() {
+        super();
+        this.varsList_ = new VarsList(var_names, i18n_names);
     }
 
     /**

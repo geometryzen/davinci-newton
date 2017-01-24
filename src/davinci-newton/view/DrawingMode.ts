@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export default class DrawingMode {
-    static DOTS = 'dots';
-    static LINES = 'lines';
+export enum DrawingMode {
+    DOTS = 0,
+    LINES = 1
 }
+
+export default DrawingMode;

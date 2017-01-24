@@ -25,7 +25,6 @@ import remove from './remove';
 import Subject from './Subject';
 import SubjectEvent from './SubjectEvent';
 import toName from '../util/toName';
-import validName from '../util/validName';
 
 /**
  * 
@@ -40,33 +39,11 @@ export class AbstractSubject implements Subject {
     /**
      * 
      */
-    private name_: string;
-
-    /**
-     * 
-     */
     private observers_: Observer[] = [];
     /**
      * 
      */
     private paramList_: Parameter[] = [];
-
-    /**
-     * 
-     */
-    constructor(name: string) {
-        if (!name) {
-            throw new Error('no name');
-        }
-        this.name_ = validName(toName(name));
-    }
-
-    /**
-     * 
-     */
-    getName(): string {
-        return this.name_;
-    }
 
     addObserver(observer: Observer) {
         if (!contains(this.observers_, observer)) {
@@ -84,8 +61,8 @@ export class AbstractSubject implements Subject {
      * @param parameter the Parameter to add
      */
     addParameter(parameter: Parameter): void {
-        var name = parameter.getName();
-        var p = this.getParam(name);
+        const name = parameter.getName();
+        const p = this.getParam(name);
         if (p != null) {
             throw new Error('parameter ' + name + ' already exists: ' + p);
         }
@@ -105,7 +82,7 @@ export class AbstractSubject implements Subject {
     }
 
     getParameter(name: string): Parameter {
-        var p = this.getParam(name);
+        const p = this.getParam(name);
         if (p != null) {
             return p;
         }

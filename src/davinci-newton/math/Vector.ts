@@ -167,6 +167,25 @@ export class Vector implements VectorE3 {
         }
     }
 
+    /**
+     * Returns a string representation of this Vector.
+     */
+    toString(radix?: number): string {
+        return `new Vector(${this.x_.toString(radix)}, ${this.y_.toString(radix)}, ${this.z_.toString(radix)})`;
+    }
+
+    __add__(rhs: VectorE3): Vector {
+        return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+    }
+
+    __mul__(rhs: number): Vector {
+        return new Vector(this.x * rhs, this.y * rhs, this.z * rhs);
+    }
+
+    __div__(rhs: number): Vector {
+        return new Vector(this.x / rhs, this.y / rhs, this.z / rhs);
+    }
+
     static dual(B: BivectorE3): Vector {
         return new Vector(-B.yz, -B.zx, -B.xy);
     }

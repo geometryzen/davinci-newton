@@ -282,12 +282,6 @@ export default class DisplayAxes implements DisplayObject {
         return this.horizName_;
     }
 
-    /*
-    getMassObjects() {
-        return [];
-    }
-    */
-
     /**
      * Returns an increment to use for spacing of tick marks on an axis.
      * The increment should be a 'round' number, with few fractional decimal places.
@@ -331,18 +325,6 @@ export default class DisplayAxes implements DisplayObject {
         // gives the first nice increment just greater than the starting number
         return Math.ceil(start / incr) * incr;
     }
-
-    /*
-    getPosition() {
-        return Vector.ORIGIN;
-    }
-    */
-
-    /*
-    getSimObjects() {
-        return [];
-    }
-    */
 
     /**
      * Returns the bounding rectangle for this DisplayAxes in simulation coordinates,
@@ -425,11 +407,6 @@ export default class DisplayAxes implements DisplayObject {
         this.horizName_ = name;
         this.needRedraw_ = true;
     }
-
-    /*
-    setPosition(position) {
-    }
-    */
 
     /**
      * Sets the bounding rectangle for this DisplayAxes in simulation coordinates; this

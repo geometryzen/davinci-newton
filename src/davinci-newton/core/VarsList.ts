@@ -62,8 +62,8 @@ export class VarsList extends AbstractSubject {
     /**
      * 
      */
-    constructor(varNames: string[], localNames: string[], name = 'VARIABLES') {
-        super(name);
+    constructor(varNames: string[], localNames: string[]) {
+        super();
         if (varNames.length !== localNames.length) {
             throw new Error('varNames and localNames are different lengths');
         }

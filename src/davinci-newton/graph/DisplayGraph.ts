@@ -88,7 +88,7 @@ export default class DisplayGraph implements DisplayObject {
             this.lastMap_ = map;
             this.needRedraw_ = true;
         }
-        for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
             // Detect when graphLine has been reset.
             if (this.memDraw_[i] > this.graphLines_[i].getGraphPoints().getEndIndex()) {
                 this.reset();
@@ -102,23 +102,24 @@ export default class DisplayGraph implements DisplayObject {
             if (this.needRedraw_) {
                 this.fullDraw(context, map);
                 this.needRedraw_ = false;
-            } else {
+            }
+            else {
                 // this is only useful for debugging, to see the incrementalDraw happening.
                 this.incrementalDraw(context, map);
             }
-        } else {
-            var w = this.screenRect_.getWidth();
-            var h = this.screenRect_.getHeight();
+        }
+        else {
+            const w = this.screenRect_.getWidth();
+            const h = this.screenRect_.getHeight();
             if (this.offScreen_ == null) {
                 // make the offscreen buffer that has an alpha channel.
-                this.offScreen_ = /** @type {!HTMLCanvasElement} */
-                    (document.createElement('canvas'));
+                this.offScreen_ = document.createElement('canvas');
                 this.offScreen_.width = w;
                 this.offScreen_.height = h;
                 this.needRedraw_ = true;
             }
             // osb = off screen buffer
-            var osb = this.offScreen_.getContext('2d');
+            const osb = this.offScreen_.getContext('2d');
             if (this.needRedraw_) {
                 // Clear image with transparent alpha by drawing a rectangle
                 // 'clearRect fills with transparent black'
@@ -127,7 +128,8 @@ export default class DisplayGraph implements DisplayObject {
                 // Draw into offscreen buffer, but using opaque ink (alpha = 1.0).
                 this.fullDraw(osb, map);
                 this.needRedraw_ = false;
-            } else {
+            }
+            else {
                 this.incrementalDraw(osb, map);
             }
             // Copy the entire offscreen buffer onto the screen.
@@ -136,7 +138,7 @@ export default class DisplayGraph implements DisplayObject {
             // it does a sort of 'transparent image copy'.
             context.drawImage(this.offScreen_, 0, 0, w, h);
         }
-        for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
             this.drawHotSpot(context, map, this.graphLines_[i]);
         }
         context.restore();
@@ -146,11 +148,11 @@ export default class DisplayGraph implements DisplayObject {
      * 
      */
     drawHotSpot(context: CanvasRenderingContext2D, coordMap: CoordMap, graphLine: GraphLine): void {
-        var p = graphLine.getGraphPoints().getEndValue();
+        const p = graphLine.getGraphPoints().getEndValue();
         if (p != null) {
-            var x = coordMap.simToScreenX(p.x);
-            var y = coordMap.simToScreenY(p.y);
-            var color = graphLine.getHotSpotColor();
+            const x = coordMap.simToScreenX(p.x);
+            const y = coordMap.simToScreenY(p.y);
+            const color = graphLine.getHotSpotColor();
             if (color) {
                 context.fillStyle = color;
                 context.fillRect(x - 2, y - 2, 5, 5);
@@ -178,7 +180,7 @@ export default class DisplayGraph implements DisplayObject {
         // Draw first point.
         // Find the GraphStyle corresponding to this point.
         const style = graphLine.getGraphStyle(iter.getIndex());
-        if (style.drawMode === DrawingMode.DOTS) {
+        if (style.drawingMode === DrawingMode.DOTS) {
             const x = coordMap.simToScreenX(next.x);
             const y = coordMap.simToScreenY(next.y);
             const w = style.lineWidth;
@@ -199,7 +201,7 @@ export default class DisplayGraph implements DisplayObject {
             // moves over the 0 to 2Pi boundary.  The sequence number changes
             // when there is a discontinuity, so don't draw a line in this case.
             const continuous = next.seqX === last.seqX && next.seqY === last.seqY;
-            if (style.drawMode === DrawingMode.DOTS || !continuous) {
+            if (style.drawingMode === DrawingMode.DOTS || !continuous) {
                 // Only draw points that are visible.
                 if (!simRect.contains(next)) {
                     continue;
@@ -272,7 +274,8 @@ export default class DisplayGraph implements DisplayObject {
                 this.graphLines_.push(graphLine);
                 this.memDraw_.push(-1);
             }
-        } else {
+        }
+        else {
             throw new Error('not a GraphLine ' + graphLine);
         }
     }
@@ -287,7 +290,8 @@ export default class DisplayGraph implements DisplayObject {
             removeAt(this.graphLines_, idx);
             removeAt(this.memDraw_, idx);
             this.needRedraw_ = true;
-        } else {
+        }
+        else {
             throw new Error('not a GraphLine ' + graphLine);
         }
     }

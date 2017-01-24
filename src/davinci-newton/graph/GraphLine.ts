@@ -77,7 +77,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * whether to draw the graph with lines or dots
      */
-    private drawMode_: string;
+    private drawingMode_: DrawingMode;
     /**
      * Thickness to use when drawing the line, in screen coordinates, so a unit is a screen pixel.
      */
@@ -106,8 +106,8 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * 
      */
-    constructor(name: string, varsList: VarsList, capacity?: number) {
-        super(name);
+    constructor(varsList: VarsList, capacity?: number) {
+        super();
         this.varsList_ = varsList;
         varsList.addObserver(this);
         this.xVar_ = -1;
@@ -123,13 +123,13 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
 
         this.dataPoints_ = new CircularList<GraphPoint>(capacity || 100000);
         this.drawColor_ = 'lime';
-        this.drawMode_ = DrawingMode.LINES;
+        this.drawingMode_ = DrawingMode.LINES;
         // ensure there is always at least one GraphStyle
         this.addGraphStyle();
         this.xTransform = function (x, y) { return x; };
         this.yTransform = function (x, y) { return y; };
         this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_LINE_WIDTH, () => this.getLineWidth(), (lineWidth: number) => this.setLineWidth(lineWidth)));
-        this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_DRAWING_MODE, () => this.getDrawingMode(), (drawingMode: string) => this.setDrawingMode(drawingMode)));
+        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_DRAWING_MODE, () => this.getDrawingMode(), (drawingMode: DrawingMode) => this.setDrawingMode(drawingMode)));
         this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_COLOR, () => this.getColor(), (color: string) => this.setColor(color)));
     }
 
@@ -138,7 +138,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * to the current end point of the HistoryList.
      */
     private addGraphStyle(): void {
-        this.styles_.push(new GraphStyle(this.dataPoints_.getEndIndex() + 1, this.drawMode_, this.drawColor_, this.lineWidth_));
+        this.styles_.push(new GraphStyle(this.dataPoints_.getEndIndex() + 1, this.drawingMode_, this.drawColor_, this.lineWidth_));
     }
 
     /**
@@ -165,7 +165,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Returns the color used when drawing the graph.
      * @return the color used when drawing the graph
      */
-    getColor() {
+    getColor(): string {
         return this.drawColor_;
     }
 
@@ -173,14 +173,14 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Returns the drawing mode of the graph: dots or lines.
      * @return the DrawingMode to draw this graph with
      */
-    getDrawingMode(): string {
-        return this.drawMode_;
+    getDrawingMode(): DrawingMode {
+        return this.drawingMode_;
     }
 
     /**
      * Returns the HistoryList of GraphPoints.
      */
-    getGraphPoints() {
+    getGraphPoints(): CircularList<GraphPoint> {
         return this.dataPoints_;
     }
 
@@ -211,7 +211,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Returns the color used when drawing the hot spot (most recent point).
      */
-    getHotSpotColor() {
+    getHotSpotColor(): string {
         return this.hotSpotColor_;
     }
 
@@ -226,7 +226,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Returns the VarsList that this GraphLine is collecting from
      */
-    getVarsList() {
+    getVarsList(): VarsList {
         return this.varsList_;
     }
 
@@ -266,17 +266,18 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
 
     memorize(): void {
         if (this.xVar_ > -1 && this.yVar_ > -1) {
-            var xVar = this.varsList_.getVariable(this.xVar_);
-            var yVar = this.varsList_.getVariable(this.yVar_);
-            var x = xVar.getValue();
-            var y = yVar.getValue();
-            var nextX = this.xTransform(x, y);
-            var nextY = this.yTransform(x, y);
-            var seqX = xVar.getSequence();
-            var seqY = yVar.getSequence();
-            var newPoint = new GraphPoint(nextX, nextY, seqX, seqY);
+            const varsList = this.varsList_;
+            const xVar = varsList.getVariable(this.xVar_);
+            const yVar = varsList.getVariable(this.yVar_);
+            const x = xVar.getValue();
+            const y = yVar.getValue();
+            const nextX = this.xTransform(x, y);
+            const nextY = this.yTransform(x, y);
+            const seqX = xVar.getSequence();
+            const seqY = yVar.getSequence();
+            const newPoint = new GraphPoint(nextX, nextY, seqX, seqY);
             // only store if the new point is different from the last point
-            var last = this.dataPoints_.getEndValue();
+            const last = this.dataPoints_.getEndValue();
             if (last == null || !last.equals(newPoint)) {
                 this.dataPoints_.store(newPoint);
             }
@@ -328,13 +329,13 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Sets whether to draw the graph with dots or lines. Applies only to portions of graph
      * memorized after this time.
-     * @param value the DrawingMode (dots or lines) to
+     * @param drawingMode the DrawingMode (dots or lines) to
      * draw this graph with.
      * @throws Error if the value does not represent a valid DrawingMode
      */
-    setDrawingMode(dm: string) {
-        if (this.drawMode_ !== dm) {
-            this.drawMode_ = dm;
+    setDrawingMode(drawingMode: DrawingMode) {
+        if (this.drawingMode_ !== drawingMode) {
+            this.drawingMode_ = drawingMode;
             this.addGraphStyle();
         }
         this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
@@ -352,11 +353,11 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Sets thickness to use when drawing the line, in screen coordinates, so a unit is a
      * screen pixel. Applies only to portions of graph memorized after this time.
-     * @param value thickness of line in screen coordinates
+     * @param lineWidth thickness of line in screen coordinates
      */
-    setLineWidth(value: number): void {
-        if (veryDifferent(value, this.lineWidth_)) {
-            this.lineWidth_ = value;
+    setLineWidth(lineWidth: number): void {
+        if (veryDifferent(lineWidth, this.lineWidth_)) {
+            this.lineWidth_ = lineWidth;
             this.addGraphStyle();
             this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
         }

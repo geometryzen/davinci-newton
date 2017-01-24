@@ -30,7 +30,6 @@ import isObject from '../checks/isObject';
  * The DisplayList is sorted by `zIndex`.
  */
 export class DisplayList extends AbstractSubject {
-    private static NAME_ID = 1;
 
     /**
      * Name of event broadcast when a DisplayObject is added.
@@ -49,8 +48,8 @@ export class DisplayList extends AbstractSubject {
     /**
      * 
      */
-    constructor(name?: string) {
-        super(name || 'DISPLAY_LIST_' + (DisplayList.NAME_ID++));
+    constructor() {
+        super();
     }
 
     /**

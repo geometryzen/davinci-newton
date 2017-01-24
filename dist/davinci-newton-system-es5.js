@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2017-01-23';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.9';
+                    this.VERSION = '0.0.10';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -95,7 +95,7 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
         }
     };
 });
-System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../checks/isDefined", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (exports_1, context_1) {
+System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../util/ParameterNumber", "../util/ParameterString", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function (d, b) {
@@ -106,7 +106,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
     var __moduleName = context_1 && context_1.id;
-    var AbstractSubject_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, isDefined_1, repeat_1, SimView_1, veryDifferent_1, AutoScale;
+    var AbstractSubject_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, ParameterNumber_1, ParameterString_1, repeat_1, SimView_1, veryDifferent_1, AutoScale;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -120,8 +120,10 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
             GraphLine_1 = GraphLine_1_1;
         }, function (removeAt_1_1) {
             removeAt_1 = removeAt_1_1;
-        }, function (isDefined_1_1) {
-            isDefined_1 = isDefined_1_1;
+        }, function (ParameterNumber_1_1) {
+            ParameterNumber_1 = ParameterNumber_1_1;
+        }, function (ParameterString_1_1) {
+            ParameterString_1 = ParameterString_1_1;
         }, function (repeat_1_1) {
             repeat_1 = repeat_1_1;
         }, function (SimView_1_1) {
@@ -132,8 +134,8 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
         execute: function () {
             AutoScale = function (_super) {
                 __extends(AutoScale, _super);
-                function AutoScale(name, graphLine, simView) {
-                    var _this = _super.call(this, name) || this;
+                function AutoScale(simView) {
+                    var _this = _super.call(this) || this;
                     _this.graphLines_ = [];
                     _this.enabled_ = true;
                     _this.isActive_ = true;
@@ -148,17 +150,21 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                     _this.extraMargin = 0.01;
                     _this.minSize = 1E-14;
                     _this.axis_ = AutoScale.BOTH_AXES;
-                    if (isDefined_1.default(graphLine) && !GraphLine_1.default.isDuckType(graphLine)) {
-                        throw new Error('not a GraphLine ' + graphLine);
-                    }
-                    if (GraphLine_1.default.isDuckType(graphLine)) {
-                        _this.graphLines_.push(graphLine);
-                        graphLine.addObserver(_this);
-                    }
                     _this.simView_ = simView;
                     simView.addMemo(_this);
                     simView.addObserver(_this);
                     _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
+                    _this.addParameter(new ParameterNumber_1.default(_this, AutoScale.TIME_WINDOW, function () {
+                        return _this.getTimeWindow();
+                    }, function (timeWindow) {
+                        return _this.setTimeWindow(timeWindow);
+                    }).setSignifDigits(3));
+                    var choices = [AutoScale.VERTICAL, AutoScale.HORIZONTAL, AutoScale.BOTH_AXES];
+                    _this.addParameter(new ParameterString_1.default(_this, AutoScale.AXIS, function () {
+                        return _this.getAxis();
+                    }, function (axis) {
+                        return _this.setAxis(axis);
+                    }, choices, choices));
                     _this.setComputed(_this.isActive_);
                     return _this;
                 }
@@ -755,7 +761,7 @@ System.register("davinci-newton/graph/DisplayGraph.js", ["../util/contains", "..
                     var next = iter.nextValue();
                     mustBeNonNullObject_1.default('first', next);
                     var style = graphLine.getGraphStyle(iter.getIndex());
-                    if (style.drawMode === DrawingMode_1.default.DOTS) {
+                    if (style.drawingMode === DrawingMode_1.default.DOTS) {
                         var x = coordMap.simToScreenX(next.x);
                         var y = coordMap.simToScreenY(next.y);
                         var w = style.lineWidth;
@@ -771,7 +777,7 @@ System.register("davinci-newton/graph/DisplayGraph.js", ["../util/contains", "..
                         }
                         var style_1 = graphLine.getGraphStyle(iter.getIndex());
                         var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
-                        if (style_1.drawMode === DrawingMode_1.default.DOTS || !continuous) {
+                        if (style_1.drawingMode === DrawingMode_1.default.DOTS || !continuous) {
                             if (!simRect.contains(next)) {
                                 continue;
                             }
@@ -881,6 +887,92 @@ System.register("davinci-newton/util/GenericObserver.js", [], function (exports_
             }();
             exports_1("GenericObserver", GenericObserver);
             exports_1("default", GenericObserver);
+        }
+    };
+});
+System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "./AutoScale", "./DisplayAxes", "./DisplayGraph", "../view/DoubleRect", "../util/GenericObserver", "./GraphLine", "../view/HorizAlign", "../view/LabCanvas", "../view/SimView", "../view/VerticalAlign"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __moduleName = context_1 && context_1.id;
+    var AbstractSubject_1, AutoScale_1, DisplayAxes_1, DisplayGraph_1, DoubleRect_1, GenericObserver_1, GraphLine_1, HorizAlign_1, LabCanvas_1, SimView_1, VerticalAlign_1, Graph;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (AutoScale_1_1) {
+            AutoScale_1 = AutoScale_1_1;
+        }, function (DisplayAxes_1_1) {
+            DisplayAxes_1 = DisplayAxes_1_1;
+        }, function (DisplayGraph_1_1) {
+            DisplayGraph_1 = DisplayGraph_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
+        }, function (GenericObserver_1_1) {
+            GenericObserver_1 = GenericObserver_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
+        }, function (HorizAlign_1_1) {
+            HorizAlign_1 = HorizAlign_1_1;
+        }, function (LabCanvas_1_1) {
+            LabCanvas_1 = LabCanvas_1_1;
+        }, function (SimView_1_1) {
+            SimView_1 = SimView_1_1;
+        }, function (VerticalAlign_1_1) {
+            VerticalAlign_1 = VerticalAlign_1_1;
+        }],
+        execute: function () {
+            Graph = function (_super) {
+                __extends(Graph, _super);
+                function Graph(canvasId, varsList) {
+                    var _this = _super.call(this) || this;
+                    _this.varsList = varsList;
+                    _this.view = new SimView_1.default(new DoubleRect_1.default(0, 0, 1, 1));
+                    _this.autoScale = new AutoScale_1.default(_this.view);
+                    var canvas = document.getElementById(canvasId);
+                    _this.labCanvas = new LabCanvas_1.default(canvas);
+                    _this.view.setHorizAlign(HorizAlign_1.default.FULL);
+                    _this.view.setVerticalAlign(VerticalAlign_1.default.FULL);
+                    _this.labCanvas.addView(_this.view);
+                    _this.displayGraph = new DisplayGraph_1.default();
+                    _this.displayGraph.setScreenRect(_this.view.getScreenRect());
+                    _this.view.getDisplayList().prepend(_this.displayGraph);
+                    _this.timeIdx_ = varsList.timeIndex();
+                    _this.axes = new DisplayAxes_1.default(_this.view.getSimRect());
+                    new GenericObserver_1.default(_this.view, function (event) {
+                        if (event.nameEquals(SimView_1.default.COORD_MAP_CHANGED)) {
+                            var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
+                            _this.axes.setSimRect(simRect);
+                        }
+                    });
+                    _this.view.getDisplayList().add(_this.axes);
+                    _this.autoScale.extraMargin = 0.05;
+                    return _this;
+                }
+                Graph.prototype.addTrace = function () {
+                    var trace = new GraphLine_1.default(this.varsList);
+                    this.view.addMemo(trace);
+                    trace.setXVariable(this.timeIdx_);
+                    trace.setColor('black');
+                    this.displayGraph.addGraphLine(trace);
+                    this.displayGraph.setUseBuffer(trace.getXVariable() !== this.timeIdx_);
+                    return trace;
+                };
+                Graph.prototype.memorize = function () {
+                    this.labCanvas.memorize();
+                };
+                Graph.prototype.render = function () {
+                    this.labCanvas.paint();
+                };
+                return Graph;
+            }(AbstractSubject_1.default);
+            exports_1("Graph", Graph);
+            exports_1("default", Graph);
         }
     };
 });
@@ -1056,7 +1148,7 @@ System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], functi
         }
     };
 });
-System.register('davinci-newton/view/DrawingMode.js', [], function (exports_1, context_1) {
+System.register("davinci-newton/view/DrawingMode.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
@@ -1064,12 +1156,11 @@ System.register('davinci-newton/view/DrawingMode.js', [], function (exports_1, c
     return {
         setters: [],
         execute: function () {
-            DrawingMode = function () {
-                function DrawingMode() {}
-                return DrawingMode;
-            }();
-            DrawingMode.DOTS = 'dots';
-            DrawingMode.LINES = 'lines';
+            (function (DrawingMode) {
+                DrawingMode[DrawingMode["DOTS"] = 0] = "DOTS";
+                DrawingMode[DrawingMode["LINES"] = 1] = "LINES";
+            })(DrawingMode || (DrawingMode = {}));
+            exports_1("DrawingMode", DrawingMode);
             exports_1("default", DrawingMode);
         }
     };
@@ -1107,9 +1198,9 @@ System.register("davinci-newton/graph/GraphStyle.js", [], function (exports_1, c
         setters: [],
         execute: function () {
             GraphStyle = function () {
-                function GraphStyle(index_, drawMode, color_, lineWidth) {
+                function GraphStyle(index_, drawingMode, color_, lineWidth) {
                     this.index_ = index_;
-                    this.drawMode = drawMode;
+                    this.drawingMode = drawingMode;
                     this.color_ = color_;
                     this.lineWidth = lineWidth;
                 }
@@ -1216,8 +1307,8 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
         execute: function () {
             GraphLine = function (_super) {
                 __extends(GraphLine, _super);
-                function GraphLine(name, varsList, capacity) {
-                    var _this = _super.call(this, name) || this;
+                function GraphLine(varsList, capacity) {
+                    var _this = _super.call(this) || this;
                     _this.lineWidth_ = 1.0;
                     _this.hotSpotColor_ = 'red';
                     _this.styles_ = [];
@@ -1241,7 +1332,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                     _this.addParameter(_this.yVarParam_);
                     _this.dataPoints_ = new CircularList_1.default(capacity || 100000);
                     _this.drawColor_ = 'lime';
-                    _this.drawMode_ = DrawingMode_1.default.LINES;
+                    _this.drawingMode_ = DrawingMode_1.default.LINES;
                     _this.addGraphStyle();
                     _this.xTransform = function (x, y) {
                         return x;
@@ -1254,7 +1345,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                     }, function (lineWidth) {
                         return _this.setLineWidth(lineWidth);
                     }));
-                    _this.addParameter(new ParameterString_1.default(_this, GraphLine.PARAM_NAME_DRAWING_MODE, function () {
+                    _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_DRAWING_MODE, function () {
                         return _this.getDrawingMode();
                     }, function (drawingMode) {
                         return _this.setDrawingMode(drawingMode);
@@ -1267,7 +1358,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                     return _this;
                 }
                 GraphLine.prototype.addGraphStyle = function () {
-                    this.styles_.push(new GraphStyle_1.default(this.dataPoints_.getEndIndex() + 1, this.drawMode_, this.drawColor_, this.lineWidth_));
+                    this.styles_.push(new GraphStyle_1.default(this.dataPoints_.getEndIndex() + 1, this.drawingMode_, this.drawColor_, this.lineWidth_));
                 };
                 GraphLine.isDuckType = function (obj) {
                     if (obj instanceof GraphLine) {
@@ -1279,7 +1370,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                     return this.drawColor_;
                 };
                 GraphLine.prototype.getDrawingMode = function () {
-                    return this.drawMode_;
+                    return this.drawingMode_;
                 };
                 GraphLine.prototype.getGraphPoints = function () {
                     return this.dataPoints_;
@@ -1322,8 +1413,9 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                 };
                 GraphLine.prototype.memorize = function () {
                     if (this.xVar_ > -1 && this.yVar_ > -1) {
-                        var xVar = this.varsList_.getVariable(this.xVar_);
-                        var yVar = this.varsList_.getVariable(this.yVar_);
+                        var varsList = this.varsList_;
+                        var xVar = varsList.getVariable(this.xVar_);
+                        var yVar = varsList.getVariable(this.yVar_);
                         var x = xVar.getValue();
                         var y = yVar.getValue();
                         var nextX = this.xTransform(x, y);
@@ -1354,9 +1446,9 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                         this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
                     }
                 };
-                GraphLine.prototype.setDrawingMode = function (dm) {
-                    if (this.drawMode_ !== dm) {
-                        this.drawMode_ = dm;
+                GraphLine.prototype.setDrawingMode = function (drawingMode) {
+                    if (this.drawingMode_ !== drawingMode) {
+                        this.drawingMode_ = drawingMode;
                         this.addGraphStyle();
                     }
                     this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
@@ -1364,9 +1456,9 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                 GraphLine.prototype.setHotSpotColor = function (color) {
                     this.hotSpotColor_ = color;
                 };
-                GraphLine.prototype.setLineWidth = function (value) {
-                    if (veryDifferent_1.default(value, this.lineWidth_)) {
-                        this.lineWidth_ = value;
+                GraphLine.prototype.setLineWidth = function (lineWidth) {
+                    if (veryDifferent_1.default(lineWidth, this.lineWidth_)) {
+                        this.lineWidth_ = lineWidth;
                         this.addGraphStyle();
                         this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
                     }
@@ -1400,94 +1492,6 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
             GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
             GraphLine.RESET = 'RESET';
             exports_1("default", GraphLine);
-        }
-    };
-});
-System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "./AutoScale", "./DisplayAxes", "./DisplayGraph", "../view/DoubleRect", "../util/GenericObserver", "./GraphLine", "../view/HorizAlign", "../view/LabCanvas", "../view/SimView", "../view/VerticalAlign"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() {
-            this.constructor = d;
-        }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-    var __moduleName = context_1 && context_1.id;
-    var AbstractSubject_1, AutoScale_1, DisplayAxes_1, DisplayGraph_1, DoubleRect_1, GenericObserver_1, GraphLine_1, HorizAlign_1, LabCanvas_1, SimView_1, VerticalAlign_1, Graph;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (AutoScale_1_1) {
-            AutoScale_1 = AutoScale_1_1;
-        }, function (DisplayAxes_1_1) {
-            DisplayAxes_1 = DisplayAxes_1_1;
-        }, function (DisplayGraph_1_1) {
-            DisplayGraph_1 = DisplayGraph_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
-        }, function (GenericObserver_1_1) {
-            GenericObserver_1 = GenericObserver_1_1;
-        }, function (GraphLine_1_1) {
-            GraphLine_1 = GraphLine_1_1;
-        }, function (HorizAlign_1_1) {
-            HorizAlign_1 = HorizAlign_1_1;
-        }, function (LabCanvas_1_1) {
-            LabCanvas_1 = LabCanvas_1_1;
-        }, function (SimView_1_1) {
-            SimView_1 = SimView_1_1;
-        }, function (VerticalAlign_1_1) {
-            VerticalAlign_1 = VerticalAlign_1_1;
-        }],
-        execute: function () {
-            Graph = function (_super) {
-                __extends(Graph, _super);
-                function Graph(canvasId, varsList) {
-                    var _this = _super.call(this, 'TIME_GRAPH_LAYOUT') || this;
-                    _this.varsList = varsList;
-                    _this.view = new SimView_1.default('TIME_GRAPH_VIEW', new DoubleRect_1.default(0, 0, 1, 1));
-                    var canvas = document.getElementById(canvasId);
-                    _this.labCanvas = new LabCanvas_1.default(canvas, 'GRAPH_CANVAS');
-                    _this.view.setHorizAlign(HorizAlign_1.default.FULL);
-                    _this.view.setVerticalAlign(VerticalAlign_1.default.FULL);
-                    _this.labCanvas.addView(_this.view);
-                    _this.displayGraph = new DisplayGraph_1.default();
-                    _this.displayGraph.setScreenRect(_this.view.getScreenRect());
-                    _this.view.getDisplayList().prepend(_this.displayGraph);
-                    _this.timeIdx_ = varsList.timeIndex();
-                    var axes = new DisplayAxes_1.default(_this.view.getSimRect());
-                    new GenericObserver_1.default(_this.view, function (event) {
-                        if (event.nameEquals(SimView_1.default.COORD_MAP_CHANGED)) {
-                            var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
-                            axes.setSimRect(simRect);
-                        }
-                    });
-                    _this.view.getDisplayList().add(axes);
-                    return _this;
-                }
-                Graph.prototype.addTrace = function (name) {
-                    var trace = new GraphLine_1.default(name, this.varsList);
-                    this.view.addMemo(trace);
-                    trace.setXVariable(this.timeIdx_);
-                    trace.setColor('black');
-                    this.displayGraph.addGraphLine(trace);
-                    this.displayGraph.setUseBuffer(trace.getXVariable() !== this.timeIdx_);
-                    return trace;
-                };
-                Graph.prototype.memorize = function () {
-                    this.labCanvas.memorize();
-                };
-                Graph.prototype.render = function () {
-                    this.labCanvas.paint();
-                };
-                Graph.prototype.setAutoScale = function (trace) {
-                    this.autoScale = new AutoScale_1.default('TIME_GRAPH_AUTO_SCALE', trace, this.view);
-                    this.autoScale.extraMargin = 0.05;
-                };
-                return Graph;
-            }(AbstractSubject_1.default);
-            exports_1("Graph", Graph);
-            exports_1("default", Graph);
         }
     };
 });
@@ -1608,8 +1612,8 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
             BACKGROUND = 'background';
             LabCanvas = function (_super) {
                 __extends(LabCanvas, _super);
-                function LabCanvas(canvas, name) {
-                    var _this = _super.call(this, name) || this;
+                function LabCanvas(canvas) {
+                    var _this = _super.call(this) || this;
                     _this.labViews_ = [];
                     _this.memorizables_ = [];
                     _this.focusView_ = null;
@@ -2500,7 +2504,7 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
             SimList = function (_super) {
                 __extends(SimList, _super);
                 function SimList() {
-                    var _this = _super.call(this, 'SIM_LIST') || this;
+                    var _this = _super.call(this) || this;
                     _this.elements_ = [];
                     return _this;
                 }
@@ -2720,11 +2724,8 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
         execute: function () {
             VarsList = function (_super) {
                 __extends(VarsList, _super);
-                function VarsList(varNames, localNames, name) {
-                    if (name === void 0) {
-                        name = 'VARIABLES';
-                    }
-                    var _this = _super.call(this, name) || this;
+                function VarsList(varNames, localNames) {
+                    var _this = _super.call(this) || this;
                     _this.timeIdx_ = -1;
                     _this.varList_ = [];
                     _this.history_ = true;
@@ -3056,11 +3057,8 @@ System.register("davinci-newton/engine3D/RigidBodySim.js", ["../util/AbstractSub
             NUM_VARS_IN_STATE = 13;
             RigidBodySim = function (_super) {
                 __extends(RigidBodySim, _super);
-                function RigidBodySim(name) {
-                    if (name === void 0) {
-                        name = 'SIM';
-                    }
-                    var _this = _super.call(this, name) || this;
+                function RigidBodySim() {
+                    var _this = _super.call(this) || this;
                     _this.simList_ = new SimList_1.default();
                     _this.bodies_ = [];
                     _this.forceLaws_ = [];
@@ -3068,7 +3066,7 @@ System.register("davinci-newton/engine3D/RigidBodySim.js", ["../util/AbstractSub
                     _this.potentialOffset_ = 0;
                     _this.force_ = new Vector3_1.default(0, 0, 0);
                     _this.torque_ = new Bivector3_1.default();
-                    _this.varsList_ = new VarsList_1.default(var_names, i18n_names, _this.getName() + '_VARS');
+                    _this.varsList_ = new VarsList_1.default(var_names, i18n_names);
                     return _this;
                 }
                 Object.defineProperty(RigidBodySim.prototype, "showForces", {
@@ -3446,11 +3444,8 @@ System.register("davinci-newton/runner/Clock.js", ["../util/AbstractSubject", ".
         execute: function () {
             Clock = function (_super) {
                 __extends(Clock, _super);
-                function Clock(name) {
-                    if (name === void 0) {
-                        name = 'CLOCK';
-                    }
-                    var _this = _super.call(this, name) || this;
+                function Clock() {
+                    var _this = _super.call(this) || this;
                     _this.clockStart_sys_secs_ = getSystemTime_1.default();
                     _this.isRunning_ = false;
                     _this.saveTime_secs_ = 0;
@@ -3977,11 +3972,11 @@ System.register("davinci-newton/util/ParameterString.js", ["./toName", "./validN
         }
     };
 });
-System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contains", "./find", "./ParameterBoolean", "./ParameterNumber", "./ParameterString", "./remove", "../util/toName", "../util/validName"], function (exports_1, context_1) {
+System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contains", "./find", "./ParameterBoolean", "./ParameterNumber", "./ParameterString", "./remove", "../util/toName"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var clone_1, contains_1, find_1, ParameterBoolean_1, ParameterNumber_1, ParameterString_1, remove_1, toName_1, validName_1, AbstractSubject;
+    var clone_1, contains_1, find_1, ParameterBoolean_1, ParameterNumber_1, ParameterString_1, remove_1, toName_1, AbstractSubject;
     return {
         setters: [function (clone_1_1) {
             clone_1 = clone_1_1;
@@ -3999,23 +3994,14 @@ System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contain
             remove_1 = remove_1_1;
         }, function (toName_1_1) {
             toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
         }],
         execute: function () {
             AbstractSubject = function () {
-                function AbstractSubject(name) {
+                function AbstractSubject() {
                     this.doBroadcast_ = true;
                     this.observers_ = [];
                     this.paramList_ = [];
-                    if (!name) {
-                        throw new Error('no name');
-                    }
-                    this.name_ = validName_1.default(toName_1.default(name));
                 }
-                AbstractSubject.prototype.getName = function () {
-                    return this.name_;
-                };
                 AbstractSubject.prototype.addObserver = function (observer) {
                     if (!contains_1.default(this.observers_, observer)) {
                         this.observers_.push(observer);
@@ -4161,8 +4147,8 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
         execute: function () {
             DisplayList = function (_super) {
                 __extends(DisplayList, _super);
-                function DisplayList(name) {
-                    var _this = _super.call(this, name || 'DISPLAY_LIST_' + DisplayList.NAME_ID++) || this;
+                function DisplayList() {
+                    var _this = _super.call(this) || this;
                     _this.drawables_ = [];
                     return _this;
                 }
@@ -4208,7 +4194,6 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
                 DisplayList.prototype.sort = function () {};
                 return DisplayList;
             }(AbstractSubject_1.default);
-            DisplayList.NAME_ID = 1;
             DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
             DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
             exports_1("DisplayList", DisplayList);
@@ -4585,6 +4570,10 @@ System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validN
                     this.lowerLimit_ = lowerLimit;
                     return this;
                 };
+                ParameterNumber.prototype.setSignifDigits = function (signifDigits) {
+                    this.signifDigits_ = signifDigits;
+                    return this;
+                };
                 return ParameterNumber;
             }();
             exports_1("ParameterNumber", ParameterNumber);
@@ -4737,25 +4726,6 @@ System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", ".
         }
     };
 });
-System.register("davinci-newton/view/VerticalAlign.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var VerticalAlign;
-    return {
-        setters: [],
-        execute: function () {
-            (function (VerticalAlign) {
-                VerticalAlign[VerticalAlign["TOP"] = 0] = "TOP";
-                VerticalAlign[VerticalAlign["MIDDLE"] = 1] = "MIDDLE";
-                VerticalAlign[VerticalAlign["BOTTOM"] = 2] = "BOTTOM";
-                VerticalAlign[VerticalAlign["FULL"] = 3] = "FULL";
-            })(VerticalAlign || (VerticalAlign = {}));
-            exports_1("VerticalAlign", VerticalAlign);
-            exports_1("default", VerticalAlign);
-        }
-    };
-});
 System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", "../util/clone", "../util/contains", "./CoordMap", "./DisplayList", "./DoubleRect", "../util/GenericEvent", "./HorizAlign", "../util/ParameterBoolean", "../util/ParameterNumber", "../util/remove", "./ScreenRect", "./VerticalAlign", "../util/veryDifferent"], function (exports_1, context_1) {
     "use strict";
 
@@ -4801,8 +4771,8 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         execute: function () {
             SimView = function (_super) {
                 __extends(SimView, _super);
-                function SimView(name, simRect) {
-                    var _this = _super.call(this, name) || this;
+                function SimView(simRect) {
+                    var _this = _super.call(this) || this;
                     _this.panX = 0.05;
                     _this.panY = 0.05;
                     _this.zoom = 1.1;
@@ -5294,6 +5264,15 @@ System.register("davinci-newton/math/Vector3.js", [], function (exports_1, conte
                     this.z -= rhs.z;
                     return this;
                 };
+                Vector3.prototype.__add__ = function (rhs) {
+                    return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+                };
+                Vector3.prototype.__div__ = function (rhs) {
+                    return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+                };
+                Vector3.prototype.__mul__ = function (rhs) {
+                    return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+                };
                 Vector3.prototype.__neg__ = function () {
                     return new Vector3(-this.x, -this.y, -this.z);
                 };
@@ -5630,6 +5609,18 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
                         throw new Error("TODO: rotate(spinor)");
                     }
                 };
+                Vector.prototype.toString = function (radix) {
+                    return "new Vector(" + this.x_.toString(radix) + ", " + this.y_.toString(radix) + ", " + this.z_.toString(radix) + ")";
+                };
+                Vector.prototype.__add__ = function (rhs) {
+                    return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+                };
+                Vector.prototype.__mul__ = function (rhs) {
+                    return new Vector(this.x * rhs, this.y * rhs, this.z * rhs);
+                };
+                Vector.prototype.__div__ = function (rhs) {
+                    return new Vector(this.x / rhs, this.y / rhs, this.z / rhs);
+                };
                 Vector.dual = function (B) {
                     return new Vector(-B.yz, -B.zx, -B.xy);
                 };
@@ -5644,11 +5635,30 @@ System.register("davinci-newton/math/Vector.js", ["../util/veryDifferent"], func
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/model/Force", "./davinci-newton/graph/Graph", "./davinci-newton/objects/GravitationLaw", "./davinci-newton/view/LabCanvas", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/engine3D/RigidBody", "./davinci-newton/engine3D/RigidBodySim", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector"], function (exports_1, context_1) {
+System.register("davinci-newton/view/VerticalAlign.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var CircularList_1, config_1, DisplayGraph_1, EulerMethod_1, Force_1, Graph_1, GravitationLaw_1, LabCanvas_1, ModifiedEuler_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, Vector_1, newton;
+    var VerticalAlign;
+    return {
+        setters: [],
+        execute: function () {
+            (function (VerticalAlign) {
+                VerticalAlign[VerticalAlign["TOP"] = 0] = "TOP";
+                VerticalAlign[VerticalAlign["MIDDLE"] = 1] = "MIDDLE";
+                VerticalAlign[VerticalAlign["BOTTOM"] = 2] = "BOTTOM";
+                VerticalAlign[VerticalAlign["FULL"] = 3] = "FULL";
+            })(VerticalAlign || (VerticalAlign = {}));
+            exports_1("VerticalAlign", VerticalAlign);
+            exports_1("default", VerticalAlign);
+        }
+    };
+});
+System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/model/Force", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/objects/GravitationLaw", "./davinci-newton/view/HorizAlign", "./davinci-newton/view/LabCanvas", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/engine3D/RigidBody", "./davinci-newton/engine3D/RigidBodySim", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/SimpleAdvance", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/objects/Spring", "./davinci-newton/math/Vector", "./davinci-newton/view/VerticalAlign"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    var CircularList_1, config_1, DisplayGraph_1, DrawingMode_1, EulerMethod_1, Force_1, Graph_1, GraphLine_1, GravitationLaw_1, HorizAlign_1, LabCanvas_1, ModifiedEuler_1, RigidBody_1, RigidBodySim_1, RungeKutta_1, SimpleAdvance_1, SimRunner_1, SimView_1, Spring_1, Vector_1, VerticalAlign_1, newton;
     return {
         setters: [function (CircularList_1_1) {
             CircularList_1 = CircularList_1_1;
@@ -5656,14 +5666,20 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
             config_1 = config_1_1;
         }, function (DisplayGraph_1_1) {
             DisplayGraph_1 = DisplayGraph_1_1;
+        }, function (DrawingMode_1_1) {
+            DrawingMode_1 = DrawingMode_1_1;
         }, function (EulerMethod_1_1) {
             EulerMethod_1 = EulerMethod_1_1;
         }, function (Force_1_1) {
             Force_1 = Force_1_1;
         }, function (Graph_1_1) {
             Graph_1 = Graph_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
         }, function (GravitationLaw_1_1) {
             GravitationLaw_1 = GravitationLaw_1_1;
+        }, function (HorizAlign_1_1) {
+            HorizAlign_1 = HorizAlign_1_1;
         }, function (LabCanvas_1_1) {
             LabCanvas_1 = LabCanvas_1_1;
         }, function (ModifiedEuler_1_1) {
@@ -5684,6 +5700,8 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
             Spring_1 = Spring_1_1;
         }, function (Vector_1_1) {
             Vector_1 = Vector_1_1;
+        }, function (VerticalAlign_1_1) {
+            VerticalAlign_1 = VerticalAlign_1_1;
         }],
         execute: function () {
             newton = {
@@ -5699,6 +5717,9 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
                 get DisplayGraph() {
                     return DisplayGraph_1.default;
                 },
+                get DrawingMode() {
+                    return DrawingMode_1.default;
+                },
                 get EulerMethod() {
                     return EulerMethod_1.default;
                 },
@@ -5708,8 +5729,14 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
                 get Graph() {
                     return Graph_1.default;
                 },
+                get GraphLine() {
+                    return GraphLine_1.default;
+                },
                 get GravitationLaw() {
                     return GravitationLaw_1.default;
+                },
+                get HorizAlign() {
+                    return HorizAlign_1.default;
                 },
                 get LabCanvas() {
                     return LabCanvas_1.default;
@@ -5740,6 +5767,9 @@ System.register("davinci-newton.js", ["./davinci-newton/util/CircularList", "./d
                 },
                 get Vector() {
                     return Vector_1.default;
+                },
+                get VerticalAlign() {
+                    return VerticalAlign_1.default;
                 }
             };
             exports_1("default", newton);

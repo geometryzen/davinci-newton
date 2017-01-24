@@ -59,8 +59,8 @@ export class Clock extends AbstractSubject {
     /**
      * 
      */
-    constructor(name = 'CLOCK') {
-        super(name);
+    constructor() {
+        super();
         this.realStart_sys_secs_ = this.clockStart_sys_secs_;
     }
     /**

@@ -36,11 +36,6 @@ export interface LabView extends Memorizable {
     getDisplayList(): DisplayList;
 
     /**
-     * Returns the name of this LabView, for use in scripting or debugging.
-     */
-    getName(): string;
-
-    /**
      * Returns the screen rectangle that this LabView is occupying within the
      * LabCanvas, in screen coordinates.
      */

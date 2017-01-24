@@ -157,6 +157,18 @@ export class Vector3 implements VectorE3 {
         return this;
     }
 
+    __add__(rhs: VectorE3): Vector3 {
+        return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+    }
+
+    __div__(rhs: number): Vector3 {
+        return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+    }
+
+    __mul__(rhs: number): Vector3 {
+        return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+    }
+
     __neg__(): Vector3 {
         return new Vector3(-this.x, -this.y, -this.z);
     }

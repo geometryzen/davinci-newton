@@ -37,8 +37,9 @@ import VerticalAlign from '../view/VerticalAlign';
  * This class is a user interface control. It may manipulate the DOM, adding controls.
  */
 export class Graph extends AbstractSubject {
-    private readonly view = new SimView('TIME_GRAPH_VIEW', new DoubleRect(0, 0, 1, 1));
-    private autoScale: AutoScale;
+    private readonly view = new SimView(new DoubleRect(0, 0, 1, 1));
+    public autoScale = new AutoScale(this.view);
+    public axes: DisplayAxes;
     private displayGraph: DisplayGraph;
     private labCanvas: LabCanvas;
     /**
@@ -49,9 +50,9 @@ export class Graph extends AbstractSubject {
      * 
      */
     constructor(canvasId: string, private varsList: VarsList) {
-        super('TIME_GRAPH_LAYOUT');
+        super();
         const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
-        this.labCanvas = new LabCanvas(canvas, 'GRAPH_CANVAS');
+        this.labCanvas = new LabCanvas(canvas);
 
         this.view.setHorizAlign(HorizAlign.FULL);
         this.view.setVerticalAlign(VerticalAlign.FULL);
@@ -65,21 +66,23 @@ export class Graph extends AbstractSubject {
         // Find out where the time is stored in the list of variables.
         this.timeIdx_ = varsList.timeIndex();
 
-        const axes = new DisplayAxes(this.view.getSimRect());
+        this.axes = new DisplayAxes(this.view.getSimRect());
         new GenericObserver(this.view, (event) => {
             if (event.nameEquals(SimView.COORD_MAP_CHANGED)) {
                 const simRect = this.view.getCoordMap().screenToSimRect(this.view.getScreenRect());
-                axes.setSimRect(simRect);
+                this.axes.setSimRect(simRect);
             }
         });
-        this.view.getDisplayList().add(axes);
+        this.view.getDisplayList().add(this.axes);
+
+        this.autoScale.extraMargin = 0.05;
     }
 
     /**
      * 
      */
-    addTrace(name: string): GraphLine {
-        const trace = new GraphLine(name, this.varsList);
+    addTrace(): GraphLine {
+        const trace = new GraphLine(this.varsList);
         this.view.addMemo(trace);
         trace.setXVariable(this.timeIdx_);
         trace.setColor('black');
@@ -96,15 +99,6 @@ export class Graph extends AbstractSubject {
 
     render(): void {
         this.labCanvas.paint();
-    }
-
-    /**
-     * 
-     */
-    setAutoScale(trace: GraphLine): void {
-        // Crate an AutoScale based upon one of the lines.
-        this.autoScale = new AutoScale('TIME_GRAPH_AUTO_SCALE', trace, this.view);
-        this.autoScale.extraMargin = 0.05;
     }
 }
 

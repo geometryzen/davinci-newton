@@ -47,12 +47,6 @@ export interface Subject {
     broadcastParameter(name: string): void;
 
     /**
-     * Return the language-independent name of this Subject for scripting purposes.
-     * @return name the language-independent name of this Subject
-     */
-    getName(): string;
-
-    /**
      * Returns a copy of the list of Observers of this Subject.
      * @return a copy of the list of Observers of this Subject.
      */

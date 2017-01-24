@@ -1,10 +1,13 @@
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
+import DrawingMode from './davinci-newton/view/DrawingMode';
 import EulerMethod from './davinci-newton/solvers/EulerMethod';
 import Force from './davinci-newton/model/Force';
 import Graph from './davinci-newton/graph/Graph';
+import GraphLine from './davinci-newton/graph/GraphLine';
 import GravitationLaw from './davinci-newton/objects/GravitationLaw';
+import HorizAlign from './davinci-newton/view/HorizAlign';
 import LabCanvas from './davinci-newton/view/LabCanvas';
 import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
 import RigidBody from './davinci-newton/engine3D/RigidBody';
@@ -15,6 +18,7 @@ import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
 import Spring from './davinci-newton/objects/Spring';
 import Vector from './davinci-newton/math/Vector';
+import VerticalAlign from './davinci-newton/view/VerticalAlign';
 
 /**
  *
@@ -39,6 +43,10 @@ const newton = {
     /**
      * 
      */
+    get DrawingMode() { return DrawingMode; },
+    /**
+     * 
+     */
     get EulerMethod() { return EulerMethod; },
     /**
      * 
@@ -51,7 +59,15 @@ const newton = {
     /**
      * 
      */
+    get GraphLine() { return GraphLine; },
+    /**
+     * 
+     */
     get GravitationLaw() { return GravitationLaw; },
+    /**
+     * 
+     */
+    get HorizAlign() { return HorizAlign; },
     /**
      * 
      */
@@ -92,6 +108,10 @@ const newton = {
      * 
      */
     get Vector() { return Vector; },
+    /**
+     * 
+     */
+    get VerticalAlign() { return VerticalAlign; },
 }
 
 export default newton;

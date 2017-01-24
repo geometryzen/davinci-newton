@@ -19,16 +19,56 @@ import DoubleRect from '../view/DoubleRect';
 import GenericEvent from '../util/GenericEvent';
 import GraphLine from './GraphLine';
 import removeAt from '../util/removeAt';
-import isDefined from '../checks/isDefined';
+// import isDefined from '../checks/isDefined';
+import Memorizable from '../util/Memorizable';
+import Observer from '../util/Observer';
+import ParameterNumber from '../util/ParameterNumber';
+import ParameterString from '../util/ParameterString';
 import repeat from '../util/repeat';
 import SimView from '../view/SimView';
 import SubjectEvent from '../util/SubjectEvent';
 import veryDifferent from '../util/veryDifferent';
 
 /**
+ * Watches the VarsList of one or more GraphLines to calculate the range
+ * rectangle that encloses the points on the graphs, and sets accordingly the simRect of a
+ * SimView. The range rectangle is the smallest rectangle that contains all the points, but
+ * possibly expanded by the `extraMargin` factor.
  * 
+ * Enabled and Active
+ * 
+ * To entirely disable an AutoScale, see {@link #setEnabled}.
+ * Assuming the AutoScale is enabled, it will react to events in the SimView and GraphLines as follows:
+ * 
+ * + AutoScale becomes **inactive** when the SimView's simRect is changed by an entity
+ * other than this AutoScale. This happens when AutoScale observes a SimView event called
+ * `LabView.SIM_RECT_CHANGED`.
+ * 
+ * + AutoScale becomes **active** when one of its GraphLines broadcasts a `RESET` event.
+ * This happens when a graph is cleared, or when the X or Y variable is changed.
+ * 
+ * You can also call {@link #setActive} directly to make an enabled AutoScale active or
+ * inactive.
+ * 
+ * ### Time Graph
+ * 
+ * For a *time graph* where one variable is time, the range rectangle in the time dimension
+ * has a fixed size specified by {@link #setTimeWindow}. The default time window is 10
+ * seconds.
+ * 
+ * ### Events Broadcast
+ * 
+ * GenericEvent named {@link #AUTO_SCALE} is broadcast when the range rectangle changes.
+ * 
+ * ### Parameters Created
+ * 
+ * + ParameterNumber named `AutoScale.en.TIME_WINDOW`
+ * see {@link #setTimeWindow}.
+ * 
+ * + ParameterNumber named `AutoScale.en.AXIS`
+ * see {@link #setAxis}.
  */
-export default class AutoScale extends AbstractSubject {
+export default class AutoScale extends AbstractSubject implements Memorizable, Observer {
     /**
      * Event broadcasted when axis is changed.
      */
@@ -129,10 +169,11 @@ export default class AutoScale extends AbstractSubject {
      */
     private lastIndex_: number[];
     /**
-     * 
+     * @param simView the SimView whose simRect will be modified to the range rectangle.
      */
-    constructor(name: string, graphLine: GraphLine, simView: SimView) {
-        super(name);
+    constructor(simView: SimView) {
+        super();
+        /*
         if (isDefined(graphLine) && !GraphLine.isDuckType(graphLine)) {
             throw new Error('not a GraphLine ' + graphLine);
         }
@@ -140,10 +181,14 @@ export default class AutoScale extends AbstractSubject {
             this.graphLines_.push(graphLine);
             graphLine.addObserver(this);
         }
+        */
         this.simView_ = simView;
         simView.addMemo(this);
         simView.addObserver(this);
         this.lastIndex_ = repeat(-1, this.graphLines_.length);
+        this.addParameter(new ParameterNumber(this, AutoScale.TIME_WINDOW, () => this.getTimeWindow(), (timeWindow: number) => this.setTimeWindow(timeWindow)).setSignifDigits(3));
+        const choices = [AutoScale.VERTICAL, AutoScale.HORIZONTAL, AutoScale.BOTH_AXES];
+        this.addParameter(new ParameterString(this, AutoScale.AXIS, () => this.getAxis(), (axis: string) => this.setAxis(axis), choices, choices));
         this.setComputed(this.isActive_);
     }
 
@@ -158,7 +203,8 @@ export default class AutoScale extends AbstractSubject {
                 this.graphLines_.push(graphLine);
                 this.lastIndex_.push(-1);
             }
-        } else {
+        }
+        else {
             throw new Error('not a GraphLine ' + graphLine);
         }
     }
@@ -247,7 +293,8 @@ export default class AutoScale extends AbstractSubject {
                     this.setActive(false);
                 }
             }
-        } else if (contains(this.graphLines_, event.getSubject())) {
+        }
+        else if (contains(this.graphLines_, event.getSubject())) {
             if (event.nameEquals(GraphLine.PARAM_NAME_X_VARIABLE) || event.nameEquals(GraphLine.PARAM_NAME_Y_VARIABLE)) {
                 // the GraphLine's X or Y variable has changed
                 this.reset();
@@ -309,7 +356,8 @@ export default class AutoScale extends AbstractSubject {
             removeAt(this.graphLines_, idx);
             removeAt(this.lastIndex_, idx);
             this.reset();
-        } else {
+        }
+        else {
             throw new Error('not a GraphLine ' + graphLine);
         }
     }
@@ -320,7 +368,7 @@ export default class AutoScale extends AbstractSubject {
      */
     reset() {
         this.clearRange();
-        for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
+        for (let i = 0, n = this.lastIndex_.length; i < n; i++) {
             this.lastIndex_[i] = -1;
         }
     }
@@ -359,11 +407,12 @@ export default class AutoScale extends AbstractSubject {
      * {@link #BOTH_AXES}.
      * @param value which axis should be auto scaled
      */
-    setAxis(value: string) {
+    setAxis(value: string): void {
         if (value === AutoScale.VERTICAL || value === AutoScale.HORIZONTAL || value === AutoScale.BOTH_AXES) {
             this.axis_ = value;
             this.broadcastParameter(AutoScale.AXIS);
-        } else {
+        }
+        else {
             throw new Error('unknown ' + value);
         }
     }
@@ -424,30 +473,34 @@ export default class AutoScale extends AbstractSubject {
         if (!isFinite(nowX)) {
             if (nowX === Number.POSITIVE_INFINITY) {
                 nowX = 1e308;
-            } else if (nowX === Number.NEGATIVE_INFINITY) {
+            }
+            else if (nowX === Number.NEGATIVE_INFINITY) {
                 nowX = -1e308;
             }
         }
         if (!isFinite(nowY)) {
             if (nowY === Number.POSITIVE_INFINITY) {
                 nowY = 1e308;
-            } else if (nowY === Number.NEGATIVE_INFINITY) {
+            }
+            else if (nowY === Number.NEGATIVE_INFINITY) {
                 nowY = -1e308;
             }
         }
-        var timeIdx = line.getVarsList().timeIndex();
-        var xIsTimeVar = line.getXVariable() === timeIdx;
-        var yIsTimeVar = line.getYVariable() === timeIdx;
+        const timeIdx = line.getVarsList().timeIndex();
+        const xIsTimeVar = line.getXVariable() === timeIdx;
+        const yIsTimeVar = line.getYVariable() === timeIdx;
         if (!this.rangeSetX_) {
             this.rangeXLo_ = nowX;
             this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
             this.rangeSetX_ = true;
-        } else {
+        }
+        else {
             if (nowX < this.rangeXLo_) {
                 if (xIsTimeVar) {
                     this.rangeXLo_ = nowX;
                     this.rangeXHi_ = nowX + this.timeWindow_;
-                } else {
+                }
+                else {
                     this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
                 }
             }
@@ -458,7 +511,8 @@ export default class AutoScale extends AbstractSubject {
                     this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
                     this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
                 }
-            } else {
+            }
+            else {
                 if (nowX > this.rangeXHi_) {
                     this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
                 }
@@ -468,12 +522,14 @@ export default class AutoScale extends AbstractSubject {
             this.rangeYLo_ = nowY;
             this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
             this.rangeSetY_ = true;
-        } else {
+        }
+        else {
             if (nowY < this.rangeYLo_) {
                 if (yIsTimeVar) {
                     this.rangeYLo_ = nowY;
                     this.rangeYHi_ = nowY + this.timeWindow_;
-                } else {
+                }
+                else {
                     this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
                 }
             }
@@ -484,7 +540,8 @@ export default class AutoScale extends AbstractSubject {
                     this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
                     this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
                 }
-            } else {
+            }
+            else {
                 if (nowY > this.rangeYHi_) {
                     this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
                 }

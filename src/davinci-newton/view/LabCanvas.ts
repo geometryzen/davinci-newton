@@ -166,8 +166,8 @@ export class LabCanvas extends AbstractSubject {
     /**
      * 
      */
-    constructor(canvas: HTMLCanvasElement, name: string) {
-        super(name);
+    constructor(canvas: HTMLCanvasElement) {
+        super();
         this.canvas_ = canvas;
         // contentEditable makes the canvas be focusable (can get keyboard focus)
         // and can get control of the cursor.
