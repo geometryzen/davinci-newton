@@ -35,7 +35,7 @@ export class ParameterBoolean implements Parameter {
         this.choices_ = [];
         this.values_ = [];
     }
-    getName(): string {
+    get name(): string {
         return this.name_;
     }
     getSubject(): Subject {

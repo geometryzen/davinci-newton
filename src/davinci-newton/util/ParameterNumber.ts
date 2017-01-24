@@ -50,7 +50,7 @@ export class ParameterNumber implements Parameter {
         this.values_ = [];
     }
 
-    getName(): string {
+    get name(): string {
         return this.name_;
     }
 

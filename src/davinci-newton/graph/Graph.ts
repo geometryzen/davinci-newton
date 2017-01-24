@@ -14,17 +14,17 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
+import AlignH from '../view/AlignH';
+import AlignV from '../view/AlignV';
 import AutoScale from './AutoScale';
 import DisplayAxes from './DisplayAxes';
 import DisplayGraph from './DisplayGraph';
 import DoubleRect from '../view/DoubleRect';
 import GenericObserver from '../util/GenericObserver';
 import GraphLine from './GraphLine';
-import HorizAlign from '../view/HorizAlign';
 import LabCanvas from '../view/LabCanvas';
 import SimView from '../view/SimView';
 import VarsList from '../core/VarsList';
-import VerticalAlign from '../view/VerticalAlign';
 
 
 /**
@@ -37,10 +37,25 @@ import VerticalAlign from '../view/VerticalAlign';
  * This class is a user interface control. It may manipulate the DOM, adding controls.
  */
 export class Graph extends AbstractSubject {
+    /**
+     * 
+     */
     private readonly view = new SimView(new DoubleRect(0, 0, 1, 1));
+    /**
+     * 
+     */
     public autoScale = new AutoScale(this.view);
+    /**
+     * 
+     */
     public axes: DisplayAxes;
+    /**
+     * 
+     */
     private displayGraph: DisplayGraph;
+    /**
+     * 
+     */
     private labCanvas: LabCanvas;
     /**
      * The index for the time variable in the varsList.
@@ -54,8 +69,8 @@ export class Graph extends AbstractSubject {
         const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
         this.labCanvas = new LabCanvas(canvas);
 
-        this.view.setHorizAlign(HorizAlign.FULL);
-        this.view.setVerticalAlign(VerticalAlign.FULL);
+        this.view.hAxisAlign = AlignH.FULL;
+        this.view.vAxisAlign = AlignV.FULL;
         this.labCanvas.addView(this.view);
 
         this.displayGraph = new DisplayGraph();
@@ -81,15 +96,16 @@ export class Graph extends AbstractSubject {
     /**
      * 
      */
-    addTrace(): GraphLine {
+    addGraphLine(): GraphLine {
         const trace = new GraphLine(this.varsList);
         this.view.addMemo(trace);
-        trace.setXVariable(this.timeIdx_);
-        trace.setColor('black');
+        trace.hCoordIndex = this.timeIdx_;
+        trace.vCoordIndex = -1;
+        trace.color = 'black';
         this.displayGraph.addGraphLine(trace);
         // Don't use off-screen buffer with time variable because the auto-scale causes
         // graph to redraw every frame.
-        this.displayGraph.setUseBuffer(trace.getXVariable() !== this.timeIdx_);
+        this.displayGraph.setUseBuffer(trace.hCoordIndex !== this.timeIdx_);
         return trace;
     }
 

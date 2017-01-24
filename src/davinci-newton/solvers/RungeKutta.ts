@@ -28,7 +28,7 @@ export class RungeKutta implements DiffEqSolver {
     }
     step(stepSize: number): void {
         var error, i;
-        const va = this.ode_.getVarsList();
+        const va = this.ode_.varsList;
         const vars = va.getValues();
         const N = vars.length;
         if (this.inp_.length < N) {

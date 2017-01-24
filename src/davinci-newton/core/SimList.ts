@@ -82,7 +82,7 @@ export class SimList extends AbstractSubject {
     removeTemporary(time: number): void {
         for (let i = this.elements_.length - 1; i >= 0; i--) {
             const simobj = this.elements_[i];
-            if (simobj.getExpireTime() < time) {
+            if (simobj.expireTime < time) {
                 this.elements_.splice(i, 1);
                 this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simobj));
             }

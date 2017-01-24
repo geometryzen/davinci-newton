@@ -34,10 +34,10 @@ export class AbstractSimObject implements SimObject {
     /**
      * 
      */
-    getExpireTime(): number {
+    get expireTime(): number {
         return this.expireTime_;
     }
-    setExpireTime(expireTime: number): void {
+    set expireTime(expireTime: number) {
         this.expireTime_ = expireTime;
     }
 }

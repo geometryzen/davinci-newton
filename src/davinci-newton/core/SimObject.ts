@@ -20,7 +20,7 @@ export interface SimObject {
     /**
      * 
      */
-    getExpireTime(): number;
+    expireTime: number;
 }
 
 export default SimObject;

@@ -61,7 +61,7 @@ export class AbstractSubject implements Subject {
      * @param parameter the Parameter to add
      */
     addParameter(parameter: Parameter): void {
-        const name = parameter.getName();
+        const name = parameter.name;
         const p = this.getParam(name);
         if (p != null) {
             throw new Error('parameter ' + name + ' already exists: ' + p);
@@ -77,7 +77,7 @@ export class AbstractSubject implements Subject {
     private getParam(name: string): Parameter {
         name = toName(name);
         return find(this.paramList_, function (p) {
-            return p.getName() === name;
+            return p.name === name;
         });
     }
 

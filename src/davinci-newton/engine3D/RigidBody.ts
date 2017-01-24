@@ -119,7 +119,7 @@ export class RigidBody extends AbstractSimObject {
     /**
      * 
      */
-    getExpireTime(): number {
+    get expireTime(): number {
         return Number.POSITIVE_INFINITY;
     }
 

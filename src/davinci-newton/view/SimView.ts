@@ -14,20 +14,20 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
+import AlignH from './AlignH';
+import AlignV from './AlignV';
 import clone from '../util/clone';
 import contains from '../util/contains';
 import CoordMap from './CoordMap';
 import DisplayList from './DisplayList';
 import DoubleRect from './DoubleRect';
 import GenericEvent from '../util/GenericEvent';
-import HorizAlign from './HorizAlign';
 import LabView from './LabView';
 import Memorizable from '../util/Memorizable';
 import ParameterBoolean from '../util/ParameterBoolean';
 import ParameterNumber from '../util/ParameterNumber';
 import remove from '../util/remove';
 import ScreenRect from './ScreenRect';
-import VerticalAlign from './VerticalAlign';
 import veryDifferent from '../util/veryDifferent';
 
 export class SimView extends AbstractSubject implements LabView {
@@ -71,8 +71,8 @@ export class SimView extends AbstractSubject implements LabView {
      * The rectangle in screen coordinates where this SimView exists inside the LabCanvas.
      */
     private screenRect_ = new ScreenRect(0, 0, 800, 600);
-    private horizAlign_ = HorizAlign.MIDDLE;
-    private verticalAlign_ = VerticalAlign.MIDDLE;
+    private horizAlign_ = AlignH.MIDDLE;
+    private verticalAlign_ = AlignV.MIDDLE;
     private aspectRatio_ = 1.0;
     /**
      * This list of DisplayObjects that this SimView displays
@@ -117,8 +117,8 @@ export class SimView extends AbstractSubject implements LabView {
         this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_CENTER_X, () => this.getCenterX(), (centerX: number) => this.setCenterX(centerX)).setLowerLimit(Number.NEGATIVE_INFINITY));
         this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_CENTER_Y, () => this.getCenterY(), (centerY: number) => this.setCenterY(centerY)).setLowerLimit(Number.NEGATIVE_INFINITY));
         this.addParameter(new ParameterBoolean(this, SimView.PARAM_NAME_SCALE_TOGETHER, () => this.getScaleTogether(), (scaleTogether: boolean) => this.setScaleTogether(scaleTogether)));
-        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_VERTICAL_ALIGN, () => this.getVerticalAlign(), (verticalAlign: number) => this.setVerticalAlign(verticalAlign)));
-        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, () => this.getHorizAlign(), (horizAlign: number) => this.setHorizAlign(horizAlign)));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_VERTICAL_ALIGN, () => this.vAxisAlign, (vAxisAlign: AlignV) => this.vAxisAlign = vAxisAlign));
+        this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, () => this.hAxisAlign, (hAxisAlign: AlignH) => this.hAxisAlign = hAxisAlign));
         this.addParameter(new ParameterNumber(this, SimView.PARAM_NAME_ASPECT_RATIO, () => this.getAspectRatio(), (aspectRatio: number) => this.setAspectRatio(aspectRatio)));
     }
 
@@ -176,7 +176,7 @@ export class SimView extends AbstractSubject implements LabView {
      * Returns the horizontal alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
      */
-    getHorizAlign(): HorizAlign {
+    get hAxisAlign(): AlignH {
         return this.horizAlign_;
     }
 
@@ -203,7 +203,7 @@ export class SimView extends AbstractSubject implements LabView {
      * Returns the vertical alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
      */
-    getVerticalAlign() {
+    get vAxisAlign(): AlignV {
         return this.verticalAlign_;
     }
 
@@ -385,10 +385,8 @@ export class SimView extends AbstractSubject implements LabView {
     /**
      * Sets the horizontal alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
-     * @param alignHoriz the horizontal alignment to use
-     * for aligning the simulation rectangle within the screen rectangle.
      */
-    setHorizAlign(alignHoriz: HorizAlign) {
+    set hAxisAlign(alignHoriz: AlignH) {
         this.horizAlign_ = alignHoriz;
         this.realign();
         this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
@@ -412,10 +410,8 @@ export class SimView extends AbstractSubject implements LabView {
     /**
      * Sets the vertical alignment to use when aligning the SimView's
      * simulation rectangle within its screen rectangle.
-     * @param alignVert the vertical alignment to use
-     * for aligning the simulation rectangle within the screen rectangle.
      */
-    setVerticalAlign(alignVert: VerticalAlign): void {
+    set vAxisAlign(alignVert: AlignV) {
         this.verticalAlign_ = alignVert;
         this.realign();
         this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);

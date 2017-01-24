@@ -24,7 +24,7 @@ export class SimpleAdvance implements AdvanceStrategy {
         // Do nothing yet.
     }
     advance(timeStep: number, memoList?: MemoList) {
-        this.sim_.getSimList().removeTemporary(this.sim_.getTime());
+        this.sim_.simList.removeTemporary(this.sim_.getTime());
         const err = this.odeSolver_.step(timeStep);
         if (err != null) {
             throw new Error(`error during advance ${err}`);

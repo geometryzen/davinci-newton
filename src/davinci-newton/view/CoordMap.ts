@@ -14,12 +14,12 @@
 // limitations under the License.
 
 import AffineTransform from './AffineTransform';
+import AlignH from './AlignH';
+import AlignV from './AlignV';
 import DoubleRect from './DoubleRect';
-import HorizAlign from './HorizAlign';
 import mustBeFinite from '../checks/mustBeFinite';
 import Point from './Point';
 import ScreenRect from './ScreenRect';
-import VerticalAlign from './VerticalAlign';
 
 const MIN_SIZE = 1E-15;
 
@@ -222,7 +222,7 @@ export default class CoordMap {
      * divided by 'pixels per simulation unit along x axis';  default is 1.0
      * @return the CoordMap corresponding to the given options
      */
-    static make(screenRect: ScreenRect, simRect: DoubleRect, horizAlign = HorizAlign.MIDDLE, verticalAlign = VerticalAlign.MIDDLE, aspectRatio = 1) {
+    static make(screenRect: ScreenRect, simRect: DoubleRect, horizAlign = AlignH.MIDDLE, verticalAlign = AlignV.MIDDLE, aspectRatio = 1) {
         if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
             throw new Error('bad aspectRatio ' + aspectRatio);
         }
@@ -242,23 +242,23 @@ export default class CoordMap {
         var pixel_per_unit_x = 0;
         var pixel_per_unit_y = 0;
         // FULL = simRect matches the screenRect
-        if (horizAlign === HorizAlign.FULL) {
+        if (horizAlign === AlignH.FULL) {
             pixel_per_unit_x = screen_width / sim_width;
             offset_x = 0;
         }
-        if (verticalAlign === VerticalAlign.FULL) {
+        if (verticalAlign === AlignV.FULL) {
             pixel_per_unit_y = screen_height / sim_height;
             offset_y = 0;
         }
-        if (horizAlign !== HorizAlign.FULL || verticalAlign !== VerticalAlign.FULL) {
+        if (horizAlign !== AlignH.FULL || verticalAlign !== AlignV.FULL) {
             // find scale (pixel_per_unit) for both x and y
             // aspectRatio = pixel_per_unit_y/pixel_per_unit_x
             // horizFull = true means: x axis has full-justification
             var horizFull;
-            if (horizAlign === HorizAlign.FULL) {
+            if (horizAlign === AlignH.FULL) {
                 pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
                 horizFull = true;
-            } else if (verticalAlign === VerticalAlign.FULL) {
+            } else if (verticalAlign === AlignV.FULL) {
                 pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
                 horizFull = false;
             } else {
@@ -281,11 +281,11 @@ export default class CoordMap {
                 offset_y = 0;
                 var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
                 switch (horizAlign) {
-                    case HorizAlign.LEFT:
+                    case AlignH.LEFT:
                         offset_x = 0; break;
-                    case HorizAlign.MIDDLE:
+                    case AlignH.MIDDLE:
                         offset_x = (screen_width - ideal_width) / 2; break;
-                    case HorizAlign.RIGHT:
+                    case AlignH.RIGHT:
                         offset_x = screen_width - ideal_width; break;
                     default: throw new Error();
                 }
@@ -294,11 +294,11 @@ export default class CoordMap {
                 offset_x = 0;
                 var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
                 switch (verticalAlign) {
-                    case VerticalAlign.BOTTOM:
+                    case AlignV.BOTTOM:
                         offset_y = 0; break;
-                    case VerticalAlign.MIDDLE:
+                    case AlignV.MIDDLE:
                         offset_y = (screen_height - ideal_height) / 2; break;
-                    case VerticalAlign.TOP:
+                    case AlignV.TOP:
                         offset_y = screen_height - ideal_height; break;
                     default: {
                         throw new Error();
@@ -306,7 +306,7 @@ export default class CoordMap {
                 }
             }
         }
-        var coordMap = new CoordMap(screen_left,
+        const coordMap = new CoordMap(screen_left,
             screen_top + screen_height,
             simLeft - offset_x / pixel_per_unit_x,
             simBottom - offset_y / pixel_per_unit_y,

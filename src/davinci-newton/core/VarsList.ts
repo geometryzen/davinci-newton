@@ -37,7 +37,19 @@ export class VarsList extends AbstractSubject {
     /**
      * 
      */
-    private static readonly TIME = 'TIME';
+    public static readonly TIME = 'TIME';
+    /**
+     * 
+     */
+    public static readonly KINETIC_ENERGY = 'KINETIC_ENERGY';
+    /**
+     * 
+     */
+    public static readonly POTENTIAL_ENERGY = 'POTENTIAL_ENERGY';
+    /**
+     * 
+     */
+    public static readonly TOTAL_ENERGY = 'TOTAL_ENERGY';
     /**
      * 
      */
@@ -62,11 +74,8 @@ export class VarsList extends AbstractSubject {
     /**
      * 
      */
-    constructor(varNames: string[], localNames: string[]) {
+    constructor(varNames: string[]) {
         super();
-        if (varNames.length !== localNames.length) {
-            throw new Error('varNames and localNames are different lengths');
-        }
         for (let i = 0, n = varNames.length; i < n; i++) {
             let s = varNames[i];
             if (!isString(s)) {
@@ -80,7 +89,7 @@ export class VarsList extends AbstractSubject {
             }
         }
         for (let i = 0, n = varNames.length; i < n; i++) {
-            this.varList_.push(new ConcreteVariable(this, varNames[i], localNames[i]));
+            this.varList_.push(new ConcreteVariable(this, varNames[i]));
         }
     }
 
@@ -94,7 +103,7 @@ export class VarsList extends AbstractSubject {
         var found = 0;
         var startIdx = -1;
         for (var i = 0, n = this.varList_.length; i < n; i++) {
-            if (this.varList_[i].getName() === VarsList.DELETED) {
+            if (this.varList_[i].name === VarsList.DELETED) {
                 if (startIdx === -1) {
                     startIdx = i;
                 }
@@ -120,8 +129,7 @@ export class VarsList extends AbstractSubject {
         }
         var newVars = [];
         for (i = 0; i < expand; i++) {
-            newVars.push(new ConcreteVariable(this, VarsList.DELETED,
-                VarsList.DELETED));
+            newVars.push(new ConcreteVariable(this, VarsList.DELETED));
         }
         extendArray(this.varList_, expand, newVars);
         return startIdx;
@@ -131,17 +139,13 @@ export class VarsList extends AbstractSubject {
      * Add a continguous block of ConcreteVariables.
      * @param names language-independent names of variables; these will be
      * underscorized so the English name can be passed in here.
-     * @param localNames localized names of variables
      * @return index index of first Variable that was added
      * @throws if any of the variable names is 'DELETED', or array of names is empty
      */
-    addVariables(names: string[], localNames: string[]): number {
+    addVariables(names: string[]): number {
         const howMany = names.length;
         if (howMany === 0) {
             throw new Error();
-        }
-        if (names.length !== localNames.length) {
-            throw new Error('names and localNames are different lengths');
         }
         const position = this.findOpenSlot_(howMany);
         for (let i = 0; i < howMany; i++) {
@@ -150,7 +154,7 @@ export class VarsList extends AbstractSubject {
                 throw new Error("variable cannot be named ''+VarsList.DELETED+''");
             }
             const idx = position + i;
-            this.varList_[idx] = new ConcreteVariable(this, name, localNames[i]);
+            this.varList_[idx] = new ConcreteVariable(this, name);
             if (name === VarsList.TIME) {
                 // auto-detect time variable
                 this.timeIdx_ = idx;
@@ -176,8 +180,7 @@ export class VarsList extends AbstractSubject {
             throw new Error('deleteVariables');
         }
         for (var i = index; i < index + howMany; i++) {
-            this.varList_[i] = new ConcreteVariable(this, VarsList.DELETED,
-                VarsList.DELETED);
+            this.varList_[i] = new ConcreteVariable(this, VarsList.DELETED);
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
     }
@@ -262,7 +265,7 @@ export class VarsList extends AbstractSubject {
         this.checkIndex_(index);
         const variable = this.varList_[index];
         if (isNaN(value)) {
-            throw new Error('cannot set variable ' + variable.getName() + ' to NaN');
+            throw new Error('cannot set variable ' + variable.name + ' to NaN');
         }
         if (continuous) {
             variable.setValueSmooth(value);
@@ -287,12 +290,12 @@ export class VarsList extends AbstractSubject {
      * @throws if name if the Variable is 'DELETED'
      */
     addVariable(variable: Variable): number {
-        var name = variable.getName();
+        const name = variable.name;
         if (name === VarsList.DELETED) {
             throw new Error('variable cannot be named "' + VarsList.DELETED + '"');
         }
         // add variable to first open slot
-        var position = this.findOpenSlot_(1);
+        const position = this.findOpenSlot_(1);
         this.varList_[position] = variable;
         if (name === VarsList.TIME) {
             // auto-detect time variable
@@ -312,8 +315,8 @@ export class VarsList extends AbstractSubject {
 
     getParameter(name: string) {
         name = toName(name);
-        var p = find(this.varList_, function (p) {
-            return p.getName() === name;
+        const p = find(this.varList_, function (p) {
+            return p.name === name;
         });
         if (p != null) {
             return p;
@@ -353,7 +356,7 @@ export class VarsList extends AbstractSubject {
         } else if (isString(id)) {
             id = toName(id);
             index = findIndex(this.varList_,
-                function (v) { return v.getName() === id; });
+                function (v) { return v.name === id; });
             if (index < 0) {
                 throw new Error('unknown variable name ' + id);
             }

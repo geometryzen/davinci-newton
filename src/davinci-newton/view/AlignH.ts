@@ -13,11 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export enum HorizAlign {
+export enum AlignH {
     LEFT = 0,
     MIDDLE = 1,
     RIGHT = 2,
     FULL = 3
 }
 
-export default HorizAlign;
+export default AlignH;

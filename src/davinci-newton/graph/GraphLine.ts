@@ -94,10 +94,12 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * in the list.
      */
     private styles_: GraphStyle[] = [];
+
     /**
      * Function that gives the transformed the X value.
      */
     xTransform: (x: number, y: number) => number;
+
     /**
      * Function that gives the transformed the Y value.
      */
@@ -113,11 +115,11 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         this.xVar_ = -1;
         this.yVar_ = -1;
 
-        this.xVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_X_VARIABLE, () => this.getXVariable(), (index: number) => this.setXVariable(index));
+        this.xVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_X_VARIABLE, () => this.hCoordIndex, (hCoordIndex: number) => this.hCoordIndex = hCoordIndex);
         this.xVarParam_.setLowerLimit(-1);
         this.addParameter(this.xVarParam_);
 
-        this.yVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_Y_VARIABLE, () => this.getYVariable(), (index: number) => this.setYVariable(index));
+        this.yVarParam_ = new ParameterNumber(this, GraphLine.PARAM_NAME_Y_VARIABLE, () => this.vCoordIndex, (vCoordIndex: number) => this.vCoordIndex = vCoordIndex);
         this.yVarParam_.setLowerLimit(-1);
         this.addParameter(this.yVarParam_);
 
@@ -128,9 +130,9 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         this.addGraphStyle();
         this.xTransform = function (x, y) { return x; };
         this.yTransform = function (x, y) { return y; };
-        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_LINE_WIDTH, () => this.getLineWidth(), (lineWidth: number) => this.setLineWidth(lineWidth)));
-        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_DRAWING_MODE, () => this.getDrawingMode(), (drawingMode: DrawingMode) => this.setDrawingMode(drawingMode)));
-        this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_COLOR, () => this.getColor(), (color: string) => this.setColor(color)));
+        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_LINE_WIDTH, () => this.lineWidth, (lineWidth: number) => this.lineWidth = lineWidth));
+        this.addParameter(new ParameterNumber(this, GraphLine.PARAM_NAME_DRAWING_MODE, () => this.drawingMode, (drawingMode: DrawingMode) => this.drawingMode = drawingMode));
+        this.addParameter(new ParameterString(this, GraphLine.PARAM_NAME_COLOR, () => this.color, (color: string) => this.color = color));
     }
 
     /**
@@ -153,10 +155,10 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
         }
         return isObject(obj) && obj.setXVariable !== undefined
             && obj.setYVariable !== undefined
-            && obj.setColor !== undefined
-            && obj.setLineWidth !== undefined
+            && obj.color !== undefined
+            && obj.lineWidth !== undefined
             && obj.setAxes !== undefined
-            && obj.getVarsList !== undefined
+            && obj.varsList !== undefined
             && obj.reset !== undefined
             && obj.getGraphStyle !== undefined;
     }
@@ -165,7 +167,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Returns the color used when drawing the graph.
      * @return the color used when drawing the graph
      */
-    getColor(): string {
+    get color(): string {
         return this.drawColor_;
     }
 
@@ -173,7 +175,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Returns the drawing mode of the graph: dots or lines.
      * @return the DrawingMode to draw this graph with
      */
-    getDrawingMode(): DrawingMode {
+    get drawingMode(): DrawingMode {
         return this.drawingMode_;
     }
 
@@ -219,14 +221,14 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Returns thickness to use when drawing the line, in screen coordinates, so a unit
      * is a screen pixel.
      */
-    getLineWidth(): number {
+    get lineWidth(): number {
         return this.lineWidth_;
     }
 
     /**
      * Returns the VarsList that this GraphLine is collecting from
      */
-    getVarsList(): VarsList {
+    get varsList(): VarsList {
         return this.varsList_;
     }
 
@@ -235,7 +237,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return the index of X variable in the VarsList, or  -1 if no X variable
      * is being collected.
      */
-    getXVariable(): number {
+    get hCoordIndex(): number {
         return this.xVar_;
     }
 
@@ -244,7 +246,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return variable name or empty string in case index is -1
      */
     getXVarName(): string {
-        return this.xVar_ > -1 ? this.varsList_.getVariable(this.xVar_).getName() : '';
+        return this.xVar_ > -1 ? this.varsList_.getVariable(this.xVar_).name : '';
     }
 
     /**
@@ -252,7 +254,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return the index of Y variable in the VarsList, or  -1 if no Y variable
      * is being collected.
      */
-    getYVariable(): number {
+    get vCoordIndex(): number {
         return this.yVar_;
     }
 
@@ -261,7 +263,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return variable name or empty string in case index is -1
      */
     getYVarName(): string {
-        return this.yVar_ > -1 ? this.varsList_.getVariable(this.yVar_).getName() : '';
+        return this.yVar_ > -1 ? this.varsList_.getVariable(this.yVar_).name : '';
     }
 
     memorize(): void {
@@ -318,7 +320,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * memorized after this time.
      * @param color the color to use when drawing the graph, a CSS3 color string.
      */
-    setColor(color: string): void {
+    set color(color: string) {
         if (this.drawColor_ !== color) {
             this.drawColor_ = color;
             this.addGraphStyle();
@@ -333,7 +335,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * draw this graph with.
      * @throws Error if the value does not represent a valid DrawingMode
      */
-    setDrawingMode(drawingMode: DrawingMode) {
+    set drawingMode(drawingMode: DrawingMode) {
         if (this.drawingMode_ !== drawingMode) {
             this.drawingMode_ = drawingMode;
             this.addGraphStyle();
@@ -355,7 +357,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * screen pixel. Applies only to portions of graph memorized after this time.
      * @param lineWidth thickness of line in screen coordinates
      */
-    setLineWidth(lineWidth: number): void {
+    set lineWidth(lineWidth: number) {
         if (veryDifferent(lineWidth, this.lineWidth_)) {
             this.lineWidth_ = lineWidth;
             this.addGraphStyle();
@@ -367,10 +369,8 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Sets the variable from which to collect data for the X value of the graph. Starts
      * over with a new HistoryList. Broadcasts the ParameterNumber named
      * `GraphLine.i18n.X_VARIABLE`.
-     * @param {number} xVar the index of X variable in the VarsList, or -1 to not
-     * collect any X variable data and have an empty HistoryList.
      */
-    setXVariable(xVar: number): void {
+    set hCoordIndex(xVar: number) {
         if (xVar < -1 || xVar > this.varsList_.numVariables() - 1) {
             throw new Error('setXVariable bad index ' + xVar);
         }
@@ -385,10 +385,8 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * Sets the variable from which to collect data for the Y value of the graph. Starts
      * over with a new HistoryList. Broadcasts the ParameterNumber named
      * `GraphLine.i18n.Y_VARIABLE`.
-     * @param {number} yVar the index of Y variable in the VarsList, or -1 to not
-     * collect any Y variable data and have an empty HistoryList.
      */
-    setYVariable(yVar: number): void {
+    set vCoordIndex(yVar: number) {
         if (yVar < -1 || yVar > this.varsList_.numVariables() - 1) {
             throw new Error('setYVariable bad index ' + yVar);
         }

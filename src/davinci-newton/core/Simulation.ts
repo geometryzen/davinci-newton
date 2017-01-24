@@ -23,15 +23,15 @@ export interface Simulation {
     /**
      * 
      */
+    simList: SimList;
+    /**
+     * 
+     */
+    varsList: VarsList;
+    /**
+     * 
+     */
     evaluate(vars: number[], change: number[], timeStep: number): void;
-    /**
-     * 
-     */
-    getSimList(): SimList;
-    /**
-     * 
-     */
-    getVarsList(): VarsList;
     /**
      * 
      */

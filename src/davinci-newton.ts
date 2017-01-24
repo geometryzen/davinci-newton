@@ -1,3 +1,6 @@
+import AlignH from './davinci-newton/view/AlignH';
+import AlignV from './davinci-newton/view/AlignV';
+import AxisChoice from './davinci-newton/graph/AxisChoice';
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
@@ -7,7 +10,6 @@ import Force from './davinci-newton/model/Force';
 import Graph from './davinci-newton/graph/Graph';
 import GraphLine from './davinci-newton/graph/GraphLine';
 import GravitationLaw from './davinci-newton/objects/GravitationLaw';
-import HorizAlign from './davinci-newton/view/HorizAlign';
 import LabCanvas from './davinci-newton/view/LabCanvas';
 import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
 import RigidBody from './davinci-newton/engine3D/RigidBody';
@@ -18,7 +20,6 @@ import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
 import Spring from './davinci-newton/objects/Spring';
 import Vector from './davinci-newton/math/Vector';
-import VerticalAlign from './davinci-newton/view/VerticalAlign';
 
 /**
  *
@@ -32,6 +33,18 @@ const newton = {
      * The semantic version of the library.
      */
     get VERSION() { return config.VERSION; },
+    /**
+     * 
+     */
+    get AlignH() { return AlignH; },
+    /**
+     * 
+     */
+    get AlignV() { return AlignV; },
+    /**
+     * 
+     */
+    get AxisChoice() { return AxisChoice; },
     /**
      * 
      */
@@ -64,10 +77,6 @@ const newton = {
      * 
      */
     get GravitationLaw() { return GravitationLaw; },
-    /**
-     * 
-     */
-    get HorizAlign() { return HorizAlign; },
     /**
      * 
      */
@@ -107,11 +116,7 @@ const newton = {
     /**
      * 
      */
-    get Vector() { return Vector; },
-    /**
-     * 
-     */
-    get VerticalAlign() { return VerticalAlign; },
+    get Vector() { return Vector; }
 }
 
 export default newton;

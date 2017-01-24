@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import AlignH from '../view/AlignH';
+import AlignV from '../view/AlignV';
 import CoordMap from '../view/CoordMap';
 import DisplayObject from '../view/DisplayObject';
 import DoubleRect from '../view/DoubleRect';
-import HorizAlign from '../view/HorizAlign';
 import isDefined from '../checks/isDefined';
-import VerticalAlign from '../view/VerticalAlign';
 
 /**
  * Draws linear horizontal and vertical axes within a given simulation coordinates
@@ -26,18 +26,16 @@ import VerticalAlign from '../view/VerticalAlign';
  * numbering scale shown.
  * 
  * Axes are drawn with numbered tick marks. Axes are labeled with
- * names which can be specified by `setHorizName` and `setVerticalName`. Axes
- * are drawn using specified font and color, see {@link #setColor} and {@link #setFont}.
+ * names which can be specified by `hAxisLabel` and `vAxisLabel`. Axes
+ * are drawn using specified font and color.
  * 
  * Options exist for drawing the vertical axis near the left, center, or right, and for
  * drawing the horizontal axis near the top, center, or bottom of the screen. See
- * {@link #setXAxisAlignment} and {@link #setYAxisAlignment}.
+ * `hAxisAlign` and `vAxisAlign`.
  * 
  * To keep the DisplayAxes in sync with a LabView, when
  * doing for example pan/zoom of the LabView, you can arrange for {@link #setSimRect} to
  * be called by an Observer.
- * 
- * @todo  add option to set the number of tick marks (instead of automatic)?
  */
 export default class DisplayAxes implements DisplayObject {
     /**
@@ -66,11 +64,11 @@ export default class DisplayAxes implements DisplayObject {
     /**
      * location of the horizontal axis, default value is BOTTOM
      */
-    private horizAxisAlignment_: VerticalAlign;
+    private hAxisAlign_: AlignV;
     /**
      * location of the vertical axis, default value is LEFT
      */
-    private vertAxisAlignment_: HorizAlign;
+    private vAxisAlign_: AlignH;
     /**
      * Number of fractional decimal places to show.
      */
@@ -80,17 +78,17 @@ export default class DisplayAxes implements DisplayObject {
      */
     private needRedraw_: boolean;
     /**
-     * name of horizontal axis
+     * The label for the horizontal axis.
      */
-    private horizName_: string;
+    private hLabel_: string;
     /**
-     * name of vertical axis
+     * The label for the vertical axis.
      */
-    private verticalName_: string;
+    private vLabel_: string;
     /**
      * 
      */
-    private zIndex: number;
+    private zIndex_: number;
     /**
      * @param simRect the area to draw axes for in simulation coordinates.
      * @param font the Font to draw numbers and names of axes with 
@@ -102,13 +100,13 @@ export default class DisplayAxes implements DisplayObject {
         this.drawColor_ = color;
         this.fontDescent = 8;
         this.fontAscent = 12;
-        this.horizAxisAlignment_ = VerticalAlign.BOTTOM;
-        this.vertAxisAlignment_ = HorizAlign.LEFT;
+        this.hAxisAlign_ = AlignV.BOTTOM;
+        this.vAxisAlign_ = AlignH.LEFT;
         this.numDecimal_ = 0;
         this.needRedraw_ = true;
-        this.horizName_ = 'x';
-        this.verticalName_ = 'y';
-        this.zIndex = 100;
+        this.hLabel_ = 'x';
+        this.vLabel_ = 'y';
+        this.zIndex_ = 100;
     }
 
     /*
@@ -133,11 +131,11 @@ export default class DisplayAxes implements DisplayObject {
         var sim_x2 = r.getRight();
         var sim_y1 = r.getBottom();
         var sim_y2 = r.getTop();
-        switch (this.vertAxisAlignment_) {
-            case HorizAlign.RIGHT:
+        switch (this.vAxisAlign_) {
+            case AlignH.RIGHT:
                 x0 = map.simToScreenX(sim_x2 - 0.05 * (sim_x2 - sim_x1));
                 break;
-            case HorizAlign.LEFT:
+            case AlignH.LEFT:
                 x0 = map.simToScreenX(sim_x1 + 0.05 * (sim_x2 - sim_x1));
                 break;
             default:
@@ -145,11 +143,11 @@ export default class DisplayAxes implements DisplayObject {
         }
 
         // leave room to draw the numbers below the horizontal axis
-        switch (this.horizAxisAlignment_) {
-            case VerticalAlign.TOP:
+        switch (this.hAxisAlign_) {
+            case AlignV.TOP:
                 y0 = map.simToScreenY(sim_y2) + (10 + this.fontDescent + this.fontAscent);
                 break;
-            case VerticalAlign.BOTTOM:
+            case AlignV.BOTTOM:
                 y0 = map.simToScreenY(sim_y1) - (10 + this.fontDescent + this.fontAscent);
                 break;
             default:
@@ -207,8 +205,8 @@ export default class DisplayAxes implements DisplayObject {
             x_sim = next_x_sim;
         }
         // draw name of the horizontal axis
-        var w = context.measureText(this.horizName_).width;
-        context.fillText(this.horizName_, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
+        const w = context.measureText(this.hLabel_).width;
+        context.fillText(this.hLabel_, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
     }
 
     /**
@@ -236,7 +234,7 @@ export default class DisplayAxes implements DisplayObject {
                 // draw a number
                 var s = y_sim.toFixed(this.numDecimal_);
                 var textWidth = context.measureText(s).width;
-                if (this.vertAxisAlignment_ === HorizAlign.RIGHT) {
+                if (this.vAxisAlign_ === AlignH.RIGHT) {
                     context.fillText(s, x2 - (textWidth + 10), y_screen + (this.fontAscent / 2));
                 } else {// LEFT is default
                     context.fillText(s, x2 + 5, y_screen + (this.fontAscent / 2));
@@ -250,11 +248,12 @@ export default class DisplayAxes implements DisplayObject {
             y_sim = next_y_sim;  // next tick mark
         }
         // draw name of the vertical axis
-        var w = context.measureText(this.verticalName_).width;
-        if (this.vertAxisAlignment_ === HorizAlign.RIGHT) {
-            context.fillText(this.verticalName_, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
-        } else { // LEFT is default
-            context.fillText(this.verticalName_, x0 + 6, map.simToScreenY(sim_y2) + 13);
+        var w = context.measureText(this.vLabel_).width;
+        if (this.vAxisAlign_ === AlignH.RIGHT) {
+            context.fillText(this.vLabel_, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
+        }
+        else { // LEFT is default
+            context.fillText(this.vLabel_, x0 + 6, map.simToScreenY(sim_y2) + 13);
         }
     }
 
@@ -262,7 +261,7 @@ export default class DisplayAxes implements DisplayObject {
      * Returns the color to draw the graph axes with.
      * @return the color to draw the graph axes with
      */
-    getColor(): string {
+    get color(): string {
         return this.drawColor_;
     }
 
@@ -275,11 +274,10 @@ export default class DisplayAxes implements DisplayObject {
     }
 
     /**
-     * Returns the name shown next to the horizontal axis.
-     * @return the name of the horizontal axis.
+     * Returns the label shown next to the horizontal axis.
      */
-    getHorizName(): string {
-        return this.horizName_;
+    get hAxisLabel(): string {
+        return this.hLabel_;
     }
 
     /**
@@ -337,32 +335,29 @@ export default class DisplayAxes implements DisplayObject {
 
     /**
      * Returns the name shown next to the vertical axis.
-     * @return the name of the vertical axis.
      */
-    getVerticalName(): string {
-        return this.verticalName_;
+    get vAxisLabel(): string {
+        return this.vLabel_;
     }
 
     /**
      * Returns the X-axis alignment: whether it should appear at bottom, top or middle of
      * the simulation rectangle.
-     * @return X-axis alignment option from VerticalAlign.
      */
-    getXAxisAlignment(): VerticalAlign {
-        return this.horizAxisAlignment_;
+    get hAxisAlign(): AlignV {
+        return this.hAxisAlign_;
     }
 
     /**
      * Returns the Y-axis alignment : whether it should appear at left, right or middle of
      * the simulation rectangle.
-     * @return Y-axis alignment option from HorizAlign
      */
-    getYAxisAlignment(): HorizAlign {
-        return this.vertAxisAlignment_;
+    get vAxisAlign(): AlignH {
+        return this.vAxisAlign_;
     }
 
     getZIndex(): number {
-        return this.zIndex;
+        return this.zIndex_;
     }
 
     isDragable(): boolean {
@@ -381,7 +376,7 @@ export default class DisplayAxes implements DisplayObject {
      * Set the color to draw the graph axes with.
      * @param color the color to draw the graph axes with
      */
-    setColor(color: string): void {
+    set color(color: string) {
         this.drawColor_ = color;
         this.needRedraw_ = true;
     }
@@ -400,11 +395,10 @@ export default class DisplayAxes implements DisplayObject {
     }
 
     /**
-     * Sets the name shown next to the horizontal axis
-     * @param name name of the horizontal axis
+     * Sets the label shown next to the horizontal axis.
      */
-    setHorizName(name: string): void {
-        this.horizName_ = name;
+    set hAxisLabel(hAxisLabel: string) {
+        this.hLabel_ = hAxisLabel;
         this.needRedraw_ = true;
     }
 
@@ -419,41 +413,34 @@ export default class DisplayAxes implements DisplayObject {
     }
 
     /**
-     * Sets the name shown next to the vertical axis
-     * @param name name of the vertical axis
+     * Sets the name shown next to the vertical axis.
      */
-    setVerticalName(name: string): void {
-        this.verticalName_ = name;
+    set vAxisLabel(vAxisLabel: string) {
+        this.vLabel_ = vAxisLabel;
         this.needRedraw_ = true;
     }
 
     /**
-     * Sets the X-axis alignment: whether it should appear at bottom, top or middle of the
+     * Sets the horizontal axis alignment: whether it should appear at bottom, top or middle of the
      * simulation rectangle.
-     * @param alignment X-axis alignment option from VerticalAlign.
-     * @return this object for chaining setters
      */
-    setXAxisAlignment(alignment: VerticalAlign): this {
-        this.horizAxisAlignment_ = alignment;
+    set hAxisAlign(alignment: AlignV) {
+        this.hAxisAlign_ = alignment;
         this.needRedraw_ = true;
-        return this;
     }
 
     /**
-     * Sets the Y-axis alignment: whether it should appear at left, right or middle of the
+     * Sets the vertical axis alignment: whether it should appear at left, right or middle of the
      * simulation rectangle.
-     * @param alignment Y-axis alignment option from HorizAlign.
-     * @return this object for chaining setters
      */
-    setYAxisAlignment(alignment: HorizAlign): this {
-        this.vertAxisAlignment_ = alignment;
+    set vAxisAlign(alignment: AlignH) {
+        this.vAxisAlign_ = alignment;
         this.needRedraw_ = true;
-        return this;
     }
 
     setZIndex(zIndex: number): void {
         if (isDefined(zIndex)) {
-            this.zIndex = zIndex;
+            this.zIndex_ = zIndex;
         }
     }
 }

@@ -14,16 +14,15 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
+import AxisChoice from './AxisChoice';
 import contains from '../util/contains';
 import DoubleRect from '../view/DoubleRect';
 import GenericEvent from '../util/GenericEvent';
 import GraphLine from './GraphLine';
 import removeAt from '../util/removeAt';
-// import isDefined from '../checks/isDefined';
 import Memorizable from '../util/Memorizable';
 import Observer from '../util/Observer';
 import ParameterNumber from '../util/ParameterNumber';
-import ParameterString from '../util/ParameterString';
 import repeat from '../util/repeat';
 import SimView from '../view/SimView';
 import SubjectEvent from '../util/SubjectEvent';
@@ -37,7 +36,7 @@ import veryDifferent from '../util/veryDifferent';
  * 
  * Enabled and Active
  * 
- * To entirely disable an AutoScale, see {@link #setEnabled}.
+ * To entirely disable an AutoScale, see `enabled`.
  * Assuming the AutoScale is enabled, it will react to events in the SimView and GraphLines as follows:
  * 
  * + AutoScale becomes **inactive** when the SimView's simRect is changed by an entity
@@ -47,7 +46,7 @@ import veryDifferent from '../util/veryDifferent';
  * + AutoScale becomes **active** when one of its GraphLines broadcasts a `RESET` event.
  * This happens when a graph is cleared, or when the X or Y variable is changed.
  * 
- * You can also call {@link #setActive} directly to make an enabled AutoScale active or
+ * You can also call `active` directly to make an enabled AutoScale active or
  * inactive.
  * 
  * ### Time Graph
@@ -62,11 +61,11 @@ import veryDifferent from '../util/veryDifferent';
  * 
  * ### Parameters Created
  * 
- * + ParameterNumber named `AutoScale.en.TIME_WINDOW`
+ * + ParameterNumber named `AutoScale.TIME_WINDOW`
  * see {@link #setTimeWindow}.
  * 
- * + ParameterNumber named `AutoScale.en.AXIS`
- * see {@link #setAxis}.
+ * + ParameterNumber named `AutoScale.AXIS`
+ * see `axisChoice`.
  */
 export default class AutoScale extends AbstractSubject implements Memorizable, Observer {
     /**
@@ -88,24 +87,9 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
     public static readonly AUTO_SCALE = 'AUTO_SCALE';
 
     /**
-     * Specifies both axes option for {@link #setAxis}.
-     */
-    public static readonly BOTH_AXES = 'BOTH_AXES';
-
-    /**
      * Name of event broadcast when the enabled state changes, value is whether enabled.
      */
     public static readonly ENABLED = 'ENABLED';
-
-    /**
-     * Specifies horizontal axis option for {@link #setAxis}.
-     */
-    public static readonly HORIZONTAL = 'HORIZONTAL';
-
-    /**
-     * Specifies vertical axis option for {@link #setAxis}.
-     */
-    public static readonly VERTICAL = 'VERTICAL';
 
     /**
      * The GraphLines to auto-scale.
@@ -163,7 +147,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
      * Minimum size that range rectangle can be, for width and height.
      */
     private minSize = 1E-14;
-    private axis_ = AutoScale.BOTH_AXES;
+    private axisChoice_ = AxisChoice.BOTH;
     /**
      * Index of last point seen within GraphPoints list of each GraphLine
      */
@@ -186,9 +170,10 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
         simView.addMemo(this);
         simView.addObserver(this);
         this.lastIndex_ = repeat(-1, this.graphLines_.length);
-        this.addParameter(new ParameterNumber(this, AutoScale.TIME_WINDOW, () => this.getTimeWindow(), (timeWindow: number) => this.setTimeWindow(timeWindow)).setSignifDigits(3));
-        const choices = [AutoScale.VERTICAL, AutoScale.HORIZONTAL, AutoScale.BOTH_AXES];
-        this.addParameter(new ParameterString(this, AutoScale.AXIS, () => this.getAxis(), (axis: string) => this.setAxis(axis), choices, choices));
+        this.addParameter(new ParameterNumber(this, AutoScale.TIME_WINDOW, () => this.timeWindow, (timeWindow: number) => this.timeWindow = timeWindow).setSignifDigits(3));
+        const choiceNames = ['VERTICAL', 'HORIZONTAL', 'BOTH'];
+        const choices = [AxisChoice.VERTICAL, AxisChoice.HORIZONTAL, AxisChoice.BOTH];
+        this.addParameter(new ParameterNumber(this, AutoScale.AXIS, () => this.axisChoice, (axisChoice: AxisChoice) => this.axisChoice = axisChoice, choiceNames, choices));
         this.setComputed(this.isActive_);
     }
 
@@ -222,34 +207,32 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
     }
 
     /**
-     * Returns whether is AutoScale is active.  See {@link #setActive}.
+     * Returns whether is AutoScale is active.
      * @return whether is AutoScale is active
      */
-    getActive(): boolean {
+    get active(): boolean {
         return this.isActive_;
     }
 
     /**
-     * Returns which axis should be auto scaled: one of {@link #VERTICAL},
-     * {@link #HORIZONTAL}, or {@link #BOTH_AXES}.
-     * @return which axis should be auto scaled
+     * Returns which axis should be auto scaled.
      */
-    getAxis(): string {
-        return this.axis_;
+    get axisChoice(): AxisChoice {
+        return this.axisChoice_;
     }
 
     /**
-     * Returns whether is AutoScale is enabled.  See {@link #setEnabled}.
+     * Returns whether is AutoScale is enabled.  See `enabled`.
      * @return whether is AutoScale is enabled
      */
-    getEnabled(): boolean {
+    get enabled(): boolean {
         return this.enabled_;
     }
 
     /**
      * Returns the range rectangle that encloses points on the GraphLines, including any
      * extra margin. Note that this rectangle might not correspond to the SimView's simulation
-     * rectangle, see {@link #setAxis}.
+     * rectangle, see `axisChoice`.
      * @return the range rectangle that encloses points on the GraphLines
      */
     getRangeRect(): DoubleRect {
@@ -260,7 +243,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
      * Returns length of time to include in the range rectangle for a *time graph*.
      * @return length of time to include in the range rectangle
      */
-    getTimeWindow(): number {
+    get timeWindow(): number {
         return this.timeWindow_;
     }
 
@@ -290,7 +273,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
                 if (!this.ownEvent_) {
                     // Become inactive when the SimView's simRect is changed by an entity other
                     // than this AutoScale.
-                    this.setActive(false);
+                    this.active = false;
                 }
             }
         }
@@ -302,7 +285,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
             else if (event.nameEquals(GraphLine.RESET)) {
                 // This has the effect of turning AutoScale back on
                 // after clicking the 'clear graph' button.
-                this.setActive(true);
+                this.active = true;
             }
         }
     }
@@ -329,11 +312,11 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
         }
         let nr = this.getRangeRect();
         const sr = this.simView_.getSimRect();
-        if (this.axis_ === AutoScale.VERTICAL) {
+        if (this.axisChoice_ === AxisChoice.VERTICAL) {
             // set vertical range, but retain existing horiz range
             nr = new DoubleRect(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
         }
-        else if (this.axis_ === AutoScale.HORIZONTAL) {
+        else if (this.axisChoice_ === AxisChoice.HORIZONTAL) {
             // set horizontal range, but retain existing vertical range
             nr = new DoubleRect(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
         }
@@ -378,11 +361,11 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
      * is not updated and the SimView's simulation rectangle is not modified. When changed
      * to be active, this will also call {@link #reset}.
      * 
-     * The AutoScale must be enabled in order to become active, see {@link #setEnabled}.
+     * The AutoScale must be enabled in order to become active, see `enabled`.
      * If not enabled, then this method can only make the AutoScale inactive.
      * @param value whether this AutoScale should be active
      */
-    setActive(value: boolean): void {
+    set active(value: boolean) {
         if (this.isActive_ !== value) {
             if (value) {
                 if (this.enabled_) {
@@ -403,13 +386,11 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
     }
 
     /**
-     * Set which axis to auto scale: one of {@link #VERTICAL}, {@link #HORIZONTAL}, or
-     * {@link #BOTH_AXES}.
-     * @param value which axis should be auto scaled
+     * Set which axis to auto scale.
      */
-    setAxis(value: string): void {
-        if (value === AutoScale.VERTICAL || value === AutoScale.HORIZONTAL || value === AutoScale.BOTH_AXES) {
-            this.axis_ = value;
+    set axisChoice(value: AxisChoice) {
+        if (value === AxisChoice.VERTICAL || value === AxisChoice.HORIZONTAL || value === AxisChoice.BOTH) {
+            this.axisChoice_ = value;
             this.broadcastParameter(AutoScale.AXIS);
         }
         else {
@@ -432,29 +413,29 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
 
     /**
      * Sets whether this AutoScale is enabled. The AutoScale must be enabled in order
-     * to be active.  See {@link #setActive}.
+     * to be active.  See `active`.
      * @param value whether this AutoScale should be enabled
      */
-    setEnabled(value: boolean): void {
-        if (this.enabled_ !== value) {
-            this.enabled_ = value;
-            this.setActive(value);
+    set enabled(enabled: boolean) {
+        if (this.enabled_ !== enabled) {
+            this.enabled_ = enabled;
+            this.active = enabled;
             this.broadcast(new GenericEvent(this, AutoScale.ENABLED, this.enabled_));
         }
     }
 
     /**
      * Sets length of time to include in the range rectangle for a *time graph*,
-     * and sets the AutoScale to be active. See {@link #setActive}.
-     * @param value length of time to include in the range rectangle
+     * and sets the AutoScale to be active.
+     * @param timeWindow length of time to include in the range rectangle
      */
-    setTimeWindow(value: number): void {
-        if (veryDifferent(value, this.timeWindow_)) {
-            this.timeWindow_ = value;
+    set timeWindow(timeWindow: number) {
+        if (veryDifferent(timeWindow, this.timeWindow_)) {
+            this.timeWindow_ = timeWindow;
             this.reset();
             // this fixes following bug: click pan-zoom control which makes AutoScale inactive;
             // then change the time window, but nothing happens.
-            this.setActive(true);
+            this.active = true;
             this.broadcastParameter(AutoScale.TIME_WINDOW);
         }
     }
@@ -486,9 +467,9 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
                 nowY = -1e308;
             }
         }
-        const timeIdx = line.getVarsList().timeIndex();
-        const xIsTimeVar = line.getXVariable() === timeIdx;
-        const yIsTimeVar = line.getYVariable() === timeIdx;
+        const timeIdx = line.varsList.timeIndex();
+        const xIsTimeVar = line.hCoordIndex === timeIdx;
+        const yIsTimeVar = line.vCoordIndex === timeIdx;
         if (!this.rangeSetX_) {
             this.rangeXLo_ = nowX;
             this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);

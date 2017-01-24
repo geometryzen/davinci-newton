@@ -27,19 +27,7 @@ import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
 import Vector3 from '../math/Vector3';
 
-const var_names = [
-    'time',
-    'kinetic enetry',
-    'potential energy',
-    'total energy'
-];
-
-const i18n_names = [
-    'time',
-    'kinetic enetry',
-    'potential energy',
-    'total energy'
-];
+const var_names = [VarsList.TIME, VarsList.KINETIC_ENERGY, VarsList.POTENTIAL_ENERGY, VarsList.TOTAL_ENERGY];
 
 enum Offset {
     POSITION_X = 0,
@@ -60,7 +48,7 @@ enum Offset {
 /**
  *
  */
-function getVarName(index: number, localized: boolean): string {
+function getVarName(index: number): string {
     switch (index) {
         case Offset.POSITION_X: return "position x";
         case Offset.POSITION_Y: return "position y";
@@ -79,7 +67,7 @@ function getVarName(index: number, localized: boolean): string {
     throw new Error(`getVarName(${index})`);
 }
 
-const NUM_VARS_IN_STATE = 13;
+const NUM_VARIABLES_PER_BODY = 13;
 
 /**
  * 
@@ -131,7 +119,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     constructor() {
         super();
-        this.varsList_ = new VarsList(var_names, i18n_names);
+        this.varsList_ = new VarsList(var_names);
     }
 
     /**
@@ -151,17 +139,13 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         if (!contains(this.bodies_, body)) {
             // create variables in vars array for this body
             const names = [];
-            for (let k = 0; k < NUM_VARS_IN_STATE; k++) {
-                names.push(getVarName(k, false));
+            for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
+                names.push(getVarName(k));
             }
-            const localNames = [];
-            for (let k = 0; k < NUM_VARS_IN_STATE; k++) {
-                localNames.push(getVarName(k, true));
-            }
-            body.varsIndex = this.varsList_.addVariables(names, localNames);
+            body.varsIndex = this.varsList_.addVariables(names);
             // add body to end of list of bodies
             this.bodies_.push(body);
-            this.getSimList().add(body);
+            this.simList_.add(body);
         }
         this.initializeFromBody(body);
         this.bodies_.forEach(function (b) {
@@ -174,13 +158,13 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      */
     removeBody(body: RigidBody): void {
         if (contains(this.bodies_, body)) {
-            this.varsList_.deleteVariables(body.varsIndex, NUM_VARS_IN_STATE);
+            this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
             remove(this.bodies_, body);
             body.varsIndex = -1;
         }
-        this.getSimList().remove(body);
+        this.simList_.remove(body);
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.getVarsList().incrSequence(1, 2, 3);
+        this.varsList_.incrSequence(1, 2, 3);
     }
 
     /**
@@ -191,7 +175,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             this.forceLaws_.push(forceLaw);
         }
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.getVarsList().incrSequence(1, 2, 3);
+        this.varsList_.incrSequence(1, 2, 3);
     }
 
     /**
@@ -200,7 +184,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     removeForceLaw(forceLaw: ForceLaw) {
         forceLaw.disconnect();
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.getVarsList().incrSequence(1, 2, 3);
+        this.varsList_.incrSequence(1, 2, 3);
         return remove(this.forceLaws_, forceLaw);
     };
 
@@ -256,7 +240,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             }
             const mass = body.M;
             if (mass === Number.POSITIVE_INFINITY) {
-                for (var k = 0; k < NUM_VARS_IN_STATE; k++)
+                for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++)
                     change[idx + k] = 0;  // infinite mass objects don't move
             }
             else {
@@ -326,8 +310,8 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         change[idx + Offset.ANGULAR_MOMENTUM_XY] += Γ.xy;
 
         if (this.showForces_) {
-            forceApp.setExpireTime(this.getTime());
-            this.getSimList().add(forceApp);
+            forceApp.expireTime = this.getTime();
+            this.simList_.add(forceApp);
         }
     }
 
@@ -365,7 +349,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
             va.setValue(Offset.ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
         }
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.getVarsList().incrSequence(1, 2, 3);
+        this.varsList_.incrSequence(1, 2, 3);
     }
 
     /**
@@ -385,14 +369,14 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    getSimList(): SimList {
+    get simList(): SimList {
         return this.simList_;
     }
 
     /**
      * 
      */
-    getVarsList(): VarsList {
+    get varsList(): VarsList {
         return this.varsList_;
     }
 

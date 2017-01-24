@@ -17,13 +17,13 @@ import Subject from './Subject';
 
 export interface SubjectEvent {
     /**
+     * 
+     */
+    readonly name: string;
+    /**
      * Returns the Subject to which this SubjectEvent refers.
      */
     getSubject(): Subject;
-    /**
-     * 
-     */
-    getName(): string;
     /**
      * 
      */

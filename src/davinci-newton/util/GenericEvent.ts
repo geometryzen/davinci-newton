@@ -36,7 +36,7 @@ export class GenericEvent implements SubjectEvent {
     /**
      * 
      */
-    getName(localized?: boolean): string {
+    get name(): string {
         return this.name_;
     }
 

@@ -51,7 +51,7 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
-    constructor(private varsList_: VarsList, name: string, private localName_: string) {
+    constructor(private varsList_: VarsList, name: string) {
         this.name_ = validName(toName(name));
     }
 
@@ -62,8 +62,8 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
-    getName(localized?: boolean) {
-        return localized ? this.localName_ : this.name_;
+    get name(): string {
+        return this.name_;
     }
 
     getSequence(): number {

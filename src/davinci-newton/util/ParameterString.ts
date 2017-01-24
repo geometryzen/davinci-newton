@@ -48,7 +48,7 @@ export class ParameterString implements Parameter {
         this.inputFunction_ = null;
     }
 
-    getName(): string {
+    get name(): string {
         return this.name_;
     }
 
