@@ -19,6 +19,7 @@ import DrawingMode from '../view/DrawingMode';
 import GenericEvent from '../util/GenericEvent';
 import GraphPoint from './GraphPoint';
 import GraphStyle from './GraphStyle';
+import GraphVarsList from './GraphVarsList';
 import isObject from '../checks/isObject';
 import Memorizable from '../util/Memorizable';
 import mustBeLE from '../checks/mustBeLE';
@@ -27,7 +28,6 @@ import Observer from '../util/Observer';
 import ParameterNumber from '../util/ParameterNumber';
 import ParameterString from '../util/ParameterString';
 import SubjectEvent from '../util/SubjectEvent';
-import VarsList from '../core/VarsList';
 import veryDifferent from '../util/veryDifferent';
 
 // const GRAPH_DRAW_MODE = 'graph draw mode';
@@ -49,7 +49,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * The VarsList whose data this graph is displaying
      */
-    private readonly varsList_: VarsList;
+    private readonly varsList_: GraphVarsList;
     /**
      * index of horizontal variable in simulation's variables, or -1 to not collect any X variable data
      */
@@ -85,7 +85,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * The color to draw the hot spot (most recent point) with, a CSS3 color string.
      */
-    private hotSpotColor_ = 'red';
+    private hotspotColor_ = 'red';
 
     /**
      * GraphStyle's for display, ordered by index in dataPoints list.
@@ -108,7 +108,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * 
      */
-    constructor(varsList: VarsList, capacity?: number) {
+    constructor(varsList: GraphVarsList, capacity?: number) {
         super();
         this.varsList_ = varsList;
         varsList.addObserver(this);
@@ -213,8 +213,8 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Returns the color used when drawing the hot spot (most recent point).
      */
-    getHotSpotColor(): string {
-        return this.hotSpotColor_;
+    get hotspotColor(): string {
+        return this.hotspotColor_;
     }
 
     /**
@@ -228,7 +228,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Returns the VarsList that this GraphLine is collecting from
      */
-    get varsList(): VarsList {
+    get varsList(): GraphVarsList {
         return this.varsList_;
     }
 
@@ -246,7 +246,7 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return variable name or empty string in case index is -1
      */
     getXVarName(): string {
-        return this.xVar_ > -1 ? this.varsList_.getVariable(this.xVar_).name : '';
+        return this.xVar_ > -1 ? this.varsList_.getName(this.xVar_) : '';
     }
 
     /**
@@ -263,20 +263,18 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @return variable name or empty string in case index is -1
      */
     getYVarName(): string {
-        return this.yVar_ > -1 ? this.varsList_.getVariable(this.yVar_).name : '';
+        return this.yVar_ > -1 ? this.varsList_.getName(this.yVar_) : '';
     }
 
     memorize(): void {
         if (this.xVar_ > -1 && this.yVar_ > -1) {
             const varsList = this.varsList_;
-            const xVar = varsList.getVariable(this.xVar_);
-            const yVar = varsList.getVariable(this.yVar_);
-            const x = xVar.getValue();
-            const y = yVar.getValue();
+            const x = varsList.getValue(this.xVar_);
+            const y = varsList.getValue(this.yVar_);
             const nextX = this.xTransform(x, y);
             const nextY = this.yTransform(x, y);
-            const seqX = xVar.getSequence();
-            const seqY = yVar.getSequence();
+            const seqX = varsList.getSequence(this.xVar_);
+            const seqY = varsList.getSequence(this.xVar_);
             const newPoint = new GraphPoint(nextX, nextY, seqX, seqY);
             // only store if the new point is different from the last point
             const last = this.dataPoints_.getEndValue();
@@ -346,10 +344,9 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     /**
      * Sets the color to use when drawing the hot spot (most recent point).
      * Set this to empty string to not draw the hot spot.
-     * @param color the color to use when drawing the hot spot (most recent point)
      */
-    setHotSpotColor(color: string): void {
-        this.hotSpotColor_ = color;
+    set hotspotColor(color: string) {
+        this.hotspotColor_ = color;
     }
 
     /**
@@ -366,14 +363,12 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     }
 
     /**
-     * Sets the variable from which to collect data for the X value of the graph. Starts
-     * over with a new HistoryList. Broadcasts the ParameterNumber named
-     * `GraphLine.i18n.X_VARIABLE`.
+     * Sets the variable from which to collect data for the X value of the graph.
+     * Starts over with a new HistoryList.
+     * Broadcasts the parameter named `X_VARIABLE`.
      */
     set hCoordIndex(xVar: number) {
-        if (xVar < -1 || xVar > this.varsList_.numVariables() - 1) {
-            throw new Error('setXVariable bad index ' + xVar);
-        }
+        this.checkVarIndex(GraphLine.PARAM_NAME_X_VARIABLE, xVar);
         if (xVar !== this.xVar_) {
             this.xVar_ = xVar;
             this.reset();
@@ -382,18 +377,22 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
     }
 
     /**
-     * Sets the variable from which to collect data for the Y value of the graph. Starts
-     * over with a new HistoryList. Broadcasts the ParameterNumber named
-     * `GraphLine.i18n.Y_VARIABLE`.
+     * Sets the variable from which to collect data for the Y value of the graph.
+     * Starts over with a new HistoryList.
+     * Broadcasts the parameter named `Y_VARIABLE`.
      */
     set vCoordIndex(yVar: number) {
-        if (yVar < -1 || yVar > this.varsList_.numVariables() - 1) {
-            throw new Error('setYVariable bad index ' + yVar);
-        }
+        this.checkVarIndex(GraphLine.PARAM_NAME_Y_VARIABLE, yVar);
         if (yVar !== this.yVar_) {
             this.yVar_ = yVar;
             this.reset();
             this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
+        }
+    }
+
+    private checkVarIndex(name: string, index: number): void {
+        if (index < -1 || index > this.varsList_.numVariables() - 1) {
+            throw new Error(`${name} bad index: ${index}`);
         }
     }
 }

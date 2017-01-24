@@ -22,9 +22,11 @@ import DisplayGraph from './DisplayGraph';
 import DoubleRect from '../view/DoubleRect';
 import GenericObserver from '../util/GenericObserver';
 import GraphLine from './GraphLine';
+import GraphVarsList from './GraphVarsList';
 import LabCanvas from '../view/LabCanvas';
+import mustBeNumber from '../checks/mustBeNumber';
+import mustBeString from '../checks/mustBeString';
 import SimView from '../view/SimView';
-import VarsList from '../core/VarsList';
 
 
 /**
@@ -64,7 +66,7 @@ export class Graph extends AbstractSubject {
     /**
      * 
      */
-    constructor(canvasId: string, private varsList: VarsList) {
+    constructor(canvasId: string, private varsList: GraphVarsList) {
         super();
         const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
         this.labCanvas = new LabCanvas(canvas);
@@ -96,17 +98,25 @@ export class Graph extends AbstractSubject {
     /**
      * 
      */
-    addGraphLine(): GraphLine {
-        const trace = new GraphLine(this.varsList);
-        this.view.addMemo(trace);
-        trace.hCoordIndex = this.timeIdx_;
-        trace.vCoordIndex = -1;
-        trace.color = 'black';
-        this.displayGraph.addGraphLine(trace);
+    addGraphLine(hCoordIndex: number, vCoordIndex: number, color = 'black'): GraphLine {
+        mustBeNumber('hCoordIndex', hCoordIndex);
+        mustBeNumber('vCoordIndex', vCoordIndex);
+        mustBeString('color', color);
+        const graphLine = new GraphLine(this.varsList);
+        this.view.addMemo(graphLine);
+        graphLine.hCoordIndex = hCoordIndex;
+        graphLine.vCoordIndex = vCoordIndex;
+        graphLine.color = color;
+        graphLine.hotspotColor = color;
+        this.displayGraph.addGraphLine(graphLine);
         // Don't use off-screen buffer with time variable because the auto-scale causes
         // graph to redraw every frame.
-        this.displayGraph.setUseBuffer(trace.hCoordIndex !== this.timeIdx_);
-        return trace;
+        this.displayGraph.setUseBuffer(graphLine.hCoordIndex !== this.timeIdx_);
+        return graphLine;
+    }
+
+    removeGraphLine(graphLine: GraphLine): void {
+        this.displayGraph.removeGraphLine(graphLine);
     }
 
     memorize(): void {
@@ -115,6 +125,11 @@ export class Graph extends AbstractSubject {
 
     render(): void {
         this.labCanvas.paint();
+    }
+
+    reset(): void {
+        this.autoScale.reset();
+        this.displayGraph.reset();
     }
 }
 

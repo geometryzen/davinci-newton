@@ -31,8 +31,8 @@ export class ModifiedEuler implements DiffEqSolver {
 
     }
     step(stepSize: number): void {
-        const va = this.ode_.varsList;
-        const vars = va.getValues();
+        const varsList = this.ode_.varsList;
+        const vars = varsList.getValues();
         const N = vars.length;
         if (this.inp_.length !== N) {
             this.inp_ = new Array(N);
@@ -57,7 +57,7 @@ export class ModifiedEuler implements DiffEqSolver {
         for (let i = 0; i < N; i++) {
             vars[i] += (k1[i] + k2[i]) * stepSize / 2;
         }
-        va.setValues(vars, true);
+        varsList.setValues(vars, true);
     }
 }
 

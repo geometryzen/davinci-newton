@@ -83,14 +83,16 @@ export default class DisplayGraph implements DisplayObject {
         if (this.screenRect_.isEmpty()) {
             return;
         }
+        const graphLines = this.graphLines_;
+        const N = graphLines.length;
         context.save();
         if (this.lastMap_ == null || this.lastMap_ !== map) {
             this.lastMap_ = map;
             this.needRedraw_ = true;
         }
-        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
+        for (let i = 0; i < N; i++) {
             // Detect when graphLine has been reset.
-            if (this.memDraw_[i] > this.graphLines_[i].getGraphPoints().getEndIndex()) {
+            if (this.memDraw_[i] > graphLines[i].getGraphPoints().getEndIndex()) {
                 this.reset();
                 break;
             }
@@ -138,8 +140,8 @@ export default class DisplayGraph implements DisplayObject {
             // it does a sort of 'transparent image copy'.
             context.drawImage(this.offScreen_, 0, 0, w, h);
         }
-        for (let i = 0, n = this.graphLines_.length; i < n; i++) {
-            this.drawHotSpot(context, map, this.graphLines_[i]);
+        for (let i = 0; i < N; i++) {
+            this.drawHotSpot(context, map, graphLines[i]);
         }
         context.restore();
     }
@@ -152,7 +154,7 @@ export default class DisplayGraph implements DisplayObject {
         if (p != null) {
             const x = coordMap.simToScreenX(p.x);
             const y = coordMap.simToScreenY(p.y);
-            const color = graphLine.getHotSpotColor();
+            const color = graphLine.hotspotColor;
             if (color) {
                 context.fillStyle = color;
                 context.fillRect(x - 2, y - 2, 5, 5);
@@ -286,7 +288,7 @@ export default class DisplayGraph implements DisplayObject {
      */
     removeGraphLine(graphLine: GraphLine) {
         if (GraphLine.isDuckType(graphLine)) {
-            var idx = this.graphLines_.indexOf(graphLine);
+            const idx = this.graphLines_.indexOf(graphLine);
             removeAt(this.graphLines_, idx);
             removeAt(this.memDraw_, idx);
             this.needRedraw_ = true;
@@ -323,10 +325,15 @@ export default class DisplayGraph implements DisplayObject {
     }
 
     /**
-     * Causes entire graph to be redrawn, when {@link #draw} is next called.
+     * Causes entire graph to be redrawn, when `draw` is next called.
      */
     reset(): void {
-        this.memDraw_ = repeat(-1, this.graphLines_.length);
+        const graphLines = this.graphLines_;
+        const N = graphLines.length;
+        this.memDraw_ = repeat(-1, N);
+        for (let i = 0; i < N; i++) {
+            graphLines[i].reset();
+        }
         this.needRedraw_ = true;
     }
 }

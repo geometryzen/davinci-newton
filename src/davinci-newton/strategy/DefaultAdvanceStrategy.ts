@@ -18,7 +18,7 @@ import DiffEqSolver from '../core/DiffEqSolver';
 import MemoList from '../runner/MemoList';
 import Simulation from '../core/Simulation';
 
-export class SimpleAdvance implements AdvanceStrategy {
+export class DefaultAdvanceStrategy implements AdvanceStrategy {
     private timeStep_ = 0.025;
     constructor(private sim_: Simulation, private odeSolver_: DiffEqSolver) {
         // Do nothing yet.
@@ -42,4 +42,4 @@ export class SimpleAdvance implements AdvanceStrategy {
     }
 }
 
-export default SimpleAdvance;
+export default DefaultAdvanceStrategy;

@@ -16,16 +16,16 @@
 import AbstractSimObject from '../objects/AbstractSimObject';
 import Bivector3 from '../math/Bivector3';
 import BivectorE3 from '../math/BivectorE3';
-import CoordType from './CoordType';
-import ForceBody from './ForceBody';
-import Vector from '../math/Vector';
+import CoordType from '../model/CoordType';
+import ForceBody3 from './ForceBody3';
+import Vec3 from '../math/Vec3';
 import Vector3 from '../math/Vector3';
 import VectorE3 from '../math/VectorE3';
 
 /**
  * 
  */
-export class Force extends AbstractSimObject {
+export class Force3 extends AbstractSimObject {
     /**
      * 
      */
@@ -59,14 +59,14 @@ export class Force extends AbstractSimObject {
     /**
      * 
      */
-    constructor(private body_: ForceBody) {
+    constructor(private body_: ForceBody3) {
         super();
     }
 
     /**
      * 
      */
-    getBody(): ForceBody {
+    getBody(): ForceBody3 {
         return this.body_;
     }
 
@@ -89,14 +89,14 @@ export class Force extends AbstractSimObject {
         }
     }
 
-    get F(): Vector {
+    get F(): Vec3 {
         this.computeForce(this.force_);
-        return Vector.fromVector(this.force_);
+        return Vec3.fromVector(this.force_);
     }
 
-    get x(): Vector {
+    get x(): Vec3 {
         this.computePosition(this.position_);
-        return Vector.fromVector(this.position_);
+        return Vec3.fromVector(this.position_);
     }
 
     /**
@@ -132,4 +132,4 @@ export class Force extends AbstractSimObject {
     }
 }
 
-export default Force;
+export default Force3;

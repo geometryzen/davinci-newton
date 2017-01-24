@@ -45,7 +45,7 @@ export class AbstractSubject implements Subject {
      */
     private paramList_: Parameter[] = [];
 
-    addObserver(observer: Observer) {
+    addObserver(observer: Observer): void {
         if (!contains(this.observers_, observer)) {
             this.observers_.push(observer);
         }

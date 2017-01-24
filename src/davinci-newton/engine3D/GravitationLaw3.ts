@@ -13,16 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from './AbstractSimObject';
+import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from '../model/CoordType';
-import Force from '../model/Force';
-import ForceLaw from '../model/ForceLaw';
-import Massive from './Massive';
+import Force from './Force3';
+import ForceLaw from './ForceLaw3';
+import Massive from './Massive3';
 
 /**
  * 
  */
-export class GravitationLaw extends AbstractSimObject implements ForceLaw {
+export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
@@ -50,7 +50,7 @@ export class GravitationLaw extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    calculateForces(): Force[] {
+    updateForces(): Force[] {
 
         this.F1.location.copy(this.body1_.X);
         this.F2.location.copy(this.body2_.X);
@@ -77,7 +77,7 @@ export class GravitationLaw extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    getPotentialEnergy(): number {
+    potentialEnergy(): number {
         const m1 = this.body1_.M;
         const m2 = this.body2_.M;
         const r = this.F1.location.distanceTo(this.F2.location);
@@ -85,4 +85,4 @@ export class GravitationLaw extends AbstractSimObject implements ForceLaw {
     }
 }
 
-export default GravitationLaw;
+export default GravitationLaw3;

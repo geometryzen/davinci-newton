@@ -15,19 +15,18 @@
 
 import AbstractSubject from '../util/AbstractSubject';
 import Bivector3 from '../math/Bivector3';
-import Collision from './Collision';
+// import Collision from './Collision';
 import contains from '../util/contains';
-import EnergyInfo from '../model/EnergyInfo';
-import Force from '../model/Force';
-import ForceLaw from '../model/ForceLaw';
+import Force from './Force3';
+import ForceLaw from './ForceLaw3';
 import remove from '../util/remove';
-import RigidBody from './RigidBody';
+import RigidBody3 from './RigidBody3';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
 import Vector3 from '../math/Vector3';
 
-const var_names = [VarsList.TIME, VarsList.KINETIC_ENERGY, VarsList.POTENTIAL_ENERGY, VarsList.TOTAL_ENERGY];
+const var_names = [VarsList.TIME, "kinetic energy", "potential energy", "total energy"];
 
 enum Offset {
     POSITION_X = 0,
@@ -72,19 +71,19 @@ const NUM_VARIABLES_PER_BODY = 13;
 /**
  * 
  */
-export default class RigidBodySim extends AbstractSubject implements Simulation {
+export class Physics3 extends AbstractSubject implements Simulation {
     /**
      * 
      */
     private simList_ = new SimList();
     /**
-     * 
+     * The list of variables represents the current state of the simulation.
      */
     private varsList_: VarsList;
     /**
      * The RigidBody(s) in this simulation.
      */
-    private bodies_: RigidBody[] = [];
+    private bodies_: RigidBody3[] = [];
     /**
      * 
      */
@@ -135,7 +134,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    addBody(body: RigidBody): void {
+    addBody(body: RigidBody3): void {
         if (!contains(this.bodies_, body)) {
             // create variables in vars array for this body
             const names = [];
@@ -156,7 +155,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    removeBody(body: RigidBody): void {
+    removeBody(body: RigidBody3): void {
         if (contains(this.bodies_, body)) {
             this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
             remove(this.bodies_, body);
@@ -170,7 +169,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    addForceLaw(forceLaw: ForceLaw) {
+    addForceLaw(forceLaw: ForceLaw): void {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
         }
@@ -181,18 +180,18 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    removeForceLaw(forceLaw: ForceLaw) {
+    removeForceLaw(forceLaw: ForceLaw): void {
         forceLaw.disconnect();
         // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
         this.varsList_.incrSequence(1, 2, 3);
-        return remove(this.forceLaws_, forceLaw);
-    };
+        remove(this.forceLaws_, forceLaw);
+    }
 
     /**
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
-    private moveObjects(vars: number[]) {
+    private moveObjects(vars: number[]): void {
         this.bodies_.forEach(function (body) {
             const idx = body.varsIndex;
             if (idx < 0) {
@@ -228,7 +227,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.calculateForces.
+     * If anything it could be passed to forceLaw.updateForces.
      */
     evaluate(vars: number[], change: number[], time: number): void {
         // Move objects so that rigid body objects know their current state.
@@ -271,7 +270,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         });
         this.forceLaws_.forEach((forceLaw) => {
             // The forces will give rise to changes in both linear and angulat momentum.
-            const forces = forceLaw.calculateForces();
+            const forces = forceLaw.updateForces();
             forces.forEach((force) => {
                 this.applyForce(change, force);
             });
@@ -283,7 +282,7 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * Applying forces gives rise to linear and angular momentum.
      */
-    private applyForce(change: number[], forceApp: Force) {
+    private applyForce(change: number[], forceApp: Force): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
@@ -318,14 +317,14 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    getTime() {
+    getTime(): number {
         return this.varsList_.getTime();
     }
 
     /**
      * 
      */
-    private initializeFromBody(body: RigidBody): void {
+    private initializeFromBody(body: RigidBody3): void {
         // eraseOldCopy(body);
         const idx = body.varsIndex;
         if (idx > -1) {
@@ -356,14 +355,34 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
      * 
      */
     modifyObjects(): void {
-        const va = this.varsList_;
-        const vars = va.getValues();
+        const varsList = this.varsList_;
+        const vars = varsList.getValues();
         this.moveObjects(vars);
+
         // update the variables that track energy
-        const einfo = this.getEnergyInfo_(vars);
-        va.setValue(1, einfo.getTranslational() + einfo.getRotational(), true);
-        va.setValue(2, einfo.getPotential(), true);
-        va.setValue(3, einfo.getTotalEnergy(), true);
+        let pe = this.potentialOffset_;
+        let re = 0;
+        let te = 0;
+
+        const bs = this.bodies_;
+        const Nb = bs.length;
+        for (let i = 0; i < Nb; i++) {
+            const b = bs[i];
+            if (isFinite(b.M)) {
+                re += b.rotationalEnergy();
+                te += b.translationalEnergy();
+            }
+        }
+
+        const fs = this.forceLaws_;
+        const Nf = fs.length;
+        for (let i = 0; i < Nf; i++) {
+            pe += fs[i].potentialEnergy();
+        }
+
+        varsList.setValue(1, te + re, true);
+        varsList.setValue(2, pe, true);
+        varsList.setValue(3, te + re + pe, true);
     }
 
     /**
@@ -383,31 +402,13 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
     /**
      * 
      */
-    private getEnergyInfo_(vars: number[]): EnergyInfo {
-        // assumes bodies match current vars
-        let pe = 0;
-        let re = 0;
-        let te = 0;
-        this.bodies_.forEach(function (b) {
-            if (isFinite(b.M)) {
-                re += b.rotationalEnergy();
-                te += b.translationalEnergy();
-            }
-        });
-        this.forceLaws_.forEach(function (forceLaw) {
-            pe += forceLaw.getPotentialEnergy();
-        });
-        return new EnergyInfo(pe + this.potentialOffset_, te, re);
-    }
-
-    /**
-     * 
-     */
     saveState(): void {
         this.recentState_ = this.varsList_.getValues();
+        /*
         this.bodies_.forEach(function (b) {
-            // saveOldCopy(b);
+            saveOldCopy(b);
         });
+        */
     }
 
     /**
@@ -417,15 +418,21 @@ export default class RigidBodySim extends AbstractSubject implements Simulation 
         if (this.recentState_ != null) {
             this.varsList_.setValues(this.recentState_, true);
         }
+        /*
         this.bodies_.forEach(function (b) {
-            // eraseOldCopy(b);
+            eraseOldCopy(b);
         });
+        */
     }
 
     /**
      * 
      */
+    /*
     findCollisions(collisions: Collision[], vars: number[], stepSize: number): void {
         throw new Error("TODO: findCollisions");
     }
+    */
 }
+
+export default Physics3;

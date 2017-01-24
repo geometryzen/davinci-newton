@@ -6,12 +6,12 @@ import veryDifferent from '../util/veryDifferent';
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
  */
-export class Vector implements VectorE3 {
+export class Vec3 implements VectorE3 {
 
     /**
      * 
      */
-    static ORIGIN = new Vector(0, 0, 0);
+    static ORIGIN = new Vec3(0, 0, 0);
 
     /**
      * 
@@ -21,20 +21,21 @@ export class Vector implements VectorE3 {
     }
 
     /**
-     * 
+     * readonly x coordinate.
      */
     get x(): number {
         return this.x_;
     }
 
     /**
-     * 
+     * readonly y coordinate.
      */
     get y(): number {
         return this.y_;
     }
+
     /**
-     * 
+     * readonly z coordinate.
      */
     get z(): number {
         return this.z_;
@@ -43,14 +44,14 @@ export class Vector implements VectorE3 {
     /**
      * 
      */
-    add(rhs: VectorE3): Vector {
-        return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+    add(rhs: VectorE3): Vec3 {
+        return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
     }
 
     /**
      * this << B
      */
-    lco(B: BivectorE3): Vector {
+    lco(B: BivectorE3): Vec3 {
         const ax = B.yz;
         const ay = B.zx;
         const az = B.xy;
@@ -60,27 +61,27 @@ export class Vector implements VectorE3 {
         const x = ay * bz - az * by;
         const y = az * bx - ax * bz;
         const z = ax * by - ay * bx;
-        return new Vector(x, y, z);
+        return new Vec3(x, y, z);
     }
 
     /**
      * 
      */
-    subtract(rhs: VectorE3): Vector {
-        return new Vector(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+    subtract(rhs: VectorE3): Vec3 {
+        return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
     }
 
     /**
      * 
      */
-    multiply(alpha: number): Vector {
-        return new Vector(alpha * this.x, alpha * this.y, alpha * this.z);
+    multiply(alpha: number): Vec3 {
+        return new Vec3(alpha * this.x, alpha * this.y, alpha * this.z);
     }
 
     /**
      * 
      */
-    cross(rhs: VectorE3): Vector {
+    cross(rhs: VectorE3): Vec3 {
         const ax = this.x;
         const ay = this.y;
         const az = this.z;
@@ -90,7 +91,7 @@ export class Vector implements VectorE3 {
         const x = ay * bz - az * by;
         const y = az * bx - ax * bz;
         const z = ax * by - ay * bx;
-        return new Vector(x, y, z);
+        return new Vec3(x, y, z);
     }
 
     /**
@@ -106,7 +107,7 @@ export class Vector implements VectorE3 {
     /**
      * 
      */
-    immutable(): Vector {
+    immutable(): Vec3 {
         return this;
     }
 
@@ -139,7 +140,7 @@ export class Vector implements VectorE3 {
     /**
      * 
      */
-    direction(): Vector {
+    direction(): Vec3 {
         const magnitude = this.magnitude();
         if (magnitude !== 1) {
             if (magnitude === 0) {
@@ -158,7 +159,7 @@ export class Vector implements VectorE3 {
     /**
      * 
      */
-    rotate(spinor: SpinorE3): Vector {
+    rotate(spinor: SpinorE3): Vec3 {
         if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
             return this;
         }
@@ -174,25 +175,25 @@ export class Vector implements VectorE3 {
         return `new Vector(${this.x_.toString(radix)}, ${this.y_.toString(radix)}, ${this.z_.toString(radix)})`;
     }
 
-    __add__(rhs: VectorE3): Vector {
-        return new Vector(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+    __add__(rhs: VectorE3): Vec3 {
+        return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
     }
 
-    __mul__(rhs: number): Vector {
-        return new Vector(this.x * rhs, this.y * rhs, this.z * rhs);
+    __mul__(rhs: number): Vec3 {
+        return new Vec3(this.x * rhs, this.y * rhs, this.z * rhs);
     }
 
-    __div__(rhs: number): Vector {
-        return new Vector(this.x / rhs, this.y / rhs, this.z / rhs);
+    __div__(rhs: number): Vec3 {
+        return new Vec3(this.x / rhs, this.y / rhs, this.z / rhs);
     }
 
-    static dual(B: BivectorE3): Vector {
-        return new Vector(-B.yz, -B.zx, -B.xy);
+    static dual(B: BivectorE3): Vec3 {
+        return new Vec3(-B.yz, -B.zx, -B.xy);
     }
 
-    static fromVector(v: VectorE3): Vector {
-        return new Vector(v.x, v.y, v.z);
+    static fromVector(v: VectorE3): Vec3 {
+        return new Vec3(v.x, v.y, v.z);
     }
 }
 
-export default Vector;
+export default Vec3;

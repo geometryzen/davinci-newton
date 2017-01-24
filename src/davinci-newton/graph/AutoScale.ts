@@ -157,15 +157,6 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
      */
     constructor(simView: SimView) {
         super();
-        /*
-        if (isDefined(graphLine) && !GraphLine.isDuckType(graphLine)) {
-            throw new Error('not a GraphLine ' + graphLine);
-        }
-        if (GraphLine.isDuckType(graphLine)) {
-            this.graphLines_.push(graphLine);
-            graphLine.addObserver(this);
-        }
-        */
         this.simView_ = simView;
         simView.addMemo(this);
         simView.addObserver(this);
@@ -186,6 +177,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
         if (GraphLine.isDuckType(graphLine)) {
             if (!contains(this.graphLines_, graphLine)) {
                 this.graphLines_.push(graphLine);
+                graphLine.addObserver(this);
                 this.lastIndex_.push(-1);
             }
         }

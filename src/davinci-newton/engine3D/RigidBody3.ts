@@ -18,14 +18,14 @@ import Bivector3 from '../math/Bivector3';
 import Matrix3 from '../math/Matrix3';
 import mustBeNumber from '../checks/mustBeNumber';
 import Spinor3 from '../math/Spinor3';
-import Vector from '../math/Vector';
+import Vec3 from '../math/Vec3';
 import Vector3 from '../math/Vector3';
 import VectorE3 from '../math/VectorE3';
 
 /**
  * 
  */
-export class RigidBody extends AbstractSimObject {
+export class RigidBody3 extends AbstractSimObject {
     /**
      * Mass, M.
      */
@@ -57,7 +57,7 @@ export class RigidBody extends AbstractSimObject {
     /**
      * center of mass in body coordinates.
      */
-    protected cm_body_ = Vector.ORIGIN;
+    protected cm_body_ = Vec3.ORIGIN;
 
     /**
      * 
@@ -155,7 +155,8 @@ export class RigidBody extends AbstractSimObject {
      * 
      */
     bodyToWorld(bodyPoint: VectorE3, out: VectorE3): void {
-        const r = Vector.fromVector(bodyPoint).subtract(this.cm_body_);
+        // TODO: Avoid object creation.
+        const r = Vec3.fromVector(bodyPoint).subtract(this.cm_body_);
         const result = r.rotate(this.R).add(this.X);
         out.x = result.x;
         out.y = result.y;
@@ -188,4 +189,4 @@ export class RigidBody extends AbstractSimObject {
     */
 }
 
-export default RigidBody;
+export default RigidBody3;

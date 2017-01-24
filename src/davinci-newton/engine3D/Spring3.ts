@@ -13,18 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from './AbstractSimObject';
+import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from '../model/CoordType';
-import Force from '../model/Force';
-import ForceLaw from '../model/ForceLaw';
-import RigidBody from '../engine3D/RigidBody';
-import Vector from '../math/Vector';
+import Force3 from '../engine3D/Force3';
+import ForceLaw3 from '../engine3D/ForceLaw3';
+import RigidBody3 from '../engine3D/RigidBody3';
+import Vec3 from '../math/Vec3';
 import VectorE3 from '../math/VectorE3';
 
 /**
  * 
  */
-export class Spring extends AbstractSimObject implements ForceLaw {
+export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
@@ -32,22 +32,22 @@ export class Spring extends AbstractSimObject implements ForceLaw {
     // private compressOnly_ = false;
     private restLength_ = 1;
     private stiffness_ = 1;
-    private attach1_: VectorE3 = Vector.ORIGIN;
-    private attach2_: VectorE3 = Vector.ORIGIN;
-    private readonly F12: Force;
-    private readonly F21: Force;
-    private readonly forces: Force[] = [];
+    private attach1_: VectorE3 = Vec3.ORIGIN;
+    private attach2_: VectorE3 = Vec3.ORIGIN;
+    private readonly F12: Force3;
+    private readonly F21: Force3;
+    private readonly forces: Force3[] = [];
     /**
      * 
      */
-    constructor(private body1_: RigidBody, private body2_: RigidBody) {
+    constructor(private body1_: RigidBody3, private body2_: RigidBody3) {
         super();
 
-        this.F12 = new Force(this.body1_);
+        this.F12 = new Force3(this.body1_);
         this.F12.locationCoordType = CoordType.WORLD;
         this.F12.vectorCoordType = CoordType.WORLD;
 
-        this.F21 = new Force(this.body2_);
+        this.F21 = new Force3(this.body2_);
         this.F21.locationCoordType = CoordType.WORLD;
         this.F21.vectorCoordType = CoordType.WORLD;
 
@@ -71,7 +71,7 @@ export class Spring extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    calculateForces(): Force[] {
+    updateForces(): Force3[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F12.location);
         this.computeBody2AttachPointInWorldCoords(this.F21.location);
@@ -106,11 +106,11 @@ export class Spring extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    getPotentialEnergy(): number {
+    potentialEnergy(): number {
         // spring potential energy = 0.5 * stiffness * (stretch ^ 2)
         const stretch = this.F21.location.distanceTo(this.F12.location) - this.restLength_;
         return 0.5 * this.stiffness_ * stretch * stretch;
     }
 }
 
-export default Spring;
+export default Spring3;

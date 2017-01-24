@@ -20,6 +20,7 @@ import extendArray from '../util/extendArray';
 import find from '../util/find';
 import findIndex from '../util/findIndex';
 import GenericEvent from '../util/GenericEvent';
+import GraphVarsList from '../graph/GraphVarsList';
 import isNumber from '../checks/isNumber';
 import isString from '../checks/isString';
 import toName from '../util/toName';
@@ -27,9 +28,52 @@ import validName from '../util/validName';
 import Variable from '../model/Variable';
 
 /**
+ * A set of Variables.
+ * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
  * 
+ * VarsList is a `Subject` and each Variable is a `Parameter` of the VarsList.
+ * 
+ * Unlike other Subject classes, VarsList does not broadcast each Variable whenever the
+ * Variable changes. And VarsList prohibits adding general Parameters in its
+ * `addParameter` method, because it can only contain Variables.
+ * 
+ * As a Subject, the VarsList will broadcast the `VARS_MODIFIED` event to its
+ * Observers whenever Variables are added or removed.
+ * 
+ * ### Continuous vs. Discontinuous Changes
+ * 
+ * A change to a variable is either continuous or discontinuous. This affects how a line
+ * graph of the variable is drawn: `DisplayGraph` doesn't draw a line at a point of discontinuity.
+ * A discontinuity is indicated by incrementing the sequence number.
+ * 
+ * It is important to note that `setValue` and `setValues` have an optional
+ * parameter `continuous` which determines whether the change of variable is continuous or
+ * discontinuous.
+ * 
+ * Here are some guidelines about when a change in a variable should be marked as being
+ * discontinuous by incrementing the sequence number:
+ * 
+ * 1. When a change increments only a few variables, be sure to increment any variables
+ * that are **dependent** on those variables. For example, if velocity of an object is
+ * discontinuously changed, then the kinetic, potential and total energy should all be
+ * marked as discontinuous.
+ * 
+ * 2. When **dragging** an object, don't increment variables of other objects.
+ * 
+ * 3. When some **parameter** such as gravity or mass changes, increment any derived
+ * variables (like energy) that depend on that parameter.
+ * 
+ * ## Deleted Variables
+ * 
+ * When a variable is no longer used it has the reserved name 'DELETED'. Any such variable
+ * should be ignored.  This allows variables to be added or removed without affecting the
+ * index of other existing variables.
+ * 
+ * ### Events Broadcast
+ * 
+ * + GenericEvent name `VARS_MODIFIED`
  */
-export class VarsList extends AbstractSubject {
+export class VarsList extends AbstractSubject implements GraphVarsList {
     /**
      * 
      */
@@ -38,18 +82,6 @@ export class VarsList extends AbstractSubject {
      * 
      */
     public static readonly TIME = 'TIME';
-    /**
-     * 
-     */
-    public static readonly KINETIC_ENERGY = 'KINETIC_ENERGY';
-    /**
-     * 
-     */
-    public static readonly POTENTIAL_ENERGY = 'POTENTIAL_ENERGY';
-    /**
-     * 
-     */
-    public static readonly TOTAL_ENERGY = 'TOTAL_ENERGY';
     /**
      * 
      */
@@ -72,25 +104,32 @@ export class VarsList extends AbstractSubject {
      */
     private histArray_: number[][] = [];
     /**
-     * 
+     * @param names  array of language-independent variable names;
+     * these will be underscorized so the English names can be passed in here.
      */
-    constructor(varNames: string[]) {
+    constructor(names: string[]) {
         super();
-        for (let i = 0, n = varNames.length; i < n; i++) {
-            let s = varNames[i];
+        const howMany = names.length;
+        if (howMany !== 0) {
+            this.addVariables(names);
+        }
+        /*
+        for (let i = 0, n = names.length; i < n; i++) {
+            let s = names[i];
             if (!isString(s)) {
                 throw new Error('variable name ' + s + ' is not a string i=' + i);
             }
             s = validName(toName(s));
-            varNames[i] = s;
+            names[i] = s;
             // find index of the time variable.
             if (s === VarsList.TIME) {
                 this.timeIdx_ = i;
             }
         }
-        for (let i = 0, n = varNames.length; i < n; i++) {
-            this.varList_.push(new ConcreteVariable(this, varNames[i]));
+        for (let i = 0, n = names.length; i < n; i++) {
+            this.varList_.push(new ConcreteVariable(this, names[i]));
         }
+        */
     }
 
     /**
@@ -100,8 +139,8 @@ export class VarsList extends AbstractSubject {
      * @return index of first variable
      */
     private findOpenSlot_(quantity: number): number {
-        var found = 0;
-        var startIdx = -1;
+        let found = 0;
+        let startIdx = -1;
         for (var i = 0, n = this.varList_.length; i < n; i++) {
             if (this.varList_[i].name === VarsList.DELETED) {
                 if (startIdx === -1) {
@@ -111,23 +150,25 @@ export class VarsList extends AbstractSubject {
                 if (found >= quantity) {
                     return startIdx;
                 }
-            } else {
+            }
+            else {
                 startIdx = -1;
                 found = 0;
             }
         }
-        var expand;
+        let expand: number;
         if (found > 0) {
             // Found a group of deleted variables at end of VarsList, but need more.
             // Expand to get full quantity.
             expand = quantity - found;
-        } else {
+        }
+        else {
             // Did not find contiguous group of deleted variables of requested size.
             // Add space at end of current variables.
             startIdx = this.varList_.length;
             expand = quantity;
         }
-        var newVars = [];
+        const newVars: ConcreteVariable[] = [];
         for (i = 0; i < expand; i++) {
             newVars.push(new ConcreteVariable(this, VarsList.DELETED));
         }
@@ -136,7 +177,7 @@ export class VarsList extends AbstractSubject {
     }
 
     /**
-     * Add a continguous block of ConcreteVariables.
+     * Add a contiguous block of variables.
      * @param names language-independent names of variables; these will be
      * underscorized so the English name can be passed in here.
      * @return index index of first Variable that was added
@@ -151,7 +192,7 @@ export class VarsList extends AbstractSubject {
         for (let i = 0; i < howMany; i++) {
             const name = validName(toName(names[i]));
             if (name === VarsList.DELETED) {
-                throw new Error("variable cannot be named ''+VarsList.DELETED+''");
+                throw new Error(`variable cannot be named '${VarsList.DELETED}'`);
             }
             const idx = position + i;
             this.varList_[idx] = new ConcreteVariable(this, name);
@@ -165,6 +206,7 @@ export class VarsList extends AbstractSubject {
     }
 
     /**
+     * Deletes a contiguous block of variables.
      * Delete several variables, but leaves those places in the array as empty spots that
      * can be allocated in future with `addVariables`. Until an empty spot is
      * reallocated, the name of the variable at that spot has the reserved name 'DELETED' and
@@ -198,7 +240,8 @@ export class VarsList extends AbstractSubject {
             for (let i = 0, n = this.varList_.length; i < n; i++) {
                 this.varList_[i].incrSequence();
             }
-        } else {
+        }
+        else {
             // increment sequence number only on specified variables
             for (let i = 0, n = arguments.length; i < n; i++) {
                 const idx = arguments[i];
@@ -213,13 +256,24 @@ export class VarsList extends AbstractSubject {
      * @param index the index of the variable of interest
      * @return the current value of the variable of interest
      */
-    getValue(index: number) {
+    getValue(index: number): number {
         this.checkIndex_(index);
         return this.varList_[index].getValue();
     }
 
+    getName(index: number): string {
+        this.checkIndex_(index);
+        return this.varList_[index].name;
+    }
+
+    getSequence(index: number): number {
+        this.checkIndex_(index);
+        return this.varList_[index].getSequence();
+    }
+
     /**
      * Returns an array with the current value of each variable.
+     * The returned array is a copy and will not change.
      */
     getValues(): number[] {
         return this.varList_.map(function (v) { return v.getValue(); });
@@ -283,6 +337,7 @@ export class VarsList extends AbstractSubject {
             throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
         }
     }
+
     /**
      * Add a Variable to this VarsList.
      * @param variable the Variable to add
@@ -292,7 +347,7 @@ export class VarsList extends AbstractSubject {
     addVariable(variable: Variable): number {
         const name = variable.name;
         if (name === VarsList.DELETED) {
-            throw new Error('variable cannot be named "' + VarsList.DELETED + '"');
+            throw new Error(`variable cannot be named '${VarsList.DELETED}'`);
         }
         // add variable to first open slot
         const position = this.findOpenSlot_(1);
@@ -350,17 +405,18 @@ export class VarsList extends AbstractSubject {
      * @return the Variable object at the given index or with the given name
      */
     getVariable(id: number | string) {
-        var index;
+        let index: number;
         if (isNumber(id)) {
             index = id;
-        } else if (isString(id)) {
+        }
+        else if (isString(id)) {
             id = toName(id);
-            index = findIndex(this.varList_,
-                function (v) { return v.name === id; });
+            index = findIndex(this.varList_, v => v.name === id);
             if (index < 0) {
                 throw new Error('unknown variable name ' + id);
             }
-        } else {
+        }
+        else {
             throw new Error();
         }
         this.checkIndex_(index);
@@ -382,7 +438,7 @@ export class VarsList extends AbstractSubject {
      */
     saveHistory(): void {
         if (this.history_) {
-            var v = this.getValues();
+            const v = this.getValues();
             v.push(this.getTime());
             this.histArray_.push(v); // adds element to end of histArray_
             if (this.histArray_.length > 20) {

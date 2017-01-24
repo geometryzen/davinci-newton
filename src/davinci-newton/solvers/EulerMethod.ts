@@ -30,8 +30,8 @@ export class EulerMethod implements DiffEqSolver {
 
     }
     step(stepSize: number): void {
-        const va = this.ode_.varsList;
-        const vars = va.getValues();
+        const varsList = this.ode_.varsList;
+        const vars = varsList.getValues();
         const N = vars.length;
         if (this.inp_.length !== N) {
             this.inp_ = new Array(N);
@@ -44,15 +44,11 @@ export class EulerMethod implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        const error = this.ode_.evaluate(inp, k1, 0);
-        if (error !== null) {
-            return error;
-        }
+        this.ode_.evaluate(inp, k1, 0);
         for (let i = 0; i < N; i++) {
             vars[i] += k1[i] * stepSize;
         }
-        va.setValues(vars, true);
-        return null;
+        varsList.setValues(vars, true);
     }
 }
 
