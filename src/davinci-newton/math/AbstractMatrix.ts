@@ -1,3 +1,4 @@
+import MatrixLike from './MatrixLike';
 import mustBeDefined from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import expectArg from '../checks/expectArg';
@@ -6,7 +7,7 @@ import expectArg from '../checks/expectArg';
  * Base class for matrices with the expectation that they will be used with WebGL.
  * The underlying data storage is a <code>Float32Array</code>.
  */
-export default class AbstractMatrix<T extends { elements: Float32Array }> {
+export default class AbstractMatrix<T extends { elements: Float32Array }> implements MatrixLike {
 
     private _elements: Float32Array;
     private _length: number;
@@ -37,12 +38,19 @@ export default class AbstractMatrix<T extends { elements: Float32Array }> {
         this._elements = elements;
     }
 
-    copy(m: T): T {
-        this.elements.set(m.elements);
+    copy(source: MatrixLike): T {
+        const N = this.dimensions;
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                const value = source.getElement(i, j);
+                this.setElement(i, j, value);
+            }
+        }
         return <T><any>this;
     }
 
     /**
+     * Returns the element at the specified (zero-based) row and column.
      * @param row The zero-based row.
      * @param column The zero-based column.
      */

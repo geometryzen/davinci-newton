@@ -15,7 +15,11 @@
 
 import AbstractSimObject from '../objects/AbstractSimObject';
 import Bivector3 from '../math/Bivector3';
+import Mat3 from '../math/Mat3';
 import Matrix3 from '../math/Matrix3';
+import MatrixLike from '../math/MatrixLike';
+import mustBeFunction from '../checks/mustBeFunction';
+import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
 import Spinor3 from '../math/Spinor3';
 import Vec3 from '../math/Vec3';
@@ -31,10 +35,13 @@ export class RigidBody3 extends AbstractSimObject {
      */
     private mass_ = 1;
     /**
-     * Inertia tensor.
+     * Inertia tensor in body coordinates.
      */
-    public Ibody = Matrix3.one();
-    public Ibodyinv = Matrix3.one();
+    // private Ibody_ = new Mat3(Matrix3.one());
+    /**
+     * Inverse of the Inertia tensor in body coordinates.
+     */
+    private inertiaTensorInverse_ = new Mat3(Matrix3.one());
 
     /**
      * the index into the variables array for this rigid body, or -1 if not in vars array.
@@ -45,10 +52,6 @@ export class RigidBody3 extends AbstractSimObject {
     private readonly attitude_ = new Spinor3();
     private readonly linearMomentum_ = new Vector3();
     private readonly angularMomentum_ = new Bivector3();
-    /**
-     * Derived quantity (auxiliary variable).
-     */
-    public Iinv = Matrix3.one();
     /**
      * Angular velocity (bivector).
      */
@@ -74,6 +77,19 @@ export class RigidBody3 extends AbstractSimObject {
     }
     set M(mass: number) {
         this.mass_ = mustBeNumber('mass', mass);
+    }
+
+    /**
+     * Inertia Tensor (in body coordinates) inverse (3x3 matrix).
+     */
+    get Iinv(): MatrixLike {
+        return this.inertiaTensorInverse_;
+    }
+    set Iinv(source: MatrixLike) {
+        mustBeNonNullObject('Iinv', source);
+        mustBeNumber('dimensions', source.dimensions);
+        mustBeFunction('getElement', source.getElement);
+        this.inertiaTensorInverse_ = new Mat3(source);
     }
 
     /**

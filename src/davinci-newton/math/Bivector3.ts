@@ -50,6 +50,12 @@ export class Bivector3 implements BivectorE3 {
         this.xy = v.z;
         return this;
     }
+    /**
+     * Returns a string representation of this Bivector.
+     */
+    toString(radix?: number): string {
+        return `new Bivector3(yz: ${this.yz.toString(radix)}, zx: ${this.zx.toString(radix)}, xy: ${this.xy.toString(radix)})`;
+    }
 
     /**
      * 

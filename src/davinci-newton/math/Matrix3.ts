@@ -1,4 +1,6 @@
 import AbstractMatrix from './AbstractMatrix';
+import inv3x3 from './inv3x3';
+import mul3x3 from './mul3x3';
 import SpinorE3 from './SpinorE3';
 
 /**
@@ -8,9 +10,42 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
     /**
      * @param elements
      */
-    constructor(elements: Float32Array) {
+    constructor(elements = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])) {
         super(elements, 3);
     }
+
+    /**
+     *
+     */
+    inv(): this {
+        inv3x3(this.elements, this.elements);
+        return this;
+    }
+
+    /**
+     * @param rhs
+     */
+    mul(rhs: Matrix3): this {
+        return this.mul2(this, rhs);
+    }
+
+    /**
+     * @param lhs
+     */
+    rmul(lhs: Matrix3): this {
+        mul3x3(lhs.elements, this.elements, this.elements);
+        return this;
+    }
+
+    /**
+     * @param a
+     * @param b
+     */
+    mul2(a: Matrix3, b: Matrix3): this {
+        mul3x3(a.elements, b.elements, this.elements);
+        return this;
+    }
+
     /**
      * Sets this matrix to be equivalent to the spinor.
      *
@@ -47,6 +82,15 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
 
         return this;
     }
+
+    /**
+     * @param i the zero-based index of the row.
+     */
+    row(i: number): number[] {
+        const te = this.elements;
+        return [te[0 + i], te[3 + i], te[6 + i]];
+    }
+
     /**
      * <p>
      * Sets all elements of this matrix to the supplied values (provided in <em>row-major</em> order).
@@ -58,22 +102,19 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
      * The parameters are named according to the 1-based row and column.
      * </p>
      *
-     * @method set
-     * @param n11 {number}
-     * @param n12 {number}
-     * @param n13 {number}
-     * @param n21 {number}
-     * @param n22 {number}
-     * @param n23 {number}
-     * @param n31 {number}
-     * @param n32 {number}
-     * @param n33 {number}
-     * @return {Matrix3}
-     * @chainable
+     * @param n11
+     * @param n12
+     * @param n13
+     * @param n21
+     * @param n22
+     * @param n23
+     * @param n31
+     * @param n32
+     * @param n33
      */
     set(n11: number, n12: number, n13: number,
         n21: number, n22: number, n23: number,
-        n31: number, n32: number, n33: number): Matrix3 {
+        n31: number, n32: number, n33: number): this {
 
         const te = this.elements;
 
@@ -85,12 +126,40 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
     }
 
     /**
+     * @param radix
+     */
+    toString(radix?: number): string {
+        const text: string[] = [];
+        for (let i = 0; i < this.dimensions; i++) {
+            text.push(this.row(i).map(function (element: number, index: number) { return element.toString(radix); }).join(' '));
+        }
+        return text.join('\n');
+    }
+
+    /**
+     *
+     */
+    transpose(): this {
+        let tmp: number;
+        const m = this.elements;
+
+        tmp = m[1]; m[1] = m[3]; m[3] = tmp;
+        tmp = m[2]; m[2] = m[6]; m[6] = tmp;
+        tmp = m[5]; m[5] = m[7]; m[7] = tmp;
+
+        return this;
+    }
+
+    /**
      * Creates a new matrix with all elements zero except those along the main diagonal which have the value unity.
      */
     public static one(): Matrix3 {
         return new Matrix3(new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]));
     }
 
+    public static zero(): Matrix3 {
+        return new Matrix3(new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]));
+    }
 }
 
 export default Matrix3;

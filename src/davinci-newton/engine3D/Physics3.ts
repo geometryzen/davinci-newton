@@ -19,6 +19,7 @@ import Bivector3 from '../math/Bivector3';
 import contains from '../util/contains';
 import Force from './Force3';
 import ForceLaw from './ForceLaw3';
+import Matrix3 from '../math/Matrix3';
 import remove from '../util/remove';
 import RigidBody3 from './RigidBody3';
 import SimList from '../core/SimList';
@@ -112,6 +113,12 @@ export class Physics3 extends AbstractSubject implements Simulation {
      * Scratch variable for computing torque.
      */
     private torque_ = new Bivector3();
+    /**
+     * Scratch variable for computing Inertia Tensor.
+     */
+    private R_ = Matrix3.one();
+    private T_ = Matrix3.one();
+    private I_ = Matrix3.one();
 
     /**
      * 
@@ -192,6 +199,10 @@ export class Physics3 extends AbstractSubject implements Simulation {
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
     private moveObjects(vars: number[]): void {
+        const R = this.R_;
+        const T = this.T_;
+        const I = this.I_;
+
         this.bodies_.forEach(function (body) {
             const idx = body.varsIndex;
             if (idx < 0) {
@@ -217,10 +228,11 @@ export class Physics3 extends AbstractSubject implements Simulation {
             body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
 
             // Update derived quantities (auxiliary variables).
-            // body.V.copy(body.P).divByScalar(body.M);
             // We must compute Iinv before computing ω!
-            // TODO: body.Iinv = R(t) * Ibodyinv * transpose(R(t))
-            body.Ω.applyMatrix(body.Iinv);
+            R.rotation(body.R);
+            T.copy(R).transpose();
+            I.copy(body.Iinv).mul(T).rmul(R);
+            body.Ω.copy(body.L).applyMatrix(I);
         });
     }
 
@@ -249,14 +261,14 @@ export class Physics3 extends AbstractSubject implements Simulation {
                 change[idx + Offset.POSITION_Y] = vars[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
                 change[idx + Offset.POSITION_Z] = vars[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
 
-                // The rate of change of attitude is given by: dR/dt = (1/2) * Ω * R
-                // Ω and R are auxiliary variables that have already been computed.
+                // The rate of change of attitude is given by: dR/dt = -(1/2) * Ω * R
+                // Ω and R are auxiliary and primary variables that have already been computed.
                 const R = body.R;
                 const Ω = body.Ω;
-                change[idx + Offset.ATTITUDE_A] = -0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-                change[idx + Offset.ATTITUDE_XY] = 0.5 * Ω.xy * R.a;
-                change[idx + Offset.ATTITUDE_YZ] = 0.5 * Ω.yz * R.a;
-                change[idx + Offset.ATTITUDE_ZX] = 0.5 * Ω.zx * R.a;
+                change[idx + Offset.ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+                change[idx + Offset.ATTITUDE_XY] = -0.5 * Ω.xy * R.a;
+                change[idx + Offset.ATTITUDE_YZ] = -0.5 * Ω.yz * R.a;
+                change[idx + Offset.ATTITUDE_ZX] = -0.5 * Ω.zx * R.a;
 
                 // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
                 change[idx + Offset.LINEAR_MOMENTUM_X] = 0;

@@ -11,6 +11,7 @@ import Graph from './davinci-newton/graph/Graph';
 import GraphLine from './davinci-newton/graph/GraphLine';
 import GravitationLaw3 from './davinci-newton/engine3D/GravitationLaw3';
 import LabCanvas from './davinci-newton/view/LabCanvas';
+import Matrix3 from './davinci-newton/math/Matrix3';
 import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
 import RigidBody3 from './davinci-newton/engine3D/RigidBody3';
 import Physics3 from './davinci-newton/engine3D/Physics3';
@@ -86,6 +87,10 @@ const newton = {
      * 
      */
     get LabCanvas() { return LabCanvas; },
+    /**
+     * 
+     */
+    get Matrix3() { return Matrix3; },
     /**
      * 
      */

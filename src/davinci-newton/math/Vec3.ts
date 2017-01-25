@@ -164,7 +164,25 @@ export class Vec3 implements VectorE3 {
             return this;
         }
         else {
-            throw new Error("TODO: rotate(spinor)");
+            const x = this.x;
+            const y = this.y;
+            const z = this.z;
+
+            const a = spinor.xy;
+            const b = spinor.yz;
+            const c = spinor.zx;
+            const w = spinor.a;
+
+            const ix = w * x - c * z + a * y;
+            const iy = w * y - a * x + b * z;
+            const iz = w * z - b * y + c * x;
+            const iw = b * x + c * y + a * z;
+
+            const xPrimed = ix * w + iw * b + iy * a - iz * c;
+            const yPrimed = iy * w + iw * c + iz * b - ix * a;
+            const zPrimed = iz * w + iw * a + ix * c - iy * b;
+
+            return new Vec3(xPrimed, yPrimed, zPrimed);
         }
     }
 
@@ -177,6 +195,10 @@ export class Vec3 implements VectorE3 {
 
     __add__(rhs: VectorE3): Vec3 {
         return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+    }
+
+    __sub__(rhs: VectorE3): Vec3 {
+        return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
     }
 
     __mul__(rhs: number): Vec3 {

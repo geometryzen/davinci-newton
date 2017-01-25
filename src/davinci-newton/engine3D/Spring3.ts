@@ -20,6 +20,7 @@ import ForceLaw3 from '../engine3D/ForceLaw3';
 import RigidBody3 from '../engine3D/RigidBody3';
 import Vec3 from '../math/Vec3';
 import VectorE3 from '../math/VectorE3';
+import Vector3 from '../math/Vector3';
 
 /**
  * 
@@ -32,11 +33,19 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     // private compressOnly_ = false;
     private restLength_ = 1;
     private stiffness_ = 1;
-    private attach1_: VectorE3 = Vec3.ORIGIN;
-    private attach2_: VectorE3 = Vec3.ORIGIN;
+    private attach1_ = Vec3.ORIGIN;
+    private attach2_ = Vec3.ORIGIN;
     private readonly F12: Force3;
     private readonly F21: Force3;
     private readonly forces: Force3[] = [];
+    /**
+     * Scratch variable for computing endpoint in world coordinates.
+     */
+    private readonly end1_ = new Vector3();
+    /**
+     * Scratch variable for computing endpoint in world coordinates.
+     */
+    private readonly end2_ = new Vector3();
     /**
      * 
      */
@@ -66,6 +75,30 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
             throw new Error();
         }
         this.body2_.bodyToWorld(this.attach2_, x);
+    }
+
+    get attach1(): VectorE3 {
+        return this.attach1_;
+    }
+    set attach1(attach1: VectorE3) {
+        this.attach1_ = Vec3.fromVector(attach1);
+    }
+
+    get attach2(): VectorE3 {
+        return this.attach2_;
+    }
+    set attach2(attach2: VectorE3) {
+        this.attach2_ = Vec3.fromVector(attach2);
+    }
+
+    get end1(): Vec3 {
+        this.computeBody1AttachPointInWorldCoords(this.end1_);
+        return Vec3.fromVector(this.end1_);
+    }
+
+    get end2(): Vec3 {
+        this.computeBody2AttachPointInWorldCoords(this.end2_);
+        return Vec3.fromVector(this.end2_);
     }
 
     /**
