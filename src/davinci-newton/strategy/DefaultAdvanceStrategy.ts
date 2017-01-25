@@ -23,20 +23,32 @@ export class DefaultAdvanceStrategy implements AdvanceStrategy {
     constructor(private sim_: Simulation, private odeSolver_: DiffEqSolver) {
         // Do nothing yet.
     }
+
+    /**
+     * 
+     */
     advance(timeStep: number, memoList?: MemoList) {
-        this.sim_.simList.removeTemporary(this.sim_.getTime());
+        this.sim_.prolog();
         const err = this.odeSolver_.step(timeStep);
         if (err != null) {
             throw new Error(`error during advance ${err}`);
         }
-        this.sim_.modifyObjects();
+        this.sim_.epilog();
         if (memoList !== undefined) {
             memoList.memorize();
         }
     }
+
+    /**
+     * 
+     */
     getTime(): number {
-        return this.sim_.getTime();
+        return this.sim_.time;
     }
+
+    /**
+     * 
+     */
     getTimeStep(): number {
         return this.timeStep_;
     }

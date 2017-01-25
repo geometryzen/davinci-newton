@@ -27,7 +27,13 @@ import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
 import Vector3 from '../math/Vector3';
 
-const var_names = [VarsList.TIME, "kinetic energy", "potential energy", "total energy"];
+const var_names = [
+    VarsList.TIME,
+    "translational kinetic energy",
+    "rotational kinetic energy",
+    "potential energy",
+    "total energy"
+];
 
 enum Offset {
     POSITION_X = 0,
@@ -73,6 +79,11 @@ const NUM_VARIABLES_PER_BODY = 13;
  * 
  */
 export class Physics3 extends AbstractSubject implements Simulation {
+    public static readonly INDEX_TIME = 0;
+    public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+    public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+    public static readonly INDEX_POTENTIAL_ENERGY = 3;
+    public static readonly INDEX_TOTAL_ENERGY = 4;
     /**
      * 
      */
@@ -118,7 +129,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
      */
     private R_ = Matrix3.one();
     private T_ = Matrix3.one();
-    private I_ = Matrix3.one();
+    private Iinv_ = Matrix3.one();
 
     /**
      * 
@@ -157,6 +168,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
         this.bodies_.forEach(function (b) {
             // eraseOldCopy(b);
         });
+        this.discontinuosChangeToEnergy();
     }
 
     /**
@@ -169,8 +181,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
             body.varsIndex = -1;
         }
         this.simList_.remove(body);
-        // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.varsList_.incrSequence(1, 2, 3);
+        this.discontinuosChangeToEnergy();
     }
 
     /**
@@ -180,8 +191,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
         }
-        // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.varsList_.incrSequence(1, 2, 3);
+        this.discontinuosChangeToEnergy();
     }
 
     /**
@@ -189,9 +199,12 @@ export class Physics3 extends AbstractSubject implements Simulation {
      */
     removeForceLaw(forceLaw: ForceLaw): void {
         forceLaw.disconnect();
-        // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.varsList_.incrSequence(1, 2, 3);
+        this.discontinuosChangeToEnergy();
         remove(this.forceLaws_, forceLaw);
+    }
+
+    private discontinuosChangeToEnergy(): void {
+        this.varsList_.incrSequence(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, Physics3.INDEX_POTENTIAL_ENERGY, Physics3.INDEX_TOTAL_ENERGY);
     }
 
     /**
@@ -201,9 +214,12 @@ export class Physics3 extends AbstractSubject implements Simulation {
     private moveObjects(vars: number[]): void {
         const R = this.R_;
         const T = this.T_;
-        const I = this.I_;
+        const Iinv = this.Iinv_;
 
-        this.bodies_.forEach(function (body) {
+        const bodies = this.bodies_;
+        const N = bodies.length;
+        for (let i = 0; i < N; i++) {
+            const body = bodies[i];
             const idx = body.varsIndex;
             if (idx < 0) {
                 return;
@@ -228,12 +244,29 @@ export class Physics3 extends AbstractSubject implements Simulation {
             body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
 
             // Update derived quantities (auxiliary variables).
-            // We must compute Iinv before computing ω!
+            // We must calculate Ω.
+            // L = I * Ω => Ω = Iinv * L
+            // The inertia tensor must be converted from body coordinates to world.
             R.rotation(body.R);
             T.copy(R).transpose();
-            I.copy(body.Iinv).mul(T).rmul(R);
-            body.Ω.copy(body.L).applyMatrix(I);
-        });
+            Iinv.copy(body.Iinv).mul(T).rmul(R);
+            body.Ω.copy(body.L).applyMatrix(Iinv);
+        }
+    }
+
+    /**
+     * Handler for actions to be performed before the evaluate calls.
+     */
+    prolog(): void {
+        this.simList.removeTemporary(this.varsList.getTime());
+    }
+
+    getState(): number[] {
+        return this.varsList_.getValues();
+    }
+
+    setState(state: number[]): void {
+        this.varsList.setValues(state, true);
     }
 
     /**
@@ -241,9 +274,9 @@ export class Physics3 extends AbstractSubject implements Simulation {
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
      */
-    evaluate(vars: number[], change: number[], time: number): void {
+    evaluate(state: number[], change: number[], timeOffset: number): void {
         // Move objects so that rigid body objects know their current state.
-        this.moveObjects(vars);
+        this.moveObjects(state);
         this.bodies_.forEach(function (body) {
             const idx = body.varsIndex;
             if (idx < 0) {
@@ -251,15 +284,16 @@ export class Physics3 extends AbstractSubject implements Simulation {
             }
             const mass = body.M;
             if (mass === Number.POSITIVE_INFINITY) {
-                for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++)
+                for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
                     change[idx + k] = 0;  // infinite mass objects don't move
+                }
             }
             else {
                 // The rate of change of position is the velocity.
                 // dX/dt = V = P / M
-                change[idx + Offset.POSITION_X] = vars[idx + Offset.LINEAR_MOMENTUM_X] / mass;
-                change[idx + Offset.POSITION_Y] = vars[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
-                change[idx + Offset.POSITION_Z] = vars[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
+                change[idx + Offset.POSITION_X] = state[idx + Offset.LINEAR_MOMENTUM_X] / mass;
+                change[idx + Offset.POSITION_Y] = state[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
+                change[idx + Offset.POSITION_Z] = state[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
 
                 // The rate of change of attitude is given by: dR/dt = -(1/2) * Ω * R
                 // Ω and R are auxiliary and primary variables that have already been computed.
@@ -281,7 +315,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
             }
         });
         this.forceLaws_.forEach((forceLaw) => {
-            // The forces will give rise to changes in both linear and angulat momentum.
+            // The forces will give rise to changes in both linear and angular momentum.
             const forces = forceLaw.updateForces();
             forces.forEach((force) => {
                 this.applyForce(change, force);
@@ -321,7 +355,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
         change[idx + Offset.ANGULAR_MOMENTUM_XY] += Γ.xy;
 
         if (this.showForces_) {
-            forceApp.expireTime = this.getTime();
+            forceApp.expireTime = this.varsList_.getTime();
             this.simList_.add(forceApp);
         }
     }
@@ -329,7 +363,7 @@ export class Physics3 extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    getTime(): number {
+    get time(): number {
         return this.varsList_.getTime();
     }
 
@@ -359,14 +393,12 @@ export class Physics3 extends AbstractSubject implements Simulation {
             va.setValue(Offset.ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
             va.setValue(Offset.ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
         }
-        // discontinuous change to energy; 1 = KE, 2 = PE, 3 = TE
-        this.varsList_.incrSequence(1, 2, 3);
     }
 
     /**
-     * 
+     * Handler for actions to be performed after the evaluate calls.
      */
-    modifyObjects(): void {
+    epilog(): void {
         const varsList = this.varsList_;
         const vars = varsList.getValues();
         this.moveObjects(vars);
@@ -392,9 +424,10 @@ export class Physics3 extends AbstractSubject implements Simulation {
             pe += fs[i].potentialEnergy();
         }
 
-        varsList.setValue(1, te + re, true);
-        varsList.setValue(2, pe, true);
-        varsList.setValue(3, te + re + pe, true);
+        varsList.setValue(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+        varsList.setValue(Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+        varsList.setValue(Physics3.INDEX_POTENTIAL_ENERGY, pe, true);
+        varsList.setValue(Physics3.INDEX_TOTAL_ENERGY, te + re + pe, true);
     }
 
     /**

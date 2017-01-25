@@ -9,9 +9,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-01-24';
+                    this.LAST_MODIFIED = '2017-01-25';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.13';
+                    this.VERSION = '0.0.14';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -59,14 +59,13 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
         }],
         execute: function () {
             EulerMethod = function () {
-                function EulerMethod(ode_) {
-                    this.ode_ = ode_;
+                function EulerMethod(sim_) {
+                    this.sim_ = sim_;
                     this.inp_ = [];
                     this.k1_ = [];
                 }
                 EulerMethod.prototype.step = function (stepSize) {
-                    var varsList = this.ode_.varsList;
-                    var vars = varsList.getValues();
+                    var vars = this.sim_.getState();
                     var N = vars.length;
                     if (this.inp_.length !== N) {
                         this.inp_ = new Array(N);
@@ -78,11 +77,11 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
                         inp[i] = vars[i];
                     }
                     zeroArray_1.default(k1);
-                    this.ode_.evaluate(inp, k1, 0);
+                    this.sim_.evaluate(inp, k1, 0);
                     for (var i = 0; i < N; i++) {
                         vars[i] += k1[i] * stepSize;
                     }
-                    varsList.setValues(vars, true);
+                    this.sim_.setState(vars);
                 };
                 return EulerMethod;
             }();
@@ -1927,15 +1926,14 @@ System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"]
         }],
         execute: function () {
             ModifiedEuler = function () {
-                function ModifiedEuler(ode_) {
-                    this.ode_ = ode_;
+                function ModifiedEuler(sim_) {
+                    this.sim_ = sim_;
                     this.inp_ = [];
                     this.k1_ = [];
                     this.k2_ = [];
                 }
                 ModifiedEuler.prototype.step = function (stepSize) {
-                    var varsList = this.ode_.varsList;
-                    var vars = varsList.getValues();
+                    var vars = this.sim_.getState();
                     var N = vars.length;
                     if (this.inp_.length !== N) {
                         this.inp_ = new Array(N);
@@ -1949,16 +1947,16 @@ System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"]
                         inp[i] = vars[i];
                     }
                     zeroArray_1.default(k1);
-                    this.ode_.evaluate(inp, k1, 0);
+                    this.sim_.evaluate(inp, k1, 0);
                     for (var i = 0; i < N; i++) {
                         inp[i] = vars[i] + k1[i] * stepSize;
                     }
                     zeroArray_1.default(k2);
-                    this.ode_.evaluate(inp, k2, stepSize);
+                    this.sim_.evaluate(inp, k2, stepSize);
                     for (var i = 0; i < N; i++) {
                         vars[i] += (k1[i] + k2[i]) * stepSize / 2;
                     }
-                    varsList.setValues(vars, true);
+                    this.sim_.setState(vars);
                 };
                 return ModifiedEuler;
             }();
@@ -2938,7 +2936,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
             Vector3_1 = Vector3_1_1;
         }],
         execute: function () {
-            var_names = [VarsList_1.default.TIME, "kinetic energy", "potential energy", "total energy"];
+            var_names = [VarsList_1.default.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy"];
             (function (Offset) {
                 Offset[Offset["POSITION_X"] = 0] = "POSITION_X";
                 Offset[Offset["POSITION_Y"] = 1] = "POSITION_Y";
@@ -2968,7 +2966,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     _this.torque_ = new Bivector3_1.default();
                     _this.R_ = Matrix3_1.default.one();
                     _this.T_ = Matrix3_1.default.one();
-                    _this.I_ = Matrix3_1.default.one();
+                    _this.Iinv_ = Matrix3_1.default.one();
                     _this.varsList_ = new VarsList_1.default(var_names);
                     return _this;
                 }
@@ -2994,6 +2992,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     }
                     this.initializeFromBody(body);
                     this.bodies_.forEach(function (b) {});
+                    this.discontinuosChangeToEnergy();
                 };
                 Physics3.prototype.removeBody = function (body) {
                     if (contains_1.default(this.bodies_, body)) {
@@ -3002,24 +3001,30 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                         body.varsIndex = -1;
                     }
                     this.simList_.remove(body);
-                    this.varsList_.incrSequence(1, 2, 3);
+                    this.discontinuosChangeToEnergy();
                 };
                 Physics3.prototype.addForceLaw = function (forceLaw) {
                     if (!contains_1.default(this.forceLaws_, forceLaw)) {
                         this.forceLaws_.push(forceLaw);
                     }
-                    this.varsList_.incrSequence(1, 2, 3);
+                    this.discontinuosChangeToEnergy();
                 };
                 Physics3.prototype.removeForceLaw = function (forceLaw) {
                     forceLaw.disconnect();
-                    this.varsList_.incrSequence(1, 2, 3);
+                    this.discontinuosChangeToEnergy();
                     remove_1.default(this.forceLaws_, forceLaw);
+                };
+                Physics3.prototype.discontinuosChangeToEnergy = function () {
+                    this.varsList_.incrSequence(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, Physics3.INDEX_POTENTIAL_ENERGY, Physics3.INDEX_TOTAL_ENERGY);
                 };
                 Physics3.prototype.moveObjects = function (vars) {
                     var R = this.R_;
                     var T = this.T_;
-                    var I = this.I_;
-                    this.bodies_.forEach(function (body) {
+                    var Iinv = this.Iinv_;
+                    var bodies = this.bodies_;
+                    var N = bodies.length;
+                    for (var i = 0; i < N; i++) {
+                        var body = bodies[i];
                         var idx = body.varsIndex;
                         if (idx < 0) {
                             return;
@@ -3039,13 +3044,22 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                         body.L.zx = vars[idx + Offset.ANGULAR_MOMENTUM_ZX];
                         R.rotation(body.R);
                         T.copy(R).transpose();
-                        I.copy(body.Iinv).mul(T).rmul(R);
-                        body.Ω.copy(body.L).applyMatrix(I);
-                    });
+                        Iinv.copy(body.Iinv).mul(T).rmul(R);
+                        body.Ω.copy(body.L).applyMatrix(Iinv);
+                    }
                 };
-                Physics3.prototype.evaluate = function (vars, change, time) {
+                Physics3.prototype.prolog = function () {
+                    this.simList.removeTemporary(this.varsList.getTime());
+                };
+                Physics3.prototype.getState = function () {
+                    return this.varsList_.getValues();
+                };
+                Physics3.prototype.setState = function (state) {
+                    this.varsList.setValues(state, true);
+                };
+                Physics3.prototype.evaluate = function (state, change, timeOffset) {
                     var _this = this;
-                    this.moveObjects(vars);
+                    this.moveObjects(state);
                     this.bodies_.forEach(function (body) {
                         var idx = body.varsIndex;
                         if (idx < 0) {
@@ -3053,11 +3067,13 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                         }
                         var mass = body.M;
                         if (mass === Number.POSITIVE_INFINITY) {
-                            for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++) change[idx + k] = 0;
+                            for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
+                                change[idx + k] = 0;
+                            }
                         } else {
-                            change[idx + Offset.POSITION_X] = vars[idx + Offset.LINEAR_MOMENTUM_X] / mass;
-                            change[idx + Offset.POSITION_Y] = vars[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
-                            change[idx + Offset.POSITION_Z] = vars[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
+                            change[idx + Offset.POSITION_X] = state[idx + Offset.LINEAR_MOMENTUM_X] / mass;
+                            change[idx + Offset.POSITION_Y] = state[idx + Offset.LINEAR_MOMENTUM_Y] / mass;
+                            change[idx + Offset.POSITION_Z] = state[idx + Offset.LINEAR_MOMENTUM_Z] / mass;
                             var R = body.R;
                             var Ω = body.Ω;
                             change[idx + Offset.ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
@@ -3101,13 +3117,17 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     change[idx + Offset.ANGULAR_MOMENTUM_ZX] += Γ.zx;
                     change[idx + Offset.ANGULAR_MOMENTUM_XY] += Γ.xy;
                     if (this.showForces_) {
-                        forceApp.expireTime = this.getTime();
+                        forceApp.expireTime = this.varsList_.getTime();
                         this.simList_.add(forceApp);
                     }
                 };
-                Physics3.prototype.getTime = function () {
-                    return this.varsList_.getTime();
-                };
+                Object.defineProperty(Physics3.prototype, "time", {
+                    get: function () {
+                        return this.varsList_.getTime();
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Physics3.prototype.initializeFromBody = function (body) {
                     var idx = body.varsIndex;
                     if (idx > -1) {
@@ -3126,9 +3146,8 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                         va.setValue(Offset.ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
                         va.setValue(Offset.ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
                     }
-                    this.varsList_.incrSequence(1, 2, 3);
                 };
-                Physics3.prototype.modifyObjects = function () {
+                Physics3.prototype.epilog = function () {
                     var varsList = this.varsList_;
                     var vars = varsList.getValues();
                     this.moveObjects(vars);
@@ -3149,9 +3168,10 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     for (var i = 0; i < Nf; i++) {
                         pe += fs[i].potentialEnergy();
                     }
-                    varsList.setValue(1, te + re, true);
-                    varsList.setValue(2, pe, true);
-                    varsList.setValue(3, te + re + pe, true);
+                    varsList.setValue(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+                    varsList.setValue(Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+                    varsList.setValue(Physics3.INDEX_POTENTIAL_ENERGY, pe, true);
+                    varsList.setValue(Physics3.INDEX_TOTAL_ENERGY, te + re + pe, true);
                 };
                 Object.defineProperty(Physics3.prototype, "simList", {
                     get: function () {
@@ -3177,6 +3197,11 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                 };
                 return Physics3;
             }(AbstractSubject_1.default);
+            Physics3.INDEX_TIME = 0;
+            Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+            Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+            Physics3.INDEX_POTENTIAL_ENERGY = 3;
+            Physics3.INDEX_TOTAL_ENERGY = 4;
             exports_1("Physics3", Physics3);
             exports_1("default", Physics3);
         }
@@ -3209,8 +3234,8 @@ System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], f
         }],
         execute: function () {
             RungeKutta = function () {
-                function RungeKutta(ode_) {
-                    this.ode_ = ode_;
+                function RungeKutta(sim_) {
+                    this.sim_ = sim_;
                     this.inp_ = [];
                     this.k1_ = [];
                     this.k2_ = [];
@@ -3218,8 +3243,7 @@ System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], f
                     this.k4_ = [];
                 }
                 RungeKutta.prototype.step = function (stepSize) {
-                    var varsList = this.ode_.varsList;
-                    var vars = varsList.getValues();
+                    var vars = this.sim_.getState();
                     var N = vars.length;
                     if (this.inp_.length < N) {
                         this.inp_ = new Array(N);
@@ -3237,26 +3261,26 @@ System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], f
                         inp[i] = vars[i];
                     }
                     zeroArray_1.default(k1);
-                    this.ode_.evaluate(inp, k1, 0);
+                    this.sim_.evaluate(inp, k1, 0);
                     for (var i = 0; i < N; i++) {
                         inp[i] = vars[i] + k1[i] * stepSize / 2;
                     }
                     zeroArray_1.default(k2);
-                    this.ode_.evaluate(inp, k2, stepSize / 2);
+                    this.sim_.evaluate(inp, k2, stepSize / 2);
                     for (var i = 0; i < N; i++) {
                         inp[i] = vars[i] + k2[i] * stepSize / 2;
                     }
                     zeroArray_1.default(k3);
-                    this.ode_.evaluate(inp, k3, stepSize / 2);
+                    this.sim_.evaluate(inp, k3, stepSize / 2);
                     for (var i = 0; i < N; i++) {
                         inp[i] = vars[i] + k3[i] * stepSize;
                     }
                     zeroArray_1.default(k4);
-                    this.ode_.evaluate(inp, k4, stepSize);
+                    this.sim_.evaluate(inp, k4, stepSize);
                     for (var i = 0; i < N; i++) {
                         vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
                     }
-                    varsList.setValues(vars, true);
+                    this.sim_.setState(vars);
                 };
                 return RungeKutta;
             }();
@@ -3280,18 +3304,18 @@ System.register("davinci-newton/strategy/DefaultAdvanceStrategy.js", [], functio
                     this.timeStep_ = 0.025;
                 }
                 DefaultAdvanceStrategy.prototype.advance = function (timeStep, memoList) {
-                    this.sim_.simList.removeTemporary(this.sim_.getTime());
+                    this.sim_.prolog();
                     var err = this.odeSolver_.step(timeStep);
                     if (err != null) {
                         throw new Error("error during advance " + err);
                     }
-                    this.sim_.modifyObjects();
+                    this.sim_.epilog();
                     if (memoList !== undefined) {
                         memoList.memorize();
                     }
                 };
                 DefaultAdvanceStrategy.prototype.getTime = function () {
-                    return this.sim_.getTime();
+                    return this.sim_.time;
                 };
                 DefaultAdvanceStrategy.prototype.getTimeStep = function () {
                     return this.timeStep_;

@@ -23,12 +23,11 @@ export class RungeKutta implements DiffEqSolver {
     private k2_: number[] = [];
     private k3_: number[] = [];
     private k4_: number[] = [];
-    constructor(private ode_: Simulation) {
+    constructor(private sim_: Simulation) {
 
     }
     step(stepSize: number): void {
-        const varsList = this.ode_.varsList;
-        const vars = varsList.getValues();
+        const vars = this.sim_.getState();
         const N = vars.length;
         if (this.inp_.length < N) {
             this.inp_ = new Array(N);
@@ -47,29 +46,29 @@ export class RungeKutta implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.ode_.evaluate(inp, k1, 0);
+        this.sim_.evaluate(inp, k1, 0);
         // evaluate at time t+stepSize/2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k1[i] * stepSize / 2;
         }
         zeroArray(k2);
-        this.ode_.evaluate(inp, k2, stepSize / 2);
+        this.sim_.evaluate(inp, k2, stepSize / 2);
         // evaluate at time t+stepSize/2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k2[i] * stepSize / 2;
         }
         zeroArray(k3);
-        this.ode_.evaluate(inp, k3, stepSize / 2);
+        this.sim_.evaluate(inp, k3, stepSize / 2);
         // evaluate at time t+stepSize
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k3[i] * stepSize;
         }
         zeroArray(k4);
-        this.ode_.evaluate(inp, k4, stepSize);
+        this.sim_.evaluate(inp, k4, stepSize);
         for (let i = 0; i < N; i++) {
             vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
         }
-        varsList.setValues(vars, true);
+        this.sim_.setState(vars);
     }
 }
 

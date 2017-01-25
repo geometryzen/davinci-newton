@@ -13,9 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import SimList from './SimList';
-import VarsList from './VarsList';
-
 /**
  * 
  */
@@ -23,31 +20,27 @@ export interface Simulation {
     /**
      * 
      */
-    simList: SimList;
+    readonly time: number;
+    /**
+     * Handler for actions to be performed before getState and the evaluate calls.
+     */
+    prolog(): void;
     /**
      * 
      */
-    varsList: VarsList;
+    getState(): number[];
     /**
      * 
      */
-    evaluate(vars: number[], change: number[], timeStep: number): void;
+    evaluate(state: number[], change: number[], timeOffset: number): void;
     /**
      * 
      */
-    saveState(): void;
+    setState(state: number[]): void;
     /**
-     * 
+     * Handler for actions to be performed after the evaluate calls and setState.
      */
-    restoreState(): void;
-    /**
-     * 
-     */
-    getTime(): number;
-    /**
-     * 
-     */
-    modifyObjects(): void;
+    epilog(): void;
 }
 
 export default Simulation;
