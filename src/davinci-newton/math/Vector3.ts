@@ -143,7 +143,24 @@ export class Vector3 implements VectorE3 {
             return this;
         }
         else {
-            throw new Error("TODO: rotate(spinor)");
+            const x = this.x;
+            const y = this.y;
+            const z = this.z;
+
+            const a = spinor.xy;
+            const b = spinor.yz;
+            const c = spinor.zx;
+            const w = spinor.a;
+
+            const ix = w * x - c * z + a * y;
+            const iy = w * y - a * x + b * z;
+            const iz = w * z - b * y + c * x;
+            const iw = b * x + c * y + a * z;
+
+            this.x = ix * w + iw * b + iy * a - iz * c;
+            this.y = iy * w + iw * c + iz * b - ix * a;
+            this.z = iz * w + iw * a + ix * c - iy * b;
+            return this;
         }
     }
 

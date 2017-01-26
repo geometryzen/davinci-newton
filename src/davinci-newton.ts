@@ -1,8 +1,13 @@
 import AlignH from './davinci-newton/view/AlignH';
 import AlignV from './davinci-newton/view/AlignV';
 import AxisChoice from './davinci-newton/graph/AxisChoice';
+import Block3 from './davinci-newton/engine3D/Block3';
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
+import ConstantForceLaw3 from './davinci-newton/engine3D/ConstantForceLaw3';
+import CoordType from './davinci-newton/model/CoordType';
+import Cylinder3 from './davinci-newton/engine3D/Cylinder3';
+import DefaultAdvanceStrategy from './davinci-newton/strategy/DefaultAdvanceStrategy';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
 import DrawingMode from './davinci-newton/view/DrawingMode';
 import EulerMethod from './davinci-newton/solvers/EulerMethod';
@@ -16,9 +21,9 @@ import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
 import RigidBody3 from './davinci-newton/engine3D/RigidBody3';
 import Physics3 from './davinci-newton/engine3D/Physics3';
 import RungeKutta from './davinci-newton/solvers/RungeKutta';
-import DefaultAdvanceStrategy from './davinci-newton/strategy/DefaultAdvanceStrategy';
 import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
+import Sphere3 from './davinci-newton/engine3D/Sphere3';
 import Spring3 from './davinci-newton/engine3D/Spring3';
 import VarsList from './davinci-newton/core/VarsList';
 import Vec3 from './davinci-newton/math/Vec3';
@@ -50,7 +55,23 @@ const newton = {
     /**
      * 
      */
+    get Block3() { return Block3; },
+    /**
+     * 
+     */
     get CircularList() { return CircularList; },
+    /**
+     * 
+     */
+    get ConstantForceLaw3() { return ConstantForceLaw3; },
+    /**
+     * 
+     */
+    get CoordType() { return CoordType; },
+    /**
+     * 
+     */
+    get Cylinder3() { return Cylinder3; },
     /**
      * 
      */
@@ -115,6 +136,10 @@ const newton = {
      * 
      */
     get SimView() { return SimView; },
+    /**
+     * 
+     */
+    get Sphere3() { return Sphere3; },
     /**
      * 
      */

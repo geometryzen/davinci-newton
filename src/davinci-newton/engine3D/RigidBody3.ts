@@ -33,11 +33,7 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * Mass, M.
      */
-    private mass_ = 1;
-    /**
-     * Inertia tensor in body coordinates.
-     */
-    // private Ibody_ = new Mat3(Matrix3.one());
+    private M_ = 1;
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
@@ -73,10 +69,32 @@ export class RigidBody3 extends AbstractSimObject {
      * Mass (scalar)
      */
     get M(): number {
-        return this.mass_;
+        return this.M_;
     }
-    set M(mass: number) {
-        this.mass_ = mustBeNumber('mass', mass);
+    set M(M: number) {
+        if (this.M_ !== M) {
+            this.M_ = mustBeNumber('M', M);
+            this.updateInertiaTensor();
+        }
+    }
+
+    /**
+     * Derived classes should override.
+     */
+    protected updateInertiaTensor(): void {
+        // Do nothing.
+    }
+
+    /**
+     * Inertia Tensor (in body coordinates) (3x3 matrix).
+     */
+    get I(): MatrixLike {
+        const I = Matrix3.zero().copy(this.inertiaTensorInverse_).inv();
+        return new Mat3(I);
+    }
+    set I(I: MatrixLike) {
+        const Iinv = Matrix3.zero().copy(I).inv();
+        this.inertiaTensorInverse_ = new Mat3(Iinv);
     }
 
     /**
@@ -159,12 +177,12 @@ export class RigidBody3 extends AbstractSimObject {
     }
 
     /**
-     * (1/2) P^2 / M
+     * (1/2) (P * P) / M
      */
     translationalEnergy(): number {
-        const P = this.linearMomentum_;
-        const m = this.mass_;
-        return 0.5 * P.quadrance() / m;
+        const PxP = this.linearMomentum_.quadrance();
+        const M = this.M_;
+        return 0.5 * PxP / M;
     }
 
     /**
