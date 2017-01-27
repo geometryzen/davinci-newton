@@ -335,14 +335,15 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
                 change[idx + Physics3.OFFSET_POSITION_Y] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] / mass;
                 change[idx + Physics3.OFFSET_POSITION_Z] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] / mass;
 
-                // The rate of change of attitude is given by: dR/dt = -(1/2) * Ω * R
+                // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
+                // requiring the geometric product of Ω and R.
                 // Ω and R are auxiliary and primary variables that have already been computed.
                 const R = body.R;
                 const Ω = body.Ω;
                 change[idx + Physics3.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-                change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * Ω.xy * R.a;
-                change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * Ω.yz * R.a;
-                change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * Ω.zx * R.a;
+                change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+                change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+                change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
 
                 // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
                 change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] = 0;

@@ -206,7 +206,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2017-01-27';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.17';
+                    this.VERSION = '0.0.18';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -2594,9 +2594,9 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                             var R = body.R;
                             var Ω = body.Ω;
                             change[idx + Physics3.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-                            change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * Ω.xy * R.a;
-                            change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * Ω.yz * R.a;
-                            change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * Ω.zx * R.a;
+                            change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+                            change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+                            change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
                             change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] = 0;
                             change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] = 0;
                             change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] = 0;
