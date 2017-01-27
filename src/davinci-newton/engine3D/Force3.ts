@@ -44,15 +44,15 @@ export class Force3 extends AbstractSimObject {
     public vectorCoordType: CoordType;
 
     /**
-     * Scratch variable for computing position.
+     * Scratch variable for computing position (world coordinates).
      */
     private readonly position_ = new Vector3();
     /**
-     * Scratch variable for computing force.
+     * Scratch variable for computing force (world coordinates).
      */
     private readonly force_ = new Vector3();
     /**
-     * Scratch variable for computing torque.
+     * Scratch variable for computing torque (world coordinates).
      */
     private readonly torque_ = new Bivector3();
 
@@ -123,6 +123,8 @@ export class Force3 extends AbstractSimObject {
 
     /**
      * Computes the torque, i.e. moment of the force about the center of mass (bivector).
+     * Γ = (x - X) ^ F, so the torque is being computed with center of mass as origin.
+     * Γ = r ^ F because r = x - X
      */
     computeTorque(torque: BivectorE3): void {
         this.computePosition(this.position_);

@@ -29,10 +29,7 @@ export class DefaultAdvanceStrategy implements AdvanceStrategy {
      */
     advance(timeStep: number, memoList?: MemoList) {
         this.sim_.prolog();
-        const err = this.odeSolver_.step(timeStep);
-        if (err != null) {
-            throw new Error(`error during advance ${err}`);
-        }
+        this.odeSolver_.step(timeStep);
         this.sim_.epilog();
         if (memoList !== undefined) {
             memoList.memorize();

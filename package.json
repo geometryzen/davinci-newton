@@ -1,6 +1,6 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "WebGL library for mathematical physics using Geometric Algebra",
   "author": {
     "name": "David Holmes",
@@ -48,7 +48,7 @@
     "grunt-typedoc": "^0.2.4",
     "grunt-typescript": "^0.8.0",
     "jasmine-core": "^2.5.2",
-    "jspm": "^0.16.49",
+    "jspm": "^0.16.51",
     "karma": "0.13.22",
     "karma-chrome-launcher": "0.1.12",
     "karma-jasmine": "0.3.8",

@@ -173,7 +173,10 @@ export class RigidBody3 extends AbstractSimObject {
     rotationalEnergy(): number {
         const Ω = this.Ω;
         const L = this.L;
-        return 0.5 * (Ω.xy * L.xy + Ω.yz * L.yz + Ω.zx * L.zx);
+        const ω = Vector3.dual(Ω).neg();
+        const J = Vector3.dual(L).neg();
+        return 0.5 * ω.dot(J);
+        // return 0.5 * (Ω.xy * L.xy + Ω.yz * L.yz + Ω.zx * L.zx);
     }
 
     /**

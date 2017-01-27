@@ -1,5 +1,5 @@
 import BivectorE3 from './BivectorE3';
-import Matrix3 from './Matrix3';
+import MatrixLike from './MatrixLike';
 import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 
@@ -30,16 +30,18 @@ export class Vector3 implements VectorE3 {
      *
      * @param σ The 3x3 matrix that pre-multiplies this column vector.
      */
-    applyMatrix(σ: Matrix3): this {
+    applyMatrix(σ: MatrixLike): this {
         const x = this.x;
         const y = this.y;
         const z = this.z;
 
-        const e = σ.elements;
+        const n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
+        const n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
+        const n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
 
-        this.x = e[0x0] * x + e[0x3] * y + e[0x6] * z;
-        this.y = e[0x1] * x + e[0x4] * y + e[0x7] * z;
-        this.z = e[0x2] * x + e[0x5] * y + e[0x8] * z;
+        this.x = n11 * x + n12 * y + n13 * z;
+        this.y = n21 * x + n22 * y + n23 * z;
+        this.z = n31 * x + n32 * y + n33 * z;
 
         return this;
     }
@@ -59,6 +61,13 @@ export class Vector3 implements VectorE3 {
      */
     distanceTo(rhs: VectorE3): number {
         return Math.sqrt(this.quadranceTo(rhs));
+    }
+
+    /**
+     * 
+     */
+    dot(source: VectorE3): number {
+        return this.x * source.x + this.y * source.y + this.z * source.z;
     }
 
     /**
@@ -172,6 +181,12 @@ export class Vector3 implements VectorE3 {
         this.y -= rhs.y;
         this.z -= rhs.z;
         return this;
+    }
+    /**
+     * Returns a string representation of this Vector.
+     */
+    toString(radix?: number): string {
+        return `new Vector3(${this.x.toString(radix)}, ${this.y.toString(radix)}, ${this.z.toString(radix)})`;
     }
 
     __add__(rhs: VectorE3): Vector3 {

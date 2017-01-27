@@ -22,6 +22,30 @@ export class Spinor3 implements SpinorE3 {
         return this;
     }
 
+    divByScalar(alpha: number): this {
+        if (alpha !== 1) {
+            this.a /= alpha;
+            this.xy /= alpha;
+            this.yz /= alpha;
+            this.zx /= alpha;
+        }
+        return this;
+    }
+
+    magnitude(): number {
+        return Math.sqrt(this.quadrance());
+    }
+
+    normalize(): this {
+        const m = this.magnitude();
+        if (m !== 1) {
+            return this.divByScalar(m);
+        }
+        else {
+            return this;
+        }
+    }
+
     /**
      * 
      */
@@ -31,6 +55,14 @@ export class Spinor3 implements SpinorE3 {
         this.yz = 0;
         this.zx = 0;
         return this;
+    }
+
+    quadrance(): number {
+        const a = this.a;
+        const x = this.yz;
+        const y = this.zx;
+        const z = this.xy;
+        return a * a + x * x + y * y + z * z;
     }
 }
 

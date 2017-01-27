@@ -33,10 +33,25 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     // private compressOnly_ = false;
     private restLength_ = 1;
     private stiffness_ = 1;
+    /**
+     * The attachment point to body1 in the local coordinates frame of body 1.
+     */
     private attach1_ = Vec3.ORIGIN;
+    /**
+     * The attachment point to body2 in the local coordinates frame of body 2.
+     */
     private attach2_ = Vec3.ORIGIN;
-    private readonly F12: Force3;
-    private readonly F21: Force3;
+    /**
+     * The force information on body1 due to body2.
+     */
+    private readonly F1: Force3;
+    /**
+     * The force information on body2 due to body1.
+     */
+    private readonly F2: Force3;
+    /**
+     * 
+     */
     private readonly forces: Force3[] = [];
     /**
      * Scratch variable for computing endpoint in world coordinates.
@@ -52,15 +67,15 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     constructor(private body1_: RigidBody3, private body2_: RigidBody3) {
         super();
 
-        this.F12 = new Force3(this.body1_);
-        this.F12.locationCoordType = CoordType.WORLD;
-        this.F12.vectorCoordType = CoordType.WORLD;
+        this.F1 = new Force3(this.body1_);
+        this.F1.locationCoordType = CoordType.WORLD;
+        this.F1.vectorCoordType = CoordType.WORLD;
 
-        this.F21 = new Force3(this.body2_);
-        this.F21.locationCoordType = CoordType.WORLD;
-        this.F21.vectorCoordType = CoordType.WORLD;
+        this.F2 = new Force3(this.body2_);
+        this.F2.locationCoordType = CoordType.WORLD;
+        this.F2.vectorCoordType = CoordType.WORLD;
 
-        this.forces = [this.F12, this.F21];
+        this.forces = [this.F1, this.F2];
     }
 
     private computeBody1AttachPointInWorldCoords(x: VectorE3): void {
@@ -106,14 +121,14 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
      */
     updateForces(): Force3[] {
 
-        this.computeBody1AttachPointInWorldCoords(this.F12.location);
-        this.computeBody2AttachPointInWorldCoords(this.F21.location);
+        this.computeBody1AttachPointInWorldCoords(this.F1.location);
+        this.computeBody2AttachPointInWorldCoords(this.F2.location);
 
-        const length = this.F12.location.distanceTo(this.F21.location);
+        const length = this.F1.location.distanceTo(this.F2.location);
         const sf = this.stiffness_ * (length - this.restLength_) / length;
 
-        this.F12.vector.copy(this.F21.location).subtract(this.F12.location).mulByScalar(sf);
-        this.F21.vector.copy(this.F12.vector).neg();
+        this.F1.vector.copy(this.F2.location).subtract(this.F1.location).mulByScalar(sf);
+        this.F2.vector.copy(this.F1.vector).neg();
 
         /*
         if (this.damping_ !== 0) {
@@ -140,8 +155,11 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
      * 
      */
     potentialEnergy(): number {
+        this.computeBody1AttachPointInWorldCoords(this.F1.location);
+        this.computeBody2AttachPointInWorldCoords(this.F2.location);
+
         // spring potential energy = 0.5 * stiffness * (stretch ^ 2)
-        const stretch = this.F21.location.distanceTo(this.F12.location) - this.restLength_;
+        const stretch = this.F2.location.distanceTo(this.F1.location) - this.restLength_;
         return 0.5 * this.stiffness_ * stretch * stretch;
     }
 }

@@ -187,10 +187,10 @@ export class Vec3 implements VectorE3 {
     }
 
     /**
-     * Returns a string representation of this Vector.
+     * Returns a string representation of this vector.
      */
     toString(radix?: number): string {
-        return `new Vector(${this.x_.toString(radix)}, ${this.y_.toString(radix)}, ${this.z_.toString(radix)})`;
+        return `new Vec3(${this.x_.toString(radix)}, ${this.y_.toString(radix)}, ${this.z_.toString(radix)})`;
     }
 
     __add__(rhs: VectorE3): Vec3 {

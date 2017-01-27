@@ -1,3 +1,4 @@
+import AdaptiveStepSolver from './davinci-newton/solvers/AdaptiveStepSolver';
 import AlignH from './davinci-newton/view/AlignH';
 import AlignV from './davinci-newton/view/AlignV';
 import AxisChoice from './davinci-newton/graph/AxisChoice';
@@ -27,6 +28,7 @@ import Sphere3 from './davinci-newton/engine3D/Sphere3';
 import Spring3 from './davinci-newton/engine3D/Spring3';
 import VarsList from './davinci-newton/core/VarsList';
 import Vec3 from './davinci-newton/math/Vec3';
+import Vector3 from './davinci-newton/math/Vector3';
 
 /**
  *
@@ -40,6 +42,10 @@ const newton = {
      * The semantic version of the library.
      */
     get VERSION() { return config.VERSION; },
+    /**
+     * 
+     */
+    get AdaptiveStepSolver() { return AdaptiveStepSolver; },
     /**
      * 
      */
@@ -151,7 +157,11 @@ const newton = {
     /**
      * 
      */
-    get Vec3() { return Vec3; }
+    get Vec3() { return Vec3; },
+    /**
+     * 
+     */
+    get Vector3() { return Vector3; }
 }
 
 export default newton;

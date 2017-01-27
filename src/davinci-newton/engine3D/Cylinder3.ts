@@ -66,11 +66,11 @@ export class Cylinder3 extends RigidBody3 {
         const rr = r * r;
         const hh = h * h;
         const Irr = this.M * (3 * rr + hh) / 12;
-        const Izz = this.M * rr / 2;
+        const Ihh = this.M * rr / 2;
         const I = Matrix3.zero();
         I.setElement(0, 0, Irr);
-        I.setElement(1, 1, Irr);
-        I.setElement(2, 2, Izz);
+        I.setElement(1, 1, Ihh);
+        I.setElement(2, 2, Irr);
         this.I = I;
     }
 }
