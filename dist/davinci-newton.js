@@ -1060,6 +1060,9 @@ define('davinci-newton/math/Bivector3',["require", "exports", "./wedge"], functi
             this.xy = v.z;
             return this;
         };
+        Bivector3.prototype.isZero = function () {
+            return this.xy === 0 && this.yz === 0 && this.zx === 0;
+        };
         Bivector3.prototype.toString = function (radix) {
             return "new Bivector3(yz: " + this.yz.toString(radix) + ", zx: " + this.zx.toString(radix) + ", xy: " + this.xy.toString(radix) + ")";
         };
@@ -1180,6 +1183,46 @@ define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../ch
     exports.default = mustBeObject;
 });
 
+define('davinci-newton/math/rotate',["require", "exports"], function (require, exports) {
+    "use strict";
+    function rotateX(x, y, z, spinor) {
+        var a = spinor.xy;
+        var b = spinor.yz;
+        var c = spinor.zx;
+        var w = spinor.a;
+        var ix = w * x - c * z + a * y;
+        var iy = w * y - a * x + b * z;
+        var iz = w * z - b * y + c * x;
+        var iw = b * x + c * y + a * z;
+        return ix * w + iw * b + iy * a - iz * c;
+    }
+    exports.rotateX = rotateX;
+    function rotateY(x, y, z, spinor) {
+        var a = spinor.xy;
+        var b = spinor.yz;
+        var c = spinor.zx;
+        var w = spinor.a;
+        var ix = w * x - c * z + a * y;
+        var iy = w * y - a * x + b * z;
+        var iz = w * z - b * y + c * x;
+        var iw = b * x + c * y + a * z;
+        return iy * w + iw * c + iz * b - ix * a;
+    }
+    exports.rotateY = rotateY;
+    function rotateZ(x, y, z, spinor) {
+        var a = spinor.xy;
+        var b = spinor.yz;
+        var c = spinor.zx;
+        var w = spinor.a;
+        var ix = w * x - c * z + a * y;
+        var iy = w * y - a * x + b * z;
+        var iz = w * z - b * y + c * x;
+        var iw = b * x + c * y + a * z;
+        return iz * w + iw * a + ix * c - iy * b;
+    }
+    exports.rotateZ = rotateZ;
+});
+
 define('davinci-newton/math/Spinor3',["require", "exports"], function (require, exports) {
     "use strict";
     var Spinor3 = (function () {
@@ -1208,6 +1251,9 @@ define('davinci-newton/math/Spinor3',["require", "exports"], function (require, 
                 this.zx /= alpha;
             }
             return this;
+        };
+        Spinor3.prototype.isOne = function () {
+            return this.a === 1 && this.xy === 0 && this.yz === 0 && this.zx === 0;
         };
         Spinor3.prototype.magnitude = function () {
             return Math.sqrt(this.quadrance());
@@ -1293,6 +1339,9 @@ define('davinci-newton/math/Vec3',["require", "exports", "../util/veryDifferent"
         Vec3.prototype.add = function (rhs) {
             return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
         };
+        Vec3.prototype.divByScalar = function (alpha) {
+            return new Vec3(this.x / alpha, this.y / alpha, this.z / alpha);
+        };
         Vec3.prototype.lco = function (B) {
             var ax = B.yz;
             var ay = B.zx;
@@ -1308,7 +1357,7 @@ define('davinci-newton/math/Vec3',["require", "exports", "../util/veryDifferent"
         Vec3.prototype.subtract = function (rhs) {
             return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
         };
-        Vec3.prototype.multiply = function (alpha) {
+        Vec3.prototype.mulByScalar = function (alpha) {
             return new Vec3(alpha * this.x, alpha * this.y, alpha * this.z);
         };
         Vec3.prototype.cross = function (rhs) {
@@ -1323,14 +1372,11 @@ define('davinci-newton/math/Vec3',["require", "exports", "../util/veryDifferent"
             var z = ax * by - ay * bx;
             return new Vec3(x, y, z);
         };
-        Vec3.prototype.distanceTo = function (rhs) {
-            var Δx = this.x - rhs.x;
-            var Δy = this.y - rhs.y;
-            var Δz = this.z - rhs.z;
+        Vec3.prototype.distanceTo = function (point) {
+            var Δx = this.x - point.x;
+            var Δy = this.y - point.y;
+            var Δz = this.z - point.z;
             return Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
-        };
-        Vec3.prototype.immutable = function () {
-            return this;
         };
         Vec3.prototype.magnitude = function () {
             var x = this.x;
@@ -1338,14 +1384,14 @@ define('davinci-newton/math/Vec3',["require", "exports", "../util/veryDifferent"
             var z = this.z;
             return Math.sqrt(x * x + y * y + z * z);
         };
-        Vec3.prototype.nearEqual = function (vector, tolerance) {
-            if (veryDifferent_1.default(this.x_, vector.x, tolerance)) {
+        Vec3.prototype.nearEqual = function (v, tolerance) {
+            if (veryDifferent_1.default(this.x_, v.x, tolerance)) {
                 return false;
             }
-            if (veryDifferent_1.default(this.y_, vector.y, tolerance)) {
+            if (veryDifferent_1.default(this.y_, v.y, tolerance)) {
                 return false;
             }
-            if (veryDifferent_1.default(this.z_, vector.z, tolerance)) {
+            if (veryDifferent_1.default(this.z_, v.z, tolerance)) {
                 return false;
             }
             return true;
@@ -1357,7 +1403,7 @@ define('davinci-newton/math/Vec3',["require", "exports", "../util/veryDifferent"
                     throw new Error("direction is undefined.");
                 }
                 else {
-                    return this.multiply(1 / magnitude);
+                    return this.divByScalar(magnitude);
                 }
             }
             else {
@@ -1450,11 +1496,11 @@ define('davinci-newton/math/Vector3',["require", "exports"], function (require, 
             this.z = source.z;
             return this;
         };
-        Vector3.prototype.distanceTo = function (rhs) {
-            return Math.sqrt(this.quadranceTo(rhs));
+        Vector3.prototype.distanceTo = function (point) {
+            return Math.sqrt(this.quadranceTo(point));
         };
-        Vector3.prototype.dot = function (source) {
-            return this.x * source.x + this.y * source.y + this.z * source.z;
+        Vector3.prototype.dot = function (v) {
+            return this.x * v.x + this.y * v.y + this.z * v.z;
         };
         Vector3.prototype.dual = function (B) {
             this.x = -B.yz;
@@ -1472,8 +1518,11 @@ define('davinci-newton/math/Vector3',["require", "exports"], function (require, 
             this.z /= alpha;
             return this;
         };
+        Vector3.prototype.isZero = function () {
+            return this.x === 0 && this.y === 0 && this.z === 0;
+        };
         Vector3.prototype.magnitude = function () {
-            return Math.sqrt(this.quadrance());
+            return Math.sqrt(this.quaditude());
         };
         Vector3.prototype.mulByScalar = function (alpha) {
             this.x *= alpha;
@@ -1490,16 +1539,22 @@ define('davinci-newton/math/Vector3',["require", "exports"], function (require, 
             destination.z = this.z;
             return this;
         };
-        Vector3.prototype.quadrance = function () {
+        Vector3.prototype.zero = function () {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            return this;
+        };
+        Vector3.prototype.quaditude = function () {
             var x = this.x;
             var y = this.y;
             var z = this.z;
             return x * x + y * y + z * z;
         };
-        Vector3.prototype.quadranceTo = function (rhs) {
-            var Δx = this.x - rhs.x;
-            var Δy = this.y - rhs.y;
-            var Δz = this.z - rhs.z;
+        Vector3.prototype.quadranceTo = function (point) {
+            var Δx = this.x - point.x;
+            var Δy = this.y - point.y;
+            var Δz = this.z - point.z;
             return Δx * Δx + Δy * Δy + Δz * Δz;
         };
         Vector3.prototype.rotate = function (spinor) {
@@ -1560,7 +1615,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/AbstractSimObject", "../math/Bivector3", "../math/Mat3", "../math/Matrix3", "../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Spinor3", "../math/Vec3", "../math/Vector3"], function (require, exports, AbstractSimObject_1, Bivector3_1, Mat3_1, Matrix3_1, mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Spinor3_1, Vec3_1, Vector3_1) {
+define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/AbstractSimObject", "../math/Bivector3", "../math/Mat3", "../math/Matrix3", "../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/rotate", "../math/Spinor3", "../math/Vec3", "../math/Vector3"], function (require, exports, AbstractSimObject_1, Bivector3_1, Mat3_1, Matrix3_1, mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, rotate_1, Spinor3_1, Vec3_1, Vector3_1) {
     "use strict";
     var RigidBody3 = (function (_super) {
         __extends(RigidBody3, _super);
@@ -1574,9 +1629,19 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
             _this.linearMomentum_ = new Vector3_1.default();
             _this.angularMomentum_ = new Bivector3_1.default();
             _this.Ω = new Bivector3_1.default();
-            _this.cm_body_ = Vec3_1.default.ORIGIN;
+            _this.centerOfMassLocal_ = Vec3_1.default.ORIGIN;
             return _this;
         }
+        Object.defineProperty(RigidBody3.prototype, "centerOfMassLocal", {
+            get: function () {
+                return this.centerOfMassLocal_;
+            },
+            set: function (centerOfMassLocal) {
+                this.centerOfMassLocal_ = Vec3_1.default.fromVector(centerOfMassLocal);
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(RigidBody3.prototype, "M", {
             get: function () {
                 return this.M_;
@@ -1682,16 +1747,18 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
             return 0.5 * ω.dot(J);
         };
         RigidBody3.prototype.translationalEnergy = function () {
-            var PxP = this.linearMomentum_.quadrance();
-            var M = this.M_;
-            return 0.5 * PxP / M;
+            return 0.5 * this.P.quaditude() / this.M;
         };
-        RigidBody3.prototype.bodyToWorld = function (bodyPoint, out) {
-            var r = Vec3_1.default.fromVector(bodyPoint).subtract(this.cm_body_);
-            var result = r.rotate(this.R).add(this.X);
-            out.x = result.x;
-            out.y = result.y;
-            out.z = result.z;
+        RigidBody3.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
+            var comLocal = this.centerOfMassLocal_;
+            var x = localPoint.x - comLocal.x;
+            var y = localPoint.y - comLocal.y;
+            var z = localPoint.z - comLocal.z;
+            var X = this.position_;
+            var R = this.attitude_;
+            worldPoint.x = rotate_1.rotateX(x, y, z, R) + X.x;
+            worldPoint.y = rotate_1.rotateY(x, y, z, R) + X.y;
+            worldPoint.z = rotate_1.rotateZ(x, y, z, R) + X.z;
         };
         return RigidBody3;
     }(AbstractSimObject_1.default));
@@ -1958,9 +2025,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-01-27';
+            this.LAST_MODIFIED = '2017-01-28';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.18';
+            this.VERSION = '0.0.19';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5973,13 +6040,13 @@ define('davinci-newton/engine3D/Spring3',["require", "exports", "../objects/Abst
             if (this.attach1_ == null || this.body1_ == null) {
                 throw new Error();
             }
-            this.body1_.bodyToWorld(this.attach1_, x);
+            this.body1_.localPointToWorldPoint(this.attach1_, x);
         };
         Spring3.prototype.computeBody2AttachPointInWorldCoords = function (x) {
             if (this.attach2_ == null || this.body2_ == null) {
                 throw new Error();
             }
-            this.body2_.bodyToWorld(this.attach2_, x);
+            this.body2_.localPointToWorldPoint(this.attach2_, x);
         };
         Object.defineProperty(Spring3.prototype, "attach1", {
             get: function () {

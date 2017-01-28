@@ -69,6 +69,14 @@ declare module NEWTON {
      */
     class Vec3 implements VectorE3 {
         /**
+         * 
+         */
+        static ORIGIN: Vec3;
+        /**
+         * 
+         */
+        constructor(x: number, y: number, z: number);
+        /**
          * x coordinate.
          */
         x: number;
@@ -80,28 +88,61 @@ declare module NEWTON {
          * z coordinate.
          */
         z: number;
-        static ORIGIN: Vec3;
-        constructor(x: number, y: number, z: number);
         add(rhs: VectorE3): Vec3;
-        subtract(rhs: VectorE3): Vec3;
-        multiply(alpha: number): Vec3;
-        distanceTo(rhs: VectorE3): number;
-        immutable(): Vec3;
+        cross(rhs: VectorE3): Vec3;
+        direction(): Vec3;
+        distanceTo(point: VectorE3): number;
+        divByScalar(alpha: number): Vec3;
+        lco(B: BivectorE3): Vec3;
         magnitude(): number;
-        normalize(): Vec3;
-        rotate(cosAngle: number, sinAngle: number): Vec3;
+        mulByScalar(alpha: number): Vec3;
+        nearEqual(v: VectorE3, tolerance?: number): boolean;
+        // normalize(): Vec3;
+        rotate(spinor: SpinorE3): Vec3;
+        subtract(rhs: VectorE3): Vec3;
+        toString(radix?: number): string;
+        static dual(B: BivectorE3): Vec3;
+        static fromVector(v: VectorE3): Vec3;
     }
 
     /**
      * A mutable implementation of a vector with cartesian coordinates in 3D.
      */
     class Vector3 implements VectorE3 {
-        x: number;
-        y: number;
-        z: number;
+        /**
+         * 
+         */
         constructor(x?: number, y?: number, z?: number);
+        /**
+         * 
+         */
+        x: number;
+        /**
+         * 
+         */
+        y: number;
+        /**
+         * 
+         */
+        z: number;
+        add(rhs: VectorE3): this;
+        applyMatrix(σ: MatrixLike): this;
         copy(source: VectorE3): this;
+        direction(): this;
+        distanceTo(point: VectorE3): number;
+        divByScalar(alpha: number): this;
+        dot(v: VectorE3): number;
+        dual(B: BivectorE3): this;
+        isZero(): boolean;
+        magnitude(): number;
         neg(): this;
+        quaditude(): number;
+        quadranceTo(point: VectorE3): number;
+        rotate(spinor: SpinorE3): this;
+        subtract(rhs: VectorE3): this;
+        toString(radix?: number): string;
+        write(destination: VectorE3): this;
+        zero(): this;
         static dual(B: BivectorE3): Vector3;
     }
 
@@ -124,7 +165,14 @@ declare module NEWTON {
         yz: number;
         zx: number;
         xy: number;
+        applyMatrix(m: MatrixLike): this;
         copy(B: BivectorE3): this;
+        dual(v: VectorE3): this;
+        isZero(): boolean;
+        toString(radix?: number): string;
+        wedge(a: VectorE3, b: VectorE3): this;
+        write(B: BivectorE3): this;
+        zero(): this;
     }
 
 
@@ -136,10 +184,18 @@ declare module NEWTON {
      * A mutable implementation of a spinor with cartesian coordinates in 3D.
      */
     class Spinor3 implements SpinorE3 {
+        constructor(a?: number, xy?: number, yz?: number, zx?: number);
         a: number;
         yz: number;
         zx: number;
         xy: number;
+        copy(spinor: SpinorE3): this;
+        divByScalar(alpha: number): this;
+        isOne(): boolean;
+        magnitude(): number;
+        normalize(): this;
+        one(): this;
+        quadrance(): this;
     }
 
     interface MatrixLike {
@@ -152,24 +208,36 @@ declare module NEWTON {
      */
     class Matrix3 implements MatrixLike {
         dimensions: number;
+        elements: Float32Array;
+        modified: boolean;
         /**
          * Constructs a mutable 3x3 identity matrix.
          */
-        constructor();
+        constructor(elements?: Float32Array);
         copy(source: MatrixLike): this;
         getElement(row: number, column: number): number;
         inv(): this;
+        isOne(): boolean;
         mul(rhs: Matrix3): this;
+        mul2(a: Matrix3, b: Matrix3): this;
         rmul(lhs: Matrix3): this;
         rotation(spinor: SpinorE3): this;
+        row(i: number): number[];
         setElement(row: number, column: number, value: number): void;
+        toString(radix?: number): string;
         transpose(): this;
+        static one(): Matrix3;
+        static zero(): Matrix3;
     }
 
     /**
      * 
      */
     class RigidBody3 implements SimObject {
+        /**
+         * The center of mass position vector in local coordinates.
+         */
+        centerOfMassLocal: VectorE3;
         /**
          * Mass (scalar).
          */
@@ -215,6 +283,11 @@ declare module NEWTON {
          */
         constructor();
         /**
+         * Converts a point in local coordinates to the same point in world coordinates.
+         * x = R (localPoint - centerOfMassLocal) * ~R + X
+         */
+        localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void;
+        /**
          * 
          */
         protected updateInertiaTensor(): void;
@@ -254,12 +327,6 @@ declare module NEWTON {
         radius: number;
         constructor(radius?: number);
     }
-
-    /*
-    interface Collision {
-
-    }
-    */
 
     enum CoordType {
         BODY = 0,

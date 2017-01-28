@@ -52,6 +52,11 @@ export class Bivector3 implements BivectorE3 {
         this.xy = v.z;
         return this;
     }
+
+    isZero(): boolean {
+        return this.xy === 0 && this.yz === 0 && this.zx === 0;
+    }
+
     /**
      * Returns a string representation of this Bivector.
      */

@@ -32,6 +32,10 @@ export class Spinor3 implements SpinorE3 {
         return this;
     }
 
+    isOne(): boolean {
+        return this.a === 1 && this.xy === 0 && this.yz === 0 && this.zx === 0;
+    }
+
     magnitude(): number {
         return Math.sqrt(this.quadrance());
     }

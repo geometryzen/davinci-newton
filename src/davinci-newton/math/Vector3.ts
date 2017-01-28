@@ -59,15 +59,15 @@ export class Vector3 implements VectorE3 {
     /**
      * 
      */
-    distanceTo(rhs: VectorE3): number {
-        return Math.sqrt(this.quadranceTo(rhs));
+    distanceTo(point: VectorE3): number {
+        return Math.sqrt(this.quadranceTo(point));
     }
 
     /**
      * 
      */
-    dot(source: VectorE3): number {
-        return this.x * source.x + this.y * source.y + this.z * source.z;
+    dot(v: VectorE3): number {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
     /**
@@ -95,8 +95,12 @@ export class Vector3 implements VectorE3 {
         return this;
     }
 
+    isZero(): boolean {
+        return this.x === 0 && this.y === 0 && this.z === 0;
+    }
+
     magnitude(): number {
-        return Math.sqrt(this.quadrance());
+        return Math.sqrt(this.quaditude());
     }
 
     /**
@@ -124,9 +128,19 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
+     * 
+     */
+    zero(): this {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        return this;
+    }
+
+    /**
      * Computes the square of this vector.
      */
-    quadrance(): number {
+    quaditude(): number {
         const x = this.x;
         const y = this.y;
         const z = this.z;
@@ -137,10 +151,10 @@ export class Vector3 implements VectorE3 {
     /**
      * 
      */
-    quadranceTo(rhs: VectorE3): number {
-        const Δx = this.x - rhs.x;
-        const Δy = this.y - rhs.y;
-        const Δz = this.z - rhs.z;
+    quadranceTo(point: VectorE3): number {
+        const Δx = this.x - point.x;
+        const Δy = this.y - point.y;
+        const Δz = this.z - point.z;
         return Δx * Δx + Δy * Δy + Δz * Δz;
     }
 

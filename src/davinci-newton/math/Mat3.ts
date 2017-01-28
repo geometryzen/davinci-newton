@@ -22,7 +22,10 @@ export class Mat3 implements MatrixLike {
         const n31 = source.getElement(2, 0);
         const n32 = source.getElement(2, 1);
         const n33 = source.getElement(2, 2);
-        this.data.set(n11, n12, n13, n21, n22, n23, n31, n32, n33);
+        this.data.set(
+            n11, n12, n13,
+            n21, n22, n23,
+            n31, n32, n33);
     }
 
     /**
@@ -54,7 +57,6 @@ export class Mat3 implements MatrixLike {
     toString(radix?: number): string {
         return this.data.toString(radix);
     }
-
 }
 
 export default Mat3;

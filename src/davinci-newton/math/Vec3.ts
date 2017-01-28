@@ -49,6 +49,13 @@ export class Vec3 implements VectorE3 {
     }
 
     /**
+     * 
+     */
+    divByScalar(alpha: number): Vec3 {
+        return new Vec3(this.x / alpha, this.y / alpha, this.z / alpha);
+    }
+
+    /**
      * this << B
      */
     lco(B: BivectorE3): Vec3 {
@@ -74,7 +81,7 @@ export class Vec3 implements VectorE3 {
     /**
      * 
      */
-    multiply(alpha: number): Vec3 {
+    mulByScalar(alpha: number): Vec3 {
         return new Vec3(alpha * this.x, alpha * this.y, alpha * this.z);
     }
 
@@ -97,18 +104,11 @@ export class Vec3 implements VectorE3 {
     /**
      * 
      */
-    distanceTo(rhs: VectorE3): number {
-        const Δx = this.x - rhs.x;
-        const Δy = this.y - rhs.y;
-        const Δz = this.z - rhs.z;
+    distanceTo(point: VectorE3): number {
+        const Δx = this.x - point.x;
+        const Δy = this.y - point.y;
+        const Δz = this.z - point.z;
         return Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
-    }
-
-    /**
-     * 
-     */
-    immutable(): Vec3 {
-        return this;
     }
 
     /**
@@ -124,14 +124,14 @@ export class Vec3 implements VectorE3 {
     /**
      * 
      */
-    nearEqual(vector: VectorE3, tolerance?: number): boolean {
-        if (veryDifferent(this.x_, vector.x, tolerance)) {
+    nearEqual(v: VectorE3, tolerance?: number): boolean {
+        if (veryDifferent(this.x_, v.x, tolerance)) {
             return false;
         }
-        if (veryDifferent(this.y_, vector.y, tolerance)) {
+        if (veryDifferent(this.y_, v.y, tolerance)) {
             return false;
         }
-        if (veryDifferent(this.z_, vector.z, tolerance)) {
+        if (veryDifferent(this.z_, v.z, tolerance)) {
             return false;
         }
         return true;
@@ -148,7 +148,7 @@ export class Vec3 implements VectorE3 {
                 // return void 0;
             }
             else {
-                return this.multiply(1 / magnitude);
+                return this.divByScalar(magnitude);
             }
         }
         else {

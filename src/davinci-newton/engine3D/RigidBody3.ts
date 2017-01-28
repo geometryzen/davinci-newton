@@ -21,6 +21,7 @@ import MatrixLike from '../math/MatrixLike';
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
+import { rotateX, rotateY, rotateZ } from '../math/rotate';
 import Spinor3 from '../math/Spinor3';
 import Vec3 from '../math/Vec3';
 import Vector3 from '../math/Vector3';
@@ -54,15 +55,25 @@ export class RigidBody3 extends AbstractSimObject {
     public Ω = new Bivector3();
 
     /**
-     * center of mass in body coordinates.
+     * center of mass in local coordinates.
      */
-    protected cm_body_ = Vec3.ORIGIN;
+    protected centerOfMassLocal_ = Vec3.ORIGIN;
 
     /**
      * 
      */
     constructor() {
         super();
+    }
+
+    /**
+     * The center of mass position vector in local coordinates.
+     */
+    get centerOfMassLocal(): VectorE3 {
+        return this.centerOfMassLocal_;
+    }
+    set centerOfMassLocal(centerOfMassLocal: VectorE3) {
+        this.centerOfMassLocal_ = Vec3.fromVector(centerOfMassLocal);
     }
 
     /**
@@ -183,21 +194,24 @@ export class RigidBody3 extends AbstractSimObject {
      * (1/2) (P * P) / M
      */
     translationalEnergy(): number {
-        const PxP = this.linearMomentum_.quadrance();
-        const M = this.M_;
-        return 0.5 * PxP / M;
+        return 0.5 * this.P.quaditude() / this.M;
     }
 
     /**
-     * 
+     * Converts a point in local coordinates to the same point in world coordinates.
+     * x = R (localPoint - centerOfMassLocal) * ~R + X
      */
-    bodyToWorld(bodyPoint: VectorE3, out: VectorE3): void {
-        // TODO: Avoid object creation.
-        const r = Vec3.fromVector(bodyPoint).subtract(this.cm_body_);
-        const result = r.rotate(this.R).add(this.X);
-        out.x = result.x;
-        out.y = result.y;
-        out.z = result.z;
+    localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void {
+        // This implementation avoids object creation at the expense of more operations.
+        const comLocal = this.centerOfMassLocal_;
+        const x = localPoint.x - comLocal.x;
+        const y = localPoint.y - comLocal.y;
+        const z = localPoint.z - comLocal.z;
+        const X = this.position_;
+        const R = this.attitude_;
+        worldPoint.x = rotateX(x, y, z, R) + X.x;
+        worldPoint.y = rotateY(x, y, z, R) + X.y;
+        worldPoint.z = rotateZ(x, y, z, R) + X.z;
     }
 
     /**

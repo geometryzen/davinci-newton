@@ -82,14 +82,14 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         if (this.attach1_ == null || this.body1_ == null) {
             throw new Error();
         }
-        this.body1_.bodyToWorld(this.attach1_, x);
+        this.body1_.localPointToWorldPoint(this.attach1_, x);
     }
 
     private computeBody2AttachPointInWorldCoords(x: VectorE3): void {
         if (this.attach2_ == null || this.body2_ == null) {
             throw new Error();
         }
-        this.body2_.bodyToWorld(this.attach2_, x);
+        this.body2_.localPointToWorldPoint(this.attach2_, x);
     }
 
     get attach1(): VectorE3 {
