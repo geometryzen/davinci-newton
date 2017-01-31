@@ -119,7 +119,7 @@ export class DisplayList extends AbstractSubject {
     }
 
     private sort(): void {
-        // TODO
+        // TODO: sort display objects
     }
 
 }

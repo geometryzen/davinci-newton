@@ -1,24 +1,22 @@
-import SpinorE3 from './SpinorE3';
+import SpinorE2 from './SpinorE2';
 
 /**
- * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.
+ * 
  */
-export class Spinor3 implements SpinorE3 {
+export class Spinor2 implements SpinorE2 {
     /**
      * 
      */
-    constructor(public a = 1, public xy = 0, public yz = 0, public zx = 0) {
+    constructor(public a = 1, public xy = 0) {
 
     }
 
     /**
      * 
      */
-    copy(spinor: SpinorE3): this {
+    copy(spinor: SpinorE2): this {
         this.a = spinor.a;
         this.xy = spinor.xy;
-        this.yz = spinor.yz;
-        this.zx = spinor.zx;
         return this;
     }
 
@@ -26,14 +24,12 @@ export class Spinor3 implements SpinorE3 {
         if (alpha !== 1) {
             this.a /= alpha;
             this.xy /= alpha;
-            this.yz /= alpha;
-            this.zx /= alpha;
         }
         return this;
     }
 
     isOne(): boolean {
-        return this.a === 1 && this.xy === 0 && this.yz === 0 && this.zx === 0;
+        return this.a === 1 && this.xy === 0;
     }
 
     magnitude(): number {
@@ -56,8 +52,6 @@ export class Spinor3 implements SpinorE3 {
     one(): this {
         this.a = 1;
         this.xy = 0;
-        this.yz = 0;
-        this.zx = 0;
         return this;
     }
 
@@ -66,18 +60,14 @@ export class Spinor3 implements SpinorE3 {
      */
     private quaditude(): number {
         const a = this.a;
-        const x = this.yz;
-        const y = this.zx;
         const z = this.xy;
-        return a * a + x * x + y * y + z * z;
+        return a * a + z * z;
     }
 
     rev(): this {
         this.xy = -this.xy;
-        this.yz = -this.yz;
-        this.zx = -this.zx;
         return this;
     }
 }
 
-export default Spinor3;
+export default Spinor2;

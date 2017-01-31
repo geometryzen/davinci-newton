@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Block3 from './Block3';
 import RigidBody3 from './RigidBody3';
 import Vec3 from '../math/Vec3';
 import Vector3 from '../math/Vector3';
@@ -89,6 +90,22 @@ describe("RigidBody3", function () {
             expect(xActual.x).toBe(xExpect.x);
             expect(xActual.y).toBe(xExpect.y);
             expect(xActual.z).toBe(xExpect.z);
+        });
+    });
+    describe("rotationalEnergy", function () {
+        it("calculated using (1/2) Ω * L(Ω) should be same as (1/2) ω * L(ω)", function () {
+            const body = new Block3(1, 1, 1);
+            body.M = 12;
+            const ω = new Vec3(0, 0, 1);
+            body.L.yz = 0;
+            body.L.zx = 0;
+            body.L.xy = 1;
+            body.Ω.yz = ω.x;
+            body.Ω.zx = ω.y;
+            body.Ω.xy = ω.z;
+            const J = new Vec3(body.L.yz, body.L.zx, body.L.xy);
+            const rotationalEnergy = 0.5 * ω.dot(J);
+            expect(body.rotationalEnergy()).toBe(rotationalEnergy);
         });
     });
 });

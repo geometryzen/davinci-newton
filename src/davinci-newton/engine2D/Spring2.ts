@@ -15,17 +15,17 @@
 
 import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from '../model/CoordType';
-import Force3 from './Force3';
-import ForceLaw3 from './ForceLaw3';
-import RigidBody3 from './RigidBody3';
-import Vec3 from '../math/Vec3';
-import VectorE3 from '../math/VectorE3';
-import Vector3 from '../math/Vector3';
+import Force2 from './Force2';
+import ForceLaw2 from './ForceLaw2';
+import RigidBody2 from './RigidBody2';
+import Vec2 from '../math/Vec2';
+import VectorE2 from '../math/VectorE2';
+import Vector2 from '../math/Vector2';
 
 /**
  * 
  */
-export class Spring3 extends AbstractSimObject implements ForceLaw3 {
+export class Spring2 extends AbstractSimObject implements ForceLaw2 {
     /**
      * 
      */
@@ -36,90 +36,90 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
-    private attach1_ = Vec3.ORIGIN;
+    private attach1_ = Vec2.ORIGIN;
     /**
      * The attachment point to body2 in the local coordinates frame of body 2.
      */
-    private attach2_ = Vec3.ORIGIN;
+    private attach2_ = Vec2.ORIGIN;
     /**
      * The force information on body1 due to body2.
      */
-    private readonly F1: Force3;
+    private readonly F1: Force2;
     /**
      * The force information on body2 due to body1.
      */
-    private readonly F2: Force3;
+    private readonly F2: Force2;
     /**
      * 
      */
-    private readonly forces: Force3[] = [];
+    private readonly forces: Force2[] = [];
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end1_ = new Vector3();
+    private readonly end1_ = new Vector2();
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end2_ = new Vector3();
+    private readonly end2_ = new Vector2();
     /**
      * 
      */
-    constructor(private body1_: RigidBody3, private body2_: RigidBody3) {
+    constructor(private body1_: RigidBody2, private body2_: RigidBody2) {
         super();
 
-        this.F1 = new Force3(this.body1_);
+        this.F1 = new Force2(this.body1_);
         this.F1.locationCoordType = CoordType.WORLD;
         this.F1.vectorCoordType = CoordType.WORLD;
 
-        this.F2 = new Force3(this.body2_);
+        this.F2 = new Force2(this.body2_);
         this.F2.locationCoordType = CoordType.WORLD;
         this.F2.vectorCoordType = CoordType.WORLD;
 
         this.forces = [this.F1, this.F2];
     }
 
-    private computeBody1AttachPointInWorldCoords(x: VectorE3): void {
+    private computeBody1AttachPointInWorldCoords(x: VectorE2): void {
         if (this.attach1_ == null || this.body1_ == null) {
             throw new Error();
         }
         this.body1_.localPointToWorldPoint(this.attach1_, x);
     }
 
-    private computeBody2AttachPointInWorldCoords(x: VectorE3): void {
+    private computeBody2AttachPointInWorldCoords(x: VectorE2): void {
         if (this.attach2_ == null || this.body2_ == null) {
             throw new Error();
         }
         this.body2_.localPointToWorldPoint(this.attach2_, x);
     }
 
-    get attach1(): VectorE3 {
+    get attach1(): VectorE2 {
         return this.attach1_;
     }
-    set attach1(attach1: VectorE3) {
-        this.attach1_ = Vec3.fromVector(attach1);
+    set attach1(attach1: VectorE2) {
+        this.attach1_ = Vec2.fromVector(attach1);
     }
 
-    get attach2(): VectorE3 {
+    get attach2(): VectorE2 {
         return this.attach2_;
     }
-    set attach2(attach2: VectorE3) {
-        this.attach2_ = Vec3.fromVector(attach2);
+    set attach2(attach2: VectorE2) {
+        this.attach2_ = Vec2.fromVector(attach2);
     }
 
-    get end1(): Vec3 {
+    get end1(): Vec2 {
         this.computeBody1AttachPointInWorldCoords(this.end1_);
-        return Vec3.fromVector(this.end1_);
+        return Vec2.fromVector(this.end1_);
     }
 
-    get end2(): Vec3 {
+    get end2(): Vec2 {
         this.computeBody2AttachPointInWorldCoords(this.end2_);
-        return Vec3.fromVector(this.end2_);
+        return Vec2.fromVector(this.end2_);
     }
 
     /**
      * 
      */
-    updateForces(): Force3[] {
+    updateForces(): Force2[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
@@ -164,4 +164,4 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     }
 }
 
-export default Spring3;
+export default Spring2;

@@ -13,7 +13,6 @@
         "inlineSources": false
     },
     "files": [
-        //        "src/davinci-newton/core/BeginMode.ts",
         "src/davinci-newton.ts"
     ]
 }

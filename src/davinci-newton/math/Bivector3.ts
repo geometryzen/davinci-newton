@@ -1,7 +1,8 @@
 import BivectorE3 from './BivectorE3';
 import MatrixLike from './MatrixLike';
+import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
-import { wedgeYZ, wedgeZX, wedgeXY } from './wedge';
+import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
 
 /**
  * 
@@ -43,18 +44,52 @@ export class Bivector3 implements BivectorE3 {
         return this;
     }
 
-    /**
-     * 
-     */
-    dual(v: VectorE3): this {
-        this.yz = v.x;
-        this.zx = v.y;
-        this.xy = v.z;
+    isZero(): boolean {
+        return this.xy === 0 && this.yz === 0 && this.zx === 0;
+    }
+
+    rev(): this {
+        this.yz = -this.yz;
+        this.zx = -this.zx;
+        this.xy = -this.xy;
         return this;
     }
 
-    isZero(): boolean {
-        return this.xy === 0 && this.yz === 0 && this.zx === 0;
+    /**
+     * R * this * ~R
+     */
+    rotate(R: SpinorE3): this {
+        if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
+            return this;
+        }
+        else {
+            const yz = this.yz;
+            const zx = this.zx;
+            const xy = this.xy;
+
+            const Rxy = R.xy;
+            const Ryz = R.yz;
+            const Rzx = R.zx;
+            const Ra = R.a;
+
+            const Syz = Ra * yz - Rzx * xy + Rxy * zx;
+            const Szx = Ra * zx - Rxy * yz + Ryz * xy;
+            const Sxy = Ra * xy - Ryz * zx + Rzx * yz;
+            const Sa = Ryz * yz + Rzx * zx + Rxy * xy;
+
+            this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
+            this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
+            this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
+
+            return this;
+        }
+    }
+
+    /**
+     * Computes the scalar product of this bivector with B.
+     */
+    scp(B: BivectorE3): number {
+        return this.xy * B.xy + this.yz * B.yz + this.zx * B.zx;
     }
 
     /**

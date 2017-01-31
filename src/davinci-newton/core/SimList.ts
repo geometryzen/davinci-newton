@@ -17,6 +17,7 @@ import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import GenericEvent from '../util/GenericEvent';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
+import remove from '../util/remove';
 import SimObject from './SimObject';
 
 /**
@@ -71,7 +72,9 @@ export class SimList extends AbstractSubject {
      * 
      */
     remove(simObject: SimObject): void {
-        throw new Error("TODO");
+        if (remove(this.elements_, simObject)) {
+            this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simObject));
+        }
     }
 
     /**

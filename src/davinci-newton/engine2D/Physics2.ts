@@ -14,18 +14,18 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
-import Bivector3 from '../math/Bivector3';
+import Bivector2 from '../math/Bivector2';
 import contains from '../util/contains';
 import EnergySystem from '../solvers/EnergySystem';
-import Force from './Force3';
-import ForceLaw from './ForceLaw3';
+import Force from './Force2';
+import ForceLaw from './ForceLaw2';
 import remove from '../util/remove';
-import RigidBody3 from './RigidBody3';
+import RigidBody2 from './RigidBody2';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import VarsList from '../core/VarsList';
-import Vector3 from '../math/Vector3';
-import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
+import Vector2 from '../math/Vector2';
+import { wedgeXY } from '../math/wedge2';
 
 const var_names = [
     VarsList.TIME,
@@ -35,9 +35,6 @@ const var_names = [
     "total energy",
     "total linear momentum - x",
     "total linear momentum - y",
-    "total linear momentum - z",
-    "total angular momentum - yz",
-    "total angular momentum - zx",
     "total angular momentum - xy"
 ];
 
@@ -46,19 +43,13 @@ const var_names = [
  */
 function getVarName(index: number): string {
     switch (index) {
-        case Physics3.OFFSET_POSITION_X: return "position x";
-        case Physics3.OFFSET_POSITION_Y: return "position y";
-        case Physics3.OFFSET_POSITION_Z: return "position z";
-        case Physics3.OFFSET_ATTITUDE_A: return "attitude a";
-        case Physics3.OFFSET_ATTITUDE_YZ: return "attitude yz";
-        case Physics3.OFFSET_ATTITUDE_ZX: return "attitude zx";
-        case Physics3.OFFSET_ATTITUDE_XY: return "attitude xy";
-        case Physics3.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
-        case Physics3.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
-        case Physics3.OFFSET_LINEAR_MOMENTUM_Z: return "linear momentum z";
-        case Physics3.OFFSET_ANGULAR_MOMENTUM_YZ: return "angular momentum yz";
-        case Physics3.OFFSET_ANGULAR_MOMENTUM_ZX: return "angular momentum zx";
-        case Physics3.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
+        case Physics2.OFFSET_POSITION_X: return "position x";
+        case Physics2.OFFSET_POSITION_Y: return "position y";
+        case Physics2.OFFSET_ATTITUDE_A: return "attitude a";
+        case Physics2.OFFSET_ATTITUDE_XY: return "attitude xy";
+        case Physics2.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
+        case Physics2.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
+        case Physics2.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
     }
     throw new Error(`getVarName(${index})`);
 }
@@ -68,7 +59,7 @@ const NUM_VARIABLES_PER_BODY = 13;
 /**
  * 
  */
-export class Physics3 extends AbstractSubject implements Simulation, EnergySystem {
+export class Physics2 extends AbstractSubject implements Simulation, EnergySystem {
     public static readonly INDEX_TIME = 0;
     public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
     public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
@@ -76,23 +67,14 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     public static readonly INDEX_TOTAL_ENERGY = 4;
     public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
     public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
-    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7;
-    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8;
-    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9;
-    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10;
+    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 7;
     public static readonly OFFSET_POSITION_X = 0;
     public static readonly OFFSET_POSITION_Y = 1;
-    public static readonly OFFSET_POSITION_Z = 2;
-    public static readonly OFFSET_ATTITUDE_A = 3;
-    public static readonly OFFSET_ATTITUDE_YZ = 4;
-    public static readonly OFFSET_ATTITUDE_ZX = 5;
-    public static readonly OFFSET_ATTITUDE_XY = 6;
-    public static readonly OFFSET_LINEAR_MOMENTUM_X = 7;
-    public static readonly OFFSET_LINEAR_MOMENTUM_Y = 8;
-    public static readonly OFFSET_LINEAR_MOMENTUM_Z = 9;
-    public static readonly OFFSET_ANGULAR_MOMENTUM_YZ = 10;
-    public static readonly OFFSET_ANGULAR_MOMENTUM_ZX = 11;
-    public static readonly OFFSET_ANGULAR_MOMENTUM_XY = 12;
+    public static readonly OFFSET_ATTITUDE_A = 2;
+    public static readonly OFFSET_ATTITUDE_XY = 3;
+    public static readonly OFFSET_LINEAR_MOMENTUM_X = 4;
+    public static readonly OFFSET_LINEAR_MOMENTUM_Y = 5;
+    public static readonly OFFSET_ANGULAR_MOMENTUM_XY = 6;
 
     /**
      * 
@@ -105,7 +87,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * The RigidBody(s) in this simulation.
      */
-    private bodies_: RigidBody3[] = [];
+    private bodies_: RigidBody2[] = [];
     /**
      * 
      */
@@ -124,11 +106,11 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * Scratch variable for computing force.
      */
-    private force_ = new Vector3(0, 0, 0);
+    private force_ = new Vector2(0, 0);
     /**
      * Scratch variable for computing torque.
      */
-    private torque_ = new Bivector3();
+    private torque_ = new Bivector2();
 
     /**
      * 
@@ -151,7 +133,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    addBody(body: RigidBody3): void {
+    addBody(body: RigidBody2): void {
         if (!contains(this.bodies_, body)) {
             // create variables in vars array for this body
             const names = [];
@@ -173,7 +155,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    removeBody(body: RigidBody3): void {
+    removeBody(body: RigidBody2): void {
         if (contains(this.bodies_, body)) {
             this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
             remove(this.bodies_, body);
@@ -204,16 +186,13 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
 
     private discontinuosChangeToEnergy(): void {
         this.varsList_.incrSequence(
-            Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY,
-            Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY,
-            Physics3.INDEX_POTENTIAL_ENERGY,
-            Physics3.INDEX_TOTAL_ENERGY,
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_X,
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Y,
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Z,
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_YZ,
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX,
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY
+            Physics2.INDEX_TRANSLATIONAL_KINETIC_ENERGY,
+            Physics2.INDEX_ROTATIONAL_KINETIC_ENERGY,
+            Physics2.INDEX_POTENTIAL_ENERGY,
+            Physics2.INDEX_TOTAL_ENERGY,
+            Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_X,
+            Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_Y,
+            Physics2.INDEX_TOTAL_ANGULAR_MOMENTUM_XY
         );
     }
 
@@ -222,7 +201,6 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
     private moveObjects(vars: number[]): void {
-
         const bodies = this.bodies_;
         const N = bodies.length;
         for (let i = 0; i < N; i++) {
@@ -233,27 +211,33 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             }
 
             // Update state variables.
-            body.X.x = vars[idx + Physics3.OFFSET_POSITION_X];
-            body.X.y = vars[idx + Physics3.OFFSET_POSITION_Y];
-            body.X.z = vars[idx + Physics3.OFFSET_POSITION_Z];
+            body.X.x = vars[idx + Physics2.OFFSET_POSITION_X];
+            body.X.y = vars[idx + Physics2.OFFSET_POSITION_Y];
 
-            body.R.a = vars[idx + Physics3.OFFSET_ATTITUDE_A];
-            body.R.xy = vars[idx + Physics3.OFFSET_ATTITUDE_XY];
-            body.R.yz = vars[idx + Physics3.OFFSET_ATTITUDE_YZ];
-            body.R.zx = vars[idx + Physics3.OFFSET_ATTITUDE_ZX];
+            body.R.a = vars[idx + Physics2.OFFSET_ATTITUDE_A];
+            body.R.xy = vars[idx + Physics2.OFFSET_ATTITUDE_XY];
 
             // Keep the magnitude of the attitude as close to 1 as possible.
             body.R.normalize();
 
-            body.P.x = vars[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X];
-            body.P.y = vars[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y];
-            body.P.z = vars[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z];
+            body.P.x = vars[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X];
+            body.P.y = vars[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y];
 
-            body.L.xy = vars[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY];
-            body.L.yz = vars[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ];
-            body.L.zx = vars[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX];
+            body.L.xy = vars[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY];
 
-            body.updateAngularVelocity();
+            // Update derived quantities (auxiliary variables).
+            // We must calculate Ω.
+            // In matrix notation,
+            // L = I Ω => Ω = Iinv L.
+            // Either the inertia tensor must be converted from local coordinates to world, or
+            // we convert L to local coordinates, apply the local inertial tensor and then rotate
+            // Ω back to world coordinates.
+            // Notice that in the following we avoid creating temporary variables by computing
+            // the reversion of the mutable body.R twice.
+            body.Ω.copy(body.L);
+            // body.Ω.rotate(body.R.rev());
+            body.Ω.applyMatrix(body.Iinv);
+            // body.Ω.rotate(body.R.rev());
         }
     }
 
@@ -297,28 +281,22 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             else {
                 // The rate of change of position is the velocity.
                 // dX/dt = V = P / M
-                change[idx + Physics3.OFFSET_POSITION_X] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] / mass;
-                change[idx + Physics3.OFFSET_POSITION_Y] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] / mass;
-                change[idx + Physics3.OFFSET_POSITION_Z] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] / mass;
+                change[idx + Physics2.OFFSET_POSITION_X] = state[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X] / mass;
+                change[idx + Physics2.OFFSET_POSITION_Y] = state[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y] / mass;
 
                 // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
                 // requiring the geometric product of Ω and R.
                 // Ω and R are auxiliary and primary variables that have already been computed.
                 const R = body.R;
                 const Ω = body.Ω;
-                change[idx + Physics3.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-                change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
-                change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
-                change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+                change[idx + Physics2.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
+                change[idx + Physics2.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
 
                 // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] = 0;
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] = 0;
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] = 0;
+                change[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X] = 0;
+                change[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y] = 0;
 
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+                change[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
             }
         }
         const forceLaws = this.forceLaws_;
@@ -353,17 +331,14 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         // dP/dt = F
         forceApp.computeForce(this.force_);
         const F = this.force_;
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] += F.z;
+        change[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X] += F.x;
+        change[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
         forceApp.computeTorque(this.torque_);
         const Γ = this.torque_;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += Γ.yz;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += Γ.zx;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] += Γ.xy;
+        change[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY] += Γ.xy;
 
         if (this.showForces_) {
             forceApp.expireTime = this.varsList_.getTime();
@@ -381,27 +356,21 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private initializeFromBody(body: RigidBody3): void {
+    private initializeFromBody(body: RigidBody2): void {
         const idx = body.varsIndex;
         if (idx > -1) {
             const va = this.varsList_;
 
-            va.setValue(Physics3.OFFSET_POSITION_X + idx, body.X.x);
-            va.setValue(Physics3.OFFSET_POSITION_Y + idx, body.X.y);
-            va.setValue(Physics3.OFFSET_POSITION_Z + idx, body.X.z);
+            va.setValue(Physics2.OFFSET_POSITION_X + idx, body.X.x);
+            va.setValue(Physics2.OFFSET_POSITION_Y + idx, body.X.y);
 
-            va.setValue(Physics3.OFFSET_ATTITUDE_A + idx, body.R.a);
-            va.setValue(Physics3.OFFSET_ATTITUDE_XY + idx, body.R.xy);
-            va.setValue(Physics3.OFFSET_ATTITUDE_YZ + idx, body.R.yz);
-            va.setValue(Physics3.OFFSET_ATTITUDE_ZX + idx, body.R.zx);
+            va.setValue(Physics2.OFFSET_ATTITUDE_A + idx, body.R.a);
+            va.setValue(Physics2.OFFSET_ATTITUDE_XY + idx, body.R.xy);
 
-            va.setValue(Physics3.OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-            va.setValue(Physics3.OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-            va.setValue(Physics3.OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
+            va.setValue(Physics2.OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
+            va.setValue(Physics2.OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
 
-            va.setValue(Physics3.OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
-            va.setValue(Physics3.OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
-            va.setValue(Physics3.OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
+            va.setValue(Physics2.OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
         }
     }
 
@@ -420,10 +389,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         // update the variable that track linear momentum (vector)
         let Px = 0;
         let Py = 0;
-        let Pz = 0;
         // update the variable that track angular momentum (bivector)
-        let Lyz = 0;
-        let Lzx = 0;
         let Lxy = 0;
 
         const bs = this.bodies_;
@@ -436,14 +402,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
                 // linear momentum
                 Px += b.P.x;
                 Py += b.P.y;
-                Pz += b.P.z;
                 // orbital angular momentum
-                Lyz += wedgeYZ(b.X, b.P);
-                Lzx += wedgeZX(b.X, b.P);
                 Lxy += wedgeXY(b.X, b.P);
                 // spin angular momentum
-                Lyz += b.L.yz;
-                Lzx += b.L.zx;
                 Lxy += b.L.xy;
             }
         }
@@ -454,16 +415,13 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             pe += fs[i].potentialEnergy();
         }
 
-        varsList.setValue(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-        varsList.setValue(Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-        varsList.setValue(Physics3.INDEX_POTENTIAL_ENERGY, pe, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_ENERGY, te + re + pe, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Z, Pz, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, Lyz, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
-        varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+        varsList.setValue(Physics2.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+        varsList.setValue(Physics2.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+        varsList.setValue(Physics2.INDEX_POTENTIAL_ENERGY, pe, true);
+        varsList.setValue(Physics2.INDEX_TOTAL_ENERGY, te + re + pe, true);
+        varsList.setValue(Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
+        varsList.setValue(Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
+        varsList.setValue(Physics2.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
     }
 
     /**
@@ -510,4 +468,4 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     }
 }
 
-export default Physics3;
+export default Physics2;

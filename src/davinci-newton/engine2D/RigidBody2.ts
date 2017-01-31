@@ -14,23 +14,23 @@
 // limitations under the License.
 
 import AbstractSimObject from '../objects/AbstractSimObject';
-import Bivector3 from '../math/Bivector3';
-import Mat3 from '../math/Mat3';
-import Matrix3 from '../math/Matrix3';
+import Bivector2 from '../math/Bivector2';
+import Mat2 from '../math/Mat2';
+import Matrix2 from '../math/Matrix2';
 import MatrixLike from '../math/MatrixLike';
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import { rotateX, rotateY, rotateZ } from '../math/rotate3';
-import Spinor3 from '../math/Spinor3';
-import Vec3 from '../math/Vec3';
-import Vector3 from '../math/Vector3';
-import VectorE3 from '../math/VectorE3';
+import { rotateX, rotateY } from '../math/rotate2';
+import Spinor2 from '../math/Spinor2';
+import Vec2 from '../math/Vec2';
+import Vector2 from '../math/Vector2';
+import VectorE2 from '../math/VectorE2';
 
 /**
  * 
  */
-export class RigidBody3 extends AbstractSimObject {
+export class RigidBody2 extends AbstractSimObject {
     /**
      * Mass, M.
      */
@@ -38,26 +38,26 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
-    private inertiaTensorInverse_ = new Mat3(Matrix3.one());
+    private inertiaTensorInverse_ = new Mat2(Matrix2.one());
 
     /**
      * the index into the variables array for this rigid body, or -1 if not in vars array.
      */
     private varsIndex_ = -1;
 
-    private readonly position_ = new Vector3();
-    private readonly attitude_ = new Spinor3();
-    private readonly linearMomentum_ = new Vector3();
-    private readonly angularMomentum_ = new Bivector3();
+    private readonly position_ = new Vector2();
+    private readonly attitude_ = new Spinor2();
+    private readonly linearMomentum_ = new Vector2();
+    private readonly angularMomentum_ = new Bivector2();
     /**
      * Angular velocity (bivector).
      */
-    public Ω = new Bivector3();
+    public Ω = new Bivector2();
 
     /**
      * center of mass in local coordinates.
      */
-    protected centerOfMassLocal_ = Vec3.ORIGIN;
+    protected centerOfMassLocal_ = Vec2.ORIGIN;
 
     /**
      * 
@@ -69,11 +69,11 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * The center of mass position vector in local coordinates.
      */
-    get centerOfMassLocal(): VectorE3 {
+    get centerOfMassLocal(): VectorE2 {
         return this.centerOfMassLocal_;
     }
-    set centerOfMassLocal(centerOfMassLocal: VectorE3) {
-        this.centerOfMassLocal_ = Vec3.fromVector(centerOfMassLocal);
+    set centerOfMassLocal(centerOfMassLocal: VectorE2) {
+        this.centerOfMassLocal_ = Vec2.fromVector(centerOfMassLocal);
     }
 
     /**
@@ -90,24 +90,6 @@ export class RigidBody3 extends AbstractSimObject {
     }
 
     /**
-     * Updates the angular velocity, Ω, bivector based upon the angular momentum.
-     * Derived classes may override to provide more efficient implementations based upon symmetry.
-     */
-    public updateAngularVelocity(): void {
-        // In matrix notation,
-        // L = I Ω => Ω = Iinv L.
-        // Either the inertia tensor must be converted from local coordinates to world, or
-        // we convert L to local coordinates, apply the local inertial tensor and then rotate
-        // Ω back to world coordinates.
-        // Notice that in the following we avoid creating temporary variables by computing
-        // the reversion of the mutable body.R twice.
-        this.Ω.copy(this.L);
-        this.Ω.rotate(this.R.rev());
-        this.Ω.applyMatrix(this.Iinv);
-        this.Ω.rotate(this.R.rev());
-    }
-
-    /**
      * Derived classes should override.
      */
     protected updateInertiaTensor(): void {
@@ -118,15 +100,12 @@ export class RigidBody3 extends AbstractSimObject {
      * Inertia Tensor (in body coordinates) (3x3 matrix).
      */
     get I(): MatrixLike {
-        const I = Matrix3.zero().copy(this.inertiaTensorInverse_).inv();
-        return new Mat3(I);
+        const I = Matrix2.zero().copy(this.inertiaTensorInverse_).inv();
+        return new Mat2(I);
     }
-    /**
-     * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
-     */
     set I(I: MatrixLike) {
-        const Iinv = Matrix3.zero().copy(I).inv();
-        this.inertiaTensorInverse_ = new Mat3(Iinv);
+        const Iinv = Matrix2.zero().copy(I).inv();
+        this.inertiaTensorInverse_ = new Mat2(Iinv);
     }
 
     /**
@@ -139,47 +118,46 @@ export class RigidBody3 extends AbstractSimObject {
         mustBeNonNullObject('Iinv', source);
         mustBeNumber('dimensions', source.dimensions);
         mustBeFunction('getElement', source.getElement);
-        this.inertiaTensorInverse_ = new Mat3(source);
+        this.inertiaTensorInverse_ = new Mat2(source);
     }
 
     /**
      * Position (vector).
      */
-    get X(): Vector3 {
+    get X(): Vector2 {
         return this.position_;
     }
-    set X(position: Vector3) {
+    set X(position: Vector2) {
         this.position_.copy(position);
     }
 
     /**
      * Attitude (spinor).
-     * Effects a rotation from local coordinates to world coordinates.
      */
-    get R(): Spinor3 {
+    get R(): Spinor2 {
         return this.attitude_;
     }
-    set R(attitude: Spinor3) {
+    set R(attitude: Spinor2) {
         this.attitude_.copy(attitude);
     }
 
     /**
      * Linear momentum (vector).
      */
-    get P(): Vector3 {
+    get P(): Vector2 {
         return this.linearMomentum_;
     }
-    set P(momentum: Vector3) {
+    set P(momentum: Vector2) {
         this.linearMomentum_.copy(momentum);
     }
 
     /**
-     * Angular momentum (bivector) in world coordinates.
+     * Angular momentum (bivector).
      */
-    get L(): Bivector3 {
+    get L(): Bivector2 {
         return this.angularMomentum_;
     }
-    set L(angularMomentum: Bivector3) {
+    set L(angularMomentum: Bivector2) {
         this.angularMomentum_.copy(angularMomentum);
     }
 
@@ -208,7 +186,7 @@ export class RigidBody3 extends AbstractSimObject {
     }
 
     /**
-     * (1/2) (P * P) / M
+     * (1/2) (P * P) / M = (1/2) V * P
      */
     translationalEnergy(): number {
         return 0.5 * this.P.quaditude() / this.M;
@@ -218,17 +196,15 @@ export class RigidBody3 extends AbstractSimObject {
      * Converts a point in local coordinates to the same point in world coordinates.
      * x = R (localPoint - centerOfMassLocal) * ~R + X
      */
-    localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void {
+    localPointToWorldPoint(localPoint: VectorE2, worldPoint: VectorE2): void {
         // This implementation avoids object creation at the expense of more operations.
         const comLocal = this.centerOfMassLocal_;
         const x = localPoint.x - comLocal.x;
         const y = localPoint.y - comLocal.y;
-        const z = localPoint.z - comLocal.z;
         const X = this.position_;
         const R = this.attitude_;
-        worldPoint.x = rotateX(x, y, z, R) + X.x;
-        worldPoint.y = rotateY(x, y, z, R) + X.y;
-        worldPoint.z = rotateZ(x, y, z, R) + X.z;
+        worldPoint.x = rotateX(x, y, R) + X.x;
+        worldPoint.y = rotateY(x, y, R) + X.y;
     }
 
     /**
@@ -244,9 +220,9 @@ export class RigidBody3 extends AbstractSimObject {
      * This method is most often used to calculate damping.
      */
     /*
-    worldVelocityOfBodyPoint(bodyPoint: VectorE3): Vector {
+    worldVelocityOfBodyPoint(bodyPoint: VectorE2): Vector {
         // r = R(t) * [bodyPoint relative to body center of mass]
-        const s = new Vector3().copy(bodyPoint).subtract(this.cm_body_).rotate(this.R);
+        const s = new Vector2().copy(bodyPoint).subtract(this.cm_body_).rotate(this.R);
         const r = Vector.fromVector(bodyPoint).subtract(this.cm_body_).rotate(this.R);
         // ω x r => r << Ω
         // dx/dt = r << Ω + dX/dt
@@ -257,4 +233,4 @@ export class RigidBody3 extends AbstractSimObject {
     */
 }
 
-export default RigidBody3;
+export default RigidBody2;

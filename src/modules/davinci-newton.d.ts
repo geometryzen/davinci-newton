@@ -101,7 +101,6 @@ declare module NEWTON {
         rotate(spinor: SpinorE3): Vec3;
         subtract(rhs: VectorE3): Vec3;
         toString(radix?: number): string;
-        static dual(B: BivectorE3): Vec3;
         static fromVector(v: VectorE3): Vec3;
     }
 
@@ -143,6 +142,9 @@ declare module NEWTON {
         toString(radix?: number): string;
         write(destination: VectorE3): this;
         zero(): this;
+        /**
+         * Constructs a vector by computing the dual of a bivector.
+         */
         static dual(B: BivectorE3): Vector3;
     }
 
@@ -167,7 +169,6 @@ declare module NEWTON {
         xy: number;
         applyMatrix(m: MatrixLike): this;
         copy(B: BivectorE3): this;
-        dual(v: VectorE3): this;
         isZero(): boolean;
         toString(radix?: number): string;
         wedge(a: VectorE3, b: VectorE3): this;
@@ -195,7 +196,6 @@ declare module NEWTON {
         magnitude(): number;
         normalize(): this;
         one(): this;
-        quadrance(): this;
     }
 
     interface MatrixLike {
@@ -287,6 +287,11 @@ declare module NEWTON {
          * x = R (localPoint - centerOfMassLocal) * ~R + X
          */
         localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void;
+        /**
+         * Updates the angular velocity, Ω, bivector based upon the angular momentum.
+         * Derived classes may override to provide more efficient implementations based upon symmetry.
+         */
+        public updateAngularVelocity(): void;
         /**
          * 
          */

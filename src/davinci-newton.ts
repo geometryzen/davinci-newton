@@ -2,6 +2,7 @@ import AdaptiveStepSolver from './davinci-newton/solvers/AdaptiveStepSolver';
 import AlignH from './davinci-newton/view/AlignH';
 import AlignV from './davinci-newton/view/AlignV';
 import AxisChoice from './davinci-newton/graph/AxisChoice';
+// import Block2 from './davinci-newton/engine2D/Block2';
 import Block3 from './davinci-newton/engine3D/Block3';
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
@@ -12,22 +13,31 @@ import DefaultAdvanceStrategy from './davinci-newton/strategy/DefaultAdvanceStra
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
 import DrawingMode from './davinci-newton/view/DrawingMode';
 import EulerMethod from './davinci-newton/solvers/EulerMethod';
+// import Force2 from './davinci-newton/engine2D/Force2';
 import Force3 from './davinci-newton/engine3D/Force3';
 import Graph from './davinci-newton/graph/Graph';
 import GraphLine from './davinci-newton/graph/GraphLine';
+// import GravitationLaw2 from './davinci-newton/engine2D/GravitationLaw2';
 import GravitationLaw3 from './davinci-newton/engine3D/GravitationLaw3';
 import LabCanvas from './davinci-newton/view/LabCanvas';
+// import Matrix2 from './davinci-newton/math/Matrix2';
 import Matrix3 from './davinci-newton/math/Matrix3';
 import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
+// import RigidBody2 from './davinci-newton/engine2D/RigidBody2';
 import RigidBody3 from './davinci-newton/engine3D/RigidBody3';
+// import Physics2 from './davinci-newton/engine2D/Physics2';
 import Physics3 from './davinci-newton/engine3D/Physics3';
 import RungeKutta from './davinci-newton/solvers/RungeKutta';
 import SimRunner from './davinci-newton/runner/SimRunner';
 import SimView from './davinci-newton/view/SimView';
+// import Sphere2 from './davinci-newton/engine2D/Sphere2';
 import Sphere3 from './davinci-newton/engine3D/Sphere3';
+// import Spring2 from './davinci-newton/engine2D/Spring2';
 import Spring3 from './davinci-newton/engine3D/Spring3';
 import VarsList from './davinci-newton/core/VarsList';
+// import Vec2 from './davinci-newton/math/Vec2';
 import Vec3 from './davinci-newton/math/Vec3';
+//import Vector2 from './davinci-newton/math/Vector2';
 import Vector3 from './davinci-newton/math/Vector3';
 
 /**
@@ -58,6 +68,10 @@ const newton = {
      * 
      */
     get AxisChoice() { return AxisChoice; },
+    /**
+     * 
+     */
+    // get Block2() { return Block2; },
     /**
      * 
      */
@@ -97,6 +111,10 @@ const newton = {
     /**
      * 
      */
+    // get Force2() { return Force2; },
+    /**
+     * 
+     */
     get Force3() { return Force3; },
     /**
      * 
@@ -109,6 +127,10 @@ const newton = {
     /**
      * 
      */
+    // get GravitationLaw2() { return GravitationLaw2; },
+    /**
+     * 
+     */
     get GravitationLaw3() { return GravitationLaw3; },
     /**
      * 
@@ -117,11 +139,19 @@ const newton = {
     /**
      * 
      */
+    // get Matrix2() { return Matrix2; },
+    /**
+     * 
+     */
     get Matrix3() { return Matrix3; },
     /**
      * 
      */
     get ModifiedEuler() { return ModifiedEuler; },
+    /**
+     * 
+     */
+    // get Physics2() { return Physics2; },
     /**
      * 
      */
@@ -145,7 +175,15 @@ const newton = {
     /**
      * 
      */
+    // get Sphere2() { return Sphere2; },
+    /**
+     * 
+     */
     get Sphere3() { return Sphere3; },
+    /**
+     * 
+     */
+    // get Spring2() { return Spring2; },
     /**
      * 
      */
@@ -157,7 +195,15 @@ const newton = {
     /**
      * 
      */
+    // get Vec2() { return Vec2; },
+    /**
+     * 
+     */
     get Vec3() { return Vec3; },
+    /**
+     * 
+     */
+    // get Vector2() { return Vector2; },
     /**
      * 
      */

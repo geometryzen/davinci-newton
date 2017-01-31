@@ -1,7 +1,7 @@
 /**
  * Computes the determinant of a 3x3 (square) matrix where the elements are assumed to be in column-major order.
  */
-export default function (m: Float32Array): number {
+export default function det3x3(m: Float32Array): number {
 
     const m00 = m[0x0], m01 = m[0x3], m02 = m[0x6];
     const m10 = m[0x1], m11 = m[0x4], m12 = m[0x7];

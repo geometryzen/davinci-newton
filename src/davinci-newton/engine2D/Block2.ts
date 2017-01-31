@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Matrix3 from '../math/Matrix3';
-import RigidBody3 from './RigidBody3';
+import Matrix2 from '../math/Matrix2';
+import RigidBody2 from './RigidBody2';
 
 /**
  * A rectangular block of constant density.
  */
-export class Block3 extends RigidBody3 {
+export class Block2 extends RigidBody2 {
     /**
      * The dimension corresponding to the width.
      */
@@ -28,17 +28,12 @@ export class Block3 extends RigidBody3 {
      */
     private height_ = 1;
     /**
-     * The dimension corresponding to the depth.
-     */
-    private depth_ = 1;
-    /**
      * 
      */
-    constructor(width = 1, height = 1, depth = 1) {
+    constructor(width = 1, height = 1) {
         super();
         this.width_ = width;
         this.height_ = height;
-        this.depth_ = depth;
         this.updateInertiaTensor();
     }
 
@@ -62,45 +57,20 @@ export class Block3 extends RigidBody3 {
         }
     }
 
-    get depth(): number {
-        return this.depth_;
-    }
-    set depth(depth: number) {
-        if (this.depth !== depth) {
-            this.depth_ = depth;
-            this.updateInertiaTensor();
-        }
-    }
-
-    public updateAngularVelocity(): void {
-        const w = this.width_;
-        const h = this.height_;
-        const d = this.depth_;
-        const ww = w * w;
-        const hh = h * h;
-        const dd = d * d;
-        this.Ω.yz = (12 / this.M) * this.L.yz / (hh + dd);
-        this.Ω.zx = (12 / this.M) * this.L.zx / (ww + dd);
-        this.Ω.xy = (12 / this.M) * this.L.xy / (ww + hh);
-    }
-
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.
      */
     protected updateInertiaTensor(): void {
         const x = this.width_;
         const y = this.height_;
-        const z = this.depth_;
         const xx = x * x;
         const yy = y * y;
-        const zz = z * z;
         const s = this.M / 12;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, s * (yy + zz));
-        I.setElement(1, 1, s * (zz + xx));
-        I.setElement(2, 2, s * (xx + yy));
+        const I = Matrix2.zero();
+        I.setElement(0, 0, s * (yy));
+        I.setElement(1, 1, s * (xx));
         this.I = I;
     }
 }
 
-export default Block3;
+export default Block2;

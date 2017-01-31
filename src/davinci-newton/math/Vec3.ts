@@ -114,6 +114,13 @@ export class Vec3 implements VectorE3 {
     /**
      * 
      */
+    dot(v: VectorE3): number {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
+    }
+
+    /**
+     * 
+     */
     magnitude(): number {
         const x = this.x;
         const y = this.y;
@@ -207,10 +214,6 @@ export class Vec3 implements VectorE3 {
 
     __div__(rhs: number): Vec3 {
         return new Vec3(this.x / rhs, this.y / rhs, this.z / rhs);
-    }
-
-    static dual(B: BivectorE3): Vec3 {
-        return new Vec3(-B.yz, -B.zx, -B.xy);
     }
 
     static fromVector(v: VectorE3): Vec3 {

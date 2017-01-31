@@ -59,8 +59,26 @@ export class Vector3 implements VectorE3 {
     /**
      * 
      */
+    direction(): this {
+        const m = this.magnitude();
+        return this.divByScalar(m);
+    }
+
+    /**
+     * 
+     */
     distanceTo(point: VectorE3): number {
         return Math.sqrt(this.quadranceTo(point));
+    }
+
+    /**
+     * 
+     */
+    divByScalar(alpha: number): this {
+        this.x /= alpha;
+        this.y /= alpha;
+        this.z /= alpha;
+        return this;
     }
 
     /**
@@ -77,21 +95,6 @@ export class Vector3 implements VectorE3 {
         this.x = -B.yz;
         this.y = -B.zx;
         this.z = -B.xy;
-        return this;
-    }
-
-    direction(): this {
-        const m = this.magnitude();
-        return this.divByScalar(m);
-    }
-
-    /**
-     * 
-     */
-    divByScalar(alpha: number): this {
-        this.x /= alpha;
-        this.y /= alpha;
-        this.z /= alpha;
         return this;
     }
 
@@ -139,6 +142,7 @@ export class Vector3 implements VectorE3 {
 
     /**
      * Computes the square of this vector.
+     * a.k.a squared norm.
      */
     quaditude(): number {
         const x = this.x;
