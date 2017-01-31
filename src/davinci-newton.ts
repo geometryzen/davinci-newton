@@ -6,6 +6,7 @@ import AxisChoice from './davinci-newton/graph/AxisChoice';
 import Block3 from './davinci-newton/engine3D/Block3';
 import CircularList from './davinci-newton/util/CircularList';
 import config from './davinci-newton/config';
+import ConstantEnergySolver from './davinci-newton/solvers/ConstantEnergySolver';
 import ConstantForceLaw3 from './davinci-newton/engine3D/ConstantForceLaw3';
 import CoordType from './davinci-newton/model/CoordType';
 import Cylinder3 from './davinci-newton/engine3D/Cylinder3';
@@ -80,6 +81,10 @@ const newton = {
      * 
      */
     get CircularList() { return CircularList; },
+    /**
+     * 
+     */
+    get ConstantEnergySolver() { return ConstantEnergySolver; },
     /**
      * 
      */

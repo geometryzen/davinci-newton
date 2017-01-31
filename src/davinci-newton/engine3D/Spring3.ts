@@ -36,11 +36,11 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
-    private attach1_ = Vec3.ORIGIN;
+    private attach1_ = Vec3.zero;
     /**
      * The attachment point to body2 in the local coordinates frame of body 2.
      */
-    private attach2_ = Vec3.ORIGIN;
+    private attach2_ = Vec3.zero;
     /**
      * The force information on body1 due to body2.
      */

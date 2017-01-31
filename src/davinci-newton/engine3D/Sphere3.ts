@@ -42,13 +42,20 @@ export class Sphere3 extends RigidBody3 {
         }
     }
 
+    public updateAngularVelocity(): void {
+        const r = this.radius_;
+        const s = 2 * this.M * r * r / 5;
+        this.Ω.yz = this.L.yz / s;
+        this.Ω.zx = this.L.zx / s;
+        this.Ω.xy = this.L.xy / s;
+    }
+
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.
      */
     protected updateInertiaTensor(): void {
         const r = this.radius_;
-        const rr = r * r;
-        const s = 2 * this.M * rr / 5;
+        const s = 2 * this.M * r * r / 5;
         const I = Matrix3.zero();
         I.setElement(0, 0, s);
         I.setElement(1, 1, s);

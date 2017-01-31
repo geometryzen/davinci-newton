@@ -79,26 +79,27 @@ export class Block3 extends RigidBody3 {
         const ww = w * w;
         const hh = h * h;
         const dd = d * d;
-        this.Ω.yz = (12 / this.M) * this.L.yz / (hh + dd);
-        this.Ω.zx = (12 / this.M) * this.L.zx / (ww + dd);
-        this.Ω.xy = (12 / this.M) * this.L.xy / (ww + hh);
+        const k = 12 / this.M;
+        this.Ω.yz = k * this.L.yz / (hh + dd);
+        this.Ω.zx = k * this.L.zx / (ww + dd);
+        this.Ω.xy = k * this.L.xy / (ww + hh);
     }
 
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.
      */
     protected updateInertiaTensor(): void {
-        const x = this.width_;
-        const y = this.height_;
-        const z = this.depth_;
-        const xx = x * x;
-        const yy = y * y;
-        const zz = z * z;
+        const w = this.width_;
+        const h = this.height_;
+        const d = this.depth_;
+        const ww = w * w;
+        const hh = h * h;
+        const dd = d * d;
         const s = this.M / 12;
         const I = Matrix3.zero();
-        I.setElement(0, 0, s * (yy + zz));
-        I.setElement(1, 1, s * (zz + xx));
-        I.setElement(2, 2, s * (xx + yy));
+        I.setElement(0, 0, s * (hh + dd));
+        I.setElement(1, 1, s * (dd + ww));
+        I.setElement(2, 2, s * (ww + hh));
         this.I = I;
     }
 }

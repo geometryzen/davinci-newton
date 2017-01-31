@@ -57,7 +57,7 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * center of mass in local coordinates.
      */
-    protected centerOfMassLocal_ = Vec3.ORIGIN;
+    protected centerOfMassLocal_ = Vec3.zero;
 
     /**
      * 

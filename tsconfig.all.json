@@ -16,6 +16,7 @@
         "src/davinci-newton/engine3D/Block3.spec.ts",
         "src/davinci-newton/engine3D/Physics3.spec.ts",
         "src/davinci-newton/engine3D/RigidBody3.spec.ts",
+        "src/davinci-newton/engine3D/Sphere3.spec.ts",
         "src/davinci-newton/math/Vector3.spec.ts",
         "typings/jasmine/jasmine.d.ts"
     ]

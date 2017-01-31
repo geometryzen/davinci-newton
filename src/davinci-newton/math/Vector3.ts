@@ -1,5 +1,6 @@
 import BivectorE3 from './BivectorE3';
 import MatrixLike from './MatrixLike';
+import mustBeVectorE3 from './mustBeVectorE3';
 import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 
@@ -24,6 +25,7 @@ export class Vector3 implements VectorE3 {
         this.z += rhs.z;
         return this;
     }
+
     /**
      * Pre-multiplies the column vector corresponding to this vector by the matrix.
      * The result is applied to this vector.
@@ -50,6 +52,7 @@ export class Vector3 implements VectorE3 {
      * 
      */
     copy(source: VectorE3): this {
+        mustBeVectorE3('source', source);
         this.x = source.x;
         this.y = source.y;
         this.z = source.z;
@@ -142,13 +145,12 @@ export class Vector3 implements VectorE3 {
 
     /**
      * Computes the square of this vector.
-     * a.k.a squared norm.
+     * This is an alias for the `squaredNorm` method.
      */
     quaditude(): number {
         const x = this.x;
         const y = this.y;
         const z = this.z;
-
         return x * x + y * y + z * z;
     }
 
@@ -192,6 +194,17 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
+     * Computes the square of this vector.
+     * This is an alias for the `quaditude` method.
+     */
+    squaredNorm(): number {
+        const x = this.x;
+        const y = this.y;
+        const z = this.z;
+        return x * x + y * y + z * z;
+    }
+
+    /**
      * 
      */
     subtract(rhs: VectorE3): this {
@@ -200,6 +213,7 @@ export class Vector3 implements VectorE3 {
         this.z -= rhs.z;
         return this;
     }
+
     /**
      * Returns a string representation of this Vector.
      */
@@ -221,6 +235,14 @@ export class Vector3 implements VectorE3 {
 
     __neg__(): Vector3 {
         return new Vector3(-this.x, -this.y, -this.z);
+    }
+
+    __rmul__(lhs: number): Vector3 {
+        return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+    }
+
+    __sub__(rhs: VectorE3): Vector3 {
+        return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
     }
 
     /**

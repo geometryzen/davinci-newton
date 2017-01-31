@@ -1,4 +1,5 @@
 import BivectorE3 from './BivectorE3';
+import mustBeNumber from '../checks/mustBeNumber';
 import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
@@ -9,15 +10,38 @@ import veryDifferent from '../util/veryDifferent';
 export class Vec3 implements VectorE3 {
 
     /**
-     * 
+     * The basis vector corresponding to the x coordinate.
      */
-    static ORIGIN = new Vec3(0, 0, 0);
+    static e1 = new Vec3(1, 0, 0);
 
     /**
-     * 
+     * The basis vector corresponding to the y coordinate.
      */
-    constructor(private x_: number, private y_: number, private z_: number) {
+    static e2 = new Vec3(0, 1, 0);
 
+    /**
+     * The basis vector corresponding to the z coordinate.
+     */
+    static e3 = new Vec3(0, 0, 1);
+
+    /**
+     * The zero vector.
+     */
+    static zero = new Vec3(0, 0, 0);
+
+    private readonly x_: number;
+    private readonly y_: number;
+    private readonly z_: number;
+
+    /**
+     * "v corresponds to `new Vec3(x, y, z)` in the [e1, e2, e3] basis"
+     * means
+     * v = x * e1 + y * e2 + z * e3
+     */
+    constructor(x: number, y: number, z: number) {
+        this.x_ = mustBeNumber('x', x);
+        this.y_ = mustBeNumber('y', y);
+        this.z_ = mustBeNumber('z', z);
     }
 
     /**
@@ -204,16 +228,20 @@ export class Vec3 implements VectorE3 {
         return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
     }
 
-    __sub__(rhs: VectorE3): Vec3 {
-        return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+    __div__(rhs: number): Vec3 {
+        return new Vec3(this.x / rhs, this.y / rhs, this.z / rhs);
     }
 
     __mul__(rhs: number): Vec3 {
         return new Vec3(this.x * rhs, this.y * rhs, this.z * rhs);
     }
 
-    __div__(rhs: number): Vec3 {
-        return new Vec3(this.x / rhs, this.y / rhs, this.z / rhs);
+    __rmul__(lhs: number): Vec3 {
+        return new Vec3(lhs * this.x, lhs * this.y, lhs * this.z);
+    }
+
+    __sub__(rhs: VectorE3): Vec3 {
+        return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
     }
 
     static fromVector(v: VectorE3): Vec3 {

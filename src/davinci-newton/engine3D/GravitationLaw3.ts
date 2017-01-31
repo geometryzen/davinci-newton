@@ -26,14 +26,14 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    public G = 1;
+    public G: number;
     private readonly F1: Force;
     private readonly F2: Force;
     private readonly forces: Force[] = [];
     /**
      * 
      */
-    constructor(private body1_: Massive, private body2_: Massive) {
+    constructor(private body1_: Massive, private body2_: Massive, G = 1) {
         super();
 
         this.F1 = new Force(this.body1_);
@@ -44,6 +44,8 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         this.F2.locationCoordType = CoordType.WORLD;
         this.F2.vectorCoordType = CoordType.WORLD;
 
+        this.G = G;
+
         this.forces = [this.F1, this.F2];
     }
 
@@ -51,7 +53,6 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
      * 
      */
     updateForces(): Force[] {
-
         this.F1.location.copy(this.body1_.X);
         this.F2.location.copy(this.body2_.X);
 
@@ -78,6 +79,9 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
      * 
      */
     potentialEnergy(): number {
+        this.F1.location.copy(this.body1_.X);
+        this.F2.location.copy(this.body2_.X);
+
         const m1 = this.body1_.M;
         const m2 = this.body2_.M;
         const r = this.F1.location.distanceTo(this.F2.location);
