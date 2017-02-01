@@ -200,9 +200,12 @@ declare module NEWTON {
         yz: number;
         zx: number;
         xy: number;
+        constructor(yz?: number, zx?: number, xy?: number);
+        add(B: BivectorE3): this;
         applyMatrix(m: MatrixLike): this;
         copy(B: BivectorE3): this;
         isZero(): boolean;
+        sub(B: BivectorE3): this;
         toString(radix?: number): string;
         wedge(a: VectorE3, b: VectorE3): this;
         write(B: BivectorE3): this;
@@ -449,18 +452,19 @@ declare module NEWTON {
          */
         constructor();
         addBody(body: RigidBody3): void;
-        removeBody(body: RigidBody3): void;
         addForceLaw(forceLaw: ForceLaw3): void;
-        removeForceLaw(forceLaw: ForceLaw3): void;
-        prolog(): void;
-        getState(): number[];
-        evaluate(state: number[], change: number[], timeOffset: number): void;
-        setState(state: number[]): void;
         epilog(): void;
+        evaluate(state: number[], change: number[], timeOffset: number): void;
+        getState(): number[];
+        prolog(): void;
+        removeBody(body: RigidBody3): void;
+        removeForceLaw(forceLaw: ForceLaw3): void;
+        setState(state: number[]): void;
         totalEnergy(): number;
-        // saveState(): void;
-        // restoreState(): void;
-        // findCollisions(collisions: Collision[], vars: number[], stepSize: number): void;
+        /**
+         * Update the state variables following a change to the simulation bodies.
+         */
+        updateFromBodies(): void;
     }
 
     interface DiffEqSolver {

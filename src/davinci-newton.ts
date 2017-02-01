@@ -2,6 +2,7 @@ import AdaptiveStepSolver from './davinci-newton/solvers/AdaptiveStepSolver';
 import AlignH from './davinci-newton/view/AlignH';
 import AlignV from './davinci-newton/view/AlignV';
 import AxisChoice from './davinci-newton/graph/AxisChoice';
+import Bivector3 from './davinci-newton/math/Bivector3';
 // import Block2 from './davinci-newton/engine2D/Block2';
 import Block3 from './davinci-newton/engine3D/Block3';
 import CircularList from './davinci-newton/util/CircularList';
@@ -69,6 +70,10 @@ const newton = {
      * 
      */
     get AxisChoice() { return AxisChoice; },
+    /**
+     * 
+     */
+    get Bivector3() { return Bivector3; },
     /**
      * 
      */

@@ -163,10 +163,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             this.bodies_.push(body);
             this.simList_.add(body);
         }
-        this.initializeFromBody(body);
-        this.bodies_.forEach(function (b) {
-            // eraseOldCopy(b);
-        });
+        this.updateFromBody(body);
         this.discontinuosChangeToEnergy();
     }
 
@@ -378,10 +375,19 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         return this.varsList_.getTime();
     }
 
+    public updateFromBodies(): void {
+        const bodies = this.bodies_;
+        const N = bodies.length;
+        for (let i = 0; i < N; i++) {
+            this.updateFromBody(bodies[i]);
+        }
+        this.discontinuosChangeToEnergy();
+    }
+
     /**
      * 
      */
-    private initializeFromBody(body: RigidBody3): void {
+    private updateFromBody(body: RigidBody3): void {
         const idx = body.varsIndex;
         if (idx > -1) {
             const va = this.varsList_;

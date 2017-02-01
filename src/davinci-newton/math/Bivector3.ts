@@ -1,5 +1,10 @@
 import BivectorE3 from './BivectorE3';
+import isBivectorE3 from './isBivectorE3';
+import isNumber from '../checks/isNumber';
+import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
+import mustBeBivectorE3 from './mustBeBivectorE3';
+import mustBeVectorE3 from './mustBeVectorE3';
 import SpinorE3 from './SpinorE3';
 import VectorE3 from './VectorE3';
 import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
@@ -11,6 +16,26 @@ export class Bivector3 implements BivectorE3 {
     yz = 0;
     zx = 0;
     xy = 0;
+
+    /**
+     * 
+     */
+    constructor(yz = 0, zx = 0, xy = 0) {
+        this.yz = yz;
+        this.zx = zx;
+        this.xy = xy;
+    }
+
+    /**
+     * 
+     */
+    add(B: BivectorE3): this {
+        mustBeBivectorE3('B', B);
+        this.yz += B.yz;
+        this.zx += B.zx;
+        this.xy += B.xy;
+        return this;
+    }
 
     /**
      * Pre-multiplies the column vector corresponding to this bivector by the matrix.
@@ -38,6 +63,7 @@ export class Bivector3 implements BivectorE3 {
      * 
      */
     copy(B: BivectorE3): this {
+        mustBeBivectorE3('B', B);
         this.yz = B.yz;
         this.zx = B.zx;
         this.xy = B.xy;
@@ -89,7 +115,19 @@ export class Bivector3 implements BivectorE3 {
      * Computes the scalar product of this bivector with B.
      */
     scp(B: BivectorE3): number {
+        mustBeBivectorE3('B', B);
         return this.xy * B.xy + this.yz * B.yz + this.zx * B.zx;
+    }
+
+    /**
+     * 
+     */
+    sub(B: BivectorE3): this {
+        mustBeBivectorE3('B', B);
+        this.yz -= B.yz;
+        this.zx -= B.zx;
+        this.xy -= B.xy;
+        return this;
     }
 
     /**
@@ -103,6 +141,8 @@ export class Bivector3 implements BivectorE3 {
      * 
      */
     wedge(a: VectorE3, b: VectorE3): this {
+        mustBeVectorE3('a', a);
+        mustBeVectorE3('b', b);
         this.yz = wedgeYZ(a, b);
         this.zx = wedgeZX(a, b);
         this.xy = wedgeXY(a, b);
@@ -127,6 +167,54 @@ export class Bivector3 implements BivectorE3 {
         this.zx = 0;
         this.xy = 0;
         return this;
+    }
+
+    __add__(rhs: BivectorE3): Bivector3 {
+        if (isBivectorE3(rhs) && !isVectorE3(rhs)) {
+            const yz = this.yz + rhs.yz;
+            const zx = this.zx + rhs.zx;
+            const xy = this.xy + rhs.xy;
+            return new Bivector3(yz, zx, xy);
+        }
+        else {
+            return void 0;
+        }
+    }
+
+    __mul__(rhs: number): Bivector3 {
+        if (isNumber(rhs)) {
+            const yz = this.yz * rhs;
+            const zx = this.zx * rhs;
+            const xy = this.xy * rhs;
+            return new Bivector3(yz, zx, xy);
+        }
+        else {
+            return void 0;
+        }
+    }
+
+    __rmul__(lhs: number): Bivector3 {
+        if (isNumber(lhs)) {
+            const yz = lhs * this.yz;
+            const zx = lhs * this.zx;
+            const xy = lhs * this.xy;
+            return new Bivector3(yz, zx, xy);
+        }
+        else {
+            return void 0;
+        }
+    }
+
+    __sub__(rhs: BivectorE3): Bivector3 {
+        if (isBivectorE3(rhs) && !isVectorE3(rhs)) {
+            const yz = this.yz - rhs.yz;
+            const zx = this.zx - rhs.zx;
+            const xy = this.xy - rhs.xy;
+            return new Bivector3(yz, zx, xy);
+        }
+        else {
+            return void 0;
+        }
     }
 }
 

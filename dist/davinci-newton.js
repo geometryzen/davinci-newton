@@ -564,6 +564,257 @@ define('davinci-newton/graph/AxisChoice',["require", "exports"], function (requi
     exports.default = AxisChoice;
 });
 
+define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
+    "use strict";
+    function default_1(x) {
+        return x === null;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = default_1;
+});
+
+define('davinci-newton/checks/isNumber',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isNumber(x) {
+        return (typeof x === 'number');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isNumber;
+});
+
+define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
+    "use strict";
+    function isObject(x) {
+        return (typeof x === 'object');
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isObject;
+});
+
+define('davinci-newton/math/isBivectorE3',["require", "exports", "../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (require, exports, isNull_1, isNumber_1, isObject_1) {
+    "use strict";
+    function isBivectorE3(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.xy) && isNumber_1.default(v.yz) && isNumber_1.default(v.zx);
+        }
+        else {
+            return false;
+        }
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isBivectorE3;
+});
+
+define('davinci-newton/math/isVectorE3',["require", "exports", "../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (require, exports, isNull_1, isNumber_1, isObject_1) {
+    "use strict";
+    function isVectorE3(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.x) && isNumber_1.default(v.y) && isNumber_1.default(v.z);
+        }
+        else {
+            return false;
+        }
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = isVectorE3;
+});
+
+define('davinci-newton/math/mustBeBivectorE3',["require", "exports"], function (require, exports) {
+    "use strict";
+    function mustBeBivectorE3(name, B) {
+        if (isNaN(B.yz) || isNaN(B.zx) || isNaN(B.xy)) {
+            throw new Error(name + ", (" + B.yz + ", " + B.zx + ", " + B.xy + "), must be a BivectorE3.");
+        }
+        return B;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeBivectorE3;
+});
+
+define('davinci-newton/math/mustBeVectorE3',["require", "exports"], function (require, exports) {
+    "use strict";
+    function mustBeVectorE3(name, v) {
+        if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
+            throw new Error(name + ", (" + v.x + ", " + v.y + ", " + v.z + "), must be a VectorE3.");
+        }
+        return v;
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = mustBeVectorE3;
+});
+
+define('davinci-newton/math/wedge3',["require", "exports"], function (require, exports) {
+    "use strict";
+    function wedgeYZ(a, b) {
+        return a.y * b.z - a.z * b.y;
+    }
+    exports.wedgeYZ = wedgeYZ;
+    function wedgeZX(a, b) {
+        return a.z * b.x - a.x * b.z;
+    }
+    exports.wedgeZX = wedgeZX;
+    function wedgeXY(a, b) {
+        return a.x * b.y - a.y * b.x;
+    }
+    exports.wedgeXY = wedgeXY;
+});
+
+define('davinci-newton/math/Bivector3',["require", "exports", "./isBivectorE3", "../checks/isNumber", "./isVectorE3", "./mustBeBivectorE3", "./mustBeVectorE3", "./wedge3"], function (require, exports, isBivectorE3_1, isNumber_1, isVectorE3_1, mustBeBivectorE3_1, mustBeVectorE3_1, wedge3_1) {
+    "use strict";
+    var Bivector3 = (function () {
+        function Bivector3(yz, zx, xy) {
+            if (yz === void 0) { yz = 0; }
+            if (zx === void 0) { zx = 0; }
+            if (xy === void 0) { xy = 0; }
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            this.yz = yz;
+            this.zx = zx;
+            this.xy = xy;
+        }
+        Bivector3.prototype.add = function (B) {
+            mustBeBivectorE3_1.default('B', B);
+            this.yz += B.yz;
+            this.zx += B.zx;
+            this.xy += B.xy;
+            return this;
+        };
+        Bivector3.prototype.applyMatrix = function (σ) {
+            var x = this.yz;
+            var y = this.zx;
+            var z = this.xy;
+            var n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
+            var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
+            var n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
+            this.yz = n11 * x + n12 * y + n13 * z;
+            this.zx = n21 * x + n22 * y + n23 * z;
+            this.xy = n31 * x + n32 * y + n33 * z;
+            return this;
+        };
+        Bivector3.prototype.copy = function (B) {
+            mustBeBivectorE3_1.default('B', B);
+            this.yz = B.yz;
+            this.zx = B.zx;
+            this.xy = B.xy;
+            return this;
+        };
+        Bivector3.prototype.isZero = function () {
+            return this.xy === 0 && this.yz === 0 && this.zx === 0;
+        };
+        Bivector3.prototype.rev = function () {
+            this.yz = -this.yz;
+            this.zx = -this.zx;
+            this.xy = -this.xy;
+            return this;
+        };
+        Bivector3.prototype.rotate = function (R) {
+            if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
+                return this;
+            }
+            else {
+                var yz = this.yz;
+                var zx = this.zx;
+                var xy = this.xy;
+                var Rxy = R.xy;
+                var Ryz = R.yz;
+                var Rzx = R.zx;
+                var Ra = R.a;
+                var Syz = Ra * yz - Rzx * xy + Rxy * zx;
+                var Szx = Ra * zx - Rxy * yz + Ryz * xy;
+                var Sxy = Ra * xy - Ryz * zx + Rzx * yz;
+                var Sa = Ryz * yz + Rzx * zx + Rxy * xy;
+                this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
+                this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
+                this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
+                return this;
+            }
+        };
+        Bivector3.prototype.scp = function (B) {
+            mustBeBivectorE3_1.default('B', B);
+            return this.xy * B.xy + this.yz * B.yz + this.zx * B.zx;
+        };
+        Bivector3.prototype.sub = function (B) {
+            mustBeBivectorE3_1.default('B', B);
+            this.yz -= B.yz;
+            this.zx -= B.zx;
+            this.xy -= B.xy;
+            return this;
+        };
+        Bivector3.prototype.toString = function (radix) {
+            return "new Bivector3(yz: " + this.yz.toString(radix) + ", zx: " + this.zx.toString(radix) + ", xy: " + this.xy.toString(radix) + ")";
+        };
+        Bivector3.prototype.wedge = function (a, b) {
+            mustBeVectorE3_1.default('a', a);
+            mustBeVectorE3_1.default('b', b);
+            this.yz = wedge3_1.wedgeYZ(a, b);
+            this.zx = wedge3_1.wedgeZX(a, b);
+            this.xy = wedge3_1.wedgeXY(a, b);
+            return this;
+        };
+        Bivector3.prototype.write = function (B) {
+            B.xy = this.xy;
+            B.yz = this.yz;
+            B.zx = this.zx;
+            return this;
+        };
+        Bivector3.prototype.zero = function () {
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            return this;
+        };
+        Bivector3.prototype.__add__ = function (rhs) {
+            if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
+                var yz = this.yz + rhs.yz;
+                var zx = this.zx + rhs.zx;
+                var xy = this.xy + rhs.xy;
+                return new Bivector3(yz, zx, xy);
+            }
+            else {
+                return void 0;
+            }
+        };
+        Bivector3.prototype.__mul__ = function (rhs) {
+            if (isNumber_1.default(rhs)) {
+                var yz = this.yz * rhs;
+                var zx = this.zx * rhs;
+                var xy = this.xy * rhs;
+                return new Bivector3(yz, zx, xy);
+            }
+            else {
+                return void 0;
+            }
+        };
+        Bivector3.prototype.__rmul__ = function (lhs) {
+            if (isNumber_1.default(lhs)) {
+                var yz = lhs * this.yz;
+                var zx = lhs * this.zx;
+                var xy = lhs * this.xy;
+                return new Bivector3(yz, zx, xy);
+            }
+            else {
+                return void 0;
+            }
+        };
+        Bivector3.prototype.__sub__ = function (rhs) {
+            if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
+                var yz = this.yz - rhs.yz;
+                var zx = this.zx - rhs.zx;
+                var xy = this.xy - rhs.xy;
+                return new Bivector3(yz, zx, xy);
+            }
+            else {
+                return void 0;
+            }
+        };
+        return Bivector3;
+    }());
+    exports.Bivector3 = Bivector3;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Bivector3;
+});
+
 define('davinci-newton/checks/mustSatisfy',["require", "exports"], function (require, exports) {
     "use strict";
     function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
@@ -597,15 +848,6 @@ define('davinci-newton/checks/mustBeDefined',["require", "exports", "../checks/m
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = mustBeDefined;
-});
-
-define('davinci-newton/checks/isNumber',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isNumber(x) {
-        return (typeof x === 'number');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isNumber;
 });
 
 define('davinci-newton/checks/isInteger',["require", "exports", "../checks/isNumber"], function (require, exports, isNumber_1) {
@@ -1012,110 +1254,6 @@ define('davinci-newton/objects/AbstractSimObject',["require", "exports"], functi
     exports.default = AbstractSimObject;
 });
 
-define('davinci-newton/math/wedge3',["require", "exports"], function (require, exports) {
-    "use strict";
-    function wedgeYZ(a, b) {
-        return a.y * b.z - a.z * b.y;
-    }
-    exports.wedgeYZ = wedgeYZ;
-    function wedgeZX(a, b) {
-        return a.z * b.x - a.x * b.z;
-    }
-    exports.wedgeZX = wedgeZX;
-    function wedgeXY(a, b) {
-        return a.x * b.y - a.y * b.x;
-    }
-    exports.wedgeXY = wedgeXY;
-});
-
-define('davinci-newton/math/Bivector3',["require", "exports", "./wedge3"], function (require, exports, wedge3_1) {
-    "use strict";
-    var Bivector3 = (function () {
-        function Bivector3() {
-            this.yz = 0;
-            this.zx = 0;
-            this.xy = 0;
-        }
-        Bivector3.prototype.applyMatrix = function (σ) {
-            var x = this.yz;
-            var y = this.zx;
-            var z = this.xy;
-            var n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
-            var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
-            var n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
-            this.yz = n11 * x + n12 * y + n13 * z;
-            this.zx = n21 * x + n22 * y + n23 * z;
-            this.xy = n31 * x + n32 * y + n33 * z;
-            return this;
-        };
-        Bivector3.prototype.copy = function (B) {
-            this.yz = B.yz;
-            this.zx = B.zx;
-            this.xy = B.xy;
-            return this;
-        };
-        Bivector3.prototype.isZero = function () {
-            return this.xy === 0 && this.yz === 0 && this.zx === 0;
-        };
-        Bivector3.prototype.rev = function () {
-            this.yz = -this.yz;
-            this.zx = -this.zx;
-            this.xy = -this.xy;
-            return this;
-        };
-        Bivector3.prototype.rotate = function (R) {
-            if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
-                return this;
-            }
-            else {
-                var yz = this.yz;
-                var zx = this.zx;
-                var xy = this.xy;
-                var Rxy = R.xy;
-                var Ryz = R.yz;
-                var Rzx = R.zx;
-                var Ra = R.a;
-                var Syz = Ra * yz - Rzx * xy + Rxy * zx;
-                var Szx = Ra * zx - Rxy * yz + Ryz * xy;
-                var Sxy = Ra * xy - Ryz * zx + Rzx * yz;
-                var Sa = Ryz * yz + Rzx * zx + Rxy * xy;
-                this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
-                this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
-                this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
-                return this;
-            }
-        };
-        Bivector3.prototype.scp = function (B) {
-            return this.xy * B.xy + this.yz * B.yz + this.zx * B.zx;
-        };
-        Bivector3.prototype.toString = function (radix) {
-            return "new Bivector3(yz: " + this.yz.toString(radix) + ", zx: " + this.zx.toString(radix) + ", xy: " + this.xy.toString(radix) + ")";
-        };
-        Bivector3.prototype.wedge = function (a, b) {
-            this.yz = wedge3_1.wedgeYZ(a, b);
-            this.zx = wedge3_1.wedgeZX(a, b);
-            this.xy = wedge3_1.wedgeXY(a, b);
-            return this;
-        };
-        Bivector3.prototype.write = function (B) {
-            B.xy = this.xy;
-            B.yz = this.yz;
-            B.zx = this.zx;
-            return this;
-        };
-        Bivector3.prototype.zero = function () {
-            this.yz = 0;
-            this.zx = 0;
-            this.xy = 0;
-            return this;
-        };
-        return Bivector3;
-    }());
-    exports.Bivector3 = Bivector3;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = Bivector3;
-});
-
 define('davinci-newton/math/Mat3',["require", "exports", "./Matrix3"], function (require, exports, Matrix3_1) {
     "use strict";
     var Mat3 = (function () {
@@ -1175,24 +1313,6 @@ define('davinci-newton/checks/mustBeFunction',["require", "exports", "../checks/
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = mustBeFunction;
-});
-
-define('davinci-newton/checks/isNull',["require", "exports"], function (require, exports) {
-    "use strict";
-    function default_1(x) {
-        return x === null;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = default_1;
-});
-
-define('davinci-newton/checks/isObject',["require", "exports"], function (require, exports) {
-    "use strict";
-    function isObject(x) {
-        return (typeof x === 'object');
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isObject;
 });
 
 define('davinci-newton/checks/mustBeNonNullObject',["require", "exports", "../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (require, exports, mustSatisfy_1, isNull_1, isObject_1) {
@@ -1510,32 +1630,6 @@ define('davinci-newton/math/isSpinorE3',["require", "exports", "../checks/isNull
     }
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = isSpinorE3;
-});
-
-define('davinci-newton/math/isVectorE3',["require", "exports", "../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (require, exports, isNull_1, isNumber_1, isObject_1) {
-    "use strict";
-    function isVectorE3(v) {
-        if (isObject_1.default(v) && !isNull_1.default(v)) {
-            return isNumber_1.default(v.x) && isNumber_1.default(v.y) && isNumber_1.default(v.z);
-        }
-        else {
-            return false;
-        }
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = isVectorE3;
-});
-
-define('davinci-newton/math/mustBeVectorE3',["require", "exports"], function (require, exports) {
-    "use strict";
-    function mustBeVectorE3(name, v) {
-        if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
-            throw new Error(name + ", (" + v.x + ", " + v.y + ", " + v.z + "), must be a VectorE3.");
-        }
-        return v;
-    }
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = mustBeVectorE3;
 });
 
 define('davinci-newton/math/Vector3',["require", "exports", "../checks/isNumber", "./isSpinorE3", "./isVectorE3", "./mustBeVectorE3"], function (require, exports, isNumber_1, isSpinorE3_1, isVectorE3_1, mustBeVectorE3_1) {
@@ -2180,7 +2274,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2017-01-31';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.22';
+            this.VERSION = '0.0.23';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5719,9 +5813,7 @@ define('davinci-newton/engine3D/Physics3',["require", "exports", "../util/Abstra
                 this.bodies_.push(body);
                 this.simList_.add(body);
             }
-            this.initializeFromBody(body);
-            this.bodies_.forEach(function (b) {
-            });
+            this.updateFromBody(body);
             this.discontinuosChangeToEnergy();
         };
         Physics3.prototype.removeBody = function (body) {
@@ -5860,7 +5952,15 @@ define('davinci-newton/engine3D/Physics3',["require", "exports", "../util/Abstra
             enumerable: true,
             configurable: true
         });
-        Physics3.prototype.initializeFromBody = function (body) {
+        Physics3.prototype.updateFromBodies = function () {
+            var bodies = this.bodies_;
+            var N = bodies.length;
+            for (var i = 0; i < N; i++) {
+                this.updateFromBody(bodies[i]);
+            }
+            this.discontinuosChangeToEnergy();
+        };
+        Physics3.prototype.updateFromBody = function (body) {
             var idx = body.varsIndex;
             if (idx > -1) {
                 var va = this.varsList_;
@@ -6344,7 +6444,7 @@ define('davinci-newton/engine3D/Spring3',["require", "exports", "../objects/Abst
     exports.default = Spring3;
 });
 
-define('davinci-newton',["require", "exports", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3", "./davinci-newton/math/Vector3"], function (require, exports, AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, Cylinder3_1, DefaultAdvanceStrategy_1, DisplayGraph_1, DrawingMode_1, EulerMethod_1, Force3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, RigidBody3_1, Physics3_1, RungeKutta_1, SimRunner_1, SimView_1, Sphere3_1, Spring3_1, VarsList_1, Vec3_1, Vector3_1) {
+define('davinci-newton',["require", "exports", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/math/Bivector3", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/runner/SimRunner", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3", "./davinci-newton/math/Vector3"], function (require, exports, AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Bivector3_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, Cylinder3_1, DefaultAdvanceStrategy_1, DisplayGraph_1, DrawingMode_1, EulerMethod_1, Force3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, RigidBody3_1, Physics3_1, RungeKutta_1, SimRunner_1, SimView_1, Sphere3_1, Spring3_1, VarsList_1, Vec3_1, Vector3_1) {
     "use strict";
     var newton = {
         get LAST_MODIFIED() { return config_1.default.LAST_MODIFIED; },
@@ -6353,6 +6453,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/solvers/Adaptiv
         get AlignH() { return AlignH_1.default; },
         get AlignV() { return AlignV_1.default; },
         get AxisChoice() { return AxisChoice_1.default; },
+        get Bivector3() { return Bivector3_1.default; },
         get Block3() { return Block3_1.default; },
         get CircularList() { return CircularList_1.default; },
         get ConstantEnergySolver() { return ConstantEnergySolver_1.default; },
