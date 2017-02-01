@@ -1,4 +1,7 @@
 import BivectorE3 from './BivectorE3';
+import isNumber from '../checks/isNumber';
+import isSpinorE3 from './isSpinorE3';
+import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
 import mustBeVectorE3 from './mustBeVectorE3';
 import SpinorE3 from './SpinorE3';
@@ -46,6 +49,13 @@ export class Vector3 implements VectorE3 {
         this.z = n31 * x + n32 * y + n33 * z;
 
         return this;
+    }
+
+    /**
+     * 
+     */
+    clone(): Vector3 {
+        return new Vector3(this.x, this.y, this.z);
     }
 
     /**
@@ -105,6 +115,9 @@ export class Vector3 implements VectorE3 {
         return this.x === 0 && this.y === 0 && this.z === 0;
     }
 
+    /**
+     * 
+     */
     magnitude(): number {
         return Math.sqrt(this.quaditude());
     }
@@ -121,6 +134,14 @@ export class Vector3 implements VectorE3 {
 
     neg(): this {
         return this.mulByScalar(-1);
+    }
+
+    /**
+     * 
+     */
+    normalize(magnitude = 1): this {
+        const m = this.magnitude();
+        return this.mulByScalar(magnitude).divByScalar(m);
     }
 
     /**
@@ -207,7 +228,7 @@ export class Vector3 implements VectorE3 {
     /**
      * 
      */
-    subtract(rhs: VectorE3): this {
+    sub(rhs: VectorE3): this {
         this.x -= rhs.x;
         this.y -= rhs.y;
         this.z -= rhs.z;
@@ -222,27 +243,70 @@ export class Vector3 implements VectorE3 {
     }
 
     __add__(rhs: VectorE3): Vector3 {
-        return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+        if (isVectorE3(rhs) && !isSpinorE3(rhs)) {
+            return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+        }
+        else {
+            return void 0;
+        }
     }
 
     __div__(rhs: number): Vector3 {
-        return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+        if (isNumber(rhs)) {
+            return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+        }
+        else {
+            return void 0;
+        }
     }
 
     __mul__(rhs: number): Vector3 {
-        return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+        if (isNumber(rhs)) {
+            return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+        }
+        else {
+            return void 0;
+        }
     }
 
     __neg__(): Vector3 {
         return new Vector3(-this.x, -this.y, -this.z);
     }
 
+    __radd__(lhs: VectorE3): Vector3 {
+        if (isVectorE3(lhs) && !isSpinorE3(lhs)) {
+            return new Vector3(lhs.x + this.x, lhs.y + this.y, lhs.z + this.z);
+        }
+        else {
+            return void 0;
+        }
+    }
+
     __rmul__(lhs: number): Vector3 {
-        return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+        if (isNumber(lhs)) {
+            return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+        }
+        else {
+            return void 0;
+        }
+    }
+
+    __rsub__(lhs: VectorE3): Vector3 {
+        if (isVectorE3(lhs) && !isSpinorE3(lhs)) {
+            return new Vector3(lhs.x - this.x, lhs.y - this.y, lhs.z - this.z);
+        }
+        else {
+            return void 0;
+        }
     }
 
     __sub__(rhs: VectorE3): Vector3 {
-        return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+        if (isVectorE3(rhs) && !isSpinorE3(rhs)) {
+            return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+        }
+        else {
+            return void 0;
+        }
     }
 
     /**

@@ -62,7 +62,7 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         const r2 = this.F1.location.quadranceTo(this.F2.location);
         const sf = this.G * m1 * m2 / r2;
 
-        this.F1.vector.copy(this.F2.location).subtract(this.F1.location).direction().mulByScalar(sf);
+        this.F1.vector.copy(this.F2.location).sub(this.F1.location).direction().mulByScalar(sf);
         this.F2.vector.copy(this.F1.vector).neg();
 
         return this.forces;

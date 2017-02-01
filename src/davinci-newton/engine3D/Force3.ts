@@ -129,7 +129,7 @@ export class Force3 extends AbstractSimObject {
     computeTorque(torque: BivectorE3): void {
         this.computePosition(this.position_);
         this.computeForce(this.force_);
-        this.torque_.wedge(this.position_.subtract(this.body_.X), this.force_);
+        this.torque_.wedge(this.position_.sub(this.body_.X), this.force_);
         this.torque_.write(torque);
     }
 }

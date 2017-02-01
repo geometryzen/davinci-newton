@@ -84,7 +84,7 @@ describe("RigidBody3", function () {
             const localPoint = new Vec3(0, 0, 0);
             const xActual = new Vector3();
             const xExpect = new Vector3();
-            xExpect.copy(localPoint).subtract(body.centerOfMassLocal).rotate(body.R).add(body.X);
+            xExpect.copy(localPoint).sub(body.centerOfMassLocal).rotate(body.R).add(body.X);
             body.localPointToWorldPoint(localPoint, xActual);
 
             expect(xActual.x).toBe(xExpect.x);

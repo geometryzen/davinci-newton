@@ -218,7 +218,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2017-01-31';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.21';
+                    this.VERSION = '0.0.22';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -2126,7 +2126,7 @@ System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../objects/Abstr
                     var m2 = this.body2_.M;
                     var r2 = this.F1.location.quadranceTo(this.F2.location);
                     var sf = this.G * m1 * m2 / r2;
-                    this.F1.vector.copy(this.F2.location).subtract(this.F1.location).direction().mulByScalar(sf);
+                    this.F1.vector.copy(this.F2.location).sub(this.F1.location).direction().mulByScalar(sf);
                     this.F2.vector.copy(this.F1.vector).neg();
                     return this.forces;
                 };
@@ -4732,32 +4732,6 @@ System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatis
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/isNull.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function default_1(x) {
-        return x === null;
-    }
-    exports_1("default", default_1);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isObject.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isObject(x) {
-        return typeof x === 'object';
-    }
-    exports_1("default", isObject);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (exports_1, context_1) {
     "use strict";
 
@@ -5428,7 +5402,7 @@ System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObj
                 Force3.prototype.computeTorque = function (torque) {
                     this.computePosition(this.position_);
                     this.computeForce(this.force_);
-                    this.torque_.wedge(this.position_.subtract(this.body_.X), this.force_);
+                    this.torque_.wedge(this.position_.sub(this.body_.X), this.force_);
                     this.torque_.write(torque);
                 };
                 return Force3;
@@ -5469,8 +5443,8 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                     var _this = _super.call(this) || this;
                     _this.body1_ = body1_;
                     _this.body2_ = body2_;
-                    _this.restLength_ = 1;
-                    _this.stiffness_ = 1;
+                    _this.restLength = 1;
+                    _this.stiffness = 1;
                     _this.attach1_ = Vec3_1.default.zero;
                     _this.attach2_ = Vec3_1.default.zero;
                     _this.forces = [];
@@ -5537,8 +5511,8 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                     this.computeBody1AttachPointInWorldCoords(this.F1.location);
                     this.computeBody2AttachPointInWorldCoords(this.F2.location);
                     var length = this.F1.location.distanceTo(this.F2.location);
-                    var sf = this.stiffness_ * (length - this.restLength_) / length;
-                    this.F1.vector.copy(this.F2.location).subtract(this.F1.location).mulByScalar(sf);
+                    var sf = this.stiffness * (length - this.restLength) / length;
+                    this.F1.vector.copy(this.F2.location).sub(this.F1.location).mulByScalar(sf);
                     this.F2.vector.copy(this.F1.vector).neg();
                     return this.forces;
                 };
@@ -5546,8 +5520,8 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                 Spring3.prototype.potentialEnergy = function () {
                     this.computeBody1AttachPointInWorldCoords(this.F1.location);
                     this.computeBody2AttachPointInWorldCoords(this.F2.location);
-                    var stretch = this.F2.location.distanceTo(this.F1.location) - this.restLength_;
-                    return 0.5 * this.stiffness_ * stretch * stretch;
+                    var stretch = this.F2.location.distanceTo(this.F1.location) - this.restLength;
+                    return 0.5 * this.stiffness * stretch * stretch;
                 };
                 return Spring3;
             }(AbstractSimObject_1.default);
@@ -6431,19 +6405,6 @@ System.register("davinci-newton/checks/mustSatisfy.js", [], function (exports_1,
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/isNumber.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isNumber(x) {
-        return typeof x === 'number';
-    }
-    exports_1("default", isNumber);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy", "../checks/isNumber"], function (exports_1, context_1) {
     "use strict";
 
@@ -6660,6 +6621,93 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "../ut
         }
     };
 });
+System.register("davinci-newton/math/isSpinorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isSpinorE3(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.a) && isNumber_1.default(v.xy) && isNumber_1.default(v.yz) && isNumber_1.default(v.zx);
+        } else {
+            return false;
+        }
+    }
+    exports_1("default", isSpinorE3);
+    var isNull_1, isNumber_1, isObject_1;
+    return {
+        setters: [function (isNull_1_1) {
+            isNull_1 = isNull_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isNull.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function default_1(x) {
+        return x === null;
+    }
+    exports_1("default", default_1);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isNumber.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isNumber(x) {
+        return typeof x === 'number';
+    }
+    exports_1("default", isNumber);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isObject.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isObject(x) {
+        return typeof x === 'object';
+    }
+    exports_1("default", isObject);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/isVectorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isVectorE3(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.x) && isNumber_1.default(v.y) && isNumber_1.default(v.z);
+        } else {
+            return false;
+        }
+    }
+    exports_1("default", isVectorE3);
+    var isNull_1, isNumber_1, isObject_1;
+    return {
+        setters: [function (isNull_1_1) {
+            isNull_1 = isNull_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {}
+    };
+});
 System.register("davinci-newton/math/mustBeVectorE3.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -6676,13 +6724,19 @@ System.register("davinci-newton/math/mustBeVectorE3.js", [], function (exports_1
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/Vector3.js", ["./mustBeVectorE3"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Vector3.js", ["../checks/isNumber", "./isSpinorE3", "./isVectorE3", "./mustBeVectorE3"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var mustBeVectorE3_1, Vector3;
+    var isNumber_1, isSpinorE3_1, isVectorE3_1, mustBeVectorE3_1, Vector3;
     return {
-        setters: [function (mustBeVectorE3_1_1) {
+        setters: [function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (isSpinorE3_1_1) {
+            isSpinorE3_1 = isSpinorE3_1_1;
+        }, function (isVectorE3_1_1) {
+            isVectorE3_1 = isVectorE3_1_1;
+        }, function (mustBeVectorE3_1_1) {
             mustBeVectorE3_1 = mustBeVectorE3_1_1;
         }],
         execute: function () {
@@ -6724,6 +6778,9 @@ System.register("davinci-newton/math/Vector3.js", ["./mustBeVectorE3"], function
                     this.y = n21 * x + n22 * y + n23 * z;
                     this.z = n31 * x + n32 * y + n33 * z;
                     return this;
+                };
+                Vector3.prototype.clone = function () {
+                    return new Vector3(this.x, this.y, this.z);
                 };
                 Vector3.prototype.copy = function (source) {
                     mustBeVectorE3_1.default('source', source);
@@ -6768,6 +6825,13 @@ System.register("davinci-newton/math/Vector3.js", ["./mustBeVectorE3"], function
                 };
                 Vector3.prototype.neg = function () {
                     return this.mulByScalar(-1);
+                };
+                Vector3.prototype.normalize = function (magnitude) {
+                    if (magnitude === void 0) {
+                        magnitude = 1;
+                    }
+                    var m = this.magnitude();
+                    return this.mulByScalar(magnitude).divByScalar(m);
                 };
                 Vector3.prototype.write = function (destination) {
                     destination.x = this.x;
@@ -6820,7 +6884,7 @@ System.register("davinci-newton/math/Vector3.js", ["./mustBeVectorE3"], function
                     var z = this.z;
                     return x * x + y * y + z * z;
                 };
-                Vector3.prototype.subtract = function (rhs) {
+                Vector3.prototype.sub = function (rhs) {
                     this.x -= rhs.x;
                     this.y -= rhs.y;
                     this.z -= rhs.z;
@@ -6830,22 +6894,56 @@ System.register("davinci-newton/math/Vector3.js", ["./mustBeVectorE3"], function
                     return "new Vector3(" + this.x.toString(radix) + ", " + this.y.toString(radix) + ", " + this.z.toString(radix) + ")";
                 };
                 Vector3.prototype.__add__ = function (rhs) {
-                    return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+                    if (isVectorE3_1.default(rhs) && !isSpinorE3_1.default(rhs)) {
+                        return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+                    } else {
+                        return void 0;
+                    }
                 };
                 Vector3.prototype.__div__ = function (rhs) {
-                    return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+                    if (isNumber_1.default(rhs)) {
+                        return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+                    } else {
+                        return void 0;
+                    }
                 };
                 Vector3.prototype.__mul__ = function (rhs) {
-                    return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+                    if (isNumber_1.default(rhs)) {
+                        return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+                    } else {
+                        return void 0;
+                    }
                 };
                 Vector3.prototype.__neg__ = function () {
                     return new Vector3(-this.x, -this.y, -this.z);
                 };
+                Vector3.prototype.__radd__ = function (lhs) {
+                    if (isVectorE3_1.default(lhs) && !isSpinorE3_1.default(lhs)) {
+                        return new Vector3(lhs.x + this.x, lhs.y + this.y, lhs.z + this.z);
+                    } else {
+                        return void 0;
+                    }
+                };
                 Vector3.prototype.__rmul__ = function (lhs) {
-                    return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+                    if (isNumber_1.default(lhs)) {
+                        return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+                    } else {
+                        return void 0;
+                    }
+                };
+                Vector3.prototype.__rsub__ = function (lhs) {
+                    if (isVectorE3_1.default(lhs) && !isSpinorE3_1.default(lhs)) {
+                        return new Vector3(lhs.x - this.x, lhs.y - this.y, lhs.z - this.z);
+                    } else {
+                        return void 0;
+                    }
                 };
                 Vector3.prototype.__sub__ = function (rhs) {
-                    return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+                    if (isVectorE3_1.default(rhs) && !isSpinorE3_1.default(rhs)) {
+                        return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+                    } else {
+                        return void 0;
+                    }
                 };
                 Vector3.dual = function (B) {
                     return new Vector3().dual(B);
