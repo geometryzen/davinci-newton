@@ -14,6 +14,7 @@
 // limitations under the License.
 
 import Force3 from './Force3';
+import Geometric3 from '../math/Geometric3';
 import SimObject from '../core/SimObject';
 
 /**
@@ -22,7 +23,7 @@ import SimObject from '../core/SimObject';
 export interface ForceLaw3 extends SimObject {
     updateForces(): Force3[];
     disconnect(): void;
-    potentialEnergy(): number;
+    potentialEnergy(): Geometric3;
 }
 
 export default ForceLaw3;

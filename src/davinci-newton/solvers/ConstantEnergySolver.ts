@@ -1,6 +1,7 @@
 import DiffEqSolver from '../core/DiffEqSolver';
 import EnergySystem from './EnergySystem';
 import Simulation from '../core/Simulation';
+import Unit from '../math/Unit';
 
 /**
  * An adaptive step solver that adjusts the step size in order to
@@ -31,27 +32,27 @@ export class ConstantEnergySolver implements DiffEqSolver {
         this.solverMethod_ = solverMethod;
         this.totSteps_ = 0;
     }
-    step(stepSize: number): void {
+    step(Δt: number, uomTime: Unit): void {
         // save the vars in case we need to back up and start again
         this.savedState = this.simulation_.getState();
         const startTime = this.simulation_.time;
         /**
          * The adapted step size.
          */
-        let adaptedStepSize = stepSize; // adaptedStepSize = our smaller step size
+        let adaptedStepSize = Δt; // adaptedStepSize = our smaller step size
         /**
          * number of diffEqSolver steps taken during this step
          */
         let steps = 0;
         this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy = this.energySystem_.totalEnergy();
+        const startEnergy: number = this.energySystem_.totalEnergy().a;
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
          */
         let value = Number.POSITIVE_INFINITY;
         let firstTime = true;
-        if (stepSize < this.stepLowerBound) {
+        if (Δt < this.stepLowerBound) {
             return;
         }
         do {
@@ -70,18 +71,18 @@ export class ConstantEnergySolver implements DiffEqSolver {
             }
             steps = 0;  // only count steps of the last iteration
             // take multiple steps of size adaptedStepSize to equal the entire requested stepSize
-            while (t < startTime + stepSize) {
+            while (t < startTime + Δt) {
                 let h = adaptedStepSize;
                 // if this step takes us past the end of the overall step, then shorten it
-                if (t + h > startTime + stepSize - 1E-10) {
-                    h = startTime + stepSize - t;
+                if (t + h > startTime + Δt - 1E-10) {
+                    h = startTime + Δt - t;
                 }
                 steps++;
-                this.solverMethod_.step(h);
+                this.solverMethod_.step(h, uomTime);
                 this.simulation_.epilog();
                 t += h;
             }
-            const finishEnergy = this.energySystem_.totalEnergy();
+            const finishEnergy: number = this.energySystem_.totalEnergy().a;
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             // reduce time step until change in energy goes to zero.
             value = energyDiff;

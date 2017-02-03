@@ -2,6 +2,7 @@ import AbstractMatrix from './AbstractMatrix';
 import inv3x3 from './inv3x3';
 import mul3x3 from './mul3x3';
 import SpinorE3 from './SpinorE3';
+import Unit from './Unit';
 
 /**
  * 
@@ -9,9 +10,10 @@ import SpinorE3 from './SpinorE3';
 export class Matrix3 extends AbstractMatrix<Matrix3> {
     /**
      * @param elements
+     * @uom The optional unit of measure.
      */
-    constructor(elements = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])) {
-        super(elements, 3);
+    constructor(elements: Float32Array/* = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])*/, uom?: Unit) {
+        super(elements, 3, uom);
     }
 
     /**

@@ -15,6 +15,7 @@
 
 import DiffEqSolver from '../core/DiffEqSolver';
 import Simulation from '../core/Simulation';
+import Unit from '../math/Unit';
 import zeroArray from '../util/zeroArray';
 
 export class RungeKutta implements DiffEqSolver {
@@ -26,7 +27,7 @@ export class RungeKutta implements DiffEqSolver {
     constructor(private sim_: Simulation) {
 
     }
-    step(stepSize: number): void {
+    step(stepSize: number, uomStep: Unit): void {
         const vars = this.sim_.getState();
         const N = vars.length;
         if (this.inp_.length < N) {
@@ -46,25 +47,25 @@ export class RungeKutta implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0);
+        this.sim_.evaluate(inp, k1, 0, uomStep);
         // evaluate at time t+stepSize/2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k1[i] * stepSize / 2;
         }
         zeroArray(k2);
-        this.sim_.evaluate(inp, k2, stepSize / 2);
+        this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
         // evaluate at time t+stepSize/2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k2[i] * stepSize / 2;
         }
         zeroArray(k3);
-        this.sim_.evaluate(inp, k3, stepSize / 2);
+        this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
         // evaluate at time t+stepSize
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k3[i] * stepSize;
         }
         zeroArray(k4);
-        this.sim_.evaluate(inp, k4, stepSize);
+        this.sim_.evaluate(inp, k4, stepSize, uomStep);
         for (let i = 0; i < N; i++) {
             vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
         }

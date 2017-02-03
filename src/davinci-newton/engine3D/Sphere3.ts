@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Geometric3 from '../math/Geometric3';
+import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
+import Unit from '../math/Unit';
 
 /**
  * A solid sphere of constant density.
@@ -22,32 +25,29 @@ export class Sphere3 extends RigidBody3 {
     /**
      * The dimension corresponding to the width.
      */
-    private radius_ = 1;
+    private radius_ = Geometric3.one();
     /**
      * 
      */
-    constructor(radius = 1) {
+    constructor(radius: GeometricE3 = Geometric3.one()) {
         super();
+        this.radius_.copy(radius);
+        this.updateInertiaTensor();
+    }
+
+    get radius(): Geometric3 {
+        return this.radius_;
+    }
+    set radius(radius: Geometric3) {
         this.radius_ = radius;
         this.updateInertiaTensor();
     }
 
-    get radius(): number {
-        return this.radius_;
-    }
-    set radius(radius: number) {
-        if (this.radius !== radius) {
-            this.radius_ = radius;
-            this.updateInertiaTensor();
-        }
-    }
-
+    /**
+     * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
+     */
     public updateAngularVelocity(): void {
-        const r = this.radius_;
-        const s = 2 * this.M * r * r / 5;
-        this.Ω.yz = this.L.yz / s;
-        this.Ω.zx = this.L.zx / s;
-        this.Ω.xy = this.L.xy / s;
+        this.Ω.copy(this.radius_).quaditude().mul(this.M).mulByNumber(2 / 5).inv().mul(this.L);
     }
 
     /**
@@ -55,11 +55,12 @@ export class Sphere3 extends RigidBody3 {
      */
     protected updateInertiaTensor(): void {
         const r = this.radius_;
-        const s = 2 * this.M * r * r / 5;
+        const s = 2 * this.M.a * r.a * r.a / 5;
         const I = Matrix3.zero();
         I.setElement(0, 0, s);
         I.setElement(1, 1, s);
         I.setElement(2, 2, s);
+        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
         this.I = I;
     }
 }

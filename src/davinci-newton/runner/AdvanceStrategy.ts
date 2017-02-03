@@ -13,21 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import MemoList from './MemoList';
+import Unit from '../math/Unit';
 
 export interface AdvanceStrategy {
     /**
      * 
      */
-    advance(timeStep: number, memoList?: MemoList): void;
-    /**
-     * 
-     */
-    getTime(): number;
-    /**
-     * 
-     */
-    getTimeStep(): number;
+    advance(stepSize: number, uomStep: Unit): void;
 }
 
 export default AdvanceStrategy;

@@ -4,8 +4,10 @@ import isNumber from '../checks/isNumber';
 import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
 import mustBeBivectorE3 from './mustBeBivectorE3';
+import mustBeNumber from '../checks/mustBeNumber';
 import mustBeVectorE3 from './mustBeVectorE3';
 import SpinorE3 from './SpinorE3';
+import Unit from './Unit';
 import VectorE3 from './VectorE3';
 import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
 
@@ -13,17 +15,27 @@ import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
  * 
  */
 export class Bivector3 implements BivectorE3 {
-    yz = 0;
-    zx = 0;
-    xy = 0;
+    public yz: number;
+    public zx: number;
+    public xy: number;
+    public uom: Unit;
 
     /**
      * 
      */
-    constructor(yz = 0, zx = 0, xy = 0) {
-        this.yz = yz;
-        this.zx = zx;
-        this.xy = xy;
+    constructor(yz: number, zx: number, xy: number, uom?: Unit) {
+        this.yz = mustBeNumber('yz', yz);
+        this.zx = mustBeNumber('zx', zx);
+        this.xy = mustBeNumber('xy', xy);
+        this.uom = Unit.mustBeUnit('uom', uom);
+        /*
+        if (this.isZero()) {
+            this.uom = uom;
+        }
+        else {
+            this.uom = mustBeUnit('uom', uom);
+        }
+        */
     }
 
     /**
@@ -34,6 +46,7 @@ export class Bivector3 implements BivectorE3 {
         this.yz += B.yz;
         this.zx += B.zx;
         this.xy += B.xy;
+        this.uom = Unit.compatible(this.uom, B.uom);
         return this;
     }
 
@@ -114,10 +127,13 @@ export class Bivector3 implements BivectorE3 {
     /**
      * Computes the scalar product of this bivector with B.
      */
+    /*
     scp(B: BivectorE3): number {
         mustBeBivectorE3('B', B);
+        // FIXME: This is wrong by a sign.
         return this.xy * B.xy + this.yz * B.yz + this.zx * B.zx;
     }
+    */
 
     /**
      * 
@@ -128,6 +144,18 @@ export class Bivector3 implements BivectorE3 {
         this.zx -= B.zx;
         this.xy -= B.xy;
         return this;
+    }
+
+    toExponential(fractionDigits?: number): string {
+        return `new Bivector3(yz: ${this.yz.toExponential(fractionDigits)}, zx: ${this.zx.toExponential(fractionDigits)}, xy: ${this.xy.toExponential(fractionDigits)})`;
+    }
+
+    toFixed(fractionDigits?: number): string {
+        return `new Bivector3(yz: ${this.yz.toFixed(fractionDigits)}, zx: ${this.zx.toFixed(fractionDigits)}, xy: ${this.xy.toFixed(fractionDigits)})`;
+    }
+
+    toPrecision(precision?: number): string {
+        return `new Bivector3(yz: ${this.yz.toPrecision(precision)}, zx: ${this.zx.toPrecision(precision)}, xy: ${this.xy.toPrecision(precision)})`;
     }
 
     /**
@@ -146,6 +174,7 @@ export class Bivector3 implements BivectorE3 {
         this.yz = wedgeYZ(a, b);
         this.zx = wedgeZX(a, b);
         this.xy = wedgeXY(a, b);
+        this.uom = Unit.mul(a.uom, b.uom);
         return this;
     }
 
@@ -156,6 +185,7 @@ export class Bivector3 implements BivectorE3 {
         B.xy = this.xy;
         B.yz = this.yz;
         B.zx = this.zx;
+        B.uom = this.uom;
         return this;
     }
 
@@ -174,7 +204,8 @@ export class Bivector3 implements BivectorE3 {
             const yz = this.yz + rhs.yz;
             const zx = this.zx + rhs.zx;
             const xy = this.xy + rhs.xy;
-            return new Bivector3(yz, zx, xy);
+            const uom = Unit.compatible(this.uom, rhs.uom);
+            return new Bivector3(yz, zx, xy, uom);
         }
         else {
             return void 0;
@@ -186,7 +217,7 @@ export class Bivector3 implements BivectorE3 {
             const yz = this.yz * rhs;
             const zx = this.zx * rhs;
             const xy = this.xy * rhs;
-            return new Bivector3(yz, zx, xy);
+            return new Bivector3(yz, zx, xy, this.uom);
         }
         else {
             return void 0;
@@ -198,7 +229,7 @@ export class Bivector3 implements BivectorE3 {
             const yz = lhs * this.yz;
             const zx = lhs * this.zx;
             const xy = lhs * this.xy;
-            return new Bivector3(yz, zx, xy);
+            return new Bivector3(yz, zx, xy, this.uom);
         }
         else {
             return void 0;
@@ -210,11 +241,19 @@ export class Bivector3 implements BivectorE3 {
             const yz = this.yz - rhs.yz;
             const zx = this.zx - rhs.zx;
             const xy = this.xy - rhs.xy;
-            return new Bivector3(yz, zx, xy);
+            const uom = Unit.compatible(this.uom, rhs.uom);
+            return new Bivector3(yz, zx, xy, uom);
         }
         else {
             return void 0;
         }
+    }
+
+    /**
+     * 
+     */
+    static wedge(a: VectorE3, b: VectorE3): Bivector3 {
+        return new Bivector3(0, 0, 0).wedge(a, b);
     }
 }
 

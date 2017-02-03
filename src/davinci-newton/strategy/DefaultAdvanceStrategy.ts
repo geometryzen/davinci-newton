@@ -15,39 +15,37 @@
 
 import AdvanceStrategy from '../runner/AdvanceStrategy';
 import DiffEqSolver from '../core/DiffEqSolver';
-import MemoList from '../runner/MemoList';
+import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import Simulation from '../core/Simulation';
+import Unit from '../math/Unit';
 
+/**
+ * 
+ */
 export class DefaultAdvanceStrategy implements AdvanceStrategy {
-    private timeStep_ = 0.025;
-    constructor(private sim_: Simulation, private odeSolver_: DiffEqSolver) {
-        // Do nothing yet.
+    /**
+     * 
+     */
+    private simulation_: Simulation;
+    /**
+     * 
+     */
+    private solver_: DiffEqSolver;
+    /**
+     * 
+     */
+    constructor(simulation: Simulation, solver: DiffEqSolver) {
+        this.simulation_ = mustBeNonNullObject('simulation', simulation);
+        this.solver_ = mustBeNonNullObject('solver', solver);
     }
 
     /**
      * 
      */
-    advance(timeStep: number, memoList?: MemoList) {
-        this.sim_.prolog();
-        this.odeSolver_.step(timeStep);
-        this.sim_.epilog();
-        if (memoList !== undefined) {
-            memoList.memorize();
-        }
-    }
-
-    /**
-     * 
-     */
-    getTime(): number {
-        return this.sim_.time;
-    }
-
-    /**
-     * 
-     */
-    getTimeStep(): number {
-        return this.timeStep_;
+    advance(stepSize: number, uomStep: Unit): void {
+        this.simulation_.prolog();
+        this.solver_.step(stepSize, uomStep);
+        this.simulation_.epilog();
     }
 }
 

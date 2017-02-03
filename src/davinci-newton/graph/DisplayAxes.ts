@@ -18,7 +18,17 @@ import AlignV from '../view/AlignV';
 import CoordMap from '../view/CoordMap';
 import DisplayObject from '../view/DisplayObject';
 import DoubleRect from '../view/DoubleRect';
+import Unit from '../math/Unit';
 import isDefined from '../checks/isDefined';
+
+function makeLabelScale(label: string, scale: Unit): string {
+    if (Unit.isOne(scale)) {
+        return label;
+    }
+    else {
+        return `${label} / (${scale})`;
+    }
+}
 
 /**
  * Draws linear horizontal and vertical axes within a given simulation coordinates
@@ -82,9 +92,17 @@ export default class DisplayAxes implements DisplayObject {
      */
     private hLabel_: string;
     /**
+     * The scale factor for the horizontal axis.
+     */
+    private hScale_: Unit;
+    /**
      * The label for the vertical axis.
      */
     private vLabel_: string;
+    /**
+     * The scale factor for the vertical axis.
+     */
+    private vScale_: Unit;
     /**
      * 
      */
@@ -205,8 +223,9 @@ export default class DisplayAxes implements DisplayObject {
             x_sim = next_x_sim;
         }
         // draw name of the horizontal axis
-        const w = context.measureText(this.hLabel_).width;
-        context.fillText(this.hLabel_, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
+        const hLabel = makeLabelScale(this.hLabel_, this.hScale_);
+        const w = context.measureText(hLabel).width;
+        context.fillText(hLabel, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
     }
 
     /**
@@ -247,13 +266,14 @@ export default class DisplayAxes implements DisplayObject {
             }
             y_sim = next_y_sim;  // next tick mark
         }
-        // draw name of the vertical axis
-        var w = context.measureText(this.vLabel_).width;
+        // draw label for the vertical axis
+        const vLabel = makeLabelScale(this.vLabel_, this.vScale_);
+        const w = context.measureText(vLabel).width;
         if (this.vAxisAlign_ === AlignH.RIGHT) {
-            context.fillText(this.vLabel_, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
+            context.fillText(vLabel, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
         }
         else { // LEFT is default
-            context.fillText(this.vLabel_, x0 + 6, map.simToScreenY(sim_y2) + 13);
+            context.fillText(vLabel, x0 + 6, map.simToScreenY(sim_y2) + 13);
         }
     }
 
@@ -278,6 +298,10 @@ export default class DisplayAxes implements DisplayObject {
      */
     get hAxisLabel(): string {
         return this.hLabel_;
+    }
+
+    get hAxisScale(): Unit {
+        return this.hScale_;
     }
 
     /**
@@ -338,6 +362,10 @@ export default class DisplayAxes implements DisplayObject {
      */
     get vAxisLabel(): string {
         return this.vLabel_;
+    }
+
+    get vAxisScale(): Unit {
+        return this.vScale_;
     }
 
     /**
@@ -403,6 +431,14 @@ export default class DisplayAxes implements DisplayObject {
     }
 
     /**
+     * Sets the scale used for the horizontal axis.
+     */
+    set hAxisScale(hAxisScale: Unit) {
+        this.hScale_ = hAxisScale;
+        this.needRedraw_ = true;
+    }
+
+    /**
      * Sets the bounding rectangle for this DisplayAxes in simulation coordinates; this
      * determines the numbering scale shown.
      * @param simRect the bounding rectangle for this DisplayAxes in simulation coordinates.
@@ -417,6 +453,14 @@ export default class DisplayAxes implements DisplayObject {
      */
     set vAxisLabel(vAxisLabel: string) {
         this.vLabel_ = vAxisLabel;
+        this.needRedraw_ = true;
+    }
+
+    /**
+     * Sets the scale used for the horizontal axis.
+     */
+    set vAxisScale(vAxisScale: Unit) {
+        this.vScale_ = vAxisScale;
         this.needRedraw_ = true;
     }
 

@@ -2,6 +2,7 @@ import MatrixLike from './MatrixLike';
 import mustBeDefined from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import expectArg from '../checks/expectArg';
+import Unit from './Unit';
 
 /**
  * Base class for matrices with the expectation that they will be used with WebGL.
@@ -13,17 +14,19 @@ export default class AbstractMatrix<T extends { elements: Float32Array }> implem
     private _length: number;
     private _dimensions: number;
     public modified: boolean;
+    public uom: Unit;
 
     /**
      * @param elements
      * @param dimensions
      */
-    constructor(elements: Float32Array, dimensions: number) {
+    constructor(elements: Float32Array, dimensions: number, uom: Unit) {
         this._elements = mustBeDefined('elements', elements);
         this._dimensions = mustBeInteger('dimensions', dimensions);
         this._length = dimensions * dimensions;
         expectArg('elements', elements).toSatisfy(elements.length === this._length, 'elements must have length ' + this._length);
         this.modified = false;
+        this.uom = Unit.mustBeUnit('uom', uom);
     }
 
     get dimensions(): number {
@@ -46,6 +49,7 @@ export default class AbstractMatrix<T extends { elements: Float32Array }> implem
                 this.setElement(i, j, value);
             }
         }
+        this.uom = source.uom;
         return <T><any>this;
     }
 

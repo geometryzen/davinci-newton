@@ -18,8 +18,7 @@ import Bivector3 from '../math/Bivector3';
 import BivectorE3 from '../math/BivectorE3';
 import CoordType from '../model/CoordType';
 import ForceBody3 from './ForceBody3';
-import Vec3 from '../math/Vec3';
-import Vector3 from '../math/Vector3';
+import Geometric3 from '../math/Geometric3';
 import VectorE3 from '../math/VectorE3';
 
 /**
@@ -29,15 +28,15 @@ export class Force3 extends AbstractSimObject {
     /**
      * 
      */
-    public readonly location = new Vector3();
+    public readonly location = Geometric3.zero();
     /**
      * 
      */
     public locationCoordType: CoordType;
     /**
-     * 
+     * The force vector, may be in local or world coordinates.
      */
-    public readonly vector = new Vector3();
+    public readonly vector = Geometric3.zero();
     /**
      * 
      */
@@ -46,15 +45,17 @@ export class Force3 extends AbstractSimObject {
     /**
      * Scratch variable for computing position (world coordinates).
      */
-    private readonly position_ = new Vector3();
+    private readonly position_ = Geometric3.zero();
+    // private positionLock_ = this.position_.lock();
     /**
      * Scratch variable for computing force (world coordinates).
      */
-    private readonly force_ = new Vector3();
+    private readonly force_ = Geometric3.zero();
+    // private forceLock_ = this.force_.lock();
     /**
      * Scratch variable for computing torque (world coordinates).
      */
-    private readonly torque_ = new Bivector3();
+    private readonly torque_ = new Bivector3(0, 0, 0);
 
     /**
      * 
@@ -76,27 +77,27 @@ export class Force3 extends AbstractSimObject {
     computeForce(force: VectorE3): void {
         switch (this.vectorCoordType) {
             case CoordType.BODY: {
-                this.force_.copy(this.vector);
+                this.force_.copyVector(this.vector);
                 this.force_.rotate(this.body_.R);
-                this.force_.write(force);
+                this.force_.writeVector(force);
                 break;
             }
             case CoordType.WORLD: {
-                this.force_.copy(this.vector);
-                this.force_.write(force);
+                this.force_.copyVector(this.vector);
+                this.force_.writeVector(force);
                 break;
             }
         }
     }
 
-    get F(): Vec3 {
+    get F(): Geometric3 {
         this.computeForce(this.force_);
-        return Vec3.fromVector(this.force_);
+        return this.force_;
     }
 
-    get x(): Vec3 {
+    get x(): Geometric3 {
         this.computePosition(this.position_);
-        return Vec3.fromVector(this.position_);
+        return this.position_;
     }
 
     /**
@@ -105,17 +106,17 @@ export class Force3 extends AbstractSimObject {
     computePosition(position: VectorE3): void {
         switch (this.locationCoordType) {
             case CoordType.BODY: {
-                this.position_.copy(this.location);
+                this.position_.copyVector(this.location);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero. 
                 this.position_.rotate(this.body_.R);
-                this.position_.add(this.body_.X);
-                this.position_.write(position);
+                this.position_.addVector(this.body_.X);
+                this.position_.writeVector(position);
                 break;
             }
             case CoordType.WORLD: {
-                this.position_.copy(this.location);
-                this.position_.write(position);
+                this.position_.copyVector(this.location);
+                this.position_.writeVector(position);
                 break;
             }
         }
@@ -129,7 +130,7 @@ export class Force3 extends AbstractSimObject {
     computeTorque(torque: BivectorE3): void {
         this.computePosition(this.position_);
         this.computeForce(this.force_);
-        this.torque_.wedge(this.position_.sub(this.body_.X), this.force_);
+        this.torque_.wedge(this.position_.subVector(this.body_.X), this.force_);
         this.torque_.write(torque);
     }
 }

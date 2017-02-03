@@ -1,6 +1,7 @@
 import DiffEqSolver from '../core/DiffEqSolver';
 import EnergySystem from './EnergySystem';
 import Simulation from '../core/Simulation';
+import Unit from '../math/Unit';
 
 export class AdaptiveStepSolver implements DiffEqSolver {
     private diffEq_: Simulation;
@@ -27,7 +28,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
         this.secondDiff_ = true;
         this.tolerance_ = 1E-6;
     }
-    step(stepSize: number): void {
+    step(stepSize: number, uom: Unit): void {
         // save the vars in case we need to back up and start again
         this.savedState = this.diffEq_.getState();
         const startTime = this.diffEq_.time;
@@ -40,7 +41,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
          */
         let steps = 0;
         this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy = this.energySystem_.totalEnergy();
+        const startEnergy: number = this.energySystem_.totalEnergy().a;
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -73,11 +74,11 @@ export class AdaptiveStepSolver implements DiffEqSolver {
                     h = startTime + stepSize - t;
                 }
                 steps++;
-                this.odeSolver_.step(h);
+                this.odeSolver_.step(h, uom);
                 this.diffEq_.epilog();
                 t += h;
             }
-            const finishEnergy = this.energySystem_.totalEnergy();
+            const finishEnergy: number = this.energySystem_.totalEnergy().a;
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             if (this.secondDiff_) {
                 // reduce time step until change in energy stabilizes

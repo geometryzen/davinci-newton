@@ -14,17 +14,20 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
-import Bivector3 from '../math/Bivector3';
 import contains from '../util/contains';
 import EnergySystem from '../solvers/EnergySystem';
 import Force from './Force3';
+import ForceBody3 from './ForceBody3';
 import ForceLaw from './ForceLaw3';
+import Geometric3 from '../math/Geometric3';
+import isUndefined from '../checks/isUndefined';
+import isZeroBivectorE3 from '../math/isZeroBivectorE3';
+import isZeroVectorE3 from '../math/isZeroVectorE3';
 import remove from '../util/remove';
-import RigidBody3 from './RigidBody3';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
+import Unit from '../math/Unit';
 import VarsList from '../core/VarsList';
-import Vector3 from '../math/Vector3';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 
 const var_names = [
@@ -97,19 +100,19 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private simList_ = new SimList();
+    private readonly simList_ = new SimList();
     /**
      * The list of variables represents the current state of the simulation.
      */
-    private varsList_: VarsList;
+    private readonly varsList_: VarsList;
     /**
      * The RigidBody(s) in this simulation.
      */
-    private bodies_: RigidBody3[] = [];
+    private readonly bodies_: ForceBody3[] = [];
     /**
      * 
      */
-    private forceLaws_: ForceLaw[] = [];
+    private readonly forceLaws_: ForceLaw[] = [];
 
     /**
      * 
@@ -119,16 +122,21 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private potentialOffset_ = 0;
+    private readonly potentialOffset_ = Geometric3.zero();
 
     /**
      * Scratch variable for computing force.
      */
-    private force_ = new Vector3(0, 0, 0);
+    private readonly force_ = Geometric3.zero();
     /**
      * Scratch variable for computing torque.
      */
-    private torque_ = new Bivector3();
+    private readonly torque_ = Geometric3.zero();
+    /**
+     * Scratch variable for computing total energy.
+     */
+    private readonly totalEnergy_ = Geometric3.zero();
+    private totalEnergyLock_ = this.totalEnergy_.lock();
 
     /**
      * 
@@ -151,7 +159,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    addBody(body: RigidBody3): void {
+    addBody(body: ForceBody3): void {
         if (!contains(this.bodies_, body)) {
             // create variables in vars array for this body
             const names = [];
@@ -170,7 +178,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    removeBody(body: RigidBody3): void {
+    removeBody(body: ForceBody3): void {
         if (contains(this.bodies_, body)) {
             this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
             remove(this.bodies_, body);
@@ -240,7 +248,12 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             body.R.zx = vars[idx + Physics3.OFFSET_ATTITUDE_ZX];
 
             // Keep the magnitude of the attitude as close to 1 as possible.
-            body.R.normalize();
+            const R = body.R;
+            const magR = Math.sqrt(R.a * R.a + R.xy * R.xy + R.yz * R.yz + R.zx * R.zx);
+            body.R.a = body.R.a / magR;
+            body.R.xy = body.R.xy / magR;
+            body.R.yz = body.R.yz / magR;
+            body.R.zx = body.R.zx / magR;
 
             body.P.x = vars[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X];
             body.P.y = vars[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y];
@@ -274,7 +287,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
      */
-    evaluate(state: number[], change: number[], timeOffset: number): void {
+    evaluate(state: number[], change: number[], Δt: number, uomTime: Unit): void {
         // Move objects so that rigid body objects know their current state.
         this.moveObjects(state);
         const bodies = this.bodies_;
@@ -285,7 +298,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             if (idx < 0) {
                 return;
             }
-            const mass = body.M;
+            const mass = body.M.a;
             if (mass === Number.POSITIVE_INFINITY) {
                 for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
                     change[idx + k] = 0;  // infinite mass objects don't move
@@ -326,7 +339,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             const forces = forceLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                this.applyForce(change, forces[forceIndex]);
+                this.applyForce(change, forces[forceIndex], Δt, uomTime);
             }
         }
         change[this.varsList_.timeIndex()] = 1; // time variable
@@ -336,7 +349,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * Applying forces gives rise to linear and angular momentum.
      */
-    private applyForce(change: number[], forceApp: Force): void {
+    private applyForce(change: number[], forceApp: Force, Δt: number, uomTime: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
@@ -350,6 +363,10 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         // dP/dt = F
         forceApp.computeForce(this.force_);
         const F = this.force_;
+        // Bootstrap the linear momentum unit of measure.
+        if (isUndefined(body.P.uom) && isZeroVectorE3(body.P)) {
+            body.P.uom = Unit.mul(F.uom, uomTime);
+        }
         change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
         change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
         change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] += F.z;
@@ -357,10 +374,14 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
         forceApp.computeTorque(this.torque_);
-        const Γ = this.torque_;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += Γ.yz;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += Γ.zx;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] += Γ.xy;
+        const T = this.torque_;
+        // Bootstrap the angular momentum unit of measure.
+        if (isUndefined(body.L.uom) && isZeroBivectorE3(body.L)) {
+            body.L.uom = Unit.mul(T.uom, uomTime);
+        }
+        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += T.yz;
+        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += T.zx;
+        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] += T.xy;
 
         if (this.showForces_) {
             forceApp.expireTime = this.varsList_.getTime();
@@ -387,7 +408,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private updateFromBody(body: RigidBody3): void {
+    private updateFromBody(body: ForceBody3): void {
         const idx = body.varsIndex;
         if (idx > -1) {
             const va = this.varsList_;
@@ -420,7 +441,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         this.moveObjects(vars);
 
         // update the variables that track energy
-        let pe = this.potentialOffset_;
+        let pe = this.potentialOffset_.a;
         let re = 0;
         let te = 0;
         // update the variable that track linear momentum (vector)
@@ -436,9 +457,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         const Nb = bs.length;
         for (let i = 0; i < Nb; i++) {
             const b = bs[i];
-            if (isFinite(b.M)) {
-                re += b.rotationalEnergy();
-                te += b.translationalEnergy();
+            if (isFinite(b.M.a)) {
+                re += b.rotationalEnergy().a;
+                te += b.translationalEnergy().a;
                 // linear momentum
                 Px += b.P.x;
                 Py += b.P.y;
@@ -457,7 +478,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         const fs = this.forceLaws_;
         const Nf = fs.length;
         for (let i = 0; i < Nf; i++) {
-            pe += fs[i].potentialEnergy();
+            pe += fs[i].potentialEnergy().a;
         }
 
         varsList.setValue(Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
@@ -487,32 +508,35 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     }
 
     /**
-     * 
+     * Computes the sum of the translational and rotational kinetic energy of all bodies,
+     * and the potential energy due to body interactions.
      */
-    totalEnergy(): number {
+    totalEnergy(): Geometric3 {
+        this.totalEnergy_.unlock(this.totalEnergyLock_);
 
-        // update the variables that track energy
-        let pe = this.potentialOffset_;
-        let re = 0;
-        let te = 0;
+        this.totalEnergy_.zero();
+
+        this.totalEnergy_.add(this.potentialOffset_);
 
         const bs = this.bodies_;
         const Nb = bs.length;
         for (let i = 0; i < Nb; i++) {
-            const b = bs[i];
-            if (isFinite(b.M)) {
-                re += b.rotationalEnergy();
-                te += b.translationalEnergy();
+            const body = bs[i];
+            if (isFinite(body.M.a)) {
+                this.totalEnergy_.add(body.rotationalEnergy());
+                this.totalEnergy_.add(body.translationalEnergy());
             }
         }
 
         const fs = this.forceLaws_;
         const Nf = fs.length;
         for (let i = 0; i < Nf; i++) {
-            pe += fs[i].potentialEnergy();
+            this.totalEnergy_.add(fs[i].potentialEnergy());
         }
 
-        return te + re + pe;
+        this.totalEnergyLock_ = this.totalEnergy_.lock();
+
+        return this.totalEnergy_;
     }
 }
 

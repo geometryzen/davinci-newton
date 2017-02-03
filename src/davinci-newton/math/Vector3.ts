@@ -1,22 +1,44 @@
 import BivectorE3 from './BivectorE3';
+import CartesianG3 from './CartesianG3';
 import isNumber from '../checks/isNumber';
 import isSpinorE3 from './isSpinorE3';
 import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
+import mustBeNumber from '../checks/mustBeNumber';
 import mustBeVectorE3 from './mustBeVectorE3';
+import randomRange from './randomRange';
+import readOnly from '../i18n/readOnly';
 import SpinorE3 from './SpinorE3';
+import Unit from './Unit';
 import VectorE3 from './VectorE3';
 
 /**
  * 
  */
-export class Vector3 implements VectorE3 {
+export class Vector3 implements VectorE3, CartesianG3 {
+    public x: number;
+    public y: number;
+    public z: number;
+    public uom: Unit;
 
     /**
      * 
      */
-    constructor(public x = 0, public y = 0, public z = 0) {
+    constructor(x: number, y: number, z: number, uom?: Unit) {
+        this.x = mustBeNumber('x', x);
+        this.y = mustBeNumber('y', y);
+        this.z = mustBeNumber('z', z);
+        this.uom = Unit.mustBeUnit('uom', uom);
+    }
 
+    /**
+     *
+     */
+    get maskG3(): number {
+        return this.isZero() ? 0x0 : 0x2;
+    }
+    set maskG3(unused: number) {
+        throw new Error(readOnly('maskG3').message);
     }
 
     /**
@@ -26,6 +48,7 @@ export class Vector3 implements VectorE3 {
         this.x += rhs.x;
         this.y += rhs.y;
         this.z += rhs.z;
+        this.uom = Unit.compatible(this.uom, rhs.uom);
         return this;
     }
 
@@ -55,7 +78,7 @@ export class Vector3 implements VectorE3 {
      * 
      */
     clone(): Vector3 {
-        return new Vector3(this.x, this.y, this.z);
+        return new Vector3(this.x, this.y, this.z, this.uom);
     }
 
     /**
@@ -75,13 +98,6 @@ export class Vector3 implements VectorE3 {
     direction(): this {
         const m = this.magnitude();
         return this.divByScalar(m);
-    }
-
-    /**
-     * 
-     */
-    distanceTo(point: VectorE3): number {
-        return Math.sqrt(this.quadranceTo(point));
     }
 
     /**
@@ -236,7 +252,29 @@ export class Vector3 implements VectorE3 {
     }
 
     /**
-     * Returns a string representation of this Vector.
+     * Returns a string containing a number in exponential notation. 
+     */
+    toExponential(fractionDigits?: number): string {
+        return `new Vector3(${this.x.toExponential(fractionDigits)}, ${this.y.toExponential(fractionDigits)}, ${this.z.toExponential(fractionDigits)})`;
+    }
+
+    /**
+     * Returns a string containing a number in fixed-point notation. 
+     */
+    toFixed(fractionDigits?: number): string {
+        return `new Vector3(${this.x.toFixed(fractionDigits)}, ${this.y.toFixed(fractionDigits)}, ${this.z.toFixed(fractionDigits)})`;
+    }
+
+    /**
+     * Returns a string containing a number represented either in exponential or fixed-point notation
+     * with a specified number of digits.
+     */
+    toPrecision(precision?: number): string {
+        return `new Vector3(${this.x.toPrecision(precision)}, ${this.y.toPrecision(precision)}, ${this.z.toPrecision(precision)})`;
+    }
+
+    /**
+     * Returns a string representation of this vector.
      */
     toString(radix?: number): string {
         return `new Vector3(${this.x.toString(radix)}, ${this.y.toString(radix)}, ${this.z.toString(radix)})`;
@@ -244,7 +282,8 @@ export class Vector3 implements VectorE3 {
 
     __add__(rhs: VectorE3): Vector3 {
         if (isVectorE3(rhs) && !isSpinorE3(rhs)) {
-            return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z);
+            const uom = Unit.compatible(this.uom, rhs.uom);
+            return new Vector3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z, uom);
         }
         else {
             return void 0;
@@ -253,7 +292,7 @@ export class Vector3 implements VectorE3 {
 
     __div__(rhs: number): Vector3 {
         if (isNumber(rhs)) {
-            return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs);
+            return new Vector3(this.x / rhs, this.y / rhs, this.z / rhs, this.uom);
         }
         else {
             return void 0;
@@ -262,7 +301,7 @@ export class Vector3 implements VectorE3 {
 
     __mul__(rhs: number): Vector3 {
         if (isNumber(rhs)) {
-            return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs);
+            return new Vector3(this.x * rhs, this.y * rhs, this.z * rhs, this.uom);
         }
         else {
             return void 0;
@@ -270,12 +309,13 @@ export class Vector3 implements VectorE3 {
     }
 
     __neg__(): Vector3 {
-        return new Vector3(-this.x, -this.y, -this.z);
+        return new Vector3(-this.x, -this.y, -this.z, this.uom);
     }
 
     __radd__(lhs: VectorE3): Vector3 {
         if (isVectorE3(lhs) && !isSpinorE3(lhs)) {
-            return new Vector3(lhs.x + this.x, lhs.y + this.y, lhs.z + this.z);
+            const uom = Unit.compatible(lhs.uom, this.uom);
+            return new Vector3(lhs.x + this.x, lhs.y + this.y, lhs.z + this.z, uom);
         }
         else {
             return void 0;
@@ -284,7 +324,7 @@ export class Vector3 implements VectorE3 {
 
     __rmul__(lhs: number): Vector3 {
         if (isNumber(lhs)) {
-            return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z);
+            return new Vector3(lhs * this.x, lhs * this.y, lhs * this.z, this.uom);
         }
         else {
             return void 0;
@@ -293,7 +333,8 @@ export class Vector3 implements VectorE3 {
 
     __rsub__(lhs: VectorE3): Vector3 {
         if (isVectorE3(lhs) && !isSpinorE3(lhs)) {
-            return new Vector3(lhs.x - this.x, lhs.y - this.y, lhs.z - this.z);
+            const uom = Unit.compatible(lhs.uom, this.uom);
+            return new Vector3(lhs.x - this.x, lhs.y - this.y, lhs.z - this.z, uom);
         }
         else {
             return void 0;
@@ -302,7 +343,8 @@ export class Vector3 implements VectorE3 {
 
     __sub__(rhs: VectorE3): Vector3 {
         if (isVectorE3(rhs) && !isSpinorE3(rhs)) {
-            return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z);
+            const uom = Unit.compatible(this.uom, rhs.uom);
+            return new Vector3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z, uom);
         }
         else {
             return void 0;
@@ -313,8 +355,31 @@ export class Vector3 implements VectorE3 {
      * Constructs a vector by computing the dual of a bivector.
      */
     static dual(B: BivectorE3): Vector3 {
-        return new Vector3().dual(B);
+        return new Vector3(0, 0, 0, void 0).dual(B);
     }
+
+    /**
+     * <p>
+     * Computes a unit vector with a random direction.
+     * </p>
+     */
+    static random(): Vector3 {
+        const x = randomRange(-1, 1);
+        const y = randomRange(-1, 1);
+        const z = randomRange(-1, 1);
+        return Vector3.vector(x, y, z).normalize();
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param z
+     * @param uom
+     */
+    static vector(x: number, y: number, z: number, uom?: Unit): Vector3 {
+        return new Vector3(x, y, z, uom);
+    }
+
 }
 
 export default Vector3;

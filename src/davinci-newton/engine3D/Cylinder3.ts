@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Geometric3 from '../math/Geometric3';
+import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
+import Unit from '../math/Unit';
 
 /**
  * A solid cylinder of uniform density.
@@ -22,39 +25,35 @@ export class Cylinder3 extends RigidBody3 {
     /**
      * The dimension corresponding to the radius.
      */
-    private radius_ = 1;
+    private radius_ = Geometric3.one();
     /**
      * The dimension corresponding to the height.
      */
-    private height_ = 1;
+    private height_ = Geometric3.one();
     /**
      * 
      */
-    constructor(radius = 1, height = 1) {
+    constructor(radius: GeometricE3 = Geometric3.one(), height: GeometricE3 = Geometric3.one()) {
         super();
-        this.radius_ = radius;
-        this.height_ = height;
+        this.radius_.copy(radius);
+        this.height_.copy(height);
         this.updateInertiaTensor();
     }
 
-    get radius(): number {
+    get radius(): Geometric3 {
         return this.radius_;
     }
-    set radius(radius: number) {
-        if (this.radius !== radius) {
-            this.radius_ = radius;
-            this.updateInertiaTensor();
-        }
+    set radius(radius: Geometric3) {
+        this.radius_ = radius;
+        this.updateInertiaTensor();
     }
 
-    get height(): number {
+    get height(): Geometric3 {
         return this.height_;
     }
-    set height(height: number) {
-        if (this.height !== height) {
-            this.height_ = height;
-            this.updateInertiaTensor();
-        }
+    set height(height: Geometric3) {
+        this.height_ = height;
+        this.updateInertiaTensor();
     }
 
     /**
@@ -63,14 +62,15 @@ export class Cylinder3 extends RigidBody3 {
     protected updateInertiaTensor(): void {
         const r = this.radius_;
         const h = this.height_;
-        const rr = r * r;
-        const hh = h * h;
-        const Irr = this.M * (3 * rr + hh) / 12;
-        const Ihh = this.M * rr / 2;
+        const rr = r.a * r.a;
+        const hh = h.a * h.a;
+        const Irr = this.M.a * (3 * rr + hh) / 12;
+        const Ihh = this.M.a * rr / 2;
         const I = Matrix3.zero();
         I.setElement(0, 0, Irr);
         I.setElement(1, 1, Ihh);
         I.setElement(2, 2, Irr);
+        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
         this.I = I;
     }
 }

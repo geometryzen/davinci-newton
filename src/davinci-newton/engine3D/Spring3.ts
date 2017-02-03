@@ -17,25 +17,43 @@ import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from '../model/CoordType';
 import Force3 from './Force3';
 import ForceLaw3 from './ForceLaw3';
+import Geometric3 from '../math/Geometric3';
 import RigidBody3 from './RigidBody3';
 import Vec3 from '../math/Vec3';
 import VectorE3 from '../math/VectorE3';
-import Vector3 from '../math/Vector3';
+import Unit from '../math/Unit';
+
+/**
+ * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
+ * If either measure is zero, the unit of dimensions are meaningless
+ */
+function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: Geometric3): void {
+    if (!A.isZero() && !B.isZero()) {
+        if (Unit.isOne(A.uom)) {
+            if (!Unit.isOne(B.uom)) {
+                throw new Error(`${aName} => ${A} must have dimensions if ${bName} => ${B} has dimensions.`);
+            }
+        }
+        else {
+            if (Unit.isOne(B.uom)) {
+                throw new Error(`${bName} => ${B} must have dimensions if ${aName} => ${A} has dimensions.`);
+            }
+        }
+    }
+}
 
 /**
  * 
  */
 export class Spring3 extends AbstractSimObject implements ForceLaw3 {
-    // private damping_ = 0;
-    // private compressOnly_ = false;
     /**
      * 
      */
-    public restLength = 1;
+    public restLength = Geometric3.one();
     /**
      * 
      */
-    public stiffness = 1;
+    public stiffness = Geometric3.one();
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
@@ -56,14 +74,25 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
      * 
      */
     private readonly forces: Force3[] = [];
+
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end1_ = new Vector3();
+    private readonly end1_ = Geometric3.zero();
+    private end1Lock_ = this.end1_.lock();
+
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end2_ = new Vector3();
+    private readonly end2_ = Geometric3.zero();
+    private end2Lock_ = this.end2_.lock();
+
+    /**
+     * Scratch variable for computing potential energy.
+     */
+    private readonly potentialEnergy_ = Geometric3.zero();
+    private potentialEnergyLock_ = this.potentialEnergy_.lock();
+
     /**
      * 
      */
@@ -109,14 +138,18 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         this.attach2_ = Vec3.fromVector(attach2);
     }
 
-    get end1(): Vec3 {
+    get end1(): Geometric3 {
+        this.end1.unlock(this.end1Lock_);
         this.computeBody1AttachPointInWorldCoords(this.end1_);
-        return Vec3.fromVector(this.end1_);
+        this.end1Lock_ = this.end1.lock();
+        return this.end1_;
     }
 
-    get end2(): Vec3 {
+    get end2(): Geometric3 {
+        this.end2.unlock(this.end2Lock_);
         this.computeBody2AttachPointInWorldCoords(this.end2_);
-        return Vec3.fromVector(this.end2_);
+        this.end2Lock_ = this.end2.lock();
+        return this.end2_;
     }
 
     /**
@@ -127,10 +160,17 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
 
-        const length = this.F1.location.distanceTo(this.F2.location);
-        const sf = this.stiffness * (length - this.restLength) / length;
+        // Temporarily use the F2 vector property to compute the direction (unit vector).
+        this.F2.vector.copy(this.F2.location).sub(this.F1.location).direction();
 
-        this.F1.vector.copy(this.F2.location).sub(this.F1.location).mulByScalar(sf);
+        // Use the the F1 vector property as working storage.
+        // 1. Compute the extension.
+        this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude().sub(this.restLength);
+        // 2. Multiply by the stiffness.
+        this.F1.vector.mul(this.stiffness);
+        // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
+        this.F1.vector.mul(this.F2.vector);
+        // 4. The F2 vector property is the reaction to the F1 vector action.
         this.F2.vector.copy(this.F1.vector).neg();
 
         /*
@@ -157,13 +197,29 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    potentialEnergy(): number {
+    potentialEnergy(): Geometric3 {
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
 
-        // spring potential energy = 0.5 * stiffness * (stretch ^ 2)
-        const stretch = this.F2.location.distanceTo(this.F1.location) - this.restLength;
-        return 0.5 * this.stiffness * stretch * stretch;
+        this.potentialEnergy_.unlock(this.potentialEnergyLock_);
+
+        // spring potential energy = 0.5 * stiffness * (stretch * stretch)
+
+        // 1. Compute the magnitude of the distance between the endpoints.
+        assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
+        this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude();
+        // 2. Compute the stretch.
+        assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
+        this.potentialEnergy_.sub(this.restLength);
+        // 3. Square it.
+        this.potentialEnergy_.quaditude();
+        // 4. Multiply by the stiffness.
+        this.potentialEnergy_.mul(this.stiffness);
+        // 5. Multiply by the 0.5 factor.
+        this.potentialEnergy_.mulByNumber(0.5);
+
+        this.potentialEnergyLock_ = this.potentialEnergy_.lock();
+        return this.potentialEnergy_;
     }
 }
 

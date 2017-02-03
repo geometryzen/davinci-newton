@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Geometric3 from '../math/Geometric3';
+import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
+import Unit from '../math/Unit';
 
 /**
  * A rectangular block of constant density.
@@ -22,67 +25,62 @@ export class Block3 extends RigidBody3 {
     /**
      * The dimension corresponding to the width.
      */
-    private width_ = 1;
+    private readonly width_ = Geometric3.one();
     /**
      * The dimension corresponding to the height.
      */
-    private height_ = 1;
+    private readonly height_ = Geometric3.one();
     /**
      * The dimension corresponding to the depth.
      */
-    private depth_ = 1;
+    private readonly depth_ = Geometric3.one();
     /**
      * 
      */
-    constructor(width = 1, height = 1, depth = 1) {
+    constructor(width: GeometricE3 = Geometric3.one(), height: GeometricE3 = Geometric3.one(), depth: GeometricE3 = Geometric3.one()) {
         super();
-        this.width_ = width;
-        this.height_ = height;
-        this.depth_ = depth;
+        this.width_.copy(width);
+        this.height_.copy(height);
+        this.depth_.copy(depth);
         this.updateInertiaTensor();
     }
 
-    get width(): number {
+    get width(): Geometric3 {
         return this.width_;
     }
-    set width(width: number) {
-        if (this.width !== width) {
-            this.width_ = width;
-            this.updateInertiaTensor();
-        }
+    set width(width: Geometric3) {
+        this.width_.copy(width);
+        this.updateInertiaTensor();
     }
 
-    get height(): number {
+    get height(): Geometric3 {
         return this.height_;
     }
-    set height(height: number) {
-        if (this.height !== height) {
-            this.height_ = height;
-            this.updateInertiaTensor();
-        }
+    set height(height: Geometric3) {
+        this.height_.copy(height);
+        this.updateInertiaTensor();
     }
 
-    get depth(): number {
+    get depth(): Geometric3 {
         return this.depth_;
     }
-    set depth(depth: number) {
-        if (this.depth !== depth) {
-            this.depth_ = depth;
-            this.updateInertiaTensor();
-        }
+    set depth(depth: Geometric3) {
+        this.depth_.copy(depth);
+        this.updateInertiaTensor();
     }
 
     public updateAngularVelocity(): void {
         const w = this.width_;
         const h = this.height_;
         const d = this.depth_;
-        const ww = w * w;
-        const hh = h * h;
-        const dd = d * d;
-        const k = 12 / this.M;
+        const ww = w.a * w.a;
+        const hh = h.a * h.a;
+        const dd = d.a * d.a;
+        const k = 12 / this.M.a;
         this.Ω.yz = k * this.L.yz / (hh + dd);
         this.Ω.zx = k * this.L.zx / (ww + dd);
         this.Ω.xy = k * this.L.xy / (ww + hh);
+        this.Ω.uom = Unit.div(Unit.div(this.L.uom, this.M.uom), Unit.mul(w.uom, w.uom));
     }
 
     /**
@@ -92,14 +90,15 @@ export class Block3 extends RigidBody3 {
         const w = this.width_;
         const h = this.height_;
         const d = this.depth_;
-        const ww = w * w;
-        const hh = h * h;
-        const dd = d * d;
-        const s = this.M / 12;
+        const ww = w.a * w.a;
+        const hh = h.a * h.a;
+        const dd = d.a * d.a;
+        const s = this.M.a / 12;
         const I = Matrix3.zero();
         I.setElement(0, 0, s * (hh + dd));
         I.setElement(1, 1, s * (dd + ww));
         I.setElement(2, 2, s * (ww + hh));
+        I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
         this.I = I;
     }
 }

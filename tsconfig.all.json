@@ -14,10 +14,17 @@
     },
     "files": [
         "src/davinci-newton/engine3D/Block3.spec.ts",
+        "src/davinci-newton/engine3D/GravitationLaw3.spec.ts",
         "src/davinci-newton/engine3D/Physics3.spec.ts",
         "src/davinci-newton/engine3D/RigidBody3.spec.ts",
         "src/davinci-newton/engine3D/Sphere3.spec.ts",
+        "src/davinci-newton/math/Dimensions.spec.ts",
+        "src/davinci-newton/math/gauss.spec.ts",
+        "src/davinci-newton/math/Geometric3.spec.ts",
+        "src/davinci-newton/math/QQ.spec.ts",
+        "src/davinci-newton/math/Unit.spec.ts",
         "src/davinci-newton/math/Vector3.spec.ts",
+        "src/davinci-newton/math/VectorN.spec.ts",
         "typings/jasmine/jasmine.d.ts"
     ]
 }

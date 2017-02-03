@@ -1,5 +1,6 @@
 import Matrix3 from './Matrix3';
 import MatrixLike from './MatrixLike';
+import Unit from './Unit';
 
 /**
  * 
@@ -9,6 +10,10 @@ export class Mat3 implements MatrixLike {
      * 
      */
     private data = Matrix3.one();
+    /**
+     * 
+     */
+    public uom: Unit;
     /**
      * 
      */
@@ -26,6 +31,7 @@ export class Mat3 implements MatrixLike {
             n11, n12, n13,
             n21, n22, n23,
             n31, n32, n33);
+        this.uom = Unit.mustBeUnit('uom', source.uom);
     }
 
     /**

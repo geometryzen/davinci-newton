@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Unit from '../math/Unit';
+
 /**
  * 
  */
@@ -32,7 +34,7 @@ export interface Simulation {
     /**
      * 
      */
-    evaluate(state: number[], change: number[], timeOffset: number): void;
+    evaluate(state: number[], change: number[], stepSize: number, uomStep: Unit): void;
     /**
      * 
      */

@@ -15,26 +15,45 @@
 
 import AbstractSimObject from '../objects/AbstractSimObject';
 import Bivector3 from '../math/Bivector3';
+import ForceBody3 from './ForceBody3';
+import Geometric3 from '../math/Geometric3';
 import Mat3 from '../math/Mat3';
 import Matrix3 from '../math/Matrix3';
 import MatrixLike from '../math/MatrixLike';
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import { rotateX, rotateY, rotateZ } from '../math/rotate3';
-import Spinor3 from '../math/Spinor3';
+import Unit from '../math/Unit';
 import Vec3 from '../math/Vec3';
-import Vector3 from '../math/Vector3';
 import VectorE3 from '../math/VectorE3';
+
+/**
+ * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
+ * If either measure is zero, the unit of dimensions are meaningless
+ */
+function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: Geometric3): void {
+    if (!A.isZero() && !B.isZero()) {
+        if (Unit.isOne(A.uom)) {
+            if (!Unit.isOne(B.uom)) {
+                throw new Error(`${aName} => ${A} must have dimensions if ${bName} => ${B} has dimensions.`);
+            }
+        }
+        else {
+            if (Unit.isOne(B.uom)) {
+                throw new Error(`${bName} => ${B} must have dimensions if ${aName} => ${A} has dimensions.`);
+            }
+        }
+    }
+}
 
 /**
  * 
  */
-export class RigidBody3 extends AbstractSimObject {
+export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     /**
      * Mass, M.
      */
-    private M_ = 1;
+    private M_ = Geometric3.one();
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
@@ -45,19 +64,49 @@ export class RigidBody3 extends AbstractSimObject {
      */
     private varsIndex_ = -1;
 
-    private readonly position_ = new Vector3();
-    private readonly attitude_ = new Spinor3();
-    private readonly linearMomentum_ = new Vector3();
-    private readonly angularMomentum_ = new Bivector3();
+    /**
+     * The position (vector).
+     */
+    private readonly position_ = Geometric3.zero();
+    /**
+     * The attitude (spinor).
+     */
+    private readonly attitude_ = Geometric3.one();
+    /**
+     * The linear momentum (vector).
+     */
+    private readonly linearMomentum_ = Geometric3.zero();
+    /**
+     * The angular momentum (bivector).
+     */
+    private readonly angularMomentum_ = Geometric3.bivector(0, 0, 0);
+    private Ω_ = new Bivector3(0, 0, 0);
     /**
      * Angular velocity (bivector).
      */
-    public Ω = new Bivector3();
+    public Ω = Geometric3.bivector(0, 0, 0);
 
     /**
      * center of mass in local coordinates.
      */
     protected centerOfMassLocal_ = Vec3.zero;
+
+    /**
+     * Scratch variable for rotational energy.
+     */
+    private rotationalEnergy_ = Geometric3.scalar(0);
+    private rotationalEnergyLock_ = this.rotationalEnergy_.lock();
+
+    /**
+     * Scratch variable for translational energy.
+     */
+    private translationalEnergy_ = Geometric3.scalar(0);
+    private translationalEnergyLock_ = this.translationalEnergy_.lock();
+
+    /**
+     * Scratch variable for calculation worldPoint.
+     */
+    private worldPoint_ = Geometric3.zero();
 
     /**
      * 
@@ -79,14 +128,12 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * Mass (scalar)
      */
-    get M(): number {
+    get M(): Geometric3 {
         return this.M_;
     }
-    set M(M: number) {
-        if (this.M_ !== M) {
-            this.M_ = mustBeNumber('M', M);
-            this.updateInertiaTensor();
-        }
+    set M(M: Geometric3) {
+        this.M_.copy(M);
+        this.updateInertiaTensor();
     }
 
     /**
@@ -103,7 +150,9 @@ export class RigidBody3 extends AbstractSimObject {
         // the reversion of the mutable body.R twice.
         this.Ω.copy(this.L);
         this.Ω.rotate(this.R.rev());
-        this.Ω.applyMatrix(this.Iinv);
+        this.Ω_.copy(this.Ω);
+        this.Ω_.applyMatrix(this.Iinv);
+        this.Ω.copyBivector(this.Ω_);
         this.Ω.rotate(this.R.rev());
     }
 
@@ -145,10 +194,10 @@ export class RigidBody3 extends AbstractSimObject {
     /**
      * Position (vector).
      */
-    get X(): Vector3 {
+    get X(): Geometric3 {
         return this.position_;
     }
-    set X(position: Vector3) {
+    set X(position: Geometric3) {
         this.position_.copy(position);
     }
 
@@ -156,30 +205,30 @@ export class RigidBody3 extends AbstractSimObject {
      * Attitude (spinor).
      * Effects a rotation from local coordinates to world coordinates.
      */
-    get R(): Spinor3 {
+    get R(): Geometric3 {
         return this.attitude_;
     }
-    set R(attitude: Spinor3) {
+    set R(attitude: Geometric3) {
         this.attitude_.copy(attitude);
     }
 
     /**
      * Linear momentum (vector).
      */
-    get P(): Vector3 {
+    get P(): Geometric3 {
         return this.linearMomentum_;
     }
-    set P(momentum: Vector3) {
+    set P(momentum: Geometric3) {
         this.linearMomentum_.copy(momentum);
     }
 
     /**
      * Angular momentum (bivector) in world coordinates.
      */
-    get L(): Bivector3 {
+    get L(): Geometric3 {
         return this.angularMomentum_;
     }
-    set L(angularMomentum: Bivector3) {
+    set L(angularMomentum: Geometric3) {
         this.angularMomentum_.copy(angularMomentum);
     }
 
@@ -201,17 +250,28 @@ export class RigidBody3 extends AbstractSimObject {
     }
 
     /**
-     * (1/2) Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
+     * In the following formula, notice the reversion on either Ω or L.
+     * Geometrically, this means we depend on the cosine of the angle between the bivectors, since
+     * A * ~B = |A||B|cos(...).
+     * (1/2) Ω * ~L(Ω) = (1/2) ~Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
      */
-    rotationalEnergy(): number {
-        return 0.5 * this.Ω.scp(this.L);
+    rotationalEnergy(): Geometric3 {
+        assertConsistentUnits('Ω', this.Ω, 'L', this.L);
+        this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
+        this.rotationalEnergy_.copy(this.Ω).rev().scp(this.L).mulByNumber(0.5);
+        this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
+        return this.rotationalEnergy_;
     }
 
     /**
      * (1/2) (P * P) / M
      */
-    translationalEnergy(): number {
-        return 0.5 * this.P.quaditude() / this.M;
+    translationalEnergy(): Geometric3 {
+        assertConsistentUnits('M', this.M, 'P', this.P);
+        this.translationalEnergy_.unlock(this.translationalEnergyLock_);
+        this.translationalEnergy_.copy(this.P).mul(this.P).div(this.M).mulByNumber(0.5);
+        this.translationalEnergyLock_ = this.translationalEnergy_.lock();
+        return this.translationalEnergy_;
     }
 
     /**
@@ -219,16 +279,9 @@ export class RigidBody3 extends AbstractSimObject {
      * x = R (localPoint - centerOfMassLocal) * ~R + X
      */
     localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void {
-        // This implementation avoids object creation at the expense of more operations.
-        const comLocal = this.centerOfMassLocal_;
-        const x = localPoint.x - comLocal.x;
-        const y = localPoint.y - comLocal.y;
-        const z = localPoint.z - comLocal.z;
-        const X = this.position_;
-        const R = this.attitude_;
-        worldPoint.x = rotateX(x, y, z, R) + X.x;
-        worldPoint.y = rotateY(x, y, z, R) + X.y;
-        worldPoint.z = rotateZ(x, y, z, R) + X.z;
+        this.worldPoint_.copyVector(localPoint).subVector(this.centerOfMassLocal_);
+        this.worldPoint_.rotate(this.attitude_).add(this.position_);
+        this.worldPoint_.writeVector(worldPoint);
     }
 
     /**

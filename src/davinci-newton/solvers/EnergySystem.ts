@@ -1,5 +1,10 @@
+import Geometric3 from '../math/Geometric3';
+
+/**
+ * 
+ */
 export interface EnergySystem {
-    totalEnergy(): number;
+    totalEnergy(): Geometric3;
 }
 
 export default EnergySystem;

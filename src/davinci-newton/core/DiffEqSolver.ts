@@ -13,11 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Unit from '../math/Unit';
+
 /**
  * 
  */
 export interface DiffEqSolver {
-    step(stepSize: number): void;
+    step(stepSize: number, uomStep: Unit): void;
 }
 
 export default DiffEqSolver;

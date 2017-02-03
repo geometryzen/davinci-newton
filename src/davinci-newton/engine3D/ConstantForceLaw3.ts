@@ -17,6 +17,7 @@ import AbstractSimObject from '../objects/AbstractSimObject';
 import CoordType from '../model/CoordType';
 import Force3 from './Force3';
 import ForceLaw3 from './ForceLaw3';
+import Geometric3 from '../math/Geometric3';
 import RigidBody3 from '../engine3D/RigidBody3';
 import VectorE3 from '../math/VectorE3';
 
@@ -26,12 +27,18 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
      */
     private readonly force_: Force3;
     private readonly forces: Force3[] = [];
+    private readonly potentialEnergy_ = Geometric3.zero();
+    private potentialEnergyLock_ = this.potentialEnergy_.lock();
+
+    /**
+     * 
+     */
     constructor(private body_: RigidBody3, vector: VectorE3, vectorCoordType: CoordType = CoordType.WORLD) {
         super();
         this.force_ = new Force3(this.body_);
 
         this.force_.locationCoordType = CoordType.BODY;
-        this.force_.vector.copy(vector);
+        this.force_.vector.copyVector(vector);
         this.force_.vectorCoordType = vectorCoordType;
 
         this.forces = [this.force_];
@@ -41,7 +48,7 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
         return this.force_.location;
     }
     set location(location: VectorE3) {
-        this.force_.location.copy(location);
+        this.force_.location.copyVector(location);
     }
 
     /**
@@ -61,8 +68,11 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    potentialEnergy(): number {
-        return 0;
+    potentialEnergy(): Geometric3 {
+        this.potentialEnergy_.unlock(this.potentialEnergyLock_);
+        this.potentialEnergy_.a = 0;
+        this.potentialEnergyLock_ = this.potentialEnergy_.lock();
+        return this.potentialEnergy_;
     }
 }
 
