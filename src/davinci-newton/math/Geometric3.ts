@@ -260,7 +260,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
             this.uom_ = Unit.mustBeUnit('uom', uom);
         }
         else {
-            throw new Error(readOnly(name).message);
+            throw new Error(readOnly('uom').message);
         }
     }
 
@@ -2106,39 +2106,40 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     /**
      * Constructs a Geometric3 representing the number zero.
      * The identity element for addition, <b>0</b>.
+     * The returned multivector is locked.
      */
-    static zero(): Geometric3 { return new Geometric3(); };
+    public static readonly zero = lock(new Geometric3());
 
     /**
      * Constructs a Geometric3 representing the number one.
      * The identity element for multiplication, <b>1</b>.
-     * The returned multivector is a new instance and is not locked.
+     * The returned multivector is locked.
      */
-    static one(): Geometric3 { return new Geometric3().addScalar(1); };
+    public static readonly one = lock(new Geometric3().addScalar(1));
 
     /**
      * Constructs a basis vector corresponding to the <code>x</code> coordinate.
-     * The returned multivector is a new instance and is not locked.
+     * The returned multivector is locked.
      */
-    static e1(): Geometric3 { return Geometric3.vector(1, 0, 0); };
+    public static readonly e1 = lock(Geometric3.vector(1, 0, 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>y</code> coordinate.
-     * The returned multivector is a new instance and is not locked.
+     * The returned multivector is locked.
      */
-    static e2(): Geometric3 { return Geometric3.vector(0, 1, 0); };
+    public static readonly e2 = lock(Geometric3.vector(0, 1, 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>z</code> coordinate.
-     * The returned multivector is a new instance and is not locked.
+     * The returned multivector is locked.
      */
-    static e3(): Geometric3 { return Geometric3.vector(0, 0, 1); };
+    public static readonly e3 = lock(Geometric3.vector(0, 0, 1));
 
     /**
      * Constructs a basis vector corresponding to the <code>β</code> coordinate.
-     * The returned multivector is a new instance and is not locked.
+     * The returned multivector is locked.
      */
-    static I(): Geometric3 { return new Geometric3().addPseudo(1); };
+    public static readonly I = lock(new Geometric3().addPseudo(1));
 
     /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.

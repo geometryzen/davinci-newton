@@ -31,7 +31,7 @@ describe("Block3", function () {
             const ww = w.a * w.a;
             const hh = h.a * h.a;
             const dd = d.a * d.a;
-            body.M.a = Math.random();
+            body.M = Geometric3.scalar(Math.random());
             body.L.yz = 0;
             body.L.zx = 0;
             body.L.xy = 1;
@@ -68,15 +68,15 @@ describe("Block3", function () {
             expect(body.I.uom.dimensions.M.numer).toBe(1);
             expect(body.I.uom.dimensions.M.denom).toBe(1);
         });
-        xit("L", function () {
+        it("L", function () {
             expect(body.I.uom.dimensions.L.numer).toBe(2);
             expect(body.I.uom.dimensions.L.denom).toBe(1);
         });
-        xit("T", function () {
+        it("T", function () {
             expect(body.I.uom.dimensions.T.numer).toBe(0);
             expect(body.I.uom.dimensions.T.denom).toBe(1);
         });
-        xit("Q", function () {
+        it("Q", function () {
             expect(body.I.uom.dimensions.Q.numer).toBe(0);
             expect(body.I.uom.dimensions.Q.denom).toBe(1);
         });

@@ -20,7 +20,6 @@ import Force3 from './Force3';
 import ForceBody3 from './ForceBody3';
 import ForceLaw3 from './ForceLaw3';
 import Geometric3 from '../math/Geometric3';
-import isUndefined from '../checks/isUndefined';
 import isZeroBivectorE3 from '../math/isZeroBivectorE3';
 import isZeroVectorE3 from '../math/isZeroVectorE3';
 import remove from '../util/remove';
@@ -122,20 +121,20 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private readonly potentialOffset_ = Geometric3.zero();
+    private readonly potentialOffset_ = new Geometric3();
 
     /**
      * Scratch variable for computing force.
      */
-    private readonly force_ = Geometric3.zero();
+    private readonly force_ = new Geometric3();
     /**
      * Scratch variable for computing torque.
      */
-    private readonly torque_ = Geometric3.zero();
+    private readonly torque_ = new Geometric3();
     /**
      * Scratch variable for computing total energy.
      */
-    private readonly totalEnergy_ = Geometric3.zero();
+    private readonly totalEnergy_ = new Geometric3();
     private totalEnergyLock_ = this.totalEnergy_.lock();
 
     /**
@@ -226,7 +225,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
-    private moveObjects(vars: number[]): void {
+    private updateBodies(vars: number[]): void {
 
         const bodies = this.bodies_;
         const N = bodies.length;
@@ -287,9 +286,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
      */
-    evaluate(state: number[], change: number[], Δt: number, uomTime?: Unit): void {
+    evaluate(vars: number[], change: number[], Δt: number, uomTime?: Unit): void {
         // Move objects so that rigid body objects know their current state.
-        this.moveObjects(state);
+        this.updateBodies(vars);
         const bodies = this.bodies_;
         const Nb = bodies.length;
         for (let bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -307,9 +306,10 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             else {
                 // The rate of change of position is the velocity.
                 // dX/dt = V = P / M
-                change[idx + Physics3.OFFSET_POSITION_X] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] / mass;
-                change[idx + Physics3.OFFSET_POSITION_Y] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] / mass;
-                change[idx + Physics3.OFFSET_POSITION_Z] = state[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] / mass;
+                const P = body.P;
+                change[idx + Physics3.OFFSET_POSITION_X] = P.x / mass;
+                change[idx + Physics3.OFFSET_POSITION_Y] = P.y / mass;
+                change[idx + Physics3.OFFSET_POSITION_Z] = P.z / mass;
 
                 // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
                 // requiring the geometric product of Ω and R.
@@ -364,7 +364,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         forceApp.computeForce(this.force_);
         const F = this.force_;
         // Bootstrap the linear momentum unit of measure.
-        if (isUndefined(body.P.uom) && isZeroVectorE3(body.P)) {
+        if (Unit.isOne(body.P.uom) && isZeroVectorE3(body.P)) {
             body.P.uom = Unit.mul(F.uom, uomTime);
         }
         change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
@@ -376,7 +376,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         forceApp.computeTorque(this.torque_);
         const T = this.torque_;
         // Bootstrap the angular momentum unit of measure.
-        if (isUndefined(body.L.uom) && isZeroBivectorE3(body.L)) {
+        if (Unit.isOne(body.L.uom) && isZeroBivectorE3(body.L)) {
             body.L.uom = Unit.mul(T.uom, uomTime);
         }
         change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += T.yz;
@@ -438,7 +438,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     epilog(): void {
         const varsList = this.varsList_;
         const vars = varsList.getValues();
-        this.moveObjects(vars);
+        this.updateBodies(vars);
 
         // update the variables that track energy
         let pe = this.potentialOffset_.a;

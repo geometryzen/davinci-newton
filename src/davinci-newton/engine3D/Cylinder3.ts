@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import Geometric3 from '../math/Geometric3';
-import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
 import Unit from '../math/Unit';
@@ -22,21 +21,31 @@ import Unit from '../math/Unit';
  * A solid cylinder of uniform density.
  */
 export class Cylinder3 extends RigidBody3 {
+
     /**
      * The dimension corresponding to the radius.
      */
-    private radius_ = Geometric3.one();
+    private readonly radius_: Geometric3;
+    private radiusLock_: number;
+
     /**
      * The dimension corresponding to the height.
      */
-    private height_ = Geometric3.one();
+    private readonly height_: Geometric3;
+    private heightLock_: number;
+
     /**
      * 
      */
-    constructor(radius: GeometricE3 = Geometric3.one(), height: GeometricE3 = Geometric3.one()) {
+    constructor(radius = Geometric3.one, height = Geometric3.one) {
         super();
-        this.radius_.copy(radius);
-        this.height_.copy(height);
+
+        this.radius_ = Geometric3.copy(radius);
+        this.radiusLock_ = this.radius_.lock();
+
+        this.height_ = Geometric3.copy(height);
+        this.heightLock_ = this.height_.lock();
+
         this.updateInertiaTensor();
     }
 
@@ -44,7 +53,9 @@ export class Cylinder3 extends RigidBody3 {
         return this.radius_;
     }
     set radius(radius: Geometric3) {
-        this.radius_ = radius;
+        this.radius_.unlock(this.radiusLock_);
+        this.radius_.copy(radius);
+        this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
 
@@ -52,7 +63,9 @@ export class Cylinder3 extends RigidBody3 {
         return this.height_;
     }
     set height(height: Geometric3) {
-        this.height_ = height;
+        this.height.unlock(this.heightLock_);
+        this.height_.copy(height);
+        this.heightLock_ = this.height_.lock();
         this.updateInertiaTensor();
     }
 

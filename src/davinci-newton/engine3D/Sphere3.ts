@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import Geometric3 from '../math/Geometric3';
-import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
 import Unit from '../math/Unit';
@@ -22,16 +21,20 @@ import Unit from '../math/Unit';
  * A solid sphere of constant density.
  */
 export class Sphere3 extends RigidBody3 {
+
     /**
      * The dimension corresponding to the width.
      */
-    private radius_ = Geometric3.one();
+    private readonly radius_: Geometric3;
+    private radiusLock_: number;
+
     /**
      * 
      */
-    constructor(radius: GeometricE3 = Geometric3.one()) {
+    constructor(radius = Geometric3.one) {
         super();
-        this.radius_.copy(radius);
+        this.radius_ = Geometric3.copy(radius);
+        this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
 
@@ -39,7 +42,9 @@ export class Sphere3 extends RigidBody3 {
         return this.radius_;
     }
     set radius(radius: Geometric3) {
-        this.radius_ = radius;
+        this.radius_.unlock(this.radiusLock_);
+        this.radius_.copy(radius);
+        this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
 

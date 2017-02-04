@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import Geometric3 from '../math/Geometric3';
-import GeometricE3 from '../math/GeometricE3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
 import Unit from '../math/Unit';
@@ -25,23 +24,36 @@ export class Block3 extends RigidBody3 {
     /**
      * The dimension corresponding to the width.
      */
-    private readonly width_ = Geometric3.one();
+    private readonly width_: Geometric3;
+    private widthLock_: number;
+
     /**
      * The dimension corresponding to the height.
      */
-    private readonly height_ = Geometric3.one();
+    private readonly height_: Geometric3;
+    private heightLock_: number;
+
     /**
      * The dimension corresponding to the depth.
      */
-    private readonly depth_ = Geometric3.one();
+    private readonly depth_: Geometric3;
+    private depthLock_: number;
+
     /**
      * 
      */
-    constructor(width: GeometricE3 = Geometric3.one(), height: GeometricE3 = Geometric3.one(), depth: GeometricE3 = Geometric3.one()) {
+    constructor(width = Geometric3.one, height = Geometric3.one, depth = Geometric3.one) {
         super();
-        this.width_.copy(width);
-        this.height_.copy(height);
-        this.depth_.copy(depth);
+
+        this.width_ = Geometric3.copy(width);
+        this.widthLock_ = this.width_.lock();
+
+        this.height_ = Geometric3.copy(height);
+        this.heightLock_ = this.height_.lock();
+
+        this.depth_ = Geometric3.copy(depth);
+        this.depthLock_ = this.depth_.lock();
+
         this.updateInertiaTensor();
     }
 
@@ -49,7 +61,9 @@ export class Block3 extends RigidBody3 {
         return this.width_;
     }
     set width(width: Geometric3) {
+        this.width_.unlock(this.widthLock_);
         this.width_.copy(width);
+        this.widthLock_ = this.width_.lock();
         this.updateInertiaTensor();
     }
 
@@ -57,7 +71,9 @@ export class Block3 extends RigidBody3 {
         return this.height_;
     }
     set height(height: Geometric3) {
+        this.height_.unlock(this.heightLock_);
         this.height_.copy(height);
+        this.heightLock_ = this.height_.lock();
         this.updateInertiaTensor();
     }
 
@@ -65,7 +81,9 @@ export class Block3 extends RigidBody3 {
         return this.depth_;
     }
     set depth(depth: Geometric3) {
+        this.depth_.unlock(this.depthLock_);
         this.depth_.copy(depth);
+        this.depthLock_ = this.depth_.lock();
         this.updateInertiaTensor();
     }
 

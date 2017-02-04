@@ -102,7 +102,7 @@ describe("RigidBody3", function () {
     describe("rotationalEnergy", function () {
         describe("calculated using (1/2) Ω * ~L(Ω)", function () {
             const body = new Block3(Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()));
-            body.M.a = 12;
+            body.M = Geometric3.scalar(12);
             const ω = new Vec3(Math.random(), Math.random(), Math.random(), Unit.inv(Unit.SECOND));
             body.L.yz = Math.random();
             body.L.zx = Math.random();
@@ -143,8 +143,7 @@ describe("RigidBody3", function () {
         describe("calculated using (1/2) P * P / M", function () {
             const body = new Block3(Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()));
 
-            body.M.a = 12;
-            body.M.uom = Unit.KILOGRAM;
+            body.M = Geometric3.scalar(12, Unit.KILOGRAM);
 
             body.P.x = Math.random();
             body.P.y = Math.random();

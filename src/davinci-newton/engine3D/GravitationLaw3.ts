@@ -35,7 +35,7 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = Geometric3.zero();
+    private readonly potentialEnergy_ = new Geometric3();
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**

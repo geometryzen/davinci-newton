@@ -27,7 +27,7 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
      */
     private readonly force_: Force3;
     private readonly forces: Force3[] = [];
-    private readonly potentialEnergy_ = Geometric3.zero();
+    private readonly potentialEnergy_ = new Geometric3();
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**

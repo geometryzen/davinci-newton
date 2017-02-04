@@ -25,7 +25,7 @@ describe("Physics3", function () {
             // Not actually using this yet, other than to test construction.
             const sim = new Physics3();
             const body = new Block3(Geometric3.scalar(1), Geometric3.scalar(2), Geometric3.scalar(3));
-            body.M.a = 12;
+            body.M = Geometric3.scalar(12);
             body.L.yz = 3;
             body.L.zx = 5;
             body.L.xy = 7;

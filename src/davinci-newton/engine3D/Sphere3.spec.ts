@@ -22,10 +22,10 @@ const SECOND = Unit.SECOND;
 const MOTION = KILOGRAM.mul(METER).div(SECOND);
 
 describe("Sphere3", function () {
-    xdescribe("updateAngularVelocity", function () {
+    describe("updateAngularVelocity", function () {
         it("dimensionless should accurately update Ω", function () {
             const body = new Sphere3(Geometric3.scalar(1 - 0.5 * Math.random()));
-            body.M.a = 1 + Math.random();
+            body.M = Geometric3.scalar(1 + Math.random());
             body.L.yz = Math.random();
             body.L.zx = Math.random();
             body.L.xy = Math.random();
@@ -92,15 +92,15 @@ describe("Sphere3", function () {
             expect(body.I.uom.dimensions.M.numer).toBe(1);
             expect(body.I.uom.dimensions.M.denom).toBe(1);
         });
-        xit("L", function () {
+        it("L", function () {
             expect(body.I.uom.dimensions.L.numer).toBe(2);
             expect(body.I.uom.dimensions.L.denom).toBe(1);
         });
-        xit("T", function () {
+        it("T", function () {
             expect(body.I.uom.dimensions.T.numer).toBe(0);
             expect(body.I.uom.dimensions.T.denom).toBe(1);
         });
-        xit("Q", function () {
+        it("Q", function () {
             expect(body.I.uom.dimensions.Q.numer).toBe(0);
             expect(body.I.uom.dimensions.Q.denom).toBe(1);
         });

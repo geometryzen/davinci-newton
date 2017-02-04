@@ -52,8 +52,12 @@ function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: G
 export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     /**
      * Mass, M.
+     * Changing the mass requires an update to the intertia tensor,
+     * so we want to control the mutability.
      */
-    private M_ = Geometric3.one();
+    private readonly mass_ = new Geometric3().addScalar(1);
+    private massLock_ = this.mass_.lock();
+
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
@@ -67,19 +71,19 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     /**
      * The position (vector).
      */
-    private readonly position_ = Geometric3.zero();
+    private readonly position_ = Geometric3.zero.clone();
     /**
      * The attitude (spinor).
      */
-    private readonly attitude_ = Geometric3.one();
+    private readonly attitude_ = Geometric3.one.clone();
     /**
      * The linear momentum (vector).
      */
-    private readonly linearMomentum_ = Geometric3.zero();
+    private readonly linearMomentum_ = Geometric3.zero.clone();
     /**
      * The angular momentum (bivector).
      */
-    private readonly angularMomentum_ = Geometric3.bivector(0, 0, 0);
+    private readonly angularMomentum_ = Geometric3.zero.clone();
     private Ω_ = new Bivector3(0, 0, 0);
     /**
      * Angular velocity (bivector).
@@ -94,19 +98,19 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     /**
      * Scratch variable for rotational energy.
      */
-    private rotationalEnergy_ = Geometric3.scalar(0);
+    private rotationalEnergy_ = Geometric3.zero.clone();
     private rotationalEnergyLock_ = this.rotationalEnergy_.lock();
 
     /**
      * Scratch variable for translational energy.
      */
-    private translationalEnergy_ = Geometric3.scalar(0);
+    private translationalEnergy_ = Geometric3.zero.clone();
     private translationalEnergyLock_ = this.translationalEnergy_.lock();
 
     /**
      * Scratch variable for calculation worldPoint.
      */
-    private worldPoint_ = Geometric3.zero();
+    private readonly worldPoint_ = new Geometric3();
 
     /**
      * 
@@ -129,10 +133,12 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
      * Mass (scalar)
      */
     get M(): Geometric3 {
-        return this.M_;
+        return this.mass_;
     }
     set M(M: Geometric3) {
-        this.M_.copy(M);
+        this.mass_.unlock(this.massLock_);
+        this.mass_.copy(M);
+        this.massLock_ = this.mass_.lock();
         this.updateInertiaTensor();
     }
 
