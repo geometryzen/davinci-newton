@@ -19,7 +19,7 @@ export interface AdvanceStrategy {
     /**
      * 
      */
-    advance(stepSize: number, uomStep: Unit): void;
+    advance(stepSize: number, uomStep?: Unit): void;
 }
 
 export default AdvanceStrategy;

@@ -34,7 +34,7 @@ export interface Simulation {
     /**
      * 
      */
-    evaluate(state: number[], change: number[], stepSize: number, uomStep: Unit): void;
+    evaluate(state: number[], change: number[], stepSize: number, uomStep?: Unit): void;
     /**
      * 
      */

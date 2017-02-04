@@ -30,7 +30,7 @@ export class EulerMethod implements DiffEqSolver {
     constructor(private sim_: Simulation) {
 
     }
-    step(stepSize: number, uom: Unit): void {
+    step(stepSize: number, uomStep?: Unit): void {
         const vars = this.sim_.getState();
         const N = vars.length;
         if (this.inp_.length !== N) {
@@ -44,7 +44,7 @@ export class EulerMethod implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uom);
+        this.sim_.evaluate(inp, k1, 0, uomStep);
         for (let i = 0; i < N; i++) {
             vars[i] += k1[i] * stepSize;
         }

@@ -16,9 +16,9 @@
 import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import EnergySystem from '../solvers/EnergySystem';
-import Force from './Force3';
+import Force3 from './Force3';
 import ForceBody3 from './ForceBody3';
-import ForceLaw from './ForceLaw3';
+import ForceLaw3 from './ForceLaw3';
 import Geometric3 from '../math/Geometric3';
 import isUndefined from '../checks/isUndefined';
 import isZeroBivectorE3 from '../math/isZeroBivectorE3';
@@ -112,7 +112,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private readonly forceLaws_: ForceLaw[] = [];
+    private readonly forceLaws_: ForceLaw3[] = [];
 
     /**
      * 
@@ -191,7 +191,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    addForceLaw(forceLaw: ForceLaw): void {
+    addForceLaw(forceLaw: ForceLaw3): void {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
         }
@@ -201,7 +201,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    removeForceLaw(forceLaw: ForceLaw): void {
+    removeForceLaw(forceLaw: ForceLaw3): void {
         forceLaw.disconnect();
         this.discontinuosChangeToEnergy();
         remove(this.forceLaws_, forceLaw);
@@ -287,7 +287,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
      */
-    evaluate(state: number[], change: number[], Δt: number, uomTime: Unit): void {
+    evaluate(state: number[], change: number[], Δt: number, uomTime?: Unit): void {
         // Move objects so that rigid body objects know their current state.
         this.moveObjects(state);
         const bodies = this.bodies_;
@@ -349,7 +349,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * Applying forces gives rise to linear and angular momentum.
      */
-    private applyForce(change: number[], forceApp: Force, Δt: number, uomTime: Unit): void {
+    private applyForce(change: number[], forceApp: Force3, Δt: number, uomTime?: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;

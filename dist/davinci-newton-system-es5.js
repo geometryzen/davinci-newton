@@ -17,7 +17,7 @@ System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (ex
                     this.secondDiff_ = true;
                     this.tolerance_ = 1E-6;
                 }
-                AdaptiveStepSolver.prototype.step = function (stepSize, uom) {
+                AdaptiveStepSolver.prototype.step = function (stepSize, uomStep) {
                     this.savedState = this.diffEq_.getState();
                     var startTime = this.diffEq_.time;
                     var d_t = stepSize;
@@ -47,7 +47,7 @@ System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (ex
                                 h = startTime + stepSize - t;
                             }
                             steps++;
-                            this.odeSolver_.step(h, uom);
+                            this.odeSolver_.step(h, uomStep);
                             this.diffEq_.epilog();
                             t += h;
                         }
@@ -223,9 +223,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-02-03';
+                    this.LAST_MODIFIED = '2017-02-04';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.24';
+                    this.VERSION = '0.0.25';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -531,6 +531,62 @@ System.register("davinci-newton/strategy/DefaultAdvanceStrategy.js", ["../checks
         }
     };
 });
+System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", "../view/AlignV", "./Graph", "../engine3D/Physics3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+            d.__proto__ = b;
+        } || function (d, b) {
+            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var __moduleName = context_1 && context_1.id;
+    var AlignH_1, AlignV_1, Graph_1, Physics3_1, EnergyTimeGraph;
+    return {
+        setters: [function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (Graph_1_1) {
+            Graph_1 = Graph_1_1;
+        }, function (Physics3_1_1) {
+            Physics3_1 = Physics3_1_1;
+        }],
+        execute: function () {
+            EnergyTimeGraph = function (_super) {
+                __extends(EnergyTimeGraph, _super);
+                function EnergyTimeGraph(canvasId, varsList) {
+                    var _this = _super.call(this, canvasId, varsList) || this;
+                    _this.translationalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
+                    _this.rotationalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
+                    _this.potentialEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_POTENTIAL_ENERGY, 'blue');
+                    _this.totalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_TOTAL_ENERGY, 'white');
+                    _this.autoScale.timeWindow = 5;
+                    _this.autoScale.addGraphLine(_this.translationalEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.rotationalEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.potentialEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.totalEnergyGraphLine);
+                    _this.axes.hAxisAlign = AlignV_1.default.BOTTOM;
+                    _this.axes.vAxisAlign = AlignH_1.default.LEFT;
+                    _this.axes.hAxisLabel = 'time';
+                    _this.axes.vAxisLabel = 'energy';
+                    return _this;
+                }
+                return EnergyTimeGraph;
+            }(Graph_1.default);
+            exports_1("EnergyTimeGraph", EnergyTimeGraph);
+            exports_1("default", EnergyTimeGraph);
+        }
+    };
+});
 System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], function (exports_1, context_1) {
     "use strict";
 
@@ -547,7 +603,7 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
                     this.inp_ = [];
                     this.k1_ = [];
                 }
-                EulerMethod.prototype.step = function (stepSize, uom) {
+                EulerMethod.prototype.step = function (stepSize, uomStep) {
                     var vars = this.sim_.getState();
                     var N = vars.length;
                     if (this.inp_.length !== N) {
@@ -560,7 +616,7 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
                         inp[i] = vars[i];
                     }
                     zeroArray_1.default(k1);
-                    this.sim_.evaluate(inp, k1, 0, uom);
+                    this.sim_.evaluate(inp, k1, 0, uomStep);
                     for (var i = 0; i < N; i++) {
                         vars[i] += k1[i] * stepSize;
                     }
@@ -2475,7 +2531,7 @@ System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"]
                     this.k1_ = [];
                     this.k2_ = [];
                 }
-                ModifiedEuler.prototype.step = function (stepSize, uom) {
+                ModifiedEuler.prototype.step = function (stepSize, uomStep) {
                     var vars = this.sim_.getState();
                     var N = vars.length;
                     if (this.inp_.length !== N) {
@@ -2490,12 +2546,12 @@ System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"]
                         inp[i] = vars[i];
                     }
                     zeroArray_1.default(k1);
-                    this.sim_.evaluate(inp, k1, 0, uom);
+                    this.sim_.evaluate(inp, k1, 0, uomStep);
                     for (var i = 0; i < N; i++) {
                         inp[i] = vars[i] + k1[i] * stepSize;
                     }
                     zeroArray_1.default(k2);
-                    this.sim_.evaluate(inp, k2, stepSize, uom);
+                    this.sim_.evaluate(inp, k2, stepSize, uomStep);
                     for (var i = 0; i < N; i++) {
                         vars[i] += (k1[i] + k2[i]) * stepSize / 2;
                     }
@@ -10523,11 +10579,11 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Uni
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/math/Dimensions", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/math/Geometric3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/math/QQ", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/math/Unit", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/math/Dimensions", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/math/Geometric3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/math/QQ", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/math/Unit", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    var AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, Cylinder3_1, DefaultAdvanceStrategy_1, Dimensions_1, DisplayGraph_1, DrawingMode_1, EulerMethod_1, Force3_1, Geometric3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, QQ_1, RigidBody3_1, Physics3_1, RungeKutta_1, SimView_1, Sphere3_1, Spring3_1, Unit_1, VarsList_1, Vec3_1, newton;
+    var AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, Cylinder3_1, DefaultAdvanceStrategy_1, Dimensions_1, DisplayGraph_1, DrawingMode_1, EnergyTimeGraph_1, EulerMethod_1, Force3_1, Geometric3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, QQ_1, RigidBody3_1, Physics3_1, RungeKutta_1, SimView_1, Sphere3_1, Spring3_1, Unit_1, VarsList_1, Vec3_1, newton;
     return {
         setters: [function (AdaptiveStepSolver_1_1) {
             AdaptiveStepSolver_1 = AdaptiveStepSolver_1_1;
@@ -10559,6 +10615,8 @@ System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolv
             DisplayGraph_1 = DisplayGraph_1_1;
         }, function (DrawingMode_1_1) {
             DrawingMode_1 = DrawingMode_1_1;
+        }, function (EnergyTimeGraph_1_1) {
+            EnergyTimeGraph_1 = EnergyTimeGraph_1_1;
         }, function (EulerMethod_1_1) {
             EulerMethod_1 = EulerMethod_1_1;
         }, function (Force3_1_1) {
@@ -10647,6 +10705,9 @@ System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolv
                 },
                 get DrawingMode() {
                     return DrawingMode_1.default;
+                },
+                get EnergyTimeGraph() {
+                    return EnergyTimeGraph_1.default;
                 },
                 get EulerMethod() {
                     return EulerMethod_1.default;

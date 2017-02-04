@@ -27,7 +27,7 @@ export class RungeKutta implements DiffEqSolver {
     constructor(private sim_: Simulation) {
 
     }
-    step(stepSize: number, uomStep: Unit): void {
+    step(stepSize: number, uomStep?: Unit): void {
         const vars = this.sim_.getState();
         const N = vars.length;
         if (this.inp_.length < N) {

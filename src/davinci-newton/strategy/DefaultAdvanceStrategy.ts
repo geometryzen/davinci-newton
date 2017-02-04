@@ -42,7 +42,7 @@ export class DefaultAdvanceStrategy implements AdvanceStrategy {
     /**
      * 
      */
-    advance(stepSize: number, uomStep: Unit): void {
+    advance(stepSize: number, uomStep?: Unit): void {
         this.simulation_.prolog();
         this.solver_.step(stepSize, uomStep);
         this.simulation_.epilog();

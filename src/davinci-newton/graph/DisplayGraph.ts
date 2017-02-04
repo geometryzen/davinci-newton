@@ -32,42 +32,42 @@ export default class DisplayGraph implements DisplayObject {
     /**
      * The GraphLines to draw.
      */
-    graphLines_: GraphLine[] = [];
+    private readonly graphLines_: GraphLine[] = [];
 
     /**
      * 
      */
-    memDraw_ = repeat(-1, this.graphLines_.length);
+    private memDraw_ = repeat(-1, this.graphLines_.length);
 
     /**
      * 
      */
-    offScreen_: HTMLCanvasElement = null;
+    private offScreen_: HTMLCanvasElement = null;
 
     /**
      * to detect when redraw needed;  when the coordmap changes, we need to redraw.
      */
-    lastMap_: CoordMap = null;
+    private lastMap_: CoordMap = null;
 
     /**
      * 
      */
-    screenRect_ = ScreenRect.EMPTY_RECT;
+    private screenRect_ = ScreenRect.EMPTY_RECT;
 
     /**
      * set when the entire graph needs to be redrawn.
      */
-    needRedraw_ = false;
+    private needRedraw_ = false;
 
     /**
      * set when the entire graph needs to be redrawn.
      */
-    useBuffer_ = false;
+    private useBuffer_ = false;
 
     /**
      * 
      */
-    zIndex = 0;
+    private zIndex = 0;
 
     /**
      * 

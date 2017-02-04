@@ -57,7 +57,6 @@ export class AbstractSubject implements Subject {
 
     /**
      * Adds the Parameter to the list of this Subject's available Parameters.
-     * @throws if a Parameter with the same name already exists.
      * @param parameter the Parameter to add
      */
     addParameter(parameter: Parameter): void {

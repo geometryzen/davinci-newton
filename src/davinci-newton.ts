@@ -13,6 +13,7 @@ import DefaultAdvanceStrategy from './davinci-newton/strategy/DefaultAdvanceStra
 import Dimensions from './davinci-newton/math/Dimensions';
 import DisplayGraph from './davinci-newton/graph/DisplayGraph';
 import DrawingMode from './davinci-newton/view/DrawingMode';
+import EnergyTimeGraph from './davinci-newton/graph/EnergyTimeGraph';
 import EulerMethod from './davinci-newton/solvers/EulerMethod';
 import Force3 from './davinci-newton/engine3D/Force3';
 import Geometric3 from './davinci-newton/math/Geometric3';
@@ -101,6 +102,10 @@ const newton = {
      * 
      */
     get DrawingMode() { return DrawingMode; },
+    /**
+     * 
+     */
+    get EnergyTimeGraph() { return EnergyTimeGraph; },
     /**
      * 
      */

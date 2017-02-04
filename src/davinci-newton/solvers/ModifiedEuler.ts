@@ -31,7 +31,7 @@ export class ModifiedEuler implements DiffEqSolver {
     constructor(private sim_: Simulation) {
 
     }
-    step(stepSize: number, uom: Unit): void {
+    step(stepSize: number, uomStep?: Unit): void {
         const vars = this.sim_.getState();
         const N = vars.length;
         if (this.inp_.length !== N) {
@@ -47,13 +47,13 @@ export class ModifiedEuler implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uom);
+        this.sim_.evaluate(inp, k1, 0, uomStep);
         // evaluate at time t+stepSize
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k1[i] * stepSize;
         }
         zeroArray(k2);
-        this.sim_.evaluate(inp, k2, stepSize, uom);
+        this.sim_.evaluate(inp, k2, stepSize, uomStep);
         for (let i = 0; i < N; i++) {
             vars[i] += (k1[i] + k2[i]) * stepSize / 2;
         }

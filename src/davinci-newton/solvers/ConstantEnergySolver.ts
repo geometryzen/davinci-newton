@@ -32,7 +32,7 @@ export class ConstantEnergySolver implements DiffEqSolver {
         this.solverMethod_ = solverMethod;
         this.totSteps_ = 0;
     }
-    step(Δt: number, uomTime: Unit): void {
+    step(Δt: number, uomTime?: Unit): void {
         // save the vars in case we need to back up and start again
         this.savedState = this.simulation_.getState();
         const startTime = this.simulation_.time;

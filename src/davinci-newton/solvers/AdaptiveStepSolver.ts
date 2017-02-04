@@ -28,7 +28,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
         this.secondDiff_ = true;
         this.tolerance_ = 1E-6;
     }
-    step(stepSize: number, uom: Unit): void {
+    step(stepSize: number, uomStep?: Unit): void {
         // save the vars in case we need to back up and start again
         this.savedState = this.diffEq_.getState();
         const startTime = this.diffEq_.time;
@@ -74,7 +74,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
                     h = startTime + stepSize - t;
                 }
                 steps++;
-                this.odeSolver_.step(h, uom);
+                this.odeSolver_.step(h, uomStep);
                 this.diffEq_.epilog();
                 t += h;
             }
