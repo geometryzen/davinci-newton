@@ -1,5 +1,6 @@
 import BivectorE3 from './BivectorE3';
 import mustBeNumber from '../checks/mustBeNumber';
+import Scalar3 from './Scalar3';
 import SpinorE3 from './SpinorE3';
 import Unit from './Unit';
 import VectorE3 from './VectorE3';
@@ -36,7 +37,7 @@ export class Vec3 implements VectorE3 {
     /**
      * The optional unit of measure.
      */
-    public readonly uom: Unit;
+    private readonly uom_: Unit;
 
     /**
      * "v corresponds to `new Vec3(x, y, z)` in the [e1, e2, e3] basis"
@@ -47,13 +48,13 @@ export class Vec3 implements VectorE3 {
         this.x_ = mustBeNumber('x', x);
         this.y_ = mustBeNumber('y', y);
         this.z_ = mustBeNumber('z', z);
-        this.uom = Unit.mustBeUnit('uom', uom);
-        if (this.uom && this.uom.multiplier !== 1) {
-            const multiplier: number = this.uom.multiplier;
+        this.uom_ = Unit.mustBeUnit('uom', uom);
+        if (this.uom_ && this.uom_.multiplier !== 1) {
+            const multiplier: number = this.uom_.multiplier;
             this.x_ *= multiplier;
             this.y_ *= multiplier;
             this.z_ *= multiplier;
-            this.uom = new Unit(1, uom.dimensions, uom.labels);
+            this.uom_ = new Unit(1, uom.dimensions, uom.labels);
         }
     }
 
@@ -79,22 +80,29 @@ export class Vec3 implements VectorE3 {
     }
 
     /**
-     * 
+     * readonly unit of measure
+     */
+    get uom(): Unit {
+        return this.uom_;
+    }
+
+    /**
+     * @returns this + rhs
      */
     add(rhs: VectorE3): Vec3 {
-        const uom = Unit.compatible(this.uom, rhs.uom);
+        const uom = Unit.compatible(this.uom_, rhs.uom);
         return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z, uom);
     }
 
     /**
-     * 
+     * @returns this / alpha
      */
     divByScalar(alpha: number): Vec3 {
-        return new Vec3(this.x / alpha, this.y / alpha, this.z / alpha, this.uom);
+        return new Vec3(this.x / alpha, this.y / alpha, this.z / alpha, this.uom_);
     }
 
     /**
-     * this << B
+     * @returns this << B
      */
     lco(B: BivectorE3): Vec3 {
         const ax = B.yz;
@@ -106,26 +114,26 @@ export class Vec3 implements VectorE3 {
         const x = ay * bz - az * by;
         const y = az * bx - ax * bz;
         const z = ax * by - ay * bx;
-        return new Vec3(x, y, z, Unit.mul(this.uom, B.uom));
+        return new Vec3(x, y, z, Unit.mul(this.uom_, B.uom));
     }
 
     /**
-     * 
+     * @returns this - rhs
      */
     subtract(rhs: VectorE3): Vec3 {
-        const uom = Unit.compatible(this.uom, rhs.uom);
+        const uom = Unit.compatible(this.uom_, rhs.uom);
         return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z, uom);
     }
 
     /**
-     * 
+     * @returns this * alpha
      */
     mulByScalar(alpha: number): Vec3 {
-        return new Vec3(alpha * this.x, alpha * this.y, alpha * this.z, this.uom);
+        return new Vec3(alpha * this.x, alpha * this.y, alpha * this.z, this.uom_);
     }
 
     /**
-     * 
+     * @returns this x alpha
      */
     cross(rhs: VectorE3): Vec3 {
         const ax = this.x;
@@ -137,30 +145,34 @@ export class Vec3 implements VectorE3 {
         const x = ay * bz - az * by;
         const y = az * bx - ax * bz;
         const z = ax * by - ay * bx;
-        return new Vec3(x, y, z, Unit.mul(this.uom, rhs.uom));
+        return new Vec3(x, y, z, Unit.mul(this.uom_, rhs.uom));
     }
 
     /**
-     * 
+     * @returns |this - point|
      */
-    distanceTo(point: VectorE3): number {
+    public distanceTo(point: VectorE3): Scalar3 {
         const Δx = this.x - point.x;
         const Δy = this.y - point.y;
         const Δz = this.z - point.z;
-        return Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
+        const a = Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
+        const uom = Unit.compatible(this.uom_, point.uom);
+        return new Scalar3(a, uom);
     }
 
     /**
-     * 
+     * @returns this | v
      */
-    dot(v: VectorE3): number {
-        return this.x * v.x + this.y * v.y + this.z * v.z;
+    public dot(v: VectorE3): Scalar3 {
+        const a = this.x * v.x + this.y * v.y + this.z * v.z;
+        const uom = Unit.mul(this.uom_, v.uom);
+        return new Scalar3(a, uom);
     }
 
     /**
-     * 
+     * @returns |this|
      */
-    magnitude(): number {
+    private magnitude(): number {
         const x = this.x;
         const y = this.y;
         const z = this.z;
@@ -184,7 +196,7 @@ export class Vec3 implements VectorE3 {
     }
 
     /**
-     * 
+     * @returns this / magnitude(this)
      */
     direction(): Vec3 {
         const magnitude = this.magnitude();
@@ -202,10 +214,10 @@ export class Vec3 implements VectorE3 {
     }
 
     /**
-     * 
+     * @returns R * this * ~R
      */
-    rotate(spinor: SpinorE3): Vec3 {
-        if (spinor.a === 1 && spinor.xy === 0 && spinor.yz === 0 && spinor.zx === 0) {
+    rotate(R: SpinorE3): Vec3 {
+        if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
             return this;
         }
         else {
@@ -213,10 +225,10 @@ export class Vec3 implements VectorE3 {
             const y = this.y;
             const z = this.z;
 
-            const a = spinor.xy;
-            const b = spinor.yz;
-            const c = spinor.zx;
-            const w = spinor.a;
+            const a = R.xy;
+            const b = R.yz;
+            const c = R.zx;
+            const w = R.a;
 
             const ix = w * x - c * z + a * y;
             const iy = w * y - a * x + b * z;
@@ -227,7 +239,7 @@ export class Vec3 implements VectorE3 {
             const yPrimed = iy * w + iw * c + iz * b - ix * a;
             const zPrimed = iz * w + iw * a + ix * c - iy * b;
 
-            return new Vec3(xPrimed, yPrimed, zPrimed, this.uom);
+            return new Vec3(xPrimed, yPrimed, zPrimed, this.uom_);
         }
     }
 

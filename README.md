@@ -1,2 +1,2 @@
 # davinci-newton
-Experimental Physics Engine
+Physics Modeling and Engine using Geometric Algebra

@@ -76,7 +76,7 @@ export class Force3 extends AbstractSimObject {
      */
     computeForce(force: VectorE3): void {
         switch (this.vectorCoordType) {
-            case CoordType.BODY: {
+            case CoordType.LOCAL: {
                 this.force_.copyVector(this.vector);
                 this.force_.rotate(this.body_.R);
                 this.force_.writeVector(force);
@@ -105,7 +105,7 @@ export class Force3 extends AbstractSimObject {
      */
     computePosition(position: VectorE3): void {
         switch (this.locationCoordType) {
-            case CoordType.BODY: {
+            case CoordType.LOCAL: {
                 this.position_.copyVector(this.location);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero. 

@@ -197,8 +197,8 @@ export class Spinor3 implements SpinorE3, CartesianG3 {
      * @param xy
      * @param α
      */
-    static spinor(yz: number, zx: number, xy: number, α: number): Spinor3 {
-        return new Spinor3(α, yz, zx, xy, Unit.ONE);
+    static spinor(yz: number, zx: number, xy: number, α: number, uom?: Unit): Spinor3 {
+        return new Spinor3(α, yz, zx, xy, uom);
     }
 }
 

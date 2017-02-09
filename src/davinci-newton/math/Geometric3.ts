@@ -276,7 +276,13 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     }
 
     /**
+     * A bitmask describing the grades.
      *
+     * 0x0 = zero
+     * 0x1 = scalar
+     * 0x2 = vector
+     * 0x4 = bivector
+     * 0x8 = pseudoscalar
      */
     get maskG3(): number {
         const coords = this.coords_;

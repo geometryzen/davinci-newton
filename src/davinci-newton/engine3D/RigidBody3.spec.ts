@@ -115,27 +115,36 @@ describe("RigidBody3", function () {
             body.Ω.uom = ω.uom;
 
             const J = new Vec3(body.L.yz, body.L.zx, body.L.xy, body.L.uom);
-            const expectRotationalEnergy = 0.5 * ω.dot(J);
+            const expectRotationalEnergy = ω.dot(J).mulByNumber(0.5);
             const actualRotationalEnergy = body.rotationalEnergy();
-            const uom = actualRotationalEnergy.uom;
+            const uomExpect = expectRotationalEnergy.uom;
+            const uomActual = actualRotationalEnergy.uom;
             it("should get the quantity", function () {
-                expect(actualRotationalEnergy.a).toBeCloseTo(expectRotationalEnergy, 10);
+                expect(actualRotationalEnergy.a).toBeCloseTo(expectRotationalEnergy.a, 10);
             });
             it("should have M dimension 1", function () {
-                expect(uom.dimensions.M.numer).toBe(1);
-                expect(uom.dimensions.M.denom).toBe(1);
+                expect(uomExpect.dimensions.M.numer).toBe(1);
+                expect(uomExpect.dimensions.M.denom).toBe(1);
+                expect(uomActual.dimensions.M.numer).toBe(1);
+                expect(uomActual.dimensions.M.denom).toBe(1);
             });
             it("should have L dimension 2", function () {
-                expect(uom.dimensions.L.numer).toBe(2);
-                expect(uom.dimensions.L.denom).toBe(1);
+                expect(uomExpect.dimensions.L.numer).toBe(2);
+                expect(uomExpect.dimensions.L.denom).toBe(1);
+                expect(uomActual.dimensions.L.numer).toBe(2);
+                expect(uomActual.dimensions.L.denom).toBe(1);
             });
             it("should have T dimension -2", function () {
-                expect(uom.dimensions.T.numer).toBe(-2);
-                expect(uom.dimensions.T.denom).toBe(1);
+                expect(uomExpect.dimensions.T.numer).toBe(-2);
+                expect(uomExpect.dimensions.T.denom).toBe(1);
+                expect(uomActual.dimensions.T.numer).toBe(-2);
+                expect(uomActual.dimensions.T.denom).toBe(1);
             });
             it("should have Q dimension 0", function () {
-                expect(uom.dimensions.Q.numer).toBe(0);
-                expect(uom.dimensions.Q.denom).toBe(1);
+                expect(uomExpect.dimensions.Q.numer).toBe(0);
+                expect(uomExpect.dimensions.Q.denom).toBe(1);
+                expect(uomActual.dimensions.Q.numer).toBe(0);
+                expect(uomActual.dimensions.Q.denom).toBe(1);
             });
         });
     });

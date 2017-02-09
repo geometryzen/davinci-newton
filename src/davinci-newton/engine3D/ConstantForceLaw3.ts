@@ -21,6 +21,9 @@ import Geometric3 from '../math/Geometric3';
 import RigidBody3 from '../engine3D/RigidBody3';
 import VectorE3 from '../math/VectorE3';
 
+/**
+ * 
+ */
 export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * The attachment point to the body in body coordinates.
@@ -37,7 +40,7 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
         super();
         this.force_ = new Force3(this.body_);
 
-        this.force_.locationCoordType = CoordType.BODY;
+        this.force_.locationCoordType = CoordType.LOCAL;
         this.force_.vector.copyVector(vector);
         this.force_.vectorCoordType = vectorCoordType;
 

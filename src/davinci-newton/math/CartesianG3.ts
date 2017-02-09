@@ -6,7 +6,7 @@
  * No units of measure
  * Euclidean metric.
  */
-interface CartesianG3 {
+export interface CartesianG3 {
   /**
    * A bitmask describing the grades.
    *
