@@ -1,11 +1,12 @@
+import approx from './approx';
 import BivectorE3 from './BivectorE3';
 import CartesianG3 from './CartesianG3';
-import { Coords } from './Coords';
 import arraysEQ from './arraysEQ';
 import dotVector from './dotVectorE3';
 import extG3 from './extG3';
 import gauss from './gauss';
 import GeometricE3 from './GeometricE3';
+import isDefined from '../checks/isDefined';
 import isScalarG3 from './isScalarG3';
 import isVectorE3 from './isVectorE3';
 import isVectorG3 from './isVectorG3';
@@ -42,13 +43,80 @@ const COORD_PSEUDO = 7;
 
 // FIXME: Change to Canonical ordering.
 const BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
+BASIS_LABELS[COORD_SCALAR] = '1';
+BASIS_LABELS[COORD_X] = 'e1';
+BASIS_LABELS[COORD_Y] = 'e2';
+BASIS_LABELS[COORD_Z] = 'e3';
+
+const zero = function zero(): number[] {
+    return [0, 0, 0, 0, 0, 0, 0, 0];
+};
+
+const scalar = function scalar(a: number): number[] {
+    const coords = zero();
+    coords[COORD_SCALAR] = a;
+    return coords;
+};
+
+const vector = function vector(x: number, y: number, z: number): number[] {
+    const coords = zero();
+    coords[COORD_X] = x;
+    coords[COORD_Y] = y;
+    coords[COORD_Z] = z;
+    return coords;
+};
+
+const bivector = function bivector(yz: number, zx: number, xy: number): number[] {
+    const coords = zero();
+    coords[COORD_YZ] = yz;
+    coords[COORD_ZX] = zx;
+    coords[COORD_XY] = xy;
+    return coords;
+};
+
+const spinor = function spinor(a: number, yz: number, zx: number, xy: number): number[] {
+    const coords = zero();
+    coords[COORD_SCALAR] = a;
+    coords[COORD_YZ] = yz;
+    coords[COORD_ZX] = zx;
+    coords[COORD_XY] = xy;
+    return coords;
+};
+
+const multivector = function multivector(a: number, x: number, y: number, z: number, yz: number, zx: number, xy: number, b: number): number[] {
+    const coords = zero();
+    coords[COORD_SCALAR] = a;
+    coords[COORD_X] = x;
+    coords[COORD_Y] = y;
+    coords[COORD_Z] = z;
+    coords[COORD_YZ] = yz;
+    coords[COORD_ZX] = zx;
+    coords[COORD_XY] = xy;
+    coords[COORD_PSEUDO] = b;
+    return coords;
+};
+
+const pseudo = function pseudo(b: number): number[] {
+    const coords = zero();
+    coords[COORD_PSEUDO] = b;
+    return coords;
+};
 
 /**
  * Coordinates corresponding to basis labels.
  */
-function coordinates(m: GeometricE3): number[] {
-    return [m.a, m.x, m.y, m.z, m.xy, m.yz, m.zx, m.b];
-}
+const coordinates = function coordinates(m: GeometricE3): number[] {
+    const coords = zero();
+    coords[COORD_SCALAR] = m.a;
+    coords[COORD_X] = m.x;
+    coords[COORD_Y] = m.y;
+    coords[COORD_Z] = m.z;
+    coords[COORD_YZ] = m.yz;
+    coords[COORD_ZX] = m.zx;
+    coords[COORD_XY] = m.xy;
+    coords[COORD_PSEUDO] = m.b;
+    return coords;
+};
 
 /**
  * Computes the cosine of the angle between two vectors.
@@ -69,7 +137,6 @@ function cosVectorVector(a: VectorE3, b: VectorE3): number {
  * Sets the lock on the multivector argument and returns the same argument.
  * This is a convenience function for the dunder (double underscore) methods.
  * All dunder methods should return locked values.
- * TODO: All mutation values should respect the state returned by isLocked().
  */
 function lock(m: Geometric3): Geometric3 {
     m.lock();
@@ -81,6 +148,8 @@ function lock(m: Geometric3): Geometric3 {
  */
 const cosines: number[] = [];
 
+const magicCode = Math.random();
+
 /**
  * Sentinel value to indicate that the Geometric3 is not locked.
  * UNLOCKED is in the range -1 to 0.
@@ -90,23 +159,42 @@ const UNLOCKED = -1 * Math.random();
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
+export class Geometric3 implements CartesianG3, GeometricE3 {
+
     /**
-     * Th unit of measure.
+     * 
+     */
+    private readonly coords_: number[];
+
+    /**
+     * 
+     */
+    private modified_: boolean;
+
+    /**
+     * The unit of measure.
      * This property should only be changed through the accessors.
      */
     private uom_: Unit;
+
     /**
      * 
      */
     private lock_ = UNLOCKED;
+
     /**
-     * Constructs a <code>Geometric3</code>.
-     * The multivector is initialized to zero.
+     * Do not call this constructor. Use the static construction methods instead.
      */
-    constructor() {
-        super([0, 0, 0, 0, 0, 0, 0, 0], false, 8);
-        // The unit of measure should not matter when the value is zero.
+    constructor(coords: number[] = zero(), uom?: Unit, code?: number) {
+        if (coords.length !== 8) {
+            throw new Error("coords.length must be 8");
+        }
+        if (isDefined(code) && code !== magicCode) {
+            throw new Error("Use the static creation methods instead of the constructor");
+        }
+        this.coords_ = coords;
+        this.uom_ = uom;
+        this.modified_ = false;
     }
 
     /**
@@ -123,7 +211,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * and returns a token that may be used to unlock it.
      */
     public lock(): number {
-        if (this.isLocked()) {
+        if (this.lock_ !== UNLOCKED) {
             throw new Error("already locked");
         }
         else {
@@ -137,7 +225,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * using a token that was obtained from a preceding lock method call.
      */
     public unlock(token: number): void {
-        if (!this.isLocked()) {
+        if (this.lock_ === UNLOCKED) {
             throw new Error("not locked");
         }
         else if (this.lock_ === token) {
@@ -155,11 +243,11 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      */
     private setCoordinate(index: number, newValue: number, name: string) {
         if (this.lock_ === UNLOCKED) {
-            const coords = this.coords;
+            const coords = this.coords_;
             const previous = coords[index];
             if (newValue !== previous) {
                 coords[index] = newValue;
-                this.modified = true;
+                this.modified_ = true;
             }
         }
         else {
@@ -171,104 +259,27 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * The scalar part of this multivector.
      */
     get a(): number {
-        return this.coords[COORD_SCALAR];
+        return this.coords_[COORD_SCALAR];
     }
     set a(a: number) {
         this.setCoordinate(COORD_SCALAR, a, 'a');
     }
 
     /**
-     * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
-     */
-    get x(): number {
-        return this.coords[COORD_X];
-    }
-    set x(x: number) {
-        this.setCoordinate(COORD_X, x, 'x');
-    }
-
-    /**
-     * The coordinate corresponding to the <b>e</b><sub>2</sub> standard basis vector.
-     */
-    get y(): number {
-        return this.coords[COORD_Y];
-    }
-    set y(y: number) {
-        this.setCoordinate(COORD_Y, y, 'y');
-    }
-
-    /**
-     * The coordinate corresponding to the <b>e</b><sub>3</sub> standard basis vector.
-     */
-    get z(): number {
-        return this.coords[COORD_Z];
-    }
-    set z(z: number) {
-        this.setCoordinate(COORD_Z, z, 'z');
-    }
-
-    /**
-     * The coordinate corresponding to the <b>e</b><sub>2</sub><b>e</b><sub>3</sub> standard basis bivector.
-     */
-    get yz(): number {
-        return this.coords[COORD_YZ];
-    }
-    set yz(yz: number) {
-        this.setCoordinate(COORD_YZ, yz, 'yz');
-    }
-
-    /**
-     * The coordinate corresponding to the <b>e</b><sub>3</sub><b>e</b><sub>1</sub> standard basis bivector.
-     */
-    get zx(): number {
-        return this.coords[COORD_ZX];
-    }
-    set zx(zx: number) {
-        this.setCoordinate(COORD_ZX, zx, 'zx');
-    }
-
-    /**
-     * The coordinate corresponding to the <b>e</b><sub>1</sub><b>e</b><sub>2</sub> standard basis bivector.
-     */
-    get xy(): number {
-        return this.coords[COORD_XY];
-    }
-    set xy(xy: number) {
-        this.setCoordinate(COORD_XY, xy, 'xy');
-    }
-
-    /**
      * The pseudoscalar part of this multivector.
      */
     get b(): number {
-        return this.coords[COORD_PSEUDO];
+        return this.coords_[COORD_PSEUDO];
     }
     set b(b: number) {
         this.setCoordinate(COORD_PSEUDO, b, 'b');
     }
 
     /**
-     * The optional unit of measure.
-     */
-    get uom(): Unit {
-        return this.uom_;
-    }
-    set uom(uom: Unit) {
-        if (this.lock_ === UNLOCKED) {
-            // This is the only place where we should check the unit of measure.
-            // It also should be the only place where we access the private member.
-            this.uom_ = Unit.mustBeUnit('uom', uom);
-        }
-        else {
-            throw new Error(readOnly('uom').message);
-        }
-    }
-
-    /**
      *
      */
     get maskG3(): number {
-        const coords = this._coords;
+        const coords = this.coords_;
         const α = coords[COORD_SCALAR];
         const x = coords[COORD_X];
         const y = coords[COORD_Y];
@@ -292,123 +303,132 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
         }
         return mask;
     }
-    set maskG3(unused: number) {
-        throw new Error(readOnly('maskG3').message);
+
+    /**
+     * The optional unit of measure.
+     */
+    get uom(): Unit {
+        return this.uom_;
+    }
+    set uom(uom: Unit) {
+        if (this.lock_ === UNLOCKED) {
+            // This is the only place where we should check the unit of measure.
+            // It also should be the only place where we access the private member.
+            this.uom_ = Unit.mustBeUnit('uom', uom);
+        }
+        else {
+            throw new Error(readOnly('uom').message);
+        }
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
+     */
+    get x(): number {
+        return this.coords_[COORD_X];
+    }
+    set x(x: number) {
+        this.setCoordinate(COORD_X, x, 'x');
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>2</sub> standard basis vector.
+     */
+    get y(): number {
+        return this.coords_[COORD_Y];
+    }
+    set y(y: number) {
+        this.setCoordinate(COORD_Y, y, 'y');
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>3</sub> standard basis vector.
+     */
+    get z(): number {
+        return this.coords_[COORD_Z];
+    }
+    set z(z: number) {
+        this.setCoordinate(COORD_Z, z, 'z');
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>2</sub><b>e</b><sub>3</sub> standard basis bivector.
+     */
+    get yz(): number {
+        return this.coords_[COORD_YZ];
+    }
+    set yz(yz: number) {
+        this.setCoordinate(COORD_YZ, yz, 'yz');
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>3</sub><b>e</b><sub>1</sub> standard basis bivector.
+     */
+    get zx(): number {
+        return this.coords_[COORD_ZX];
+    }
+    set zx(zx: number) {
+        this.setCoordinate(COORD_ZX, zx, 'zx');
+    }
+
+    /**
+     * The coordinate corresponding to the <b>e</b><sub>1</sub><b>e</b><sub>2</sub> standard basis bivector.
+     */
+    get xy(): number {
+        return this.coords_[COORD_XY];
+    }
+    set xy(xy: number) {
+        this.setCoordinate(COORD_XY, xy, 'xy');
     }
 
     /**
      * Adds a multivector value to this multivector with optional scaling.
      *
-     * this ⟼ this + M * α
-     *
      * @param M The multivector to be added to this multivector.
      * @param α An optional scale factor that multiplies the multivector argument.
+     * @returns this + M * α
      */
-    add(M: GeometricE3, α = 1): this {
-        if (this.isZero()) {
-            this.a = M.a * α;
-            this.x = M.x * α;
-            this.y = M.y * α;
-            this.z = M.z * α;
-            this.yz = M.yz * α;
-            this.zx = M.zx * α;
-            this.xy = M.xy * α;
-            this.b = M.b * α;
-            this.uom = M.uom;
-            return this;
-        }
-        else if (isZeroGeometricE3(M)) {
-            return this;
+    add(M: GeometricE3, α = 1): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().add(M, α));
         }
         else {
-            this.a += M.a * α;
-            this.x += M.x * α;
-            this.y += M.y * α;
-            this.z += M.z * α;
-            this.yz += M.yz * α;
-            this.zx += M.zx * α;
-            this.xy += M.xy * α;
-            this.b += M.b * α;
-            this.uom = Unit.compatible(this.uom, M.uom);
-            return this;
+            if (this.isZero()) {
+                this.a = M.a * α;
+                this.x = M.x * α;
+                this.y = M.y * α;
+                this.z = M.z * α;
+                this.yz = M.yz * α;
+                this.zx = M.zx * α;
+                this.xy = M.xy * α;
+                this.b = M.b * α;
+                this.uom = M.uom;
+                return this;
+            }
+            else if (isZeroGeometricE3(M)) {
+                return this;
+            }
+            else {
+                this.a += M.a * α;
+                this.x += M.x * α;
+                this.y += M.y * α;
+                this.z += M.z * α;
+                this.yz += M.yz * α;
+                this.zx += M.zx * α;
+                this.xy += M.xy * α;
+                this.b += M.b * α;
+                this.uom = Unit.compatible(this.uom, M.uom);
+                return this;
+            }
         }
     }
 
     /**
-     * Adds a pseudoscalar value to this multivector.
-     *
-     * this ⟼ this + Iβ
-     *
-     * @param β The pseudoscalar value to be added to this multivector.
-     * @param uom The optional unit of measure.
-     */
-    addPseudo(β: number, uom?: Unit): this {
-        if (this.isZero()) {
-            this.uom = uom;
-        }
-        else if (β === 0) {
-            return this;
-        }
-        else {
-            this.uom = Unit.compatible(this.uom, uom);
-        }
-        this.b += β;
-        return this;
-    }
-
-    /**
-     * Adds a scalar value to this multivector.
-     *
-     * this ⟼ this + α
-     *
-     * @param α The scalar value to be added to this multivector.
-     * @param uom The optional unit of measure.
-     */
-    addScalar(α: number, uom?: Unit): this {
-        if (this.isZero()) {
-            this.uom = uom;
-        }
-        else if (α === 0) {
-            return this;
-        }
-        else {
-            this.uom = Unit.compatible(this.uom, uom);
-        }
-        this.a += α;
-        return this;
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ this + v * α</code>
-     * </p>
-     *
-     * @param v The vector to be added to this multivector.
-     * @param α An optional scale factor that multiplies the vector argument.
-     */
-    addVector(v: VectorE3, α = 1): this {
-        if (this.isZero()) {
-            this.uom = v.uom;
-        }
-        else if (isZeroVectorE3(v)) {
-            return this;
-        }
-        else {
-            this.uom = Unit.compatible(this.uom, v.uom);
-        }
-        this.x += v.x * α;
-        this.y += v.y * α;
-        this.z += v.z * α;
-        return this;
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ a + b</code>
-     * </p>
+     * this ⟼ a + b
      *
      * @param a
      * @param b
+     * @returns this multivector
      */
     add2(a: GeometricE3, b: GeometricE3): this {
         if (isZeroGeometricE3(a)) {
@@ -431,46 +451,130 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
         return this;
     }
 
-    adj(): this {
-        // TODO
-        return this;
+    /**
+     * Adds a pseudoscalar value to this multivector.
+     *
+     * @param β The pseudoscalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @returns this + (Iβ * uom)
+     */
+    addPseudo(β: number, uom?: Unit): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addPseudo(β, uom));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = uom;
+            }
+            else if (β === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, uom);
+            }
+            this.b += β;
+            return this;
+        }
+    }
+
+    /**
+     * Adds a scalar value to this multivector.
+     *
+     * @param α The scalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @returns this + (α * uom)
+     */
+    addScalar(α: number, uom?: Unit): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addScalar(α, uom));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = uom;
+            }
+            else if (α === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, uom);
+            }
+            this.a += α;
+            return this;
+        }
+    }
+
+    /**
+     * @param v The vector to be added to this multivector.
+     * @param α An optional scale factor that multiplies the vector argument.
+     * @returns this + v * α
+     */
+    addVector(v: VectorE3, α = 1): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addVector(v, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (isZeroVectorE3(v)) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.x += v.x * α;
+            this.y += v.y * α;
+            this.z += v.z * α;
+            return this;
+        }
     }
 
     /**
      * Sets this multivector to the angle, defined as the bivector part of the logarithm.
+     * @returns grade(log(this), 2)
      */
-    angle(): this {
+    angle(): Geometric3 {
         return this.log().grade(2);
     }
 
     /**
      * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
      * @param n
+     * @returns approx(this, n)
      */
-    approx(n: number): this {
-        super.approx(n);
-        return this;
+    approx(n: number): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().approx(n));
+        }
+        else {
+            approx(this.coords_, n);
+            return this;
+        }
     }
 
     /**
-     * @returns <code>copy(this)</code>
+     * @returns copy(this)
      */
     clone(): Geometric3 {
         return Geometric3.copy(this);
     }
 
     /**
-     * <p>
-     * <code>this ⟼ conjugate(this)</code>
-     * </p>
+     * Clifford conjugation
      */
-    conj(): this {
-        // FIXME: This is only the bivector part.
-        // Also need to think about various involutions.
-        this.yz = -this.yz;
-        this.zx = -this.zx;
-        this.xy = -this.xy;
-        return this;
+    conj(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().conj());
+        }
+        else {
+            this.x = -this.x;
+            this.y = -this.y;
+            this.z = -this.z;
+            this.yz = -this.yz;
+            this.zx = -this.zx;
+            this.xy = -this.xy;
+            return this;
+        }
     }
 
     /**
@@ -489,52 +593,6 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
         this.xy = coordinates[COORD_XY];
         this.b = coordinates[COORD_PSEUDO];
         return this;
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ this << m</code>
-     * </p>
-     *
-     * @param m
-     */
-    lco(m: GeometricE3): this {
-        return this.lco2(this, m);
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ a << b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
-     */
-    lco2(a: GeometricE3, b: GeometricE3): this {
-        return lcoG3(a, b, this);
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ this >> m</code>
-     * </p>
-     *
-     * @param m
-     */
-    rco(m: GeometricE3): this {
-        return this.rco2(this, m);
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ a >> b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
-     */
-    rco2(a: GeometricE3, b: GeometricE3): this {
-        return rcoG3(a, b, this);
     }
 
     /**
@@ -637,108 +695,142 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
 
     /**
      * Sets this multivector to the generalized vector cross product with another multivector.
-     * <p>
-     * <code>this ⟼ -I * (this ^ m)</code>
-     * </p>
+     *
+     * @returns -I * (this ^ m)
      */
-    cross(m: GeometricE3): this {
-        this.ext(m);
-        this.dual(this).neg();
-        return this;
+    cross(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().cross(m));
+        }
+        else {
+            this.ext(m);
+            this.dual(this).neg();
+            return this;
+        }
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this / m</code>
-     * </p>
-     *
-     * @param m The multivector dividend.
+     * @returns this / magnitude(this)
      */
-    div(m: GeometricE3): this {
-        // TODO: Optimize vector division too
-        if (isScalarG3(m)) {
-            this.divByScalar(m.a, m.uom);
-            return this;
-        }
-        else if (isVectorG3(m)) {
-            return this.divByVector(m);
+    direction(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().direction());
         }
         else {
-            this.uom = Unit.div(this.uom, m.uom);
-
-            const α = m.a;
-            const x = m.x;
-            const y = m.y;
-            const z = m.z;
-            const xy = m.xy;
-            const yz = m.yz;
-            const zx = m.zx;
-            const β = m.b;
-
-            const A = [
-                [α, x, y, z, -xy, -yz, -zx, -β],
-                [x, α, xy, -zx, -y, -β, z, -yz],
-                [y, -xy, α, yz, x, -z, -β, -zx],
-                [z, zx, -yz, α, -β, y, -x, -xy],
-                [xy, -y, x, β, α, zx, -yz, z],
-                [yz, β, -z, y, -zx, α, xy, x],
-                [zx, z, β, -x, yz, -xy, α, y],
-                [β, yz, zx, xy, z, x, y, α]
-            ];
-
-            const b = [1, 0, 0, 0, 0, 0, 0, 0];
-
-            const X = gauss(A, b);
-
-            const a0 = this.a;
-            const a1 = this.x;
-            const a2 = this.y;
-            const a3 = this.z;
-            const a4 = this.xy;
-            const a5 = this.yz;
-            const a6 = this.zx;
-            const a7 = this.b;
-
-            const b0 = X[0];
-            const b1 = X[1];
-            const b2 = X[2];
-            const b3 = X[3];
-            const b4 = X[4];
-            const b5 = X[5];
-            const b6 = X[6];
-            const b7 = X[7];
-
-            const c0 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0);
-            const c1 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1);
-            const c2 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2);
-            const c3 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3);
-            const c4 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4);
-            const c5 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
-            const c6 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
-            const c7 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
-
-            this.a = c0;
-            this.x = c1;
-            this.y = c2;
-            this.z = c3;
-            this.xy = c4;
-            this.yz = c5;
-            this.zx = c6;
-            this.b = c7;
+            const norm: number = this.magnitudeSansUnits();
+            if (norm !== 0) {
+                this.a = this.a / norm;
+                this.x = this.x / norm;
+                this.y = this.y / norm;
+                this.z = this.z / norm;
+                this.yz = this.yz / norm;
+                this.zx = this.zx / norm;
+                this.xy = this.xy / norm;
+                this.b = this.b / norm;
+            }
+            this.uom = void 0;
+            return this;
         }
-        return this;
     }
 
-    divByNumber(α: number): this {
-        this.a /= α;
-        this.x /= α;
-        this.y /= α;
-        this.z /= α;
-        this.yz /= α;
-        this.zx /= α;
-        this.xy /= α;
-        this.b /= α;
-        return this;
+    /**
+     * @param m The multivector dividend.
+     * @returns this / m;
+     */
+    div(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().div(m));
+        }
+        else {
+            if (isScalarG3(m)) {
+                this.divByScalar(m.a, m.uom);
+                return this;
+            }
+            else if (isVectorG3(m)) {
+                return this.divByVector(m);
+            }
+            else {
+                this.uom = Unit.div(this.uom, m.uom);
+
+                const α = m.a;
+                const x = m.x;
+                const y = m.y;
+                const z = m.z;
+                const xy = m.xy;
+                const yz = m.yz;
+                const zx = m.zx;
+                const β = m.b;
+
+                const A = [
+                    [α, x, y, z, -xy, -yz, -zx, -β],
+                    [x, α, xy, -zx, -y, -β, z, -yz],
+                    [y, -xy, α, yz, x, -z, -β, -zx],
+                    [z, zx, -yz, α, -β, y, -x, -xy],
+                    [xy, -y, x, β, α, zx, -yz, z],
+                    [yz, β, -z, y, -zx, α, xy, x],
+                    [zx, z, β, -x, yz, -xy, α, y],
+                    [β, yz, zx, xy, z, x, y, α]
+                ];
+
+                const b = [1, 0, 0, 0, 0, 0, 0, 0];
+
+                const X = gauss(A, b);
+
+                const a0 = this.a;
+                const a1 = this.x;
+                const a2 = this.y;
+                const a3 = this.z;
+                const a4 = this.xy;
+                const a5 = this.yz;
+                const a6 = this.zx;
+                const a7 = this.b;
+
+                const b0 = X[0];
+                const b1 = X[1];
+                const b2 = X[2];
+                const b3 = X[3];
+                const b4 = X[4];
+                const b5 = X[5];
+                const b6 = X[6];
+                const b7 = X[7];
+
+                const c0 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0);
+                const c1 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1);
+                const c2 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2);
+                const c3 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3);
+                const c4 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4);
+                const c5 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
+                const c6 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
+                const c7 = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
+
+                this.a = c0;
+                this.x = c1;
+                this.y = c2;
+                this.z = c3;
+                this.xy = c4;
+                this.yz = c5;
+                this.zx = c6;
+                this.b = c7;
+            }
+            return this;
+        }
+    }
+
+    divByNumber(α: number): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().divByNumber(α));
+        }
+        else {
+            this.a /= α;
+            this.x /= α;
+            this.y /= α;
+            this.z /= α;
+            this.yz /= α;
+            this.zx /= α;
+            this.xy /= α;
+            this.b /= α;
+            return this;
+        }
     }
 
     /**
@@ -749,26 +841,36 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param α The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom: Unit): this {
-        this.uom = Unit.div(this.uom, uom);
-        this.a /= α;
-        this.x /= α;
-        this.y /= α;
-        this.z /= α;
-        this.yz /= α;
-        this.zx /= α;
-        this.xy /= α;
-        this.b /= α;
-        return this;
+    divByScalar(α: number, uom: Unit): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().divByScalar(α, uom));
+        }
+        else {
+            this.uom = Unit.div(this.uom, uom);
+            this.a /= α;
+            this.x /= α;
+            this.y /= α;
+            this.z /= α;
+            this.yz /= α;
+            this.zx /= α;
+            this.xy /= α;
+            this.b /= α;
+            return this;
+        }
     }
 
-    divByVector(vector: VectorE3): this {
-        const x = vector.x;
-        const y = vector.y;
-        const z = vector.z;
-        const uom2 = Unit.pow(vector.uom, QQ.valueOf(2, 1));
-        const squaredNorm = x * x + y * y + z * z;
-        return this.mulByVector(vector).divByScalar(squaredNorm, uom2);
+    divByVector(v: VectorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().divByVector(v));
+        }
+        else {
+            const x = v.x;
+            const y = v.y;
+            const z = v.z;
+            const uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
+            const squaredNorm = x * x + y * y + z * z;
+            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+        }
     }
 
     /**
@@ -801,32 +903,40 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ dual(m) = I * m</code>
-     * </p>
+     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
      *
-     * @param m
+     * @returns dual(m) or dual(this) if m is undefined.
      */
-    dual(m: GeometricE3): this {
-        const w = -m.b;
-        const x = -m.yz;
-        const y = -m.zx;
-        const z = -m.xy;
-        const yz = m.x;
-        const zx = m.y;
-        const xy = m.z;
-        const β = m.a;
+    dual(m?: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().dual(m));
+        }
+        else {
+            if (isDefined(m)) {
+                const w = -m.b;
+                const x = -m.yz;
+                const y = -m.zx;
+                const z = -m.xy;
+                const yz = m.x;
+                const zx = m.y;
+                const xy = m.z;
+                const β = m.a;
 
-        this.a = w;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yz = yz;
-        this.zx = zx;
-        this.xy = xy;
-        this.b = β;
-        this.uom = m.uom;
-        return this;
+                this.a = w;
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.yz = yz;
+                this.zx = zx;
+                this.xy = xy;
+                this.b = β;
+                this.uom = m.uom;
+                return this;
+            }
+            else {
+                return this.dual(this);
+            }
+        }
     }
 
     /**
@@ -836,7 +946,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     equals(other: any): boolean {
         if (other instanceof Geometric3) {
             // TODO: Check units of measure.
-            return arraysEQ(this.coords, other.coords);
+            return arraysEQ(this.coords_, other.coords_);
         }
         else {
             return false;
@@ -848,80 +958,89 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * <code>this ⟼ e<sup>this</sup></code>
      * </p>
      */
-    exp(): this {
-        Unit.assertDimensionless(this.uom);
-        // It's always the case that the scalar commutes with every other
-        // grade of the multivector, so we can pull it out the front.
-        const expW = Math.exp(this.a);
+    exp(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().exp());
+        }
+        else {
+            Unit.assertDimensionless(this.uom);
+            // It's always the case that the scalar commutes with every other
+            // grade of the multivector, so we can pull it out the front.
+            const expW = Math.exp(this.a);
 
-        // In Geometric3 we have the special case that the pseudoscalar also commutes.
-        // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-        // let cosβ = cos(this.b)
-        // let sinβ = sin(this.b)
+            // In Geometric3 we have the special case that the pseudoscalar also commutes.
+            // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
+            // let cosβ = cos(this.b)
+            // let sinβ = sin(this.b)
 
-        // We are left with the vector and bivector components.
-        // For a bivector (usual case), let B = I * φ, where φ is a vector.
-        // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-        const yz = this.yz;
-        const zx = this.zx;
-        const xy = this.xy;
-        // φ is actually the absolute value of one half the rotation angle.
-        // The orientation of the rotation gets carried in the bivector components.
-        const φ = Math.sqrt(yz * yz + zx * zx + xy * xy);
-        const s = φ !== 0 ? Math.sin(φ) / φ : 1;
-        const cosφ = Math.cos(φ);
+            // We are left with the vector and bivector components.
+            // For a bivector (usual case), let B = I * φ, where φ is a vector.
+            // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
+            const yz = this.yz;
+            const zx = this.zx;
+            const xy = this.xy;
+            // φ is actually the absolute value of one half the rotation angle.
+            // The orientation of the rotation gets carried in the bivector components.
+            const φ = Math.sqrt(yz * yz + zx * zx + xy * xy);
+            const s = φ !== 0 ? Math.sin(φ) / φ : 1;
+            const cosφ = Math.cos(φ);
 
-        // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-        // The mixture of vector and bivector parts is more complex!
-        this.a = cosφ;
-        this.yz = yz * s;
-        this.zx = zx * s;
-        this.xy = xy * s;
-        return this.mulByNumber(expW);
+            // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
+            // The mixture of vector and bivector parts is more complex!
+            this.a = cosφ;
+            this.yz = yz * s;
+            this.zx = zx * s;
+            this.xy = xy * s;
+            return this.mulByNumber(expW);
+        }
     }
 
     /**
-     * <p>
      * Computes the inverse of this multivector. 
-     * </p>
+     * @returns inverse(this)
      */
-    inv(): this {
-        const α = this.a;
-        const x = this.x;
-        const y = this.y;
-        const z = this.z;
-        const xy = this.xy;
-        const yz = this.yz;
-        const zx = this.zx;
-        const β = this.b;
+    inv(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().inv());
+        }
+        else {
+            const α = this.a;
+            const x = this.x;
+            const y = this.y;
+            const z = this.z;
+            const xy = this.xy;
+            const yz = this.yz;
+            const zx = this.zx;
+            const β = this.b;
 
-        const A = [
-            [α, x, y, z, -xy, -yz, -zx, -β],
-            [x, α, xy, -zx, -y, -β, z, -yz],
-            [y, -xy, α, yz, x, -z, -β, -zx],
-            [z, zx, -yz, α, -β, y, -x, -xy],
-            [xy, -y, x, β, α, zx, -yz, z],
-            [yz, β, -z, y, -zx, α, xy, x],
-            [zx, z, β, -x, yz, -xy, α, y],
-            [β, yz, zx, xy, z, x, y, α]
-        ];
+            const A = [
+                [α, x, y, z, -xy, -yz, -zx, -β],
+                [x, α, xy, -zx, -y, -β, z, -yz],
+                [y, -xy, α, yz, x, -z, -β, -zx],
+                [z, zx, -yz, α, -β, y, -x, -xy],
+                [xy, -y, x, β, α, zx, -yz, z],
+                [yz, β, -z, y, -zx, α, xy, x],
+                [zx, z, β, -x, yz, -xy, α, y],
+                [β, yz, zx, xy, z, x, y, α]
+            ];
 
-        const b = [1, 0, 0, 0, 0, 0, 0, 0];
+            const b = [1, 0, 0, 0, 0, 0, 0, 0];
 
-        const X = gauss(A, b);
+            const X = gauss(A, b);
 
-        this.a = X[0];
-        this.x = X[1];
-        this.y = X[2];
-        this.z = X[3];
-        this.xy = X[4];
-        this.yz = X[5];
-        this.zx = X[6];
-        this.b = X[7];
+            this.a = X[0];
+            this.x = X[1];
+            this.y = X[2];
+            this.z = X[3];
+            this.xy = X[4];
+            this.yz = X[5];
+            this.zx = X[6];
+            this.b = X[7];
 
-        this.uom = Unit.inv(this.uom);
+            this.uom = Unit.inv(this.uom);
 
-        return this;
+            return this;
+        }
     }
 
     /**
@@ -945,32 +1064,59 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this + α * (target - this)</code>
-     * </p>
-     *
-     * @param target
-     * @param α
+     * @param m
+     * @returns this << m
      */
-    lerp(target: GeometricE3, α: number): this {
-        if (this.isZero()) {
-            this.uom = target.uom;
-        }
-        else if (isZeroGeometricE3(target)) {
-            // Fall through.
+    lco(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().lco(m));
         }
         else {
-            this.uom = Unit.compatible(this.uom, target.uom);
+            return this.lco2(this, m);
         }
-        this.a += (target.a - this.a) * α;
-        this.x += (target.x - this.x) * α;
-        this.y += (target.y - this.y) * α;
-        this.z += (target.z - this.z) * α;
-        this.yz += (target.yz - this.yz) * α;
-        this.zx += (target.zx - this.zx) * α;
-        this.xy += (target.xy - this.xy) * α;
-        this.b += (target.b - this.b) * α;
-        return this;
+    }
+
+    /**
+     * <p>
+     * <code>this ⟼ a << b</code>
+     * </p>
+     *
+     * @param a
+     * @param b
+     */
+    lco2(a: GeometricE3, b: GeometricE3): this {
+        return lcoG3(a, b, this);
+    }
+
+    /**
+     * @param target
+     * @param α
+     * @returns this + α * (target - this)
+     */
+    lerp(target: GeometricE3, α: number): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().lerp(target, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = target.uom;
+            }
+            else if (isZeroGeometricE3(target)) {
+                // Fall through.
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, target.uom);
+            }
+            this.a += (target.a - this.a) * α;
+            this.x += (target.x - this.x) * α;
+            this.y += (target.y - this.y) * α;
+            this.z += (target.z - this.z) * α;
+            this.yz += (target.yz - this.yz) * α;
+            this.zx += (target.zx - this.zx) * α;
+            this.xy += (target.xy - this.xy) * α;
+            this.b += (target.b - this.b) * α;
+            return this;
+        }
     }
 
     /**
@@ -992,20 +1138,25 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * <code>this ⟼ log(this)</code>
      * </p>
      */
-    log(): this {
-        Unit.assertDimensionless(this.uom);
-        const α = this.a;
-        const x = this.yz;
-        const y = this.zx;
-        const z = this.xy;
-        const BB = x * x + y * y + z * z;
-        const B = Math.sqrt(BB);
-        const f = Math.atan2(B, α) / B;
-        this.a = Math.log(Math.sqrt(α * α + BB));
-        this.yz = x * f;
-        this.zx = y * f;
-        this.xy = z * f;
-        return this;
+    log(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().log());
+        }
+        else {
+            Unit.assertDimensionless(this.uom);
+            const α = this.a;
+            const x = this.yz;
+            const y = this.zx;
+            const z = this.xy;
+            const BB = x * x + y * y + z * z;
+            const B = Math.sqrt(BB);
+            const f = Math.atan2(B, α) / B;
+            this.a = Math.log(Math.sqrt(α * α + BB));
+            this.yz = x * f;
+            this.zx = y * f;
+            this.xy = z * f;
+            return this;
+        }
     }
 
     /**
@@ -1013,17 +1164,22 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(): this {
-        this.a = Math.sqrt(this.squaredNormSansUnits());
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.xy = 0;
-        this.yz = 0;
-        this.zx = 0;
-        this.b = 0;
-        // The unit of measure is unchanged.
-        return this;
+    magnitude(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().magnitude());
+        }
+        else {
+            this.a = Math.sqrt(this.squaredNormSansUnits());
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.xy = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.b = 0;
+            // The unit of measure is unchanged.
+            return this;
+        }
     }
 
     /**
@@ -1034,48 +1190,56 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this * s</code>
-     * </p>
-     *
-     * @param m
+     * Returns the geometric product of this multivector with the rhs multivector.
+     * @param rhs The operand on the right hand side of the * operator.
+     * @return this * rhs
      */
-    mul(m: GeometricE3): this {
-        return this.mul2(this, m);
+    mul(rhs: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mul(rhs));
+        }
+        else {
+            return this.mul2(this, rhs);
+        }
     }
 
-    private mulByVector(vector: VectorE3): this {
-        this.uom = Unit.mul(this.uom, vector.uom);
+    private mulByVector(v: VectorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mulByVector(v));
+        }
+        else {
+            this.uom = Unit.mul(this.uom, v.uom);
 
-        const a0 = this.a;
-        const a1 = this.x;
-        const a2 = this.y;
-        const a3 = this.z;
-        const a4 = this.xy;
-        const a5 = this.yz;
-        const a6 = this.zx;
-        const a7 = this.b;
+            const a0 = this.a;
+            const a1 = this.x;
+            const a2 = this.y;
+            const a3 = this.z;
+            const a4 = this.xy;
+            const a5 = this.yz;
+            const a6 = this.zx;
+            const a7 = this.b;
 
-        const b0 = 0;
-        const b1 = vector.x;
-        const b2 = vector.y;
-        const b3 = vector.z;
-        const b4 = 0;
-        const b5 = 0;
-        const b6 = 0;
-        const b7 = 0;
+            const b0 = 0;
+            const b1 = v.x;
+            const b2 = v.y;
+            const b3 = v.z;
+            const b4 = 0;
+            const b5 = 0;
+            const b6 = 0;
+            const b7 = 0;
 
-        // TODO: substitute a cheaper multiplication function.
-        this.a = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0);
-        this.x = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1);
-        this.y = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2);
-        this.z = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3);
-        this.xy = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4);
-        this.yz = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
-        this.zx = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
-        this.b = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
+            // TODO: substitute a cheaper multiplication function.
+            this.a = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0);
+            this.x = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1);
+            this.y = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2);
+            this.z = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3);
+            this.xy = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4);
+            this.yz = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
+            this.zx = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
+            this.b = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
 
-        return this;
+            return this;
+        }
     }
 
     /**
@@ -1087,6 +1251,9 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param b
      */
     mul2(a: GeometricE3, b: GeometricE3): this {
+        if (this.lock_ !== UNLOCKED) {
+            throw new Error("TODO");
+        }
         const a0 = a.a;
         const a1 = a.x;
         const a2 = a.y;
@@ -1120,21 +1287,24 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ -1 * this</code>
-     * </p>
+     * @returns this * -1
      */
-    neg(): this {
-        this.a = -this.a;
-        this.x = -this.x;
-        this.y = -this.y;
-        this.z = -this.z;
-        this.yz = -this.yz;
-        this.zx = -this.zx;
-        this.xy = -this.xy;
-        this.b = -this.b;
-        // There is no change in the unit of measure.
-        return this;
+    neg(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().neg());
+        }
+        else {
+            this.a = -this.a;
+            this.x = -this.x;
+            this.y = -this.y;
+            this.z = -this.z;
+            this.yz = -this.yz;
+            this.zx = -this.zx;
+            this.xy = -this.xy;
+            this.b = -this.b;
+            // There is no change in the unit of measure.
+            return this;
+        }
     }
 
     /**
@@ -1143,46 +1313,20 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * <code>this ⟼ sqrt(this * conj(this))</code>
      * </p>
      */
-    norm(): this {
-        this.a = this.magnitudeSansUnits();
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.yz = 0;
-        this.zx = 0;
-        this.xy = 0;
-        this.b = 0;
-        // There is no change to the unit of measure.
-        return this;
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ this / magnitude(this)</code>
-     * </p>
-     * <p>
-     * If the magnitude is zero (a <em>null</em> multivector), this multivector is unchanged.
-     * Since the metric is Euclidean, this will only happen if the multivector is also the
-     * <em>zero</em> multivector.
-     * </p>
-     */
-    direction(): Geometric3 {
-        if (this.isLocked()) {
-            return lock(this.clone().direction());
+    norm(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().norm());
         }
         else {
-            const norm: number = this.magnitudeSansUnits();
-            if (norm !== 0) {
-                this.a = this.a / norm;
-                this.x = this.x / norm;
-                this.y = this.y / norm;
-                this.z = this.z / norm;
-                this.yz = this.yz / norm;
-                this.zx = this.zx / norm;
-                this.xy = this.xy / norm;
-                this.b = this.b / norm;
-            }
-            this.uom = void 0;
+            this.a = this.magnitudeSansUnits();
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            this.b = 0;
+            // There is no change to the unit of measure.
             return this;
         }
     }
@@ -1209,7 +1353,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
     quaditude(): Geometric3 {
-        if (this.isLocked()) {
+        if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().quaditude());
         }
         else {
@@ -1224,6 +1368,31 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
             this.uom = Unit.mul(this.uom, this.uom);
             return this;
         }
+    }
+
+    /**
+     * @param m
+     * @returns this >> m
+     */
+    rco(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rco(m));
+        }
+        else {
+            return this.rco2(this, m);
+        }
+    }
+
+    /**
+     * <p>
+     * <code>this ⟼ a >> b</code>
+     * </p>
+     *
+     * @param a
+     * @param b
+     */
+    rco2(a: GeometricE3, b: GeometricE3): this {
+        return rcoG3(a, b, this);
     }
 
     /**
@@ -1257,91 +1426,101 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      *
      * @param n The unit vector that defines the reflection plane.
      */
-    reflect(n: VectorE3): this {
-        // We are assuming that n is dimensionless, so that our unit of measure does not change.
-        Unit.assertDimensionless(n.uom);
-        const n1 = n.x;
-        const n2 = n.y;
-        const n3 = n.z;
-        const n11 = n1 * n1;
-        const n22 = n2 * n2;
-        const n33 = n3 * n3;
-        const nn = n11 + n22 + n33;
-        const f1 = 2 * n2 * n3;
-        const f2 = 2 * n3 * n1;
-        const f3 = 2 * n1 * n2;
-        const t1 = n22 + n33 - n11;
-        const t2 = n33 + n11 - n22;
-        const t3 = n11 + n22 - n33;
-        const cs = this.coords;
-        const a = cs[COORD_SCALAR];
-        const x1 = cs[COORD_X];
-        const x2 = cs[COORD_Y];
-        const x3 = cs[COORD_Z];
-        const B3 = cs[COORD_XY];
-        const B1 = cs[COORD_YZ];
-        const B2 = cs[COORD_ZX];
-        const b = cs[COORD_PSEUDO];
-        this.setCoordinate(COORD_SCALAR, -nn * a, 'a');
-        this.setCoordinate(COORD_X, x1 * t1 - x2 * f3 - x3 * f2, 'x');
-        this.setCoordinate(COORD_Y, x2 * t2 - x3 * f1 - x1 * f3, 'y');
-        this.setCoordinate(COORD_Z, x3 * t3 - x1 * f2 - x2 * f1, 'z');
-        this.setCoordinate(COORD_XY, B3 * t3 - B1 * f2 - B2 * f1, 'xy');
-        this.setCoordinate(COORD_YZ, B1 * t1 - B2 * f3 - B3 * f2, 'yz');
-        this.setCoordinate(COORD_ZX, B2 * t2 - B3 * f1 - B1 * f3, 'zx');
-        this.setCoordinate(COORD_PSEUDO, -nn * b, 'b');
-        return this;
+    reflect(n: VectorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().reflect(n));
+        }
+        else {
+            // We are assuming that n is dimensionless, so that our unit of measure does not change.
+            Unit.assertDimensionless(n.uom);
+            const n1 = n.x;
+            const n2 = n.y;
+            const n3 = n.z;
+            const n11 = n1 * n1;
+            const n22 = n2 * n2;
+            const n33 = n3 * n3;
+            const nn = n11 + n22 + n33;
+            const f1 = 2 * n2 * n3;
+            const f2 = 2 * n3 * n1;
+            const f3 = 2 * n1 * n2;
+            const t1 = n22 + n33 - n11;
+            const t2 = n33 + n11 - n22;
+            const t3 = n11 + n22 - n33;
+            const cs = this.coords_;
+            const a = cs[COORD_SCALAR];
+            const x1 = cs[COORD_X];
+            const x2 = cs[COORD_Y];
+            const x3 = cs[COORD_Z];
+            const B3 = cs[COORD_XY];
+            const B1 = cs[COORD_YZ];
+            const B2 = cs[COORD_ZX];
+            const b = cs[COORD_PSEUDO];
+            this.setCoordinate(COORD_SCALAR, -nn * a, 'a');
+            this.setCoordinate(COORD_X, x1 * t1 - x2 * f3 - x3 * f2, 'x');
+            this.setCoordinate(COORD_Y, x2 * t2 - x3 * f1 - x1 * f3, 'y');
+            this.setCoordinate(COORD_Z, x3 * t3 - x1 * f2 - x2 * f1, 'z');
+            this.setCoordinate(COORD_XY, B3 * t3 - B1 * f2 - B2 * f1, 'xy');
+            this.setCoordinate(COORD_YZ, B1 * t1 - B2 * f3 - B3 * f2, 'yz');
+            this.setCoordinate(COORD_ZX, B2 * t2 - B3 * f1 - B1 * f3, 'zx');
+            this.setCoordinate(COORD_PSEUDO, -nn * b, 'b');
+            return this;
+        }
     }
 
     /**
-     * <p>
-     * <code>this ⟼ rev(this)</code>
-     * </p>
+     * @returns reverse(this)
      */
-    rev(): this {
-        // reverse has a ++-- structure on the grades.
-        this.a = +this.a;
-        this.x = +this.x;
-        this.y = +this.y;
-        this.z = +this.z;
-        this.yz = -this.yz;
-        this.zx = -this.zx;
-        this.xy = -this.xy;
-        this.b = -this.b;
-        // The unit of measure is unchanged.
-        return this;
+    rev(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rev());
+        }
+        else {
+            // reverse has a ++-- structure on the grades.
+            this.a = +this.a;
+            this.x = +this.x;
+            this.y = +this.y;
+            this.z = +this.z;
+            this.yz = -this.yz;
+            this.zx = -this.zx;
+            this.xy = -this.xy;
+            this.b = -this.b;
+            // The unit of measure is unchanged.
+            return this;
+        }
     }
 
     /**
-     * <p>
-     * <code>this ⟼ R * this * rev(R)</code>
-     * </p>
-     *
      * @param R the spinor that rotates this multivector.
+     * @returns R * this * reverse(R)
      */
-    rotate(R: SpinorE3): this {
-        // We are assuming that R is dimensionless.
-        Unit.assertDimensionless(R.uom);
-        // FIXME: This only rotates the vector components.
-        const x = this.x;
-        const y = this.y;
-        const z = this.z;
+    rotate(R: SpinorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rotate(R));
+        }
+        else {
+            // We are assuming that R is dimensionless.
+            Unit.assertDimensionless(R.uom);
+            // FIXME: This only rotates the vector components.
+            const x = this.x;
+            const y = this.y;
+            const z = this.z;
 
-        const a = R.xy;
-        const b = R.yz;
-        const c = R.zx;
-        const α = R.a;
+            const a = R.xy;
+            const b = R.yz;
+            const c = R.zx;
+            const α = R.a;
 
-        const ix = α * x - c * z + a * y;
-        const iy = α * y - a * x + b * z;
-        const iz = α * z - b * y + c * x;
-        const iα = b * x + c * y + a * z;
+            const ix = α * x - c * z + a * y;
+            const iy = α * y - a * x + b * z;
+            const iz = α * z - b * y + c * x;
+            const iα = b * x + c * y + a * z;
 
-        this.x = ix * α + iα * b + iy * a - iz * c;
-        this.y = iy * α + iα * c + iz * b - ix * a;
-        this.z = iz * α + iα * a + ix * c - iy * b;
+            this.x = ix * α + iα * b + iy * a - iz * c;
+            this.y = iy * α + iα * c + iz * b - ix * a;
+            this.z = iz * α + iα * a + ix * c - iy * b;
 
-        return this;
+            return this;
+        }
     }
 
     /**
@@ -1401,7 +1580,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
         // Compute R2
         const R2 = Geometric3.rotorFromVectorToVector(f, f2, B);
         // The total rotor, R, is the composition of R1 followed by R2.
-        return this.copy(R2).mul(R1);
+        return this.mul2(R2, R1);
     }
 
     /**
@@ -1472,14 +1651,16 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ scp(this, m) = this | m</code>
-     * </p>
-     *
      * @param m
+     * @returns this | m
      */
-    scp(m: GeometricE3): this {
-        return this.scp2(this, m);
+    scp(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().scp(m));
+        }
+        else {
+            return this.scp2(this, m);
+        }
     }
 
     /**
@@ -1495,56 +1676,48 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this * α</code>
-     * </p>
-     *
      * @param α
+     * @returns this * α
      */
-    mulByNumber(α: number): this {
-        this.a *= α;
-        this.x *= α;
-        this.y *= α;
-        this.z *= α;
-        this.yz *= α;
-        this.zx *= α;
-        this.xy *= α;
-        this.b *= α;
-        // There is no change in the unit of measure.
-        return this;
+    mulByNumber(α: number): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mulByNumber(α));
+        }
+        else {
+            this.a *= α;
+            this.x *= α;
+            this.y *= α;
+            this.z *= α;
+            this.yz *= α;
+            this.zx *= α;
+            this.xy *= α;
+            this.b *= α;
+            // There is no change in the unit of measure.
+            return this;
+        }
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this * (α * uom)</code>
-     * </p>
-     *
      * @param α
      * @param uom
+     * @returns this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit): this {
-        this.a *= α;
-        this.x *= α;
-        this.y *= α;
-        this.z *= α;
-        this.yz *= α;
-        this.zx *= α;
-        this.xy *= α;
-        this.b *= α;
-        this.uom = Unit.mul(this.uom, uom);
-        return this;
-    }
-
-    /**
-     * Not Implemented
-     *
-     * @param target
-     * @param α
-     */
-    slerp(target: GeometricE3, α: number): this {
-        // TODO
-        this.uom = Unit.compatible(this.uom, target.uom);
-        return this;
+    mulByScalar(α: number, uom: Unit): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mulByScalar(α, uom));
+        }
+        else {
+            this.a *= α;
+            this.x *= α;
+            this.y *= α;
+            this.z *= α;
+            this.yz *= α;
+            this.zx *= α;
+            this.xy *= α;
+            this.b *= α;
+            this.uom = Unit.mul(this.uom, uom);
+            return this;
+        }
     }
 
     /**
@@ -1552,13 +1725,18 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      *
      * @param σ
      */
-    stress(σ: VectorE3): this {
-        this.x *= σ.x;
-        this.y *= σ.y;
-        this.z *= σ.z;
-        this.uom = Unit.mul(σ.uom, this.uom);
-        // TODO: Action on other components TBD.
-        return this;
+    stress(σ: VectorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().stress(σ));
+        }
+        else {
+            this.x *= σ.x;
+            this.y *= σ.y;
+            this.z *= σ.z;
+            this.uom = Unit.mul(σ.uom, this.uom);
+            // TODO: Action on other components TBD.
+            return this;
+        }
     }
 
     /**
@@ -1571,7 +1749,6 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param b
      */
     versor(a: VectorE3, b: VectorE3): this {
-
         this.uom = Unit.mul(a.uom, b.uom);
 
         const ax = a.x;
@@ -1598,56 +1775,60 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this - M * α</code>
-     * </p>
-     *
      * @param M
      * @param α
+     * @returns this - M * α
      */
-    sub(M: GeometricE3, α = 1): this {
-        if (this.isZero()) {
-            this.uom = M.uom;
-        }
-        else if (isZeroGeometricE3(M)) {
-            return this;
+    sub(M: GeometricE3, α = 1): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().sub(M, α));
         }
         else {
-            this.uom = Unit.compatible(this.uom, M.uom);
+            if (this.isZero()) {
+                this.uom = M.uom;
+            }
+            else if (isZeroGeometricE3(M)) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, M.uom);
+            }
+            this.a -= M.a * α;
+            this.x -= M.x * α;
+            this.y -= M.y * α;
+            this.z -= M.z * α;
+            this.yz -= M.yz * α;
+            this.zx -= M.zx * α;
+            this.xy -= M.xy * α;
+            this.b -= M.b * α;
+            return this;
         }
-        this.a -= M.a * α;
-        this.x -= M.x * α;
-        this.y -= M.y * α;
-        this.z -= M.z * α;
-        this.yz -= M.yz * α;
-        this.zx -= M.zx * α;
-        this.xy -= M.xy * α;
-        this.b -= M.b * α;
-        return this;
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this - v * α</code>
-     * </p>
-     *
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
+     * @returns this - v * α
      */
-    subVector(v: VectorE3, α = 1): this {
-        if (this.isZero()) {
-            this.uom = v.uom;
-        }
-        else if (isZeroVectorE3(v)) {
-            return this;
+    subVector(v: VectorE3, α = 1): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().subVector(v, α));
         }
         else {
-            this.uom = Unit.compatible(this.uom, v.uom);
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (isZeroVectorE3(v)) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.x -= v.x * α;
+            this.y -= v.y * α;
+            this.z -= v.z * α;
+            return this;
         }
-        this.x -= v.x * α;
-        this.y -= v.y * α;
-        this.z -= v.z * α;
-        return this;
     }
 
     /**
@@ -1741,70 +1922,78 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * Sets this multivector to the result of keeping only the specified grade.
      * This is the grade extraction operation.
      * 
-     * @param grade the grade to be retained.
+     * @param n the grade to be retained.
+     * @returns grade(this, n)
      */
-    grade(grade: number): this {
-        // There is no change to the unit of measure.
-        switch (grade) {
-            case 0: {
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-                break;
-            }
-            case 1: {
-                this.a = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-                break;
-            }
-            case 2: {
-                this.a = 0;
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.b = 0;
-                break;
-            }
-            case 3: {
-                this.a = 0;
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                break;
-            }
-            default: {
-                this.a = 0;
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-            }
+    grade(n: number): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().grade(n));
         }
-        return this;
+        else {
+            // There is no change to the unit of measure.
+            switch (n) {
+                case 0: {
+                    this.x = 0;
+                    this.y = 0;
+                    this.z = 0;
+                    this.yz = 0;
+                    this.zx = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 1: {
+                    this.a = 0;
+                    this.yz = 0;
+                    this.zx = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 2: {
+                    this.a = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.z = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 3: {
+                    this.a = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.z = 0;
+                    this.yz = 0;
+                    this.zx = 0;
+                    this.xy = 0;
+                    break;
+                }
+                default: {
+                    this.a = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.z = 0;
+                    this.yz = 0;
+                    this.zx = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                }
+            }
+            return this;
+        }
     }
 
     /**
-     * <p>
-     * <code>this ⟼ this ^ m</code>
-     * </p>
-     *
      * @param m
+     * @return this ^ m
      */
-    ext(m: GeometricE3): this {
-        return this.ext2(this, m);
+    ext(m: GeometricE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().ext(m));
+        }
+        else {
+            return this.ext2(this, m);
+        }
     }
 
     /**
@@ -2108,38 +2297,38 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * The identity element for addition, <b>0</b>.
      * The returned multivector is locked.
      */
-    public static readonly zero = lock(new Geometric3());
+    public static readonly zero = lock(new Geometric3(zero(), void 0, magicCode));
 
     /**
      * Constructs a Geometric3 representing the number one.
      * The identity element for multiplication, <b>1</b>.
      * The returned multivector is locked.
      */
-    public static readonly one = lock(new Geometric3().addScalar(1));
+    public static readonly one = lock(new Geometric3(scalar(1), void 0, magicCode));
 
     /**
      * Constructs a basis vector corresponding to the <code>x</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e1 = lock(Geometric3.vector(1, 0, 0));
+    public static readonly e1 = lock(new Geometric3(vector(1, 0, 0), void 0, magicCode));
 
     /**
      * Constructs a basis vector corresponding to the <code>y</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e2 = lock(Geometric3.vector(0, 1, 0));
+    public static readonly e2 = lock(new Geometric3(vector(0, 1, 0), void 0, magicCode));
 
     /**
      * Constructs a basis vector corresponding to the <code>z</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e3 = lock(Geometric3.vector(0, 0, 1));
+    public static readonly e3 = lock(new Geometric3(vector(0, 0, 1), void 0, magicCode));
 
     /**
      * Constructs a basis vector corresponding to the <code>β</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly I = lock(new Geometric3().addPseudo(1));
+    public static readonly I = lock(new Geometric3(pseudo(1), void 0, magicCode));
 
     /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.
@@ -2153,84 +2342,48 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     }
 
     /**
-     * @param M The multivector to be copied.
+     * @param mv The multivector to be copied.
      */
-    static copy(M: GeometricE3): Geometric3 {
-        const copy = new Geometric3();
-        copy.a = M.a;
-        copy.x = M.x;
-        copy.y = M.y;
-        copy.z = M.z;
-        copy.yz = M.yz;
-        copy.zx = M.zx;
-        copy.xy = M.xy;
-        copy.b = M.b;
-        copy.uom = M.uom;
-        return copy;
+    static copy(mv: GeometricE3): Geometric3 {
+        return new Geometric3(coordinates(mv), mv.uom, magicCode);
     }
 
     static dual(m: Geometric3): Geometric3 {
-        return new Geometric3().dual(m);
+        return new Geometric3(zero(), m.uom, magicCode).dual(m);
     }
 
     static dualOfBivector(B: BivectorE3): Geometric3 {
-        const dual = new Geometric3();
-        dual.z = -B.xy;
-        dual.x = -B.yz;
-        dual.y = -B.zx;
-        dual.uom = B.uom;
-        return dual;
+        return new Geometric3(vector(-B.yz, -B.zx, -B.xy), B.uom, magicCode);
     }
 
     static dualOfVector(v: VectorE3): Geometric3 {
-        const dual = new Geometric3();
-        dual.xy = v.z;
-        dual.yz = v.x;
-        dual.zx = v.y;
-        dual.uom = v.uom;
-        return dual;
+        return new Geometric3(bivector(v.x, v.y, v.z), v.uom, magicCode);
     }
 
     static fromBivector(B: BivectorE3): Geometric3 {
-        const copy = new Geometric3();
-        copy.yz = B.yz;
-        copy.zx = B.zx;
-        copy.xy = B.xy;
-        copy.uom = B.uom;
-        return copy;
+        return new Geometric3(bivector(B.yz, B.zx, B.xy), B.uom, magicCode);
     }
 
     /**
-     * @param scalar
+     * @param alpha
      */
-    static fromScalar(scalar: Scalar): Geometric3 {
-        return new Geometric3().copyScalar(scalar.a, scalar.uom);
+    static fromScalar(alpha: Scalar): Geometric3 {
+        return new Geometric3(scalar(alpha.a), alpha.uom, magicCode);
     }
 
     /**
-     * @param spinor
+     * @param s
      */
-    static fromSpinor(spinor: SpinorE3): Geometric3 {
-        const copy = new Geometric3();
-        copy.a = spinor.a;
-        copy.yz = spinor.yz;
-        copy.zx = spinor.zx;
-        copy.xy = spinor.xy;
-        copy.uom = spinor.uom;
-        return copy;
+    static fromSpinor(R: SpinorE3): Geometric3 {
+        return new Geometric3(spinor(R.a, R.yz, R.zx, R.xy), R.uom, magicCode);
     }
 
     /**
-     * @param vector
+     * @param v
      * @returns
      */
-    static fromVector(vector: VectorE3): Geometric3 {
-        const copy = new Geometric3();
-        copy.x = vector.x;
-        copy.y = vector.y;
-        copy.z = vector.z;
-        copy.uom = vector.uom;
-        return copy;
+    static fromVector(v: VectorE3): Geometric3 {
+        return new Geometric3(vector(v.x, v.y, v.z), v.uom, magicCode);
     }
 
     /**
@@ -2251,17 +2404,15 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
     static random() {
         const lowerBound = -1;
         const upperBound = +1;
-        const g = new Geometric3();
-        g.a = randomRange(lowerBound, upperBound);
-        g.x = randomRange(lowerBound, upperBound);
-        g.y = randomRange(lowerBound, upperBound);
-        g.z = randomRange(lowerBound, upperBound);
-        g.yz = randomRange(lowerBound, upperBound);
-        g.zx = randomRange(lowerBound, upperBound);
-        g.xy = randomRange(lowerBound, upperBound);
-        g.b = randomRange(lowerBound, upperBound);
-        g.uom = void 0;
-        return g;
+        const a = randomRange(lowerBound, upperBound);
+        const x = randomRange(lowerBound, upperBound);
+        const y = randomRange(lowerBound, upperBound);
+        const z = randomRange(lowerBound, upperBound);
+        const yz = randomRange(lowerBound, upperBound);
+        const zx = randomRange(lowerBound, upperBound);
+        const xy = randomRange(lowerBound, upperBound);
+        const b = randomRange(lowerBound, upperBound);
+        return new Geometric3(multivector(a, x, y, z, yz, zx, xy, b), void 0, magicCode);
     }
 
     /**
@@ -2271,15 +2422,15 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param b The <em>to</em> vector.
      */
     static rotorFromDirections(a: VectorE3, b: VectorE3): Geometric3 {
-        return new Geometric3().rotorFromDirections(a, b);
+        return new Geometric3(zero(), void 0, magicCode).rotorFromDirections(a, b);
     }
 
     static rotorFromFrameToFrame(es: VectorE3[], fs: VectorE3[]): Geometric3 {
-        return new Geometric3().rotorFromFrameToFrame(es, fs);
+        return new Geometric3(zero(), void 0, magicCode).rotorFromFrameToFrame(es, fs);
     }
 
     static rotorFromVectorToVector(a: VectorE3, b: VectorE3, B: BivectorE3): Geometric3 {
-        return new Geometric3().rotorFromVectorToVector(a, b, B);
+        return new Geometric3(zero(), void 0, magicCode).rotorFromVectorToVector(a, b, B);
     }
 
     /**
@@ -2288,7 +2439,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static scalar(a: number, uom?: Unit): Geometric3 {
-        return new Geometric3().copyScalar(a, uom);
+        return new Geometric3(scalar(a), uom, magicCode);
     }
 
     /**
@@ -2300,14 +2451,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static spinor(a: number, yz: number, zx: number, xy: number, uom?: Unit): Geometric3 {
-        const spinor = new Geometric3();
-        spinor.yz = yz;
-        spinor.zx = zx;
-        spinor.xy = xy;
-        spinor.a = a;
-        spinor.uom = uom;
-        spinor.modified = false;
-        return spinor;
+        return new Geometric3(spinor(a, yz, zx, xy), uom, magicCode);
     }
 
     /**
@@ -2318,13 +2462,7 @@ export class Geometric3 extends Coords implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static vector(x: number, y: number, z: number, uom?: Unit): Geometric3 {
-        const v = new Geometric3();
-        v.x = x;
-        v.y = y;
-        v.z = z;
-        v.uom = uom;
-        v.modified = false;
-        return v;
+        return new Geometric3(vector(x, y, z), uom, magicCode);
     }
 
     /**

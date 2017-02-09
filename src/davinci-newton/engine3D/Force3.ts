@@ -28,7 +28,7 @@ export class Force3 extends AbstractSimObject {
     /**
      * 
      */
-    public readonly location = new Geometric3();
+    public readonly location = Geometric3.vector(0, 0, 0);
     /**
      * 
      */
@@ -36,7 +36,7 @@ export class Force3 extends AbstractSimObject {
     /**
      * The force vector, may be in local or world coordinates.
      */
-    public readonly vector = new Geometric3();
+    public readonly vector = Geometric3.vector(0, 0, 0);
     /**
      * 
      */
@@ -45,12 +45,12 @@ export class Force3 extends AbstractSimObject {
     /**
      * Scratch variable for computing position (world coordinates).
      */
-    private readonly position_ = new Geometric3();
+    private readonly position_ = Geometric3.vector(0, 0, 0);
     // private positionLock_ = this.position_.lock();
     /**
      * Scratch variable for computing force (world coordinates).
      */
-    private readonly force_ = new Geometric3();
+    private readonly force_ = Geometric3.vector(0, 0, 0);
     // private forceLock_ = this.force_.lock();
     /**
      * Scratch variable for computing torque (world coordinates).

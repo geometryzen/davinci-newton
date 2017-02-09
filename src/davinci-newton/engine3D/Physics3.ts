@@ -121,20 +121,20 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private readonly potentialOffset_ = new Geometric3();
+    private readonly potentialOffset_ = Geometric3.scalar(0);
 
     /**
      * Scratch variable for computing force.
      */
-    private readonly force_ = new Geometric3();
+    private readonly force_ = Geometric3.vector(0, 0, 0);
     /**
      * Scratch variable for computing torque.
      */
-    private readonly torque_ = new Geometric3();
+    private readonly torque_ = Geometric3.bivector(0, 0, 0);
     /**
      * Scratch variable for computing total energy.
      */
-    private readonly totalEnergy_ = new Geometric3();
+    private readonly totalEnergy_ = Geometric3.scalar(0);
     private totalEnergyLock_ = this.totalEnergy_.lock();
 
     /**

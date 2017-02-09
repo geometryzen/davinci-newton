@@ -78,19 +78,19 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end1_ = new Geometric3();
+    private readonly end1_ = Geometric3.vector(0, 0, 0);
     private end1Lock_ = this.end1_.lock();
 
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end2_ = new Geometric3();
+    private readonly end2_ = Geometric3.vector(0, 0, 0);
     private end2Lock_ = this.end2_.lock();
 
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = new Geometric3();
+    private readonly potentialEnergy_ = Geometric3.scalar(0);
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**

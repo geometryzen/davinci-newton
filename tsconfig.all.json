@@ -24,7 +24,6 @@
         "src/davinci-newton/math/QQ.spec.ts",
         "src/davinci-newton/math/Unit.spec.ts",
         "src/davinci-newton/math/Vector3.spec.ts",
-        "src/davinci-newton/math/VectorN.spec.ts",
         "typings/jasmine/jasmine.d.ts"
     ]
 }

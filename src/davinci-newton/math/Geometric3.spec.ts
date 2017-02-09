@@ -9,10 +9,10 @@ const one = Geometric3.one;
 const e1 = Geometric3.e1;
 const e2 = Geometric3.e2;
 const e3 = Geometric3.e3;
-const e23 = e2.clone().mul(e3);
-const e31 = e3.clone().mul(e1);
-const e12 = e1.clone().mul(e2);
-const I = e1.clone().mul(e2).mul(e3);
+const e23 = e2.mul(e3);
+const e31 = e3.mul(e1);
+const e12 = e1.mul(e2);
+const I = Geometric3.I;
 
 function reflectSpec(M: Geometric3, n: VectorE3) {
     const spec = function () {
@@ -55,14 +55,227 @@ const PRECISION = 14;
 
 describe("Geometric3", function () {
 
-    describe("equals", function () {
-        it("(M) should be eqial to M", function () {
-            const zero: Geometric3 = Geometric3.zero;
-            const one: Geometric3 = Geometric3.one;
-            expect(zero.equals(zero)).toBe(true);
-            expect(one.equals(one)).toBe(true);
-            expect(zero.equals(one)).toBe(false);
-            expect(one.equals(zero)).toBe(false);
+    describe("Properties", function () {
+        it("I", function () {
+            const m = Geometric3.I;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(1);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("e1", function () {
+            const m = Geometric3.e1;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(1);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("e2", function () {
+            const m = Geometric3.e2;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(1);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("e3", function () {
+            const m = Geometric3.e3;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(1);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("one", function () {
+            const m = Geometric3.one;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("zero", function () {
+            const m = Geometric3.zero;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(0);
+        });
+        it("e12", function () {
+            const m = e12;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(1);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("e23", function () {
+            const m = e23;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(1);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+        it("e31", function () {
+            const m = e31;
+            expect(m.a).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(1);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(true);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+        });
+    });
+
+    describe("uom", function () {
+        it("KILOGRAM", function () {
+            const kg = Geometric3.scalar(1, Unit.KILOGRAM);
+            expect(kg.uom.dimensions.M.numer).toBe(1);
+            expect(kg.uom.dimensions.M.denom).toBe(1);
+            expect(kg.uom.dimensions.L.numer).toBe(0);
+            expect(kg.uom.dimensions.L.denom).toBe(1);
+            expect(kg.uom.dimensions.T.numer).toBe(0);
+            expect(kg.uom.dimensions.T.denom).toBe(1);
+            expect(kg.uom.dimensions.Q.numer).toBe(0);
+            expect(kg.uom.dimensions.Q.denom).toBe(1);
+        });
+        it("METER", function () {
+            const m = Geometric3.scalar(1, Unit.METER);
+            expect(m.uom.dimensions.M.numer).toBe(0);
+            expect(m.uom.dimensions.M.denom).toBe(1);
+            expect(m.uom.dimensions.L.numer).toBe(1);
+            expect(m.uom.dimensions.L.denom).toBe(1);
+            expect(m.uom.dimensions.T.numer).toBe(0);
+            expect(m.uom.dimensions.T.denom).toBe(1);
+            expect(m.uom.dimensions.Q.numer).toBe(0);
+            expect(m.uom.dimensions.Q.denom).toBe(1);
+        });
+        it("SECOND", function () {
+            const s = Geometric3.scalar(1, Unit.SECOND);
+            expect(s.uom.dimensions.M.numer).toBe(0);
+            expect(s.uom.dimensions.M.denom).toBe(1);
+            expect(s.uom.dimensions.L.numer).toBe(0);
+            expect(s.uom.dimensions.L.denom).toBe(1);
+            expect(s.uom.dimensions.T.numer).toBe(1);
+            expect(s.uom.dimensions.T.denom).toBe(1);
+            expect(s.uom.dimensions.Q.numer).toBe(0);
+            expect(s.uom.dimensions.Q.denom).toBe(1);
+        });
+        it("AMPERE", function () {
+            const A = Geometric3.scalar(1, Unit.AMPERE);
+            expect(A.uom.dimensions.M.numer).toBe(0);
+            expect(A.uom.dimensions.M.denom).toBe(1);
+            expect(A.uom.dimensions.L.numer).toBe(0);
+            expect(A.uom.dimensions.L.denom).toBe(1);
+            expect(A.uom.dimensions.T.numer).toBe(-1);
+            expect(A.uom.dimensions.T.denom).toBe(1);
+            expect(A.uom.dimensions.Q.numer).toBe(1);
+            expect(A.uom.dimensions.Q.denom).toBe(1);
+        });
+        it("COULOMB", function () {
+            const C = Geometric3.scalar(1, Unit.COULOMB);
+            expect(C.uom.dimensions.M.numer).toBe(0);
+            expect(C.uom.dimensions.M.denom).toBe(1);
+            expect(C.uom.dimensions.L.numer).toBe(0);
+            expect(C.uom.dimensions.L.denom).toBe(1);
+            expect(C.uom.dimensions.T.numer).toBe(0);
+            expect(C.uom.dimensions.T.denom).toBe(1);
+            expect(C.uom.dimensions.Q.numer).toBe(1);
+            expect(C.uom.dimensions.Q.denom).toBe(1);
+        });
+    });
+
+    describe("maskG3", function () {
+        it("0 => 0x0", function () {
+            expect(Geometric3.zero.maskG3).toBe(0x0);
+        });
+        it("1 => 0x1", function () {
+            expect(Geometric3.one.maskG3).toBe(0x1);
+        });
+        it("e1 => 0x2", function () {
+            expect(e1.maskG3).toBe(0x2);
+        });
+        it("e2 => 0x2", function () {
+            expect(e2.maskG3).toBe(0x2);
+        });
+        it("e3 => 0x2", function () {
+            expect(e3.maskG3).toBe(0x2);
+        });
+        it("1+e1 => 0x3", function () {
+            expect(e1.clone().addScalar(1).maskG3).toBe(0x3);
+        });
+        it("e1 ^ e2 => 0x4", function () {
+            expect(Geometric3.wedge(e1, e2).maskG3).toBe(0x4);
+        });
+        it("e2 ^ e3 => 0x4", function () {
+            expect(Geometric3.wedge(e2, e3).maskG3).toBe(0x4);
+        });
+        it("e3 ^ e1 => 0x4", function () {
+            expect(Geometric3.wedge(e3, e1).maskG3).toBe(0x4);
+        });
+        it("rotorFromDirections(e1, e2) => 0x5", function () {
+            expect(Geometric3.rotorFromDirections(e1, e2).maskG3).toBe(0x5);
+        });
+        it("pseudoscalar => 0x8", function () {
+            const I = Geometric3.I;
+            expect(I.maskG3).toBe(0x8);
         });
     });
 
@@ -102,6 +315,84 @@ describe("Geometric3", function () {
             const denom: Geometric3 = I.clone();
             const ratio = numer.clone().div(denom);
             expect(ratio.toString()).toBe(e3.clone().mul(e2).toString());
+        });
+    });
+
+    describe("equals", function () {
+        it("(M) should be eqial to M", function () {
+            const zero: Geometric3 = Geometric3.zero;
+            const one: Geometric3 = Geometric3.one;
+            expect(zero.equals(zero)).toBe(true);
+            expect(one.equals(one)).toBe(true);
+            expect(zero.equals(one)).toBe(false);
+            expect(one.equals(zero)).toBe(false);
+        });
+    });
+
+    describe("grade", function () {
+        const m = one.add(e1).add(e2).add(e3).add(e12).add(e23).add(e31).add(I);
+        it("target should contain all components for testing purposes", function () {
+            expect(m.isLocked()).toBe(true);
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(1);
+            expect(m.y).toBe(1);
+            expect(m.z).toBe(1);
+            expect(m.yz).toBe(1);
+            expect(m.zx).toBe(1);
+            expect(m.xy).toBe(1);
+            expect(m.b).toBe(1);
+        });
+        it("(0) should extract scalar component", function () {
+            expect(m.isLocked()).toBe(true);
+            const s = m.grade(0);
+            expect(s.isLocked()).toBe(true);
+            expect(s.a).toBe(1);
+            expect(s.x).toBe(0);
+            expect(s.y).toBe(0);
+            expect(s.z).toBe(0);
+            expect(s.yz).toBe(0);
+            expect(s.zx).toBe(0);
+            expect(s.xy).toBe(0);
+            expect(s.b).toBe(0);
+        });
+        it("(1) should extract vector components", function () {
+            expect(m.isLocked()).toBe(true);
+            const s = m.grade(1);
+            expect(s.isLocked()).toBe(true);
+            expect(s.a).toBe(0);
+            expect(s.x).toBe(1);
+            expect(s.y).toBe(1);
+            expect(s.z).toBe(1);
+            expect(s.yz).toBe(0);
+            expect(s.zx).toBe(0);
+            expect(s.xy).toBe(0);
+            expect(s.b).toBe(0);
+        });
+        it("(2) should extract bivector components", function () {
+            expect(m.isLocked()).toBe(true);
+            const s = m.grade(2);
+            expect(s.isLocked()).toBe(true);
+            expect(s.a).toBe(0);
+            expect(s.x).toBe(0);
+            expect(s.y).toBe(0);
+            expect(s.z).toBe(0);
+            expect(s.yz).toBe(1);
+            expect(s.zx).toBe(1);
+            expect(s.xy).toBe(1);
+            expect(s.b).toBe(0);
+        });
+        it("(3) should extract the pseudoscalar component", function () {
+            expect(m.isLocked()).toBe(true);
+            const s = m.grade(3);
+            expect(s.isLocked()).toBe(true);
+            expect(s.a).toBe(0);
+            expect(s.x).toBe(0);
+            expect(s.y).toBe(0);
+            expect(s.z).toBe(0);
+            expect(s.yz).toBe(0);
+            expect(s.zx).toBe(0);
+            expect(s.xy).toBe(0);
+            expect(s.b).toBe(1);
         });
     });
 
@@ -167,43 +458,6 @@ describe("Geometric3", function () {
             const inv = I.clone().mulByNumber(2).inv();
             const minusHalfI = I.clone().neg().mulByNumber(0.5);
             expect(inv.equals(minusHalfI)).toBe(true);
-        });
-    });
-
-    describe("maskG3", function () {
-        it("0 => 0x0", function () {
-            expect(Geometric3.zero.maskG3).toBe(0x0);
-        });
-        it("1 => 0x1", function () {
-            expect(Geometric3.one.maskG3).toBe(0x1);
-        });
-        it("e1 => 0x2", function () {
-            expect(e1.maskG3).toBe(0x2);
-        });
-        it("e2 => 0x2", function () {
-            expect(e2.maskG3).toBe(0x2);
-        });
-        it("e3 => 0x2", function () {
-            expect(e3.maskG3).toBe(0x2);
-        });
-        it("1+e1 => 0x3", function () {
-            expect(e1.clone().addScalar(1).maskG3).toBe(0x3);
-        });
-        it("e1 ^ e2 => 0x4", function () {
-            expect(Geometric3.wedge(e1, e2).maskG3).toBe(0x4);
-        });
-        it("e2 ^ e3 => 0x4", function () {
-            expect(Geometric3.wedge(e2, e3).maskG3).toBe(0x4);
-        });
-        it("e3 ^ e1 => 0x4", function () {
-            expect(Geometric3.wedge(e3, e1).maskG3).toBe(0x4);
-        });
-        it("rotorFromDirections(e1, e2) => 0x5", function () {
-            expect(Geometric3.rotorFromDirections(e1, e2).maskG3).toBe(0x5);
-        });
-        it("pseudoscalar => 0x8", function () {
-            const I = new Geometric3().zero().addPseudo(1);
-            expect(I.maskG3).toBe(0x8);
         });
     });
 
@@ -493,9 +747,9 @@ describe("Geometric3", function () {
             const R = Geometric3.rotorFromDirections(a, b);
             const V = a.clone().rotate(R);
             expect(V.a).toBe(0);
-            expect(V.x).toBeCloseTo(b.x, 14);
-            expect(V.y).toBeCloseTo(b.y, 14);
-            expect(V.z).toBeCloseTo(b.z, 14);
+            expect(V.x).toBeCloseTo(b.x, PRECISION);
+            expect(V.y).toBeCloseTo(b.y, PRECISION);
+            expect(V.z).toBeCloseTo(b.z, PRECISION);
             expect(V.yz).toBe(0);
             expect(V.zx).toBe(0);
             expect(V.xy).toBe(0);
@@ -546,12 +800,12 @@ describe("Geometric3", function () {
         const a = Geometric3.vector(2, 3, 0, Unit.METER);
         const chain = a.reflect(n);
 
-        it("shoud reflect (2,3)", function () {
+        it("should reflect (2,3)", function () {
             expect(a.x).toBe(-2);
             expect(a.y).toBe(+3);
             expect(a.z).toBe(0);
         });
-        it("shold be chainable", function () {
+        it("should be chainable", function () {
             expect(chain === a).toBe(true);
         });
         describe("(n)", function () {
@@ -566,7 +820,7 @@ describe("Geometric3", function () {
              */
             const C = n.clone().mul(S).mul(n).mulByNumber(-1);
 
-            it("shoud be -n * M * n", function () {
+            it("should be -n * M * n", function () {
                 expect(T.a).toBeCloseTo(C.a, PRECISION);
                 expect(T.x).toBeCloseTo(C.x, PRECISION);
                 expect(T.y).toBeCloseTo(C.y, PRECISION);

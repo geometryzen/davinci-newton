@@ -55,7 +55,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
      * Changing the mass requires an update to the intertia tensor,
      * so we want to control the mutability.
      */
-    private readonly mass_ = new Geometric3().addScalar(1);
+    private readonly mass_ = Geometric3.scalar(1);
     private massLock_ = this.mass_.lock();
 
     /**
@@ -110,7 +110,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     /**
      * Scratch variable for calculation worldPoint.
      */
-    private readonly worldPoint_ = new Geometric3();
+    private readonly worldPoint_ = Geometric3.vector(0, 0, 0);
 
     /**
      * 
