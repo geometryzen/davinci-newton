@@ -144,6 +144,23 @@ function lock(m: Geometric3): Geometric3 {
 }
 
 /**
+ * 
+ */
+function compatibleUnit(this: void, a: GeometricE3, b: GeometricE3): Unit {
+    if (Unit.isCompatible(a.uom, b.uom)) {
+        return Unit.compatible(a.uom, b.uom);
+    }
+    else {
+        try {
+            return Unit.compatible(a.uom, b.uom);
+        }
+        catch (e) {
+            throw new Error(`${Geometric3.copy(a)} and ${Geometric3.copy(b)} must have compatible units of measure. Cause: ${e}`);
+        }
+    }
+}
+
+/**
  * Scratch variable for holding cosines.
  */
 const cosines: number[] = [];
@@ -423,7 +440,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 this.zx += M.zx * α;
                 this.xy += M.xy * α;
                 this.b += M.b * α;
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = compatibleUnit(this, M);
                 return this;
             }
         }
@@ -444,7 +461,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
             this.uom = a.uom;
         }
         else {
-            this.uom = Unit.compatible(a.uom, b.uom);
+            this.uom = compatibleUnit(a, b);
         }
         this.a = a.a + b.a;
         this.x = a.x + b.x;
@@ -1111,7 +1128,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 // Fall through.
             }
             else {
-                this.uom = Unit.compatible(this.uom, target.uom);
+                this.uom = compatibleUnit(this, target);
             }
             this.a += (target.a - this.a) * α;
             this.x += (target.x - this.x) * α;
@@ -1797,7 +1814,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 return this;
             }
             else {
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = compatibleUnit(this, M);
             }
             this.a -= M.a * α;
             this.x -= M.x * α;
@@ -1877,7 +1894,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
             this.zx = a.zx - b.zx;
             this.xy = a.xy - b.xy;
             this.b = a.b - b.b;
-            this.uom = Unit.compatible(a.uom, b.uom);
+            this.uom = compatibleUnit(a, b);
         }
         return this;
     }

@@ -246,6 +246,15 @@ export class Unit {
     }
   }
 
+  private isCompatible(rhs: Unit): boolean {
+    if (rhs instanceof Unit) {
+      return this.dimensions.equals(rhs.dimensions);
+    }
+    else {
+      throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+    }
+  }
+
   public __add__(rhs: Unit) {
     if (rhs instanceof Unit) {
       return add(this, rhs);
@@ -442,6 +451,35 @@ export class Unit {
       }
       else {
         return void 0;
+      }
+    }
+  }
+
+  static isCompatible(lhs: Unit, rhs: Unit): boolean {
+    if (lhs) {
+      if (rhs) {
+        return lhs.isCompatible(rhs);
+      }
+      else {
+        if (lhs.isOne()) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+    }
+    else {
+      if (rhs) {
+        if (rhs.isOne()) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return true;
       }
     }
   }

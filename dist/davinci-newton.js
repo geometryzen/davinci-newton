@@ -1284,6 +1284,9 @@ define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "..
                 }
             }
         };
+        Dimensions.prototype.equals = function (rhs) {
+            return this.M.equals(rhs.M) && this.L.equals(rhs.L) && this.T.equals(rhs.T) && this.Q.equals(rhs.Q) && this.temperature.equals(rhs.temperature) && this.amount.equals(rhs.amount) && this.intensity.equals(rhs.intensity);
+        };
         Dimensions.prototype.mul = function (rhs) {
             return new Dimensions(this.M.add(rhs.M), this.L.add(rhs.L), this.T.add(rhs.T), this.Q.add(rhs.Q), this.temperature.add(rhs.temperature), this.amount.add(rhs.amount), this.intensity.add(rhs.intensity));
         };
@@ -1580,6 +1583,14 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
                 throw new Error("Illegal Argument for Unit.compatible: " + rhs);
             }
         };
+        Unit.prototype.isCompatible = function (rhs) {
+            if (rhs instanceof Unit) {
+                return this.dimensions.equals(rhs.dimensions);
+            }
+            else {
+                throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+            }
+        };
         Unit.prototype.__add__ = function (rhs) {
             if (rhs instanceof Unit) {
                 return add(this, rhs);
@@ -1736,6 +1747,34 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
                 }
                 else {
                     return void 0;
+                }
+            }
+        };
+        Unit.isCompatible = function (lhs, rhs) {
+            if (lhs) {
+                if (rhs) {
+                    return lhs.isCompatible(rhs);
+                }
+                else {
+                    if (lhs.isOne()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+            else {
+                if (rhs) {
+                    if (rhs.isOne()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return true;
                 }
             }
         };
@@ -2790,6 +2829,19 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
         m.lock();
         return m;
     }
+    function compatibleUnit(a, b) {
+        if (Unit_1.default.isCompatible(a.uom, b.uom)) {
+            return Unit_1.default.compatible(a.uom, b.uom);
+        }
+        else {
+            try {
+                return Unit_1.default.compatible(a.uom, b.uom);
+            }
+            catch (e) {
+                throw new Error(Geometric3.copy(a) + " and " + Geometric3.copy(b) + " must have compatible units of measure. Cause: " + e);
+            }
+        }
+    }
     var cosines = [];
     var magicCode = Math.random();
     var UNLOCKED = -1 * Math.random();
@@ -2997,7 +3049,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     this.zx += M.zx * α;
                     this.xy += M.xy * α;
                     this.b += M.b * α;
-                    this.uom = Unit_1.default.compatible(this.uom, M.uom);
+                    this.uom = compatibleUnit(this, M);
                     return this;
                 }
             }
@@ -3010,7 +3062,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.uom = a.uom;
             }
             else {
-                this.uom = Unit_1.default.compatible(a.uom, b.uom);
+                this.uom = compatibleUnit(a, b);
             }
             this.a = a.a + b.a;
             this.x = a.x + b.x;
@@ -3469,7 +3521,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 else if (isZeroGeometricE3_1.default(target)) {
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, target.uom);
+                    this.uom = compatibleUnit(this, target);
                 }
                 this.a += (target.a - this.a) * α;
                 this.x += (target.x - this.x) * α;
@@ -3907,7 +3959,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, M.uom);
+                    this.uom = compatibleUnit(this, M);
                 }
                 this.a -= M.a * α;
                 this.x -= M.x * α;
@@ -3973,7 +4025,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.zx = a.zx - b.zx;
                 this.xy = a.xy - b.xy;
                 this.b = a.b - b.b;
-                this.uom = Unit_1.default.compatible(a.uom, b.uom);
+                this.uom = compatibleUnit(a, b);
             }
             return this;
         };
@@ -5734,7 +5786,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2017-02-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.29';
+            this.VERSION = '0.0.30';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];

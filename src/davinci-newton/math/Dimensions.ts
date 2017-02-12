@@ -128,6 +128,10 @@ export class Dimensions {
         }
     }
 
+    equals(rhs: Dimensions): boolean {
+        return this.M.equals(rhs.M) && this.L.equals(rhs.L) && this.T.equals(rhs.T) && this.Q.equals(rhs.Q) && this.temperature.equals(rhs.temperature) && this.amount.equals(rhs.amount) && this.intensity.equals(rhs.intensity);
+    }
+
     /**
      * Multiplies dimensions by adding rational exponents.
      *
