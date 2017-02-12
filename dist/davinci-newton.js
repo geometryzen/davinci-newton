@@ -1420,6 +1420,8 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
         [-1, 1, +0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
         [-1, 1, +3, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],
         [+0, 1, -3, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+        [+0, 1, -2, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+        [+0, 1, -1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
         [+0, 1, 2, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],
         [+0, 1, 0, 1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
         [+0, 1, 0, 1, -1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
@@ -1449,22 +1451,24 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
     ];
     var decodes = [
         ["F/m"],
-        ["S"],
-        ["F"],
+        ["S or A/V"],
+        ["F or C/V"],
         ["C/kg"],
         ["N·m·m/kg·kg"],
-        ["C/m ** 3"],
+        ["C/m**3"],
+        ["C/m**2"],
+        ["C/m"],
         ["J/kg"],
         ["Hz"],
         ["A"],
-        ["m/s ** 2"],
+        ["m/s**2"],
         ["m/s"],
         ["kg·m/s"],
-        ["Pa"],
+        ["Pa or N/m**2"],
         ["Pa·s"],
-        ["W/m ** 2"],
+        ["W/m**2"],
         ["N/m"],
-        ["T"],
+        ["T or Wb/m**2"],
         ["W/(m·K)"],
         ["V/m"],
         ["N"],
@@ -1473,12 +1477,12 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
         ["J/(kg·K)"],
         ["J/(mol·K)"],
         ["J/mol"],
-        ["J"],
+        ["J or N·m"],
         ["J·s"],
-        ["W"],
-        ["V"],
-        ["Ω"],
-        ["H"],
+        ["W or J/s"],
+        ["V or W/A"],
+        ["Ω or V/A"],
+        ["H or Wb/A"],
         ["Wb"]
     ];
     var dumbString = function (multiplier, formatted, dimensions, labels, compact) {
@@ -4334,6 +4338,13 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
     Geometric3.e2 = lock(new Geometric3(vector(0, 1, 0), void 0, magicCode));
     Geometric3.e3 = lock(new Geometric3(vector(0, 0, 1), void 0, magicCode));
     Geometric3.I = lock(new Geometric3(pseudo(1), void 0, magicCode));
+    Geometric3.meter = lock(new Geometric3(scalar(1), Unit_1.default.METER, magicCode));
+    Geometric3.kilogram = lock(new Geometric3(scalar(1), Unit_1.default.KILOGRAM, magicCode));
+    Geometric3.second = lock(new Geometric3(scalar(1), Unit_1.default.SECOND, magicCode));
+    Geometric3.ampere = lock(new Geometric3(scalar(1), Unit_1.default.AMPERE, magicCode));
+    Geometric3.kelvin = lock(new Geometric3(scalar(1), Unit_1.default.KELVIN, magicCode));
+    Geometric3.mole = lock(new Geometric3(scalar(1), Unit_1.default.MOLE, magicCode));
+    Geometric3.candela = lock(new Geometric3(scalar(1), Unit_1.default.CANDELA, magicCode));
     exports.Geometric3 = Geometric3;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Geometric3;
@@ -5721,9 +5732,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-02-09';
+            this.LAST_MODIFIED = '2017-02-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.28';
+            this.VERSION = '0.0.29';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];

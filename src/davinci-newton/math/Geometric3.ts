@@ -2337,6 +2337,50 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     public static readonly I = lock(new Geometric3(pseudo(1), void 0, magicCode));
 
     /**
+     * SI base unit of length.
+     * The meter is the length of the path travelled by light in vacuum during a time interval of 1 / 299 792 458 of a second.
+     */
+    public static readonly meter = lock(new Geometric3(scalar(1), Unit.METER, magicCode));
+
+    /**
+     * SI base unit of mass.
+     * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
+     */
+    public static readonly kilogram = lock(new Geometric3(scalar(1), Unit.KILOGRAM, magicCode));
+
+    /**
+     * SI base unit of time.
+     * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
+     */
+    public static readonly second = lock(new Geometric3(scalar(1), Unit.SECOND, magicCode));
+
+    /**
+     * SI base unit of electric current.
+     * The ampere is that constant current which, if maintained in two straight parallel conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum, would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
+     */
+    public static readonly ampere = lock(new Geometric3(scalar(1), Unit.AMPERE, magicCode));
+
+    /**
+     * SI base unit of thermodynamic temperature.
+     * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature of the triple point of water.
+     */
+    public static readonly kelvin = lock(new Geometric3(scalar(1), Unit.KELVIN, magicCode));
+
+    /**
+     * SI base unit of amount of substance.
+     * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+     * 
+     * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
+     */
+    public static readonly mole = lock(new Geometric3(scalar(1), Unit.MOLE, magicCode));
+
+    /**
+     * SI base unit of luminous intensity.
+     * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
+     */
+    public static readonly candela = lock(new Geometric3(scalar(1), Unit.CANDELA, magicCode));
+
+    /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.
      * @param yz The coordinate corresponding to the e2e3 basis bivector.
      * @param zx The coordinate corresponding to the e3e1 basis bivector.

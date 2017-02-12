@@ -13,6 +13,13 @@ const e23 = e2.mul(e3);
 const e31 = e3.mul(e1);
 const e12 = e1.mul(e2);
 const I = Geometric3.I;
+const meter = Geometric3.meter;
+const kilogram = Geometric3.kilogram;
+const second = Geometric3.second;
+const ampere = Geometric3.ampere;
+const kelvin = Geometric3.kelvin;
+const mole = Geometric3.mole;
+const candela = Geometric3.candela;
 
 function reflectSpec(M: Geometric3, n: VectorE3) {
     const spec = function () {
@@ -181,6 +188,111 @@ describe("Geometric3", function () {
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
             expect(m.magnitude().a).toBe(1);
+        });
+        it("meter", function () {
+            const m = meter;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 m");
+        });
+        it("kilogram", function () {
+            const m = kilogram;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 kg");
+        });
+        it("second", function () {
+            const m = second;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 s");
+        });
+        it("ampere", function () {
+            const m = ampere;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 A");
+        });
+        it("kelvin", function () {
+            const m = kelvin;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 K");
+        });
+        it("mole", function () {
+            const m = mole;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 mol");
+        });
+        it("candela", function () {
+            const m = candela;
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.z).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.yz).toBe(0);
+            expect(m.zx).toBe(0);
+            expect(m.b).toBe(0);
+            expect(Unit.isOne(m.uom)).toBe(false);
+            expect(m.isLocked()).toBe(true);
+            expect(m.magnitude().a).toBe(1);
+            expect(m.toString()).toBe("1 cd");
         });
     });
 

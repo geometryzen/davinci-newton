@@ -124,16 +124,16 @@ describe("Unit", function () {
         expect(NEWTON.toString(10, true)).toBe("N");
     });
     it("energy", function () {
-        expect(JOULE.toString(10, true)).toBe("J");
+        expect(JOULE.toString(10, true)).toBe("J or N·m");
     });
     it("frequency", function () {
         expect(HERTZ.toString(10, true)).toBe("Hz");
     });
     it("power", function () {
-        expect(WATT.toString(10, true)).toBe("W");
+        expect(WATT.toString(10, true)).toBe("W or J/s");
     });
     it("electric potential", function () {
-        expect(VOLT.toString(10, true)).toBe("V");
+        expect(VOLT.toString(10, true)).toBe("V or W/A");
     });
     it("electric field strength", function () {
         expect(VOLT.div(METER).toString(10, true)).toBe("V/m");
@@ -142,20 +142,20 @@ describe("Unit", function () {
         expect(WEBER.toString(10, true)).toBe("Wb");
     });
     it("magnetic flux density", function () {
-        expect(TESLA.toString(10, true)).toBe("T");
+        expect(TESLA.toString(10, true)).toBe("T or Wb/m**2");
     });
     it("electrical resistance", function () {
-        expect(OHM.toString(10, true)).toBe("Ω");
+        expect(OHM.toString(10, true)).toBe("Ω or V/A");
     });
     it("electrical conductance", function () {
-        expect(SIEMEN.toString(10, true)).toBe("S");
+        expect(SIEMEN.toString(10, true)).toBe("S or A/V");
     });
     it("electrical capacitance", function () {
-        expect(FARAD.toString(10, true)).toBe("F");
+        expect(FARAD.toString(10, true)).toBe("F or C/V");
     });
     it("electrical inductance", function () {
-        expect(WEBER.div(AMPERE).toString(10, true)).toBe("H");
-        expect(HENRY.toString(10, true)).toBe("H");
+        expect(WEBER.div(AMPERE).toString(10, true)).toBe("H or Wb/A");
+        expect(HENRY.toString(10, true)).toBe("H or Wb/A");
     });
     it("electric permittivity", function () {
         expect(FARAD.div(METER).toString(10, true)).toBe("F/m");
@@ -164,7 +164,7 @@ describe("Unit", function () {
         expect(HENRY.div(METER).toString(10, true)).toBe("H/m");
     });
     it("pressure, stress", function () {
-        expect(PASCAL.toString(10, true)).toBe("Pa");
+        expect(PASCAL.toString(10, true)).toBe("Pa or N/m**2");
     });
     it("angular momentum", function () {
         expect(JOULE.mul(SECOND).toString(10, true)).toBe("J·s");
@@ -173,21 +173,20 @@ describe("Unit", function () {
         expect(PASCAL.mul(SECOND).toString(10, true)).toBe("Pa·s");
     });
     it("moment of force", function () {
-        //    expect(NEWTON.mul(METER).toString()).toBe("N·m");
-        expect(NEWTON.mul(METER).toString(10, true)).toBe("J");
+        expect(NEWTON.mul(METER).toString(10, true)).toBe("J or N·m");
     });
     it("surface tension", function () {
         expect(NEWTON.div(METER).toString(10, true)).toBe("N/m");
     });
     it("heat flux density", function () {
-        expect(WATT.div(METER).div(METER).toString(10, true)).toBe("W/m ** 2");
+        expect(WATT.div(METER).div(METER).toString(10, true)).toBe("W/m**2");
     });
     it("heat capacity, entropy", function () {
         expect(JOULE.div(KELVIN).toString(10, true)).toBe("J/K");
     });
     it("energy density", function () {
         // This could be a J/m ** 3 but that's a pressure too.
-        expect(JOULE.div(METER).div(METER).div(METER).toString(10, true)).toBe("Pa");
+        expect(JOULE.div(METER).div(METER).div(METER).toString(10, true)).toBe("Pa or N/m**2");
     });
     it("specific energy", function () {
         expect(JOULE.div(KILOGRAM).toString(10, true)).toBe("J/kg");
@@ -195,8 +194,14 @@ describe("Unit", function () {
     it("molar energy", function () {
         expect(JOULE.div(MOLE).toString(10, true)).toBe("J/mol");
     });
-    it("electric charge density", function () {
-        expect(COULOMB.div(METER).div(METER).div(METER).toString(10, true)).toBe("C/m ** 3");
+    it("electric line charge density", function () {
+        expect(COULOMB.div(METER).toString(10, true)).toBe("C/m");
+    });
+    it("electric surface charge density", function () {
+        expect(COULOMB.div(METER).div(METER).toString(10, true)).toBe("C/m**2");
+    });
+    it("electric volume charge density", function () {
+        expect(COULOMB.div(METER).div(METER).div(METER).toString(10, true)).toBe("C/m**3");
     });
     it("exposure (x-rays and γ-rays)", function () {
         expect(COULOMB.div(KILOGRAM).toString(10, true)).toBe("C/kg");
