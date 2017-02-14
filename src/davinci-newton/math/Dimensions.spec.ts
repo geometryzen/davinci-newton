@@ -20,7 +20,7 @@ describe("Dimensions", function () {
             const temperature = QQ.valueOf(11, 13);
             const amount = QQ.valueOf(13, 17);
             const intensity = QQ.valueOf(17, 19);
-            const x = new Dimensions(M, L, T, Q, temperature, amount, intensity);
+            const x = Dimensions.valueOf(M, L, T, Q, temperature, amount, intensity);
             expect(x.M.numer).toBe(2);
             expect(x.M.denom).toBe(3);
             expect(x.L.numer).toBe(3);
@@ -46,7 +46,7 @@ describe("Dimensions", function () {
         const temperature = QQ.valueOf(5, 1);
         const amount = QQ.valueOf(6, 1);
         const intensity = QQ.valueOf(7, 1);
-        const d = new Dimensions(M, L, T, Q, temperature, amount, intensity);
+        const d = Dimensions.valueOf(M, L, T, Q, temperature, amount, intensity);
         expect(d.M.numer).toBe(1);
         expect(d.M.denom).toBe(1);
         expect(d.L.numer).toBe(2);
@@ -64,7 +64,7 @@ describe("Dimensions", function () {
     });
 
     it("Construction(number)", function () {
-        const d = new Dimensions(R1, R2, R3, R4, R5, R6, R7);
+        const d = Dimensions.valueOf(R1, R2, R3, R4, R5, R6, R7);
         expect(d.M.numer).toBe(1);
         expect(d.M.denom).toBe(1);
         expect(d.L.numer).toBe(2);
@@ -82,13 +82,13 @@ describe("Dimensions", function () {
     });
 
     it("mul", function () {
-        const M = new Dimensions(R1, R0, R0, R0, R0, R0, R0);
-        const L = new Dimensions(R0, R1, R0, R0, R0, R0, R0);
-        const T = new Dimensions(R0, R0, R1, R0, R0, R0, R0);
-        const Q = new Dimensions(R0, R0, R0, R1, R0, R0, R0);
-        const temperature = new Dimensions(R0, R0, R0, R0, R1, R0, R0);
-        const amount = new Dimensions(R0, R0, R0, R0, R0, R1, R0);
-        const intensity = new Dimensions(R0, R0, R0, R0, R0, R0, R1);
+        const M = Dimensions.valueOf(R1, R0, R0, R0, R0, R0, R0);
+        const L = Dimensions.valueOf(R0, R1, R0, R0, R0, R0, R0);
+        const T = Dimensions.valueOf(R0, R0, R1, R0, R0, R0, R0);
+        const Q = Dimensions.valueOf(R0, R0, R0, R1, R0, R0, R0);
+        const temperature = Dimensions.valueOf(R0, R0, R0, R0, R1, R0, R0);
+        const amount = Dimensions.valueOf(R0, R0, R0, R0, R0, R1, R0);
+        const intensity = Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R1);
         const N = M.mul(L).mul(T).mul(Q).mul(temperature).mul(amount).mul(intensity);
         expect(N.M.numer).toBe(1);
         expect(N.M.denom).toBe(1);
@@ -105,14 +105,14 @@ describe("Dimensions", function () {
     });
 
     it("div", function () {
-        const one = new Dimensions(R0, R0, R0, R0, R0, R0, R0);
-        const M = new Dimensions(R1, R0, R0, R0, R0, R0, R0);
-        const L = new Dimensions(R0, R1, R0, R0, R0, R0, R0);
-        const T = new Dimensions(R0, R0, R1, R0, R0, R0, R0);
-        const Q = new Dimensions(R0, R0, R0, R1, R0, R0, R0);
-        const temperature = new Dimensions(R0, R0, R0, R0, R1, R0, R0);
-        const amount = new Dimensions(R0, R0, R0, R0, R0, R1, R0);
-        const intensity = new Dimensions(R0, R0, R0, R0, R0, R0, R1);
+        const one = Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R0);
+        const M = Dimensions.valueOf(R1, R0, R0, R0, R0, R0, R0);
+        const L = Dimensions.valueOf(R0, R1, R0, R0, R0, R0, R0);
+        const T = Dimensions.valueOf(R0, R0, R1, R0, R0, R0, R0);
+        const Q = Dimensions.valueOf(R0, R0, R0, R1, R0, R0, R0);
+        const temperature = Dimensions.valueOf(R0, R0, R0, R0, R1, R0, R0);
+        const amount = Dimensions.valueOf(R0, R0, R0, R0, R0, R1, R0);
+        const intensity = Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R1);
         const N = one.div(M).div(L).div(T).div(Q).div(temperature).div(amount).div(intensity);
         expect(N.M.numer).toBe(-1);
         expect(N.M.denom).toBe(1);
@@ -131,7 +131,7 @@ describe("Dimensions", function () {
     });
 
     it("pow", function () {
-        const base = new Dimensions(R1, R2, R3, R4, R5, R6, R7);
+        const base = Dimensions.valueOf(R1, R2, R3, R4, R5, R6, R7);
         const x = base.pow(R2);
         expect(x.M.numer).toBe(2);
         expect(x.M.denom).toBe(1);
@@ -164,7 +164,7 @@ describe("Dimensions", function () {
     });
 
     it("sqrt", function () {
-        const quad = new Dimensions(R1, R2, R3, R2, R2, R2, R2);
+        const quad = Dimensions.valueOf(R1, R2, R3, R2, R2, R2, R2);
         const x = quad.sqrt();
         expect(x.M.numer).toBe(1);
         expect(x.M.denom).toBe(2);
@@ -197,15 +197,15 @@ describe("Dimensions", function () {
     });
 
     it("compatible", function () {
-        const one = new Dimensions(R0, R0, R0, R0, R0, R0, R0);
-        const all = new Dimensions(R1, R1, R1, R1, R1, R1, R1);
-        const mass = new Dimensions(R1, R0, R0, R0, R0, R0, R0);
-        const length = new Dimensions(R0, R1, R0, R0, R0, R0, R0);
-        const time = new Dimensions(R0, R0, R1, R0, R0, R0, R0);
-        const charge = new Dimensions(R0, R0, R0, R1, R0, R0, R0);
-        const temperature = new Dimensions(R0, R0, R0, R0, R1, R0, R0);
-        const amount = new Dimensions(R0, R0, R0, R0, R0, R1, R0);
-        const intensity = new Dimensions(R0, R0, R0, R0, R0, R0, R1);
+        const one = Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R0);
+        const all = Dimensions.valueOf(R1, R1, R1, R1, R1, R1, R1);
+        const mass = Dimensions.valueOf(R1, R0, R0, R0, R0, R0, R0);
+        const length = Dimensions.valueOf(R0, R1, R0, R0, R0, R0, R0);
+        const time = Dimensions.valueOf(R0, R0, R1, R0, R0, R0, R0);
+        const charge = Dimensions.valueOf(R0, R0, R0, R1, R0, R0, R0);
+        const temperature = Dimensions.valueOf(R0, R0, R0, R0, R1, R0, R0);
+        const amount = Dimensions.valueOf(R0, R0, R0, R0, R0, R1, R0);
+        const intensity = Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R1);
 
         function inCompatible(a: Dimensions, b: Dimensions): string {
             try {
@@ -239,18 +239,18 @@ describe("Dimensions", function () {
     });
 
     it("isOne()", function () {
-        expect(new Dimensions(R0, R0, R0, R0, R0, R0, R0).isOne()).toBe(true);
-        expect(new Dimensions(R1, R0, R0, R0, R0, R0, R0).isOne()).toBe(false);
-        expect(new Dimensions(R0, R1, R0, R0, R0, R0, R0).isOne()).toBe(false);
-        expect(new Dimensions(R0, R0, R1, R0, R0, R0, R0).isOne()).toBe(false);
-        expect(new Dimensions(R0, R0, R0, R1, R0, R0, R0).isOne()).toBe(false);
-        expect(new Dimensions(R0, R0, R0, R0, R1, R0, R0).isOne()).toBe(false);
-        expect(new Dimensions(R0, R0, R0, R0, R0, R1, R0).isOne()).toBe(false);
-        return expect(new Dimensions(R0, R0, R0, R0, R0, R0, R1).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R0).isOne()).toBe(true);
+        expect(Dimensions.valueOf(R1, R0, R0, R0, R0, R0, R0).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R1, R0, R0, R0, R0, R0).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R0, R1, R0, R0, R0, R0).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R0, R0, R1, R0, R0, R0).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R0, R0, R0, R1, R0, R0).isOne()).toBe(false);
+        expect(Dimensions.valueOf(R0, R0, R0, R0, R0, R1, R0).isOne()).toBe(false);
+        return expect(Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R1).isOne()).toBe(false);
     });
 
     it("inv()", function () {
-        const dims = new Dimensions(R1, R2, R3, R4, R5, R6, R7).inv();
+        const dims = Dimensions.valueOf(R1, R2, R3, R4, R5, R6, R7).inv();
         expect(dims.M.numer).toBe(-1);
         expect(dims.M.denom).toBe(1);
         expect(dims.L.numer).toBe(-2);
@@ -268,17 +268,17 @@ describe("Dimensions", function () {
     });
 
     it("toString()", function () {
-        expect(`${new Dimensions(R0, R0, R0, R0, R0, R0, R0)}`).toBe("");
-        expect(`${new Dimensions(R1, R0, R0, R0, R0, R0, R0)}`).toBe("mass");
-        expect(`${new Dimensions(R2, R0, R0, R0, R0, R0, R0)}`).toBe("mass ** 2");
+        expect(`${Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R0)}`).toBe("");
+        expect(`${Dimensions.valueOf(R1, R0, R0, R0, R0, R0, R0)}`).toBe("mass");
+        expect(`${Dimensions.valueOf(R2, R0, R0, R0, R0, R0, R0)}`).toBe("mass ** 2");
 
-        expect("" + (new Dimensions(R0, R1, R0, R0, R0, R0, R0))).toBe("length");
-        expect("" + (new Dimensions(R0, R0, R1, R0, R0, R0, R0))).toBe("time");
-        expect("" + (new Dimensions(R0, R0, R0, R1, R0, R0, R0))).toBe("charge");
-        expect("" + (new Dimensions(R0, R0, R0, R0, R1, R0, R0))).toBe("thermodynamic temperature");
-        expect("" + (new Dimensions(R0, R0, R0, R0, R0, R1, R0))).toBe("amount of substance");
-        expect("" + (new Dimensions(R0, R0, R0, R0, R0, R0, R1))).toBe("luminous intensity");
+        expect("" + (Dimensions.valueOf(R0, R1, R0, R0, R0, R0, R0))).toBe("length");
+        expect("" + (Dimensions.valueOf(R0, R0, R1, R0, R0, R0, R0))).toBe("time");
+        expect("" + (Dimensions.valueOf(R0, R0, R0, R1, R0, R0, R0))).toBe("charge");
+        expect("" + (Dimensions.valueOf(R0, R0, R0, R0, R1, R0, R0))).toBe("thermodynamic temperature");
+        expect("" + (Dimensions.valueOf(R0, R0, R0, R0, R0, R1, R0))).toBe("amount of substance");
+        expect("" + (Dimensions.valueOf(R0, R0, R0, R0, R0, R0, R1))).toBe("luminous intensity");
 
-        return expect("" + (new Dimensions(R0, R1, QQ.valueOf(-2, 1), R0, R0, R0, R0))).toBe("length * time ** -2");
+        return expect("" + (Dimensions.valueOf(R0, R1, QQ.valueOf(-2, 1), R0, R0, R0, R0))).toBe("length * time ** -2");
     });
 });

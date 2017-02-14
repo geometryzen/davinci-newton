@@ -21,12 +21,12 @@ declare module NEWTON {
         /**
          * The denominator.
          */
-        denom: number;
+        readonly denom: number;
 
         /**
          * The numerator.
          */
-        numer: number;
+        readonly numer: number;
 
         /**
          *
@@ -49,12 +49,12 @@ declare module NEWTON {
         inv(): QQ
 
         /**
-         * Determines whether this rational number is the multiplicative identity, <b>1</b>.
+         * Determines whether this rational number is the multiplicative identity, 1.
          */
         isOne(): boolean
 
         /**
-         * Determines whether this rational number is the additive identity, <b>0</b>.
+         * Determines whether this rational number is the additive identity, 0.
          */
         isZero(): boolean
 
@@ -88,13 +88,13 @@ declare module NEWTON {
      * The dimensions of a physical quantity.
      */
     class Dimensions {
-        M: QQ;
-        L: QQ;
-        T: QQ;
-        Q: QQ;
-        temperature: QQ;
-        amount: QQ;
-        intensity: QQ;
+        readonly M: QQ;
+        readonly L: QQ;
+        readonly T: QQ;
+        readonly Q: QQ;
+        readonly temperature: QQ;
+        readonly amount: QQ;
+        readonly intensity: QQ;
         constructor(M: QQ, L: QQ, T: QQ, Q: QQ, temperature: QQ, amount: QQ, intensity);
         isOne(): boolean;
         isZero(): boolean;
@@ -104,47 +104,47 @@ declare module NEWTON {
         /**
          *
          */
-        static ONE: Dimensions;
+        static readonly ONE: Dimensions;
 
         /**
          *
          */
-        static MASS: Dimensions;
+        static readonly MASS: Dimensions;
 
         /**
          *
          */
-        static LENGTH: Dimensions;
+        static readonly LENGTH: Dimensions;
 
         /**
          *
          */
-        static TIME: Dimensions;
+        static readonly TIME: Dimensions;
 
         /**
          *
          */
-        static CHARGE: Dimensions;
+        static readonly CHARGE: Dimensions;
 
         /**
          *
          */
-        static CURRENT: Dimensions;
+        static readonly CURRENT: Dimensions;
 
         /**
          *
          */
-        static TEMPERATURE: Dimensions;
+        static readonly TEMPERATURE: Dimensions;
 
         /**
          *
          */
-        static AMOUNT: Dimensions;
+        static readonly AMOUNT: Dimensions;
 
         /**
          *
          */
-        static INTENSITY: Dimensions;
+        static readonly INTENSITY: Dimensions;
     }
 
     /**

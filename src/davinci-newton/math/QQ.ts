@@ -1,5 +1,4 @@
 import mustBeInteger from '../checks/mustBeInteger';
-import readOnly from '../i18n/readOnly';
 
 const magicCode = Math.random();
 
@@ -14,18 +13,18 @@ const magicCode = Math.random();
  */
 export class QQ {
   /**
-   *
+   * The numerator of the rational number.
    */
-  private readonly _numer: number;
+  private readonly numer_: number;
   /**
-   *
+   * The denominator of the rational number.
    */
-  private readonly _denom: number;
+  private readonly denom_: number;
 
   /**
    * Intentionally undocumented.
    */
-  constructor(n: number, d: number, code: number) {
+  private constructor(n: number, d: number, code: number) {
     if (code !== magicCode) {
       throw new Error("Use the static create method instead of the constructor");
     }
@@ -72,63 +71,51 @@ export class QQ {
       n = -n;
       d = -d;
     }
-    this._numer = n / g;
-    this._denom = d / g;
+    this.numer_ = n / g;
+    this.denom_ = d / g;
   }
 
   /**
-   *
-   * @readOnly
+   * The numerator of the rational number.
    */
   get numer(): number {
-    return this._numer;
-  }
-  set numer(unused: number) {
-    throw new Error(readOnly('numer').message);
+    return this.numer_;
   }
 
   /**
-   *
-   * @readOnly
+   * The denominator of the rational number.
    */
   get denom(): number {
-    return this._denom;
-  }
-  set denom(unused: number) {
-    throw new Error(readOnly('denom').message);
+    return this.denom_;
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this + rhs
    */
   add(rhs: QQ): QQ {
-    return QQ.valueOf(this._numer * rhs._denom + this._denom * rhs._numer, this._denom * rhs._denom);
+    return QQ.valueOf(this.numer_ * rhs.denom_ + this.denom_ * rhs.numer_, this.denom_ * rhs.denom_);
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this - rhs
    */
   sub(rhs: QQ): QQ {
-    return QQ.valueOf(this._numer * rhs._denom - this._denom * rhs._numer, this._denom * rhs._denom);
+    return QQ.valueOf(this.numer_ * rhs.denom_ - this.denom_ * rhs.numer_, this.denom_ * rhs.denom_);
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this * rhs
    */
   mul(rhs: QQ): QQ {
-    return QQ.valueOf(this._numer * rhs._numer, this._denom * rhs._denom);
+    return QQ.valueOf(this.numer_ * rhs.numer_, this.denom_ * rhs.denom_);
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this / rhs
    */
   div(rhs: QQ): QQ {
-    const numer = this._numer * rhs._denom;
-    const denom = this._denom * rhs._numer;
+    const numer = this.numer_ * rhs.denom_;
+    const denom = this.denom_ * rhs.numer_;
     if (numer === 0) {
       if (denom === 0) {
         // How do we handle undefined?
@@ -150,53 +137,55 @@ export class QQ {
   }
 
   /**
-   * @returns
+   * @returns `true` if this rational number is one (1), otherwise `false`.
    */
   isOne(): boolean {
-    return this._numer === 1 && this._denom === 1;
+    return this.numer_ === 1 && this.denom_ === 1;
   }
 
   /**
-   * @returns
+   * @returns `true` if this rational number is zero (0), otherwise `false`.
    */
   isZero(): boolean {
-    return this._numer === 0 && this._denom === 1;
+    return this.numer_ === 0 && this.denom_ === 1;
   }
 
   /**
-   * @returns
+   * @returns 37 * numerator + 13 * denominator
    */
   hashCode(): number {
-    return 37 * this.numer + 13 * this.denom;
+    return 37 * this.numer_ + 13 * this.denom_;
   }
 
   /**
    * Computes the multiplicative inverse of this rational number.
    *
-   * @returns
+   * @returns 1 / this
    */
   inv(): QQ {
-    return QQ.valueOf(this._denom, this._numer);
+    return QQ.valueOf(this.denom_, this.numer_);
   }
 
   /**
    * Computes the additive inverse of this rational number.
    *
-   * @returns
+   * @returns -this
    */
   neg(): QQ {
-    return QQ.valueOf(-this._numer, this._denom);
+    return QQ.valueOf(-this.numer_, this.denom_);
   }
 
   /**
    * Determines whether two rational numbers are equal.
    *
-   * @param other
-   * @returns
+   * @returns `true` if `this` rational number equals the `other` rational number.
    */
   equals(other: QQ): boolean {
-    if (other instanceof QQ) {
-      return this._numer * other._denom === this._denom * other._numer;
+    if (this === other) {
+      return true;
+    }
+    else if (other instanceof QQ) {
+      return this.numer_ * other.denom_ === this.denom_ * other.numer_;
     }
     else {
       return false;
@@ -208,13 +197,12 @@ export class QQ {
    *
    * @returns
    */
-  toString(): string {
-    return "" + this._numer + "/" + this._denom + "";
+  toString(radix?: number): string {
+    return "" + this.numer_.toString(radix) + "/" + this.denom_.toString(radix) + "";
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this + rhs
    */
   __add__(rhs: QQ): QQ {
     if (rhs instanceof QQ) {
@@ -226,8 +214,7 @@ export class QQ {
   }
 
   /**
-   * @param lhs
-   * @returns
+   * @returns lhs + this
    */
   __radd__(lhs: QQ): QQ {
     if (lhs instanceof QQ) {
@@ -239,8 +226,7 @@ export class QQ {
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this - rhs
    */
   __sub__(rhs: QQ): QQ {
     if (rhs instanceof QQ) {
@@ -252,8 +238,7 @@ export class QQ {
   }
 
   /**
-   * @param lhs
-   * @returns
+   * @returns lhs - this
    */
   __rsub__(lhs: QQ): QQ {
     if (lhs instanceof QQ) {
@@ -265,8 +250,7 @@ export class QQ {
   }
 
   /**
-   * @param rhs
-   * @returns
+   * @returns this * rhs
    */
   __mul__(rhs: QQ): QQ {
     if (rhs instanceof QQ) {
@@ -278,8 +262,7 @@ export class QQ {
   }
 
   /**
-   * @param lhs
-   * @returns
+   * @returns lhs * this
    */
   __rmul__(lhs: QQ): QQ {
     if (lhs instanceof QQ) {
@@ -291,8 +274,7 @@ export class QQ {
   }
 
   /**
-   * @param div
-   * @returns
+   * @returns this / rhs
    */
   __div__(rhs: QQ): QQ {
     if (rhs instanceof QQ) {
@@ -304,8 +286,7 @@ export class QQ {
   }
 
   /**
-   * @param lhs
-   * @returns
+   * @returns lhs / this
    */
   __rdiv__(lhs: QQ): QQ {
     if (lhs instanceof QQ) {
@@ -317,14 +298,14 @@ export class QQ {
   }
 
   /**
-   * @returns
+   * @returns +this
    */
   __pos__(): this {
     return this;
   }
 
   /**
-   * @returns
+   * @returns -this
    */
   __neg__(): QQ {
     return this.neg();
@@ -355,9 +336,9 @@ export class QQ {
   private static readonly POS_02_03: QQ = new QQ(2, 3, magicCode);
 
   /**
-   * @param numer
-   * @param denom
-   * @returns
+   * @param numer The numerator of the rational number.
+   * @param denom The denominator of the rational number.
+   * @returns The rational number numer / denom reduced to its lowest form.
    */
   static valueOf(n: number, d: number): QQ {
     if (n === 0) {
@@ -447,7 +428,7 @@ export class QQ {
         return QQ.POS_08_01;
       }
     }
-    // console.warn(`QQ.valueOf(${n},${d}) is not cached.`)
+    // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
     return new QQ(n, d, magicCode);
   }
 }

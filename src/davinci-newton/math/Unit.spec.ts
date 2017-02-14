@@ -32,12 +32,12 @@ describe("Unit", function () {
     const symbols = ["kg", "m", "s", "C", "K", "mol", "cd"];
 
     it("Construction", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         expect(meter.multiplier).toBe(1);
     });
 
     it("toString", function () {
-        const dimensionless = new Unit(1234, new Dimensions(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const dimensionless = new Unit(1234, Dimensions.valueOf(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         // expect(ONE.toString(void 0, true)).toBe("");
         expect(METER.toString(void 0, true)).toBe("m");
         expect(KILOGRAM.toString(void 0, true)).toBe("kg");
@@ -50,7 +50,7 @@ describe("Unit", function () {
         expect(dimensionless.toString(10, true)).toBe("1234");
     });
     it("mul", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         const centimeter = meter.__mul__(0.01);
         const inch = centimeter.__mul__(2.54);
         const foot = inch.__mul__(12);
@@ -76,35 +76,35 @@ describe("Unit", function () {
         expect(nanometer.multiplier * 1e9).toBe(1);
     });
     it("mul by number", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         const yard = meter.__mul__(2.54 * 36 / 100);
         expect(yard.toString()).toBe("0.9144 m");
     });
     it("mul by Unit", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
-        const second = new Unit(1, new Dimensions(Rat0, Rat0, Rat1, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const second = new Unit(1, Dimensions.valueOf(Rat0, Rat0, Rat1, Rat0, Rat0, Rat0, Rat0), symbols);
         const areaUnit = meter.mul(second);
         expect(meter.toString(void 0, true)).toBe("m");
         expect(second.toString(void 0, true)).toBe("s");
         expect(areaUnit.toString(void 0, true)).toBe("m s");
     });
     it("div by Unit", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
-        const second = new Unit(1, new Dimensions(Rat0, Rat0, Rat1, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const second = new Unit(1, Dimensions.valueOf(Rat0, Rat0, Rat1, Rat0, Rat0, Rat0, Rat0), symbols);
         const speedUnit = meter.div(second);
         expect(meter.toString(void 0, true)).toBe("m");
         expect(second.toString(void 0, true)).toBe("s");
         expect(speedUnit.toString(10, true)).toBe("m/s");
     });
     it("pow by number", function () {
-        const meter = new Unit(1, new Dimensions(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        const meter = new Unit(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         const square = Unit.pow(meter, Rat2);
-        // const radian = new Unit(1, new Dimensions(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        // const radian = new Unit(1, Dimensions.valueOf(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         expect(meter.toString(void 0, true)).toBe("m");
         expect(square.toString(void 0, true)).toBe("m ** 2");
     });
     it("inverse", function () {
-        // const dimensionless = new Unit(1234, new Dimensions(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
+        // const dimensionless = new Unit(1234, Dimensions.valueOf(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         // expect(Unit.inv(Unit.ONE)).toBe(Unit.ONE);
         expect(Unit.inv(METER).toString(void 0, true)).toBe("m ** -1");
         expect(Unit.inv(KILOGRAM).toString(void 0, true)).toBe("kg ** -1");
