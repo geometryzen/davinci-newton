@@ -18,6 +18,7 @@
         "src/davinci-newton/engine3D/Physics3.spec.ts",
         "src/davinci-newton/engine3D/RigidBody3.spec.ts",
         "src/davinci-newton/engine3D/Sphere3.spec.ts",
+        "src/davinci-newton/math/detectDimensions.spec.ts",
         "src/davinci-newton/math/Dimensions.spec.ts",
         "src/davinci-newton/math/gauss.spec.ts",
         "src/davinci-newton/math/Geometric3.spec.ts",

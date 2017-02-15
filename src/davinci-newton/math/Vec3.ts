@@ -54,7 +54,7 @@ export class Vec3 implements VectorE3 {
             this.x_ *= multiplier;
             this.y_ *= multiplier;
             this.z_ *= multiplier;
-            this.uom_ = new Unit(1, uom.dimensions, uom.labels);
+            this.uom_ = Unit.valueOf(1, uom.dimensions, uom.labels);
         }
     }
 

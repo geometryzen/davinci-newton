@@ -1,5 +1,6 @@
-import { QQ } from '../math/QQ';
-import notSupported from '../i18n/notSupported';
+import DimensionsSummary from './DimensionsSummary';
+import QQ from '../math/QQ';
+import detectDimensions from './detectDimensions';
 
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);
@@ -12,11 +13,9 @@ function assertArgRational(name: string, arg: QQ): QQ {
         return arg;
     }
     else {
-        throw new Error("Argument '" + arg + "' must be a QQ");
+        throw new Error(`Argument ${name} => ${arg} must be a QQ`);
     }
 }
-
-const magicCode = Math.random();
 
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
@@ -27,111 +26,125 @@ export class Dimensions {
     /**
      * All exponents are zero, a dimensionless quantity.
      */
-    public static readonly ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, magicCode);
+    public static readonly ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, DimensionsSummary.ONE);
 
     /**
      * M<sup>1</sup>
      */
-    public static readonly MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, magicCode);
+    public static readonly MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, DimensionsSummary.MASS);
 
     /**
      * L<sup>1</sup>
      */
-    public static readonly LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, magicCode);
+    public static readonly LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, DimensionsSummary.LENGTH);
     /**
      * L<sup>2</sup>
      */
-    public static readonly AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, magicCode);
+    public static readonly AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary.AREA);
+    /**
+     * Inverse Length.
+     */
+    public static readonly INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary.INV_LENGTH);
 
     /**
      * T<sup>1</sup>
      */
-    public static readonly TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, magicCode);
+    public static readonly TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, DimensionsSummary.TIME);
 
     /**
      * Q<sup>1</sup>
      */
-    public static readonly CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, magicCode);
+    public static readonly CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary.CHARGE);
 
     /**
      * Q<sup>1</sup>T<sup>-1<sup>
      */
-    public static readonly CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, magicCode);
+    public static readonly CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary.CURRENT);
 
     /**
      *
      */
-    public static readonly TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, magicCode);
+    public static readonly TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary.TEMPERATURE);
 
     /**
      *
      */
-    public static readonly AMOUNT = new Dimensions(R0, R0, R0, R0, R0, R1, R0, magicCode);
+    public static readonly AMOUNT = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary.AMOUNT);
 
     /**
      *
      */
-    public static readonly INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, magicCode);
+    public static readonly INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary.INTENSITY);
 
     /**
      * Angular Momentum.
      */
-    private static readonly ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, magicCode);
+    public static readonly ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, DimensionsSummary.ANGULAR_MOMENTUM);
 
     /**
      * Rate of change of Area.
      */
-    private static readonly RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, magicCode);
+    public static readonly RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary.RATE_OF_CHANGE_OF_AREA);
 
     /**
      * Energy or Torque.
      */
-    private static readonly ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, magicCode);
+    public static readonly ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary.ENERGY_OR_TORQUE);
 
     /**
      * Force.
      */
-    private static readonly FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, magicCode);
+    public static readonly FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, DimensionsSummary.FORCE);
 
     /**
      * Inverse Mass.
      */
-    private static readonly INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, magicCode);
+    public static readonly INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, DimensionsSummary.INV_MASS);
 
     /**
      * Inverse Moment of Inertia.
      */
-    private static readonly INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, magicCode);
+    public static readonly INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, DimensionsSummary.INV_MOMENT_OF_INERTIA);
 
     /**
      * Inverse Time.
      */
-    private static readonly INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, magicCode);
+    public static readonly INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, DimensionsSummary.INV_TIME);
 
     /**
      * Moment of Inertia.
      */
-    private static readonly MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, magicCode);
+    public static readonly MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, DimensionsSummary.MOMENT_OF_INERTIA);
 
     /**
      * Momentum.
      */
-    private static readonly MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, magicCode);
+    public static readonly MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, DimensionsSummary.MOMENTUM);
 
     /**
      * Momentum squared.
      */
-    private static readonly MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, magicCode);
+    public static readonly MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, DimensionsSummary.MOMENTUM_SQUARED);
 
     /**
      * Stiffness.
      */
-    private static readonly STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, magicCode);
+    public static readonly STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary.STIFFNESS);
 
     /**
      * Time squared.
      */
-    private static readonly TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, magicCode);
+    public static readonly TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary.TIME_SQUARED);
+
+    /**
+     * Velocity
+     */
+    public static readonly VELOCITY = new Dimensions(R0, R1, M1, R0, R0, R0, R0, DimensionsSummary.VELOCITY);
+
+    /**
+     * Velocity squared
+     */
+    public static readonly VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary.VELOCITY_SQUARED);
 
     public readonly M: QQ;
     public readonly L: QQ;
@@ -140,6 +153,7 @@ export class Dimensions {
     public readonly temperature: QQ;
     public readonly amount: QQ;
     public readonly intensity: QQ;
+    private readonly summary_: DimensionsSummary;
 
     /**
      * The Dimensions class captures the physical dimensions associated with a unit of measure.
@@ -152,10 +166,7 @@ export class Dimensions {
      * @param amount The amount component of the dimensions object.
      * @param intensity The intensity component of the dimensions object.
      */
-    private constructor(M: QQ, L: QQ, T: QQ, Q: QQ, temperature: QQ, amount: QQ, intensity: QQ, code: number) {
-        if (code !== magicCode) {
-            throw new Error("Use the static create method instead of the constructor");
-        }
+    private constructor(M: QQ, L: QQ, T: QQ, Q: QQ, temperature: QQ, amount: QQ, intensity: QQ, summary: DimensionsSummary) {
         this.M = assertArgRational('M', M);
         this.L = assertArgRational('L', L);
         this.T = assertArgRational('T', T);
@@ -163,9 +174,11 @@ export class Dimensions {
         this.temperature = assertArgRational('temperature', temperature);
         this.amount = assertArgRational('amount', amount);
         this.intensity = assertArgRational('intensity', intensity);
-        if (arguments.length !== 8) {
-            throw new Error("Expecting 8 arguments");
-        }
+        this.summary_ = summary;
+    }
+
+    public get summary(): number {
+        return this.summary_;
     }
 
     /**
@@ -175,7 +188,10 @@ export class Dimensions {
      * @returns
      */
     compatible(rhs: Dimensions): Dimensions {
-        if (this.M.equals(rhs.M) && this.L.equals(rhs.L) && this.T.equals(rhs.T) && this.Q.equals(rhs.Q) && this.temperature.equals(rhs.temperature) && this.amount.equals(rhs.amount) && this.intensity.equals(rhs.intensity)) {
+        if (this.summary_ !== DimensionsSummary.Unknown && this.summary_ === rhs.summary_) {
+            return this;
+        }
+        else if (this.M.equals(rhs.M) && this.L.equals(rhs.L) && this.T.equals(rhs.T) && this.Q.equals(rhs.Q) && this.temperature.equals(rhs.temperature) && this.amount.equals(rhs.amount) && this.intensity.equals(rhs.intensity)) {
             return this;
         }
         else {
@@ -269,13 +285,6 @@ export class Dimensions {
      */
     inv(): Dimensions {
         return Dimensions.valueOf(this.M.neg(), this.L.neg(), this.T.neg(), this.Q.neg(), this.temperature.neg(), this.amount.neg(), this.intensity.neg());
-    }
-
-    /**
-     * Intentionally undocumented.
-     */
-    neg(): Dimensions {
-        throw new Error(notSupported('neg').message);
     }
 
     /**
@@ -425,7 +434,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * Constructor function for Dimensions.
      * @param M The mass component of the dimensions object.
      * @param L The length component of the dimensions object.
      * @param T The time component of the dimensions object.
@@ -435,201 +444,28 @@ export class Dimensions {
      * @param intensity The intensity component of the dimensions object.
      */
     public static valueOf(M: QQ, L: QQ, T: QQ, Q: QQ, temperature: QQ, amount: QQ, intensity: QQ) {
-        if (temperature.isZero() && amount.isZero() && intensity.isZero()) {
-            if (M.numer === -1) {
-                if (M.denom === 1) {
-                    if (L.numer === -2) {
-                        if (L.denom === 1) {
-                            if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.INV_MOMENT_OF_INERTIA;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (L.numer === 0) {
-                        if (L.denom === 1) {
-                            if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.INV_MASS;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (M.numer === 0) {
-                if (M.denom === 1) {
-                    if (L.numer === 0) {
-                        if (L.denom === 1) {
-                            if (T.numer === -1) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.INV_TIME;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.ONE;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === 2) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.TIME_SQUARED;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (L.numer === 1) {
-                        if (L.denom === 1) {
-                            if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.LENGTH;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (L.numer === 2) {
-                        if (L.denom === 1) {
-                            if (T.numer === -1) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.RATE_OF_CHANGE_OF_AREA;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.AREA;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (M.numer === 1) {
-                if (M.denom === 1) {
-                    if (L.numer === 0) {
-                        if (L.denom === 1) {
-                            if (T.numer === -2) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.STIFFNESS;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (L.numer === 1) {
-                        if (L.denom === 1) {
-                            if (T.numer === -2) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.FORCE;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === -1) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.MOMENTUM;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (L.numer === 2) {
-                        if (L.denom === 1) {
-                            if (T.numer === -2) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.ENERGY_OR_TORQUE;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === -1) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.ANGULAR_MOMENTUM;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (T.numer === 0) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.MOMENT_OF_INERTIA;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (M.numer === 2) {
-                if (M.denom === 1) {
-                    if (L.numer === 2) {
-                        if (L.denom === 1) {
-                            if (T.numer === -2) {
-                                if (T.denom === 1) {
-                                    if (Q.numer === 0) {
-                                        if (Q.denom === 1) {
-                                            return Dimensions.MOMENTUM_SQUARED;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        // This function is optimized to minimize the need for object creation.
+        const summary = detectDimensions(M, L, T, Q, temperature, amount, intensity);
+        switch (summary) {
+            case DimensionsSummary.ANGULAR_MOMENTUM: return Dimensions.ANGULAR_MOMENTUM;
+            case DimensionsSummary.AREA: return Dimensions.AREA;
+            case DimensionsSummary.ENERGY_OR_TORQUE: return Dimensions.ENERGY_OR_TORQUE;
+            case DimensionsSummary.FORCE: return Dimensions.FORCE;
+            case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
+            case DimensionsSummary.INV_MASS: return Dimensions.INV_MASS;
+            case DimensionsSummary.INV_TIME: return Dimensions.INV_TIME;
+            case DimensionsSummary.LENGTH: return Dimensions.LENGTH;
+            case DimensionsSummary.MOMENTUM: return Dimensions.MOMENTUM;
+            case DimensionsSummary.MOMENTUM_SQUARED: return Dimensions.MOMENTUM_SQUARED;
+            case DimensionsSummary.MOMENT_OF_INERTIA: return Dimensions.MOMENT_OF_INERTIA;
+            case DimensionsSummary.ONE: return Dimensions.ONE;
+            case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Dimensions.RATE_OF_CHANGE_OF_AREA;
+            case DimensionsSummary.STIFFNESS: return Dimensions.STIFFNESS;
+            case DimensionsSummary.TIME_SQUARED: return Dimensions.TIME_SQUARED;
+            case DimensionsSummary.VELOCITY: return Dimensions.VELOCITY;
+            case DimensionsSummary.VELOCITY_SQUARED: return Dimensions.VELOCITY_SQUARED;
+            default: return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
         }
-        else {
-            // No optimization.
-            return new Dimensions(M, L, T, Q, temperature, amount, intensity, magicCode);
-        }
-        // console.warn(`Dimensions.valueOf(${M}, ${L}, ${T}, ${Q}) is not cached.`);
-        return new Dimensions(M, L, T, Q, temperature, amount, intensity, magicCode);
     }
 }
 

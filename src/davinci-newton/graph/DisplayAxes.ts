@@ -96,6 +96,10 @@ export default class DisplayAxes implements DisplayObject {
      */
     private hScale_: Unit;
     /**
+     * 
+     */
+    private hLabelScaleCache_: string;
+    /**
      * The label for the vertical axis.
      */
     private vLabel_: string;
@@ -103,6 +107,10 @@ export default class DisplayAxes implements DisplayObject {
      * The scale factor for the vertical axis.
      */
     private vScale_: Unit;
+    /**
+     * 
+     */
+    private vLabelScaleCache_: string;
     /**
      * 
      */
@@ -123,7 +131,9 @@ export default class DisplayAxes implements DisplayObject {
         this.numDecimal_ = 0;
         this.needRedraw_ = true;
         this.hLabel_ = 'x';
+        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
         this.vLabel_ = 'y';
+        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
         this.zIndex_ = 100;
     }
 
@@ -143,12 +153,19 @@ export default class DisplayAxes implements DisplayObject {
         context.textAlign = 'start';
         context.textBaseline = 'alphabetic';
         // figure where to draw axes
-        var x0, y0;  // screen coords of axes, the point where the axes intersect
-        var r = this.simRect_;
-        var sim_x1 = r.getLeft();
-        var sim_x2 = r.getRight();
-        var sim_y1 = r.getBottom();
-        var sim_y2 = r.getTop();
+        /**
+         * screen x-coord of axes, the point where the axes intersect.
+         */
+        let x0: number;
+        /**
+         * screen y-coord of axes, the point where the axes intersect.
+         */
+        let y0: number;
+        const r = this.simRect_;
+        const sim_x1 = r.getLeft();
+        const sim_x2 = r.getRight();
+        const sim_y1 = r.getBottom();
+        const sim_y2 = r.getTop();
         switch (this.vAxisAlign_) {
             case AlignH.RIGHT:
                 x0 = map.simToScreenX(sim_x2 - 0.05 * (sim_x2 - sim_x1));
@@ -195,23 +212,23 @@ export default class DisplayAxes implements DisplayObject {
      * @param r the view area in simulation coords
      */
     drawHorizTicks(y0: number, context: CanvasRenderingContext2D, map: CoordMap, r: DoubleRect): void {
-        var y1 = y0 - 4;  // bottom edge of tick mark
-        var y2 = y1 + 8;  // top edge of tick mark
-        var sim_x1 = r.getLeft();
-        var sim_x2 = r.getRight();
-        var graphDelta = this.getNiceIncrement(sim_x2 - sim_x1);
-        var x_sim = DisplayAxes.getNiceStart(sim_x1, graphDelta);
+        const y1 = y0 - 4;  // bottom edge of tick mark
+        const y2 = y1 + 8;  // top edge of tick mark
+        const sim_x1 = r.getLeft();
+        const sim_x2 = r.getRight();
+        const graphDelta = this.getNiceIncrement(sim_x2 - sim_x1);
+        let x_sim = DisplayAxes.getNiceStart(sim_x1, graphDelta);
         while (x_sim < sim_x2) {
-            var x_screen = map.simToScreenX(x_sim);
+            const x_screen = map.simToScreenX(x_sim);
             context.beginPath(); // draw a tick mark
             context.moveTo(x_screen, y1);
             context.lineTo(x_screen, y2);
             context.stroke();
-            var next_x_sim = x_sim + graphDelta;  // next tick mark location
+            const next_x_sim = x_sim + graphDelta;  // next tick mark location
             if (next_x_sim > x_sim) {
                 // draw a number
-                var s = x_sim.toFixed(this.numDecimal_);
-                var textWidth = context.measureText(s).width;
+                const s = x_sim.toFixed(this.numDecimal_);
+                const textWidth = context.measureText(s).width;
                 context.fillText(s, x_screen - textWidth / 2, y2 + this.fontAscent);
             }
             else {
@@ -223,7 +240,7 @@ export default class DisplayAxes implements DisplayObject {
             x_sim = next_x_sim;
         }
         // draw name of the horizontal axis
-        const hLabel = makeLabelScale(this.hLabel_, this.hScale_);
+        const hLabel = this.hLabelScaleCache_;
         const w = context.measureText(hLabel).width;
         context.fillText(hLabel, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
     }
@@ -236,29 +253,31 @@ export default class DisplayAxes implements DisplayObject {
      * @param r the view area in simulation coords
      */
     drawVertTicks(x0: number, context: CanvasRenderingContext2D, map: CoordMap, r: DoubleRect): void {
-        var x1 = x0 - 4;  // left edge of tick mark
-        var x2 = x1 + 8;  // right edge of tick mark
-        var sim_y1 = r.getBottom();
-        var sim_y2 = r.getTop();
-        var graphDelta = this.getNiceIncrement(sim_y2 - sim_y1);
-        var y_sim = DisplayAxes.getNiceStart(sim_y1, graphDelta);
+        const x1 = x0 - 4;  // left edge of tick mark
+        const x2 = x1 + 8;  // right edge of tick mark
+        const sim_y1 = r.getBottom();
+        const sim_y2 = r.getTop();
+        const graphDelta = this.getNiceIncrement(sim_y2 - sim_y1);
+        let y_sim = DisplayAxes.getNiceStart(sim_y1, graphDelta);
         while (y_sim < sim_y2) {
-            var y_screen = map.simToScreenY(y_sim);
+            const y_screen = map.simToScreenY(y_sim);
             context.beginPath(); // draw a tick mark
             context.moveTo(x1, y_screen);
             context.lineTo(x2, y_screen);
             context.stroke();
-            var next_y_sim = y_sim + graphDelta;
+            const next_y_sim = y_sim + graphDelta;
             if (next_y_sim > y_sim) {
                 // draw a number
-                var s = y_sim.toFixed(this.numDecimal_);
-                var textWidth = context.measureText(s).width;
+                const s = y_sim.toFixed(this.numDecimal_);
+                const textWidth = context.measureText(s).width;
                 if (this.vAxisAlign_ === AlignH.RIGHT) {
                     context.fillText(s, x2 - (textWidth + 10), y_screen + (this.fontAscent / 2));
-                } else {// LEFT is default
+                }
+                else {// LEFT is default
                     context.fillText(s, x2 + 5, y_screen + (this.fontAscent / 2));
                 }
-            } else {
+            }
+            else {
                 // This can happen when the range is tiny compared to the numbers
                 // for example:  y_sim = 6.5 and graphDelta = 1E-15.
                 context.fillText('scale is too small', x2, y_screen);
@@ -267,7 +286,7 @@ export default class DisplayAxes implements DisplayObject {
             y_sim = next_y_sim;  // next tick mark
         }
         // draw label for the vertical axis
-        const vLabel = makeLabelScale(this.vLabel_, this.vScale_);
+        const vLabel = this.vLabelScaleCache_;
         const w = context.measureText(vLabel).width;
         if (this.vAxisAlign_ === AlignH.RIGHT) {
             context.fillText(vLabel, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
@@ -316,10 +335,10 @@ export default class DisplayAxes implements DisplayObject {
      */
     private getNiceIncrement(range: number): number {
         // First, scale the range to within 1 to 10.
-        var power = Math.pow(10, Math.floor(Math.log(range) / Math.LN10));
-        var logTot = range / power;
+        const power = Math.pow(10, Math.floor(Math.log(range) / Math.LN10));
+        const logTot = range / power;
         // logTot should be in the range from 1.0 to 9.999
-        var incr;
+        let incr;
         if (logTot >= 8)
             incr = 2;
         else if (logTot >= 5)
@@ -332,7 +351,7 @@ export default class DisplayAxes implements DisplayObject {
             incr = 0.2;
         incr *= power;  // scale back to original range
         // setup for nice formatting of numbers in this range
-        var dlog = Math.log(incr) / Math.LN10;
+        const dlog = Math.log(incr) / Math.LN10;
         this.numDecimal_ = (dlog < 0) ? Math.ceil(-dlog) : 0;
         return incr;
     }
@@ -427,6 +446,7 @@ export default class DisplayAxes implements DisplayObject {
      */
     set hAxisLabel(hAxisLabel: string) {
         this.hLabel_ = hAxisLabel;
+        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
         this.needRedraw_ = true;
     }
 
@@ -435,6 +455,7 @@ export default class DisplayAxes implements DisplayObject {
      */
     set hAxisScale(hAxisScale: Unit) {
         this.hScale_ = hAxisScale;
+        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
         this.needRedraw_ = true;
     }
 
@@ -453,6 +474,7 @@ export default class DisplayAxes implements DisplayObject {
      */
     set vAxisLabel(vAxisLabel: string) {
         this.vLabel_ = vAxisLabel;
+        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
         this.needRedraw_ = true;
     }
 
@@ -461,6 +483,7 @@ export default class DisplayAxes implements DisplayObject {
      */
     set vAxisScale(vAxisScale: Unit) {
         this.vScale_ = vAxisScale;
+        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
         this.needRedraw_ = true;
     }
 

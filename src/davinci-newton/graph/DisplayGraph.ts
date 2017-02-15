@@ -19,7 +19,6 @@ import DisplayObject from '../view/DisplayObject';
 import DrawingMode from '../view/DrawingMode';
 import GraphLine from './GraphLine';
 import isDefined from '../checks/isDefined';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import ScreenRect from '../view/ScreenRect';
@@ -178,7 +177,6 @@ export default class DisplayGraph implements DisplayObject {
             return from;
         }
         let next = iter.nextValue();  // move to first point
-        mustBeNonNullObject('first', next);
         // Draw first point.
         // Find the GraphStyle corresponding to this point.
         const style = graphLine.getGraphStyle(iter.getIndex());
@@ -192,7 +190,6 @@ export default class DisplayGraph implements DisplayObject {
         while (iter.hasNext()) {
             const last = next;
             next = iter.nextValue();
-            mustBeNonNullObject('next', next);
             // if same point then don't draw again
             if (next.x === last.x && next.y === last.y) {
                 continue;

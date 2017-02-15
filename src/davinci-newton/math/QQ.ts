@@ -1,7 +1,3 @@
-import mustBeInteger from '../checks/mustBeInteger';
-
-const magicCode = Math.random();
-
 /**
  * The QQ class represents a rational number, ℚ.
  *
@@ -22,14 +18,10 @@ export class QQ {
   private readonly denom_: number;
 
   /**
-   * Intentionally undocumented.
+   * @param n The numerator.
+   * @param d The denominator.
    */
-  private constructor(n: number, d: number, code: number) {
-    if (code !== magicCode) {
-      throw new Error("Use the static create method instead of the constructor");
-    }
-    mustBeInteger('n', n);
-    mustBeInteger('d', d);
+  private constructor(n: number, d: number) {
     let g: number;
 
     const gcd = function (a: number, b: number) {
@@ -315,25 +307,25 @@ export class QQ {
   // Immutable constants allow us to avoid creating
   // temporary QQ instances for the common values.
   //
-  private static readonly POS_08_01: QQ = new QQ(8, 1, magicCode);
-  private static readonly POS_07_01: QQ = new QQ(7, 1, magicCode);
-  private static readonly POS_06_01: QQ = new QQ(6, 1, magicCode);
-  private static readonly POS_05_01: QQ = new QQ(5, 1, magicCode);
-  private static readonly POS_04_01: QQ = new QQ(4, 1, magicCode);
-  private static readonly POS_03_01: QQ = new QQ(3, 1, magicCode);
-  private static readonly POS_02_01: QQ = new QQ(2, 1, magicCode);
-  private static readonly ONE: QQ = new QQ(1, 1, magicCode);
-  private static readonly POS_01_02: QQ = new QQ(1, 2, magicCode);
-  private static readonly POS_01_03: QQ = new QQ(1, 3, magicCode);
-  private static readonly POS_01_04: QQ = new QQ(1, 4, magicCode);
-  private static readonly POS_01_05: QQ = new QQ(1, 5, magicCode);
-  private static readonly ZERO: QQ = new QQ(0, 1, magicCode);
-  private static readonly NEG_01_03: QQ = new QQ(-1, 3, magicCode);
-  private static readonly NEG_01_01: QQ = new QQ(-1, 1, magicCode);
-  private static readonly NEG_02_01: QQ = new QQ(-2, 1, magicCode);
-  private static readonly NEG_03_01: QQ = new QQ(-3, 1, magicCode);
+  private static readonly POS_08_01: QQ = new QQ(8, 1);
+  private static readonly POS_07_01: QQ = new QQ(7, 1);
+  private static readonly POS_06_01: QQ = new QQ(6, 1);
+  private static readonly POS_05_01: QQ = new QQ(5, 1);
+  private static readonly POS_04_01: QQ = new QQ(4, 1);
+  private static readonly POS_03_01: QQ = new QQ(3, 1);
+  private static readonly POS_02_01: QQ = new QQ(2, 1);
+  private static readonly ONE: QQ = new QQ(1, 1);
+  private static readonly POS_01_02: QQ = new QQ(1, 2);
+  private static readonly POS_01_03: QQ = new QQ(1, 3);
+  private static readonly POS_01_04: QQ = new QQ(1, 4);
+  private static readonly POS_01_05: QQ = new QQ(1, 5);
+  private static readonly ZERO: QQ = new QQ(0, 1);
+  private static readonly NEG_01_03: QQ = new QQ(-1, 3);
+  private static readonly NEG_01_01: QQ = new QQ(-1, 1);
+  private static readonly NEG_02_01: QQ = new QQ(-2, 1);
+  private static readonly NEG_03_01: QQ = new QQ(-3, 1);
 
-  private static readonly POS_02_03: QQ = new QQ(2, 3, magicCode);
+  private static readonly POS_02_03: QQ = new QQ(2, 3);
 
   /**
    * @param numer The numerator of the rational number.
@@ -429,7 +421,7 @@ export class QQ {
       }
     }
     // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
-    return new QQ(n, d, magicCode);
+    return new QQ(n, d);
   }
 }
 

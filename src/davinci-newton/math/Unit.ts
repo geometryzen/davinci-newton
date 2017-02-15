@@ -1,6 +1,7 @@
-import { Dimensions } from '../math/Dimensions';
+import Dimensions from '../math/Dimensions';
+import DimensionsSummary from '../math/DimensionsSummary';
 import isUndefined from '../checks/isUndefined';
-import { QQ } from '../math/QQ';
+import QQ from '../math/QQ';
 
 // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
 const SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
@@ -11,8 +12,8 @@ const SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
 const patterns =
   [
     [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F/m
-    [-1, 1, -2, 1, 1, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // S
-    [-1, 1, -2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F
+    [-1, 1, -2, 1, 1, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // S or A/V
+    [-1, 1, -2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F or C/V
     [-1, 1, +0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],  // C/kg
     [-1, 1, +3, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1], // N·m·m/kg·kg (Gravitational Constant G)
     [+0, 1, -3, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],  // C/m**3
@@ -24,11 +25,11 @@ const patterns =
     [0, 1, 1, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // m/s**2
     [0, 1, 1, 1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // m/s
     [1, 1, 1, 1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // kg·m/s
-    [1, 1, -1, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],  // Pa
+    [1, 1, -1, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],  // Pa or N/m**2 or J/m**3
     [1, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1],  // Pa·s
     [1, 1, 0, 1, -3, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // W/m**2
     [1, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // N/m
-    [1, 1, 0, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // T
+    [1, 1, 0, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // T or Wb/m**2
     [1, 1, 1, 1, -3, 1, 0, 1, -1, 1, 0, 1, 0, 1],  // W/(m·K)
     [1, 1, 1, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V/m
     [1, 1, 1, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // N
@@ -37,12 +38,12 @@ const patterns =
     [0, 1, 2, 1, -2, 1, 0, 1, -1, 1, 0, 1, 0, 1],  // J/(kg·K)
     [1, 1, 2, 1, -2, 1, 0, 1, -1, 1, -1, 1, 0, 1], // J/(mol·K)
     [1, 1, 2, 1, -2, 1, 0, 1, 0, 1, -1, 1, 0, 1],  // J/(mol)
-    [1, 1, 2, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // J
+    [1, 1, 2, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // J or N·m
     [1, 1, 2, 1, -1, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // J·s
-    [1, 1, 2, 1, -3, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // W
-    [1, 1, 2, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V
-    [1, 1, 2, 1, -1, 1, -2, 1, 0, 1, 0, 1, 0, 1],  // Ω
-    [1, 1, 2, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1],   // H
+    [1, 1, 2, 1, -3, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // W or J/s
+    [1, 1, 2, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V or W/A
+    [1, 1, 2, 1, -1, 1, -2, 1, 0, 1, 0, 1, 0, 1],  // Ω or V/A
+    [1, 1, 2, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1],   // H or Wb/A
     [1, 1, 2, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1]   // Wb
   ];
 
@@ -66,7 +67,7 @@ const decodes =
     ["m/s**2"],
     ["m/s"],
     ["kg·m/s"],
-    ["Pa or N/m**2"],
+    ["Pa or N/m**2 or J/m**3"],
     ["Pa·s"],
     ["W/m**2"],
     ["N/m"],
@@ -96,17 +97,19 @@ const dumbString = function (multiplier: number, formatted: string, dimensions: 
     else if (rational.denom === 1) {
       if (rational.numer === 1) {
         if (compact) {
-          return "" + label;
+          return label;
         }
         else {
-          return "" + label;
+          return label;
         }
       }
       else {
-        return "" + label + " ** " + rational.numer;
+        return `${label}**${rational.numer}`;
       }
     }
-    return "" + label + " ** " + rational;
+    else {
+      return `${label}**${rational}`;
+    }
   };
 
   const operatorStr = multiplier === 1 || dimensions.isOne() ? (compact ? "" : " ") : " ";
@@ -151,24 +154,26 @@ const unitString = function (multiplier: number, formatted: string, dimensions: 
 };
 
 function add(lhs: Unit, rhs: Unit): Unit {
-  return new Unit(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
+  return Unit.valueOf(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
 }
 
 function sub(lhs: Unit, rhs: Unit): Unit {
-  return new Unit(lhs.multiplier - rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
+  return Unit.valueOf(lhs.multiplier - rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
 }
 
 function mul(lhs: Unit, rhs: Unit): Unit {
-  return new Unit(lhs.multiplier * rhs.multiplier, lhs.dimensions.mul(rhs.dimensions), lhs.labels);
+  return Unit.valueOf(lhs.multiplier * rhs.multiplier, lhs.dimensions.mul(rhs.dimensions), lhs.labels);
 }
 
 function scale(α: number, unit: Unit): Unit {
-  return new Unit(α * unit.multiplier, unit.dimensions, unit.labels);
+  return Unit.valueOf(α * unit.multiplier, unit.dimensions, unit.labels);
 }
 
 function div(lhs: Unit, rhs: Unit): Unit {
-  return new Unit(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
+  return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
 }
+
+const magicCode = Math.random();
 
 /**
  * <p>
@@ -180,54 +185,75 @@ export class Unit {
    * Internal symbolic constant to improve code readability.
    * May be undefined or an instance of Unit.
    */
-  private static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
+  private static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI);
+  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI);
+  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI);
+  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly COULOMB = new Unit(1, Dimensions.CHARGE, SYMBOLS_SI);
+  public static readonly COULOMB = new Unit(1, Dimensions.CHARGE, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly AMPERE = new Unit(1, Dimensions.CURRENT, SYMBOLS_SI);
+  public static readonly AMPERE = new Unit(1, Dimensions.CURRENT, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly KELVIN = new Unit(1, Dimensions.TEMPERATURE, SYMBOLS_SI);
+  public static readonly KELVIN = new Unit(1, Dimensions.TEMPERATURE, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT, SYMBOLS_SI);
+  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT, SYMBOLS_SI, magicCode);
 
   /**
    *
    */
-  public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI);
+  public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI, magicCode);
+
+  private static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI, magicCode);
+  private static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI, magicCode);
+  private static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI, magicCode);
+  private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI, magicCode);
+  private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI, magicCode);
+  private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI, magicCode);
+  private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI, magicCode);
+  private static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI, magicCode);
+  private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI, magicCode);
+  private static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI, magicCode);
+  private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI, magicCode);
+  private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI, magicCode);
+  private static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI, magicCode);
+  private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI, magicCode);
+  private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI, magicCode);
+  private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI, magicCode);
 
   /**
    * @param multiplier
    * @param dimensions
    * @param labels The label strings to use for each dimension.
+   * @param code The magic code
    */
-  constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[]) {
+  private constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[], code: number) {
+    if (code !== magicCode) {
+      throw new Error("Use the static valueOf method instead of the constructor");
+    }
     if (labels.length !== 7) {
       throw new Error("Expecting 7 elements in the labels array.");
     }
@@ -334,7 +360,7 @@ export class Unit {
       return div(this, rhs);
     }
     else if (typeof rhs === 'number') {
-      return new Unit(this.multiplier / rhs, this.dimensions, this.labels);
+      return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
     }
     else {
       return void 0;
@@ -346,7 +372,7 @@ export class Unit {
       return div(lhs, this);
     }
     else if (typeof lhs === 'number') {
-      return new Unit(lhs / this.multiplier, this.dimensions.inv(), this.labels);
+      return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
     }
     else {
       return void 0;
@@ -354,15 +380,15 @@ export class Unit {
   }
 
   private pow(exponent: QQ): Unit {
-    return new Unit(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
+    return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
   }
 
   private inv(): Unit {
-    return new Unit(1 / this.multiplier, this.dimensions.inv(), this.labels);
+    return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
   }
 
   private neg(): Unit {
-    return new Unit(-this.multiplier, this.dimensions, this.labels);
+    return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
   }
 
   private isOne(): boolean {
@@ -370,7 +396,7 @@ export class Unit {
   }
 
   private sqrt(): Unit {
-    return new Unit(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
+    return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
   }
 
   toExponential(fractionDigits?: number, compact?: boolean): string {
@@ -602,6 +628,48 @@ export class Unit {
     else {
       return void 0;
     }
+  }
+
+  /**
+   * Constructs a Unit.
+   */
+  public static valueOf(multiplier: number, dimensions: Dimensions, labels: string[]): Unit {
+    // This method is optimized to minimize object creation.
+    // The summary on the dimensions is used to improve lookup time.
+    if (multiplier === 1) {
+      switch (dimensions.summary) {
+        case DimensionsSummary.AMOUNT: return Unit.MOLE;
+        case DimensionsSummary.ANGULAR_MOMENTUM: return Unit.JOULE_SECOND;
+        case DimensionsSummary.AREA: return Unit.METER_SQUARED;
+        case DimensionsSummary.CHARGE: return Unit.COULOMB;
+        case DimensionsSummary.CURRENT: return Unit.AMPERE;
+        case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
+        case DimensionsSummary.FORCE: return Unit.NEWTON;
+        case DimensionsSummary.INTENSITY: return Unit.CANDELA;
+        case DimensionsSummary.INV_LENGTH: return Unit.INV_METER;
+        case DimensionsSummary.INV_MASS: return Unit.INV_KILOGRAM;
+        case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
+        case DimensionsSummary.INV_TIME: return Unit.INV_SECOND;
+        case DimensionsSummary.LENGTH: return Unit.METER;
+        case DimensionsSummary.MASS: return Unit.KILOGRAM;
+        case DimensionsSummary.MOMENT_OF_INERTIA: return Unit.KILOGRAM_METER_SQUARED;
+        case DimensionsSummary.MOMENTUM: return Unit.KILOGRAM_METER_PER_SECOND;
+        case DimensionsSummary.MOMENTUM_SQUARED: return Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED;
+        case DimensionsSummary.ONE: return Unit.ONE;
+        case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Unit.METER_SQUARED_PER_SECOND;
+        case DimensionsSummary.STIFFNESS: return Unit.STIFFNESS;
+        case DimensionsSummary.TEMPERATURE: return Unit.KELVIN;
+        case DimensionsSummary.TIME: return Unit.SECOND;
+        case DimensionsSummary.TIME_SQUARED: return Unit.SECOND_SQUARED;
+        case DimensionsSummary.VELOCITY: return Unit.METER_PER_SECOND;
+        case DimensionsSummary.VELOCITY_SQUARED: return Unit.METER_SQUARED_PER_SECOND_SQUARED;
+        default: {
+          // Do nothing.
+        }
+      }
+    }
+    console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
+    return new Unit(multiplier, dimensions, labels, magicCode);
   }
 }
 

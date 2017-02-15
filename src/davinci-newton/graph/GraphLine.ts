@@ -22,8 +22,6 @@ import GraphStyle from './GraphStyle';
 import GraphVarsList from './GraphVarsList';
 import isObject from '../checks/isObject';
 import Memorizable from '../util/Memorizable';
-import mustBeLE from '../checks/mustBeLE';
-import mustBeObject from '../checks/mustBeObject';
 import Observer from '../util/Observer';
 import ParameterNumber from '../util/ParameterNumber';
 import ParameterString from '../util/ParameterString';
@@ -191,22 +189,20 @@ export default class GraphLine extends AbstractSubject implements Memorizable, O
      * @param index  the index number in list of GraphPoints
      */
     getGraphStyle(index: number): GraphStyle {
-        var styles = this.styles_;
+        const styles = this.styles_;
         if (styles.length === 0) {
             throw new Error('graph styles list is empty');
         }
         // Find the latest style in the styles list with an index less than or
         // equal to the given index.
-        var last = styles[0];
-        for (var i = 1, len = styles.length; i < len; i++) {
-            var s = styles[i];
-            // assert that indices in style list are non-decreasing
-            mustBeLE('', last.index_, s.index_);
-            if (s.index_ > index)
+        let last = styles[0];
+        for (let i = 1, len = styles.length; i < len; i++) {
+            const s = styles[i];
+            if (s.index_ > index) {
                 break;
+            }
             last = s;
         }
-        mustBeObject('last', last);
         return last;
     }
 
