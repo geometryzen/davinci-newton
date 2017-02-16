@@ -83,10 +83,10 @@ export default class DoubleRect {
      * @return a DoubleRect spanning the two given points
      */
     static make(point1: Point, point2: Point): DoubleRect {
-        var left = Math.min(point1.x, point2.x);
-        var right = Math.max(point1.x, point2.x);
-        var bottom = Math.min(point1.y, point2.y);
-        var top_ = Math.max(point1.y, point2.y);
+        const left = Math.min(point1.x, point2.x);
+        const right = Math.max(point1.x, point2.x);
+        const bottom = Math.min(point1.y, point2.y);
+        const top_ = Math.max(point1.y, point2.y);
         return new DoubleRect(left, bottom, right, top_);
     }
 
@@ -98,8 +98,8 @@ export default class DoubleRect {
      * @return a DoubleRect centered at the given point with given height and width
      */
     static makeCentered(center: Point, width: number, height: number): DoubleRect {
-        var x = center.x;
-        var y = center.y;
+        const x = center.x;
+        const y = center.y;
         return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
     };
 
@@ -110,10 +110,10 @@ export default class DoubleRect {
      * @return a DoubleRect centered at the given point with given size
      */
     static makeCentered2(center: Point, size: Point): DoubleRect {
-        var x = center.x;
-        var y = center.y;
-        var w = size.x;
-        var h = size.y;
+        const x = center.x;
+        const y = center.y;
+        const w = size.x;
+        const h = size.y;
         return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
     }
 
@@ -250,11 +250,11 @@ export default class DoubleRect {
             return true;
         }
         // if both points are "outside" one of the rectangle sides, then line is not visible
-        var p1x = p1.x;
-        var p1y = p1.y;
-        var p2x = p2.x;
-        var p2y = p2.y;
-        var d = this.left_;
+        const p1x = p1.x;
+        const p1y = p1.y;
+        const p2x = p2.x;
+        const p2y = p2.y;
+        let d = this.left_;
         if (p1x < d && p2x < d) {
             return false;
         }
@@ -308,10 +308,10 @@ export default class DoubleRect {
      */
     scale(factorX: number, factorY: number): DoubleRect {
         factorY = (factorY === undefined) ? factorX : factorY;
-        var x0 = this.getCenterX();
-        var y0 = this.getCenterY();
-        var w = this.getWidth();
-        var h = this.getHeight();
+        const x0 = this.getCenterX();
+        const y0 = this.getCenterY();
+        const w = this.getWidth();
+        const h = this.getHeight();
         return new DoubleRect(x0 - (factorX * w) / 2, y0 - (factorY * h) / 2,
             x0 + (factorX * w) / 2, y0 + (factorY * h) / 2);
     }

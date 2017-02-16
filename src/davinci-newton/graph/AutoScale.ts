@@ -327,7 +327,7 @@ export default class AutoScale extends AbstractSubject implements Memorizable, O
      */
     removeGraphLine(graphLine: GraphLine): void {
         if (GraphLine.isDuckType(graphLine)) {
-            var idx = this.graphLines_.indexOf(graphLine);
+            const idx = this.graphLines_.indexOf(graphLine);
             removeAt(this.graphLines_, idx);
             removeAt(this.lastIndex_, idx);
             this.reset();

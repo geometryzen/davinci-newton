@@ -207,8 +207,8 @@ export class LabCanvas extends AbstractSubject {
     addView(view: LabView) {
         mustBeNonNullObject('view', view);
         if (this.getWidth() > 0 && this.getHeight() > 0) {
-            var sr = new ScreenRect(0, 0, this.getWidth(), this.getHeight());
-            view.setScreenRect(sr);
+            const screenRect = new ScreenRect(0, 0, this.getWidth(), this.getHeight());
+            view.setScreenRect(screenRect);
         }
         this.labViews_.push(view);
         this.addMemo(view);

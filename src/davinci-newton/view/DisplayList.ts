@@ -67,7 +67,9 @@ export class DisplayList extends AbstractSubject {
         // Objects in drawables_ array should be sorted by zIndex.
         // Starting at front of drawables_ array, find the object with bigger
         // zIndex, insert dispObj just before that object.
-        for (var i = 0, n = this.drawables_.length; i < n; i++) {
+        const iLen = this.drawables_.length;
+        let i = 0;
+        for (i = 0; i < iLen; i++) {
             const z = this.drawables_[i].getZIndex();
             if (zIndex < z) {
                 break;
@@ -108,7 +110,8 @@ export class DisplayList extends AbstractSubject {
         // Starting at back of drawables_ array, find the object with smaller
         // zIndex, insert dispObj just after that object.
         const N = this.drawables_.length;
-        for (var i = N; i > 0; i--) {
+        let i = N;
+        for (i = N; i > 0; i--) {
             const z = this.drawables_[i - 1].getZIndex();
             if (zIndex > z) {
                 break;

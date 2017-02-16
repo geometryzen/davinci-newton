@@ -109,12 +109,12 @@ export default class AffineTransform {
      * @return the product of this AffineTransform matrix right-multiplied by the `at` AffineTransform matrix
      */
     concatenate(at: AffineTransform): AffineTransform {
-        var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
-        var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
-        var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
-        var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
-        var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
-        var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
+        const m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
+        const m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
+        const m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
+        const m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
+        const dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
+        const dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
         return new AffineTransform(m11, m12, m21, m22, dx, dy);
     }
 
@@ -162,12 +162,12 @@ export default class AffineTransform {
      * @return a new AffineTransform equal to this AffineTransform rotated by the given angle
      */
     rotate(angle: number): AffineTransform {
-        var c = Math.cos(angle);
-        var s = Math.sin(angle);
-        var m11 = c * this.m11_ + s * this.m21_;
-        var m12 = c * this.m12_ + s * this.m22_;
-        var m21 = -s * this.m11_ + c * this.m21_;
-        var m22 = -s * this.m12_ + c * this.m22_;
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+        const m11 = c * this.m11_ + s * this.m21_;
+        const m12 = c * this.m12_ + s * this.m22_;
+        const m21 = -s * this.m11_ + c * this.m21_;
+        const m22 = -s * this.m12_ + c * this.m22_;
         return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
     }
 
@@ -192,10 +192,10 @@ export default class AffineTransform {
      * @return a new AffineTransform equal to this AffineTransform scaled by the given x and y factors
      */
     scale(x: number, y: number): AffineTransform {
-        var m11 = this.m11_ * x;
-        var m12 = this.m12_ * x;
-        var m21 = this.m21_ * y;
-        var m22 = this.m22_ * y;
+        const m11 = this.m11_ * x;
+        const m12 = this.m12_ * x;
+        const m21 = this.m21_ * y;
+        const m22 = this.m22_ * y;
         return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
     }
 
@@ -229,8 +229,8 @@ export default class AffineTransform {
      * @return the transformation of the given point.
      */
     transform(x: number, y: number): Point {
-        var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
-        var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
+        const x2 = this.m11_ * x + this.m21_ * y + this.dx_;
+        const y2 = this.m12_ * x + this.m22_ * y + this.dy_;
         return new Point(x2, y2);
     }
 
@@ -255,8 +255,8 @@ export default class AffineTransform {
      * @return a new AffineTransform equal to this AffineTransform  translated by the given amount
      */
     translate(x: number, y: number): AffineTransform {
-        var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
-        var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
+        const dx = this.dx_ + this.m11_ * x + this.m21_ * y;
+        const dy = this.dy_ + this.m12_ * x + this.m22_ * y;
         return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
     }
 }

@@ -40,7 +40,9 @@ export class DefaultAdvanceStrategy implements AdvanceStrategy {
     }
 
     /**
-     * 
+     * 1. 
+     * 2. The solver integrates the derivatives from the simulation.
+     * 3. Compute system variables such as energies, linear momentum, and angular momentum.
      */
     advance(stepSize: number, uomStep?: Unit): void {
         this.simulation_.prolog();

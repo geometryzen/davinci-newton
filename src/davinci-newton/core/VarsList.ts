@@ -141,7 +141,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     private findOpenSlot_(quantity: number): number {
         let found = 0;
         let startIdx = -1;
-        for (var i = 0, n = this.varList_.length; i < n; i++) {
+        for (let i = 0, n = this.varList_.length; i < n; i++) {
             if (this.varList_[i].name === VarsList.DELETED) {
                 if (startIdx === -1) {
                     startIdx = i;
@@ -169,7 +169,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
             expand = quantity;
         }
         const newVars: ConcreteVariable[] = [];
-        for (i = 0; i < expand; i++) {
+        for (let i = 0; i < expand; i++) {
             newVars.push(new ConcreteVariable(this, VarsList.DELETED));
         }
         extendArray(this.varList_, expand, newVars);
@@ -221,7 +221,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
             throw new Error('deleteVariables');
         }
-        for (var i = index; i < index + howMany; i++) {
+        for (let i = index; i < index + howMany; i++) {
             this.varList_[i] = new ConcreteVariable(this, VarsList.DELETED);
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));

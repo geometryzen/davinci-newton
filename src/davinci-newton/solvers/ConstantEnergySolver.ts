@@ -24,7 +24,8 @@ export class ConstantEnergySolver implements DiffEqSolver {
      */
     private tolerance_ = 1E-6;
     /**
-     * 
+     * Constructs an adaptive step solver that adjusts the step size in order to
+     * ensure that the energy change be less than a tolerance amount.
      */
     constructor(simulation: Simulation, energySystem: EnergySystem, solverMethod: DiffEqSolver) {
         this.simulation_ = simulation;

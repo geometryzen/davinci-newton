@@ -15,8 +15,10 @@
 
 import AbstractSimObject from '../objects/AbstractSimObject';
 import Bivector3 from '../math/Bivector3';
+import Charged3 from './Charged3';
 import ForceBody3 from './ForceBody3';
 import Geometric3 from '../math/Geometric3';
+import Massive3 from './Massive3';
 import Mat3 from '../math/Mat3';
 import Matrix3 from '../math/Matrix3';
 import MatrixLike from '../math/MatrixLike';
@@ -49,14 +51,20 @@ function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: G
 /**
  * 
  */
-export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
+export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive3, Charged3 {
     /**
-     * Mass, M.
+     * Mass, M. Default is one (1).
      * Changing the mass requires an update to the intertia tensor,
      * so we want to control the mutability.
      */
     private readonly mass_ = Geometric3.scalar(1);
     private massLock_ = this.mass_.lock();
+
+    /**
+     * Charge, Q. Default is zero (0).
+     */
+    private readonly charge_ = Geometric3.scalar(0);
+    private chargeLock_ = this.charge_.lock();
 
     /**
      * Inverse of the Inertia tensor in body coordinates.
@@ -130,7 +138,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     }
 
     /**
-     * Mass (scalar)
+     * Mass (scalar). Default is one (1).
      */
     get M(): Geometric3 {
         return this.mass_;
@@ -140,6 +148,18 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
         this.mass_.copy(M);
         this.massLock_ = this.mass_.lock();
         this.updateInertiaTensor();
+    }
+
+    /**
+     * Charge (scalar). Default is zero (0).
+     */
+    get Q(): Geometric3 {
+        return this.charge_;
+    }
+    set Q(Q: Geometric3) {
+        this.charge_.unlock(this.chargeLock_);
+        this.charge_.copy(Q);
+        this.chargeLock_ = this.charge_.lock();
     }
 
     /**

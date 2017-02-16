@@ -157,8 +157,11 @@ describe("Unit", function () {
         expect(WEBER.div(AMPERE).toString(10, true)).toBe("H or Wb/A");
         expect(HENRY.toString(10, true)).toBe("H or Wb/A");
     });
-    it("electric permittivity", function () {
-        expect(FARAD.div(METER).toString(10, true)).toBe("F/m");
+    it("electric permittivity as F / m", function () {
+        expect(FARAD.div(METER).toString(10, true)).toBe("F/m or C**2/N·m**2");
+    });
+    it("electric permittivity as C * C / (N * m * m)", function () {
+        expect(COULOMB.mul(COULOMB).div(NEWTON).div(METER).div(METER).toString(10, true)).toBe("F/m or C**2/N·m**2");
     });
     it("electric permeability", function () {
         expect(HENRY.div(METER).toString(10, true)).toBe("H/m");
@@ -208,15 +211,18 @@ describe("Unit", function () {
     it("sqrt(m)", function () {
         expect(Unit.sqrt(METER).toString(10, true)).toBe("m**1/2");
     });
+    it("Coulomb's constant", function () {
+        expect(NEWTON.mul(METER).mul(METER).div(COULOMB).div(COULOMB).toString(10, true)).toBe("N·m**2/C**2");
+    });
 
     describe("Operator Overloading", function () {
 
-        var m = METER;
+        const m = METER;
 
         describe("Binary +", function () {
 
             it("m.__add__(m)", function () {
-                var actual = m.__add__(m);
+                const actual = m.__add__(m);
                 expect(actual.multiplier).toBe(2);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -226,7 +232,7 @@ describe("Unit", function () {
                 expect(actual.dimensions.T.denom).toBe(1);
             });
             it("m.__radd__(m)", function () {
-                var actual = m.__radd__(m);
+                const actual = m.__radd__(m);
                 expect(actual.multiplier).toBe(2);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -241,7 +247,7 @@ describe("Unit", function () {
         describe("Binary -", function () {
 
             it("m.__sub__(m)", function () {
-                var actual = m.__sub__(m);
+                const actual = m.__sub__(m);
                 expect(actual.multiplier).toBe(0);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -252,7 +258,7 @@ describe("Unit", function () {
             });
 
             it("m.__rsub__(m)", function () {
-                var actual = m.__rsub__(m);
+                const actual = m.__rsub__(m);
                 expect(actual.multiplier).toBe(0);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -267,7 +273,7 @@ describe("Unit", function () {
         describe("Binary *", function () {
 
             it("m.__mul__(m)", function () {
-                var actual = m.__mul__(m);
+                const actual = m.__mul__(m);
                 expect(actual.toString(void 0, true)).toBe("m**2");
                 expect(actual.multiplier).toBe(1);
                 expect(actual.dimensions.M.numer).toBe(0);
@@ -279,7 +285,7 @@ describe("Unit", function () {
             });
 
             it("m * 5", function () {
-                var actual = m.__mul__(5);
+                const actual = m.__mul__(5);
                 expect(actual.toString()).toBe("5 m");
                 expect(actual.multiplier).toBe(5);
                 expect(actual.dimensions.M.numer).toBe(0);
@@ -291,7 +297,7 @@ describe("Unit", function () {
             });
 
             it("m.__rmul__(m)", function () {
-                var actual = m.__rmul__(m);
+                const actual = m.__rmul__(m);
                 expect(actual.multiplier).toBe(1);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -302,7 +308,7 @@ describe("Unit", function () {
             });
 
             it("5 * m", function () {
-                var actual = m.__rmul__(5);
+                const actual = m.__rmul__(5);
                 expect(actual.multiplier).toBe(5);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -317,7 +323,7 @@ describe("Unit", function () {
         describe("Binary /", function () {
 
             it("m.__div__(m)", function () {
-                var actual = m.__div__(m);
+                const actual = m.__div__(m);
                 expect(actual.toString(void 0, true)).toBe("");
                 expect(actual.multiplier).toBe(1);
                 expect(actual.dimensions.M.numer).toBe(0);
@@ -329,7 +335,7 @@ describe("Unit", function () {
             });
 
             it("m / 5", function () {
-                var actual = m.__div__(5);
+                const actual = m.__div__(5);
                 expect(actual.toString()).toBe("0.2 m");
                 expect(actual.multiplier).toBe(1 / 5);
                 expect(actual.dimensions.M.numer).toBe(0);
@@ -341,7 +347,7 @@ describe("Unit", function () {
             });
 
             it("m.__rdiv__(m)", function () {
-                var actual = m.__rdiv__(m);
+                const actual = m.__rdiv__(m);
                 expect(actual.multiplier).toBe(1);
                 expect(actual.dimensions.M.numer).toBe(0);
                 expect(actual.dimensions.M.denom).toBe(1);
@@ -352,7 +358,7 @@ describe("Unit", function () {
             });
 
             it("5 / m", function () {
-                var actual = m.__rdiv__(5);
+                const actual = m.__rdiv__(5);
                 expect(actual instanceof Unit).toBe(true);
                 expect(actual.multiplier).toBe(5);
                 expect(actual.dimensions.M.numer).toBe(0);

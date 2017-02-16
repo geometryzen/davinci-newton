@@ -1,6 +1,6 @@
 import GeometricE3 from '../math/GeometricE3';
 
-// GraphicsProgramSymbols constants for the coordinate indices into the data array.
+// Symbolic constants for the coordinate indices into the data array.
 // These are chosen to match those used by G3.
 // TODO: The goal should be to protect the user from changes in ordering.
 const COORD_W = 0;
@@ -23,7 +23,7 @@ const COORD_XYZ = 7;
  * 6: zx
  * 7: xyz
  */
-export default function gcompE3(m: GeometricE3, index: number): number {
+export default function compG3Get(m: GeometricE3, index: number): number {
     switch (index) {
         case COORD_W: {
             return m.a;

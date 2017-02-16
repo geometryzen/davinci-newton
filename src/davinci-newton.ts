@@ -8,6 +8,7 @@ import config from './davinci-newton/config';
 import ConstantEnergySolver from './davinci-newton/solvers/ConstantEnergySolver';
 import ConstantForceLaw3 from './davinci-newton/engine3D/ConstantForceLaw3';
 import CoordType from './davinci-newton/model/CoordType';
+import CoulombLaw3 from './davinci-newton/engine3D/CoulombLaw3';
 import Cylinder3 from './davinci-newton/engine3D/Cylinder3';
 import DefaultAdvanceStrategy from './davinci-newton/strategy/DefaultAdvanceStrategy';
 import Dimensions from './davinci-newton/math/Dimensions';
@@ -82,6 +83,10 @@ const newton = {
      * 
      */
     get CoordType() { return CoordType; },
+    /**
+     * 
+     */
+    get CoulombLaw3() { return CoulombLaw3; },
     /**
      * 
      */

@@ -68,7 +68,10 @@ function getVarName(index: number): string {
 const NUM_VARIABLES_PER_BODY = 13;
 
 /**
- * 
+ * <p>
+ * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+ * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
+ * </p>
  */
 export class Physics3 extends AbstractSubject implements Simulation, EnergySystem {
     public static readonly INDEX_TIME = 0;
@@ -138,7 +141,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     private totalEnergyLock_ = this.totalEnergy_.lock();
 
     /**
-     * 
+     * Constructs a Physics engine for 3D simulations.
      */
     constructor() {
         super();
@@ -268,15 +271,23 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
 
     /**
      * Handler for actions to be performed before the evaluate calls.
+     * The physics engine removes objects that were temporarily added to the simulation
+     * list but have expired.
      */
     prolog(): void {
         this.simList.removeTemporary(this.varsList.getTime());
     }
 
+    /**
+     * Gets the state vector, Y(t). 
+     */
     getState(): number[] {
         return this.varsList_.getValues();
     }
 
+    /**
+     * Sets the state vector, Y(t).
+     */
     setState(state: number[]): void {
         this.varsList.setValues(state, true);
     }
@@ -286,9 +297,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
      */
-    evaluate(vars: number[], change: number[], Δt: number, uomTime?: Unit): void {
+    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
         // Move objects so that rigid body objects know their current state.
-        this.updateBodies(vars);
+        this.updateBodies(state);
         const bodies = this.bodies_;
         const Nb = bodies.length;
         for (let bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -300,35 +311,35 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             const mass = body.M.a;
             if (mass === Number.POSITIVE_INFINITY) {
                 for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
-                    change[idx + k] = 0;  // infinite mass objects don't move
+                    rateOfChange[idx + k] = 0;  // infinite mass objects don't move
                 }
             }
             else {
                 // The rate of change of position is the velocity.
                 // dX/dt = V = P / M
                 const P = body.P;
-                change[idx + Physics3.OFFSET_POSITION_X] = P.x / mass;
-                change[idx + Physics3.OFFSET_POSITION_Y] = P.y / mass;
-                change[idx + Physics3.OFFSET_POSITION_Z] = P.z / mass;
+                rateOfChange[idx + Physics3.OFFSET_POSITION_X] = P.x / mass;
+                rateOfChange[idx + Physics3.OFFSET_POSITION_Y] = P.y / mass;
+                rateOfChange[idx + Physics3.OFFSET_POSITION_Z] = P.z / mass;
 
                 // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
                 // requiring the geometric product of Ω and R.
                 // Ω and R are auxiliary and primary variables that have already been computed.
                 const R = body.R;
                 const Ω = body.Ω;
-                change[idx + Physics3.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-                change[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
-                change[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
-                change[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+                rateOfChange[idx + Physics3.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+                rateOfChange[idx + Physics3.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+                rateOfChange[idx + Physics3.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+                rateOfChange[idx + Physics3.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
 
                 // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] = 0;
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] = 0;
-                change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] = 0;
+                rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] = 0;
+                rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] = 0;
+                rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] = 0;
 
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
-                change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+                rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+                rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
+                rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
             }
         }
         const forceLaws = this.forceLaws_;
@@ -339,17 +350,19 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
             const forces = forceLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                this.applyForce(change, forces[forceIndex], Δt, uomTime);
+                this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
             }
         }
-        change[this.varsList_.timeIndex()] = 1; // time variable
+        rateOfChange[this.varsList_.timeIndex()] = 1; // time variable
         return null;
     }
 
     /**
      * Applying forces gives rise to linear and angular momentum.
+     * @param rateOfChange The (output) rate of change of the state variables.
+     * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
-    private applyForce(change: number[], forceApp: Force3, Δt: number, uomTime?: Unit): void {
+    private applyForce(rateOfChange: number[], forceApp: Force3, Δt: number, uomTime?: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
@@ -367,9 +380,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         if (Unit.isOne(body.P.uom) && isZeroVectorE3(body.P)) {
             body.P.uom = Unit.mul(F.uom, uomTime);
         }
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
-        change[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] += F.z;
+        rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
+        rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
+        rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] += F.z;
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
@@ -379,9 +392,9 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         if (Unit.isOne(body.L.uom) && isZeroBivectorE3(body.L)) {
             body.L.uom = Unit.mul(T.uom, uomTime);
         }
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += T.yz;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += T.zx;
-        change[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] += T.xy;
+        rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += T.yz;
+        rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += T.zx;
+        rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_XY] += T.xy;
 
         if (this.showForces_) {
             forceApp.expireTime = this.varsList_.getTime();
@@ -433,7 +446,8 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     }
 
     /**
-     * Handler for actions to be performed after the evaluate calls.
+     * Handler for actions to be performed after the evaluate calls and setState.
+     * Computes the system energy, linear momentum and angular momentum.
      */
     epilog(): void {
         const varsList = this.varsList_;

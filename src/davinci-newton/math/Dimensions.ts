@@ -293,7 +293,7 @@ export class Dimensions {
      * @returns
      */
     toString(): string {
-        var stringify = function (rational: QQ, label: string): string {
+        const stringify = function (rational: QQ, label: string): string {
             if (rational.numer === 0) {
                 return null;
             } else if (rational.denom === 1) {

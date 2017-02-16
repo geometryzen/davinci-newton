@@ -14,20 +14,23 @@
 // limitations under the License.
 
 import AbstractSimObject from '../objects/AbstractSimObject';
+import Charged3 from './Charged3';
 import CoordType from '../model/CoordType';
 import Force from './Force3';
 import ForceLaw from './ForceLaw3';
 import Geometric3 from '../math/Geometric3';
-import Massive from './Massive3';
 
 /**
  * 
  */
-export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
+export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
     /**
-     * 
+     * The proportionality constant, Coulomb's constant.
+     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
+     * The default value is one (1).
      */
-    public G: Geometric3;
+    public k: Geometric3;
+
     private readonly F1: Force;
     private readonly F2: Force;
     private readonly forces: Force[] = [];
@@ -41,7 +44,7 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * 
      */
-    constructor(private body1_: Massive, private body2_: Massive, G = Geometric3.scalar(1)) {
+    constructor(private body1_: Charged3, private body2_: Charged3, k = Geometric3.scalar(1)) {
         super();
 
         this.F1 = new Force(this.body1_);
@@ -52,14 +55,14 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         this.F2.locationCoordType = CoordType.WORLD;
         this.F2.vectorCoordType = CoordType.WORLD;
 
-        this.G = G;
+        this.k = k;
 
         this.forces = [this.F1, this.F2];
     }
 
     /**
      * Computes the forces due to the gravitational interaction.
-     * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
+     * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
     updateForces(): Force[] {
         // We can use the F1.location and F2.location as temporary variables
@@ -67,10 +70,10 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         const numer = this.F1.location;
         const denom = this.F2.location;
 
-        // The direction of the force is computed such that masses always attract each other.
-        numer.copyVector(this.body2_.X).subVector(this.body1_.X);
+        // The direction of the force is computed such that like charges repel each other.
+        numer.copyVector(this.body1_.X).subVector(this.body2_.X);
         denom.copyVector(numer).quaditude();
-        numer.direction().mulByScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom);
+        numer.direction().mulByScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
 
         this.F1.vector.copyVector(numer).divByScalar(denom.a, denom.uom);
         this.F2.vector.copyVector(this.F1.vector).neg();
@@ -91,8 +94,8 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
 
     /**
      * Computes the potential energy of the gravitational interaction.
-     * U = -G m1 m2 / r, where
-     * r is the center-of-mass to center-of-mass separation of m1 and m2.
+     * U = k q1 q2 / r, where
+     * r is the center to center separation of m1 and m2.
      */
     potentialEnergy(): Geometric3 {
         // Unlock the variable that we will use for the result.
@@ -102,8 +105,8 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         // as long as we restore their contents.
         const numer = this.F1.location;
         const denom = this.F2.location;
-        // The numerator of the potential energy formula is -G * m1 * m2.
-        numer.copyScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom).neg();
+        // The numerator of the potential energy formula is k * m1 * m2.
+        numer.copyScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
         // The denominator is |r1 - r2|.
         denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude();
         // Combine the numerator and denominator.
@@ -119,4 +122,4 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
     }
 }
 
-export default GravitationLaw3;
+export default CoulombLaw3;

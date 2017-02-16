@@ -11,7 +11,7 @@ const SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
  */
 const patterns =
   [
-    [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F/m
+    [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F/m or C**2/N·m**2
     [-1, 1, -2, 1, 1, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // S or A/V
     [-1, 1, -2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F or C/V
     [-1, 1, +0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],  // C/kg
@@ -44,7 +44,8 @@ const patterns =
     [1, 1, 2, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V or W/A
     [1, 1, 2, 1, -1, 1, -2, 1, 0, 1, 0, 1, 0, 1],  // Ω or V/A
     [1, 1, 2, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1],   // H or Wb/A
-    [1, 1, 2, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1]   // Wb
+    [1, 1, 2, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // Wb
+    [1, 1, 3, 1, -2, 1, -2, 1, 0, 1, 0, 1, 0, 1]   // N·m**2/C**2
   ];
 
 /**
@@ -53,7 +54,7 @@ const patterns =
  */
 const decodes =
   [
-    ["F/m"],
+    ["F/m or C**2/N·m**2"],
     ["S or A/V"],
     ["F or C/V"],
     ["C/kg"],
@@ -86,7 +87,8 @@ const decodes =
     ["V or W/A"],
     ["Ω or V/A"],
     ["H or Wb/A"],
-    ["Wb"]
+    ["Wb"],
+    ["N·m**2/C**2"]
   ];
 
 const dumbString = function (multiplier: number, formatted: string, dimensions: Dimensions, labels: string[], compact: boolean) {
