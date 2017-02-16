@@ -173,8 +173,6 @@ function div(lhs: Unit, rhs: Unit): Unit {
   return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
 }
 
-const magicCode = Math.random();
-
 /**
  * <p>
  * The Unit class represents the units for a measure.
@@ -185,75 +183,71 @@ export class Unit {
    * Internal symbolic constant to improve code readability.
    * May be undefined or an instance of Unit.
    */
-  private static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI, magicCode);
+  private static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI, magicCode);
+  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI, magicCode);
+  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI, magicCode);
+  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly COULOMB = new Unit(1, Dimensions.CHARGE, SYMBOLS_SI, magicCode);
+  public static readonly COULOMB = new Unit(1, Dimensions.CHARGE, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly AMPERE = new Unit(1, Dimensions.CURRENT, SYMBOLS_SI, magicCode);
+  public static readonly AMPERE = new Unit(1, Dimensions.CURRENT, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly KELVIN = new Unit(1, Dimensions.TEMPERATURE, SYMBOLS_SI, magicCode);
+  public static readonly KELVIN = new Unit(1, Dimensions.TEMPERATURE, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT, SYMBOLS_SI, magicCode);
+  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT, SYMBOLS_SI);
 
   /**
    *
    */
-  public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI, magicCode);
+  public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI);
 
-  private static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI, magicCode);
-  private static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI, magicCode);
-  private static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI, magicCode);
-  private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI, magicCode);
-  private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI, magicCode);
-  private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI, magicCode);
-  private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI, magicCode);
-  private static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI, magicCode);
-  private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI, magicCode);
-  private static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI, magicCode);
-  private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI, magicCode);
-  private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI, magicCode);
-  private static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI, magicCode);
-  private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI, magicCode);
-  private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI, magicCode);
-  private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI, magicCode);
+  private static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
+  private static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
+  private static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
+  private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI);
+  private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI);
+  private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI);
+  private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI);
+  private static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
+  private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
+  private static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
+  private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
+  private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
+  private static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
+  private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
+  private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
+  private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
 
   /**
    * @param multiplier
    * @param dimensions
    * @param labels The label strings to use for each dimension.
-   * @param code The magic code
    */
-  private constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[], code: number) {
-    if (code !== magicCode) {
-      throw new Error("Use the static valueOf method instead of the constructor");
-    }
+  private constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[]) {
     if (labels.length !== 7) {
       throw new Error("Expecting 7 elements in the labels array.");
     }
@@ -668,8 +662,8 @@ export class Unit {
         }
       }
     }
-    console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
-    return new Unit(multiplier, dimensions, labels, magicCode);
+    // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
+    return new Unit(multiplier, dimensions, labels);
   }
 }
 

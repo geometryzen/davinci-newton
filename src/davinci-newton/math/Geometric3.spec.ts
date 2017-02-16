@@ -391,6 +391,96 @@ describe("Geometric3", function () {
         });
     });
 
+    describe("mulByBivector", function () {
+        it("(vector, bivector) should be same as vector.mul(bivector)", function () {
+            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(spinor, bivector) should be same as spinor.mul(bivector)", function () {
+            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(pseudo, bivector) should be same as pseudo.mul(bivector)", function () {
+            const lhs = Geometric3.pseudo(Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+    });
+
+    describe("mulByVector", function () {
+        it("(vector, vector) should be same as vector.mul(vector)", function () {
+            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(spinor, vector) should be same as spinor.mul(vector)", function () {
+            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(pseudo, vector) should be same as pseudo.mul(vector)", function () {
+            const lhs = Geometric3.pseudo(Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+    });
+
     describe("div", function () {
         it("1 / 1 should be 1", function () {
             const numer: Geometric3 = one.clone();

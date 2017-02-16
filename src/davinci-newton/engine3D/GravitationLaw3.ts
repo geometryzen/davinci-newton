@@ -69,10 +69,10 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
 
         numer.copyVector(this.body2_.X).subVector(this.body1_.X);
         denom.copyVector(numer).quaditude();
-        numer.direction().mul(this.G).mul(this.body1_.M).mul(this.body2_.M);
+        numer.direction().mulByScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom);
 
         this.F1.vector.copyVector(numer).divByScalar(denom.a, denom.uom);
-        this.F2.vector.copy(this.F1.vector).neg();
+        this.F2.vector.copyVector(this.F1.vector).neg();
 
         // Restore the contents of the location variables.
         this.F1.location.copyVector(this.body1_.X);
@@ -102,11 +102,11 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         const numer = this.F1.location;
         const denom = this.F2.location;
         // The numerator of the potential energy formula is -G * m1 * m2.
-        numer.copy(this.G).mul(this.body1_.M).mul(this.body2_.M).neg();
+        numer.copyScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom).neg();
         // The denominator is |r1 - r2|.
         denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude();
         // Combine the numerator and denominator.
-        this.potentialEnergy_.copy(numer).div(denom);
+        this.potentialEnergy_.copyScalar(numer.a, numer.uom).divByScalar(denom.a, denom.uom);
 
         // Restore the contents of the location variables.
         this.F1.location.copyVector(this.body1_.X);

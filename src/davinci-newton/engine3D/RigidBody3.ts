@@ -264,7 +264,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     rotationalEnergy(): Geometric3 {
         assertConsistentUnits('Ω', this.Ω, 'L', this.L);
         this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
-        this.rotationalEnergy_.copy(this.Ω).rev().scp(this.L).mulByNumber(0.5);
+        this.rotationalEnergy_.copyBivector(this.Ω).rev().scp(this.L).mulByNumber(0.5);
         this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
         return this.rotationalEnergy_;
     }
@@ -275,7 +275,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
     translationalEnergy(): Geometric3 {
         assertConsistentUnits('M', this.M, 'P', this.P);
         this.translationalEnergy_.unlock(this.translationalEnergyLock_);
-        this.translationalEnergy_.copy(this.P).mul(this.P).div(this.M).mulByNumber(0.5);
+        this.translationalEnergy_.copyVector(this.P).mulByVector(this.P).divByScalar(this.M.a, this.M.uom).mulByNumber(0.5);
         this.translationalEnergyLock_ = this.translationalEnergy_.lock();
         return this.translationalEnergy_;
     }
@@ -286,7 +286,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3 {
      */
     localPointToWorldPoint(localPoint: VectorE3, worldPoint: VectorE3): void {
         this.worldPoint_.copyVector(localPoint).subVector(this.centerOfMassLocal_);
-        this.worldPoint_.rotate(this.attitude_).add(this.position_);
+        this.worldPoint_.rotate(this.attitude_).addVector(this.position_);
         this.worldPoint_.writeVector(worldPoint);
     }
 

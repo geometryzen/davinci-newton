@@ -161,17 +161,17 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
 
         // Temporarily use the F2 vector property to compute the direction (unit vector).
-        this.F2.vector.copy(this.F2.location).sub(this.F1.location).direction();
+        this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction();
 
         // Use the the F1 vector property as working storage.
         // 1. Compute the extension.
-        this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude().sub(this.restLength);
+        this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude().subScalar(this.restLength);
         // 2. Multiply by the stiffness.
-        this.F1.vector.mul(this.stiffness);
+        this.F1.vector.mulByScalar(this.stiffness.a, this.stiffness.uom);
         // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
-        this.F1.vector.mul(this.F2.vector);
+        this.F1.vector.mulByVector(this.F2.vector);
         // 4. The F2 vector property is the reaction to the F1 vector action.
-        this.F2.vector.copy(this.F1.vector).neg();
+        this.F2.vector.copyVector(this.F1.vector).neg();
 
         /*
         if (this.damping_ !== 0) {
@@ -214,7 +214,7 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         // 3. Square it.
         this.potentialEnergy_.quaditude();
         // 4. Multiply by the stiffness.
-        this.potentialEnergy_.mul(this.stiffness);
+        this.potentialEnergy_.mulByScalar(this.stiffness.a, this.stiffness.uom);
         // 5. Multiply by the 0.5 factor.
         this.potentialEnergy_.mulByNumber(0.5);
 

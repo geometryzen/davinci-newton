@@ -33,7 +33,7 @@ export class Sphere3 extends RigidBody3 {
      */
     constructor(radius = Geometric3.one) {
         super();
-        this.radius_ = Geometric3.copy(radius);
+        this.radius_ = Geometric3.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
@@ -43,7 +43,7 @@ export class Sphere3 extends RigidBody3 {
     }
     set radius(radius: Geometric3) {
         this.radius_.unlock(this.radiusLock_);
-        this.radius_.copy(radius);
+        this.radius_.copyScalar(radius.a, radius.uom);
         this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
@@ -52,7 +52,12 @@ export class Sphere3 extends RigidBody3 {
      * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
      */
     public updateAngularVelocity(): void {
-        this.Ω.copy(this.radius_).quaditude().mul(this.M).mulByNumber(2 / 5).inv().mul(this.L);
+        this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
+        this.Ω.quaditude();
+        this.Ω.mulByScalar(this.M.a, this.M.uom);
+        this.Ω.mulByNumber(2 / 5);
+        this.Ω.inv();
+        this.Ω.mulByBivector(this.L);
     }
 
     /**

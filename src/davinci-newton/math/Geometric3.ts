@@ -165,8 +165,6 @@ function compatibleUnit(this: void, a: GeometricE3, b: GeometricE3): Unit {
  */
 const cosines: number[] = [];
 
-const magicCode = Math.random();
-
 /**
  * Sentinel value to indicate that the Geometric3 is not locked.
  * UNLOCKED is in the range -1 to 0.
@@ -202,12 +200,9 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     /**
      * Do not call this constructor. Use the static construction methods instead.
      */
-    constructor(coords: number[] = zero(), uom?: Unit, code?: number) {
+    constructor(coords: number[] = zero(), uom?: Unit) {
         if (coords.length !== 8) {
             throw new Error("coords.length must be 8");
-        }
-        if (isDefined(code) && code !== magicCode) {
-            throw new Error("Use the static creation methods instead of the constructor");
         }
         this.coords_ = coords;
         this.uom_ = uom;
@@ -1226,7 +1221,40 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
         }
     }
 
-    private mulByVector(v: VectorE3): Geometric3 {
+    public mulByBivector(B: BivectorE3): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mulByBivector(B));
+        }
+        else {
+            this.uom = Unit.mul(this.uom, B.uom);
+
+            const a0 = this.a;
+            const a1 = this.x;
+            const a2 = this.y;
+            const a3 = this.z;
+            const a4 = this.xy;
+            const a5 = this.yz;
+            const a6 = this.zx;
+            const a7 = this.b;
+
+            const b4 = B.xy;
+            const b5 = B.yz;
+            const b6 = B.zx;
+
+            this.a = - a4 * b4 - a5 * b5 - a6 * b6;
+            this.x = - a2 * b4 + a3 * b6 - a7 * b5;
+            this.y = + a1 * b4 - a3 * b5 - a7 * b6;
+            this.z = - a1 * b6 + a2 * b5 - a7 * b4;
+            this.xy = a0 * b4 - a5 * b6 + a6 * b5;
+            this.yz = a0 * b5 + a4 * b6 - a6 * b4;
+            this.zx = a0 * b6 - a4 * b5 + a5 * b4;
+            this.b = + a1 * b5 + a2 * b6 + a3 * b4;
+
+            return this;
+        }
+    }
+
+    public mulByVector(v: VectorE3): Geometric3 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByVector(v));
         }
@@ -1242,24 +1270,18 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
             const a6 = this.zx;
             const a7 = this.b;
 
-            const b0 = 0;
             const b1 = v.x;
             const b2 = v.y;
             const b3 = v.z;
-            const b4 = 0;
-            const b5 = 0;
-            const b6 = 0;
-            const b7 = 0;
 
-            // TODO: substitute a cheaper multiplication function.
-            this.a = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0);
-            this.x = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1);
-            this.y = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2);
-            this.z = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3);
-            this.xy = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4);
-            this.yz = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
-            this.zx = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
-            this.b = mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
+            this.a = a1 * b1 + a2 * b2 + a3 * b3;
+            this.x = a0 * b1 + a4 * b2 - a6 * b3;
+            this.y = a0 * b2 - a4 * b1 + a5 * b3;
+            this.z = a0 * b3 - a5 * b2 + a6 * b1;
+            this.xy = a1 * b2 - a2 * b1 + a7 * b3;
+            this.yz = a2 * b3 - a3 * b2 + a7 * b1;
+            this.zx = - a1 * b3 + a3 * b1 + a7 * b2;
+            this.b = a4 * b3 + a5 * b1 + a6 * b2;
 
             return this;
         }
@@ -1828,6 +1850,22 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
         }
     }
 
+    subScalar(M: Scalar, α = 1): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().subScalar(M, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = M.uom;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, M.uom);
+            }
+            this.a -= M.a * α;
+            return this;
+        }
+    }
+
     /**
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
@@ -2320,68 +2358,68 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * The identity element for addition, <b>0</b>.
      * The returned multivector is locked.
      */
-    public static readonly zero = lock(new Geometric3(zero(), void 0, magicCode));
+    public static readonly zero = lock(new Geometric3(zero(), void 0));
 
     /**
      * Constructs a Geometric3 representing the number one.
      * The identity element for multiplication, <b>1</b>.
      * The returned multivector is locked.
      */
-    public static readonly one = lock(new Geometric3(scalar(1), void 0, magicCode));
+    public static readonly one = lock(new Geometric3(scalar(1), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>x</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e1 = lock(new Geometric3(vector(1, 0, 0), void 0, magicCode));
+    public static readonly e1 = lock(new Geometric3(vector(1, 0, 0), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>y</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e2 = lock(new Geometric3(vector(0, 1, 0), void 0, magicCode));
+    public static readonly e2 = lock(new Geometric3(vector(0, 1, 0), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>z</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e3 = lock(new Geometric3(vector(0, 0, 1), void 0, magicCode));
+    public static readonly e3 = lock(new Geometric3(vector(0, 0, 1), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>β</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly I = lock(new Geometric3(pseudo(1), void 0, magicCode));
+    public static readonly I = lock(new Geometric3(pseudo(1), void 0));
 
     /**
      * SI base unit of length.
      * The meter is the length of the path travelled by light in vacuum during a time interval of 1 / 299 792 458 of a second.
      */
-    public static readonly meter = lock(new Geometric3(scalar(1), Unit.METER, magicCode));
+    public static readonly meter = lock(new Geometric3(scalar(1), Unit.METER));
 
     /**
      * SI base unit of mass.
      * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
      */
-    public static readonly kilogram = lock(new Geometric3(scalar(1), Unit.KILOGRAM, magicCode));
+    public static readonly kilogram = lock(new Geometric3(scalar(1), Unit.KILOGRAM));
 
     /**
      * SI base unit of time.
      * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
      */
-    public static readonly second = lock(new Geometric3(scalar(1), Unit.SECOND, magicCode));
+    public static readonly second = lock(new Geometric3(scalar(1), Unit.SECOND));
 
     /**
      * SI base unit of electric current.
      * The ampere is that constant current which, if maintained in two straight parallel conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum, would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
      */
-    public static readonly ampere = lock(new Geometric3(scalar(1), Unit.AMPERE, magicCode));
+    public static readonly ampere = lock(new Geometric3(scalar(1), Unit.AMPERE));
 
     /**
      * SI base unit of thermodynamic temperature.
      * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature of the triple point of water.
      */
-    public static readonly kelvin = lock(new Geometric3(scalar(1), Unit.KELVIN, magicCode));
+    public static readonly kelvin = lock(new Geometric3(scalar(1), Unit.KELVIN));
 
     /**
      * SI base unit of amount of substance.
@@ -2389,13 +2427,13 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * 
      * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
      */
-    public static readonly mole = lock(new Geometric3(scalar(1), Unit.MOLE, magicCode));
+    public static readonly mole = lock(new Geometric3(scalar(1), Unit.MOLE));
 
     /**
      * SI base unit of luminous intensity.
      * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
      */
-    public static readonly candela = lock(new Geometric3(scalar(1), Unit.CANDELA, magicCode));
+    public static readonly candela = lock(new Geometric3(scalar(1), Unit.CANDELA));
 
     /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.
@@ -2412,37 +2450,37 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @param mv The multivector to be copied.
      */
     static copy(mv: GeometricE3): Geometric3 {
-        return new Geometric3(coordinates(mv), mv.uom, magicCode);
+        return new Geometric3(coordinates(mv), mv.uom);
     }
 
     static dual(m: Geometric3): Geometric3 {
-        return new Geometric3(zero(), m.uom, magicCode).dual(m);
+        return new Geometric3(zero(), m.uom).dual(m);
     }
 
     static dualOfBivector(B: BivectorE3): Geometric3 {
-        return new Geometric3(vector(-B.yz, -B.zx, -B.xy), B.uom, magicCode);
+        return new Geometric3(vector(-B.yz, -B.zx, -B.xy), B.uom);
     }
 
     static dualOfVector(v: VectorE3): Geometric3 {
-        return new Geometric3(bivector(v.x, v.y, v.z), v.uom, magicCode);
+        return new Geometric3(bivector(v.x, v.y, v.z), v.uom);
     }
 
     static fromBivector(B: BivectorE3): Geometric3 {
-        return new Geometric3(bivector(B.yz, B.zx, B.xy), B.uom, magicCode);
+        return new Geometric3(bivector(B.yz, B.zx, B.xy), B.uom);
     }
 
     /**
      * @param alpha
      */
     static fromScalar(alpha: Scalar): Geometric3 {
-        return new Geometric3(scalar(alpha.a), alpha.uom, magicCode);
+        return new Geometric3(scalar(alpha.a), alpha.uom);
     }
 
     /**
      * @param s
      */
     static fromSpinor(R: SpinorE3): Geometric3 {
-        return new Geometric3(spinor(R.a, R.yz, R.zx, R.xy), R.uom, magicCode);
+        return new Geometric3(spinor(R.a, R.yz, R.zx, R.xy), R.uom);
     }
 
     /**
@@ -2450,7 +2488,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @returns
      */
     static fromVector(v: VectorE3): Geometric3 {
-        return new Geometric3(vector(v.x, v.y, v.z), v.uom, magicCode);
+        return new Geometric3(vector(v.x, v.y, v.z), v.uom);
     }
 
     /**
@@ -2461,6 +2499,10 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      */
     static lerp(A: GeometricE3, B: GeometricE3, α: number): Geometric3 {
         return Geometric3.copy(A).lerp(B, α);
+    }
+
+    static pseudo(b: number, uom?: Unit): Geometric3 {
+        return new Geometric3(pseudo(b), uom);
     }
 
     /**
@@ -2479,7 +2521,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
         const zx = randomRange(lowerBound, upperBound);
         const xy = randomRange(lowerBound, upperBound);
         const b = randomRange(lowerBound, upperBound);
-        return new Geometric3(multivector(a, x, y, z, yz, zx, xy, b), void 0, magicCode);
+        return new Geometric3(multivector(a, x, y, z, yz, zx, xy, b), void 0);
     }
 
     /**
@@ -2489,15 +2531,15 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @param b The <em>to</em> vector.
      */
     static rotorFromDirections(a: VectorE3, b: VectorE3): Geometric3 {
-        return new Geometric3(zero(), void 0, magicCode).rotorFromDirections(a, b);
+        return new Geometric3(zero(), void 0).rotorFromDirections(a, b);
     }
 
     static rotorFromFrameToFrame(es: VectorE3[], fs: VectorE3[]): Geometric3 {
-        return new Geometric3(zero(), void 0, magicCode).rotorFromFrameToFrame(es, fs);
+        return new Geometric3(zero(), void 0).rotorFromFrameToFrame(es, fs);
     }
 
     static rotorFromVectorToVector(a: VectorE3, b: VectorE3, B: BivectorE3): Geometric3 {
-        return new Geometric3(zero(), void 0, magicCode).rotorFromVectorToVector(a, b, B);
+        return new Geometric3(zero(), void 0).rotorFromVectorToVector(a, b, B);
     }
 
     /**
@@ -2506,7 +2548,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static scalar(a: number, uom?: Unit): Geometric3 {
-        return new Geometric3(scalar(a), uom, magicCode);
+        return new Geometric3(scalar(a), uom);
     }
 
     /**
@@ -2518,7 +2560,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static spinor(a: number, yz: number, zx: number, xy: number, uom?: Unit): Geometric3 {
-        return new Geometric3(spinor(a, yz, zx, xy), uom, magicCode);
+        return new Geometric3(spinor(a, yz, zx, xy), uom);
     }
 
     /**
@@ -2529,7 +2571,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static vector(x: number, y: number, z: number, uom?: Unit): Geometric3 {
-        return new Geometric3(vector(x, y, z), uom, magicCode);
+        return new Geometric3(vector(x, y, z), uom);
     }
 
     /**
