@@ -5,6 +5,7 @@ import detectDimensions from './detectDimensions';
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);
 const R2 = QQ.valueOf(2, 1);
+const R3 = QQ.valueOf(3, 1);
 const M1 = QQ.valueOf(-1, 1);
 const M2 = QQ.valueOf(-2, 1);
 
@@ -42,6 +43,10 @@ export class Dimensions {
      */
     public static readonly AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary.AREA);
     /**
+     * L<sup>3</sup>
+     */
+    public static readonly VOLUME = new Dimensions(R0, R3, R0, R0, R0, R0, R0, DimensionsSummary.VOLUME);
+    /**
      * Inverse Length.
      */
     public static readonly INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary.INV_LENGTH);
@@ -54,27 +59,27 @@ export class Dimensions {
     /**
      * Q<sup>1</sup>
      */
-    public static readonly CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary.CHARGE);
+    public static readonly ELECTRIC_CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary.ELECTRIC_CHARGE);
 
     /**
      * Q<sup>1</sup>T<sup>-1<sup>
      */
-    public static readonly CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary.CURRENT);
+    public static readonly ELECTRIC_CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary.ELECTRIC_CURRENT);
 
     /**
      *
      */
-    public static readonly TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary.TEMPERATURE);
+    public static readonly THERMODYNAMIC_TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary.THERMODYNAMIC_TEMPERATURE);
 
     /**
      *
      */
-    public static readonly AMOUNT = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary.AMOUNT);
+    public static readonly AMOUNT_OF_SUBSTANCE = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary.AMOUNT_OF_SUBSTANCE);
 
     /**
      *
      */
-    public static readonly INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary.INTENSITY);
+    public static readonly LUMINOUS_INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary.LUMINOUS_INTENSITY);
 
     /**
      * Angular Momentum.
@@ -457,16 +462,16 @@ export class Dimensions {
         // This function is optimized to minimize the need for object creation.
         const summary = detectDimensions(M, L, T, Q, temperature, amount, intensity);
         switch (summary) {
-            case DimensionsSummary.AMOUNT: return Dimensions.AMOUNT;
+            case DimensionsSummary.AMOUNT_OF_SUBSTANCE: return Dimensions.AMOUNT_OF_SUBSTANCE;
             case DimensionsSummary.ANGULAR_MOMENTUM: return Dimensions.ANGULAR_MOMENTUM;
             case DimensionsSummary.AREA: return Dimensions.AREA;
-            case DimensionsSummary.CHARGE: return Dimensions.CHARGE;
-            case DimensionsSummary.CURRENT: return Dimensions.CURRENT;
+            case DimensionsSummary.ELECTRIC_CHARGE: return Dimensions.ELECTRIC_CHARGE;
+            case DimensionsSummary.ELECTRIC_CURRENT: return Dimensions.ELECTRIC_CURRENT;
             case DimensionsSummary.ELECTRIC_FIELD: return Dimensions.ELECTRIC_FIELD;
             case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA;
             case DimensionsSummary.ENERGY_OR_TORQUE: return Dimensions.ENERGY_OR_TORQUE;
             case DimensionsSummary.FORCE: return Dimensions.FORCE;
-            case DimensionsSummary.INTENSITY: return Dimensions.INTENSITY;
+            case DimensionsSummary.LUMINOUS_INTENSITY: return Dimensions.LUMINOUS_INTENSITY;
             case DimensionsSummary.INV_LENGTH: return Dimensions.INV_LENGTH;
             case DimensionsSummary.INV_MASS: return Dimensions.INV_MASS;
             case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
@@ -479,7 +484,7 @@ export class Dimensions {
             case DimensionsSummary.ONE: return Dimensions.ONE;
             case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Dimensions.RATE_OF_CHANGE_OF_AREA;
             case DimensionsSummary.STIFFNESS: return Dimensions.STIFFNESS;
-            case DimensionsSummary.TEMPERATURE: return Dimensions.TEMPERATURE;
+            case DimensionsSummary.THERMODYNAMIC_TEMPERATURE: return Dimensions.THERMODYNAMIC_TEMPERATURE;
             case DimensionsSummary.TIME: return Dimensions.TIME;
             case DimensionsSummary.TIME_SQUARED: return Dimensions.TIME_SQUARED;
             case DimensionsSummary.VELOCITY: return Dimensions.VELOCITY;

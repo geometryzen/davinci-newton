@@ -16,6 +16,7 @@
         "src/davinci-newton/engine3D/Block3.spec.ts",
         "src/davinci-newton/engine3D/CoulombLaw3.spec.ts",
         "src/davinci-newton/engine3D/GravitationLaw3.spec.ts",
+        "src/davinci-newton/engine3D/Particle3.spec.ts",
         "src/davinci-newton/engine3D/Physics3.spec.ts",
         "src/davinci-newton/engine3D/RigidBody3.spec.ts",
         "src/davinci-newton/engine3D/Sphere3.spec.ts",

@@ -1,97 +1,97 @@
 import detectDims from './detectDimensions';
-// import Dimensions from './Dimensions';
 import DimensionsSummary from './DimensionsSummary';
 import QQ from './QQ';
 
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);
 const R2 = R1.add(R1);
+const R3 = R2.add(R1);
 const M1 = QQ.valueOf(-1, 1);
 const M2 = QQ.valueOf(-2, 1);
 
 describe("detectDims", function () {
-    it("Amount", function () {
-        expect(detectDims(R0, R0, R0, R0, R0, R1, R0)).toBe(DimensionsSummary.AMOUNT);
+    it("amount of substance", function () {
+        expect(detectDims(R0, R0, R0, R0, R0, R1, R0)).toBe(DimensionsSummary.AMOUNT_OF_SUBSTANCE);
     });
-    it("AngularMomentum", function () {
+    it("angular momentum", function () {
         expect(detectDims(R1, R2, M1, R0, R0, R0, R0)).toBe(DimensionsSummary.ANGULAR_MOMENTUM);
     });
-    it("Area", function () {
+    it("area", function () {
         expect(detectDims(R0, R2, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.AREA);
     });
-    it("Charge", function () {
-        expect(detectDims(R0, R0, R0, R1, R0, R0, R0)).toBe(DimensionsSummary.CHARGE);
+    it("electric charge", function () {
+        expect(detectDims(R0, R0, R0, R1, R0, R0, R0)).toBe(DimensionsSummary.ELECTRIC_CHARGE);
     });
-    it("Current", function () {
-        expect(detectDims(R0, R0, M1, R1, R0, R0, R0)).toBe(DimensionsSummary.CURRENT);
+    it("electric current", function () {
+        expect(detectDims(R0, R0, M1, R1, R0, R0, R0)).toBe(DimensionsSummary.ELECTRIC_CURRENT);
     });
-    it("Electric Field", function () {
+    it("electric field", function () {
         expect(detectDims(R1, R1, M2, M1, R0, R0, R0)).toBe(DimensionsSummary.ELECTRIC_FIELD);
     });
-    it("Electric Permittivity times Area", function () {
+    it("electric permittivity x area", function () {
         expect(detectDims(M1, M1, R2, R2, R0, R0, R0)).toBe(DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA);
     });
-    it("Energy", function () {
+    it("energy, work, quantity of heat", function () {
         expect(detectDims(R1, R2, M2, R0, R0, R0, R0)).toBe(DimensionsSummary.ENERGY_OR_TORQUE);
     });
-    it("Force", function () {
+    it("force", function () {
         expect(detectDims(R1, R1, M2, R0, R0, R0, R0)).toBe(DimensionsSummary.FORCE);
     });
-    it("Intensity", function () {
-        expect(detectDims(R0, R0, R0, R0, R0, R0, R1)).toBe(DimensionsSummary.INTENSITY);
+    it("luminous intensity", function () {
+        expect(detectDims(R0, R0, R0, R0, R0, R0, R1)).toBe(DimensionsSummary.LUMINOUS_INTENSITY);
     });
-    it("InverseLength", function () {
+    it("inverse length", function () {
         expect(detectDims(R0, M1, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.INV_LENGTH);
     });
-    it("InverseMass", function () {
+    it("inverse mass", function () {
         expect(detectDims(M1, R0, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.INV_MASS);
     });
-    it("InverseMomentOfInertia", function () {
+    it("inverse moment of inertia", function () {
         expect(detectDims(M1, M2, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.INV_MOMENT_OF_INERTIA);
     });
-    it("InverseTime", function () {
+    it("inverse time", function () {
         expect(detectDims(R0, R0, M1, R0, R0, R0, R0)).toBe(DimensionsSummary.INV_TIME);
     });
-    it("Length", function () {
+    it("length", function () {
         expect(detectDims(R0, R1, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.LENGTH);
     });
-    it("LengthSquared", function () {
-        expect(detectDims(R0, R2, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.AREA);
+    it("volume", function () {
+        expect(detectDims(R0, R3, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.VOLUME);
     });
-    it("Mass", function () {
+    it("mass", function () {
         expect(detectDims(R1, R0, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.MASS);
     });
-    it("MomentOfInertia", function () {
+    it("moment of inertia", function () {
         expect(detectDims(R1, R2, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.MOMENT_OF_INERTIA);
     });
-    it("Momentum", function () {
+    it("momentum", function () {
         expect(detectDims(R1, R1, M1, R0, R0, R0, R0)).toBe(DimensionsSummary.MOMENTUM);
     });
-    it("MomentumSquared", function () {
+    it("momentum squared", function () {
         expect(detectDims(R2, R2, M2, R0, R0, R0, R0)).toBe(DimensionsSummary.MOMENTUM_SQUARED);
     });
-    it("One", function () {
+    it("one", function () {
         expect(detectDims(R0, R0, R0, R0, R0, R0, R0)).toBe(DimensionsSummary.ONE);
     });
-    it("RateOfChangeOfArea", function () {
+    it("rate of change of area", function () {
         expect(detectDims(R0, R2, M1, R0, R0, R0, R0)).toBe(DimensionsSummary.RATE_OF_CHANGE_OF_AREA);
     });
-    it("Stiffness", function () {
+    it("stiffness", function () {
         expect(detectDims(R1, R0, M2, R0, R0, R0, R0)).toBe(DimensionsSummary.STIFFNESS);
     });
-    it("Temperature", function () {
-        expect(detectDims(R0, R0, R0, R0, R1, R0, R0)).toBe(DimensionsSummary.TEMPERATURE);
+    it("theromdynamic temperature", function () {
+        expect(detectDims(R0, R0, R0, R0, R1, R0, R0)).toBe(DimensionsSummary.THERMODYNAMIC_TEMPERATURE);
     });
-    it("Time", function () {
+    it("time", function () {
         expect(detectDims(R0, R0, R1, R0, R0, R0, R0)).toBe(DimensionsSummary.TIME);
     });
-    it("TimeSquared", function () {
+    it("time squared", function () {
         expect(detectDims(R0, R0, R2, R0, R0, R0, R0)).toBe(DimensionsSummary.TIME_SQUARED);
     });
-    it("Velocity", function () {
+    it("velocity", function () {
         expect(detectDims(R0, R1, M1, R0, R0, R0, R0)).toBe(DimensionsSummary.VELOCITY);
     });
-    it("Velocity Squared", function () {
+    it("velocity squared", function () {
         expect(detectDims(R0, R2, M2, R0, R0, R0, R0)).toBe(DimensionsSummary.VELOCITY_SQUARED);
     });
 });

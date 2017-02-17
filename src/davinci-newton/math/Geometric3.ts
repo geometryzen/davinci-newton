@@ -144,23 +144,6 @@ function lock(m: Geometric3): Geometric3 {
 }
 
 /**
- * 
- */
-function compatibleUnit(this: void, a: GeometricE3, b: GeometricE3): Unit {
-    if (Unit.isCompatible(a.uom, b.uom)) {
-        return Unit.compatible(a.uom, b.uom);
-    }
-    else {
-        try {
-            return Unit.compatible(a.uom, b.uom);
-        }
-        catch (e) {
-            throw new Error(`${Geometric3.copy(a)} and ${Geometric3.copy(b)} must have compatible units of measure. Cause: ${e}`);
-        }
-    }
-}
-
-/**
  * Scratch variable for holding cosines.
  */
 const cosines: number[] = [];
@@ -435,7 +418,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 this.zx += M.zx * α;
                 this.xy += M.xy * α;
                 this.b += M.b * α;
-                this.uom = compatibleUnit(this, M);
+                this.uom = Unit.compatible(this.uom, M.uom);
                 return this;
             }
         }
@@ -456,7 +439,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
             this.uom = a.uom;
         }
         else {
-            this.uom = compatibleUnit(a, b);
+            this.uom = Unit.compatible(a.uom, b.uom);
         }
         this.a = a.a + b.a;
         this.x = a.x + b.x;
@@ -1134,7 +1117,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 // Fall through.
             }
             else {
-                this.uom = compatibleUnit(this, target);
+                this.uom = Unit.compatible(this.uom, target.uom);
             }
             this.a += (target.a - this.a) * α;
             this.x += (target.x - this.x) * α;
@@ -1867,7 +1850,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
                 return this;
             }
             else {
-                this.uom = compatibleUnit(this, M);
+                this.uom = Unit.compatible(this.uom, M.uom);
             }
             this.a -= M.a * α;
             this.x -= M.x * α;
@@ -1963,7 +1946,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
             this.zx = a.zx - b.zx;
             this.xy = a.xy - b.xy;
             this.b = a.b - b.b;
-            this.uom = compatibleUnit(a, b);
+            this.uom = Unit.compatible(a.uom, b.uom);
         }
         return this;
     }
@@ -2465,6 +2448,21 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
      */
     public static readonly candela = lock(new Geometric3(scalar(1), Unit.CANDELA));
+
+    /**
+     * SI derived unit of electric charge, quantity of electricity.
+     */
+    public static readonly coulomb = lock(new Geometric3(scalar(1), Unit.COULOMB));
+
+    /**
+     * SI derived unit of force.
+     */
+    public static readonly newton = lock(new Geometric3(scalar(1), Unit.NEWTON));
+
+    /**
+     * SI derived unit of energy, work, quantity of heat.
+     */
+    public static readonly joule = lock(new Geometric3(scalar(1), Unit.JOULE));
 
     /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.

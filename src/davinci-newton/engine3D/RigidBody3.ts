@@ -48,6 +48,15 @@ function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: G
     }
 }
 
+function mustBeDimensionlessOrCorrectUnits(name: string, value: Geometric3, unit: Unit): Geometric3 {
+    if (!Unit.isOne(value.uom) && !Unit.isCompatible(value.uom, unit)) {
+        throw new Error(`${name} unit of measure, ${value.uom}, must be compatible with ${unit}`);
+    }
+    else {
+        return value;
+    }
+}
+
 /**
  * 
  */
@@ -139,11 +148,13 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
 
     /**
      * Mass (scalar). Default is one (1).
+     * If dimensioned units are used, they must be compatible with the unit of mass.
      */
     get M(): Geometric3 {
         return this.mass_;
     }
     set M(M: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM);
         this.mass_.unlock(this.massLock_);
         this.mass_.copy(M);
         this.massLock_ = this.mass_.lock();
@@ -152,11 +163,13 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
 
     /**
      * Charge (scalar). Default is zero (0).
+     * If dimensioned units are used, they must be compatible with the unit of electric charge.
      */
     get Q(): Geometric3 {
         return this.charge_;
     }
     set Q(Q: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB);
         this.charge_.unlock(this.chargeLock_);
         this.charge_.copy(Q);
         this.chargeLock_ = this.charge_.lock();
@@ -219,11 +232,13 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
 
     /**
      * Position (vector).
+     * If dimensioned units are used, they must be compatible with the unit of length.
      */
     get X(): Geometric3 {
         return this.position_;
     }
     set X(position: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER);
         this.position_.copy(position);
     }
 
@@ -235,26 +250,31 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
         return this.attitude_;
     }
     set R(attitude: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE);
         this.attitude_.copy(attitude);
     }
 
     /**
      * Linear momentum (vector).
+     * If dimensioned units are used, they must be compatible with the unit of momentum.
      */
     get P(): Geometric3 {
         return this.linearMomentum_;
     }
     set P(momentum: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND);
         this.linearMomentum_.copy(momentum);
     }
 
     /**
      * Angular momentum (bivector) in world coordinates.
+     * If dimensioned units are used, they must be compatible with the unit of angular momentum.
      */
     get L(): Geometric3 {
         return this.angularMomentum_;
     }
     set L(angularMomentum: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND);
         this.angularMomentum_.copy(angularMomentum);
     }
 

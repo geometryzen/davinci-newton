@@ -52,6 +52,11 @@ const patterns =
 /**
  * The string literals for the patterns.
  * The convention is to write the unit compactly (without whitespace).
+ * TODO: Would be nice to separate...
+ * Name (same as the variable name)
+ * Symbol
+ * Expression in terms of other SI units
+ * Expression in terms of SI base units.
  */
 const decodes =
   [
@@ -187,60 +192,90 @@ export class Unit {
    * Internal symbolic constant to improve code readability.
    * May be undefined or an instance of Unit.
    */
-  private static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
+  public static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of mass.
+   * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
    */
   public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of length.
+   * The meter is the length of the path travelled by light in vacuum during a time interval of 1/299 792 458 of a second.
    */
   public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of time.
+   * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
    */
   public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of electric charge.
+   * 
    */
-  public static readonly COULOMB = new Unit(1, Dimensions.CHARGE, SYMBOLS_SI);
+  public static readonly COULOMB = new Unit(1, Dimensions.ELECTRIC_CHARGE, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of electric current.
+   * The ampere is that constant current which,
+   * if maintained in two straight parallel conductors of infinite length,
+   * of negligible circular cross-section,
+   * and placed 1 meter apart in vacuum,
+   * would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
    */
-  public static readonly AMPERE = new Unit(1, Dimensions.CURRENT, SYMBOLS_SI);
+  public static readonly AMPERE = new Unit(1, Dimensions.ELECTRIC_CURRENT, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of thermodynamic temperature.
+   * The kelvin, unit of thermodynamic temperature, is the fraction 1/273.16 of the thermodynamic temperature of the triple point of water.
    */
-  public static readonly KELVIN = new Unit(1, Dimensions.TEMPERATURE, SYMBOLS_SI);
+  public static readonly KELVIN = new Unit(1, Dimensions.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of amount of substance.
+   * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+   * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
    */
-  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT, SYMBOLS_SI);
+  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
 
   /**
-   *
+   * Unit of luminous intensity.
+   * The candela is the luminous intensity, in a given direction,
+   * of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1/683 watt per steradian.
    */
-  public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI);
+  public static readonly CANDELA = new Unit(1, Dimensions.LUMINOUS_INTENSITY, SYMBOLS_SI);
 
   private static readonly COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
   private static readonly ELECTRIC_FIELD = new Unit(1, Dimensions.ELECTRIC_FIELD, SYMBOLS_SI);
-  private static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
-  private static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
-  private static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
+
+  /**
+   * 
+   */
+  public static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
+
+  /**
+   * 
+   */
+  public static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
+
+  /**
+   * The unit of angular momentum.
+   */
+  public static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
   private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI);
+  private static readonly METER_CUBED = new Unit(1, Dimensions.VOLUME, SYMBOLS_SI);
   private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI);
   private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI);
   private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI);
   private static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
   private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
-  private static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
+  /**
+   * The unit of momentum.
+   */
+  public static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
   private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
   private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
   private static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
@@ -638,16 +673,16 @@ export class Unit {
     // The summary on the dimensions is used to improve lookup time.
     if (multiplier === 1) {
       switch (dimensions.summary) {
-        case DimensionsSummary.AMOUNT: return Unit.MOLE;
+        case DimensionsSummary.AMOUNT_OF_SUBSTANCE: return Unit.MOLE;
         case DimensionsSummary.ANGULAR_MOMENTUM: return Unit.JOULE_SECOND;
         case DimensionsSummary.AREA: return Unit.METER_SQUARED;
-        case DimensionsSummary.CHARGE: return Unit.COULOMB;
-        case DimensionsSummary.CURRENT: return Unit.AMPERE;
+        case DimensionsSummary.ELECTRIC_CHARGE: return Unit.COULOMB;
+        case DimensionsSummary.ELECTRIC_CURRENT: return Unit.AMPERE;
         case DimensionsSummary.ELECTRIC_FIELD: return Unit.ELECTRIC_FIELD;
         case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
         case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
         case DimensionsSummary.FORCE: return Unit.NEWTON;
-        case DimensionsSummary.INTENSITY: return Unit.CANDELA;
+        case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
         case DimensionsSummary.INV_LENGTH: return Unit.INV_METER;
         case DimensionsSummary.INV_MASS: return Unit.INV_KILOGRAM;
         case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
@@ -660,11 +695,12 @@ export class Unit {
         case DimensionsSummary.ONE: return Unit.ONE;
         case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Unit.METER_SQUARED_PER_SECOND;
         case DimensionsSummary.STIFFNESS: return Unit.STIFFNESS;
-        case DimensionsSummary.TEMPERATURE: return Unit.KELVIN;
+        case DimensionsSummary.THERMODYNAMIC_TEMPERATURE: return Unit.KELVIN;
         case DimensionsSummary.TIME: return Unit.SECOND;
         case DimensionsSummary.TIME_SQUARED: return Unit.SECOND_SQUARED;
         case DimensionsSummary.VELOCITY: return Unit.METER_PER_SECOND;
         case DimensionsSummary.VELOCITY_SQUARED: return Unit.METER_SQUARED_PER_SECOND_SQUARED;
+        case DimensionsSummary.VOLUME: return Unit.METER_CUBED;
         default: {
           // Do nothing.
         }

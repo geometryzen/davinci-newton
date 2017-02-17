@@ -26,6 +26,7 @@ import Matrix3 from './davinci-newton/math/Matrix3';
 import ModifiedEuler from './davinci-newton/solvers/ModifiedEuler';
 import QQ from './davinci-newton/math/QQ';
 import RigidBody3 from './davinci-newton/engine3D/RigidBody3';
+import Particle3 from './davinci-newton/engine3D/Particle3';
 import Physics3 from './davinci-newton/engine3D/Physics3';
 import RungeKutta from './davinci-newton/solvers/RungeKutta';
 import SimView from './davinci-newton/view/SimView';
@@ -151,6 +152,10 @@ const newton = {
      * 
      */
     get QQ() { return QQ; },
+    /**
+     * 
+     */
+    get Particle3() { return Particle3; },
     /**
      * 
      */

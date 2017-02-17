@@ -140,7 +140,7 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                 if (amount.denom === 1) {
                                                     if (intensity.numer === 0) {
                                                         if (intensity.denom === 1) {
-                                                            return DimensionsSummary.CURRENT;
+                                                            return DimensionsSummary.ELECTRIC_CURRENT;
                                                         }
                                                     }
                                                 }
@@ -166,7 +166,7 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                     }
                                                     else if (intensity.numer === 1) {
                                                         if (intensity.denom === 1) {
-                                                            return DimensionsSummary.INTENSITY;
+                                                            return DimensionsSummary.LUMINOUS_INTENSITY;
                                                         }
                                                     }
                                                 }
@@ -175,7 +175,7 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                 if (amount.denom === 1) {
                                                     if (intensity.numer === 0) {
                                                         if (intensity.denom === 1) {
-                                                            return DimensionsSummary.AMOUNT;
+                                                            return DimensionsSummary.AMOUNT_OF_SUBSTANCE;
                                                         }
                                                     }
                                                 }
@@ -189,7 +189,7 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                 if (amount.denom === 1) {
                                                     if (intensity.numer === 0) {
                                                         if (intensity.denom === 1) {
-                                                            return DimensionsSummary.TEMPERATURE;
+                                                            return DimensionsSummary.THERMODYNAMIC_TEMPERATURE;
                                                         }
                                                     }
                                                 }
@@ -206,7 +206,7 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                 if (amount.denom === 1) {
                                                     if (intensity.numer === 0) {
                                                         if (intensity.denom === 1) {
-                                                            return DimensionsSummary.CHARGE;
+                                                            return DimensionsSummary.ELECTRIC_CHARGE;
                                                         }
                                                     }
                                                 }
@@ -362,6 +362,31 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                                                     if (intensity.numer === 0) {
                                                         if (intensity.denom === 1) {
                                                             return DimensionsSummary.AREA;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (L.numer === 3) {
+                if (L.denom === 1) {
+                    if (T.numer === 0) {
+                        if (T.denom === 1) {
+                            if (Q.numer === 0) {
+                                if (Q.denom === 1) {
+                                    if (temperature.numer === 0) {
+                                        if (temperature.denom === 1) {
+                                            if (amount.numer === 0) {
+                                                if (amount.denom === 1) {
+                                                    if (intensity.numer === 0) {
+                                                        if (intensity.denom === 1) {
+                                                            return DimensionsSummary.VOLUME;
                                                         }
                                                     }
                                                 }

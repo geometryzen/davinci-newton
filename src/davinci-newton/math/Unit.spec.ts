@@ -2,9 +2,11 @@ import { Dimensions } from './Dimensions';
 import { QQ } from './QQ';
 import { Unit } from './Unit';
 
+const Neg1 = QQ.valueOf(-1, 1);
 const Rat0 = QQ.valueOf(0, 1);
 const Rat1 = QQ.valueOf(1, 1);
 const Rat2 = QQ.valueOf(2, 1);
+const Rat3 = QQ.valueOf(3, 1);
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;
@@ -99,9 +101,13 @@ describe("Unit", function () {
     it("pow by number", function () {
         const meter = Unit.valueOf(1, Dimensions.valueOf(Rat0, Rat1, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         const square = Unit.pow(meter, Rat2);
+        const cube = Unit.pow(meter, Rat3);
+        const inverse = Unit.pow(meter, Neg1);
         // const radian = Unit.valueOf(1, Dimensions.valueOf(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
         expect(meter.toString(void 0, true)).toBe("m");
         expect(square.toString(void 0, true)).toBe("m**2");
+        expect(cube.toString(void 0, true)).toBe("m**3");
+        expect(inverse.toString(void 0, true)).toBe("m**-1");
     });
     it("inverse", function () {
         // const dimensionless = Unit.valueOf(1234, Dimensions.valueOf(Rat0, Rat0, Rat0, Rat0, Rat0, Rat0, Rat0), symbols);
@@ -113,6 +119,12 @@ describe("Unit", function () {
         expect(Unit.inv(KELVIN).toString(void 0, true)).toBe("K**-1");
         expect(Unit.inv(MOLE).toString(void 0, true)).toBe("mol**-1");
         expect(Unit.inv(CANDELA).toString(void 0, true)).toBe("cd**-1");
+    });
+    it("area", function () {
+        expect(METER.mul(METER).toString(10, true)).toBe("m**2");
+    });
+    it("volumn", function () {
+        expect(METER.mul(METER).mul(METER).toString(10, true)).toBe("m**3");
     });
     it("electric current", function () {
         expect(AMPERE.toString(10, true)).toBe("A");
