@@ -944,8 +944,8 @@ describe("Geometric3", function () {
             expect(V.xy).toBe(0);
         });
         it("(random, random) should be rotor that rotates a to b", function () {
-            const a = Geometric3.random().grade(1).direction();
-            const b = Geometric3.random().grade(1).direction();
+            const a = Geometric3.random().grade(1).direction(true);
+            const b = Geometric3.random().grade(1).direction(true);
             const R = Geometric3.rotorFromDirections(a, b);
             const V = a.clone().rotate(R);
             expect(V.a).toBe(0);
@@ -1012,7 +1012,7 @@ describe("Geometric3", function () {
         });
         describe("(n)", function () {
             const S = Geometric3.random();
-            const n = Geometric3.random().grade(1).direction();
+            const n = Geometric3.random().grade(1).direction(true);
             /**
              * The 'Test' result using the specialized method.
              */

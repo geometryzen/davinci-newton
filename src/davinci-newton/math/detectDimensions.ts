@@ -32,6 +32,31 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                     }
                 }
             }
+            else if (L.numer === -1) {
+                if (L.denom === 1) {
+                    if (T.numer === 2) {
+                        if (T.denom === 1) {
+                            if (Q.numer === 2) {
+                                if (Q.denom === 1) {
+                                    if (temperature.numer === 0) {
+                                        if (temperature.denom === 1) {
+                                            if (amount.numer === 0) {
+                                                if (amount.denom === 1) {
+                                                    if (intensity.numer === 0) {
+                                                        if (intensity.denom === 1) {
+                                                            return DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             else if (L.numer === 0) {
                 if (L.denom === 1) {
                     if (T.numer === 0) {
@@ -61,7 +86,32 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
     }
     else if (M.numer === 0) {
         if (M.denom === 1) {
-            if (L.numer === 0) {
+            if (L.numer === -1) {
+                if (L.denom === 1) {
+                    if (T.numer === 0) {
+                        if (T.denom === 1) {
+                            if (Q.numer === 0) {
+                                if (Q.denom === 1) {
+                                    if (temperature.numer === 0) {
+                                        if (temperature.denom === 1) {
+                                            if (amount.numer === 0) {
+                                                if (amount.denom === 1) {
+                                                    if (intensity.numer === 0) {
+                                                        if (intensity.denom === 1) {
+                                                            return DimensionsSummary.INV_LENGTH;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (L.numer === 0) {
                 if (L.denom === 1) {
                     if (T.numer === -1) {
                         if (T.denom === 1) {
@@ -378,7 +428,24 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
                 if (L.denom === 1) {
                     if (T.numer === -2) {
                         if (T.denom === 1) {
-                            if (Q.numer === 0) {
+                            if (Q.numer === -1) {
+                                if (Q.denom === 1) {
+                                    if (temperature.numer === 0) {
+                                        if (temperature.denom === 1) {
+                                            if (amount.numer === 0) {
+                                                if (amount.denom === 1) {
+                                                    if (intensity.numer === 0) {
+                                                        if (intensity.denom === 1) {
+                                                            return DimensionsSummary.ELECTRIC_FIELD;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (Q.numer === 0) {
                                 if (Q.denom === 1) {
                                     if (temperature.numer === 0) {
                                         if (temperature.denom === 1) {
@@ -518,5 +585,5 @@ export default function detectDimensions(M: QQ, L: QQ, T: QQ, Q: QQ, temperature
             }
         }
     }
-    return DimensionsSummary.Unknown;
+    return void 0;
 }

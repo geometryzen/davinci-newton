@@ -87,6 +87,16 @@ export class Dimensions {
     public static readonly RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary.RATE_OF_CHANGE_OF_AREA);
 
     /**
+     * Electric Field.
+     */
+    public static readonly ELECTRIC_FIELD = new Dimensions(R1, R1, M2, M1, R0, R0, R0, DimensionsSummary.ELECTRIC_FIELD);
+
+    /**
+     * Electric Permittivity times Area.
+     */
+    public static readonly ELECTRIC_PERMITTIVITY_TIMES_AREA = new Dimensions(M1, M1, R2, R2, R0, R0, R0, DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA);
+
+    /**
      * Energy or Torque.
      */
     public static readonly ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary.ENERGY_OR_TORQUE);
@@ -188,7 +198,7 @@ export class Dimensions {
      * @returns
      */
     compatible(rhs: Dimensions): Dimensions {
-        if (this.summary_ !== DimensionsSummary.Unknown && this.summary_ === rhs.summary_) {
+        if (typeof this.summary_ === 'number' && this.summary_ === rhs.summary_) {
             return this;
         }
         else if (this.M.equals(rhs.M) && this.L.equals(rhs.L) && this.T.equals(rhs.T) && this.Q.equals(rhs.Q) && this.temperature.equals(rhs.temperature) && this.amount.equals(rhs.amount) && this.intensity.equals(rhs.intensity)) {
@@ -447,24 +457,37 @@ export class Dimensions {
         // This function is optimized to minimize the need for object creation.
         const summary = detectDimensions(M, L, T, Q, temperature, amount, intensity);
         switch (summary) {
+            case DimensionsSummary.AMOUNT: return Dimensions.AMOUNT;
             case DimensionsSummary.ANGULAR_MOMENTUM: return Dimensions.ANGULAR_MOMENTUM;
             case DimensionsSummary.AREA: return Dimensions.AREA;
+            case DimensionsSummary.CHARGE: return Dimensions.CHARGE;
+            case DimensionsSummary.CURRENT: return Dimensions.CURRENT;
+            case DimensionsSummary.ELECTRIC_FIELD: return Dimensions.ELECTRIC_FIELD;
+            case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA;
             case DimensionsSummary.ENERGY_OR_TORQUE: return Dimensions.ENERGY_OR_TORQUE;
             case DimensionsSummary.FORCE: return Dimensions.FORCE;
-            case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
+            case DimensionsSummary.INTENSITY: return Dimensions.INTENSITY;
+            case DimensionsSummary.INV_LENGTH: return Dimensions.INV_LENGTH;
             case DimensionsSummary.INV_MASS: return Dimensions.INV_MASS;
+            case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
             case DimensionsSummary.INV_TIME: return Dimensions.INV_TIME;
             case DimensionsSummary.LENGTH: return Dimensions.LENGTH;
+            case DimensionsSummary.MASS: return Dimensions.MASS;
+            case DimensionsSummary.MOMENT_OF_INERTIA: return Dimensions.MOMENT_OF_INERTIA;
             case DimensionsSummary.MOMENTUM: return Dimensions.MOMENTUM;
             case DimensionsSummary.MOMENTUM_SQUARED: return Dimensions.MOMENTUM_SQUARED;
-            case DimensionsSummary.MOMENT_OF_INERTIA: return Dimensions.MOMENT_OF_INERTIA;
             case DimensionsSummary.ONE: return Dimensions.ONE;
             case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Dimensions.RATE_OF_CHANGE_OF_AREA;
             case DimensionsSummary.STIFFNESS: return Dimensions.STIFFNESS;
+            case DimensionsSummary.TEMPERATURE: return Dimensions.TEMPERATURE;
+            case DimensionsSummary.TIME: return Dimensions.TIME;
             case DimensionsSummary.TIME_SQUARED: return Dimensions.TIME_SQUARED;
             case DimensionsSummary.VELOCITY: return Dimensions.VELOCITY;
             case DimensionsSummary.VELOCITY_SQUARED: return Dimensions.VELOCITY_SQUARED;
-            default: return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+            default: {
+                // console.warn(`Dimensions.valueOf(${M},${L},${T},${Q},${temperature},${amount},${intensity}) is not cached.`);
+                return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+            }
         }
     }
 }

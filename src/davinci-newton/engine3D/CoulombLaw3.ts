@@ -72,8 +72,8 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
 
         // The direction of the force is computed such that like charges repel each other.
         numer.copyVector(this.body1_.X).subVector(this.body2_.X);
-        denom.copyVector(numer).quaditude();
-        numer.direction().mulByScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
+        denom.copyVector(numer).quaditude(true);
+        numer.direction(true).mulByScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
 
         this.F1.vector.copyVector(numer).divByScalar(denom.a, denom.uom);
         this.F2.vector.copyVector(this.F1.vector).neg();
@@ -108,7 +108,7 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         // The numerator of the potential energy formula is k * m1 * m2.
         numer.copyScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
         // The denominator is |r1 - r2|.
-        denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude();
+        denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude(true);
         // Combine the numerator and denominator.
         this.potentialEnergy_.copyScalar(numer.a, numer.uom).divByScalar(denom.a, denom.uom);
 

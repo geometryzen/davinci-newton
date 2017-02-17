@@ -22,7 +22,7 @@ interface MutableSpinor extends Spinor {
     versor(a: Vector, b: Vector): MutableSpinor;
     addScalar(α: number, uom?: Unit): MutableSpinor;
     divByScalar(α: number, uom?: Unit): MutableSpinor;
-    direction(): MutableSpinor;
+    direction(mutate: boolean): MutableSpinor;
     one(): MutableSpinor;
     rotorFromGeneratorAngle(B: Bivector, θ: number): MutableSpinor;
     zero(): MutableSpinor;
@@ -212,7 +212,7 @@ export default function rotorFromDirectionsE3(a: Vector, b: Vector, B: Bivector,
             m.yz = wedgeYZ(rx, ry, rz, a.x, a.y, a.z);
             m.zx = wedgeZX(rx, ry, rz, a.x, a.y, a.z);
             m.xy = wedgeXY(rx, ry, rz, a.x, a.y, a.z);
-            m.direction();
+            m.direction(true);
             m.rotorFromGeneratorAngle(m, Math.PI);
         }
     }

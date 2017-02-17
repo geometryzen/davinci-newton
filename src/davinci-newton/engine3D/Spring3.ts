@@ -161,11 +161,11 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
 
         // Temporarily use the F2 vector property to compute the direction (unit vector).
-        this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction();
+        this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
 
         // Use the the F1 vector property as working storage.
         // 1. Compute the extension.
-        this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude().subScalar(this.restLength);
+        this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude(true).subScalar(this.restLength);
         // 2. Multiply by the stiffness.
         this.F1.vector.mulByScalar(this.stiffness.a, this.stiffness.uom);
         // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
@@ -207,12 +207,12 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
 
         // 1. Compute the magnitude of the distance between the endpoints.
         assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
-        this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude();
+        this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude(true);
         // 2. Compute the stretch.
         assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
         this.potentialEnergy_.sub(this.restLength);
         // 3. Square it.
-        this.potentialEnergy_.quaditude();
+        this.potentialEnergy_.quaditude(true);
         // 4. Multiply by the stiffness.
         this.potentialEnergy_.mulByScalar(this.stiffness.a, this.stiffness.uom);
         // 5. Multiply by the 0.5 factor.

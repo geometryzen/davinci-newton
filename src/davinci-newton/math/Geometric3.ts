@@ -728,26 +728,37 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     }
 
     /**
+     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
      * @returns this / magnitude(this)
      */
-    direction(): Geometric3 {
+    direction(mutate: boolean): Geometric3 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().direction());
+            if (!mutate) {
+                return lock(this.clone().direction(true));
+            }
+            else {
+                throw new Error("Unable to mutate this locked Geometric3.");
+            }
         }
         else {
-            const norm: number = this.magnitudeSansUnits();
-            if (norm !== 0) {
-                this.a = this.a / norm;
-                this.x = this.x / norm;
-                this.y = this.y / norm;
-                this.z = this.z / norm;
-                this.yz = this.yz / norm;
-                this.zx = this.zx / norm;
-                this.xy = this.xy / norm;
-                this.b = this.b / norm;
+            if (mutate) {
+                const norm: number = this.magnitudeSansUnits();
+                if (norm !== 0) {
+                    this.a = this.a / norm;
+                    this.x = this.x / norm;
+                    this.y = this.y / norm;
+                    this.z = this.z / norm;
+                    this.yz = this.yz / norm;
+                    this.zx = this.zx / norm;
+                    this.xy = this.xy / norm;
+                    this.b = this.b / norm;
+                }
+                this.uom = void 0;
+                return this;
             }
-            this.uom = void 0;
-            return this;
+            else {
+                return lock(this.clone().direction(true));
+            }
         }
     }
 
@@ -1182,21 +1193,31 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(): Geometric3 {
+    magnitude(mutate: boolean): Geometric3 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().magnitude());
+            if (!mutate) {
+                return lock(this.clone().magnitude(true));
+            }
+            else {
+                throw new Error("Unable to mutate this locked Geometric3.");
+            }
         }
         else {
-            this.a = Math.sqrt(this.squaredNormSansUnits());
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.xy = 0;
-            this.yz = 0;
-            this.zx = 0;
-            this.b = 0;
-            // The unit of measure is unchanged.
-            return this;
+            if (mutate) {
+                this.a = Math.sqrt(this.squaredNormSansUnits());
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.xy = 0;
+                this.yz = 0;
+                this.zx = 0;
+                this.b = 0;
+                // The unit of measure is unchanged.
+                return this;
+            }
+            else {
+                return lock(this.clone().magnitude(true));
+            }
         }
     }
 
@@ -1397,21 +1418,31 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quaditude(): Geometric3 {
+    quaditude(mutate: boolean): Geometric3 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().quaditude());
+            if (!mutate) {
+                return lock(this.clone().quaditude(true));
+            }
+            else {
+                throw new Error("Unable to mutate this locked Geometric3.");
+            }
         }
         else {
-            this.a = this.squaredNormSansUnits();
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.yz = 0;
-            this.zx = 0;
-            this.xy = 0;
-            this.b = 0;
-            this.uom = Unit.mul(this.uom, this.uom);
-            return this;
+            if (mutate) {
+                this.a = this.squaredNormSansUnits();
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.yz = 0;
+                this.zx = 0;
+                this.xy = 0;
+                this.b = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
+            }
+            else {
+                return lock(this.clone().quaditude(true));
+            }
         }
     }
 
@@ -1445,8 +1476,8 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      *
      * This is an alias for the `quaditude` method.
      */
-    squaredNorm(): Geometric3 {
-        return this.quaditude();
+    squaredNorm(mutate: boolean): Geometric3 {
+        return this.quaditude(mutate);
     }
 
     /**

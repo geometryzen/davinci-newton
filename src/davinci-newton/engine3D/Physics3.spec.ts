@@ -33,7 +33,7 @@ describe("Physics3", function () {
             // We'll use a rotation of 90 degrees counter clockwise (from above) in the xy plane.
             body.R.a = 1 / Math.SQRT1_2;
             body.R.xy = -1 / Math.SQRT1_2;
-            body.R.direction();
+            body.R.direction(true);
 
             /**
              * Rotor from world coordinates to local coordinates.

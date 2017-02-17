@@ -14,6 +14,7 @@ const patterns =
     [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F/m or C**2/N·m**2
     [-1, 1, -2, 1, 1, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // S or A/V
     [-1, 1, -2, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // F or C/V
+    [-1, 1, -1, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],  // C**2/N
     [-1, 1, +0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],  // C/kg
     [-1, 1, +3, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1], // N·m·m/kg·kg (Gravitational Constant G)
     [+0, 1, -3, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],  // C/m**3
@@ -31,7 +32,7 @@ const patterns =
     [1, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // N/m
     [1, 1, 0, 1, -1, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // T or Wb/m**2
     [1, 1, 1, 1, -3, 1, 0, 1, -1, 1, 0, 1, 0, 1],  // W/(m·K)
-    [1, 1, 1, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V/m
+    [1, 1, 1, 1, -2, 1, -1, 1, 0, 1, 0, 1, 0, 1],  // V/m or N/C
     [1, 1, 1, 1, -2, 1, 0, 1, 0, 1, 0, 1, 0, 1],   // N
     [1, 1, 1, 1, 0, 1, -2, 1, 0, 1, 0, 1, 0, 1],   // H/m
     [1, 1, 2, 1, -2, 1, 0, 1, -1, 1, 0, 1, 0, 1],  // J/K
@@ -57,6 +58,7 @@ const decodes =
     ["F/m or C**2/N·m**2"],
     ["S or A/V"],
     ["F or C/V"],
+    ["C**2/N"],
     ["C/kg"],
     ["N·m·m/kg·kg"],
     ["C/m**3"],
@@ -74,7 +76,7 @@ const decodes =
     ["N/m"],
     ["T or Wb/m**2"],
     ["W/(m·K)"],
-    ["V/m"],
+    ["V/m or N/C"],
     ["N"],
     ["H/m"],
     ["J/K"],
@@ -227,6 +229,8 @@ export class Unit {
    */
   public static readonly CANDELA = new Unit(1, Dimensions.INTENSITY, SYMBOLS_SI);
 
+  private static readonly COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
+  private static readonly ELECTRIC_FIELD = new Unit(1, Dimensions.ELECTRIC_FIELD, SYMBOLS_SI);
   private static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
   private static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
   private static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
@@ -639,6 +643,8 @@ export class Unit {
         case DimensionsSummary.AREA: return Unit.METER_SQUARED;
         case DimensionsSummary.CHARGE: return Unit.COULOMB;
         case DimensionsSummary.CURRENT: return Unit.AMPERE;
+        case DimensionsSummary.ELECTRIC_FIELD: return Unit.ELECTRIC_FIELD;
+        case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
         case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
         case DimensionsSummary.FORCE: return Unit.NEWTON;
         case DimensionsSummary.INTENSITY: return Unit.CANDELA;

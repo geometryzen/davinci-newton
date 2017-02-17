@@ -136,7 +136,10 @@ describe("Unit", function () {
         expect(VOLT.toString(10, true)).toBe("V or W/A");
     });
     it("electric field strength", function () {
-        expect(VOLT.div(METER).toString(10, true)).toBe("V/m");
+        expect(VOLT.div(METER).toString(10, true)).toBe("V/m or N/C");
+    });
+    it("electric field strength", function () {
+        expect(NEWTON.div(COULOMB).toString(10, true)).toBe("V/m or N/C");
     });
     it("magnetic flux", function () {
         expect(WEBER.toString(10, true)).toBe("Wb");
@@ -159,6 +162,24 @@ describe("Unit", function () {
     });
     it("electric permittivity as F / m", function () {
         expect(FARAD.div(METER).toString(10, true)).toBe("F/m or C**2/N·m**2");
+    });
+    it("electric permittivity as C * C / (m * m * N)", function () {
+        expect(COULOMB.mul(COULOMB).div(METER).div(METER).div(NEWTON).toString(10, true)).toBe("F/m or C**2/N·m**2");
+    });
+    it("electric permittivity as C * C / (m * N * m)", function () {
+        expect(COULOMB.mul(COULOMB).div(METER).div(NEWTON).div(METER).toString(10, true)).toBe("F/m or C**2/N·m**2");
+    });
+    it("electric permittivity as C * C / N", function () {
+        const unit = COULOMB.mul(COULOMB).div(NEWTON);
+        expect(unit.dimensions.M.numer).toBe(-1);
+        expect(unit.dimensions.M.denom).toBe(1);
+        expect(unit.dimensions.L.numer).toBe(-1);
+        expect(unit.dimensions.L.denom).toBe(1);
+        expect(unit.dimensions.T.numer).toBe(2);
+        expect(unit.dimensions.T.denom).toBe(1);
+        expect(unit.dimensions.Q.numer).toBe(2);
+        expect(unit.dimensions.Q.denom).toBe(1);
+        expect(unit.toString(10, true)).toBe("C**2/N");
     });
     it("electric permittivity as C * C / (N * m * m)", function () {
         expect(COULOMB.mul(COULOMB).div(NEWTON).div(METER).div(METER).toString(10, true)).toBe("F/m or C**2/N·m**2");
