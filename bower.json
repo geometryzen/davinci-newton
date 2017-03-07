@@ -1,6 +1,6 @@
 {
     "name": "davinci-newton",
-    "version": "0.0.37",
+    "version": "0.0.38",
     "description": "Physics Modeling and Engine using Geometric Algebra",
     "author": {
         "name": "David Holmes",
@@ -23,8 +23,8 @@
     "devDependencies": {
         "jasmine": "^2.5.2",
         "almond": "^0.3.3",
-        "r.js": "~2.3.2",
-        "requirejs": "~2.3.2",
+        "r.js": "~2.3.3",
+        "requirejs": "~2.3.3",
         "jscover": "http://github.com/tntim96/JSCover.git"
     },
     "ignore": [

@@ -1,13 +1,13 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "Physics Modeling and Engine using Geometric Algebra",
   "author": {
     "name": "David Holmes",
     "email": "david.geo.holmes@gmail.com"
   },
   "main": "./dist/davinci-newton.min.js",
-  "typings": "./dist/davinci-newton.d.ts",
+  "typings": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/geometryzen/davinci-newton.git"
@@ -38,13 +38,12 @@
     "grunt-contrib-requirejs": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.2",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-contrib-yuidoc": "^1.0.0",
     "grunt-exec": "^1.0.1",
     "grunt-jasmine-task": "0.2.3",
     "grunt-karma": "^2.0.0",
     "grunt-template-jasmine-requirejs": "^0.2.3",
-    "grunt-ts": "^5.5.1",
-    "grunt-tslint": "^3.3.0",
+    "grunt-ts": "^6.0.0-beta.14",
+    "grunt-tslint": "^4.0.1",
     "grunt-typedoc": "^0.2.4",
     "grunt-typescript": "^0.8.0",
     "jasmine-core": "^2.5.2",
@@ -58,13 +57,13 @@
     "phantomjs": "1.9.20",
     "phantomjs-polyfill": "^0.0.1",
     "q": "1.4.1",
-    "requirejs": "~2.3.2",
+    "requirejs": "~2.3.3",
     "servedir": "^1.0.0",
     "systemjs": "0.19.40",
     "systemjs-builder": "0.15.33",
-    "tslint": "^3.15.1",
+    "tslint": "^4.5.1",
     "typedoc": "^0.5.7",
-    "typescript": "^2.2.0"
+    "typescript": "^2.2.1"
   },
   "keywords": [],
   "jspm": {
@@ -75,7 +74,7 @@
       "babel": "npm:babel-core@^5.8.38",
       "babel-runtime": "npm:babel-runtime@^5.8.38",
       "core-js": "npm:core-js@^1.2.7",
-      "typescript": "npm:typescript@^2.2.0"
+      "typescript": "npm:typescript@^2.2.1"
     }
   }
 }

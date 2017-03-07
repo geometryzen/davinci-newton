@@ -229,9 +229,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-02-17';
+                    this.LAST_MODIFIED = '2017-03-07';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.37';
+                    this.VERSION = '0.0.38';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
