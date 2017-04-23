@@ -23,7 +23,7 @@ class Newton {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
         this.LAST_MODIFIED = '2017-04-23';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '0.0.39';
+        this.VERSION = '0.0.40';
     }
 
     log(message?: any, ...optionalParams: any[]): void {
