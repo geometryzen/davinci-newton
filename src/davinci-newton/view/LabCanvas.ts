@@ -481,7 +481,7 @@ export class LabCanvas extends AbstractSubject {
         this.notifySizeChanged();
         this.broadcastParameter(WIDTH);
         this.broadcastParameter(HEIGHT);
-    };
+    }
 
     /**
      * Sets the width of the HTML canvas, and sets the screen rectangle of all the

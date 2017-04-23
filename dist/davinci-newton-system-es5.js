@@ -229,9 +229,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-03-07';
+                    this.LAST_MODIFIED = '2017-04-23';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.38';
+                    this.VERSION = '0.0.39';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -1684,7 +1684,7 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "..
                     _this.view.getDisplayList().prepend(_this.displayGraph);
                     _this.timeIdx_ = varsList.timeIndex();
                     _this.axes = new DisplayAxes_1.default(_this.view.getSimRect());
-                    new GenericObserver_1.default(_this.view, function (event) {
+                    _this.subscription = new GenericObserver_1.default(_this.view, function (event) {
                         if (event.nameEquals(SimView_1.default.COORD_MAP_CHANGED)) {
                             var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
                             _this.axes.setSimRect(simRect);
@@ -1694,6 +1694,12 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "..
                     _this.autoScale.extraMargin = 0.05;
                     return _this;
                 }
+                Graph.prototype.destructor = function () {
+                    if (this.subscription) {
+                        this.subscription.disconnect();
+                        this.subscription = void 0;
+                    }
+                };
                 Graph.prototype.addGraphLine = function (hCoordIndex, vCoordIndex, color) {
                     if (color === void 0) {
                         color = 'black';
@@ -2531,7 +2537,6 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
                     this.broadcastParameter(WIDTH);
                     this.broadcastParameter(HEIGHT);
                 };
-                ;
                 LabCanvas.prototype.setWidth = function (value) {
                     if (veryDifferent_1.default(value, this.canvas_.width)) {
                         this.canvas_.width = value;
@@ -3067,6 +3072,13 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
                     varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
                 };
+                Object.defineProperty(Physics3.prototype, "bodies", {
+                    get: function () {
+                        return this.bodies_;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(Physics3.prototype, "simList", {
                     get: function () {
                         return this.simList_;
@@ -3730,7 +3742,6 @@ System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDi
                     var y = center.y;
                     return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
                 };
-                ;
                 DoubleRect.makeCentered2 = function (center, size) {
                     var x = center.x;
                     var y = center.y;
@@ -4066,7 +4077,6 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
                     }));
                     return _this;
                 }
-                ;
                 SimView.prototype.addMemo = function (memorizable) {
                     if (!contains_1.default(this.memorizables_, memorizable)) {
                         this.memorizables_.push(memorizable);
@@ -4379,128 +4389,21 @@ System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisf
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/expectArg.js", ["../checks/isUndefined", "../checks/mustBeNumber"], function (exports_1, context_1) {
+System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefined", "../checks/mustBeInteger", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function message(standard, override) {
-        return isUndefined_1.default(override) ? standard : override();
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
+        }
     }
-    function expectArg(name, value) {
-        var arg = {
-            toSatisfy: function (condition, message) {
-                if (isUndefined_1.default(condition)) {
-                    throw new Error("condition must be specified");
-                }
-                if (isUndefined_1.default(message)) {
-                    throw new Error("message must be specified");
-                }
-                if (!condition) {
-                    throw new Error(message);
-                }
-                return arg;
-            },
-            toBeBoolean: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'boolean') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be a boolean.", override));
-                }
-                return arg;
-            },
-            toBeDefined: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue === 'undefined') {
-                    var message_1 = "Expecting argument " + name + ": " + typeOfValue + " to be defined.";
-                    throw new Error(message_1);
-                }
-                return arg;
-            },
-            toBeInClosedInterval: function (lower, upper) {
-                var something = value;
-                var x = something;
-                mustBeNumber_1.default('x', x);
-                if (x >= lower && x <= upper) {
-                    return arg;
-                } else {
-                    var message_2 = "Expecting argument " + name + " => " + value + " to be in the range [" + lower + ", " + upper + "].";
-                    throw new Error(message_2);
-                }
-            },
-            toBeFunction: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'function') {
-                    var message_3 = "Expecting argument " + name + ": " + typeOfValue + " to be a function.";
-                    throw new Error(message_3);
-                }
-                return arg;
-            },
-            toBeNumber: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'number') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be a number.", override));
-                }
-                return arg;
-            },
-            toBeObject: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'object') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be an object.", override));
-                }
-                return arg;
-            },
-            toBeString: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'string') {
-                    var message_4 = "Expecting argument " + name + ": " + typeOfValue + " to be a string.";
-                    throw new Error(message_4);
-                }
-                return arg;
-            },
-            toBeUndefined: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'undefined') {
-                    var message_5 = "Expecting argument " + name + ": " + typeOfValue + " to be undefined.";
-                    throw new Error(message_5);
-                }
-                return arg;
-            },
-            toNotBeNull: function () {
-                if (value === null) {
-                    var message_6 = "Expecting argument " + name + " to not be null.";
-                    throw new Error(message_6);
-                } else {
-                    return arg;
-                }
-            },
-            get value() {
-                return value;
-            }
-        };
-        return arg;
-    }
-    exports_1("default", expectArg);
-    var isUndefined_1, mustBeNumber_1;
-    return {
-        setters: [function (isUndefined_1_1) {
-            isUndefined_1 = isUndefined_1_1;
-        }, function (mustBeNumber_1_1) {
-            mustBeNumber_1 = mustBeNumber_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefined", "../checks/mustBeInteger", "../checks/expectArg", "./Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    var mustBeDefined_1, mustBeInteger_1, expectArg_1, Unit_1, AbstractMatrix;
+    var mustBeDefined_1, mustBeInteger_1, Unit_1, AbstractMatrix;
     return {
         setters: [function (mustBeDefined_1_1) {
             mustBeDefined_1 = mustBeDefined_1_1;
         }, function (mustBeInteger_1_1) {
             mustBeInteger_1 = mustBeInteger_1_1;
-        }, function (expectArg_1_1) {
-            expectArg_1 = expectArg_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
@@ -4510,7 +4413,7 @@ System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefin
                     this._elements = mustBeDefined_1.default('elements', elements);
                     this._dimensions = mustBeInteger_1.default('dimensions', dimensions);
                     this._length = dimensions * dimensions;
-                    expectArg_1.default('elements', elements).toSatisfy(elements.length === this._length, 'elements must have length ' + this._length);
+                    checkElementsLength(elements, this._length);
                     this.modified = false;
                     this.uom = Unit_1.default.mustBeUnit('uom', uom);
                 }
@@ -4526,7 +4429,7 @@ System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefin
                         return this._elements;
                     },
                     set: function (elements) {
-                        expectArg_1.default('elements', elements).toSatisfy(elements.length === this._length, "elements length must be " + this._length);
+                        checkElementsLength(elements, this._length);
                         this._elements = elements;
                     },
                     enumerable: true,

@@ -43,26 +43,37 @@ export class Graph extends AbstractSubject {
      * 
      */
     private readonly view = new SimView(new DoubleRect(0, 0, 1, 1));
+
     /**
      * 
      */
     public autoScale = new AutoScale(this.view);
+
     /**
      * 
      */
     public axes: DisplayAxes;
+
     /**
      * 
      */
     private displayGraph: DisplayGraph;
+
     /**
      * 
      */
     private labCanvas: LabCanvas;
+
     /**
      * The index for the time variable in the varsList.
      */
     private timeIdx_: number;
+
+    /**
+     * 
+     */
+    private subscription: GenericObserver;
+
     /**
      * 
      */
@@ -84,7 +95,7 @@ export class Graph extends AbstractSubject {
         this.timeIdx_ = varsList.timeIndex();
 
         this.axes = new DisplayAxes(this.view.getSimRect());
-        new GenericObserver(this.view, (event) => {
+        this.subscription = new GenericObserver(this.view, (event) => {
             if (event.nameEquals(SimView.COORD_MAP_CHANGED)) {
                 const simRect = this.view.getCoordMap().screenToSimRect(this.view.getScreenRect());
                 this.axes.setSimRect(simRect);
@@ -93,6 +104,13 @@ export class Graph extends AbstractSubject {
         this.view.getDisplayList().add(this.axes);
 
         this.autoScale.extraMargin = 0.05;
+    }
+
+    protected destructor(): void {
+        if (this.subscription) {
+            this.subscription.disconnect();
+            this.subscription = void 0;
+        }
     }
 
     /**

@@ -65,6 +65,9 @@ function getVarName(index: number): string {
     throw new Error(`getVarName(${index})`);
 }
 
+/**
+ * Each body is descrived by 13 kinematic components.
+ */
 const NUM_VARIABLES_PER_BODY = 13;
 
 /**
@@ -508,6 +511,13 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
     }
 
     /**
+     * Provides a reference to the bodies in the simulation.
+     */
+    get bodies(): ForceBody3[] {
+        return this.bodies_;
+    }
+
+    /**
      * 
      */
     get simList(): SimList {
@@ -523,7 +533,7 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
 
     /**
      * Computes the sum of the translational and rotational kinetic energy of all bodies,
-     * and the potential energy due to body interactions.
+     * and the potential energy due to body interactions for the force laws.
      */
     totalEnergy(): Geometric3 {
         this.totalEnergy_.unlock(this.totalEnergyLock_);

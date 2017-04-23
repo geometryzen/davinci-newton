@@ -101,7 +101,7 @@ export default class DoubleRect {
         const x = center.x;
         const y = center.y;
         return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
-    };
+    }
 
     /**
      * Returns a DoubleRect centered at the given point with given size.

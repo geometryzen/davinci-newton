@@ -9,6 +9,7 @@
         "suppressImplicitAnyIndexErrors": true,
         "moduleResolution": "classic",
         "sourceMap": false,
+        "strictNullChecks": false,
         "inlineSourceMap": false,
         "inlineSources": false
     },

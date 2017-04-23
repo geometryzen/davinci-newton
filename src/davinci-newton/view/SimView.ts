@@ -96,7 +96,7 @@ export class SimView extends AbstractSubject implements LabView {
      * ratio of height/width, used when scaleTogether_ is true.
      */
     private ratio_: number;
-    private readonly memorizables_: Memorizable[] = [];;
+    private readonly memorizables_: Memorizable[] = [];
     /**
      * 
      */

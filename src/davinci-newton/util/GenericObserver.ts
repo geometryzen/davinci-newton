@@ -26,7 +26,6 @@ export class GenericObserver implements Observer {
     /**
      * @param subject the Subject to observe
      * @param observeFn  function to execute when a SubjectEvent is broadcast by Subject
-     * @param opt_purpose Describes what this Observer does, for debugging
      */
     constructor(subject: Subject, observeFn: (event: SubjectEvent) => any) {
         this.subject_ = subject;

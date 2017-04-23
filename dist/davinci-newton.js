@@ -5232,131 +5232,20 @@ define('davinci-newton/checks/mustBeInteger',["require", "exports", "../checks/m
     exports.default = mustBeInteger;
 });
 
-define('davinci-newton/checks/mustBeNumber',["require", "exports", "../checks/mustSatisfy", "../checks/isNumber"], function (require, exports, mustSatisfy_1, isNumber_1) {
+define('davinci-newton/math/AbstractMatrix',["require", "exports", "../checks/mustBeDefined", "../checks/mustBeInteger", "./Unit"], function (require, exports, mustBeDefined_1, mustBeInteger_1, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function beANumber() {
-        return "be a `number`";
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
+        }
     }
-    function default_1(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isNumber_1.default(value), beANumber, contextBuilder);
-        return value;
-    }
-    exports.default = default_1;
-});
-
-define('davinci-newton/checks/expectArg',["require", "exports", "../checks/isUndefined", "../checks/mustBeNumber"], function (require, exports, isUndefined_1, mustBeNumber_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function message(standard, override) {
-        return isUndefined_1.default(override) ? standard : override();
-    }
-    function expectArg(name, value) {
-        var arg = {
-            toSatisfy: function (condition, message) {
-                if (isUndefined_1.default(condition)) {
-                    throw new Error("condition must be specified");
-                }
-                if (isUndefined_1.default(message)) {
-                    throw new Error("message must be specified");
-                }
-                if (!condition) {
-                    throw new Error(message);
-                }
-                return arg;
-            },
-            toBeBoolean: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'boolean') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be a boolean.", override));
-                }
-                return arg;
-            },
-            toBeDefined: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue === 'undefined') {
-                    var message_1 = "Expecting argument " + name + ": " + typeOfValue + " to be defined.";
-                    throw new Error(message_1);
-                }
-                return arg;
-            },
-            toBeInClosedInterval: function (lower, upper) {
-                var something = value;
-                var x = something;
-                mustBeNumber_1.default('x', x);
-                if (x >= lower && x <= upper) {
-                    return arg;
-                }
-                else {
-                    var message_2 = "Expecting argument " + name + " => " + value + " to be in the range [" + lower + ", " + upper + "].";
-                    throw new Error(message_2);
-                }
-            },
-            toBeFunction: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'function') {
-                    var message_3 = "Expecting argument " + name + ": " + typeOfValue + " to be a function.";
-                    throw new Error(message_3);
-                }
-                return arg;
-            },
-            toBeNumber: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'number') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be a number.", override));
-                }
-                return arg;
-            },
-            toBeObject: function (override) {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'object') {
-                    throw new Error(message("Expecting argument " + name + ": " + typeOfValue + " to be an object.", override));
-                }
-                return arg;
-            },
-            toBeString: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'string') {
-                    var message_4 = "Expecting argument " + name + ": " + typeOfValue + " to be a string.";
-                    throw new Error(message_4);
-                }
-                return arg;
-            },
-            toBeUndefined: function () {
-                var typeOfValue = typeof value;
-                if (typeOfValue !== 'undefined') {
-                    var message_5 = "Expecting argument " + name + ": " + typeOfValue + " to be undefined.";
-                    throw new Error(message_5);
-                }
-                return arg;
-            },
-            toNotBeNull: function () {
-                if (value === null) {
-                    var message_6 = "Expecting argument " + name + " to not be null.";
-                    throw new Error(message_6);
-                }
-                else {
-                    return arg;
-                }
-            },
-            get value() {
-                return value;
-            }
-        };
-        return arg;
-    }
-    exports.default = expectArg;
-});
-
-define('davinci-newton/math/AbstractMatrix',["require", "exports", "../checks/mustBeDefined", "../checks/mustBeInteger", "../checks/expectArg", "./Unit"], function (require, exports, mustBeDefined_1, mustBeInteger_1, expectArg_1, Unit_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
     var AbstractMatrix = (function () {
         function AbstractMatrix(elements, dimensions, uom) {
             this._elements = mustBeDefined_1.default('elements', elements);
             this._dimensions = mustBeInteger_1.default('dimensions', dimensions);
             this._length = dimensions * dimensions;
-            expectArg_1.default('elements', elements).toSatisfy(elements.length === this._length, 'elements must have length ' + this._length);
+            checkElementsLength(elements, this._length);
             this.modified = false;
             this.uom = Unit_1.default.mustBeUnit('uom', uom);
         }
@@ -5372,7 +5261,7 @@ define('davinci-newton/math/AbstractMatrix',["require", "exports", "../checks/mu
                 return this._elements;
             },
             set: function (elements) {
-                expectArg_1.default('elements', elements).toSatisfy(elements.length === this._length, "elements length must be " + this._length);
+                checkElementsLength(elements, this._length);
                 this._elements = elements;
             },
             enumerable: true,
@@ -5635,6 +5524,19 @@ define('davinci-newton/math/mustBeBivectorE3',["require", "exports"], function (
         return B;
     }
     exports.default = mustBeBivectorE3;
+});
+
+define('davinci-newton/checks/mustBeNumber',["require", "exports", "../checks/mustSatisfy", "../checks/isNumber"], function (require, exports, mustSatisfy_1, isNumber_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function beANumber() {
+        return "be a `number`";
+    }
+    function default_1(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isNumber_1.default(value), beANumber, contextBuilder);
+        return value;
+    }
+    exports.default = default_1;
 });
 
 define('davinci-newton/math/mustBeVectorE3',["require", "exports"], function (require, exports) {
@@ -6631,9 +6533,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-03-07';
+            this.LAST_MODIFIED = '2017-04-23';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.38';
+            this.VERSION = '0.0.39';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -8024,7 +7926,6 @@ define('davinci-newton/view/DoubleRect',["require", "exports", "./Point", "../ut
             var y = center.y;
             return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
         };
-        ;
         DoubleRect.makeCentered2 = function (center, size) {
             var x = center.x;
             var y = center.y;
@@ -8541,7 +8442,6 @@ define('davinci-newton/view/SimView',["require", "exports", "../util/AbstractSub
             _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_ASPECT_RATIO, function () { return _this.getAspectRatio(); }, function (aspectRatio) { return _this.setAspectRatio(aspectRatio); }));
             return _this;
         }
-        ;
         SimView.prototype.addMemo = function (memorizable) {
             if (!contains_1.default(this.memorizables_, memorizable)) {
                 this.memorizables_.push(memorizable);
@@ -9555,7 +9455,6 @@ define('davinci-newton/view/LabCanvas',["require", "exports", "../util/AbstractS
             this.broadcastParameter(WIDTH);
             this.broadcastParameter(HEIGHT);
         };
-        ;
         LabCanvas.prototype.setWidth = function (value) {
             if (veryDifferent_1.default(value, this.canvas_.width)) {
                 this.canvas_.width = value;
@@ -9604,7 +9503,7 @@ define('davinci-newton/graph/Graph',["require", "exports", "../util/AbstractSubj
             _this.view.getDisplayList().prepend(_this.displayGraph);
             _this.timeIdx_ = varsList.timeIndex();
             _this.axes = new DisplayAxes_1.default(_this.view.getSimRect());
-            new GenericObserver_1.default(_this.view, function (event) {
+            _this.subscription = new GenericObserver_1.default(_this.view, function (event) {
                 if (event.nameEquals(SimView_1.default.COORD_MAP_CHANGED)) {
                     var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
                     _this.axes.setSimRect(simRect);
@@ -9614,6 +9513,12 @@ define('davinci-newton/graph/Graph',["require", "exports", "../util/AbstractSubj
             _this.autoScale.extraMargin = 0.05;
             return _this;
         }
+        Graph.prototype.destructor = function () {
+            if (this.subscription) {
+                this.subscription.disconnect();
+                this.subscription = void 0;
+            }
+        };
         Graph.prototype.addGraphLine = function (hCoordIndex, vCoordIndex, color) {
             if (color === void 0) { color = 'black'; }
             mustBeNumber_1.default('hCoordIndex', hCoordIndex);
@@ -10355,6 +10260,13 @@ define('davinci-newton/engine3D/Physics3',["require", "exports", "../util/Abstra
             varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
             varsList.setValue(Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
         };
+        Object.defineProperty(Physics3.prototype, "bodies", {
+            get: function () {
+                return this.bodies_;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Physics3.prototype, "simList", {
             get: function () {
                 return this.simList_;

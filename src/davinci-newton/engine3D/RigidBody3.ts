@@ -62,6 +62,12 @@ function mustBeDimensionlessOrCorrectUnits(name: string, value: Geometric3, unit
  */
 export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive3, Charged3 {
     /**
+     * A uniquie identifier assigned by applications.
+     * This is not used internally.
+     */
+    public uuid: string;
+
+    /**
      * Mass, M. Default is one (1).
      * Changing the mass requires an update to the intertia tensor,
      * so we want to control the mutability.

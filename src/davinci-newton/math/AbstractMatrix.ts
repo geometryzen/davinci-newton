@@ -1,8 +1,13 @@
 import MatrixLike from './MatrixLike';
 import mustBeDefined from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
-import expectArg from '../checks/expectArg';
 import Unit from './Unit';
+
+function checkElementsLength(elements: Float32Array, length: number): void {
+    if (elements.length !== length) {
+        throw new Error(`elements must have length ${length}`);
+    }
+}
 
 /**
  * Base class for matrices with the expectation that they will be used with WebGL.
@@ -24,7 +29,7 @@ export default class AbstractMatrix<T extends { elements: Float32Array }> implem
         this._elements = mustBeDefined('elements', elements);
         this._dimensions = mustBeInteger('dimensions', dimensions);
         this._length = dimensions * dimensions;
-        expectArg('elements', elements).toSatisfy(elements.length === this._length, 'elements must have length ' + this._length);
+        checkElementsLength(elements, this._length);
         this.modified = false;
         this.uom = Unit.mustBeUnit('uom', uom);
     }
@@ -37,7 +42,7 @@ export default class AbstractMatrix<T extends { elements: Float32Array }> implem
         return this._elements;
     }
     set elements(elements: Float32Array) {
-        expectArg('elements', elements).toSatisfy(elements.length === this._length, "elements length must be " + this._length);
+        checkElementsLength(elements, this._length);
         this._elements = elements;
     }
 

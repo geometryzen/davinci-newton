@@ -99,7 +99,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     private history_ = true;
     /**
-     *  Recent history of the simulation state for debugging.
+     * Recent history of the simulation state for debugging.
      * An array of copies of the vars array.
      */
     private histArray_: number[][] = [];
