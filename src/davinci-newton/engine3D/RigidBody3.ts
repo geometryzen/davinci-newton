@@ -25,7 +25,7 @@ import MatrixLike from '../math/MatrixLike';
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 import Vec3 from '../math/Vec3';
 import VectorE3 from '../math/VectorE3';
 

@@ -18,7 +18,7 @@ import AlignV from '../view/AlignV';
 import CoordMap from '../view/CoordMap';
 import DisplayObject from '../view/DisplayObject';
 import DoubleRect from '../view/DoubleRect';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 import isDefined from '../checks/isDefined';
 
 function makeLabelScale(label: string, scale: Unit): string {

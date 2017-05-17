@@ -2,7 +2,7 @@ import AbstractMatrix from './AbstractMatrix';
 import inv3x3 from './inv3x3';
 import mul3x3 from './mul3x3';
 import SpinorE3 from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 
 /**
  * 

@@ -2,7 +2,7 @@ import Bivector from './BivectorE3';
 import dot from './dotVectorE3';
 import quad from './quadVectorE3';
 import Spinor from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import Vector from './VectorE3';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';

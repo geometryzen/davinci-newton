@@ -17,7 +17,7 @@ import AdvanceStrategy from '../runner/AdvanceStrategy';
 import DiffEqSolver from '../core/DiffEqSolver';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import Simulation from '../core/Simulation';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 /**
  * 

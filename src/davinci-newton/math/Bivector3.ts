@@ -7,7 +7,7 @@ import mustBeBivectorE3 from './mustBeBivectorE3';
 import mustBeNumber from '../checks/mustBeNumber';
 import mustBeVectorE3 from './mustBeVectorE3';
 import SpinorE3 from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import VectorE3 from './VectorE3';
 import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
 

@@ -1,6 +1,6 @@
 import Matrix3 from './Matrix3';
 import Spinor3 from './Spinor3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import Vector3 from './Vector3';
 
 describe("Vector3", function () {

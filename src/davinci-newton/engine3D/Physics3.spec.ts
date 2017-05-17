@@ -17,7 +17,7 @@ import Block3 from './Block3';
 import Geometric3 from '../math/Geometric3';
 import Physics3 from './Physics3';
 import Vector3 from '../math/Vector3';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 describe("Physics3", function () {
     describe("Ω calculation", function () {

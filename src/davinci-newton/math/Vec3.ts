@@ -2,7 +2,7 @@ import BivectorE3 from './BivectorE3';
 import mustBeNumber from '../checks/mustBeNumber';
 import Scalar3 from './Scalar3';
 import SpinorE3 from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
 

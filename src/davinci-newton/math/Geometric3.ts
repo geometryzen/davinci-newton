@@ -25,7 +25,7 @@ import Scalar from './Scalar';
 import SpinorE3 from './SpinorE3';
 import squaredNormG3 from './squaredNormG3';
 import stringFromCoordinates from './stringFromCoordinates';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import VectorE3 from './VectorE3';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';

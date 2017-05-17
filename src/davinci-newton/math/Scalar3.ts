@@ -1,5 +1,5 @@
 import Scalar from './Scalar';
-import Unit from './Unit';
+import { Unit } from './Unit';
 
 export class Scalar3 implements Scalar {
     private readonly a_: number;

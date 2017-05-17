@@ -14,7 +14,7 @@
 
 import Block3 from './Block3';
 import Geometric3 from '../math/Geometric3';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;

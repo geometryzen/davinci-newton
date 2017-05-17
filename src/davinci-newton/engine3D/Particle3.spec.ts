@@ -14,7 +14,7 @@
 
 import Geometric3 from '../math/Geometric3';
 import Particle3 from './Particle3';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;

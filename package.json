@@ -1,6 +1,6 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.40",
+  "version": "0.0.42",
   "description": "Physics Modeling and Engine using Geometric Algebra",
   "author": {
     "name": "David Holmes",
@@ -23,11 +23,15 @@
     }
   ],
   "scripts": {
-    "test": "grunt; grunt test"
+    "test": "grunt; grunt test",
+    "docs:typedoc": "trash documentation && typedoc src/davinci-newton.ts --excludePrivate --excludeNotExported --mode file --theme minimal --out documentation",
+    "docs": "yarn docs:typedoc && opn documentation/index.html",
+    "pages": "yarn docs:typedoc && gh-pages -d documentation"
   },
   "dependencies": {},
   "devDependencies": {
     "es6-module-loader": "^0.17.11",
+    "gh-pages": "^1.0.0",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.1.0",
@@ -46,7 +50,7 @@
     "grunt-tslint": "^5.0.1",
     "grunt-typedoc": "^0.2.4",
     "grunt-typescript": "^0.8.0",
-    "jasmine-core": "^2.5.2",
+    "jasmine-core": "^2.6.1",
     "jspm": "^0.16.53",
     "karma": "0.13.22",
     "karma-chrome-launcher": "0.1.12",
@@ -54,6 +58,7 @@
     "karma-jspm": "2.2.0",
     "karma-phantomjs-launcher": "0.2.3",
     "karma-systemjs": "0.8.2",
+    "opn-cli": "^3.1.0",
     "phantomjs": "1.9.20",
     "phantomjs-polyfill": "^0.0.1",
     "q": "1.4.1",
@@ -61,9 +66,10 @@
     "servedir": "^1.0.0",
     "systemjs": "0.19.40",
     "systemjs-builder": "0.15.33",
-    "tslint": "^5.1.0",
+    "trash-cli": "^1.4.0",
+    "tslint": "^5.2.0",
     "typedoc": "^0.5.10",
-    "typescript": "^2.3.0"
+    "typescript": "^2.3.2"
   },
   "keywords": [],
   "jspm": {

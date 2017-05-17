@@ -98,8 +98,8 @@ const decodes =
     ["N·m**2/C**2"]
   ];
 
-const dumbString = function (multiplier: number, formatted: string, dimensions: Dimensions, labels: string[], compact: boolean) {
-  const stringify = function (rational: QQ, label: string): string {
+const dumbString = function (multiplier: number, formatted: string, dimensions: Dimensions, labels: string[], compact?: boolean) {
+  const stringify = function (rational: QQ, label: string): string | null {
     if (rational.numer === 0) {
       return null;
     }
@@ -129,7 +129,7 @@ const dumbString = function (multiplier: number, formatted: string, dimensions: 
   return "" + scaleString + operatorStr + unitsString;
 };
 
-const unitString = function (multiplier: number, formatted: string, dimensions: Dimensions, labels: string[], compact: boolean): string {
+const unitString = function (multiplier: number, formatted: string, dimensions: Dimensions, labels: string[], compact?: boolean): string {
   const M = dimensions.M;
   const L = dimensions.L;
   const T = dimensions.T;
@@ -316,7 +316,10 @@ export class Unit {
     }
   }
 
-  public __add__(rhs: Unit) {
+  /**
+   *
+   */
+  public __add__(rhs: Unit): Unit | undefined {
     if (rhs instanceof Unit) {
       return add(this, rhs);
     }
@@ -325,7 +328,7 @@ export class Unit {
     }
   }
 
-  public __radd__(lhs: Unit) {
+  public __radd__(lhs: Unit): Unit | undefined {
     if (lhs instanceof Unit) {
       return add(lhs, this);
     }
@@ -426,7 +429,7 @@ export class Unit {
     return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
   }
 
-  private isOne(): boolean {
+  public isOne(): boolean {
     return this.dimensions.isOne() && (this.multiplier === 1);
   }
 
@@ -434,19 +437,19 @@ export class Unit {
     return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
   }
 
-  toExponential(fractionDigits?: number, compact?: boolean): string {
+  public toExponential(fractionDigits?: number, compact?: boolean): string {
     return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
   }
 
-  toFixed(fractionDigits?: number, compact?: boolean): string {
+  public toFixed(fractionDigits?: number, compact?: boolean): string {
     return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
   }
 
-  toPrecision(precision?: number, compact?: boolean): string {
+  public toPrecision(precision?: number, compact?: boolean): string {
     return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
   }
 
-  toString(radix?: number, compact?: boolean): string {
+  public toString(radix?: number, compact?: boolean): string {
     return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
   }
 
@@ -487,7 +490,7 @@ export class Unit {
    * @param rhs
    * @returns
    */
-  static compatible(lhs: Unit, rhs: Unit): Unit {
+  static compatible(lhs: Unit, rhs: Unit): Unit | undefined {
     if (lhs) {
       if (rhs) {
         return lhs.compatible(rhs);
@@ -550,7 +553,7 @@ export class Unit {
    * @param rhs
    * @returns
    */
-  static mul(lhs: Unit, rhs: Unit): Unit {
+  static mul(lhs: Unit, rhs: Unit): Unit | undefined {
     if (lhs) {
       if (rhs) {
         return lhs.mul(rhs);
@@ -628,7 +631,7 @@ export class Unit {
   /**
    * Computes the value of the unit of measure raised to the specified power. 
    */
-  static pow(uom: Unit, exponent: QQ): Unit {
+  static pow(uom: Unit, exponent: QQ): Unit | undefined {
     if (uom instanceof Unit) {
       if (uom.isOne()) {
         return void 0;
@@ -651,7 +654,7 @@ export class Unit {
    * @param uom
    * @returns
    */
-  static sqrt(uom: Unit): Unit {
+  static sqrt(uom: Unit): Unit | undefined {
     if (uom instanceof Unit) {
       if (uom.isOne()) {
         return void 0;
@@ -710,5 +713,3 @@ export class Unit {
     return new Unit(multiplier, dimensions, labels);
   }
 }
-
-export default Unit;

@@ -3,7 +3,7 @@ import mustBeNumber from '../checks/mustBeNumber';
 import randomRange from './randomRange';
 import readOnly from '../i18n/readOnly';
 import SpinorE3 from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 
 /**
  * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.

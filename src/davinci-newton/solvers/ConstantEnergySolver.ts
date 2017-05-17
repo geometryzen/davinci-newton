@@ -1,7 +1,7 @@
 import DiffEqSolver from '../core/DiffEqSolver';
 import EnergySystem from './EnergySystem';
 import Simulation from '../core/Simulation';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 /**
  * An adaptive step solver that adjusts the step size in order to

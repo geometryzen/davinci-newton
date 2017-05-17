@@ -2,7 +2,7 @@ import CartesianG3 from './CartesianG3';
 import GeometricE3 from './GeometricE3';
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
-import Unit from './Unit';
+import { Unit } from './Unit';
 
 const ONE: Unit = void 0; // Unit.ONE;
 

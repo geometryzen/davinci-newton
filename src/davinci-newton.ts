@@ -32,7 +32,7 @@ import RungeKutta from './davinci-newton/solvers/RungeKutta';
 import SimView from './davinci-newton/view/SimView';
 import Sphere3 from './davinci-newton/engine3D/Sphere3';
 import Spring3 from './davinci-newton/engine3D/Spring3';
-import Unit from './davinci-newton/math/Unit';
+import { Unit } from './davinci-newton/math/Unit';
 import VarsList from './davinci-newton/core/VarsList';
 import Vec3 from './davinci-newton/math/Vec3';
 
@@ -192,6 +192,6 @@ const newton = {
      * 
      */
     get Vec3() { return Vec3; }
-}
+};
 
 export default newton;

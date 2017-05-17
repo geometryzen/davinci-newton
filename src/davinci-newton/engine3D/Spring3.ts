@@ -21,7 +21,7 @@ import Geometric3 from '../math/Geometric3';
 import RigidBody3 from './RigidBody3';
 import Vec3 from '../math/Vec3';
 import VectorE3 from '../math/VectorE3';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 /**
  * Asserts that the specified quantities are either both dimensionless or neither dimensionless.

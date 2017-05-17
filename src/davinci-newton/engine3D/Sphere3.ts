@@ -15,7 +15,7 @@
 import Geometric3 from '../math/Geometric3';
 import Matrix3 from '../math/Matrix3';
 import RigidBody3 from './RigidBody3';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 
 /**
  * A solid sphere of constant density.

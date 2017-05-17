@@ -9,7 +9,7 @@ import mustBeVectorE3 from './mustBeVectorE3';
 import randomRange from './randomRange';
 import readOnly from '../i18n/readOnly';
 import SpinorE3 from './SpinorE3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import VectorE3 from './VectorE3';
 
 /**

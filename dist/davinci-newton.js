@@ -2561,14 +2561,13 @@ define('davinci-newton/math/Unit',["require", "exports", "../math/Dimensions", "
     Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions_1.default.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
     Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.VELOCITY_SQUARED, SYMBOLS_SI);
     exports.Unit = Unit;
-    exports.default = Unit;
 });
 
 define('davinci-newton/math/extG3',["require", "exports", "./compG3Get", "./extE3", "./compG3Set", "./Unit"], function (require, exports, compG3Get_1, extE3_1, compG3Set_1, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function extG3(a, b, out) {
-        out.uom = Unit_1.default.mul(a.uom, b.uom);
+        out.uom = Unit_1.Unit.mul(a.uom, b.uom);
         var a0 = compG3Get_1.default(a, 0);
         var a1 = compG3Get_1.default(a, 1);
         var a2 = compG3Get_1.default(a, 2);
@@ -2815,7 +2814,7 @@ define('davinci-newton/math/lcoG3',["require", "exports", "./compG3Get", "./lcoE
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function lcoG3(a, b, out) {
-        out.uom = Unit_1.default.mul(a.uom, b.uom);
+        out.uom = Unit_1.Unit.mul(a.uom, b.uom);
         var a0 = compG3Get_1.default(a, 0);
         var a1 = compG3Get_1.default(a, 1);
         var a2 = compG3Get_1.default(a, 2);
@@ -2881,7 +2880,7 @@ define('davinci-newton/math/maskG3',["require", "exports", "../checks/isNumber",
             else {
                 scratch.b = 0;
             }
-            scratch.uom = Unit_1.default.mustBeUnit('g.uom', g.uom);
+            scratch.uom = Unit_1.Unit.mustBeUnit('g.uom', g.uom);
             return scratch;
         }
         else if (isNumber_1.default(arg)) {
@@ -3075,7 +3074,7 @@ define('davinci-newton/math/rcoG3',["require", "exports", "./compG3Get", "./rcoE
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function rcoG3(a, b, out) {
-        out.uom = Unit_1.default.mul(a.uom, b.uom);
+        out.uom = Unit_1.Unit.mul(a.uom, b.uom);
         var a0 = compG3Get_1.default(a, 0);
         var a1 = compG3Get_1.default(a, 1);
         var a2 = compG3Get_1.default(a, 2);
@@ -3326,7 +3325,7 @@ define('davinci-newton/math/scpG3',["require", "exports", "../math/compG3Get", "
         compG3Set_1.default(out, 5, 0);
         compG3Set_1.default(out, 6, 0);
         compG3Set_1.default(out, 7, 0);
-        out.uom = Unit_1.default.mul(a.uom, b.uom);
+        out.uom = Unit_1.Unit.mul(a.uom, b.uom);
         return out;
     }
     exports.default = scpG3;
@@ -3469,7 +3468,7 @@ define('davinci-newton/math/stringFromCoordinates',["require", "exports", "../ch
                 return void 0;
             }
         }
-        if (Unit_1.default.isOne(uom)) {
+        if (Unit_1.Unit.isOne(uom)) {
             return sb.length > 0 ? sb.join("") : "0";
         }
         else {
@@ -3671,7 +3670,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
             },
             set: function (uom) {
                 if (this.lock_ === UNLOCKED) {
-                    this.uom_ = Unit_1.default.mustBeUnit('uom', uom);
+                    this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
                 }
                 else {
                     throw new Error(readOnly_1.default('uom').message);
@@ -3770,7 +3769,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     this.zx += M.zx * α;
                     this.xy += M.xy * α;
                     this.b += M.b * α;
-                    this.uom = Unit_1.default.compatible(this.uom, M.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, M.uom);
                     return this;
                 }
             }
@@ -3783,7 +3782,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.uom = a.uom;
             }
             else {
-                this.uom = Unit_1.default.compatible(a.uom, b.uom);
+                this.uom = Unit_1.Unit.compatible(a.uom, b.uom);
             }
             this.a = a.a + b.a;
             this.x = a.x + b.x;
@@ -3807,7 +3806,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, uom);
                 }
                 this.b += β;
                 return this;
@@ -3825,7 +3824,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, uom);
                 }
                 this.a += α;
                 return this;
@@ -3844,7 +3843,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, v.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, v.uom);
                 }
                 this.x += v.x * α;
                 this.y += v.y * α;
@@ -4005,7 +4004,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this.divByVector(m);
                 }
                 else {
-                    this.uom = Unit_1.default.div(this.uom, m.uom);
+                    this.uom = Unit_1.Unit.div(this.uom, m.uom);
                     var α = m.a;
                     var x = m.x;
                     var y = m.y;
@@ -4083,7 +4082,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().divByScalar(α, uom));
             }
             else {
-                this.uom = Unit_1.default.div(this.uom, uom);
+                this.uom = Unit_1.Unit.div(this.uom, uom);
                 this.a /= α;
                 this.x /= α;
                 this.y /= α;
@@ -4103,13 +4102,13 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 var x = v.x;
                 var y = v.y;
                 var z = v.z;
-                var uom2 = Unit_1.default.pow(v.uom, QQ_1.default.valueOf(2, 1));
+                var uom2 = Unit_1.Unit.pow(v.uom, QQ_1.default.valueOf(2, 1));
                 var squaredNorm = x * x + y * y + z * z;
                 return this.mulByVector(v).divByScalar(squaredNorm, uom2);
             }
         };
         Geometric3.prototype.div2 = function (a, b) {
-            this.uom = Unit_1.default.div(a.uom, b.uom);
+            this.uom = Unit_1.Unit.div(a.uom, b.uom);
             var a0 = a.a;
             var a1 = a.yz;
             var a2 = a.zx;
@@ -4167,7 +4166,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().exp());
             }
             else {
-                Unit_1.default.assertDimensionless(this.uom);
+                Unit_1.Unit.assertDimensionless(this.uom);
                 var expW = Math.exp(this.a);
                 var yz = this.yz;
                 var zx = this.zx;
@@ -4215,12 +4214,12 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.yz = X[5];
                 this.zx = X[6];
                 this.b = X[7];
-                this.uom = Unit_1.default.inv(this.uom);
+                this.uom = Unit_1.Unit.inv(this.uom);
                 return this;
             }
         };
         Geometric3.prototype.isOne = function () {
-            if (Unit_1.default.isOne(this.uom)) {
+            if (Unit_1.Unit.isOne(this.uom)) {
                 return this.a === 1 && this.x === 0 && this.y === 0 && this.z === 0 && this.yz === 0 && this.zx === 0 && this.xy === 0 && this.b === 0;
             }
             else {
@@ -4252,7 +4251,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 else if (isZeroGeometricE3_1.default(target)) {
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, target.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, target.uom);
                 }
                 this.a += (target.a - this.a) * α;
                 this.x += (target.x - this.x) * α;
@@ -4274,7 +4273,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().log());
             }
             else {
-                Unit_1.default.assertDimensionless(this.uom);
+                Unit_1.Unit.assertDimensionless(this.uom);
                 var α = this.a;
                 var x = this.yz;
                 var y = this.zx;
@@ -4331,7 +4330,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().mulByBivector(B));
             }
             else {
-                this.uom = Unit_1.default.mul(this.uom, B.uom);
+                this.uom = Unit_1.Unit.mul(this.uom, B.uom);
                 var a0 = this.a;
                 var a1 = this.x;
                 var a2 = this.y;
@@ -4359,7 +4358,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().mulByVector(v));
             }
             else {
-                this.uom = Unit_1.default.mul(this.uom, v.uom);
+                this.uom = Unit_1.Unit.mul(this.uom, v.uom);
                 var a0 = this.a;
                 var a1 = this.x;
                 var a2 = this.y;
@@ -4410,7 +4409,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
             this.yz = mulE3_1.default(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5);
             this.zx = mulE3_1.default(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6);
             this.b = mulE3_1.default(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7);
-            this.uom = Unit_1.default.mul(a.uom, b.uom);
+            this.uom = Unit_1.Unit.mul(a.uom, b.uom);
             return this;
         };
         Geometric3.prototype.neg = function () {
@@ -4476,7 +4475,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     this.zx = 0;
                     this.xy = 0;
                     this.b = 0;
-                    this.uom = Unit_1.default.mul(this.uom, this.uom);
+                    this.uom = Unit_1.Unit.mul(this.uom, this.uom);
                     return this;
                 }
                 else {
@@ -4506,7 +4505,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().reflect(n));
             }
             else {
-                Unit_1.default.assertDimensionless(n.uom);
+                Unit_1.Unit.assertDimensionless(n.uom);
                 var n1 = n.x;
                 var n2 = n.y;
                 var n3 = n.z;
@@ -4561,7 +4560,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 return lock(this.clone().rotate(R));
             }
             else {
-                Unit_1.default.assertDimensionless(R.uom);
+                Unit_1.Unit.assertDimensionless(R.uom);
                 var x = this.x;
                 var y = this.y;
                 var z = this.z;
@@ -4580,7 +4579,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
             }
         };
         Geometric3.prototype.rotorFromAxisAngle = function (axis, θ) {
-            Unit_1.default.assertDimensionless(axis.uom);
+            Unit_1.Unit.assertDimensionless(axis.uom);
             var x = axis.x;
             var y = axis.y;
             var z = axis.z;
@@ -4621,7 +4620,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
             return this.rotorFromTwoVectors(es[firstVector], fs[firstVector], es[secondVector], fs[secondVector]);
         };
         Geometric3.prototype.rotorFromGeneratorAngle = function (B, θ) {
-            Unit_1.default.assertDimensionless(B.uom);
+            Unit_1.Unit.assertDimensionless(B.uom);
             var φ = θ / 2;
             var yz = B.yz;
             var zx = B.zx;
@@ -4683,7 +4682,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.zx *= α;
                 this.xy *= α;
                 this.b *= α;
-                this.uom = Unit_1.default.mul(this.uom, uom);
+                this.uom = Unit_1.Unit.mul(this.uom, uom);
                 return this;
             }
         };
@@ -4695,12 +4694,12 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.x *= σ.x;
                 this.y *= σ.y;
                 this.z *= σ.z;
-                this.uom = Unit_1.default.mul(σ.uom, this.uom);
+                this.uom = Unit_1.Unit.mul(σ.uom, this.uom);
                 return this;
             }
         };
         Geometric3.prototype.versor = function (a, b) {
-            this.uom = Unit_1.default.mul(a.uom, b.uom);
+            this.uom = Unit_1.Unit.mul(a.uom, b.uom);
             var ax = a.x;
             var ay = a.y;
             var az = a.z;
@@ -4733,7 +4732,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, M.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, M.uom);
                 }
                 this.a -= M.a * α;
                 this.x -= M.x * α;
@@ -4756,7 +4755,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     this.uom = M.uom;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, M.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, M.uom);
                 }
                 this.a -= M.a * α;
                 return this;
@@ -4775,7 +4774,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                     return this;
                 }
                 else {
-                    this.uom = Unit_1.default.compatible(this.uom, v.uom);
+                    this.uom = Unit_1.Unit.compatible(this.uom, v.uom);
                 }
                 this.x -= v.x * α;
                 this.y -= v.y * α;
@@ -4815,7 +4814,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
                 this.zx = a.zx - b.zx;
                 this.xy = a.xy - b.xy;
                 this.b = a.b - b.b;
-                this.uom = Unit_1.default.compatible(a.uom, b.uom);
+                this.uom = Unit_1.Unit.compatible(a.uom, b.uom);
             }
             return this;
         };
@@ -5173,7 +5172,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
             var yz = wedgeYZ_1.default(ax, ay, az, bx, by, bz);
             var zx = wedgeZX_1.default(ax, ay, az, bx, by, bz);
             var xy = wedgeXY_1.default(ax, ay, az, bx, by, bz);
-            return Geometric3.spinor(0, yz, zx, xy, Unit_1.default.mul(a.uom, b.uom));
+            return Geometric3.spinor(0, yz, zx, xy, Unit_1.Unit.mul(a.uom, b.uom));
         };
         return Geometric3;
     }());
@@ -5183,16 +5182,16 @@ define('davinci-newton/math/Geometric3',["require", "exports", "./approx", "./ar
     Geometric3.e2 = lock(new Geometric3(vector(0, 1, 0), void 0));
     Geometric3.e3 = lock(new Geometric3(vector(0, 0, 1), void 0));
     Geometric3.I = lock(new Geometric3(pseudo(1), void 0));
-    Geometric3.meter = lock(new Geometric3(scalar(1), Unit_1.default.METER));
-    Geometric3.kilogram = lock(new Geometric3(scalar(1), Unit_1.default.KILOGRAM));
-    Geometric3.second = lock(new Geometric3(scalar(1), Unit_1.default.SECOND));
-    Geometric3.ampere = lock(new Geometric3(scalar(1), Unit_1.default.AMPERE));
-    Geometric3.kelvin = lock(new Geometric3(scalar(1), Unit_1.default.KELVIN));
-    Geometric3.mole = lock(new Geometric3(scalar(1), Unit_1.default.MOLE));
-    Geometric3.candela = lock(new Geometric3(scalar(1), Unit_1.default.CANDELA));
-    Geometric3.coulomb = lock(new Geometric3(scalar(1), Unit_1.default.COULOMB));
-    Geometric3.newton = lock(new Geometric3(scalar(1), Unit_1.default.NEWTON));
-    Geometric3.joule = lock(new Geometric3(scalar(1), Unit_1.default.JOULE));
+    Geometric3.meter = lock(new Geometric3(scalar(1), Unit_1.Unit.METER));
+    Geometric3.kilogram = lock(new Geometric3(scalar(1), Unit_1.Unit.KILOGRAM));
+    Geometric3.second = lock(new Geometric3(scalar(1), Unit_1.Unit.SECOND));
+    Geometric3.ampere = lock(new Geometric3(scalar(1), Unit_1.Unit.AMPERE));
+    Geometric3.kelvin = lock(new Geometric3(scalar(1), Unit_1.Unit.KELVIN));
+    Geometric3.mole = lock(new Geometric3(scalar(1), Unit_1.Unit.MOLE));
+    Geometric3.candela = lock(new Geometric3(scalar(1), Unit_1.Unit.CANDELA));
+    Geometric3.coulomb = lock(new Geometric3(scalar(1), Unit_1.Unit.COULOMB));
+    Geometric3.newton = lock(new Geometric3(scalar(1), Unit_1.Unit.NEWTON));
+    Geometric3.joule = lock(new Geometric3(scalar(1), Unit_1.Unit.JOULE));
     exports.Geometric3 = Geometric3;
     exports.default = Geometric3;
 });
@@ -5247,7 +5246,7 @@ define('davinci-newton/math/AbstractMatrix',["require", "exports", "../checks/mu
             this._length = dimensions * dimensions;
             checkElementsLength(elements, this._length);
             this.modified = false;
-            this.uom = Unit_1.default.mustBeUnit('uom', uom);
+            this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
         }
         Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
             get: function () {
@@ -5576,14 +5575,14 @@ define('davinci-newton/math/Bivector3',["require", "exports", "./isBivectorE3", 
             this.yz = mustBeNumber_1.default('yz', yz);
             this.zx = mustBeNumber_1.default('zx', zx);
             this.xy = mustBeNumber_1.default('xy', xy);
-            this.uom = Unit_1.default.mustBeUnit('uom', uom);
+            this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
         }
         Bivector3.prototype.add = function (B) {
             mustBeBivectorE3_1.default('B', B);
             this.yz += B.yz;
             this.zx += B.zx;
             this.xy += B.xy;
-            this.uom = Unit_1.default.compatible(this.uom, B.uom);
+            this.uom = Unit_1.Unit.compatible(this.uom, B.uom);
             return this;
         };
         Bivector3.prototype.applyMatrix = function (σ) {
@@ -5661,7 +5660,7 @@ define('davinci-newton/math/Bivector3',["require", "exports", "./isBivectorE3", 
             this.yz = wedge3_1.wedgeYZ(a, b);
             this.zx = wedge3_1.wedgeZX(a, b);
             this.xy = wedge3_1.wedgeXY(a, b);
-            this.uom = Unit_1.default.mul(a.uom, b.uom);
+            this.uom = Unit_1.Unit.mul(a.uom, b.uom);
             return this;
         };
         Bivector3.prototype.write = function (B) {
@@ -5682,7 +5681,7 @@ define('davinci-newton/math/Bivector3',["require", "exports", "./isBivectorE3", 
                 var yz = this.yz + rhs.yz;
                 var zx = this.zx + rhs.zx;
                 var xy = this.xy + rhs.xy;
-                var uom = Unit_1.default.compatible(this.uom, rhs.uom);
+                var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
                 return new Bivector3(yz, zx, xy, uom);
             }
             else {
@@ -5716,7 +5715,7 @@ define('davinci-newton/math/Bivector3',["require", "exports", "./isBivectorE3", 
                 var yz = this.yz - rhs.yz;
                 var zx = this.zx - rhs.zx;
                 var xy = this.xy - rhs.xy;
-                var uom = Unit_1.default.compatible(this.uom, rhs.uom);
+                var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
                 return new Bivector3(yz, zx, xy, uom);
             }
             else {
@@ -5748,7 +5747,7 @@ define('davinci-newton/math/Mat3',["require", "exports", "./Matrix3", "./Unit"],
             var n32 = source.getElement(2, 1);
             var n33 = source.getElement(2, 2);
             this.data.set(n11, n12, n13, n21, n22, n23, n31, n32, n33);
-            this.uom = Unit_1.default.mustBeUnit('uom', source.uom);
+            this.uom = Unit_1.Unit.mustBeUnit('uom', source.uom);
         }
         Object.defineProperty(Mat3.prototype, "dimensions", {
             get: function () {
@@ -5865,13 +5864,13 @@ define('davinci-newton/math/Vec3',["require", "exports", "../checks/mustBeNumber
             this.x_ = mustBeNumber_1.default('x', x);
             this.y_ = mustBeNumber_1.default('y', y);
             this.z_ = mustBeNumber_1.default('z', z);
-            this.uom_ = Unit_1.default.mustBeUnit('uom', uom);
+            this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
             if (this.uom_ && this.uom_.multiplier !== 1) {
                 var multiplier = this.uom_.multiplier;
                 this.x_ *= multiplier;
                 this.y_ *= multiplier;
                 this.z_ *= multiplier;
-                this.uom_ = Unit_1.default.valueOf(1, uom.dimensions, uom.labels);
+                this.uom_ = Unit_1.Unit.valueOf(1, uom.dimensions, uom.labels);
             }
         }
         Object.defineProperty(Vec3.prototype, "x", {
@@ -5903,7 +5902,7 @@ define('davinci-newton/math/Vec3',["require", "exports", "../checks/mustBeNumber
             configurable: true
         });
         Vec3.prototype.add = function (rhs) {
-            var uom = Unit_1.default.compatible(this.uom_, rhs.uom);
+            var uom = Unit_1.Unit.compatible(this.uom_, rhs.uom);
             return new Vec3(this.x + rhs.x, this.y + rhs.y, this.z + rhs.z, uom);
         };
         Vec3.prototype.divByScalar = function (alpha) {
@@ -5919,10 +5918,10 @@ define('davinci-newton/math/Vec3',["require", "exports", "../checks/mustBeNumber
             var x = ay * bz - az * by;
             var y = az * bx - ax * bz;
             var z = ax * by - ay * bx;
-            return new Vec3(x, y, z, Unit_1.default.mul(this.uom_, B.uom));
+            return new Vec3(x, y, z, Unit_1.Unit.mul(this.uom_, B.uom));
         };
         Vec3.prototype.subtract = function (rhs) {
-            var uom = Unit_1.default.compatible(this.uom_, rhs.uom);
+            var uom = Unit_1.Unit.compatible(this.uom_, rhs.uom);
             return new Vec3(this.x - rhs.x, this.y - rhs.y, this.z - rhs.z, uom);
         };
         Vec3.prototype.mulByScalar = function (alpha) {
@@ -5938,19 +5937,19 @@ define('davinci-newton/math/Vec3',["require", "exports", "../checks/mustBeNumber
             var x = ay * bz - az * by;
             var y = az * bx - ax * bz;
             var z = ax * by - ay * bx;
-            return new Vec3(x, y, z, Unit_1.default.mul(this.uom_, rhs.uom));
+            return new Vec3(x, y, z, Unit_1.Unit.mul(this.uom_, rhs.uom));
         };
         Vec3.prototype.distanceTo = function (point) {
             var Δx = this.x - point.x;
             var Δy = this.y - point.y;
             var Δz = this.z - point.z;
             var a = Math.sqrt(Δx * Δx + Δy * Δy + Δz * Δz);
-            var uom = Unit_1.default.compatible(this.uom_, point.uom);
+            var uom = Unit_1.Unit.compatible(this.uom_, point.uom);
             return new Scalar3_1.default(a, uom);
         };
         Vec3.prototype.dot = function (v) {
             var a = this.x * v.x + this.y * v.y + this.z * v.z;
-            var uom = Unit_1.default.mul(this.uom_, v.uom);
+            var uom = Unit_1.Unit.mul(this.uom_, v.uom);
             return new Scalar3_1.default(a, uom);
         };
         Vec3.prototype.magnitude = function () {
@@ -6053,20 +6052,20 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
     Object.defineProperty(exports, "__esModule", { value: true });
     function assertConsistentUnits(aName, A, bName, B) {
         if (!A.isZero() && !B.isZero()) {
-            if (Unit_1.default.isOne(A.uom)) {
-                if (!Unit_1.default.isOne(B.uom)) {
+            if (Unit_1.Unit.isOne(A.uom)) {
+                if (!Unit_1.Unit.isOne(B.uom)) {
                     throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
                 }
             }
             else {
-                if (Unit_1.default.isOne(B.uom)) {
+                if (Unit_1.Unit.isOne(B.uom)) {
                     throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
                 }
             }
         }
     }
     function mustBeDimensionlessOrCorrectUnits(name, value, unit) {
-        if (!Unit_1.default.isOne(value.uom) && !Unit_1.default.isCompatible(value.uom, unit)) {
+        if (!Unit_1.Unit.isOne(value.uom) && !Unit_1.Unit.isCompatible(value.uom, unit)) {
             throw new Error(name + " unit of measure, " + value.uom + ", must be compatible with " + unit);
         }
         else {
@@ -6112,7 +6111,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.mass_;
             },
             set: function (M) {
-                mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.default.KILOGRAM);
+                mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.Unit.KILOGRAM);
                 this.mass_.unlock(this.massLock_);
                 this.mass_.copy(M);
                 this.massLock_ = this.mass_.lock();
@@ -6126,7 +6125,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.charge_;
             },
             set: function (Q) {
-                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.default.COULOMB);
+                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.Unit.COULOMB);
                 this.charge_.unlock(this.chargeLock_);
                 this.charge_.copy(Q);
                 this.chargeLock_ = this.charge_.lock();
@@ -6174,7 +6173,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.position_;
             },
             set: function (position) {
-                mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.default.METER);
+                mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER);
                 this.position_.copy(position);
             },
             enumerable: true,
@@ -6185,7 +6184,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.attitude_;
             },
             set: function (attitude) {
-                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.default.ONE);
+                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE);
                 this.attitude_.copy(attitude);
             },
             enumerable: true,
@@ -6196,7 +6195,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.linearMomentum_;
             },
             set: function (momentum) {
-                mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.default.KILOGRAM_METER_PER_SECOND);
+                mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND);
                 this.linearMomentum_.copy(momentum);
             },
             enumerable: true,
@@ -6207,7 +6206,7 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
                 return this.angularMomentum_;
             },
             set: function (angularMomentum) {
-                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.default.JOULE_SECOND);
+                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND);
                 this.angularMomentum_.copy(angularMomentum);
             },
             enumerable: true,
@@ -6334,7 +6333,7 @@ define('davinci-newton/engine3D/Block3',["require", "exports", "../math/Geometri
             this.Ω.yz = k * this.L.yz / (hh + dd);
             this.Ω.zx = k * this.L.zx / (ww + dd);
             this.Ω.xy = k * this.L.xy / (ww + hh);
-            this.Ω.uom = Unit_1.default.div(Unit_1.default.div(this.L.uom, this.M.uom), Unit_1.default.mul(w.uom, w.uom));
+            this.Ω.uom = Unit_1.Unit.div(Unit_1.Unit.div(this.L.uom, this.M.uom), Unit_1.Unit.mul(w.uom, w.uom));
         };
         Block3.prototype.updateInertiaTensor = function () {
             var w = this.width_;
@@ -6348,7 +6347,7 @@ define('davinci-newton/engine3D/Block3',["require", "exports", "../math/Geometri
             I.setElement(0, 0, s * (hh + dd));
             I.setElement(1, 1, s * (dd + ww));
             I.setElement(2, 2, s * (ww + hh));
-            I.uom = Unit_1.default.mul(this.M.uom, Unit_1.default.mul(w.uom, w.uom));
+            I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(w.uom, w.uom));
             this.I = I;
         };
         return Block3;
@@ -6533,9 +6532,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2017-04-23';
+            this.LAST_MODIFIED = '2017-05-17';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.40';
+            this.VERSION = '0.0.42';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -6924,7 +6923,7 @@ define('davinci-newton/engine3D/Cylinder3',["require", "exports", "../math/Geome
             I.setElement(0, 0, Irr);
             I.setElement(1, 1, Ihh);
             I.setElement(2, 2, Irr);
-            I.uom = Unit_1.default.mul(this.M.uom, Unit_1.default.mul(r.uom, h.uom));
+            I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, h.uom));
             this.I = I;
         };
         return Cylinder3;
@@ -8962,7 +8961,7 @@ define('davinci-newton/graph/DisplayAxes',["require", "exports", "../view/AlignH
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function makeLabelScale(label, scale) {
-        if (Unit_1.default.isOne(scale)) {
+        if (Unit_1.Unit.isOne(scale)) {
             return label;
         }
         else {
@@ -10160,16 +10159,16 @@ define('davinci-newton/engine3D/Physics3',["require", "exports", "../util/Abstra
             }
             forceApp.computeForce(this.force_);
             var F = this.force_;
-            if (Unit_1.default.isOne(body.P.uom) && isZeroVectorE3_1.default(body.P)) {
-                body.P.uom = Unit_1.default.mul(F.uom, uomTime);
+            if (Unit_1.Unit.isOne(body.P.uom) && isZeroVectorE3_1.default(body.P)) {
+                body.P.uom = Unit_1.Unit.mul(F.uom, uomTime);
             }
             rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_X] += F.x;
             rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
             rateOfChange[idx + Physics3.OFFSET_LINEAR_MOMENTUM_Z] += F.z;
             forceApp.computeTorque(this.torque_);
             var T = this.torque_;
-            if (Unit_1.default.isOne(body.L.uom) && isZeroBivectorE3_1.default(body.L)) {
-                body.L.uom = Unit_1.default.mul(T.uom, uomTime);
+            if (Unit_1.Unit.isOne(body.L.uom) && isZeroBivectorE3_1.default(body.L)) {
+                body.L.uom = Unit_1.Unit.mul(T.uom, uomTime);
             }
             rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_YZ] += T.yz;
             rateOfChange[idx + Physics3.OFFSET_ANGULAR_MOMENTUM_ZX] += T.zx;
@@ -10671,7 +10670,7 @@ define('davinci-newton/engine3D/Sphere3',["require", "exports", "../math/Geometr
             I.setElement(0, 0, s);
             I.setElement(1, 1, s);
             I.setElement(2, 2, s);
-            I.uom = Unit_1.default.mul(this.M.uom, Unit_1.default.mul(r.uom, r.uom));
+            I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
             this.I = I;
         };
         return Sphere3;
@@ -10695,13 +10694,13 @@ define('davinci-newton/engine3D/Spring3',["require", "exports", "../objects/Abst
     Object.defineProperty(exports, "__esModule", { value: true });
     function assertConsistentUnits(aName, A, bName, B) {
         if (!A.isZero() && !B.isZero()) {
-            if (Unit_1.default.isOne(A.uom)) {
-                if (!Unit_1.default.isOne(B.uom)) {
+            if (Unit_1.Unit.isOne(A.uom)) {
+                if (!Unit_1.Unit.isOne(B.uom)) {
                     throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
                 }
             }
             else {
-                if (Unit_1.default.isOne(B.uom)) {
+                if (Unit_1.Unit.isOne(B.uom)) {
                     throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
                 }
             }
@@ -10856,7 +10855,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/solvers/Adaptiv
         get SimView() { return SimView_1.default; },
         get Sphere3() { return Sphere3_1.default; },
         get Spring3() { return Spring3_1.default; },
-        get Unit() { return Unit_1.default; },
+        get Unit() { return Unit_1.Unit; },
         get VarsList() { return VarsList_1.default; },
         get Vec3() { return Vec3_1.default; }
     };

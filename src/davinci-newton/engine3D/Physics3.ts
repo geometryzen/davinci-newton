@@ -25,7 +25,7 @@ import isZeroVectorE3 from '../math/isZeroVectorE3';
 import remove from '../util/remove';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
-import Unit from '../math/Unit';
+import { Unit } from '../math/Unit';
 import VarsList from '../core/VarsList';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 

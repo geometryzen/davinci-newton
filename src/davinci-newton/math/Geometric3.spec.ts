@@ -1,7 +1,7 @@
 import { Geometric3 } from './Geometric3';
 import BivectorE3 from './BivectorE3';
 import Spinor3 from './Spinor3';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import Vector3 from './Vector3';
 import VectorE3 from './VectorE3';
 
@@ -75,7 +75,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(1);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("e1", function () {
             const m = Geometric3.e1;
@@ -89,7 +89,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("e2", function () {
             const m = Geometric3.e2;
@@ -103,7 +103,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("e3", function () {
             const m = Geometric3.e3;
@@ -117,7 +117,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("one", function () {
             const m = Geometric3.one;
@@ -131,7 +131,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("zero", function () {
             const m = Geometric3.zero;
@@ -145,7 +145,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(0);
+            expect(m.magnitude(false).a).toBe(0);
         });
         it("e12", function () {
             const m = e12;
@@ -159,7 +159,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("e23", function () {
             const m = e23;
@@ -173,7 +173,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("e31", function () {
             const m = e31;
@@ -187,7 +187,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
         });
         it("meter", function () {
             const m = meter;
@@ -201,7 +201,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 m");
         });
         it("kilogram", function () {
@@ -216,7 +216,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 kg");
         });
         it("second", function () {
@@ -231,7 +231,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 s");
         });
         it("ampere", function () {
@@ -246,7 +246,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 A");
         });
         it("kelvin", function () {
@@ -261,7 +261,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 K");
         });
         it("mole", function () {
@@ -276,7 +276,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 mol");
         });
         it("candela", function () {
@@ -291,7 +291,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude().a).toBe(1);
+            expect(m.magnitude(false).a).toBe(1);
             expect(m.toString()).toBe("1 cd");
         });
     });

@@ -1,6 +1,6 @@
 import isDefined from '../checks/isDefined';
 import mustBeArray from '../checks/mustBeArray';
-import Unit from './Unit';
+import { Unit } from './Unit';
 
 function isLabelOne(label: (string | string[])): boolean {
     if (typeof label === 'string') {
