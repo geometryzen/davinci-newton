@@ -841,6 +841,11 @@ declare namespace NEWTON {
         scp2(a: GeometricE3, b: GeometricE3): Geometric3;
 
         /**
+         * Currently limited to taking the square root of a positive scalar quantity.
+         */
+        sqrt(): Geometric3;
+
+        /**
          * Computes the <em>squared norm</em> of this multivector.
          */
         squaredNorm(mutate?: boolean): Geometric3;

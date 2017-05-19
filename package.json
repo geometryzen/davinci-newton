@@ -1,6 +1,6 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "Physics Modeling and Engine using Geometric Algebra",
   "author": {
     "name": "David Holmes",

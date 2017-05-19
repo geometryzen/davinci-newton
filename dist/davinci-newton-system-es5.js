@@ -229,9 +229,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-05-17';
+                    this.LAST_MODIFIED = '2017-05-19';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.42';
+                    this.VERSION = '0.0.43';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -8030,6 +8030,22 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                 };
                 Geometric3.prototype.scp2 = function (a, b) {
                     return scpG3_1.default(a, b, this);
+                };
+                Geometric3.prototype.sqrt = function () {
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().sqrt());
+                    } else {
+                        this.a = Math.sqrt(this.a);
+                        this.x = 0;
+                        this.y = 0;
+                        this.z = 0;
+                        this.yz = 0;
+                        this.zx = 0;
+                        this.xy = 0;
+                        this.b = 0;
+                        this.uom = Unit_1.Unit.sqrt(this.uom);
+                        return this;
+                    }
                 };
                 Geometric3.prototype.mulByNumber = function (α) {
                     if (this.lock_ !== UNLOCKED) {

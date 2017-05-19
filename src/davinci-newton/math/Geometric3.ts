@@ -1735,6 +1735,27 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     }
 
     /**
+     * Currently limited to taking the square root of a positive scalar quantity.
+     */
+    sqrt(): Geometric3 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().sqrt());
+        }
+        else {
+            this.a = Math.sqrt(this.a);
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            this.b = 0;
+            this.uom = Unit.sqrt(this.uom);
+            return this;
+        }
+    }
+
+    /**
      * @param α
      * @returns this * α
      */
