@@ -1,8 +1,8 @@
 System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AdaptiveStepSolver;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -72,7 +72,7 @@ System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (ex
                     set: function (value) {
                         this.secondDiff_ = value;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(AdaptiveStepSolver.prototype, "tolerance", {
@@ -82,7 +82,7 @@ System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (ex
                     set: function (value) {
                         this.tolerance_ = value;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 return AdaptiveStepSolver;
@@ -96,10 +96,13 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -109,8 +112,8 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Block3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
@@ -154,7 +157,7 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                         this.widthLock_ = this.width_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Block3.prototype, "height", {
@@ -167,7 +170,7 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                         this.heightLock_ = this.height_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Block3.prototype, "depth", {
@@ -180,7 +183,7 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                         this.depthLock_ = this.depth_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Block3.prototype.updateAngularVelocity = function () {
@@ -221,17 +224,17 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
 System.register('davinci-newton/config.js', [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Newton, config;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2017-05-19';
+                    this.LAST_MODIFIED = '2020-07-08';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '0.0.43';
+                    this.VERSION = '0.0.44';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -271,8 +274,8 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
 System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var ConstantEnergySolver;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -335,7 +338,7 @@ System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (
                     set: function (value) {
                         this.tolerance_ = value;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 return ConstantEnergySolver;
@@ -349,10 +352,13 @@ System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/Abs
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -362,8 +368,8 @@ System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/Abs
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, ConstantForceLaw3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -400,7 +406,7 @@ System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/Abs
                     set: function (location) {
                         this.force_.location.copyVector(location);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 ConstantForceLaw3.prototype.updateForces = function () {
@@ -424,10 +430,13 @@ System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../objects/AbstractS
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -437,8 +446,8 @@ System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../objects/AbstractS
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, CoulombLaw3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -508,10 +517,13 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -521,8 +533,8 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Cylinder3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
@@ -561,7 +573,7 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
                         this.radiusLock_ = this.radius_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Cylinder3.prototype, "height", {
@@ -574,7 +586,7 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
                         this.heightLock_ = this.height_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Cylinder3.prototype.updateInertiaTensor = function () {
@@ -601,8 +613,8 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
 System.register("davinci-newton/strategy/DefaultAdvanceStrategy.js", ["../checks/mustBeNonNullObject"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var mustBeNonNullObject_1, DefaultAdvanceStrategy;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (mustBeNonNullObject_1_1) {
             mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
@@ -629,10 +641,13 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -642,8 +657,8 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AlignH_1, AlignV_1, Graph_1, Physics3_1, EnergyTimeGraph;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AlignH_1_1) {
             AlignH_1 = AlignH_1_1;
@@ -684,8 +699,8 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
 System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var zeroArray_1, EulerMethod;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (zeroArray_1_1) {
             zeroArray_1 = zeroArray_1_1;
@@ -726,8 +741,8 @@ System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], 
 System.register("davinci-newton/graph/AxisChoice.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AxisChoice;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -745,10 +760,13 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -758,8 +776,8 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, AxisChoice_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, ParameterNumber_1, repeat_1, SimView_1, veryDifferent_1, AutoScale;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -863,7 +881,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                             }
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(AutoScale.prototype, "axisChoice", {
@@ -878,7 +896,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                             throw new Error('unknown ' + value);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(AutoScale.prototype, "enabled", {
@@ -892,7 +910,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                             this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 AutoScale.prototype.getRangeRect = function () {
@@ -910,7 +928,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                             this.broadcastParameter(AutoScale.TIME_WINDOW);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 AutoScale.prototype.memorize = function () {
@@ -1065,13 +1083,13 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
                         }
                     }
                 };
+                AutoScale.AXIS = 'AXIS';
+                AutoScale.TIME_WINDOW = 'TIME_WINDOW';
+                AutoScale.ACTIVE = 'ACTIVE';
+                AutoScale.AUTO_SCALE = 'AUTO_SCALE';
+                AutoScale.ENABLED = 'ENABLED';
                 return AutoScale;
             }(AbstractSubject_1.default);
-            AutoScale.AXIS = 'AXIS';
-            AutoScale.TIME_WINDOW = 'TIME_WINDOW';
-            AutoScale.ACTIVE = 'ACTIVE';
-            AutoScale.AUTO_SCALE = 'AUTO_SCALE';
-            AutoScale.ENABLED = 'ENABLED';
             exports_1("default", AutoScale);
         }
     };
@@ -1079,6 +1097,7 @@ System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject",
 System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../view/AlignV", "../view/DoubleRect", "../math/Unit", "../checks/isDefined"], function (exports_1, context_1) {
     "use strict";
 
+    var AlignH_1, AlignV_1, DoubleRect_1, Unit_1, isDefined_1, DisplayAxes;
     var __moduleName = context_1 && context_1.id;
     function makeLabelScale(label, scale) {
         if (Unit_1.Unit.isOne(scale)) {
@@ -1087,7 +1106,6 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
             return label + " / (" + scale + ")";
         }
     }
-    var AlignH_1, AlignV_1, DoubleRect_1, Unit_1, isDefined_1, DisplayAxes;
     return {
         setters: [function (AlignH_1_1) {
             AlignH_1 = AlignH_1_1;
@@ -1246,7 +1264,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.drawColor_ = color;
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 DisplayAxes.prototype.getFont = function () {
@@ -1261,7 +1279,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(DisplayAxes.prototype, "hAxisScale", {
@@ -1273,7 +1291,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 DisplayAxes.prototype.getNiceIncrement = function (range) {
@@ -1301,7 +1319,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(DisplayAxes.prototype, "vAxisScale", {
@@ -1313,7 +1331,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(DisplayAxes.prototype, "hAxisAlign", {
@@ -1324,7 +1342,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.hAxisAlign_ = alignment;
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(DisplayAxes.prototype, "vAxisAlign", {
@@ -1335,7 +1353,7 @@ System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../vi
                         this.vAxisAlign_ = alignment;
                         this.needRedraw_ = true;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 DisplayAxes.prototype.getZIndex = function () {
@@ -1387,8 +1405,8 @@ System.register("davinci-newton/util/repeat.js", [], function (exports_1, contex
 System.register("davinci-newton/graph/DisplayGraph.js", ["../util/contains", "../view/DrawingMode", "./GraphLine", "../checks/isDefined", "../util/removeAt", "../util/repeat", "../view/ScreenRect"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var contains_1, DrawingMode_1, GraphLine_1, isDefined_1, removeAt_1, repeat_1, ScreenRect_1, DisplayGraph;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (contains_1_1) {
             contains_1 = contains_1_1;
@@ -1595,8 +1613,8 @@ System.register("davinci-newton/graph/DisplayGraph.js", ["../util/contains", "..
 System.register("davinci-newton/util/GenericObserver.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var GenericObserver;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -1623,10 +1641,13 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "..
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -1636,8 +1657,8 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "..
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, AlignH_1, AlignV_1, AutoScale_1, DisplayAxes_1, DisplayGraph_1, DoubleRect_1, GenericObserver_1, GraphLine_1, LabCanvas_1, mustBeNumber_1, mustBeString_1, SimView_1, Graph;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -1740,16 +1761,16 @@ System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "..
 System.register("davinci-newton/util/UtilityCore.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var UtilityCore;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
             UtilityCore = function () {
                 function UtilityCore() {}
+                UtilityCore.MAX_INTEGER = Math.pow(2, 53);
                 return UtilityCore;
             }();
-            UtilityCore.MAX_INTEGER = Math.pow(2, 53);
             exports_1("default", UtilityCore);
         }
     };
@@ -1757,8 +1778,8 @@ System.register("davinci-newton/util/UtilityCore.js", [], function (exports_1, c
 System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var UtilityCore_1, MAX_INDEX_ERROR, CircularList, CircularListIterator;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (UtilityCore_1_1) {
             UtilityCore_1 = UtilityCore_1_1;
@@ -1912,8 +1933,8 @@ System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], functi
 System.register("davinci-newton/view/DrawingMode.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var DrawingMode;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -1929,8 +1950,8 @@ System.register("davinci-newton/view/DrawingMode.js", [], function (exports_1, c
 System.register("davinci-newton/graph/GraphPoint.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var GraphPoint;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -1953,8 +1974,8 @@ System.register("davinci-newton/graph/GraphPoint.js", [], function (exports_1, c
 System.register("davinci-newton/graph/GraphStyle.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var GraphStyle;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -1975,10 +1996,13 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -1988,8 +2012,8 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, CircularList_1, DrawingMode_1, GenericEvent_1, GraphPoint_1, GraphStyle_1, isObject_1, ParameterNumber_1, ParameterString_1, veryDifferent_1, GraphLine;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -2085,7 +2109,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                             this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(GraphLine.prototype, "drawingMode", {
@@ -2099,7 +2123,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                         }
                         this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 GraphLine.prototype.getGraphPoints = function () {
@@ -2127,7 +2151,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                     set: function (color) {
                         this.hotspotColor_ = color;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(GraphLine.prototype, "lineWidth", {
@@ -2141,14 +2165,14 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                             this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(GraphLine.prototype, "varsList", {
                     get: function () {
                         return this.varsList_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(GraphLine.prototype, "hCoordIndex", {
@@ -2163,7 +2187,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                             this.broadcastParameter(GraphLine.PARAM_NAME_X_VARIABLE);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 GraphLine.prototype.getXVarName = function () {
@@ -2181,7 +2205,7 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                             this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 GraphLine.prototype.getYVarName = function () {
@@ -2218,14 +2242,14 @@ System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject",
                         throw new Error(name + " bad index: " + index);
                     }
                 };
+                GraphLine.PARAM_NAME_X_VARIABLE = 'X variable';
+                GraphLine.PARAM_NAME_Y_VARIABLE = 'Y variable';
+                GraphLine.PARAM_NAME_LINE_WIDTH = 'line width';
+                GraphLine.PARAM_NAME_COLOR = 'color';
+                GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
+                GraphLine.RESET = 'RESET';
                 return GraphLine;
             }(AbstractSubject_1.default);
-            GraphLine.PARAM_NAME_X_VARIABLE = 'X variable';
-            GraphLine.PARAM_NAME_Y_VARIABLE = 'Y variable';
-            GraphLine.PARAM_NAME_LINE_WIDTH = 'line width';
-            GraphLine.PARAM_NAME_COLOR = 'color';
-            GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
-            GraphLine.RESET = 'RESET';
             exports_1("default", GraphLine);
         }
     };
@@ -2234,10 +2258,13 @@ System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../objects/Abstr
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -2247,8 +2274,8 @@ System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../objects/Abstr
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, GravitationLaw3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -2331,10 +2358,13 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -2344,8 +2374,8 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, clone_1, contains_1, GenericEvent_1, isEmpty_1, isNumber_1, mustBeNonNullObject_1, remove_1, ScreenRect_1, veryDifferent_1, WIDTH, HEIGHT, ALPHA, BACKGROUND, LabCanvas;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -2544,13 +2574,13 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
                     this.notifySizeChanged();
                     this.broadcastParameter(WIDTH);
                 };
+                LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
+                LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
+                LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
+                LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
+                LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
                 return LabCanvas;
             }(AbstractSubject_1.default);
-            LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
-            LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
-            LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
-            LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
-            LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
             exports_1("LabCanvas", LabCanvas);
             exports_1("default", LabCanvas);
         }
@@ -2559,8 +2589,8 @@ System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", 
 System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var zeroArray_1, ModifiedEuler;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (zeroArray_1_1) {
             zeroArray_1 = zeroArray_1_1;
@@ -2610,10 +2640,13 @@ System.register("davinci-newton/engine3D/Particle3.js", ["../math/Geometric3", "
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -2623,8 +2656,8 @@ System.register("davinci-newton/engine3D/Particle3.js", ["../math/Geometric3", "
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var Geometric3_1, RigidBody3_1, Particle3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
@@ -2666,10 +2699,13 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -2679,8 +2715,8 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, contains_1, GenericEvent_1, mustBeNonNullObject_1, remove_1, SimList;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -2728,10 +2764,10 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
                         }
                     }
                 };
+                SimList.OBJECT_ADDED = 'OBJECT_ADDED';
+                SimList.OBJECT_REMOVED = 'OBJECT_REMOVED';
                 return SimList;
             }(AbstractSubject_1.default);
-            SimList.OBJECT_ADDED = 'OBJECT_ADDED';
-            SimList.OBJECT_REMOVED = 'OBJECT_REMOVED';
             exports_1("SimList", SimList);
             exports_1("default", SimList);
         }
@@ -2741,10 +2777,13 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -2754,6 +2793,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
+    var AbstractSubject_1, contains_1, Geometric3_1, isZeroBivectorE3_1, isZeroVectorE3_1, remove_1, SimList_1, Unit_1, VarsList_1, wedge3_1, var_names, NUM_VARIABLES_PER_BODY, Physics3;
     var __moduleName = context_1 && context_1.id;
     function getVarName(index) {
         switch (index) {
@@ -2786,7 +2826,6 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
         }
         throw new Error("getVarName(" + index + ")");
     }
-    var AbstractSubject_1, contains_1, Geometric3_1, isZeroBivectorE3_1, isZeroVectorE3_1, remove_1, SimList_1, Unit_1, VarsList_1, wedge3_1, var_names, NUM_VARIABLES_PER_BODY, Physics3;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -2835,7 +2874,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     set: function (showForces) {
                         this.showForces_ = showForces;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Physics3.prototype.addBody = function (body) {
@@ -2995,7 +3034,7 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     get: function () {
                         return this.varsList_.getTime();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Physics3.prototype.updateFromBodies = function () {
@@ -3076,21 +3115,21 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     get: function () {
                         return this.bodies_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Physics3.prototype, "simList", {
                     get: function () {
                         return this.simList_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Physics3.prototype, "varsList", {
                     get: function () {
                         return this.varsList_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Physics3.prototype.totalEnergy = function () {
@@ -3114,32 +3153,32 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     this.totalEnergyLock_ = this.totalEnergy_.lock();
                     return this.totalEnergy_;
                 };
+                Physics3.INDEX_TIME = 0;
+                Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+                Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+                Physics3.INDEX_POTENTIAL_ENERGY = 3;
+                Physics3.INDEX_TOTAL_ENERGY = 4;
+                Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
+                Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
+                Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7;
+                Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8;
+                Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9;
+                Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10;
+                Physics3.OFFSET_POSITION_X = 0;
+                Physics3.OFFSET_POSITION_Y = 1;
+                Physics3.OFFSET_POSITION_Z = 2;
+                Physics3.OFFSET_ATTITUDE_A = 3;
+                Physics3.OFFSET_ATTITUDE_YZ = 4;
+                Physics3.OFFSET_ATTITUDE_ZX = 5;
+                Physics3.OFFSET_ATTITUDE_XY = 6;
+                Physics3.OFFSET_LINEAR_MOMENTUM_X = 7;
+                Physics3.OFFSET_LINEAR_MOMENTUM_Y = 8;
+                Physics3.OFFSET_LINEAR_MOMENTUM_Z = 9;
+                Physics3.OFFSET_ANGULAR_MOMENTUM_YZ = 10;
+                Physics3.OFFSET_ANGULAR_MOMENTUM_ZX = 11;
+                Physics3.OFFSET_ANGULAR_MOMENTUM_XY = 12;
                 return Physics3;
             }(AbstractSubject_1.default);
-            Physics3.INDEX_TIME = 0;
-            Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
-            Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
-            Physics3.INDEX_POTENTIAL_ENERGY = 3;
-            Physics3.INDEX_TOTAL_ENERGY = 4;
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
-            Physics3.INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7;
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8;
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9;
-            Physics3.INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10;
-            Physics3.OFFSET_POSITION_X = 0;
-            Physics3.OFFSET_POSITION_Y = 1;
-            Physics3.OFFSET_POSITION_Z = 2;
-            Physics3.OFFSET_ATTITUDE_A = 3;
-            Physics3.OFFSET_ATTITUDE_YZ = 4;
-            Physics3.OFFSET_ATTITUDE_ZX = 5;
-            Physics3.OFFSET_ATTITUDE_XY = 6;
-            Physics3.OFFSET_LINEAR_MOMENTUM_X = 7;
-            Physics3.OFFSET_LINEAR_MOMENTUM_Y = 8;
-            Physics3.OFFSET_LINEAR_MOMENTUM_Z = 9;
-            Physics3.OFFSET_ANGULAR_MOMENTUM_YZ = 10;
-            Physics3.OFFSET_ANGULAR_MOMENTUM_ZX = 11;
-            Physics3.OFFSET_ANGULAR_MOMENTUM_XY = 12;
             exports_1("Physics3", Physics3);
             exports_1("default", Physics3);
         }
@@ -3164,8 +3203,8 @@ System.register("davinci-newton/util/zeroArray.js", [], function (exports_1, con
 System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var zeroArray_1, RungeKutta;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (zeroArray_1_1) {
             zeroArray_1 = zeroArray_1_1;
@@ -3230,8 +3269,8 @@ System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], f
 System.register("davinci-newton/view/AffineTransform.js", ["./Point"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Point_1, AffineTransform;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Point_1_1) {
             Point_1 = Point_1_1;
@@ -3299,9 +3338,9 @@ System.register("davinci-newton/view/AffineTransform.js", ["./Point"], function 
                     var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
                     return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
                 };
+                AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
                 return AffineTransform;
             }();
-            AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
             exports_1("default", AffineTransform);
         }
     };
@@ -3309,8 +3348,8 @@ System.register("davinci-newton/view/AffineTransform.js", ["./Point"], function 
 System.register("davinci-newton/view/AlignH.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AlignH;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -3328,8 +3367,8 @@ System.register("davinci-newton/view/AlignH.js", [], function (exports_1, contex
 System.register("davinci-newton/view/AlignV.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AlignV;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -3363,8 +3402,8 @@ System.register('davinci-newton/checks/mustBeFinite.js', [], function (exports_1
 System.register("davinci-newton/view/CoordMap.js", ["./AffineTransform", "./AlignH", "./AlignV", "./DoubleRect", "../checks/mustBeFinite", "./Point", "./ScreenRect"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AffineTransform_1, AlignH_1, AlignV_1, DoubleRect_1, mustBeFinite_1, Point_1, ScreenRect_1, MIN_SIZE, CoordMap;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AffineTransform_1_1) {
             AffineTransform_1 = AffineTransform_1_1;
@@ -3578,10 +3617,13 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -3591,8 +3633,8 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1, DisplayList;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -3654,10 +3696,10 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
                     this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
                 };
                 DisplayList.prototype.sort = function () {};
+                DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
+                DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
                 return DisplayList;
             }(AbstractSubject_1.default);
-            DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
-            DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
             exports_1("DisplayList", DisplayList);
             exports_1("default", DisplayList);
         }
@@ -3666,8 +3708,8 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
 System.register("davinci-newton/view/Point.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Point;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -3680,14 +3722,14 @@ System.register("davinci-newton/view/Point.js", [], function (exports_1, context
                     get: function () {
                         return this.x_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Point.prototype, "y", {
                     get: function () {
                         return this.y_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 return Point;
@@ -3699,8 +3741,8 @@ System.register("davinci-newton/view/Point.js", [], function (exports_1, context
 System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDifferent"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Point_1, veryDifferent_1, DoubleRect;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Point_1_1) {
             Point_1 = Point_1_1;
@@ -3855,9 +3897,9 @@ System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDi
                 DoubleRect.prototype.unionPoint = function (point) {
                     return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
                 };
+                DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
                 return DoubleRect;
             }();
-            DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
             exports_1("default", DoubleRect);
         }
     };
@@ -3865,8 +3907,8 @@ System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDi
 System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var isFunction_1, veryDifferent_1, ScreenRect;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (isFunction_1_1) {
             isFunction_1 = isFunction_1_1;
@@ -3953,9 +3995,9 @@ System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", ".
                     }
                     return true;
                 };
+                ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
                 return ScreenRect;
             }();
-            ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
             exports_1("default", ScreenRect);
         }
     };
@@ -3964,10 +4006,13 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -3977,8 +4022,8 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, AlignH_1, AlignV_1, clone_1, contains_1, CoordMap_1, DisplayList_1, DoubleRect_1, GenericEvent_1, ParameterBoolean_1, ParameterNumber_1, remove_1, ScreenRect_1, veryDifferent_1, SimView;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -4110,7 +4155,7 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
                         this.realign();
                         this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 SimView.prototype.getMemos = function () {
@@ -4134,7 +4179,7 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
                         this.realign();
                         this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 SimView.prototype.getWidth = function () {
@@ -4261,19 +4306,19 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
                 SimView.prototype.zoomOut = function () {
                     this.setHeight(this.height_ * this.zoom);
                 };
+                SimView.PARAM_NAME_WIDTH = 'width';
+                SimView.PARAM_NAME_HEIGHT = 'height';
+                SimView.PARAM_NAME_CENTER_X = 'center-x';
+                SimView.PARAM_NAME_CENTER_Y = 'center-y';
+                SimView.PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
+                SimView.PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
+                SimView.PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
+                SimView.PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
+                SimView.COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
+                SimView.SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
+                SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
                 return SimView;
             }(AbstractSubject_1.default);
-            SimView.PARAM_NAME_WIDTH = 'width';
-            SimView.PARAM_NAME_HEIGHT = 'height';
-            SimView.PARAM_NAME_CENTER_X = 'center-x';
-            SimView.PARAM_NAME_CENTER_Y = 'center-y';
-            SimView.PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
-            SimView.PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
-            SimView.PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
-            SimView.PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
-            SimView.COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
-            SimView.SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
-            SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
             exports_1("SimView", SimView);
             exports_1("default", SimView);
         }
@@ -4282,8 +4327,8 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
 System.register("davinci-newton/math/Mat3.js", ["./Matrix3", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Matrix3_1, Unit_1, Mat3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Matrix3_1_1) {
             Matrix3_1 = Matrix3_1_1;
@@ -4310,7 +4355,7 @@ System.register("davinci-newton/math/Mat3.js", ["./Matrix3", "./Unit"], function
                     get: function () {
                         return 3;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Mat3.prototype.getElement = function (row, column) {
@@ -4332,6 +4377,7 @@ System.register("davinci-newton/math/Mat3.js", ["./Matrix3", "./Unit"], function
 System.register("davinci-newton/checks/mustBeDefined.js", ["../checks/mustSatisfy", "../checks/isDefined"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isDefined_1;
     var __moduleName = context_1 && context_1.id;
     function beDefined() {
         return "not be 'undefined'";
@@ -4341,7 +4387,6 @@ System.register("davinci-newton/checks/mustBeDefined.js", ["../checks/mustSatisf
         return value;
     }
     exports_1("default", mustBeDefined);
-    var mustSatisfy_1, isDefined_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -4354,12 +4399,12 @@ System.register("davinci-newton/checks/mustBeDefined.js", ["../checks/mustSatisf
 System.register("davinci-newton/checks/isInteger.js", ["../checks/isNumber"], function (exports_1, context_1) {
     "use strict";
 
+    var isNumber_1;
     var __moduleName = context_1 && context_1.id;
     function isInteger(x) {
         return isNumber_1.default(x) && x % 1 === 0;
     }
     exports_1("default", isInteger);
-    var isNumber_1;
     return {
         setters: [function (isNumber_1_1) {
             isNumber_1 = isNumber_1_1;
@@ -4370,6 +4415,7 @@ System.register("davinci-newton/checks/isInteger.js", ["../checks/isNumber"], fu
 System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisfy", "../checks/isInteger"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isInteger_1;
     var __moduleName = context_1 && context_1.id;
     function beAnInteger() {
         return "be an integer";
@@ -4379,7 +4425,6 @@ System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisf
         return value;
     }
     exports_1("default", mustBeInteger);
-    var mustSatisfy_1, isInteger_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -4392,13 +4437,13 @@ System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisf
 System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefined", "../checks/mustBeInteger", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var mustBeDefined_1, mustBeInteger_1, Unit_1, AbstractMatrix;
     var __moduleName = context_1 && context_1.id;
     function checkElementsLength(elements, length) {
         if (elements.length !== length) {
             throw new Error("elements must have length " + length);
         }
     }
-    var mustBeDefined_1, mustBeInteger_1, Unit_1, AbstractMatrix;
     return {
         setters: [function (mustBeDefined_1_1) {
             mustBeDefined_1 = mustBeDefined_1_1;
@@ -4421,7 +4466,7 @@ System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefin
                     get: function () {
                         return this._dimensions;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(AbstractMatrix.prototype, "elements", {
@@ -4432,7 +4477,7 @@ System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefin
                         checkElementsLength(elements, this._length);
                         this._elements = elements;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 AbstractMatrix.prototype.copy = function (source) {
@@ -4500,6 +4545,7 @@ System.register("davinci-newton/math/det3x3.js", [], function (exports_1, contex
 System.register("davinci-newton/math/inv3x3.js", ["../math/det3x3"], function (exports_1, context_1) {
     "use strict";
 
+    var det3x3_1;
     var __moduleName = context_1 && context_1.id;
     function inv3x3(m, te) {
         var det = det3x3_1.default(m);
@@ -4533,7 +4579,6 @@ System.register("davinci-newton/math/inv3x3.js", ["../math/det3x3"], function (e
         te[0x8] = o33 * α;
     }
     exports_1("default", inv3x3);
-    var det3x3_1;
     return {
         setters: [function (det3x3_1_1) {
             det3x3_1 = det3x3_1_1;
@@ -4585,10 +4630,13 @@ System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix", "./inv3x3
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -4598,8 +4646,8 @@ System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix", "./inv3x3
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractMatrix_1, inv3x3_1, mul3x3_1, Matrix3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractMatrix_1_1) {
             AbstractMatrix_1 = AbstractMatrix_1_1;
@@ -4718,6 +4766,7 @@ System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, 
 System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatisfy", "../checks/isFunction"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isFunction_1;
     var __moduleName = context_1 && context_1.id;
     function beFunction() {
         return "be a function";
@@ -4727,7 +4776,6 @@ System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatis
         return value;
     }
     exports_1("default", mustBeFunction);
-    var mustSatisfy_1, isFunction_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -4740,6 +4788,7 @@ System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatis
 System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isNull_1, isObject_1;
     var __moduleName = context_1 && context_1.id;
     function beObject() {
         return "be a non-null `object`";
@@ -4749,7 +4798,6 @@ System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/must
         return value;
     }
     exports_1("default", mustBeObject);
-    var mustSatisfy_1, isNull_1, isObject_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -4765,10 +4813,13 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -4778,6 +4829,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
+    var AbstractSimObject_1, Bivector3_1, Geometric3_1, Mat3_1, Matrix3_1, mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Unit_1, Vec3_1, RigidBody3;
     var __moduleName = context_1 && context_1.id;
     function assertConsistentUnits(aName, A, bName, B) {
         if (!A.isZero() && !B.isZero()) {
@@ -4799,7 +4851,6 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
             return value;
         }
     }
-    var AbstractSimObject_1, Bivector3_1, Geometric3_1, Mat3_1, Matrix3_1, mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Unit_1, Vec3_1, RigidBody3;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -4854,7 +4905,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                     set: function (centerOfMassLocal) {
                         this.centerOfMassLocal_ = Vec3_1.default.fromVector(centerOfMassLocal);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "M", {
@@ -4868,7 +4919,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         this.massLock_ = this.mass_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "Q", {
@@ -4881,7 +4932,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         this.charge_.copy(Q);
                         this.chargeLock_ = this.charge_.lock();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 RigidBody3.prototype.updateAngularVelocity = function () {
@@ -4902,7 +4953,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         var Iinv = Matrix3_1.default.zero().copy(I).inv();
                         this.inertiaTensorInverse_ = new Mat3_1.default(Iinv);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "Iinv", {
@@ -4915,7 +4966,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         mustBeFunction_1.default('getElement', source.getElement);
                         this.inertiaTensorInverse_ = new Mat3_1.default(source);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "X", {
@@ -4926,7 +4977,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER);
                         this.position_.copy(position);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "R", {
@@ -4937,7 +4988,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE);
                         this.attitude_.copy(attitude);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "P", {
@@ -4948,7 +4999,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND);
                         this.linearMomentum_.copy(momentum);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "L", {
@@ -4959,14 +5010,14 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                         mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND);
                         this.angularMomentum_.copy(angularMomentum);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "expireTime", {
                     get: function () {
                         return Number.POSITIVE_INFINITY;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(RigidBody3.prototype, "varsIndex", {
@@ -4976,7 +5027,7 @@ System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSi
                     set: function (index) {
                         this.varsIndex_ = index;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 RigidBody3.prototype.rotationalEnergy = function () {
@@ -5009,10 +5060,13 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "..
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -5022,8 +5076,8 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "..
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Sphere3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
@@ -5057,7 +5111,7 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "..
                         this.radiusLock_ = this.radius_.lock();
                         this.updateInertiaTensor();
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Sphere3.prototype.updateAngularVelocity = function () {
@@ -5088,8 +5142,8 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "..
 System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AbstractSimObject;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -5104,7 +5158,7 @@ System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exp
                     set: function (expireTime) {
                         this.expireTime_ = expireTime;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 return AbstractSimObject;
@@ -5117,6 +5171,7 @@ System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exp
 System.register("davinci-newton/math/isBivectorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
     "use strict";
 
+    var isNull_1, isNumber_1, isObject_1;
     var __moduleName = context_1 && context_1.id;
     function isBivectorE3(v) {
         if (isObject_1.default(v) && !isNull_1.default(v)) {
@@ -5126,7 +5181,6 @@ System.register("davinci-newton/math/isBivectorE3.js", ["../checks/isNull", "../
         }
     }
     exports_1("default", isBivectorE3);
-    var isNull_1, isNumber_1, isObject_1;
     return {
         setters: [function (isNull_1_1) {
             isNull_1 = isNull_1_1;
@@ -5194,8 +5248,8 @@ System.register("davinci-newton/math/wedge3.js", [], function (exports_1, contex
 System.register("davinci-newton/math/Bivector3.js", ["./isBivectorE3", "../checks/isNumber", "./isVectorE3", "./mustBeBivectorE3", "../checks/mustBeNumber", "./mustBeVectorE3", "./Unit", "./wedge3"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var isBivectorE3_1, isNumber_1, isVectorE3_1, mustBeBivectorE3_1, mustBeNumber_1, mustBeVectorE3_1, Unit_1, wedge3_1, Bivector3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (isBivectorE3_1_1) {
             isBivectorE3_1 = isBivectorE3_1_1;
@@ -5381,8 +5435,8 @@ System.register("davinci-newton/math/Bivector3.js", ["./isBivectorE3", "../check
 System.register("davinci-newton/model/CoordType.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var CoordType;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -5399,10 +5453,13 @@ System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObj
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -5412,8 +5469,8 @@ System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObj
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSimObject_1, Bivector3_1, CoordType_1, Geometric3_1, Force3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -5462,7 +5519,7 @@ System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObj
                         this.computeForce(this.force_);
                         return this.force_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Force3.prototype, "x", {
@@ -5470,7 +5527,7 @@ System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObj
                         this.computePosition(this.position_);
                         return this.position_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Force3.prototype.computePosition = function (position) {
@@ -5530,6 +5587,7 @@ System.register("davinci-newton/math/approx.js", [], function (exports_1, contex
 System.register("davinci-newton/math/arraysEQ.js", ["../checks/isDefined", "../checks/isNull", "../checks/isUndefined"], function (exports_1, context_1) {
     "use strict";
 
+    var isDefined_1, isNull_1, isUndefined_1;
     var __moduleName = context_1 && context_1.id;
     function default_1(a, b) {
         if (isDefined_1.default(a)) {
@@ -5562,7 +5620,6 @@ System.register("davinci-newton/math/arraysEQ.js", ["../checks/isDefined", "../c
         }
     }
     exports_1("default", default_1);
-    var isDefined_1, isNull_1, isUndefined_1;
     return {
         setters: [function (isDefined_1_1) {
             isDefined_1 = isDefined_1_1;
@@ -5654,6 +5711,7 @@ System.register("davinci-newton/math/extE3.js", [], function (exports_1, context
 System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./extE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var compG3Get_1, extE3_1, compG3Set_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function extG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -5679,7 +5737,6 @@ System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./extE3", "./co
         return out;
     }
     exports_1("default", extG3);
-    var compG3Get_1, extE3_1, compG3Set_1, Unit_1;
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
@@ -5696,6 +5753,7 @@ System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./extE3", "./co
 System.register("davinci-newton/math/gauss.js", [], function (exports_1, context_1) {
     "use strict";
 
+    var abs;
     var __moduleName = context_1 && context_1.id;
     function makeColumnVector(n, v) {
         var a = [];
@@ -5759,7 +5817,6 @@ System.register("davinci-newton/math/gauss.js", [], function (exports_1, context
         return solve(A, N);
     }
     exports_1("default", gauss);
-    var abs;
     return {
         setters: [],
         execute: function () {
@@ -5796,6 +5853,7 @@ System.register("davinci-newton/checks/isNull.js", [], function (exports_1, cont
 System.register("davinci-newton/math/isVectorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
     "use strict";
 
+    var isNull_1, isNumber_1, isObject_1;
     var __moduleName = context_1 && context_1.id;
     function isVectorE3(v) {
         if (isObject_1.default(v) && !isNull_1.default(v)) {
@@ -5805,7 +5863,6 @@ System.register("davinci-newton/math/isVectorE3.js", ["../checks/isNull", "../ch
         }
     }
     exports_1("default", isVectorE3);
-    var isNull_1, isNumber_1, isObject_1;
     return {
         setters: [function (isNull_1_1) {
             isNull_1 = isNull_1_1;
@@ -5846,12 +5903,12 @@ System.register("davinci-newton/math/isZeroBivectorE3.js", [], function (exports
 System.register("davinci-newton/math/isZeroGeometricE3.js", ["./isZeroBivectorE3", "./isZeroVectorE3"], function (exports_1, context_1) {
     "use strict";
 
+    var isZeroBivectorE3_1, isZeroVectorE3_1;
     var __moduleName = context_1 && context_1.id;
     function isZeroGeometricE3(m) {
         return isZeroVectorE3_1.default(m) && isZeroBivectorE3_1.default(m) && m.a === 0 && m.b === 0;
     }
     exports_1("default", isZeroGeometricE3);
-    var isZeroBivectorE3_1, isZeroVectorE3_1;
     return {
         setters: [function (isZeroBivectorE3_1_1) {
             isZeroBivectorE3_1 = isZeroBivectorE3_1_1;
@@ -5954,6 +6011,7 @@ System.register("davinci-newton/math/lcoE3.js", [], function (exports_1, context
 System.register("davinci-newton/math/lcoG3.js", ["./compG3Get", "./lcoE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var compG3Get_1, lcoE3_1, compG3Set_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function lcoG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -5979,7 +6037,6 @@ System.register("davinci-newton/math/lcoG3.js", ["./compG3Get", "./lcoE3", "./co
         return out;
     }
     exports_1("default", lcoG3);
-    var compG3Get_1, lcoE3_1, compG3Set_1, Unit_1;
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
@@ -6009,6 +6066,7 @@ System.register("davinci-newton/checks/isObject.js", [], function (exports_1, co
 System.register("davinci-newton/math/maskG3.js", ["../checks/isNumber", "../checks/isObject", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var isNumber_1, isObject_1, Unit_1, ONE, scratch;
     var __moduleName = context_1 && context_1.id;
     function maskG3(arg) {
         if (isObject_1.default(arg) && 'maskG3' in arg) {
@@ -6060,7 +6118,6 @@ System.register("davinci-newton/math/maskG3.js", ["../checks/isNumber", "../chec
         }
     }
     exports_1("default", maskG3);
-    var isNumber_1, isObject_1, Unit_1, ONE, scratch;
     return {
         setters: [function (isNumber_1_1) {
             isNumber_1 = isNumber_1_1;
@@ -6091,6 +6148,7 @@ System.register("davinci-newton/math/randomRange.js", [], function (exports_1, c
 System.register("davinci-newton/checks/mustBeString.js", ["../checks/mustSatisfy", "../checks/isString"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isString_1;
     var __moduleName = context_1 && context_1.id;
     function beAString() {
         return "be a string";
@@ -6100,7 +6158,6 @@ System.register("davinci-newton/checks/mustBeString.js", ["../checks/mustSatisfy
         return value;
     }
     exports_1("default", default_1);
-    var mustSatisfy_1, isString_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -6113,6 +6170,7 @@ System.register("davinci-newton/checks/mustBeString.js", ["../checks/mustSatisfy
 System.register("davinci-newton/i18n/readOnly.js", ["../checks/mustBeString"], function (exports_1, context_1) {
     "use strict";
 
+    var mustBeString_1;
     var __moduleName = context_1 && context_1.id;
     function readOnly(name) {
         mustBeString_1.default('name', name);
@@ -6124,7 +6182,6 @@ System.register("davinci-newton/i18n/readOnly.js", ["../checks/mustBeString"], f
         return message;
     }
     exports_1("default", readOnly);
-    var mustBeString_1;
     return {
         setters: [function (mustBeString_1_1) {
             mustBeString_1 = mustBeString_1_1;
@@ -6212,6 +6269,7 @@ System.register("davinci-newton/math/rcoE3.js", [], function (exports_1, context
 System.register("davinci-newton/math/rcoG3.js", ["./compG3Get", "./rcoE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var compG3Get_1, rcoE3_1, compG3Set_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function rcoG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -6237,7 +6295,6 @@ System.register("davinci-newton/math/rcoG3.js", ["./compG3Get", "./rcoE3", "./co
         return out;
     }
     exports_1("default", rcoG3);
-    var compG3Get_1, rcoE3_1, compG3Set_1, Unit_1;
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
@@ -6283,6 +6340,7 @@ System.register("davinci-newton/math/quadVectorE3.js", [], function (exports_1, 
 System.register("davinci-newton/math/rotorFromDirectionsE3.js", ["./dotVectorE3", "./quadVectorE3", "./wedgeXY", "./wedgeYZ", "./wedgeZX"], function (exports_1, context_1) {
     "use strict";
 
+    var dotVectorE3_1, quadVectorE3_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, sqrt, cosPIdiv4, sinPIdiv4;
     var __moduleName = context_1 && context_1.id;
     function rotorFromDirectionsE3(a, b, B, m) {
         if (a.x === b.x && a.y === b.y && a.z === b.z) {
@@ -6433,7 +6491,6 @@ System.register("davinci-newton/math/rotorFromDirectionsE3.js", ["./dotVectorE3"
         }
     }
     exports_1("default", rotorFromDirectionsE3);
-    var dotVectorE3_1, quadVectorE3_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, sqrt, cosPIdiv4, sinPIdiv4;
     return {
         setters: [function (dotVectorE3_1_1) {
             dotVectorE3_1 = dotVectorE3_1_1;
@@ -6456,6 +6513,7 @@ System.register("davinci-newton/math/rotorFromDirectionsE3.js", ["./dotVectorE3"
 System.register("davinci-newton/math/compG3Get.js", [], function (exports_1, context_1) {
     "use strict";
 
+    var COORD_W, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_XYZ;
     var __moduleName = context_1 && context_1.id;
     function compG3Get(m, index) {
         switch (index) {
@@ -6498,7 +6556,6 @@ System.register("davinci-newton/math/compG3Get.js", [], function (exports_1, con
         }
     }
     exports_1("default", compG3Get);
-    var COORD_W, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_XYZ;
     return {
         setters: [],
         execute: function () {
@@ -6566,6 +6623,7 @@ System.register("davinci-newton/math/mulE3.js", [], function (exports_1, context
 System.register("davinci-newton/math/compG3Set.js", [], function (exports_1, context_1) {
     "use strict";
 
+    var COORD_W, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_XYZ;
     var __moduleName = context_1 && context_1.id;
     function compG3Set(m, index, value) {
         switch (index) {
@@ -6614,7 +6672,6 @@ System.register("davinci-newton/math/compG3Set.js", [], function (exports_1, con
         }
     }
     exports_1("default", compG3Set);
-    var COORD_W, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_XYZ;
     return {
         setters: [],
         execute: function () {
@@ -6632,6 +6689,7 @@ System.register("davinci-newton/math/compG3Set.js", [], function (exports_1, con
 System.register("davinci-newton/math/scpG3.js", ["../math/compG3Get", "../math/mulE3", "../math/compG3Set", "../math/Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var compG3Get_1, mulE3_1, compG3Set_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function scpG3(a, b, out) {
         var a0 = compG3Get_1.default(a, 0);
@@ -6662,7 +6720,6 @@ System.register("davinci-newton/math/scpG3.js", ["../math/compG3Get", "../math/m
         return out;
     }
     exports_1("default", scpG3);
-    var compG3Get_1, mulE3_1, compG3Set_1, Unit_1;
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
@@ -6713,6 +6770,7 @@ System.register("davinci-newton/checks/isDefined.js", [], function (exports_1, c
 System.register("davinci-newton/checks/mustBeArray.js", ["../checks/mustSatisfy", "../checks/isArray"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isArray_1;
     var __moduleName = context_1 && context_1.id;
     function beAnArray() {
         return "be an array";
@@ -6722,7 +6780,6 @@ System.register("davinci-newton/checks/mustBeArray.js", ["../checks/mustSatisfy"
         return value;
     }
     exports_1("default", default_1);
-    var mustSatisfy_1, isArray_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -6735,6 +6792,7 @@ System.register("davinci-newton/checks/mustBeArray.js", ["../checks/mustSatisfy"
 System.register("davinci-newton/math/stringFromCoordinates.js", ["../checks/isDefined", "../checks/mustBeArray", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
+    var isDefined_1, mustBeArray_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function isLabelOne(label) {
         if (typeof label === 'string') {
@@ -6819,7 +6877,6 @@ System.register("davinci-newton/math/stringFromCoordinates.js", ["../checks/isDe
         }
     }
     exports_1("default", stringFromCoordinates);
-    var isDefined_1, mustBeArray_1, Unit_1;
     return {
         setters: [function (isDefined_1_1) {
             isDefined_1 = isDefined_1_1;
@@ -6874,6 +6931,7 @@ System.register("davinci-newton/math/wedgeZX.js", [], function (exports_1, conte
 System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", "./dotVectorE3", "./extG3", "./gauss", "../checks/isDefined", "./isScalarG3", "./isVectorE3", "./isVectorG3", "./isZeroGeometricE3", "./isZeroVectorE3", "./lcoG3", "./maskG3", "./mulE3", "./QQ", "./randomRange", "../i18n/readOnly", "./rcoG3", "./rotorFromDirectionsE3", "./scpG3", "./squaredNormG3", "./stringFromCoordinates", "./Unit", "./wedgeXY", "./wedgeYZ", "./wedgeZX"], function (exports_1, context_1) {
     "use strict";
 
+    var approx_1, arraysEQ_1, dotVectorE3_1, extG3_1, gauss_1, isDefined_1, isScalarG3_1, isVectorE3_1, isVectorG3_1, isZeroGeometricE3_1, isZeroVectorE3_1, lcoG3_1, maskG3_1, mulE3_1, QQ_1, randomRange_1, readOnly_1, rcoG3_1, rotorFromDirectionsE3_1, scpG3_1, squaredNormG3_1, stringFromCoordinates_1, Unit_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, bivector, spinor, multivector, pseudo, coordinates, cosines, UNLOCKED, Geometric3;
     var __moduleName = context_1 && context_1.id;
     function cosVectorVector(a, b) {
         function scp(a, b) {
@@ -6888,7 +6946,6 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
         m.lock();
         return m;
     }
-    var approx_1, arraysEQ_1, dotVectorE3_1, extG3_1, gauss_1, isDefined_1, isScalarG3_1, isVectorE3_1, isVectorG3_1, isZeroGeometricE3_1, isZeroVectorE3_1, lcoG3_1, maskG3_1, mulE3_1, QQ_1, randomRange_1, readOnly_1, rcoG3_1, rotorFromDirectionsE3_1, scpG3_1, squaredNormG3_1, stringFromCoordinates_1, Unit_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, bivector, spinor, multivector, pseudo, coordinates, cosines, UNLOCKED, Geometric3;
     return {
         setters: [function (approx_1_1) {
             approx_1 = approx_1_1;
@@ -7070,7 +7127,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (a) {
                         this.setCoordinate(COORD_SCALAR, a, 'a');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "b", {
@@ -7080,7 +7137,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (b) {
                         this.setCoordinate(COORD_PSEUDO, b, 'b');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "maskG3", {
@@ -7109,7 +7166,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                         }
                         return mask;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "uom", {
@@ -7123,7 +7180,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                             throw new Error(readOnly_1.default('uom').message);
                         }
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "x", {
@@ -7133,7 +7190,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (x) {
                         this.setCoordinate(COORD_X, x, 'x');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "y", {
@@ -7143,7 +7200,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (y) {
                         this.setCoordinate(COORD_Y, y, 'y');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "z", {
@@ -7153,7 +7210,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (z) {
                         this.setCoordinate(COORD_Z, z, 'z');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "yz", {
@@ -7163,7 +7220,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (yz) {
                         this.setCoordinate(COORD_YZ, yz, 'yz');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "zx", {
@@ -7173,7 +7230,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (zx) {
                         this.setCoordinate(COORD_ZX, zx, 'zx');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Geometric3.prototype, "xy", {
@@ -7183,7 +7240,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     set: function (xy) {
                         this.setCoordinate(COORD_XY, xy, 'xy');
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Geometric3.prototype.add = function (M, α) {
@@ -8542,24 +8599,24 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                     var xy = wedgeXY_1.default(ax, ay, az, bx, by, bz);
                     return Geometric3.spinor(0, yz, zx, xy, Unit_1.Unit.mul(a.uom, b.uom));
                 };
+                Geometric3.zero = lock(new Geometric3(zero(), void 0));
+                Geometric3.one = lock(new Geometric3(scalar(1), void 0));
+                Geometric3.e1 = lock(new Geometric3(vector(1, 0, 0), void 0));
+                Geometric3.e2 = lock(new Geometric3(vector(0, 1, 0), void 0));
+                Geometric3.e3 = lock(new Geometric3(vector(0, 0, 1), void 0));
+                Geometric3.I = lock(new Geometric3(pseudo(1), void 0));
+                Geometric3.meter = lock(new Geometric3(scalar(1), Unit_1.Unit.METER));
+                Geometric3.kilogram = lock(new Geometric3(scalar(1), Unit_1.Unit.KILOGRAM));
+                Geometric3.second = lock(new Geometric3(scalar(1), Unit_1.Unit.SECOND));
+                Geometric3.ampere = lock(new Geometric3(scalar(1), Unit_1.Unit.AMPERE));
+                Geometric3.kelvin = lock(new Geometric3(scalar(1), Unit_1.Unit.KELVIN));
+                Geometric3.mole = lock(new Geometric3(scalar(1), Unit_1.Unit.MOLE));
+                Geometric3.candela = lock(new Geometric3(scalar(1), Unit_1.Unit.CANDELA));
+                Geometric3.coulomb = lock(new Geometric3(scalar(1), Unit_1.Unit.COULOMB));
+                Geometric3.newton = lock(new Geometric3(scalar(1), Unit_1.Unit.NEWTON));
+                Geometric3.joule = lock(new Geometric3(scalar(1), Unit_1.Unit.JOULE));
                 return Geometric3;
             }();
-            Geometric3.zero = lock(new Geometric3(zero(), void 0));
-            Geometric3.one = lock(new Geometric3(scalar(1), void 0));
-            Geometric3.e1 = lock(new Geometric3(vector(1, 0, 0), void 0));
-            Geometric3.e2 = lock(new Geometric3(vector(0, 1, 0), void 0));
-            Geometric3.e3 = lock(new Geometric3(vector(0, 0, 1), void 0));
-            Geometric3.I = lock(new Geometric3(pseudo(1), void 0));
-            Geometric3.meter = lock(new Geometric3(scalar(1), Unit_1.Unit.METER));
-            Geometric3.kilogram = lock(new Geometric3(scalar(1), Unit_1.Unit.KILOGRAM));
-            Geometric3.second = lock(new Geometric3(scalar(1), Unit_1.Unit.SECOND));
-            Geometric3.ampere = lock(new Geometric3(scalar(1), Unit_1.Unit.AMPERE));
-            Geometric3.kelvin = lock(new Geometric3(scalar(1), Unit_1.Unit.KELVIN));
-            Geometric3.mole = lock(new Geometric3(scalar(1), Unit_1.Unit.MOLE));
-            Geometric3.candela = lock(new Geometric3(scalar(1), Unit_1.Unit.CANDELA));
-            Geometric3.coulomb = lock(new Geometric3(scalar(1), Unit_1.Unit.COULOMB));
-            Geometric3.newton = lock(new Geometric3(scalar(1), Unit_1.Unit.NEWTON));
-            Geometric3.joule = lock(new Geometric3(scalar(1), Unit_1.Unit.JOULE));
             exports_1("Geometric3", Geometric3);
             exports_1("default", Geometric3);
         }
@@ -8569,10 +8626,13 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -8582,6 +8642,7 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
+    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, Vec3_1, Unit_1, Spring3;
     var __moduleName = context_1 && context_1.id;
     function assertConsistentUnits(aName, A, bName, B) {
         if (!A.isZero() && !B.isZero()) {
@@ -8596,7 +8657,6 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
             }
         }
     }
-    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, Vec3_1, Unit_1, Spring3;
     return {
         setters: [function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -8657,7 +8717,7 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                     set: function (attach1) {
                         this.attach1_ = Vec3_1.default.fromVector(attach1);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Spring3.prototype, "attach2", {
@@ -8667,7 +8727,7 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                     set: function (attach2) {
                         this.attach2_ = Vec3_1.default.fromVector(attach2);
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Spring3.prototype, "end1", {
@@ -8677,7 +8737,7 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                         this.end1Lock_ = this.end1.lock();
                         return this.end1_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Spring3.prototype, "end2", {
@@ -8687,7 +8747,7 @@ System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimOb
                         this.end2Lock_ = this.end2.lock();
                         return this.end2_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Spring3.prototype.updateForces = function () {
@@ -8744,8 +8804,8 @@ System.register("davinci-newton/util/contains.js", [], function (exports_1, cont
 System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./validName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var toName_1, validName_1, ParameterBoolean;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -8767,7 +8827,7 @@ System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./valid
                     get: function () {
                         return this.name_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 ParameterBoolean.prototype.getSubject = function () {
@@ -8789,8 +8849,8 @@ System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./valid
 System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var toName_1, validName_1, ParameterNumber;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -8816,7 +8876,7 @@ System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validN
                     get: function () {
                         return this.name_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 ParameterNumber.prototype.getSubject = function () {
@@ -8850,8 +8910,8 @@ System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validN
 System.register("davinci-newton/util/ParameterString.js", ["./toName", "./validName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var toName_1, validName_1, ParameterString;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -8876,7 +8936,7 @@ System.register("davinci-newton/util/ParameterString.js", ["./toName", "./validN
                     get: function () {
                         return this.name_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 ParameterString.prototype.getSubject = function () {
@@ -8914,6 +8974,7 @@ System.register("davinci-newton/util/removeAt.js", [], function (exports_1, cont
 System.register("davinci-newton/util/remove.js", ["./removeAt"], function (exports_1, context_1) {
     "use strict";
 
+    var removeAt_1;
     var __moduleName = context_1 && context_1.id;
     function remove(xs, x) {
         var i = xs.indexOf(x);
@@ -8924,7 +8985,6 @@ System.register("davinci-newton/util/remove.js", ["./removeAt"], function (expor
         return rv;
     }
     exports_1("default", remove);
-    var removeAt_1;
     return {
         setters: [function (removeAt_1_1) {
             removeAt_1 = removeAt_1_1;
@@ -8935,8 +8995,8 @@ System.register("davinci-newton/util/remove.js", ["./removeAt"], function (expor
 System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contains", "./find", "./ParameterBoolean", "./ParameterNumber", "./ParameterString", "./remove", "../util/toName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var clone_1, contains_1, find_1, ParameterBoolean_1, ParameterNumber_1, ParameterString_1, remove_1, toName_1, AbstractSubject;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (clone_1_1) {
             clone_1 = clone_1_1;
@@ -9064,8 +9124,8 @@ System.register("davinci-newton/util/clone.js", [], function (exports_1, context
 System.register("davinci-newton/model/ConcreteVariable.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var toName_1, validName_1, ConcreteVariable;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -9089,7 +9149,7 @@ System.register("davinci-newton/model/ConcreteVariable.js", ["../util/toName", "
                     get: function () {
                         return this.name_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 ConcreteVariable.prototype.getSequence = function () {
@@ -9148,6 +9208,7 @@ System.register("davinci-newton/checks/isArray.js", [], function (exports_1, con
 System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], function (exports_1, context_1) {
     "use strict";
 
+    var isArray_1;
     var __moduleName = context_1 && context_1.id;
     function extendArray(array, quantity, value) {
         if (quantity === 0) {
@@ -9173,7 +9234,6 @@ System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], fun
         }
     }
     exports_1("default", extendArray);
-    var isArray_1;
     return {
         setters: [function (isArray_1_1) {
             isArray_1 = isArray_1_1;
@@ -9184,13 +9244,13 @@ System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], fun
 System.register("davinci-newton/util/find.js", ["./findIndex"], function (exports_1, context_1) {
     "use strict";
 
+    var findIndex_1;
     var __moduleName = context_1 && context_1.id;
     function find(xs, test) {
         var i = findIndex_1.default(xs, test);
         return i < 0 ? null : xs[i];
     }
     exports_1("default", find);
-    var findIndex_1;
     return {
         setters: [function (findIndex_1_1) {
             findIndex_1 = findIndex_1_1;
@@ -9221,8 +9281,8 @@ System.register("davinci-newton/util/findIndex.js", [], function (exports_1, con
 System.register("davinci-newton/util/GenericEvent.js", ["./toName", "./validName"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var toName_1, validName_1, GenericEvent;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (toName_1_1) {
             toName_1 = toName_1_1;
@@ -9240,7 +9300,7 @@ System.register("davinci-newton/util/GenericEvent.js", ["./toName", "./validName
                     get: function () {
                         return this.name_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 GenericEvent.prototype.getSubject = function () {
@@ -9302,10 +9362,13 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
     "use strict";
 
     var __extends = this && this.__extends || function () {
-        var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
         };
         return function (d, b) {
             extendStatics(d, b);
@@ -9315,8 +9378,8 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var __moduleName = context_1 && context_1.id;
     var AbstractSubject_1, clone_1, ConcreteVariable_1, extendArray_1, find_1, findIndex_1, GenericEvent_1, isNumber_1, isString_1, toName_1, validName_1, VarsList;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
@@ -9577,11 +9640,11 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
                 VarsList.prototype.toArray = function () {
                     return clone_1.default(this.varList_);
                 };
+                VarsList.DELETED = 'DELETED';
+                VarsList.TIME = 'TIME';
+                VarsList.VARS_MODIFIED = 'VARS_MODIFIED';
                 return VarsList;
             }(AbstractSubject_1.default);
-            VarsList.DELETED = 'DELETED';
-            VarsList.TIME = 'TIME';
-            VarsList.VARS_MODIFIED = 'VARS_MODIFIED';
             exports_1("VarsList", VarsList);
             exports_1("default", VarsList);
         }
@@ -9620,6 +9683,7 @@ System.register("davinci-newton/checks/isNumber.js", [], function (exports_1, co
 System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy", "../checks/isNumber"], function (exports_1, context_1) {
     "use strict";
 
+    var mustSatisfy_1, isNumber_1;
     var __moduleName = context_1 && context_1.id;
     function beANumber() {
         return "be a `number`";
@@ -9629,7 +9693,6 @@ System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy
         return value;
     }
     exports_1("default", default_1);
-    var mustSatisfy_1, isNumber_1;
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
@@ -9642,8 +9705,8 @@ System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy
 System.register("davinci-newton/math/Scalar3.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var Scalar3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -9656,14 +9719,14 @@ System.register("davinci-newton/math/Scalar3.js", [], function (exports_1, conte
                     get: function () {
                         return this.a_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Scalar3.prototype, "uom", {
                     get: function () {
                         return this.uom_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Scalar3.prototype.mulByNumber = function (alpha) {
@@ -9679,8 +9742,8 @@ System.register("davinci-newton/math/Scalar3.js", [], function (exports_1, conte
 System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var QQ;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -9730,14 +9793,14 @@ System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1)
                     get: function () {
                         return this.numer_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(QQ.prototype, "denom", {
                     get: function () {
                         return this.denom_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 QQ.prototype.add = function (rhs) {
@@ -9921,26 +9984,26 @@ System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1)
                     }
                     return new QQ(n, d);
                 };
+                QQ.POS_08_01 = new QQ(8, 1);
+                QQ.POS_07_01 = new QQ(7, 1);
+                QQ.POS_06_01 = new QQ(6, 1);
+                QQ.POS_05_01 = new QQ(5, 1);
+                QQ.POS_04_01 = new QQ(4, 1);
+                QQ.POS_03_01 = new QQ(3, 1);
+                QQ.POS_02_01 = new QQ(2, 1);
+                QQ.ONE = new QQ(1, 1);
+                QQ.POS_01_02 = new QQ(1, 2);
+                QQ.POS_01_03 = new QQ(1, 3);
+                QQ.POS_01_04 = new QQ(1, 4);
+                QQ.POS_01_05 = new QQ(1, 5);
+                QQ.ZERO = new QQ(0, 1);
+                QQ.NEG_01_03 = new QQ(-1, 3);
+                QQ.NEG_01_01 = new QQ(-1, 1);
+                QQ.NEG_02_01 = new QQ(-2, 1);
+                QQ.NEG_03_01 = new QQ(-3, 1);
+                QQ.POS_02_03 = new QQ(2, 3);
                 return QQ;
             }();
-            QQ.POS_08_01 = new QQ(8, 1);
-            QQ.POS_07_01 = new QQ(7, 1);
-            QQ.POS_06_01 = new QQ(6, 1);
-            QQ.POS_05_01 = new QQ(5, 1);
-            QQ.POS_04_01 = new QQ(4, 1);
-            QQ.POS_03_01 = new QQ(3, 1);
-            QQ.POS_02_01 = new QQ(2, 1);
-            QQ.ONE = new QQ(1, 1);
-            QQ.POS_01_02 = new QQ(1, 2);
-            QQ.POS_01_03 = new QQ(1, 3);
-            QQ.POS_01_04 = new QQ(1, 4);
-            QQ.POS_01_05 = new QQ(1, 5);
-            QQ.ZERO = new QQ(0, 1);
-            QQ.NEG_01_03 = new QQ(-1, 3);
-            QQ.NEG_01_01 = new QQ(-1, 1);
-            QQ.NEG_02_01 = new QQ(-2, 1);
-            QQ.NEG_03_01 = new QQ(-3, 1);
-            QQ.POS_02_03 = new QQ(2, 3);
             exports_1("QQ", QQ);
             exports_1("default", QQ);
         }
@@ -9949,6 +10012,7 @@ System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1)
 System.register("davinci-newton/math/detectDimensions.js", ["./DimensionsSummary"], function (exports_1, context_1) {
     "use strict";
 
+    var DimensionsSummary_1;
     var __moduleName = context_1 && context_1.id;
     function detectDimensions(M, L, T, Q, temperature, amount, intensity) {
         if (M.numer === -1) {
@@ -10532,7 +10596,6 @@ System.register("davinci-newton/math/detectDimensions.js", ["./DimensionsSummary
         return void 0;
     }
     exports_1("default", detectDimensions);
-    var DimensionsSummary_1;
     return {
         setters: [function (DimensionsSummary_1_1) {
             DimensionsSummary_1 = DimensionsSummary_1_1;
@@ -10543,6 +10606,7 @@ System.register("davinci-newton/math/detectDimensions.js", ["./DimensionsSummary
 System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "../math/QQ", "./detectDimensions"], function (exports_1, context_1) {
     "use strict";
 
+    var DimensionsSummary_1, QQ_1, detectDimensions_1, R0, R1, R2, R3, M1, M2, Dimensions;
     var __moduleName = context_1 && context_1.id;
     function assertArgRational(name, arg) {
         if (arg instanceof QQ_1.default) {
@@ -10551,7 +10615,6 @@ System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "..
             throw new Error("Argument " + name + " => " + arg + " must be a QQ");
         }
     }
-    var DimensionsSummary_1, QQ_1, detectDimensions_1, R0, R1, R2, R3, M1, M2, Dimensions;
     return {
         setters: [function (DimensionsSummary_1_1) {
             DimensionsSummary_1 = DimensionsSummary_1_1;
@@ -10582,7 +10645,7 @@ System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "..
                     get: function () {
                         return this.summary_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Dimensions.prototype.compatible = function (rhs) {
@@ -10777,36 +10840,36 @@ System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "..
                             }
                     }
                 };
+                Dimensions.ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.ONE);
+                Dimensions.MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.MASS);
+                Dimensions.LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, DimensionsSummary_1.default.LENGTH);
+                Dimensions.AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.AREA);
+                Dimensions.VOLUME = new Dimensions(R0, R3, R0, R0, R0, R0, R0, DimensionsSummary_1.default.VOLUME);
+                Dimensions.INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_LENGTH);
+                Dimensions.TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, DimensionsSummary_1.default.TIME);
+                Dimensions.ELECTRIC_CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_CHARGE);
+                Dimensions.ELECTRIC_CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_CURRENT);
+                Dimensions.THERMODYNAMIC_TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary_1.default.THERMODYNAMIC_TEMPERATURE);
+                Dimensions.AMOUNT_OF_SUBSTANCE = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary_1.default.AMOUNT_OF_SUBSTANCE);
+                Dimensions.LUMINOUS_INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary_1.default.LUMINOUS_INTENSITY);
+                Dimensions.ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, DimensionsSummary_1.default.ANGULAR_MOMENTUM);
+                Dimensions.RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary_1.default.RATE_OF_CHANGE_OF_AREA);
+                Dimensions.ELECTRIC_FIELD = new Dimensions(R1, R1, M2, M1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_FIELD);
+                Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA = new Dimensions(M1, M1, R2, R2, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_PERMITTIVITY_TIMES_AREA);
+                Dimensions.ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.ENERGY_OR_TORQUE);
+                Dimensions.FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, DimensionsSummary_1.default.FORCE);
+                Dimensions.INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_MASS);
+                Dimensions.INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_MOMENT_OF_INERTIA);
+                Dimensions.INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, DimensionsSummary_1.default.INV_TIME);
+                Dimensions.MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENT_OF_INERTIA);
+                Dimensions.MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENTUM);
+                Dimensions.MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENTUM_SQUARED);
+                Dimensions.STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary_1.default.STIFFNESS);
+                Dimensions.TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary_1.default.TIME_SQUARED);
+                Dimensions.VELOCITY = new Dimensions(R0, R1, M1, R0, R0, R0, R0, DimensionsSummary_1.default.VELOCITY);
+                Dimensions.VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.VELOCITY_SQUARED);
                 return Dimensions;
             }();
-            Dimensions.ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.ONE);
-            Dimensions.MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.MASS);
-            Dimensions.LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, DimensionsSummary_1.default.LENGTH);
-            Dimensions.AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.AREA);
-            Dimensions.VOLUME = new Dimensions(R0, R3, R0, R0, R0, R0, R0, DimensionsSummary_1.default.VOLUME);
-            Dimensions.INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_LENGTH);
-            Dimensions.TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, DimensionsSummary_1.default.TIME);
-            Dimensions.ELECTRIC_CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_CHARGE);
-            Dimensions.ELECTRIC_CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_CURRENT);
-            Dimensions.THERMODYNAMIC_TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary_1.default.THERMODYNAMIC_TEMPERATURE);
-            Dimensions.AMOUNT_OF_SUBSTANCE = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary_1.default.AMOUNT_OF_SUBSTANCE);
-            Dimensions.LUMINOUS_INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary_1.default.LUMINOUS_INTENSITY);
-            Dimensions.ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, DimensionsSummary_1.default.ANGULAR_MOMENTUM);
-            Dimensions.RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary_1.default.RATE_OF_CHANGE_OF_AREA);
-            Dimensions.ELECTRIC_FIELD = new Dimensions(R1, R1, M2, M1, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_FIELD);
-            Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA = new Dimensions(M1, M1, R2, R2, R0, R0, R0, DimensionsSummary_1.default.ELECTRIC_PERMITTIVITY_TIMES_AREA);
-            Dimensions.ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.ENERGY_OR_TORQUE);
-            Dimensions.FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, DimensionsSummary_1.default.FORCE);
-            Dimensions.INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_MASS);
-            Dimensions.INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.INV_MOMENT_OF_INERTIA);
-            Dimensions.INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, DimensionsSummary_1.default.INV_TIME);
-            Dimensions.MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENT_OF_INERTIA);
-            Dimensions.MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENTUM);
-            Dimensions.MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.MOMENTUM_SQUARED);
-            Dimensions.STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary_1.default.STIFFNESS);
-            Dimensions.TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary_1.default.TIME_SQUARED);
-            Dimensions.VELOCITY = new Dimensions(R0, R1, M1, R0, R0, R0, R0, DimensionsSummary_1.default.VELOCITY);
-            Dimensions.VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary_1.default.VELOCITY_SQUARED);
             exports_1("Dimensions", Dimensions);
             exports_1("default", Dimensions);
         }
@@ -10815,8 +10878,8 @@ System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "..
 System.register("davinci-newton/math/DimensionsSummary.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var DimensionsSummary;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
@@ -10871,6 +10934,7 @@ System.register("davinci-newton/checks/isUndefined.js", [], function (exports_1,
 System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/DimensionsSummary", "../checks/isUndefined"], function (exports_1, context_1) {
     "use strict";
 
+    var Dimensions_1, DimensionsSummary_1, isUndefined_1, SYMBOLS_SI, patterns, decodes, dumbString, unitString, Unit;
     var __moduleName = context_1 && context_1.id;
     function add(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
@@ -10887,7 +10951,6 @@ System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/D
     function div(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
     }
-    var Dimensions_1, DimensionsSummary_1, isUndefined_1, SYMBOLS_SI, patterns, decodes, dumbString, unitString, Unit;
     return {
         setters: [function (Dimensions_1_1) {
             Dimensions_1 = Dimensions_1_1;
@@ -11280,36 +11343,36 @@ System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/D
                     }
                     return new Unit(multiplier, dimensions, labels);
                 };
+                Unit.ONE = new Unit(1, Dimensions_1.default.ONE, SYMBOLS_SI);
+                Unit.KILOGRAM = new Unit(1, Dimensions_1.default.MASS, SYMBOLS_SI);
+                Unit.METER = new Unit(1, Dimensions_1.default.LENGTH, SYMBOLS_SI);
+                Unit.SECOND = new Unit(1, Dimensions_1.default.TIME, SYMBOLS_SI);
+                Unit.COULOMB = new Unit(1, Dimensions_1.default.ELECTRIC_CHARGE, SYMBOLS_SI);
+                Unit.AMPERE = new Unit(1, Dimensions_1.default.ELECTRIC_CURRENT, SYMBOLS_SI);
+                Unit.KELVIN = new Unit(1, Dimensions_1.default.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
+                Unit.MOLE = new Unit(1, Dimensions_1.default.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
+                Unit.CANDELA = new Unit(1, Dimensions_1.default.LUMINOUS_INTENSITY, SYMBOLS_SI);
+                Unit.COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions_1.default.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
+                Unit.ELECTRIC_FIELD = new Unit(1, Dimensions_1.default.ELECTRIC_FIELD, SYMBOLS_SI);
+                Unit.NEWTON = new Unit(1, Dimensions_1.default.FORCE, SYMBOLS_SI);
+                Unit.JOULE = new Unit(1, Dimensions_1.default.ENERGY_OR_TORQUE, SYMBOLS_SI);
+                Unit.JOULE_SECOND = new Unit(1, Dimensions_1.default.ANGULAR_MOMENTUM, SYMBOLS_SI);
+                Unit.METER_SQUARED = new Unit(1, Dimensions_1.default.AREA, SYMBOLS_SI);
+                Unit.METER_CUBED = new Unit(1, Dimensions_1.default.VOLUME, SYMBOLS_SI);
+                Unit.SECOND_SQUARED = new Unit(1, Dimensions_1.default.TIME_SQUARED, SYMBOLS_SI);
+                Unit.INV_KILOGRAM = new Unit(1, Dimensions_1.default.INV_MASS, SYMBOLS_SI);
+                Unit.INV_METER = new Unit(1, Dimensions_1.default.INV_LENGTH, SYMBOLS_SI);
+                Unit.INV_SECOND = new Unit(1, Dimensions_1.default.INV_TIME, SYMBOLS_SI);
+                Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.MOMENT_OF_INERTIA, SYMBOLS_SI);
+                Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions_1.default.MOMENTUM, SYMBOLS_SI);
+                Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.MOMENTUM_SQUARED, SYMBOLS_SI);
+                Unit.INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
+                Unit.STIFFNESS = new Unit(1, Dimensions_1.default.STIFFNESS, SYMBOLS_SI);
+                Unit.METER_PER_SECOND = new Unit(1, Dimensions_1.default.VELOCITY, SYMBOLS_SI);
+                Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions_1.default.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
+                Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.VELOCITY_SQUARED, SYMBOLS_SI);
                 return Unit;
             }();
-            Unit.ONE = new Unit(1, Dimensions_1.default.ONE, SYMBOLS_SI);
-            Unit.KILOGRAM = new Unit(1, Dimensions_1.default.MASS, SYMBOLS_SI);
-            Unit.METER = new Unit(1, Dimensions_1.default.LENGTH, SYMBOLS_SI);
-            Unit.SECOND = new Unit(1, Dimensions_1.default.TIME, SYMBOLS_SI);
-            Unit.COULOMB = new Unit(1, Dimensions_1.default.ELECTRIC_CHARGE, SYMBOLS_SI);
-            Unit.AMPERE = new Unit(1, Dimensions_1.default.ELECTRIC_CURRENT, SYMBOLS_SI);
-            Unit.KELVIN = new Unit(1, Dimensions_1.default.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
-            Unit.MOLE = new Unit(1, Dimensions_1.default.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
-            Unit.CANDELA = new Unit(1, Dimensions_1.default.LUMINOUS_INTENSITY, SYMBOLS_SI);
-            Unit.COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions_1.default.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
-            Unit.ELECTRIC_FIELD = new Unit(1, Dimensions_1.default.ELECTRIC_FIELD, SYMBOLS_SI);
-            Unit.NEWTON = new Unit(1, Dimensions_1.default.FORCE, SYMBOLS_SI);
-            Unit.JOULE = new Unit(1, Dimensions_1.default.ENERGY_OR_TORQUE, SYMBOLS_SI);
-            Unit.JOULE_SECOND = new Unit(1, Dimensions_1.default.ANGULAR_MOMENTUM, SYMBOLS_SI);
-            Unit.METER_SQUARED = new Unit(1, Dimensions_1.default.AREA, SYMBOLS_SI);
-            Unit.METER_CUBED = new Unit(1, Dimensions_1.default.VOLUME, SYMBOLS_SI);
-            Unit.SECOND_SQUARED = new Unit(1, Dimensions_1.default.TIME_SQUARED, SYMBOLS_SI);
-            Unit.INV_KILOGRAM = new Unit(1, Dimensions_1.default.INV_MASS, SYMBOLS_SI);
-            Unit.INV_METER = new Unit(1, Dimensions_1.default.INV_LENGTH, SYMBOLS_SI);
-            Unit.INV_SECOND = new Unit(1, Dimensions_1.default.INV_TIME, SYMBOLS_SI);
-            Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.MOMENT_OF_INERTIA, SYMBOLS_SI);
-            Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions_1.default.MOMENTUM, SYMBOLS_SI);
-            Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.MOMENTUM_SQUARED, SYMBOLS_SI);
-            Unit.INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
-            Unit.STIFFNESS = new Unit(1, Dimensions_1.default.STIFFNESS, SYMBOLS_SI);
-            Unit.METER_PER_SECOND = new Unit(1, Dimensions_1.default.VELOCITY, SYMBOLS_SI);
-            Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions_1.default.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
-            Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.VELOCITY_SQUARED, SYMBOLS_SI);
             exports_1("Unit", Unit);
         }
     };
@@ -11344,8 +11407,8 @@ System.register("davinci-newton/util/veryDifferent.js", [], function (exports_1,
 System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Scalar3", "./Unit", "../util/veryDifferent"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var mustBeNumber_1, Scalar3_1, Unit_1, veryDifferent_1, Vec3;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (mustBeNumber_1_1) {
             mustBeNumber_1 = mustBeNumber_1_1;
@@ -11375,28 +11438,28 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Sca
                     get: function () {
                         return this.x_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Vec3.prototype, "y", {
                     get: function () {
                         return this.y_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Vec3.prototype, "z", {
                     get: function () {
                         return this.z_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Object.defineProperty(Vec3.prototype, "uom", {
                     get: function () {
                         return this.uom_;
                     },
-                    enumerable: true,
+                    enumerable: false,
                     configurable: true
                 });
                 Vec3.prototype.add = function (rhs) {
@@ -11522,12 +11585,12 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Sca
                 Vec3.fromVector = function (v) {
                     return new Vec3(v.x, v.y, v.z, v.uom);
                 };
+                Vec3.e1 = new Vec3(1, 0, 0);
+                Vec3.e2 = new Vec3(0, 1, 0);
+                Vec3.e3 = new Vec3(0, 0, 1);
+                Vec3.zero = new Vec3(0, 0, 0);
                 return Vec3;
             }();
-            Vec3.e1 = new Vec3(1, 0, 0);
-            Vec3.e2 = new Vec3(0, 1, 0);
-            Vec3.e3 = new Vec3(0, 0, 1);
-            Vec3.zero = new Vec3(0, 0, 0);
             exports_1("Vec3", Vec3);
             exports_1("default", Vec3);
         }
@@ -11536,8 +11599,8 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Sca
 System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/CoulombLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/math/Dimensions", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/math/Geometric3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/math/QQ", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Particle3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/math/Unit", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
     var AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, CoulombLaw3_1, Cylinder3_1, DefaultAdvanceStrategy_1, Dimensions_1, DisplayGraph_1, DrawingMode_1, EnergyTimeGraph_1, EulerMethod_1, Force3_1, Geometric3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, QQ_1, RigidBody3_1, Particle3_1, Physics3_1, RungeKutta_1, SimView_1, Sphere3_1, Spring3_1, Unit_1, VarsList_1, Vec3_1, newton;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AdaptiveStepSolver_1_1) {
             AdaptiveStepSolver_1 = AdaptiveStepSolver_1_1;
