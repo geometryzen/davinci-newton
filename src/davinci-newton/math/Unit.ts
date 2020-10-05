@@ -270,7 +270,10 @@ export class Unit {
   private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI);
   private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI);
   private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI);
-  private static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
+  /**
+   * The unit of angular velocity.
+   */
+  public static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
   private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
   /**
    * The unit of momentum.

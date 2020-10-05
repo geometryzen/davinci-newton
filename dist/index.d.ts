@@ -354,6 +354,7 @@ declare namespace NEWTON {
         getTime(): number;
         timeIndex(): number;
     }
+
     interface Scalar {
         a: number;
         uom: Unit;
@@ -380,6 +381,7 @@ declare namespace NEWTON {
 
     interface SpinorE3 extends Scalar, BivectorE3 {
     }
+    
     /**
      * The coordinates for a multivector in 3D in geometric Cartesian basis.
      */

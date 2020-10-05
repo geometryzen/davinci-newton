@@ -182,6 +182,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
 
     /**
      * Do not call this constructor. Use the static construction methods instead.
+     * The multivector is constructed in the unlocked (mutable) state.
      */
     constructor(coords: number[] = zero(), uom?: Unit) {
         if (coords.length !== 8) {
@@ -2487,6 +2488,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
 
     /**
      * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.
+     * The bivector returned is in the unlocked (mutable) state.
      * @param yz The coordinate corresponding to the e2e3 basis bivector.
      * @param zx The coordinate corresponding to the e3e1 basis bivector.
      * @param xy The coordinate corresponding to the e1e2 basis bivector.
@@ -2594,6 +2596,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
+     * The scalar returned is in the unlocked (mutable) state.
      * @param a The scaling factor for the unit of measure.
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
@@ -2603,6 +2606,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
 
     /**
      * Creates a spinor valued multivector from the specified cartesian coordinates.
+     * The spinor returned is in the unlocked (mutable) state.
      * @param a The scalar coordinate.
      * @param yz The coordinate corresponding to the e2e3 basis bivector.
      * @param zx The coordinate corresponding to the e3e1 basis bivector.

@@ -66,6 +66,25 @@ package.json
 bower.json
 ```
 
+## Deliverables
+
+The following files are created in the `dist` folder.
+
+The following files are in the `UMD` format.
+
+davinci-newton.js
+davinci-newton.min.js
+
+The following files are in the `System` format.
+
+davinci-newton-system-es5.js
+davinci-newton-system-es5.min.js
+davinci-newton-system-es5.js.map
+
+The following files contains the TypeScript type declarations (in a single file).
+
+index.d.ts
+
 ## Git
 
 ```

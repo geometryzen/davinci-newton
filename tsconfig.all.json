@@ -4,6 +4,7 @@
         "target": "ES5",
         "outDir": "test/system",
         "noImplicitAny": true,
+        "noImplicitReturns": true,
         "noLib": false,
         "removeComments": true,
         "suppressImplicitAnyIndexErrors": true,

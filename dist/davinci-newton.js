@@ -6126,8 +6126,8 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
             _this.attitude_ = Geometric3_1.default.one.clone();
             _this.linearMomentum_ = Geometric3_1.default.zero.clone();
             _this.angularMomentum_ = Geometric3_1.default.zero.clone();
-            _this.Ω_ = new Bivector3_1.default(0, 0, 0);
-            _this.Ω = Geometric3_1.default.bivector(0, 0, 0);
+            _this.Ω_scratch = new Bivector3_1.default(0, 0, 0);
+            _this.angularVelocity_ = Geometric3_1.default.bivector(0, 0, 0);
             _this.centerOfMassLocal_ = Vec3_1.default.zero;
             _this.rotationalEnergy_ = Geometric3_1.default.zero.clone();
             _this.rotationalEnergyLock_ = _this.rotationalEnergy_.lock();
@@ -6176,9 +6176,9 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
         RigidBody3.prototype.updateAngularVelocity = function () {
             this.Ω.copy(this.L);
             this.Ω.rotate(this.R.rev());
-            this.Ω_.copy(this.Ω);
-            this.Ω_.applyMatrix(this.Iinv);
-            this.Ω.copyBivector(this.Ω_);
+            this.Ω_scratch.copy(this.Ω);
+            this.Ω_scratch.applyMatrix(this.Iinv);
+            this.Ω.copyBivector(this.Ω_scratch);
             this.Ω.rotate(this.R.rev());
         };
         RigidBody3.prototype.updateInertiaTensor = function () {
@@ -6248,6 +6248,17 @@ define('davinci-newton/engine3D/RigidBody3',["require", "exports", "../objects/A
             set: function (angularMomentum) {
                 mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND);
                 this.angularMomentum_.copy(angularMomentum);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody3.prototype, "\u03A9", {
+            get: function () {
+                return this.angularVelocity_;
+            },
+            set: function (angularVelocity) {
+                mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit_1.Unit.INV_SECOND);
+                this.angularVelocity_.copy(angularVelocity);
             },
             enumerable: false,
             configurable: true
@@ -6576,9 +6587,9 @@ define('davinci-newton/config',["require", "exports"], function (require, export
     var Newton = (function () {
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2020-07-08';
+            this.LAST_MODIFIED = '2020-10-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '0.0.44';
+            this.VERSION = '1.0.0';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];

@@ -87,6 +87,9 @@ export class Block3 extends RigidBody3 {
         this.updateInertiaTensor();
     }
 
+    /**
+     * The angular velocity is updated from the angular momentum.
+     */
     public updateAngularVelocity(): void {
         const w = this.width_;
         const h = this.height_;

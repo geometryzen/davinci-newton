@@ -107,11 +107,17 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
      * The angular momentum (bivector).
      */
     private readonly angularMomentum_ = Geometric3.zero.clone();
-    private Ω_ = new Bivector3(0, 0, 0);
+    /**
+     * Scratch member variable used only during updateAngularVelocity.
+     * The purpose is to avoid temporary object creation. 
+     */
+    private Ω_scratch = new Bivector3(0, 0, 0);
     /**
      * Angular velocity (bivector).
+     * The angular velocity is initially created in the unlocked state.
      */
-    public Ω = Geometric3.bivector(0, 0, 0);
+    private angularVelocity_ = Geometric3.bivector(0, 0, 0);
+    // private angularVelocityLock_ = this.angularVelocity_.lock();
 
     /**
      * center of mass in local coordinates.
@@ -193,12 +199,12 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
         // Ω back to world coordinates.
         // Notice that in the following we avoid creating temporary variables by computing
         // the reversion of the mutable body.R twice.
-        this.Ω.copy(this.L);
-        this.Ω.rotate(this.R.rev());
-        this.Ω_.copy(this.Ω);
-        this.Ω_.applyMatrix(this.Iinv);
-        this.Ω.copyBivector(this.Ω_);
-        this.Ω.rotate(this.R.rev());
+        this.Ω.copy(this.L); // Ω contains L
+        this.Ω.rotate(this.R.rev()); // Ω contains R L ~R
+        this.Ω_scratch.copy(this.Ω); // scratch contains R L ~R
+        this.Ω_scratch.applyMatrix(this.Iinv); // scratch contains Iinv (R L ~R)
+        this.Ω.copyBivector(this.Ω_scratch); // Ω contains Iinv (R L ~R)
+        this.Ω.rotate(this.R.rev()); // Ω contains R (Iinv (R L ~R)) ~R
     }
 
     /**
@@ -282,6 +288,20 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
     set L(angularMomentum: Geometric3) {
         mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND);
         this.angularMomentum_.copy(angularMomentum);
+    }
+
+    /**
+     * Angular velocity (bivector).
+     * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+     */
+    get Ω(): Geometric3 {
+        // A getter is required in order to support the setter existence.
+        return this.angularVelocity_;
+    }
+    set Ω(angularVelocity: Geometric3) {
+        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND);
+        // A setter is used so that assignments do not cause the member vaiable to become immutable.
+        this.angularVelocity_.copy(angularVelocity);
     }
 
     /**

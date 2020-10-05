@@ -1,6 +1,6 @@
 {
   "name": "davinci-newton",
-  "version": "0.0.44",
+  "version": "1.0.0",
   "description": "Physics Modeling and Engine using Geometric Algebra",
   "author": {
     "name": "David Holmes",
@@ -23,6 +23,7 @@
     }
   ],
   "scripts": {
+    "build": "grunt",
     "test": "grunt; grunt test",
     "docs:typedoc": "trash documentation && typedoc src/davinci-newton.ts --excludePrivate --excludeNotExported --mode file --theme minimal --out documentation",
     "docs": "npm run docs:typedoc && opn documentation/index.html",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "es6-module-loader": "^0.17.11",
     "gh-pages": "^1.0.0",
-    "grunt": "^1.0.1",
+    "grunt": "^1.3.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-connect": "^1.0.2",
@@ -67,9 +68,9 @@
     "systemjs": "0.19.40",
     "systemjs-builder": "0.15.33",
     "trash-cli": "^1.4.0",
-    "tslint": "^6.1.2",
-    "typedoc": "^0.17.8",
-    "typescript": "^3.9.6"
+    "tslint": "^6.1.3",
+    "typedoc": "^0.19.2",
+    "typescript": "^3.9.7"
   },
   "keywords": [],
   "jspm": {
