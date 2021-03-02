@@ -1,16 +1,16 @@
-import BivectorE3 from './BivectorE3';
-import CartesianG3 from './CartesianG3';
 import isNumber from '../checks/isNumber';
+import mustBeNumber from '../checks/mustBeNumber';
+import readOnly from '../i18n/readOnly';
+import { BivectorE3 } from './BivectorE3';
+import CartesianG3 from './CartesianG3';
 import isSpinorE3 from './isSpinorE3';
 import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
-import mustBeNumber from '../checks/mustBeNumber';
 import mustBeVectorE3 from './mustBeVectorE3';
 import randomRange from './randomRange';
-import readOnly from '../i18n/readOnly';
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
-import VectorE3 from './VectorE3';
+import { VectorE3 } from './VectorE3';
 
 /**
  * 
@@ -381,5 +381,3 @@ export class Vector3 implements VectorE3, CartesianG3 {
     }
 
 }
-
-export default Vector3;

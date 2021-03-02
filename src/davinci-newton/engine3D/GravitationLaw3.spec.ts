@@ -1,7 +1,7 @@
-import Geometric3 from '../math/Geometric3';
-import GravitationLaw3 from './GravitationLaw3';
-import Sphere3 from './Sphere3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { GravitationLaw3 } from './GravitationLaw3';
+import { Sphere3 } from './Sphere3';
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;

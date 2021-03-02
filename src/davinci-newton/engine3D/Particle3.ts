@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Geometric3 from '../math/Geometric3';
-import RigidBody3 from './RigidBody3';
+import { Geometric3 } from '../math/Geometric3';
+import { RigidBody3 } from './RigidBody3';
 
 /**
  * An object with no internal structure.
@@ -50,5 +50,3 @@ export class Particle3 extends RigidBody3 {
         // Do nothing yet.
     }
 }
-
-export default Particle3;

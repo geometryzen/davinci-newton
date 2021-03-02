@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,19 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import isNumber from '../checks/isNumber';
+import isString from '../checks/isString';
+import GraphVarsList from '../graph/GraphVarsList';
+import { ConcreteVariable } from '../model/ConcreteVariable';
+import Variable from '../model/Variable';
 import AbstractSubject from '../util/AbstractSubject';
 import clone from '../util/clone';
-import ConcreteVariable from '../model/ConcreteVariable';
 import extendArray from '../util/extendArray';
 import find from '../util/find';
 import findIndex from '../util/findIndex';
 import GenericEvent from '../util/GenericEvent';
-import GraphVarsList from '../graph/GraphVarsList';
-import isNumber from '../checks/isNumber';
-import isString from '../checks/isString';
 import toName from '../util/toName';
 import validName from '../util/validName';
-import Variable from '../model/Variable';
 
 /**
  * A set of Variables.
@@ -491,5 +491,3 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         return clone(this.varList_);
     }
 }
-
-export default VarsList;

@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -14,21 +14,21 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
-import AlignH from './AlignH';
-import AlignV from './AlignV';
 import clone from '../util/clone';
 import contains from '../util/contains';
-import CoordMap from './CoordMap';
-import DisplayList from './DisplayList';
-import DoubleRect from './DoubleRect';
 import GenericEvent from '../util/GenericEvent';
-import LabView from './LabView';
 import Memorizable from '../util/Memorizable';
 import ParameterBoolean from '../util/ParameterBoolean';
 import ParameterNumber from '../util/ParameterNumber';
 import remove from '../util/remove';
-import ScreenRect from './ScreenRect';
 import veryDifferent from '../util/veryDifferent';
+import { AlignH } from './AlignH';
+import { AlignV } from './AlignV';
+import CoordMap from './CoordMap';
+import DisplayList from './DisplayList';
+import DoubleRect from './DoubleRect';
+import LabView from './LabView';
+import ScreenRect from './ScreenRect';
 
 export class SimView extends AbstractSubject implements LabView {
     public static readonly PARAM_NAME_WIDTH = 'width';
@@ -449,5 +449,3 @@ export class SimView extends AbstractSubject implements LabView {
     }
 
 }
-
-export default SimView;

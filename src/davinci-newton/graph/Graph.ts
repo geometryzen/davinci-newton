@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
-import AlignH from '../view/AlignH';
-import AlignV from '../view/AlignV';
-import AutoScale from './AutoScale';
-import DisplayAxes from './DisplayAxes';
-import DisplayGraph from './DisplayGraph';
-import DoubleRect from '../view/DoubleRect';
-import GenericObserver from '../util/GenericObserver';
-import GraphLine from './GraphLine';
-import GraphVarsList from './GraphVarsList';
-import LabCanvas from '../view/LabCanvas';
 import mustBeNumber from '../checks/mustBeNumber';
 import mustBeString from '../checks/mustBeString';
-import SimView from '../view/SimView';
+import AbstractSubject from '../util/AbstractSubject';
+import GenericObserver from '../util/GenericObserver';
+import { AlignH } from '../view/AlignH';
+import { AlignV } from '../view/AlignV';
+import DoubleRect from '../view/DoubleRect';
+import { LabCanvas } from '../view/LabCanvas';
+import { SimView } from '../view/SimView';
+import AutoScale from './AutoScale';
+import DisplayAxes from './DisplayAxes';
+import { DisplayGraph } from './DisplayGraph';
+import { GraphLine } from './GraphLine';
+import GraphVarsList from './GraphVarsList';
 
 
 /**
@@ -150,5 +150,3 @@ export class Graph extends AbstractSubject {
         this.displayGraph.reset();
     }
 }
-
-export default Graph;

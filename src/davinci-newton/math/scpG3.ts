@@ -1,7 +1,7 @@
-import GeometricE3 from '../math/GeometricE3';
 import get from '../math/compG3Get';
-import mulE3 from '../math/mulE3';
 import set from '../math/compG3Set';
+import { GeometricE3 } from '../math/GeometricE3';
+import mulE3 from '../math/mulE3';
 import { Unit } from '../math/Unit';
 
 export default function scpG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {

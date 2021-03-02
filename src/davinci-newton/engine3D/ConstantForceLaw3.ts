@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from '../objects/AbstractSimObject';
-import CoordType from '../model/CoordType';
-import Force3 from './Force3';
-import ForceLaw3 from './ForceLaw3';
-import Geometric3 from '../math/Geometric3';
-import RigidBody3 from '../engine3D/RigidBody3';
-import VectorE3 from '../math/VectorE3';
+import { RigidBody3 } from '../engine3D/RigidBody3';
+import { Geometric3 } from '../math/Geometric3';
+import { VectorE3 } from '../math/VectorE3';
+import { CoordType, COORD_TYPE_LOCAL, COORD_TYPE_WORLD } from '../model/CoordType';
+import { AbstractSimObject } from '../objects/AbstractSimObject';
+import { Force3 } from './Force3';
+import { ForceLaw3 } from './ForceLaw3';
 
 /**
  * 
@@ -36,11 +36,11 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    constructor(private body_: RigidBody3, vector: VectorE3, vectorCoordType: CoordType = CoordType.WORLD) {
+    constructor(private body_: RigidBody3, vector: VectorE3, vectorCoordType: CoordType = COORD_TYPE_WORLD) {
         super();
         this.force_ = new Force3(this.body_);
 
-        this.force_.locationCoordType = CoordType.LOCAL;
+        this.force_.locationCoordType = COORD_TYPE_LOCAL;
         this.force_.vector.copyVector(vector);
         this.force_.vectorCoordType = vectorCoordType;
 
@@ -78,5 +78,3 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
         return this.potentialEnergy_;
     }
 }
-
-export default ConstantForceLaw3;

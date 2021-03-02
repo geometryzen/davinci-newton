@@ -1,7 +1,7 @@
 import DiffEqSolver from '../core/DiffEqSolver';
-import EnergySystem from './EnergySystem';
 import Simulation from '../core/Simulation';
 import { Unit } from '../math/Unit';
+import { EnergySystem } from './EnergySystem';
 
 /**
  * An adaptive step solver that adjusts the step size in order to
@@ -111,5 +111,3 @@ export class ConstantEnergySolver implements DiffEqSolver {
         this.tolerance_ = value;
     }
 }
-
-export default ConstantEnergySolver;

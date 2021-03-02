@@ -19,5 +19,3 @@ export enum AlignH {
     RIGHT = 2,
     FULL = 3
 }
-
-export default AlignH;

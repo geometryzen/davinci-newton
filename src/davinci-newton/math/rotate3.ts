@@ -1,4 +1,4 @@
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 
 export function rotateX(x: number, y: number, z: number, spinor: SpinorE3): number {
     const a = spinor.xy;

@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -14,19 +14,19 @@
 // limitations under the License.
 
 import AbstractSubject from '../util/AbstractSubject';
-import AxisChoice from './AxisChoice';
 import contains from '../util/contains';
-import DoubleRect from '../view/DoubleRect';
 import GenericEvent from '../util/GenericEvent';
-import GraphLine from './GraphLine';
-import removeAt from '../util/removeAt';
 import Memorizable from '../util/Memorizable';
 import Observer from '../util/Observer';
 import ParameterNumber from '../util/ParameterNumber';
+import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
-import SimView from '../view/SimView';
 import SubjectEvent from '../util/SubjectEvent';
 import veryDifferent from '../util/veryDifferent';
+import DoubleRect from '../view/DoubleRect';
+import { SimView } from '../view/SimView';
+import { AxisChoice } from './AxisChoice';
+import { GraphLine } from './GraphLine';
 
 /**
  * Watches the VarsList of one or more GraphLines to calculate the range

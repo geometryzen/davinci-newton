@@ -424,5 +424,3 @@ export class QQ {
     return new QQ(n, d);
   }
 }
-
-export default QQ;

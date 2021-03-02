@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
-import contains from '../util/contains';
-import EnergySystem from '../solvers/EnergySystem';
-import Force3 from './Force3';
-import ForceBody3 from './ForceBody3';
-import ForceLaw3 from './ForceLaw3';
-import Geometric3 from '../math/Geometric3';
-import isZeroBivectorE3 from '../math/isZeroBivectorE3';
-import isZeroVectorE3 from '../math/isZeroVectorE3';
-import remove from '../util/remove';
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
+import { VarsList } from '../core/VarsList';
+import { Geometric3 } from '../math/Geometric3';
+import isZeroBivectorE3 from '../math/isZeroBivectorE3';
+import isZeroVectorE3 from '../math/isZeroVectorE3';
 import { Unit } from '../math/Unit';
-import VarsList from '../core/VarsList';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
+import { EnergySystem } from '../solvers/EnergySystem';
+import AbstractSubject from '../util/AbstractSubject';
+import contains from '../util/contains';
+import remove from '../util/remove';
+import { Force3 } from './Force3';
+import { ForceBody3 } from './ForceBody3';
+import { ForceLaw3 } from './ForceLaw3';
 
 const var_names = [
     VarsList.TIME,
@@ -563,5 +563,3 @@ export class Physics3 extends AbstractSubject implements Simulation, EnergySyste
         return this.totalEnergy_;
     }
 }
-
-export default Physics3;

@@ -1,10 +1,10 @@
-import BivectorE3 from './BivectorE3';
 import mustBeNumber from '../checks/mustBeNumber';
-import Scalar3 from './Scalar3';
-import SpinorE3 from './SpinorE3';
-import { Unit } from './Unit';
-import VectorE3 from './VectorE3';
 import veryDifferent from '../util/veryDifferent';
+import { BivectorE3 } from './BivectorE3';
+import Scalar3 from './Scalar3';
+import { SpinorE3 } from './SpinorE3';
+import { Unit } from './Unit';
+import { VectorE3 } from './VectorE3';
 
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
@@ -274,5 +274,3 @@ export class Vec3 implements VectorE3 {
         return new Vec3(v.x, v.y, v.z, v.uom);
     }
 }
-
-export default Vec3;

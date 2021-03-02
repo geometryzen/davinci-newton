@@ -1,9 +1,9 @@
-import AlignH from '../view/AlignH';
-import AlignV from '../view/AlignV';
-import Graph from './Graph';
-import GraphLine from './GraphLine';
-import Physics3 from '../engine3D/Physics3';
-import VarsList from '../core/VarsList';
+import { VarsList } from '../core/VarsList';
+import { Physics3 } from '../engine3D/Physics3';
+import { AlignH } from '../view/AlignH';
+import { AlignV } from '../view/AlignV';
+import { Graph } from './Graph';
+import { GraphLine } from './GraphLine';
 
 /**
  * 
@@ -35,6 +35,7 @@ export class EnergyTimeGraph extends Graph {
      */
     constructor(canvasId: string, varsList: VarsList) {
         super(canvasId, varsList);
+        // TODO: Make the indices independent of the number of dimensions.
         this.translationalEnergyGraphLine = this.addGraphLine(Physics3.INDEX_TIME, Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
         this.rotationalEnergyGraphLine = this.addGraphLine(Physics3.INDEX_TIME, Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
         this.potentialEnergyGraphLine = this.addGraphLine(Physics3.INDEX_TIME, Physics3.INDEX_POTENTIAL_ENERGY, 'blue');
@@ -52,5 +53,3 @@ export class EnergyTimeGraph extends Graph {
         this.axes.vAxisLabel = 'energy';
     }
 }
-
-export default EnergyTimeGraph;

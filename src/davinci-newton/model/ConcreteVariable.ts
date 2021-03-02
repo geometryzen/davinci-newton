@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { VarsList } from '../core/VarsList';
 import toName from '../util/toName';
 import validName from '../util/validName';
 import Variable from './Variable';
-import VarsList from '../core/VarsList';
 
 /**
  * 
@@ -120,5 +120,3 @@ export class ConcreteVariable implements Variable {
         this.seq_++;
     }
 }
-
-export default ConcreteVariable;

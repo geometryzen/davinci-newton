@@ -1,7 +1,7 @@
-import GeometricE3 from './GeometricE3';
 import get from './compG3Get';
-import lcoE3 from './lcoE3';
 import set from './compG3Set';
+import { GeometricE3 } from './GeometricE3';
+import lcoE3 from './lcoE3';
 import { Unit } from './Unit';
 
 export default function lcoG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {

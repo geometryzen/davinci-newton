@@ -29,7 +29,6 @@
     "docs": "npm run docs:typedoc && opn documentation/index.html",
     "pages": "npm run docs:typedoc && gh-pages -d documentation"
   },
-  "dependencies": {},
   "devDependencies": {
     "es6-module-loader": "^0.17.11",
     "gh-pages": "^1.0.0",

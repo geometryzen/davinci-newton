@@ -9,5 +9,3 @@ export interface BivectorE3 {
      */
     uom: Unit;
 }
-
-export default BivectorE3;

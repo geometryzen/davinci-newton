@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,18 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import isNumber from '../checks/isNumber';
+import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import AbstractSubject from '../util/AbstractSubject';
 import clone from '../util/clone';
 import contains from '../util/contains';
 import GenericEvent from '../util/GenericEvent';
 import isEmpty from '../util/isEmpty';
-import isNumber from '../checks/isNumber';
-import LabView from './LabView';
 import Memorizable from '../util/Memorizable';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import remove from '../util/remove';
-import ScreenRect from './ScreenRect';
 import veryDifferent from '../util/veryDifferent';
+import LabView from './LabView';
+import ScreenRect from './ScreenRect';
 
 const WIDTH = 'width';
 const HEIGHT = 'height';
@@ -496,5 +496,3 @@ export class LabCanvas extends AbstractSubject {
         this.broadcastParameter(WIDTH);
     }
 }
-
-export default LabCanvas;

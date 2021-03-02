@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from '../objects/AbstractSimObject';
-import Bivector3 from '../math/Bivector3';
-import Charged3 from './Charged3';
-import ForceBody3 from './ForceBody3';
-import Geometric3 from '../math/Geometric3';
-import Massive3 from './Massive3';
-import Mat3 from '../math/Mat3';
-import Matrix3 from '../math/Matrix3';
-import MatrixLike from '../math/MatrixLike';
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
+import { Bivector3 } from '../math/Bivector3';
+import { Geometric3 } from '../math/Geometric3';
+import { Mat3 } from '../math/Mat3';
+import { Matrix3 } from '../math/Matrix3';
+import MatrixLike from '../math/MatrixLike';
 import { Unit } from '../math/Unit';
-import Vec3 from '../math/Vec3';
-import VectorE3 from '../math/VectorE3';
+import { Vec3 } from '../math/Vec3';
+import { VectorE3 } from '../math/VectorE3';
+import { AbstractSimObject } from '../objects/AbstractSimObject';
+import { Charged3 } from './Charged3';
+import { ForceBody3 } from './ForceBody3';
+import { Massive3 } from './Massive3';
 
 /**
  * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
@@ -381,5 +381,3 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
     }
     */
 }
-
-export default RigidBody3;

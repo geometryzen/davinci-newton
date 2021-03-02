@@ -13,11 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AffineTransform from './AffineTransform';
-import AlignH from './AlignH';
-import AlignV from './AlignV';
-import DoubleRect from './DoubleRect';
 import mustBeFinite from '../checks/mustBeFinite';
+import AffineTransform from './AffineTransform';
+import { AlignH } from './AlignH';
+import { AlignV } from './AlignV';
+import DoubleRect from './DoubleRect';
 import Point from './Point';
 import ScreenRect from './ScreenRect';
 

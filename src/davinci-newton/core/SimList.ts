@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import GenericEvent from '../util/GenericEvent';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import remove from '../util/remove';
-import SimObject from './SimObject';
+import { SimObject } from './SimObject';
 
 /**
  * 

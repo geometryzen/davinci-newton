@@ -1,6 +1,6 @@
-import DimensionsSummary from './DimensionsSummary';
-import QQ from '../math/QQ';
+import { QQ } from '../math/QQ';
 import detectDimensions from './detectDimensions';
+import DimensionsSummary from './DimensionsSummary';
 
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);
@@ -496,5 +496,3 @@ export class Dimensions {
         }
     }
 }
-
-export default Dimensions;

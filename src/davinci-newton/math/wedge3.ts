@@ -1,4 +1,4 @@
-import VectorE3 from './VectorE3';
+import { VectorE3 } from './VectorE3';
 
 export function wedgeYZ(a: VectorE3, b: VectorE3): number {
     return a.y * b.z - a.z * b.y;

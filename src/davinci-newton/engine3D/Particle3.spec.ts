@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Geometric3 from '../math/Geometric3';
-import Particle3 from './Particle3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { Particle3 } from './Particle3';
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;

@@ -19,5 +19,3 @@ export enum AlignV {
     BOTTOM = 2,
     FULL = 3
 }
-
-export default AlignV;

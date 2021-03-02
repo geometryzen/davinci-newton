@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AlignH from '../view/AlignH';
-import AlignV from '../view/AlignV';
+import isDefined from '../checks/isDefined';
+import { Unit } from '../math/Unit';
+import { AlignH } from '../view/AlignH';
+import { AlignV } from '../view/AlignV';
 import CoordMap from '../view/CoordMap';
 import DisplayObject from '../view/DisplayObject';
 import DoubleRect from '../view/DoubleRect';
-import { Unit } from '../math/Unit';
-import isDefined from '../checks/isDefined';
 
 function makeLabelScale(label: string, scale: Unit): string {
     if (Unit.isOne(scale)) {

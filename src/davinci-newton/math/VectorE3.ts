@@ -9,5 +9,3 @@ export interface VectorE3 {
      */
     uom: Unit;
 }
-
-export default VectorE3;

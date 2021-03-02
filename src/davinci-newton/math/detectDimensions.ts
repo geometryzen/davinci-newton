@@ -1,4 +1,4 @@
-import QQ from '../math/QQ';
+import { QQ } from '../math/QQ';
 import DimensionsSummary from './DimensionsSummary';
 
 /**

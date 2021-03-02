@@ -1,6 +1,6 @@
 import detectDims from './detectDimensions';
 import DimensionsSummary from './DimensionsSummary';
-import QQ from './QQ';
+import { QQ } from './QQ';
 
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);

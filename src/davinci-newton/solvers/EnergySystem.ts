@@ -1,4 +1,4 @@
-import Geometric3 from '../math/Geometric3';
+import { Geometric3 } from '../math/Geometric3';
 
 /**
  * 
@@ -6,5 +6,3 @@ import Geometric3 from '../math/Geometric3';
 export interface EnergySystem {
     totalEnergy(): Geometric3;
 }
-
-export default EnergySystem;

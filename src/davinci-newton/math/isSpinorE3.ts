@@ -1,7 +1,7 @@
 import isNull from '../checks/isNull';
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 
 /**
  * Determines whether the argument supports the SpinorE3 interface.

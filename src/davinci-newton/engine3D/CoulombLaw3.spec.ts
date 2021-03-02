@@ -1,7 +1,7 @@
-import Geometric3 from '../math/Geometric3';
-import CoulombLaw3 from './CoulombLaw3';
-import Sphere3 from './Sphere3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { CoulombLaw3 } from './CoulombLaw3';
+import { Sphere3 } from './Sphere3';
 
 const COULOMB = Unit.COULOMB;
 const KILOGRAM = Unit.KILOGRAM;

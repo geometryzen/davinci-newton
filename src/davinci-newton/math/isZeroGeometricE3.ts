@@ -1,4 +1,4 @@
-import GeometricE3 from './GeometricE3';
+import { GeometricE3 } from './GeometricE3';
 import isZeroBivectorE3 from './isZeroBivectorE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 

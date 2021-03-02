@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from '../objects/AbstractSimObject';
-import Charged3 from './Charged3';
-import CoordType from '../model/CoordType';
-import Force from './Force3';
-import ForceLaw from './ForceLaw3';
-import Geometric3 from '../math/Geometric3';
+import { Geometric3 } from '../math/Geometric3';
+import { COORD_TYPE_WORLD } from '../model/CoordType';
+import { AbstractSimObject } from '../objects/AbstractSimObject';
+import { Charged3 } from './Charged3';
+import { Force3 as Force } from './Force3';
+import { ForceLaw3 as ForceLaw } from './ForceLaw3';
 
 /**
  * 
@@ -48,12 +48,12 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         super();
 
         this.F1 = new Force(this.body1_);
-        this.F1.locationCoordType = CoordType.WORLD;
-        this.F1.vectorCoordType = CoordType.WORLD;
+        this.F1.locationCoordType = COORD_TYPE_WORLD;
+        this.F1.vectorCoordType = COORD_TYPE_WORLD;
 
         this.F2 = new Force(this.body2_);
-        this.F2.locationCoordType = CoordType.WORLD;
-        this.F2.vectorCoordType = CoordType.WORLD;
+        this.F2.locationCoordType = COORD_TYPE_WORLD;
+        this.F2.vectorCoordType = COORD_TYPE_WORLD;
 
         this.k = k;
 
@@ -121,5 +121,3 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         return this.potentialEnergy_;
     }
 }
-
-export default CoulombLaw3;

@@ -1,12 +1,13 @@
+import isDefined from '../checks/isDefined';
+import readOnly from '../i18n/readOnly';
 import approx from './approx';
-import BivectorE3 from './BivectorE3';
-import CartesianG3 from './CartesianG3';
 import arraysEQ from './arraysEQ';
+import { BivectorE3 } from './BivectorE3';
+import CartesianG3 from './CartesianG3';
 import dotVector from './dotVectorE3';
 import extG3 from './extG3';
 import gauss from './gauss';
-import GeometricE3 from './GeometricE3';
-import isDefined from '../checks/isDefined';
+import { GeometricE3 } from './GeometricE3';
 import isScalarG3 from './isScalarG3';
 import isVectorE3 from './isVectorE3';
 import isVectorG3 from './isVectorG3';
@@ -15,18 +16,17 @@ import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
 import maskG3 from './maskG3';
 import mulE3 from './mulE3';
-import QQ from './QQ';
+import { QQ } from './QQ';
 import randomRange from './randomRange';
-import readOnly from '../i18n/readOnly';
 import rcoG3 from './rcoG3';
 import rotorFromDirections from './rotorFromDirectionsE3';
+import { Scalar } from './Scalar';
 import scpG3 from './scpG3';
-import Scalar from './Scalar';
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 import squaredNormG3 from './squaredNormG3';
 import stringFromCoordinates from './stringFromCoordinates';
 import { Unit } from './Unit';
-import VectorE3 from './VectorE3';
+import { VectorE3 } from './VectorE3';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
@@ -2648,5 +2648,3 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
         return Geometric3.spinor(0, yz, zx, xy, Unit.mul(a.uom, b.uom));
     }
 }
-
-export default Geometric3;

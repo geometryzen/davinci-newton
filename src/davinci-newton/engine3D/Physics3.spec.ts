@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Bivector3 from '../math/Bivector3';
-import Block3 from './Block3';
-import Geometric3 from '../math/Geometric3';
-import Physics3 from './Physics3';
-import Vector3 from '../math/Vector3';
+import { Bivector3 } from '../math/Bivector3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { Vector3 } from '../math/Vector3';
+import { Block3 } from './Block3';
+import { Physics3 } from './Physics3';
 
 describe("Physics3", function () {
     describe("Ω calculation", function () {

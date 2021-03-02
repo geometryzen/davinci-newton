@@ -50,5 +50,3 @@ export class DefaultAdvanceStrategy implements AdvanceStrategy {
         this.simulation_.epilog();
     }
 }
-
-export default DefaultAdvanceStrategy;

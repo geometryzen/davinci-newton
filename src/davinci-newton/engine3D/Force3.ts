@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from '../objects/AbstractSimObject';
-import Bivector3 from '../math/Bivector3';
-import BivectorE3 from '../math/BivectorE3';
-import CoordType from '../model/CoordType';
-import ForceBody3 from './ForceBody3';
-import Geometric3 from '../math/Geometric3';
-import VectorE3 from '../math/VectorE3';
+import { Bivector3 } from '../math/Bivector3';
+import { BivectorE3 } from '../math/BivectorE3';
+import { Geometric3 } from '../math/Geometric3';
+import { VectorE3 } from '../math/VectorE3';
+import { CoordType, COORD_TYPE_LOCAL, COORD_TYPE_WORLD } from '../model/CoordType';
+import { AbstractSimObject } from '../objects/AbstractSimObject';
+import { ForceBody3 } from './ForceBody3';
 
 /**
  * 
@@ -76,13 +76,13 @@ export class Force3 extends AbstractSimObject {
      */
     computeForce(force: VectorE3): void {
         switch (this.vectorCoordType) {
-            case CoordType.LOCAL: {
+            case COORD_TYPE_LOCAL: {
                 this.force_.copyVector(this.vector);
                 this.force_.rotate(this.body_.R);
                 this.force_.writeVector(force);
                 break;
             }
-            case CoordType.WORLD: {
+            case COORD_TYPE_WORLD: {
                 this.force_.copyVector(this.vector);
                 this.force_.writeVector(force);
                 break;
@@ -105,7 +105,7 @@ export class Force3 extends AbstractSimObject {
      */
     computePosition(position: VectorE3): void {
         switch (this.locationCoordType) {
-            case CoordType.LOCAL: {
+            case COORD_TYPE_LOCAL: {
                 this.position_.copyVector(this.location);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero. 
@@ -114,7 +114,7 @@ export class Force3 extends AbstractSimObject {
                 this.position_.writeVector(position);
                 break;
             }
-            case CoordType.WORLD: {
+            case COORD_TYPE_WORLD: {
                 this.position_.copyVector(this.location);
                 this.position_.writeVector(position);
                 break;
@@ -134,5 +134,3 @@ export class Force3 extends AbstractSimObject {
         this.torque_.write(torque);
     }
 }
-
-export default Force3;

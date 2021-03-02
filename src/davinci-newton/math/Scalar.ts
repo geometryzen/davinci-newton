@@ -11,4 +11,3 @@ export interface Scalar {
     uom: Unit;
 }
 
-export default Scalar;

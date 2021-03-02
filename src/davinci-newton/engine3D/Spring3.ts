@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSimObject from '../objects/AbstractSimObject';
-import CoordType from '../model/CoordType';
-import Force3 from './Force3';
-import ForceLaw3 from './ForceLaw3';
-import Geometric3 from '../math/Geometric3';
-import RigidBody3 from './RigidBody3';
-import Vec3 from '../math/Vec3';
-import VectorE3 from '../math/VectorE3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { Vec3 } from '../math/Vec3';
+import { VectorE3 } from '../math/VectorE3';
+import { COORD_TYPE_WORLD } from '../model/CoordType';
+import { AbstractSimObject } from '../objects/AbstractSimObject';
+import { Force3 } from './Force3';
+import { ForceLaw3 } from './ForceLaw3';
+import { RigidBody3 } from './RigidBody3';
 
 /**
  * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
@@ -100,12 +100,12 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         super();
 
         this.F1 = new Force3(this.body1_);
-        this.F1.locationCoordType = CoordType.WORLD;
-        this.F1.vectorCoordType = CoordType.WORLD;
+        this.F1.locationCoordType = COORD_TYPE_WORLD;
+        this.F1.vectorCoordType = COORD_TYPE_WORLD;
 
         this.F2 = new Force3(this.body2_);
-        this.F2.locationCoordType = CoordType.WORLD;
-        this.F2.vectorCoordType = CoordType.WORLD;
+        this.F2.locationCoordType = COORD_TYPE_WORLD;
+        this.F2.vectorCoordType = COORD_TYPE_WORLD;
 
         this.forces = [this.F1, this.F2];
     }
@@ -222,5 +222,3 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         return this.potentialEnergy_;
     }
 }
-
-export default Spring3;

@@ -1,15 +1,15 @@
-import BivectorE3 from './BivectorE3';
-import isBivectorE3 from './isBivectorE3';
 import isNumber from '../checks/isNumber';
+import mustBeNumber from '../checks/mustBeNumber';
+import { BivectorE3 } from './BivectorE3';
+import isBivectorE3 from './isBivectorE3';
 import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
 import mustBeBivectorE3 from './mustBeBivectorE3';
-import mustBeNumber from '../checks/mustBeNumber';
 import mustBeVectorE3 from './mustBeVectorE3';
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
-import VectorE3 from './VectorE3';
-import { wedgeYZ, wedgeZX, wedgeXY } from './wedge3';
+import { VectorE3 } from './VectorE3';
+import { wedgeXY, wedgeYZ, wedgeZX } from './wedge3';
 
 /**
  * 
@@ -256,5 +256,3 @@ export class Bivector3 implements BivectorE3 {
         return new Bivector3(0, 0, 0).wedge(a, b);
     }
 }
-
-export default Bivector3;

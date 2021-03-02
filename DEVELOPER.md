@@ -17,7 +17,7 @@ cd davinci-newton
 Install NPM:
 ```
 npm install
-npm update
+npm update --force
 ```
 to install the tooling dependencies (For this you need to have [Node.js](http://nodejs.org) installed).
 

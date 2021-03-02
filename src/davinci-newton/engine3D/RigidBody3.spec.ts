@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Block3 from './Block3';
-import Geometric3 from '../math/Geometric3';
-import RigidBody3 from './RigidBody3';
+import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
-import Vec3 from '../math/Vec3';
-import Vector3 from '../math/Vector3';
+import { Vec3 } from '../math/Vec3';
+import { Vector3 } from '../math/Vector3';
+import { Block3 } from './Block3';
+import { RigidBody3 } from './RigidBody3';
 
 /**
  * The unit of linear momentum. It's what Newton meant by motion.

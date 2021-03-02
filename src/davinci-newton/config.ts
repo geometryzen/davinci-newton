@@ -50,6 +50,4 @@ class Newton {
 /**
  *
  */
-const config = new Newton();
-
-export default config;
+export const config = new Newton();

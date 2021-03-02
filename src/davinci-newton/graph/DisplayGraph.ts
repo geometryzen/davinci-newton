@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,20 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import contains from '../util/contains';
-import CoordMap from '../view/CoordMap';
-import DisplayObject from '../view/DisplayObject';
-import DrawingMode from '../view/DrawingMode';
-import GraphLine from './GraphLine';
 import isDefined from '../checks/isDefined';
+import contains from '../util/contains';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
+import CoordMap from '../view/CoordMap';
+import DisplayObject from '../view/DisplayObject';
+import { DrawingMode } from '../view/DrawingMode';
 import ScreenRect from '../view/ScreenRect';
+import { GraphLine } from './GraphLine';
 
 /**
  * 
  */
-export default class DisplayGraph implements DisplayObject {
+export class DisplayGraph implements DisplayObject {
 
     /**
      * The GraphLines to draw.

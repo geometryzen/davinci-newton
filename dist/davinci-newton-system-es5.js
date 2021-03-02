@@ -1,98 +1,53 @@
-System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (exports_1, context_1) {
+System.register('davinci-newton/config.js', [], function (exports_1, context_1) {
     "use strict";
 
-    var AdaptiveStepSolver;
+    var Newton, config;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            AdaptiveStepSolver = function () {
-                function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver) {
-                    this.stepUBound = 1;
-                    this.stepLBound = 1E-5;
-                    this.diffEq_ = diffEq;
-                    this.energySystem_ = energySystem;
-                    this.odeSolver_ = diffEqSolver;
-                    this.totSteps_ = 0;
-                    this.secondDiff_ = true;
-                    this.tolerance_ = 1E-6;
+            Newton = function () {
+                function Newton() {
+                    this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
+                    this.LAST_MODIFIED = '2020-10-05';
+                    this.NAMESPACE = 'NEWTON';
+                    this.VERSION = '1.0.0';
                 }
-                AdaptiveStepSolver.prototype.step = function (stepSize, uomStep) {
-                    this.savedState = this.diffEq_.getState();
-                    var startTime = this.diffEq_.time;
-                    var d_t = stepSize;
-                    var steps = 0;
-                    this.diffEq_.epilog();
-                    var startEnergy = this.energySystem_.totalEnergy().a;
-                    var lastEnergyDiff = Number.POSITIVE_INFINITY;
-                    var value = Number.POSITIVE_INFINITY;
-                    var firstTime = true;
-                    if (stepSize < this.stepLBound) {
-                        return;
+                Newton.prototype.log = function (message) {
+                    var optionalParams = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        optionalParams[_i - 1] = arguments[_i];
                     }
-                    do {
-                        var t = startTime;
-                        if (!firstTime) {
-                            this.diffEq_.setState(this.savedState);
-                            this.diffEq_.epilog();
-                            d_t = d_t / 5;
-                            if (d_t < this.stepLBound) {
-                                throw new Error("time step " + d_t + " too small. startEnergy => " + startEnergy + " lastEnergyDiff => " + lastEnergyDiff);
-                            }
-                        }
-                        steps = 0;
-                        while (t < startTime + stepSize) {
-                            var h = d_t;
-                            if (t + h > startTime + stepSize - 1E-10) {
-                                h = startTime + stepSize - t;
-                            }
-                            steps++;
-                            this.odeSolver_.step(h, uomStep);
-                            this.diffEq_.epilog();
-                            t += h;
-                        }
-                        var finishEnergy = this.energySystem_.totalEnergy().a;
-                        var energyDiff = Math.abs(startEnergy - finishEnergy);
-                        if (this.secondDiff_) {
-                            if (!firstTime) {
-                                value = Math.abs(energyDiff - lastEnergyDiff);
-                            }
-                        } else {
-                            value = energyDiff;
-                        }
-                        lastEnergyDiff = energyDiff;
-                        firstTime = false;
-                    } while (value > this.tolerance_);
-                    this.totSteps_ += steps;
+                    console.log(message);
                 };
-                Object.defineProperty(AdaptiveStepSolver.prototype, "secondDiff", {
-                    get: function () {
-                        return this.secondDiff_;
-                    },
-                    set: function (value) {
-                        this.secondDiff_ = value;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(AdaptiveStepSolver.prototype, "tolerance", {
-                    get: function () {
-                        return this.tolerance_;
-                    },
-                    set: function (value) {
-                        this.tolerance_ = value;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return AdaptiveStepSolver;
+                Newton.prototype.info = function (message) {
+                    var optionalParams = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        optionalParams[_i - 1] = arguments[_i];
+                    }
+                    console.log(message);
+                };
+                Newton.prototype.warn = function (message) {
+                    var optionalParams = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        optionalParams[_i - 1] = arguments[_i];
+                    }
+                    console.warn(message);
+                };
+                Newton.prototype.error = function (message) {
+                    var optionalParams = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        optionalParams[_i - 1] = arguments[_i];
+                    }
+                    console.error(message);
+                };
+                return Newton;
             }();
-            exports_1("AdaptiveStepSolver", AdaptiveStepSolver);
-            exports_1("default", AdaptiveStepSolver);
+            exports_1("config", config = new Newton());
         }
     };
 });
-System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../math/Matrix3", "./RigidBody3", "../math/Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../math/Matrix3", "../math/Unit", "./RigidBody3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -112,37 +67,37 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Block3;
+    var Geometric3_1, Matrix3_1, Unit_1, RigidBody3_1, Block3;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
         }, function (Matrix3_1_1) {
             Matrix3_1 = Matrix3_1_1;
-        }, function (RigidBody3_1_1) {
-            RigidBody3_1 = RigidBody3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
+        }, function (RigidBody3_1_1) {
+            RigidBody3_1 = RigidBody3_1_1;
         }],
         execute: function () {
             Block3 = function (_super) {
                 __extends(Block3, _super);
                 function Block3(width, height, depth) {
                     if (width === void 0) {
-                        width = Geometric3_1.default.one;
+                        width = Geometric3_1.Geometric3.one;
                     }
                     if (height === void 0) {
-                        height = Geometric3_1.default.one;
+                        height = Geometric3_1.Geometric3.one;
                     }
                     if (depth === void 0) {
-                        depth = Geometric3_1.default.one;
+                        depth = Geometric3_1.Geometric3.one;
                     }
                     var _this = _super.call(this) || this;
-                    _this.width_ = Geometric3_1.default.copy(width);
+                    _this.width_ = Geometric3_1.Geometric3.copy(width);
                     _this.widthLock_ = _this.width_.lock();
-                    _this.height_ = Geometric3_1.default.copy(height);
+                    _this.height_ = Geometric3_1.Geometric3.copy(height);
                     _this.heightLock_ = _this.height_.lock();
-                    _this.depth_ = Geometric3_1.default.copy(depth);
+                    _this.depth_ = Geometric3_1.Geometric3.copy(depth);
                     _this.depthLock_ = _this.depth_.lock();
                     _this.updateInertiaTensor();
                     return _this;
@@ -207,7 +162,7 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                     var hh = h.a * h.a;
                     var dd = d.a * d.a;
                     var s = this.M.a / 12;
-                    var I = Matrix3_1.default.zero();
+                    var I = Matrix3_1.Matrix3.zero();
                     I.setElement(0, 0, s * (hh + dd));
                     I.setElement(1, 1, s * (dd + ww));
                     I.setElement(2, 2, s * (ww + hh));
@@ -215,140 +170,12 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                     this.I = I;
                 };
                 return Block3;
-            }(RigidBody3_1.default);
+            }(RigidBody3_1.RigidBody3);
             exports_1("Block3", Block3);
-            exports_1("default", Block3);
         }
     };
 });
-System.register('davinci-newton/config.js', [], function (exports_1, context_1) {
-    "use strict";
-
-    var Newton, config;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            Newton = function () {
-                function Newton() {
-                    this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2020-10-05';
-                    this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.0';
-                }
-                Newton.prototype.log = function (message) {
-                    var optionalParams = [];
-                    for (var _i = 1; _i < arguments.length; _i++) {
-                        optionalParams[_i - 1] = arguments[_i];
-                    }
-                    console.log(message);
-                };
-                Newton.prototype.info = function (message) {
-                    var optionalParams = [];
-                    for (var _i = 1; _i < arguments.length; _i++) {
-                        optionalParams[_i - 1] = arguments[_i];
-                    }
-                    console.log(message);
-                };
-                Newton.prototype.warn = function (message) {
-                    var optionalParams = [];
-                    for (var _i = 1; _i < arguments.length; _i++) {
-                        optionalParams[_i - 1] = arguments[_i];
-                    }
-                    console.warn(message);
-                };
-                Newton.prototype.error = function (message) {
-                    var optionalParams = [];
-                    for (var _i = 1; _i < arguments.length; _i++) {
-                        optionalParams[_i - 1] = arguments[_i];
-                    }
-                    console.error(message);
-                };
-                return Newton;
-            }();
-            config = new Newton();
-            exports_1("default", config);
-        }
-    };
-});
-System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var ConstantEnergySolver;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            ConstantEnergySolver = function () {
-                function ConstantEnergySolver(simulation, energySystem, solverMethod) {
-                    this.stepUpperBound = 1;
-                    this.stepLowerBound = 1E-5;
-                    this.tolerance_ = 1E-6;
-                    this.simulation_ = simulation;
-                    this.energySystem_ = energySystem;
-                    this.solverMethod_ = solverMethod;
-                    this.totSteps_ = 0;
-                }
-                ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
-                    this.savedState = this.simulation_.getState();
-                    var startTime = this.simulation_.time;
-                    var adaptedStepSize = Δt;
-                    var steps = 0;
-                    this.simulation_.epilog();
-                    var startEnergy = this.energySystem_.totalEnergy().a;
-                    var lastEnergyDiff = Number.POSITIVE_INFINITY;
-                    var value = Number.POSITIVE_INFINITY;
-                    var firstTime = true;
-                    if (Δt < this.stepLowerBound) {
-                        return;
-                    }
-                    do {
-                        var t = startTime;
-                        if (!firstTime) {
-                            this.simulation_.setState(this.savedState);
-                            this.simulation_.epilog();
-                            adaptedStepSize = adaptedStepSize / 5;
-                            if (adaptedStepSize < this.stepLowerBound) {
-                                throw new Error("Unable to achieve tolerance " + this.tolerance + " with stepLowerBound " + this.stepLowerBound);
-                            }
-                        }
-                        steps = 0;
-                        while (t < startTime + Δt) {
-                            var h = adaptedStepSize;
-                            if (t + h > startTime + Δt - 1E-10) {
-                                h = startTime + Δt - t;
-                            }
-                            steps++;
-                            this.solverMethod_.step(h, uomTime);
-                            this.simulation_.epilog();
-                            t += h;
-                        }
-                        var finishEnergy = this.energySystem_.totalEnergy().a;
-                        var energyDiff = Math.abs(startEnergy - finishEnergy);
-                        value = energyDiff;
-                        lastEnergyDiff = energyDiff;
-                        firstTime = false;
-                    } while (value > this.tolerance_);
-                    this.totSteps_ += steps;
-                };
-                Object.defineProperty(ConstantEnergySolver.prototype, "tolerance", {
-                    get: function () {
-                        return this.tolerance_;
-                    },
-                    set: function (value) {
-                        this.tolerance_ = value;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return ConstantEnergySolver;
-            }();
-            exports_1("ConstantEnergySolver", ConstantEnergySolver);
-            exports_1("default", ConstantEnergySolver);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/AbstractSimObject", "../model/CoordType", "./Force3", "../math/Geometric3"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../math/Geometric3", "../model/CoordType", "../objects/AbstractSimObject", "./Force3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -368,32 +195,32 @@ System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/Abs
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, ConstantForceLaw3;
+    var Geometric3_1, CoordType_1, AbstractSimObject_1, Force3_1, ConstantForceLaw3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
         }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
         }, function (Force3_1_1) {
             Force3_1 = Force3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
         }],
         execute: function () {
             ConstantForceLaw3 = function (_super) {
                 __extends(ConstantForceLaw3, _super);
                 function ConstantForceLaw3(body_, vector, vectorCoordType) {
                     if (vectorCoordType === void 0) {
-                        vectorCoordType = CoordType_1.default.WORLD;
+                        vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
                     }
                     var _this = _super.call(this) || this;
                     _this.body_ = body_;
                     _this.forces = [];
-                    _this.potentialEnergy_ = Geometric3_1.default.scalar(0);
+                    _this.potentialEnergy_ = Geometric3_1.Geometric3.scalar(0);
                     _this.potentialEnergyLock_ = _this.potentialEnergy_.lock();
-                    _this.force_ = new Force3_1.default(_this.body_);
-                    _this.force_.locationCoordType = CoordType_1.default.LOCAL;
+                    _this.force_ = new Force3_1.Force3(_this.body_);
+                    _this.force_.locationCoordType = CoordType_1.COORD_TYPE_LOCAL;
                     _this.force_.vector.copyVector(vector);
                     _this.force_.vectorCoordType = vectorCoordType;
                     _this.forces = [_this.force_];
@@ -420,13 +247,12 @@ System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../objects/Abs
                     return this.potentialEnergy_;
                 };
                 return ConstantForceLaw3;
-            }(AbstractSimObject_1.default);
+            }(AbstractSimObject_1.AbstractSimObject);
             exports_1("ConstantForceLaw3", ConstantForceLaw3);
-            exports_1("default", ConstantForceLaw3);
         }
     };
 });
-System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../objects/AbstractSimObject", "../model/CoordType", "./Force3", "../math/Geometric3"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../math/Geometric3", "../model/CoordType", "../objects/AbstractSimObject", "./Force3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -446,37 +272,37 @@ System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../objects/AbstractS
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, CoulombLaw3;
+    var Geometric3_1, CoordType_1, AbstractSimObject_1, Force3_1, CoulombLaw3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
         }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
         }, function (Force3_1_1) {
             Force3_1 = Force3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
         }],
         execute: function () {
             CoulombLaw3 = function (_super) {
                 __extends(CoulombLaw3, _super);
                 function CoulombLaw3(body1_, body2_, k) {
                     if (k === void 0) {
-                        k = Geometric3_1.default.scalar(1);
+                        k = Geometric3_1.Geometric3.scalar(1);
                     }
                     var _this = _super.call(this) || this;
                     _this.body1_ = body1_;
                     _this.body2_ = body2_;
                     _this.forces = [];
-                    _this.potentialEnergy_ = Geometric3_1.default.scalar(0);
+                    _this.potentialEnergy_ = Geometric3_1.Geometric3.scalar(0);
                     _this.potentialEnergyLock_ = _this.potentialEnergy_.lock();
-                    _this.F1 = new Force3_1.default(_this.body1_);
-                    _this.F1.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F1.vectorCoordType = CoordType_1.default.WORLD;
-                    _this.F2 = new Force3_1.default(_this.body2_);
-                    _this.F2.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F2.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.F1 = new Force3_1.Force3(_this.body1_);
+                    _this.F1.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2 = new Force3_1.Force3(_this.body2_);
+                    _this.F2.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
                     _this.k = k;
                     _this.forces = [_this.F1, _this.F2];
                     return _this;
@@ -507,13 +333,12 @@ System.register("davinci-newton/engine3D/CoulombLaw3.js", ["../objects/AbstractS
                     return this.potentialEnergy_;
                 };
                 return CoulombLaw3;
-            }(AbstractSimObject_1.default);
+            }(AbstractSimObject_1.AbstractSimObject);
             exports_1("CoulombLaw3", CoulombLaw3);
-            exports_1("default", CoulombLaw3);
         }
     };
 });
-System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "../math/Matrix3", "./RigidBody3", "../math/Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "../math/Matrix3", "../math/Unit", "./RigidBody3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -533,32 +358,32 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Cylinder3;
+    var Geometric3_1, Matrix3_1, Unit_1, RigidBody3_1, Cylinder3;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
         }, function (Matrix3_1_1) {
             Matrix3_1 = Matrix3_1_1;
-        }, function (RigidBody3_1_1) {
-            RigidBody3_1 = RigidBody3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
+        }, function (RigidBody3_1_1) {
+            RigidBody3_1 = RigidBody3_1_1;
         }],
         execute: function () {
             Cylinder3 = function (_super) {
                 __extends(Cylinder3, _super);
                 function Cylinder3(radius, height) {
                     if (radius === void 0) {
-                        radius = Geometric3_1.default.one;
+                        radius = Geometric3_1.Geometric3.one;
                     }
                     if (height === void 0) {
-                        height = Geometric3_1.default.one;
+                        height = Geometric3_1.Geometric3.one;
                     }
                     var _this = _super.call(this) || this;
-                    _this.radius_ = Geometric3_1.default.copy(radius);
+                    _this.radius_ = Geometric3_1.Geometric3.copy(radius);
                     _this.radiusLock_ = _this.radius_.lock();
-                    _this.height_ = Geometric3_1.default.copy(height);
+                    _this.height_ = Geometric3_1.Geometric3.copy(height);
                     _this.heightLock_ = _this.height_.lock();
                     _this.updateInertiaTensor();
                     return _this;
@@ -596,7 +421,7 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
                     var hh = h.a * h.a;
                     var Irr = this.M.a * (3 * rr + hh) / 12;
                     var Ihh = this.M.a * rr / 2;
-                    var I = Matrix3_1.default.zero();
+                    var I = Matrix3_1.Matrix3.zero();
                     I.setElement(0, 0, Irr);
                     I.setElement(1, 1, Ihh);
                     I.setElement(2, 2, Irr);
@@ -604,40 +429,12 @@ System.register("davinci-newton/engine3D/Cylinder3.js", ["../math/Geometric3", "
                     this.I = I;
                 };
                 return Cylinder3;
-            }(RigidBody3_1.default);
+            }(RigidBody3_1.RigidBody3);
             exports_1("Cylinder3", Cylinder3);
-            exports_1("default", Cylinder3);
         }
     };
 });
-System.register("davinci-newton/strategy/DefaultAdvanceStrategy.js", ["../checks/mustBeNonNullObject"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustBeNonNullObject_1, DefaultAdvanceStrategy;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (mustBeNonNullObject_1_1) {
-            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
-        }],
-        execute: function () {
-            DefaultAdvanceStrategy = function () {
-                function DefaultAdvanceStrategy(simulation, solver) {
-                    this.simulation_ = mustBeNonNullObject_1.default('simulation', simulation);
-                    this.solver_ = mustBeNonNullObject_1.default('solver', solver);
-                }
-                DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
-                    this.simulation_.prolog();
-                    this.solver_.step(stepSize, uomStep);
-                    this.simulation_.epilog();
-                };
-                return DefaultAdvanceStrategy;
-            }();
-            exports_1("DefaultAdvanceStrategy", DefaultAdvanceStrategy);
-            exports_1("default", DefaultAdvanceStrategy);
-        }
-    };
-});
-System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", "../view/AlignV", "./Graph", "../engine3D/Physics3"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../math/Geometric3", "../model/CoordType", "../objects/AbstractSimObject", "./Force3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -657,1654 +454,37 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AlignH_1, AlignV_1, Graph_1, Physics3_1, EnergyTimeGraph;
+    var Geometric3_1, CoordType_1, AbstractSimObject_1, Force3_1, GravitationLaw3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AlignH_1_1) {
-            AlignH_1 = AlignH_1_1;
-        }, function (AlignV_1_1) {
-            AlignV_1 = AlignV_1_1;
-        }, function (Graph_1_1) {
-            Graph_1 = Graph_1_1;
-        }, function (Physics3_1_1) {
-            Physics3_1 = Physics3_1_1;
-        }],
-        execute: function () {
-            EnergyTimeGraph = function (_super) {
-                __extends(EnergyTimeGraph, _super);
-                function EnergyTimeGraph(canvasId, varsList) {
-                    var _this = _super.call(this, canvasId, varsList) || this;
-                    _this.translationalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
-                    _this.rotationalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
-                    _this.potentialEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_POTENTIAL_ENERGY, 'blue');
-                    _this.totalEnergyGraphLine = _this.addGraphLine(Physics3_1.default.INDEX_TIME, Physics3_1.default.INDEX_TOTAL_ENERGY, 'white');
-                    _this.autoScale.timeWindow = 5;
-                    _this.autoScale.addGraphLine(_this.translationalEnergyGraphLine);
-                    _this.autoScale.addGraphLine(_this.rotationalEnergyGraphLine);
-                    _this.autoScale.addGraphLine(_this.potentialEnergyGraphLine);
-                    _this.autoScale.addGraphLine(_this.totalEnergyGraphLine);
-                    _this.axes.hAxisAlign = AlignV_1.default.BOTTOM;
-                    _this.axes.vAxisAlign = AlignH_1.default.LEFT;
-                    _this.axes.hAxisLabel = 'time';
-                    _this.axes.vAxisLabel = 'energy';
-                    return _this;
-                }
-                return EnergyTimeGraph;
-            }(Graph_1.default);
-            exports_1("EnergyTimeGraph", EnergyTimeGraph);
-            exports_1("default", EnergyTimeGraph);
-        }
-    };
-});
-System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], function (exports_1, context_1) {
-    "use strict";
-
-    var zeroArray_1, EulerMethod;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (zeroArray_1_1) {
-            zeroArray_1 = zeroArray_1_1;
-        }],
-        execute: function () {
-            EulerMethod = function () {
-                function EulerMethod(sim_) {
-                    this.sim_ = sim_;
-                    this.inp_ = [];
-                    this.k1_ = [];
-                }
-                EulerMethod.prototype.step = function (stepSize, uomStep) {
-                    var vars = this.sim_.getState();
-                    var N = vars.length;
-                    if (this.inp_.length !== N) {
-                        this.inp_ = new Array(N);
-                        this.k1_ = new Array(N);
-                    }
-                    var inp = this.inp_;
-                    var k1 = this.k1_;
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i];
-                    }
-                    zeroArray_1.default(k1);
-                    this.sim_.evaluate(inp, k1, 0, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        vars[i] += k1[i] * stepSize;
-                    }
-                    this.sim_.setState(vars);
-                };
-                return EulerMethod;
-            }();
-            exports_1("EulerMethod", EulerMethod);
-            exports_1("default", EulerMethod);
-        }
-    };
-});
-System.register("davinci-newton/graph/AxisChoice.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var AxisChoice;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            (function (AxisChoice) {
-                AxisChoice[AxisChoice["HORIZONTAL"] = 1] = "HORIZONTAL";
-                AxisChoice[AxisChoice["VERTICAL"] = 2] = "VERTICAL";
-                AxisChoice[AxisChoice["BOTH"] = 3] = "BOTH";
-            })(AxisChoice || (AxisChoice = {}));
-            exports_1("AxisChoice", AxisChoice);
-            exports_1("default", AxisChoice);
-        }
-    };
-});
-System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject", "./AxisChoice", "../util/contains", "../view/DoubleRect", "../util/GenericEvent", "./GraphLine", "../util/removeAt", "../util/ParameterNumber", "../util/repeat", "../view/SimView", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSubject_1, AxisChoice_1, contains_1, DoubleRect_1, GenericEvent_1, GraphLine_1, removeAt_1, ParameterNumber_1, repeat_1, SimView_1, veryDifferent_1, AutoScale;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (AxisChoice_1_1) {
-            AxisChoice_1 = AxisChoice_1_1;
-        }, function (contains_1_1) {
-            contains_1 = contains_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
-        }, function (GenericEvent_1_1) {
-            GenericEvent_1 = GenericEvent_1_1;
-        }, function (GraphLine_1_1) {
-            GraphLine_1 = GraphLine_1_1;
-        }, function (removeAt_1_1) {
-            removeAt_1 = removeAt_1_1;
-        }, function (ParameterNumber_1_1) {
-            ParameterNumber_1 = ParameterNumber_1_1;
-        }, function (repeat_1_1) {
-            repeat_1 = repeat_1_1;
-        }, function (SimView_1_1) {
-            SimView_1 = SimView_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
-        execute: function () {
-            AutoScale = function (_super) {
-                __extends(AutoScale, _super);
-                function AutoScale(simView) {
-                    var _this = _super.call(this) || this;
-                    _this.graphLines_ = [];
-                    _this.enabled_ = true;
-                    _this.isActive_ = true;
-                    _this.ownEvent_ = false;
-                    _this.rangeSetX_ = false;
-                    _this.rangeSetY_ = false;
-                    _this.rangeXHi_ = 0;
-                    _this.rangeXLo_ = 0;
-                    _this.rangeYHi_ = 0;
-                    _this.rangeYLo_ = 0;
-                    _this.timeWindow_ = 10;
-                    _this.extraMargin = 0.01;
-                    _this.minSize = 1E-14;
-                    _this.axisChoice_ = AxisChoice_1.default.BOTH;
-                    _this.simView_ = simView;
-                    simView.addMemo(_this);
-                    simView.addObserver(_this);
-                    _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
-                    _this.addParameter(new ParameterNumber_1.default(_this, AutoScale.TIME_WINDOW, function () {
-                        return _this.timeWindow;
-                    }, function (timeWindow) {
-                        return _this.timeWindow = timeWindow;
-                    }).setSignifDigits(3));
-                    var choiceNames = ['VERTICAL', 'HORIZONTAL', 'BOTH'];
-                    var choices = [AxisChoice_1.default.VERTICAL, AxisChoice_1.default.HORIZONTAL, AxisChoice_1.default.BOTH];
-                    _this.addParameter(new ParameterNumber_1.default(_this, AutoScale.AXIS, function () {
-                        return _this.axisChoice;
-                    }, function (axisChoice) {
-                        return _this.axisChoice = axisChoice;
-                    }, choiceNames, choices));
-                    _this.setComputed(_this.isActive_);
-                    return _this;
-                }
-                AutoScale.prototype.addGraphLine = function (graphLine) {
-                    if (GraphLine_1.default.isDuckType(graphLine)) {
-                        if (!contains_1.default(this.graphLines_, graphLine)) {
-                            this.graphLines_.push(graphLine);
-                            graphLine.addObserver(this);
-                            this.lastIndex_.push(-1);
-                        }
-                    } else {
-                        throw new Error('not a GraphLine ' + graphLine);
-                    }
-                };
-                AutoScale.prototype.clearRange = function () {
-                    this.rangeXLo_ = 0;
-                    this.rangeXHi_ = 0;
-                    this.rangeSetX_ = false;
-                    this.rangeYLo_ = 0;
-                    this.rangeYHi_ = 0;
-                    this.rangeSetY_ = false;
-                };
-                Object.defineProperty(AutoScale.prototype, "active", {
-                    get: function () {
-                        return this.isActive_;
-                    },
-                    set: function (value) {
-                        if (this.isActive_ !== value) {
-                            if (value) {
-                                if (this.enabled_) {
-                                    this.reset();
-                                    this.simView_.addMemo(this);
-                                    this.setComputed(true);
-                                    this.isActive_ = true;
-                                    this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
-                                }
-                            } else {
-                                this.simView_.removeMemo(this);
-                                this.setComputed(false);
-                                this.isActive_ = false;
-                                this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
-                            }
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(AutoScale.prototype, "axisChoice", {
-                    get: function () {
-                        return this.axisChoice_;
-                    },
-                    set: function (value) {
-                        if (value === AxisChoice_1.default.VERTICAL || value === AxisChoice_1.default.HORIZONTAL || value === AxisChoice_1.default.BOTH) {
-                            this.axisChoice_ = value;
-                            this.broadcastParameter(AutoScale.AXIS);
-                        } else {
-                            throw new Error('unknown ' + value);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(AutoScale.prototype, "enabled", {
-                    get: function () {
-                        return this.enabled_;
-                    },
-                    set: function (enabled) {
-                        if (this.enabled_ !== enabled) {
-                            this.enabled_ = enabled;
-                            this.active = enabled;
-                            this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                AutoScale.prototype.getRangeRect = function () {
-                    return new DoubleRect_1.default(this.rangeXLo_, this.rangeYLo_, this.rangeXHi_, this.rangeYHi_);
-                };
-                Object.defineProperty(AutoScale.prototype, "timeWindow", {
-                    get: function () {
-                        return this.timeWindow_;
-                    },
-                    set: function (timeWindow) {
-                        if (veryDifferent_1.default(timeWindow, this.timeWindow_)) {
-                            this.timeWindow_ = timeWindow;
-                            this.reset();
-                            this.active = true;
-                            this.broadcastParameter(AutoScale.TIME_WINDOW);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                AutoScale.prototype.memorize = function () {
-                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
-                        var graphPts = this.graphLines_[i].getGraphPoints();
-                        if (this.lastIndex_[i] > graphPts.getEndIndex()) {
-                            this.reset();
-                        }
-                    }
-                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
-                        var graphPts = this.graphLines_[i].getGraphPoints();
-                        var iter = graphPts.getIterator(this.lastIndex_[i]);
-                        while (iter.hasNext()) {
-                            var gp = iter.nextValue();
-                            this.updateRange_(this.graphLines_[i], gp.x, gp.y);
-                            this.lastIndex_[i] = iter.getIndex();
-                        }
-                    }
-                    this.rangeCheck_();
-                };
-                AutoScale.prototype.observe = function (event) {
-                    if (event.getSubject() === this.simView_) {
-                        if (event.nameEquals(SimView_1.default.SIM_RECT_CHANGED)) {
-                            if (!this.ownEvent_) {
-                                this.active = false;
-                            }
-                        }
-                    } else if (contains_1.default(this.graphLines_, event.getSubject())) {
-                        if (event.nameEquals(GraphLine_1.default.PARAM_NAME_X_VARIABLE) || event.nameEquals(GraphLine_1.default.PARAM_NAME_Y_VARIABLE)) {
-                            this.reset();
-                        } else if (event.nameEquals(GraphLine_1.default.RESET)) {
-                            this.active = true;
-                        }
-                    }
-                };
-                AutoScale.prototype.rangeCheck_ = function () {
-                    var e = this.minSize;
-                    if (this.rangeXHi_ - this.rangeXLo_ < e) {
-                        var avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
-                        var incr = Math.max(avg * e, e);
-                        this.rangeXHi_ = avg + incr;
-                        this.rangeXLo_ = avg - incr;
-                    }
-                    if (this.rangeYHi_ - this.rangeYLo_ < e) {
-                        var avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
-                        var incr = Math.max(avg * e, e);
-                        this.rangeYHi_ = avg + incr;
-                        this.rangeYLo_ = avg - incr;
-                    }
-                    var nr = this.getRangeRect();
-                    var sr = this.simView_.getSimRect();
-                    if (this.axisChoice_ === AxisChoice_1.default.VERTICAL) {
-                        nr = new DoubleRect_1.default(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
-                    } else if (this.axisChoice_ === AxisChoice_1.default.HORIZONTAL) {
-                        nr = new DoubleRect_1.default(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
-                    }
-                    if (this.isActive_ && !nr.nearEqual(sr)) {
-                        this.ownEvent_ = true;
-                        this.simView_.setSimRect(nr);
-                        this.ownEvent_ = false;
-                        this.broadcast(new GenericEvent_1.default(this, AutoScale.AUTO_SCALE, nr));
-                    }
-                };
-                AutoScale.prototype.removeGraphLine = function (graphLine) {
-                    if (GraphLine_1.default.isDuckType(graphLine)) {
-                        var idx = this.graphLines_.indexOf(graphLine);
-                        removeAt_1.default(this.graphLines_, idx);
-                        removeAt_1.default(this.lastIndex_, idx);
-                        this.reset();
-                    } else {
-                        throw new Error('not a GraphLine ' + graphLine);
-                    }
-                };
-                AutoScale.prototype.reset = function () {
-                    this.clearRange();
-                    for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
-                        this.lastIndex_[i] = -1;
-                    }
-                };
-                AutoScale.prototype.setComputed = function (value) {
-                    var _this = this;
-                    var names = [SimView_1.default.PARAM_NAME_WIDTH, SimView_1.default.PARAM_NAME_HEIGHT, SimView_1.default.PARAM_NAME_CENTER_X, SimView_1.default.PARAM_NAME_CENTER_Y];
-                    names.forEach(function (name) {
-                        var p = _this.simView_.getParameter(name);
-                        p.setComputed(value);
-                    });
-                };
-                AutoScale.prototype.updateRange_ = function (line, nowX, nowY) {
-                    if (!isFinite(nowX)) {
-                        if (nowX === Number.POSITIVE_INFINITY) {
-                            nowX = 1e308;
-                        } else if (nowX === Number.NEGATIVE_INFINITY) {
-                            nowX = -1e308;
-                        }
-                    }
-                    if (!isFinite(nowY)) {
-                        if (nowY === Number.POSITIVE_INFINITY) {
-                            nowY = 1e308;
-                        } else if (nowY === Number.NEGATIVE_INFINITY) {
-                            nowY = -1e308;
-                        }
-                    }
-                    var timeIdx = line.varsList.timeIndex();
-                    var xIsTimeVar = line.hCoordIndex === timeIdx;
-                    var yIsTimeVar = line.vCoordIndex === timeIdx;
-                    if (!this.rangeSetX_) {
-                        this.rangeXLo_ = nowX;
-                        this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
-                        this.rangeSetX_ = true;
-                    } else {
-                        if (nowX < this.rangeXLo_) {
-                            if (xIsTimeVar) {
-                                this.rangeXLo_ = nowX;
-                                this.rangeXHi_ = nowX + this.timeWindow_;
-                            } else {
-                                this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
-                            }
-                        }
-                        if (xIsTimeVar) {
-                            if (nowX > this.rangeXHi_ - this.extraMargin * this.timeWindow_) {
-                                this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
-                                this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
-                            }
-                        } else {
-                            if (nowX > this.rangeXHi_) {
-                                this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
-                            }
-                        }
-                    }
-                    if (!this.rangeSetY_) {
-                        this.rangeYLo_ = nowY;
-                        this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
-                        this.rangeSetY_ = true;
-                    } else {
-                        if (nowY < this.rangeYLo_) {
-                            if (yIsTimeVar) {
-                                this.rangeYLo_ = nowY;
-                                this.rangeYHi_ = nowY + this.timeWindow_;
-                            } else {
-                                this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
-                            }
-                        }
-                        if (yIsTimeVar) {
-                            if (nowY > this.rangeYHi_ - this.extraMargin * this.timeWindow_) {
-                                this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
-                                this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
-                            }
-                        } else {
-                            if (nowY > this.rangeYHi_) {
-                                this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
-                            }
-                        }
-                    }
-                };
-                AutoScale.AXIS = 'AXIS';
-                AutoScale.TIME_WINDOW = 'TIME_WINDOW';
-                AutoScale.ACTIVE = 'ACTIVE';
-                AutoScale.AUTO_SCALE = 'AUTO_SCALE';
-                AutoScale.ENABLED = 'ENABLED';
-                return AutoScale;
-            }(AbstractSubject_1.default);
-            exports_1("default", AutoScale);
-        }
-    };
-});
-System.register("davinci-newton/graph/DisplayAxes.js", ["../view/AlignH", "../view/AlignV", "../view/DoubleRect", "../math/Unit", "../checks/isDefined"], function (exports_1, context_1) {
-    "use strict";
-
-    var AlignH_1, AlignV_1, DoubleRect_1, Unit_1, isDefined_1, DisplayAxes;
-    var __moduleName = context_1 && context_1.id;
-    function makeLabelScale(label, scale) {
-        if (Unit_1.Unit.isOne(scale)) {
-            return label;
-        } else {
-            return label + " / (" + scale + ")";
-        }
-    }
-    return {
-        setters: [function (AlignH_1_1) {
-            AlignH_1 = AlignH_1_1;
-        }, function (AlignV_1_1) {
-            AlignV_1 = AlignV_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (isDefined_1_1) {
-            isDefined_1 = isDefined_1_1;
-        }],
-        execute: function () {
-            DisplayAxes = function () {
-                function DisplayAxes(simRect, font, color) {
-                    if (simRect === void 0) {
-                        simRect = DoubleRect_1.default.EMPTY_RECT;
-                    }
-                    if (font === void 0) {
-                        font = '14pt sans-serif';
-                    }
-                    if (color === void 0) {
-                        color = 'gray';
-                    }
-                    this.simRect_ = simRect;
-                    this.numFont_ = font;
-                    this.drawColor_ = color;
-                    this.fontDescent = 8;
-                    this.fontAscent = 12;
-                    this.hAxisAlign_ = AlignV_1.default.BOTTOM;
-                    this.vAxisAlign_ = AlignH_1.default.LEFT;
-                    this.numDecimal_ = 0;
-                    this.needRedraw_ = true;
-                    this.hLabel_ = 'x';
-                    this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
-                    this.vLabel_ = 'y';
-                    this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
-                    this.zIndex_ = 100;
-                }
-                DisplayAxes.prototype.draw = function (context, map) {
-                    context.save();
-                    context.strokeStyle = this.drawColor_;
-                    context.fillStyle = this.drawColor_;
-                    context.font = this.numFont_;
-                    context.textAlign = 'start';
-                    context.textBaseline = 'alphabetic';
-                    var x0;
-                    var y0;
-                    var r = this.simRect_;
-                    var sim_x1 = r.getLeft();
-                    var sim_x2 = r.getRight();
-                    var sim_y1 = r.getBottom();
-                    var sim_y2 = r.getTop();
-                    switch (this.vAxisAlign_) {
-                        case AlignH_1.default.RIGHT:
-                            x0 = map.simToScreenX(sim_x2 - 0.05 * (sim_x2 - sim_x1));
-                            break;
-                        case AlignH_1.default.LEFT:
-                            x0 = map.simToScreenX(sim_x1 + 0.05 * (sim_x2 - sim_x1));
-                            break;
-                        default:
-                            x0 = map.simToScreenX(r.getCenterX());
-                    }
-                    switch (this.hAxisAlign_) {
-                        case AlignV_1.default.TOP:
-                            y0 = map.simToScreenY(sim_y2) + (10 + this.fontDescent + this.fontAscent);
-                            break;
-                        case AlignV_1.default.BOTTOM:
-                            y0 = map.simToScreenY(sim_y1) - (10 + this.fontDescent + this.fontAscent);
-                            break;
-                        default:
-                            y0 = map.simToScreenY(r.getCenterY());
-                    }
-                    context.beginPath();
-                    context.moveTo(map.simToScreenX(sim_x1), y0);
-                    context.lineTo(map.simToScreenX(sim_x2), y0);
-                    context.stroke();
-                    this.drawHorizTicks(y0, context, map, this.simRect_);
-                    context.beginPath();
-                    context.moveTo(x0, map.simToScreenY(sim_y1));
-                    context.lineTo(x0, map.simToScreenY(sim_y2));
-                    context.stroke();
-                    this.drawVertTicks(x0, context, map, this.simRect_);
-                    context.restore();
-                    this.needRedraw_ = false;
-                };
-                DisplayAxes.prototype.drawHorizTicks = function (y0, context, map, r) {
-                    var y1 = y0 - 4;
-                    var y2 = y1 + 8;
-                    var sim_x1 = r.getLeft();
-                    var sim_x2 = r.getRight();
-                    var graphDelta = this.getNiceIncrement(sim_x2 - sim_x1);
-                    var x_sim = DisplayAxes.getNiceStart(sim_x1, graphDelta);
-                    while (x_sim < sim_x2) {
-                        var x_screen = map.simToScreenX(x_sim);
-                        context.beginPath();
-                        context.moveTo(x_screen, y1);
-                        context.lineTo(x_screen, y2);
-                        context.stroke();
-                        var next_x_sim = x_sim + graphDelta;
-                        if (next_x_sim > x_sim) {
-                            var s = x_sim.toFixed(this.numDecimal_);
-                            var textWidth = context.measureText(s).width;
-                            context.fillText(s, x_screen - textWidth / 2, y2 + this.fontAscent);
-                        } else {
-                            context.fillText('scale is too small', x_screen, y2 + this.fontAscent);
-                            break;
-                        }
-                        x_sim = next_x_sim;
-                    }
-                    var hLabel = this.hLabelScaleCache_;
-                    var w = context.measureText(hLabel).width;
-                    context.fillText(hLabel, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
-                };
-                DisplayAxes.prototype.drawVertTicks = function (x0, context, map, r) {
-                    var x1 = x0 - 4;
-                    var x2 = x1 + 8;
-                    var sim_y1 = r.getBottom();
-                    var sim_y2 = r.getTop();
-                    var graphDelta = this.getNiceIncrement(sim_y2 - sim_y1);
-                    var y_sim = DisplayAxes.getNiceStart(sim_y1, graphDelta);
-                    while (y_sim < sim_y2) {
-                        var y_screen = map.simToScreenY(y_sim);
-                        context.beginPath();
-                        context.moveTo(x1, y_screen);
-                        context.lineTo(x2, y_screen);
-                        context.stroke();
-                        var next_y_sim = y_sim + graphDelta;
-                        if (next_y_sim > y_sim) {
-                            var s = y_sim.toFixed(this.numDecimal_);
-                            var textWidth = context.measureText(s).width;
-                            if (this.vAxisAlign_ === AlignH_1.default.RIGHT) {
-                                context.fillText(s, x2 - (textWidth + 10), y_screen + this.fontAscent / 2);
-                            } else {
-                                context.fillText(s, x2 + 5, y_screen + this.fontAscent / 2);
-                            }
-                        } else {
-                            context.fillText('scale is too small', x2, y_screen);
-                            break;
-                        }
-                        y_sim = next_y_sim;
-                    }
-                    var vLabel = this.vLabelScaleCache_;
-                    var w = context.measureText(vLabel).width;
-                    if (this.vAxisAlign_ === AlignH_1.default.RIGHT) {
-                        context.fillText(vLabel, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
-                    } else {
-                        context.fillText(vLabel, x0 + 6, map.simToScreenY(sim_y2) + 13);
-                    }
-                };
-                Object.defineProperty(DisplayAxes.prototype, "color", {
-                    get: function () {
-                        return this.drawColor_;
-                    },
-                    set: function (color) {
-                        this.drawColor_ = color;
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                DisplayAxes.prototype.getFont = function () {
-                    return this.numFont_;
-                };
-                Object.defineProperty(DisplayAxes.prototype, "hAxisLabel", {
-                    get: function () {
-                        return this.hLabel_;
-                    },
-                    set: function (hAxisLabel) {
-                        this.hLabel_ = hAxisLabel;
-                        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(DisplayAxes.prototype, "hAxisScale", {
-                    get: function () {
-                        return this.hScale_;
-                    },
-                    set: function (hAxisScale) {
-                        this.hScale_ = hAxisScale;
-                        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                DisplayAxes.prototype.getNiceIncrement = function (range) {
-                    var power = Math.pow(10, Math.floor(Math.log(range) / Math.LN10));
-                    var logTot = range / power;
-                    var incr;
-                    if (logTot >= 8) incr = 2;else if (logTot >= 5) incr = 1;else if (logTot >= 3) incr = 0.5;else if (logTot >= 2) incr = 0.4;else incr = 0.2;
-                    incr *= power;
-                    var dlog = Math.log(incr) / Math.LN10;
-                    this.numDecimal_ = dlog < 0 ? Math.ceil(-dlog) : 0;
-                    return incr;
-                };
-                DisplayAxes.getNiceStart = function (start, incr) {
-                    return Math.ceil(start / incr) * incr;
-                };
-                DisplayAxes.prototype.getSimRect = function () {
-                    return this.simRect_;
-                };
-                Object.defineProperty(DisplayAxes.prototype, "vAxisLabel", {
-                    get: function () {
-                        return this.vLabel_;
-                    },
-                    set: function (vAxisLabel) {
-                        this.vLabel_ = vAxisLabel;
-                        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(DisplayAxes.prototype, "vAxisScale", {
-                    get: function () {
-                        return this.vScale_;
-                    },
-                    set: function (vAxisScale) {
-                        this.vScale_ = vAxisScale;
-                        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(DisplayAxes.prototype, "hAxisAlign", {
-                    get: function () {
-                        return this.hAxisAlign_;
-                    },
-                    set: function (alignment) {
-                        this.hAxisAlign_ = alignment;
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(DisplayAxes.prototype, "vAxisAlign", {
-                    get: function () {
-                        return this.vAxisAlign_;
-                    },
-                    set: function (alignment) {
-                        this.vAxisAlign_ = alignment;
-                        this.needRedraw_ = true;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                DisplayAxes.prototype.getZIndex = function () {
-                    return this.zIndex_;
-                };
-                DisplayAxes.prototype.isDragable = function () {
-                    return false;
-                };
-                DisplayAxes.prototype.needsRedraw = function () {
-                    return this.needRedraw_;
-                };
-                DisplayAxes.prototype.setDragable = function (dragable) {};
-                DisplayAxes.prototype.setFont = function (font) {
-                    this.numFont_ = font;
-                    this.needRedraw_ = true;
-                };
-                DisplayAxes.prototype.setSimRect = function (simRect) {
-                    this.simRect_ = simRect;
-                    this.needRedraw_ = true;
-                };
-                DisplayAxes.prototype.setZIndex = function (zIndex) {
-                    if (isDefined_1.default(zIndex)) {
-                        this.zIndex_ = zIndex;
-                    }
-                };
-                return DisplayAxes;
-            }();
-            exports_1("default", DisplayAxes);
-        }
-    };
-});
-System.register("davinci-newton/util/repeat.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function repeat(value, N) {
-        var xs = [];
-        for (var i = 0; i < N; i++) {
-            xs[i] = value;
-        }
-        return xs;
-    }
-    exports_1("default", repeat);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/graph/DisplayGraph.js", ["../util/contains", "../view/DrawingMode", "./GraphLine", "../checks/isDefined", "../util/removeAt", "../util/repeat", "../view/ScreenRect"], function (exports_1, context_1) {
-    "use strict";
-
-    var contains_1, DrawingMode_1, GraphLine_1, isDefined_1, removeAt_1, repeat_1, ScreenRect_1, DisplayGraph;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (contains_1_1) {
-            contains_1 = contains_1_1;
-        }, function (DrawingMode_1_1) {
-            DrawingMode_1 = DrawingMode_1_1;
-        }, function (GraphLine_1_1) {
-            GraphLine_1 = GraphLine_1_1;
-        }, function (isDefined_1_1) {
-            isDefined_1 = isDefined_1_1;
-        }, function (removeAt_1_1) {
-            removeAt_1 = removeAt_1_1;
-        }, function (repeat_1_1) {
-            repeat_1 = repeat_1_1;
-        }, function (ScreenRect_1_1) {
-            ScreenRect_1 = ScreenRect_1_1;
-        }],
-        execute: function () {
-            DisplayGraph = function () {
-                function DisplayGraph() {
-                    this.graphLines_ = [];
-                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
-                    this.offScreen_ = null;
-                    this.lastMap_ = null;
-                    this.screenRect_ = ScreenRect_1.default.EMPTY_RECT;
-                    this.needRedraw_ = false;
-                    this.useBuffer_ = false;
-                    this.zIndex = 0;
-                }
-                DisplayGraph.prototype.draw = function (context, map) {
-                    if (this.screenRect_.isEmpty()) {
-                        return;
-                    }
-                    var graphLines = this.graphLines_;
-                    var N = graphLines.length;
-                    context.save();
-                    if (this.lastMap_ == null || this.lastMap_ !== map) {
-                        this.lastMap_ = map;
-                        this.needRedraw_ = true;
-                    }
-                    for (var i = 0; i < N; i++) {
-                        if (this.memDraw_[i] > graphLines[i].getGraphPoints().getEndIndex()) {
-                            this.reset();
-                            break;
-                        }
-                    }
-                    if (!this.useBuffer_) {
-                        this.needRedraw_ = true;
-                        if (this.needRedraw_) {
-                            this.fullDraw(context, map);
-                            this.needRedraw_ = false;
-                        } else {
-                            this.incrementalDraw(context, map);
-                        }
-                    } else {
-                        var w = this.screenRect_.getWidth();
-                        var h = this.screenRect_.getHeight();
-                        if (this.offScreen_ == null) {
-                            this.offScreen_ = document.createElement('canvas');
-                            this.offScreen_.width = w;
-                            this.offScreen_.height = h;
-                            this.needRedraw_ = true;
-                        }
-                        var osb = this.offScreen_.getContext('2d');
-                        if (this.needRedraw_) {
-                            osb.clearRect(0, 0, w, h);
-                            this.fullDraw(osb, map);
-                            this.needRedraw_ = false;
-                        } else {
-                            this.incrementalDraw(osb, map);
-                        }
-                        context.drawImage(this.offScreen_, 0, 0, w, h);
-                    }
-                    for (var i = 0; i < N; i++) {
-                        this.drawHotSpot(context, map, graphLines[i]);
-                    }
-                    context.restore();
-                };
-                DisplayGraph.prototype.drawHotSpot = function (context, coordMap, graphLine) {
-                    var p = graphLine.getGraphPoints().getEndValue();
-                    if (p != null) {
-                        var x = coordMap.simToScreenX(p.x);
-                        var y = coordMap.simToScreenY(p.y);
-                        var color = graphLine.hotspotColor;
-                        if (color) {
-                            context.fillStyle = color;
-                            context.fillRect(x - 2, y - 2, 5, 5);
-                        }
-                    }
-                };
-                DisplayGraph.prototype.drawPoints = function (context, coordMap, from, graphLine) {
-                    var simRect = coordMap.screenToSimRect(this.screenRect_);
-                    var iter = graphLine.getGraphPoints().getIterator(from);
-                    if (!iter.hasNext()) {
-                        return from;
-                    }
-                    var next = iter.nextValue();
-                    var style = graphLine.getGraphStyle(iter.getIndex());
-                    if (style.drawingMode === DrawingMode_1.default.DOTS) {
-                        var x = coordMap.simToScreenX(next.x);
-                        var y = coordMap.simToScreenY(next.y);
-                        var w = style.lineWidth;
-                        context.fillStyle = style.color_;
-                        context.fillRect(x, y, w, w);
-                    }
-                    while (iter.hasNext()) {
-                        var last = next;
-                        next = iter.nextValue();
-                        if (next.x === last.x && next.y === last.y) {
-                            continue;
-                        }
-                        var style_1 = graphLine.getGraphStyle(iter.getIndex());
-                        var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
-                        if (style_1.drawingMode === DrawingMode_1.default.DOTS || !continuous) {
-                            if (!simRect.contains(next)) {
-                                continue;
-                            }
-                            var x = coordMap.simToScreenX(next.x);
-                            var y = coordMap.simToScreenY(next.y);
-                            var w = style_1.lineWidth;
-                            context.fillStyle = style_1.color_;
-                            context.fillRect(x, y, w, w);
-                        } else {
-                            if (!simRect.maybeVisible(last, next)) {
-                                continue;
-                            }
-                            var x1 = coordMap.simToScreenX(last.x);
-                            var y1 = coordMap.simToScreenY(last.y);
-                            var x2 = coordMap.simToScreenX(next.x);
-                            var y2 = coordMap.simToScreenY(next.y);
-                            context.strokeStyle = style_1.color_;
-                            context.lineWidth = style_1.lineWidth;
-                            context.beginPath();
-                            context.moveTo(x1, y1);
-                            context.lineTo(x2, y2);
-                            context.stroke();
-                        }
-                    }
-                    return iter.getIndex();
-                };
-                DisplayGraph.prototype.fullDraw = function (context, coordMap) {
-                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
-                    this.incrementalDraw(context, coordMap);
-                };
-                DisplayGraph.prototype.getZIndex = function () {
-                    return this.zIndex;
-                };
-                DisplayGraph.prototype.setZIndex = function (zIndex) {
-                    this.zIndex = isDefined_1.default(zIndex) ? zIndex : 0;
-                };
-                DisplayGraph.prototype.incrementalDraw = function (context, coordMap) {
-                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
-                        this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
-                    }
-                };
-                DisplayGraph.prototype.isDragable = function () {
-                    return false;
-                };
-                DisplayGraph.prototype.addGraphLine = function (graphLine) {
-                    if (GraphLine_1.default.isDuckType(graphLine)) {
-                        if (!contains_1.default(this.graphLines_, graphLine)) {
-                            this.graphLines_.push(graphLine);
-                            this.memDraw_.push(-1);
-                        }
-                    } else {
-                        throw new Error('not a GraphLine ' + graphLine);
-                    }
-                };
-                DisplayGraph.prototype.removeGraphLine = function (graphLine) {
-                    if (GraphLine_1.default.isDuckType(graphLine)) {
-                        var idx = this.graphLines_.indexOf(graphLine);
-                        removeAt_1.default(this.graphLines_, idx);
-                        removeAt_1.default(this.memDraw_, idx);
-                        this.needRedraw_ = true;
-                    } else {
-                        throw new Error('not a GraphLine ' + graphLine);
-                    }
-                };
-                DisplayGraph.prototype.setDragable = function (dragable) {};
-                DisplayGraph.prototype.setScreenRect = function (screenRect) {
-                    this.screenRect_ = screenRect;
-                    this.offScreen_ = null;
-                };
-                DisplayGraph.prototype.setUseBuffer = function (value) {
-                    this.useBuffer_ = value;
-                    if (!this.useBuffer_) {
-                        this.offScreen_ = null;
-                    }
-                };
-                DisplayGraph.prototype.reset = function () {
-                    var graphLines = this.graphLines_;
-                    var N = graphLines.length;
-                    this.memDraw_ = repeat_1.default(-1, N);
-                    for (var i = 0; i < N; i++) {
-                        graphLines[i].reset();
-                    }
-                    this.needRedraw_ = true;
-                };
-                return DisplayGraph;
-            }();
-            exports_1("default", DisplayGraph);
-        }
-    };
-});
-System.register("davinci-newton/util/GenericObserver.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var GenericObserver;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            GenericObserver = function () {
-                function GenericObserver(subject, observeFn) {
-                    this.subject_ = subject;
-                    subject.addObserver(this);
-                    this.observeFn_ = observeFn;
-                }
-                GenericObserver.prototype.disconnect = function () {
-                    this.subject_.removeObserver(this);
-                };
-                GenericObserver.prototype.observe = function (event) {
-                    this.observeFn_(event);
-                };
-                return GenericObserver;
-            }();
-            exports_1("GenericObserver", GenericObserver);
-            exports_1("default", GenericObserver);
-        }
-    };
-});
-System.register("davinci-newton/graph/Graph.js", ["../util/AbstractSubject", "../view/AlignH", "../view/AlignV", "./AutoScale", "./DisplayAxes", "./DisplayGraph", "../view/DoubleRect", "../util/GenericObserver", "./GraphLine", "../view/LabCanvas", "../checks/mustBeNumber", "../checks/mustBeString", "../view/SimView"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSubject_1, AlignH_1, AlignV_1, AutoScale_1, DisplayAxes_1, DisplayGraph_1, DoubleRect_1, GenericObserver_1, GraphLine_1, LabCanvas_1, mustBeNumber_1, mustBeString_1, SimView_1, Graph;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (AlignH_1_1) {
-            AlignH_1 = AlignH_1_1;
-        }, function (AlignV_1_1) {
-            AlignV_1 = AlignV_1_1;
-        }, function (AutoScale_1_1) {
-            AutoScale_1 = AutoScale_1_1;
-        }, function (DisplayAxes_1_1) {
-            DisplayAxes_1 = DisplayAxes_1_1;
-        }, function (DisplayGraph_1_1) {
-            DisplayGraph_1 = DisplayGraph_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
-        }, function (GenericObserver_1_1) {
-            GenericObserver_1 = GenericObserver_1_1;
-        }, function (GraphLine_1_1) {
-            GraphLine_1 = GraphLine_1_1;
-        }, function (LabCanvas_1_1) {
-            LabCanvas_1 = LabCanvas_1_1;
-        }, function (mustBeNumber_1_1) {
-            mustBeNumber_1 = mustBeNumber_1_1;
-        }, function (mustBeString_1_1) {
-            mustBeString_1 = mustBeString_1_1;
-        }, function (SimView_1_1) {
-            SimView_1 = SimView_1_1;
-        }],
-        execute: function () {
-            Graph = function (_super) {
-                __extends(Graph, _super);
-                function Graph(canvasId, varsList) {
-                    var _this = _super.call(this) || this;
-                    _this.varsList = varsList;
-                    _this.view = new SimView_1.default(new DoubleRect_1.default(0, 0, 1, 1));
-                    _this.autoScale = new AutoScale_1.default(_this.view);
-                    var canvas = document.getElementById(canvasId);
-                    _this.labCanvas = new LabCanvas_1.default(canvas);
-                    _this.view.hAxisAlign = AlignH_1.default.FULL;
-                    _this.view.vAxisAlign = AlignV_1.default.FULL;
-                    _this.labCanvas.addView(_this.view);
-                    _this.displayGraph = new DisplayGraph_1.default();
-                    _this.displayGraph.setScreenRect(_this.view.getScreenRect());
-                    _this.view.getDisplayList().prepend(_this.displayGraph);
-                    _this.timeIdx_ = varsList.timeIndex();
-                    _this.axes = new DisplayAxes_1.default(_this.view.getSimRect());
-                    _this.subscription = new GenericObserver_1.default(_this.view, function (event) {
-                        if (event.nameEquals(SimView_1.default.COORD_MAP_CHANGED)) {
-                            var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
-                            _this.axes.setSimRect(simRect);
-                        }
-                    });
-                    _this.view.getDisplayList().add(_this.axes);
-                    _this.autoScale.extraMargin = 0.05;
-                    return _this;
-                }
-                Graph.prototype.destructor = function () {
-                    if (this.subscription) {
-                        this.subscription.disconnect();
-                        this.subscription = void 0;
-                    }
-                };
-                Graph.prototype.addGraphLine = function (hCoordIndex, vCoordIndex, color) {
-                    if (color === void 0) {
-                        color = 'black';
-                    }
-                    mustBeNumber_1.default('hCoordIndex', hCoordIndex);
-                    mustBeNumber_1.default('vCoordIndex', vCoordIndex);
-                    mustBeString_1.default('color', color);
-                    var graphLine = new GraphLine_1.default(this.varsList);
-                    this.view.addMemo(graphLine);
-                    graphLine.hCoordIndex = hCoordIndex;
-                    graphLine.vCoordIndex = vCoordIndex;
-                    graphLine.color = color;
-                    graphLine.hotspotColor = color;
-                    this.displayGraph.addGraphLine(graphLine);
-                    this.displayGraph.setUseBuffer(graphLine.hCoordIndex !== this.timeIdx_);
-                    return graphLine;
-                };
-                Graph.prototype.removeGraphLine = function (graphLine) {
-                    this.displayGraph.removeGraphLine(graphLine);
-                };
-                Graph.prototype.memorize = function () {
-                    this.labCanvas.memorize();
-                };
-                Graph.prototype.render = function () {
-                    this.labCanvas.paint();
-                };
-                Graph.prototype.reset = function () {
-                    this.autoScale.reset();
-                    this.displayGraph.reset();
-                };
-                return Graph;
-            }(AbstractSubject_1.default);
-            exports_1("Graph", Graph);
-            exports_1("default", Graph);
-        }
-    };
-});
-System.register("davinci-newton/util/UtilityCore.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var UtilityCore;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            UtilityCore = function () {
-                function UtilityCore() {}
-                UtilityCore.MAX_INTEGER = Math.pow(2, 53);
-                return UtilityCore;
-            }();
-            exports_1("default", UtilityCore);
-        }
-    };
-});
-System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], function (exports_1, context_1) {
-    "use strict";
-
-    var UtilityCore_1, MAX_INDEX_ERROR, CircularList, CircularListIterator;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (UtilityCore_1_1) {
-            UtilityCore_1 = UtilityCore_1_1;
-        }],
-        execute: function () {
-            MAX_INDEX_ERROR = 'exceeded max int';
-            CircularList = function () {
-                function CircularList(capacity) {
-                    if (capacity === void 0) {
-                        capacity = 3000;
-                    }
-                    this.size_ = 0;
-                    this.cycles_ = 0;
-                    this.nextPtr_ = 0;
-                    this.lastPtr_ = -1;
-                    this.capacity_ = capacity || 3000;
-                    if (this.capacity_ < 2) {
-                        throw new Error();
-                    }
-                    this.size_ = 0;
-                    this.cycles_ = 0;
-                    this.nextPtr_ = 0;
-                    this.lastPtr_ = -1;
-                    this.values_ = new Array(this.capacity_);
-                    this.lastValue_ = null;
-                }
-                CircularList.prototype.causeMaxIntError = function () {
-                    this.size_ = this.capacity_;
-                    this.cycles_ = Math.floor(UtilityCore_1.default.MAX_INTEGER / this.capacity_) - 1;
-                };
-                CircularList.prototype.getEndIndex = function () {
-                    if (this.size_ === 0) {
-                        return -1;
-                    }
-                    var idx;
-                    if (this.nextPtr_ === 0) idx = this.pointerToIndex(this.size_ - 1);else idx = this.pointerToIndex(this.nextPtr_ - 1);
-                    return idx;
-                };
-                CircularList.prototype.getEndValue = function () {
-                    var idx = this.getEndIndex();
-                    return idx === -1 ? null : this.values_[this.indexToPointer_(idx)];
-                };
-                CircularList.prototype.getIterator = function (index) {
-                    return new CircularListIterator(this, index);
-                };
-                CircularList.prototype.getSize = function () {
-                    return this.size_;
-                };
-                CircularList.prototype.getStartIndex = function () {
-                    var idx = this.size_ < this.capacity_ ? 0 : this.pointerToIndex(this.nextPtr_);
-                    return idx;
-                };
-                CircularList.prototype.getValue = function (index) {
-                    var i = this.indexToPointer_(index);
-                    return this.values_[i];
-                };
-                CircularList.prototype.indexToPointer_ = function (index) {
-                    if (this.size_ < this.capacity_) return index;
-                    var p = index % this.capacity_;
-                    var idx = index - (this.cycles_ - (p < this.nextPtr_ ? 0 : 1)) * this.capacity_;
-                    return idx;
-                };
-                CircularList.prototype.pointerToIndex = function (pointer) {
-                    if (this.size_ < this.capacity_) return pointer;
-                    var idx = pointer + (this.cycles_ - (pointer < this.nextPtr_ ? 0 : 1)) * this.capacity_;
-                    if (idx >= UtilityCore_1.default.MAX_INTEGER) throw new Error(MAX_INDEX_ERROR);
-                    return idx;
-                };
-                CircularList.prototype.reset = function () {
-                    this.nextPtr_ = this.size_ = 0;
-                    this.cycles_ = 0;
-                    this.lastPtr_ = -1;
-                };
-                CircularList.prototype.store = function (value) {
-                    this.lastPtr_ = this.nextPtr_;
-                    this.values_[this.nextPtr_] = value;
-                    this.nextPtr_++;
-                    if (this.size_ < this.capacity_) this.size_++;
-                    if (this.nextPtr_ >= this.capacity_) {
-                        this.cycles_++;
-                        this.nextPtr_ = 0;
-                    }
-                    return this.pointerToIndex(this.lastPtr_);
-                };
-                return CircularList;
-            }();
-            exports_1("default", CircularList);
-            CircularListIterator = function () {
-                function CircularListIterator(cList, startIndex) {
-                    this.cList = cList;
-                    this.first_ = cList.size_ > 0;
-                    this.cList_ = cList;
-                    if (startIndex === undefined || startIndex < 0) {
-                        startIndex = cList.getStartIndex();
-                    }
-                    if (cList.size_ > 0 && (startIndex < cList.getStartIndex() || startIndex > cList.getEndIndex())) {
-                        throw new Error('out of range startIndex=' + startIndex);
-                    }
-                    this.index_ = startIndex;
-                    this.pointer_ = cList.indexToPointer_(startIndex);
-                }
-                CircularListIterator.prototype.getIndex = function () {
-                    if (this.cList_.size_ === 0) {
-                        throw new Error('no data');
-                    }
-                    return this.index_;
-                };
-                CircularListIterator.prototype.getValue = function () {
-                    if (this.cList_.size_ === 0) {
-                        throw new Error('no data');
-                    }
-                    return this.cList_.values_[this.pointer_];
-                };
-                CircularListIterator.prototype.hasNext = function () {
-                    return this.first_ || this.index_ < this.cList_.getEndIndex();
-                };
-                CircularListIterator.prototype.hasPrevious = function () {
-                    return this.first_ || this.index_ > this.cList_.getStartIndex();
-                };
-                CircularListIterator.prototype.nextValue = function () {
-                    if (this.cList_.size_ === 0) throw new Error('no data');
-                    if (this.first_) {
-                        this.first_ = false;
-                    } else {
-                        if (this.index_ + 1 > this.cList_.getEndIndex()) {
-                            throw new Error('cannot iterate past end of list');
-                        }
-                        this.index_++;
-                        this.pointer_ = this.cList_.indexToPointer_(this.index_);
-                    }
-                    return this.cList_.values_[this.pointer_];
-                };
-                CircularListIterator.prototype.previousValue = function () {
-                    if (this.cList_.size_ === 0) throw new Error('no data');
-                    if (this.first_) {
-                        this.first_ = false;
-                    } else {
-                        if (this.index_ - 1 < this.cList_.getStartIndex()) {
-                            throw new Error('cannot iterate prior to start of list');
-                        }
-                        this.index_--;
-                        this.pointer_ = this.cList_.indexToPointer_(this.index_);
-                    }
-                    return this.cList_.values_[this.pointer_];
-                };
-                return CircularListIterator;
-            }();
-        }
-    };
-});
-System.register("davinci-newton/view/DrawingMode.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var DrawingMode;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            (function (DrawingMode) {
-                DrawingMode[DrawingMode["DOTS"] = 0] = "DOTS";
-                DrawingMode[DrawingMode["LINES"] = 1] = "LINES";
-            })(DrawingMode || (DrawingMode = {}));
-            exports_1("DrawingMode", DrawingMode);
-            exports_1("default", DrawingMode);
-        }
-    };
-});
-System.register("davinci-newton/graph/GraphPoint.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var GraphPoint;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            GraphPoint = function () {
-                function GraphPoint(x, y, seqX, seqY) {
-                    this.x = x;
-                    this.y = y;
-                    this.seqX = seqX;
-                    this.seqY = seqY;
-                }
-                GraphPoint.prototype.equals = function (other) {
-                    return this.x === other.x && this.y === other.y && this.seqX === other.seqX && this.seqY === other.seqY;
-                };
-                return GraphPoint;
-            }();
-            exports_1("default", GraphPoint);
-        }
-    };
-});
-System.register("davinci-newton/graph/GraphStyle.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var GraphStyle;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            GraphStyle = function () {
-                function GraphStyle(index_, drawingMode, color_, lineWidth) {
-                    this.index_ = index_;
-                    this.drawingMode = drawingMode;
-                    this.color_ = color_;
-                    this.lineWidth = lineWidth;
-                }
-                return GraphStyle;
-            }();
-            exports_1("default", GraphStyle);
-        }
-    };
-});
-System.register("davinci-newton/graph/GraphLine.js", ["../util/AbstractSubject", "../util/CircularList", "../view/DrawingMode", "../util/GenericEvent", "./GraphPoint", "./GraphStyle", "../checks/isObject", "../util/ParameterNumber", "../util/ParameterString", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSubject_1, CircularList_1, DrawingMode_1, GenericEvent_1, GraphPoint_1, GraphStyle_1, isObject_1, ParameterNumber_1, ParameterString_1, veryDifferent_1, GraphLine;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (CircularList_1_1) {
-            CircularList_1 = CircularList_1_1;
-        }, function (DrawingMode_1_1) {
-            DrawingMode_1 = DrawingMode_1_1;
-        }, function (GenericEvent_1_1) {
-            GenericEvent_1 = GenericEvent_1_1;
-        }, function (GraphPoint_1_1) {
-            GraphPoint_1 = GraphPoint_1_1;
-        }, function (GraphStyle_1_1) {
-            GraphStyle_1 = GraphStyle_1_1;
-        }, function (isObject_1_1) {
-            isObject_1 = isObject_1_1;
-        }, function (ParameterNumber_1_1) {
-            ParameterNumber_1 = ParameterNumber_1_1;
-        }, function (ParameterString_1_1) {
-            ParameterString_1 = ParameterString_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
-        execute: function () {
-            GraphLine = function (_super) {
-                __extends(GraphLine, _super);
-                function GraphLine(varsList, capacity) {
-                    var _this = _super.call(this) || this;
-                    _this.lineWidth_ = 1.0;
-                    _this.hotspotColor_ = 'red';
-                    _this.styles_ = [];
-                    _this.varsList_ = varsList;
-                    varsList.addObserver(_this);
-                    _this.xVar_ = -1;
-                    _this.yVar_ = -1;
-                    _this.xVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_X_VARIABLE, function () {
-                        return _this.hCoordIndex;
-                    }, function (hCoordIndex) {
-                        return _this.hCoordIndex = hCoordIndex;
-                    });
-                    _this.xVarParam_.setLowerLimit(-1);
-                    _this.addParameter(_this.xVarParam_);
-                    _this.yVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_Y_VARIABLE, function () {
-                        return _this.vCoordIndex;
-                    }, function (vCoordIndex) {
-                        return _this.vCoordIndex = vCoordIndex;
-                    });
-                    _this.yVarParam_.setLowerLimit(-1);
-                    _this.addParameter(_this.yVarParam_);
-                    _this.dataPoints_ = new CircularList_1.default(capacity || 100000);
-                    _this.drawColor_ = 'lime';
-                    _this.drawingMode_ = DrawingMode_1.default.LINES;
-                    _this.addGraphStyle();
-                    _this.xTransform = function (x, y) {
-                        return x;
-                    };
-                    _this.yTransform = function (x, y) {
-                        return y;
-                    };
-                    _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_LINE_WIDTH, function () {
-                        return _this.lineWidth;
-                    }, function (lineWidth) {
-                        return _this.lineWidth = lineWidth;
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_DRAWING_MODE, function () {
-                        return _this.drawingMode;
-                    }, function (drawingMode) {
-                        return _this.drawingMode = drawingMode;
-                    }));
-                    _this.addParameter(new ParameterString_1.default(_this, GraphLine.PARAM_NAME_COLOR, function () {
-                        return _this.color;
-                    }, function (color) {
-                        return _this.color = color;
-                    }));
-                    return _this;
-                }
-                GraphLine.prototype.addGraphStyle = function () {
-                    this.styles_.push(new GraphStyle_1.default(this.dataPoints_.getEndIndex() + 1, this.drawingMode_, this.drawColor_, this.lineWidth_));
-                };
-                GraphLine.isDuckType = function (obj) {
-                    if (obj instanceof GraphLine) {
-                        return true;
-                    }
-                    return isObject_1.default(obj) && obj.setXVariable !== undefined && obj.setYVariable !== undefined && obj.color !== undefined && obj.lineWidth !== undefined && obj.setAxes !== undefined && obj.varsList !== undefined && obj.reset !== undefined && obj.getGraphStyle !== undefined;
-                };
-                Object.defineProperty(GraphLine.prototype, "color", {
-                    get: function () {
-                        return this.drawColor_;
-                    },
-                    set: function (color) {
-                        if (this.drawColor_ !== color) {
-                            this.drawColor_ = color;
-                            this.addGraphStyle();
-                            this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(GraphLine.prototype, "drawingMode", {
-                    get: function () {
-                        return this.drawingMode_;
-                    },
-                    set: function (drawingMode) {
-                        if (this.drawingMode_ !== drawingMode) {
-                            this.drawingMode_ = drawingMode;
-                            this.addGraphStyle();
-                        }
-                        this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                GraphLine.prototype.getGraphPoints = function () {
-                    return this.dataPoints_;
-                };
-                GraphLine.prototype.getGraphStyle = function (index) {
-                    var styles = this.styles_;
-                    if (styles.length === 0) {
-                        throw new Error('graph styles list is empty');
-                    }
-                    var last = styles[0];
-                    for (var i = 1, len = styles.length; i < len; i++) {
-                        var s = styles[i];
-                        if (s.index_ > index) {
-                            break;
-                        }
-                        last = s;
-                    }
-                    return last;
-                };
-                Object.defineProperty(GraphLine.prototype, "hotspotColor", {
-                    get: function () {
-                        return this.hotspotColor_;
-                    },
-                    set: function (color) {
-                        this.hotspotColor_ = color;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(GraphLine.prototype, "lineWidth", {
-                    get: function () {
-                        return this.lineWidth_;
-                    },
-                    set: function (lineWidth) {
-                        if (veryDifferent_1.default(lineWidth, this.lineWidth_)) {
-                            this.lineWidth_ = lineWidth;
-                            this.addGraphStyle();
-                            this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(GraphLine.prototype, "varsList", {
-                    get: function () {
-                        return this.varsList_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(GraphLine.prototype, "hCoordIndex", {
-                    get: function () {
-                        return this.xVar_;
-                    },
-                    set: function (xVar) {
-                        this.checkVarIndex(GraphLine.PARAM_NAME_X_VARIABLE, xVar);
-                        if (xVar !== this.xVar_) {
-                            this.xVar_ = xVar;
-                            this.reset();
-                            this.broadcastParameter(GraphLine.PARAM_NAME_X_VARIABLE);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                GraphLine.prototype.getXVarName = function () {
-                    return this.xVar_ > -1 ? this.varsList_.getName(this.xVar_) : '';
-                };
-                Object.defineProperty(GraphLine.prototype, "vCoordIndex", {
-                    get: function () {
-                        return this.yVar_;
-                    },
-                    set: function (yVar) {
-                        this.checkVarIndex(GraphLine.PARAM_NAME_Y_VARIABLE, yVar);
-                        if (yVar !== this.yVar_) {
-                            this.yVar_ = yVar;
-                            this.reset();
-                            this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
-                        }
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                GraphLine.prototype.getYVarName = function () {
-                    return this.yVar_ > -1 ? this.varsList_.getName(this.yVar_) : '';
-                };
-                GraphLine.prototype.memorize = function () {
-                    if (this.xVar_ > -1 && this.yVar_ > -1) {
-                        var varsList = this.varsList_;
-                        var x = varsList.getValue(this.xVar_);
-                        var y = varsList.getValue(this.yVar_);
-                        var nextX = this.xTransform(x, y);
-                        var nextY = this.yTransform(x, y);
-                        var seqX = varsList.getSequence(this.xVar_);
-                        var seqY = varsList.getSequence(this.xVar_);
-                        var newPoint = new GraphPoint_1.default(nextX, nextY, seqX, seqY);
-                        var last = this.dataPoints_.getEndValue();
-                        if (last == null || !last.equals(newPoint)) {
-                            this.dataPoints_.store(newPoint);
-                        }
-                    }
-                };
-                GraphLine.prototype.observe = function (event) {};
-                GraphLine.prototype.reset = function () {
-                    this.dataPoints_.reset();
-                    this.resetStyle();
-                    this.broadcast(new GenericEvent_1.default(this, GraphLine.RESET));
-                };
-                GraphLine.prototype.resetStyle = function () {
-                    this.styles_ = [];
-                    this.addGraphStyle();
-                };
-                GraphLine.prototype.checkVarIndex = function (name, index) {
-                    if (index < -1 || index > this.varsList_.numVariables() - 1) {
-                        throw new Error(name + " bad index: " + index);
-                    }
-                };
-                GraphLine.PARAM_NAME_X_VARIABLE = 'X variable';
-                GraphLine.PARAM_NAME_Y_VARIABLE = 'Y variable';
-                GraphLine.PARAM_NAME_LINE_WIDTH = 'line width';
-                GraphLine.PARAM_NAME_COLOR = 'color';
-                GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
-                GraphLine.RESET = 'RESET';
-                return GraphLine;
-            }(AbstractSubject_1.default);
-            exports_1("default", GraphLine);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../objects/AbstractSimObject", "../model/CoordType", "./Force3", "../math/Geometric3"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, GravitationLaw3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
         }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
         }, function (Force3_1_1) {
             Force3_1 = Force3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
         }],
         execute: function () {
             GravitationLaw3 = function (_super) {
                 __extends(GravitationLaw3, _super);
                 function GravitationLaw3(body1_, body2_, G) {
                     if (G === void 0) {
-                        G = Geometric3_1.default.scalar(1);
+                        G = Geometric3_1.Geometric3.scalar(1);
                     }
                     var _this = _super.call(this) || this;
                     _this.body1_ = body1_;
                     _this.body2_ = body2_;
                     _this.forces = [];
-                    _this.potentialEnergy_ = Geometric3_1.default.scalar(0);
+                    _this.potentialEnergy_ = Geometric3_1.Geometric3.scalar(0);
                     _this.potentialEnergyLock_ = _this.potentialEnergy_.lock();
-                    _this.F1 = new Force3_1.default(_this.body1_);
-                    _this.F1.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F1.vectorCoordType = CoordType_1.default.WORLD;
-                    _this.F2 = new Force3_1.default(_this.body2_);
-                    _this.F2.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F2.vectorCoordType = CoordType_1.default.WORLD;
+                    _this.F1 = new Force3_1.Force3(_this.body1_);
+                    _this.F1.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2 = new Force3_1.Force3(_this.body2_);
+                    _this.F2.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
                     _this.G = G;
                     _this.forces = [_this.F1, _this.F2];
                     return _this;
@@ -2335,304 +515,8 @@ System.register("davinci-newton/engine3D/GravitationLaw3.js", ["../objects/Abstr
                     return this.potentialEnergy_;
                 };
                 return GravitationLaw3;
-            }(AbstractSimObject_1.default);
+            }(AbstractSimObject_1.AbstractSimObject);
             exports_1("GravitationLaw3", GravitationLaw3);
-            exports_1("default", GravitationLaw3);
-        }
-    };
-});
-System.register("davinci-newton/util/isEmpty.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isEmpty(xs) {
-        return xs.length === 0;
-    }
-    exports_1("default", isEmpty);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/view/LabCanvas.js", ["../util/AbstractSubject", "../util/clone", "../util/contains", "../util/GenericEvent", "../util/isEmpty", "../checks/isNumber", "../checks/mustBeNonNullObject", "../util/remove", "./ScreenRect", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSubject_1, clone_1, contains_1, GenericEvent_1, isEmpty_1, isNumber_1, mustBeNonNullObject_1, remove_1, ScreenRect_1, veryDifferent_1, WIDTH, HEIGHT, ALPHA, BACKGROUND, LabCanvas;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (clone_1_1) {
-            clone_1 = clone_1_1;
-        }, function (contains_1_1) {
-            contains_1 = contains_1_1;
-        }, function (GenericEvent_1_1) {
-            GenericEvent_1 = GenericEvent_1_1;
-        }, function (isEmpty_1_1) {
-            isEmpty_1 = isEmpty_1_1;
-        }, function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }, function (mustBeNonNullObject_1_1) {
-            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
-        }, function (remove_1_1) {
-            remove_1 = remove_1_1;
-        }, function (ScreenRect_1_1) {
-            ScreenRect_1 = ScreenRect_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
-        execute: function () {
-            WIDTH = 'width';
-            HEIGHT = 'height';
-            ALPHA = 'alpha';
-            BACKGROUND = 'background';
-            LabCanvas = function (_super) {
-                __extends(LabCanvas, _super);
-                function LabCanvas(canvas) {
-                    var _this = _super.call(this) || this;
-                    _this.labViews_ = [];
-                    _this.memorizables_ = [];
-                    _this.focusView_ = null;
-                    _this.alpha_ = 1;
-                    _this.background_ = '';
-                    _this.canvas_ = canvas;
-                    canvas.contentEditable = 'false';
-                    return _this;
-                }
-                LabCanvas.prototype.addMemo = function (memorizable) {
-                    if (!contains_1.default(this.memorizables_, memorizable)) {
-                        this.memorizables_.push(memorizable);
-                    }
-                };
-                LabCanvas.prototype.addView = function (view) {
-                    mustBeNonNullObject_1.default('view', view);
-                    if (this.getWidth() > 0 && this.getHeight() > 0) {
-                        var screenRect = new ScreenRect_1.default(0, 0, this.getWidth(), this.getHeight());
-                        view.setScreenRect(screenRect);
-                    }
-                    this.labViews_.push(view);
-                    this.addMemo(view);
-                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_ADDED, view));
-                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
-                    if (this.focusView_ == null) {
-                        this.setFocusView(view);
-                    }
-                };
-                LabCanvas.prototype.focus = function () {
-                    this.canvas_.focus();
-                };
-                LabCanvas.prototype.getAlpha = function () {
-                    return this.alpha_;
-                };
-                LabCanvas.prototype.getBackground = function () {
-                    return this.background_;
-                };
-                LabCanvas.prototype.getCanvas = function () {
-                    return this.canvas_;
-                };
-                LabCanvas.prototype.getContext = function () {
-                    return this.canvas_.getContext('2d');
-                };
-                LabCanvas.prototype.getFocusView = function () {
-                    return this.focusView_;
-                };
-                LabCanvas.prototype.getHeight = function () {
-                    return this.canvas_.height;
-                };
-                LabCanvas.prototype.getMemos = function () {
-                    return clone_1.default(this.memorizables_);
-                };
-                LabCanvas.prototype.getScreenRect = function () {
-                    return new ScreenRect_1.default(0, 0, this.canvas_.width, this.canvas_.height);
-                };
-                LabCanvas.prototype.getViews = function () {
-                    return clone_1.default(this.labViews_);
-                };
-                LabCanvas.prototype.getWidth = function () {
-                    return this.canvas_.width;
-                };
-                LabCanvas.prototype.memorize = function () {
-                    for (var i = 0, n = this.memorizables_.length; i < n; i++) {
-                        this.memorizables_[i].memorize();
-                    }
-                };
-                LabCanvas.prototype.notifySizeChanged = function () {
-                    var r = this.getScreenRect();
-                    this.labViews_.forEach(function (view) {
-                        view.setScreenRect(r);
-                    });
-                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.SIZE_CHANGED));
-                };
-                LabCanvas.prototype.paint = function () {
-                    if (this.canvas_.offsetParent != null) {
-                        var context = this.canvas_.getContext('2d');
-                        context.save();
-                        if (this.background_ !== '') {
-                            context.globalAlpha = this.alpha_;
-                            context.fillStyle = this.background_;
-                            context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
-                            context.globalAlpha = 1;
-                        } else {
-                            context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
-                        }
-                        var vs = this.labViews_;
-                        var N = vs.length;
-                        for (var i = 0; i < N; i++) {
-                            vs[i].paint(context);
-                        }
-                        context.restore();
-                    }
-                };
-                LabCanvas.prototype.removeMemo = function (memorizable) {
-                    remove_1.default(this.memorizables_, memorizable);
-                };
-                LabCanvas.prototype.removeView = function (view) {
-                    mustBeNonNullObject_1.default('view', view);
-                    remove_1.default(this.labViews_, view);
-                    this.removeMemo(view);
-                    if (this.focusView_ === view) {
-                        this.setFocusView(isEmpty_1.default(this.labViews_) ? null : this.labViews_[0]);
-                    }
-                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_REMOVED, view));
-                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
-                };
-                LabCanvas.prototype.setAlpha = function (value) {
-                    if (veryDifferent_1.default(this.alpha_, value)) {
-                        this.alpha_ = value;
-                        if (veryDifferent_1.default(value, 1) && this.background_ === '') {
-                            this.setBackground('white');
-                        }
-                        this.broadcastParameter(ALPHA);
-                    }
-                };
-                LabCanvas.prototype.setBackground = function (value) {
-                    if (this.background_ !== value) {
-                        this.background_ = value;
-                        this.broadcastParameter(BACKGROUND);
-                    }
-                };
-                LabCanvas.prototype.setFocusView = function (view) {
-                    if (view != null && !contains_1.default(this.labViews_, view)) throw new Error('cannot set focus to unknown view ' + view);
-                    if (this.focusView_ !== view) {
-                        if (this.focusView_ != null) {
-                            this.focusView_.loseFocus();
-                        }
-                        this.focusView_ = view;
-                        if (view != null) {
-                            view.gainFocus();
-                        }
-                        this.broadcast(new GenericEvent_1.default(this, LabCanvas.FOCUS_VIEW_CHANGED, view));
-                    }
-                };
-                LabCanvas.prototype.setHeight = function (value) {
-                    if (veryDifferent_1.default(value, this.canvas_.height)) {
-                        this.canvas_.height = value;
-                    }
-                    this.notifySizeChanged();
-                    this.broadcastParameter(HEIGHT);
-                };
-                LabCanvas.prototype.setScreenRect = function (sr) {
-                    if (!ScreenRect_1.default.isDuckType(sr)) {
-                        throw new Error('not a ScreenRect ' + sr);
-                    }
-                    if (sr.getTop() !== 0 || sr.getLeft() !== 0) {
-                        throw new Error('top left must be 0,0, was: ' + sr);
-                    }
-                    this.setSize(sr.getWidth(), sr.getHeight());
-                };
-                LabCanvas.prototype.setSize = function (width, height) {
-                    if (!isNumber_1.default(width) || width <= 0 || !isNumber_1.default(height) || height <= 0) {
-                        throw new Error('bad size ' + width + ', ' + height);
-                    }
-                    this.canvas_.width = width;
-                    this.canvas_.height = height;
-                    this.notifySizeChanged();
-                    this.broadcastParameter(WIDTH);
-                    this.broadcastParameter(HEIGHT);
-                };
-                LabCanvas.prototype.setWidth = function (value) {
-                    if (veryDifferent_1.default(value, this.canvas_.width)) {
-                        this.canvas_.width = value;
-                    }
-                    this.notifySizeChanged();
-                    this.broadcastParameter(WIDTH);
-                };
-                LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
-                LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
-                LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
-                LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
-                LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
-                return LabCanvas;
-            }(AbstractSubject_1.default);
-            exports_1("LabCanvas", LabCanvas);
-            exports_1("default", LabCanvas);
-        }
-    };
-});
-System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"], function (exports_1, context_1) {
-    "use strict";
-
-    var zeroArray_1, ModifiedEuler;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (zeroArray_1_1) {
-            zeroArray_1 = zeroArray_1_1;
-        }],
-        execute: function () {
-            ModifiedEuler = function () {
-                function ModifiedEuler(sim_) {
-                    this.sim_ = sim_;
-                    this.inp_ = [];
-                    this.k1_ = [];
-                    this.k2_ = [];
-                }
-                ModifiedEuler.prototype.step = function (stepSize, uomStep) {
-                    var vars = this.sim_.getState();
-                    var N = vars.length;
-                    if (this.inp_.length !== N) {
-                        this.inp_ = new Array(N);
-                        this.k1_ = new Array(N);
-                        this.k2_ = new Array(N);
-                    }
-                    var inp = this.inp_;
-                    var k1 = this.k1_;
-                    var k2 = this.k2_;
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i];
-                    }
-                    zeroArray_1.default(k1);
-                    this.sim_.evaluate(inp, k1, 0, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i] + k1[i] * stepSize;
-                    }
-                    zeroArray_1.default(k2);
-                    this.sim_.evaluate(inp, k2, stepSize, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        vars[i] += (k1[i] + k2[i]) * stepSize / 2;
-                    }
-                    this.sim_.setState(vars);
-                };
-                return ModifiedEuler;
-            }();
-            exports_1("ModifiedEuler", ModifiedEuler);
-            exports_1("default", ModifiedEuler);
         }
     };
 });
@@ -2669,10 +553,10 @@ System.register("davinci-newton/engine3D/Particle3.js", ["../math/Geometric3", "
                 __extends(Particle3, _super);
                 function Particle3(M, Q) {
                     if (M === void 0) {
-                        M = Geometric3_1.default.one;
+                        M = Geometric3_1.Geometric3.one;
                     }
                     if (Q === void 0) {
-                        Q = Geometric3_1.default.zero;
+                        Q = Geometric3_1.Geometric3.zero;
                     }
                     var _this = _super.call(this) || this;
                     _this.M = M;
@@ -2689,13 +573,83 @@ System.register("davinci-newton/engine3D/Particle3.js", ["../math/Geometric3", "
                 };
                 Particle3.prototype.updateInertiaTensor = function () {};
                 return Particle3;
-            }(RigidBody3_1.default);
+            }(RigidBody3_1.RigidBody3);
             exports_1("Particle3", Particle3);
-            exports_1("default", Particle3);
         }
     };
 });
-System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", "../util/contains", "../util/GenericEvent", "../checks/mustBeNonNullObject", "../util/remove"], function (exports_1, context_1) {
+System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatisfy", "../checks/isFunction"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustSatisfy_1, isFunction_1;
+    var __moduleName = context_1 && context_1.id;
+    function beFunction() {
+        return "be a function";
+    }
+    function mustBeFunction(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isFunction_1.default(value), beFunction, contextBuilder);
+        return value;
+    }
+    exports_1("default", mustBeFunction);
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isFunction_1_1) {
+            isFunction_1 = isFunction_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/Mat3.js", ["./Matrix3", "./Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var Matrix3_1, Unit_1, Mat3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }],
+        execute: function () {
+            Mat3 = function () {
+                function Mat3(source) {
+                    this.data = Matrix3_1.Matrix3.one();
+                    var n11 = source.getElement(0, 0);
+                    var n12 = source.getElement(0, 1);
+                    var n13 = source.getElement(0, 2);
+                    var n21 = source.getElement(1, 0);
+                    var n22 = source.getElement(1, 1);
+                    var n23 = source.getElement(1, 2);
+                    var n31 = source.getElement(2, 0);
+                    var n32 = source.getElement(2, 1);
+                    var n33 = source.getElement(2, 2);
+                    this.data.set(n11, n12, n13, n21, n22, n23, n31, n32, n33);
+                    this.uom = Unit_1.Unit.mustBeUnit('uom', source.uom);
+                }
+                Object.defineProperty(Mat3.prototype, "dimensions", {
+                    get: function () {
+                        return 3;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Mat3.prototype.getElement = function (row, column) {
+                    return this.data.getElement(row, column);
+                };
+                Mat3.prototype.row = function (i) {
+                    return this.data.row(i);
+                };
+                Mat3.prototype.toString = function (radix) {
+                    return this.data.toString(radix);
+                };
+                return Mat3;
+            }();
+            exports_1("Mat3", Mat3);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/RigidBody3.js", ["../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Bivector3", "../math/Geometric3", "../math/Mat3", "../math/Matrix3", "../math/Unit", "../math/Vec3", "../objects/AbstractSimObject"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -2715,17 +669,909 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSubject_1, contains_1, GenericEvent_1, mustBeNonNullObject_1, remove_1, SimList;
+    var mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Bivector3_1, Geometric3_1, Mat3_1, Matrix3_1, Unit_1, Vec3_1, AbstractSimObject_1, RigidBody3;
+    var __moduleName = context_1 && context_1.id;
+    function assertConsistentUnits(aName, A, bName, B) {
+        if (!A.isZero() && !B.isZero()) {
+            if (Unit_1.Unit.isOne(A.uom)) {
+                if (!Unit_1.Unit.isOne(B.uom)) {
+                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
+                }
+            } else {
+                if (Unit_1.Unit.isOne(B.uom)) {
+                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
+                }
+            }
+        }
+    }
+    function mustBeDimensionlessOrCorrectUnits(name, value, unit) {
+        if (!Unit_1.Unit.isOne(value.uom) && !Unit_1.Unit.isCompatible(value.uom, unit)) {
+            throw new Error(name + " unit of measure, " + value.uom + ", must be compatible with " + unit);
+        } else {
+            return value;
+        }
+    }
+    return {
+        setters: [function (mustBeFunction_1_1) {
+            mustBeFunction_1 = mustBeFunction_1_1;
+        }, function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }, function (mustBeNumber_1_1) {
+            mustBeNumber_1 = mustBeNumber_1_1;
+        }, function (Bivector3_1_1) {
+            Bivector3_1 = Bivector3_1_1;
+        }, function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Mat3_1_1) {
+            Mat3_1 = Mat3_1_1;
+        }, function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (Vec3_1_1) {
+            Vec3_1 = Vec3_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }],
+        execute: function () {
+            RigidBody3 = function (_super) {
+                __extends(RigidBody3, _super);
+                function RigidBody3() {
+                    var _this = _super.call(this) || this;
+                    _this.mass_ = Geometric3_1.Geometric3.scalar(1);
+                    _this.massLock_ = _this.mass_.lock();
+                    _this.charge_ = Geometric3_1.Geometric3.scalar(0);
+                    _this.chargeLock_ = _this.charge_.lock();
+                    _this.inertiaTensorInverse_ = new Mat3_1.Mat3(Matrix3_1.Matrix3.one());
+                    _this.varsIndex_ = -1;
+                    _this.position_ = Geometric3_1.Geometric3.zero.clone();
+                    _this.attitude_ = Geometric3_1.Geometric3.one.clone();
+                    _this.linearMomentum_ = Geometric3_1.Geometric3.zero.clone();
+                    _this.angularMomentum_ = Geometric3_1.Geometric3.zero.clone();
+                    _this.Ω_scratch = new Bivector3_1.Bivector3(0, 0, 0);
+                    _this.angularVelocity_ = Geometric3_1.Geometric3.bivector(0, 0, 0);
+                    _this.centerOfMassLocal_ = Vec3_1.Vec3.zero;
+                    _this.rotationalEnergy_ = Geometric3_1.Geometric3.zero.clone();
+                    _this.rotationalEnergyLock_ = _this.rotationalEnergy_.lock();
+                    _this.translationalEnergy_ = Geometric3_1.Geometric3.zero.clone();
+                    _this.translationalEnergyLock_ = _this.translationalEnergy_.lock();
+                    _this.worldPoint_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    return _this;
+                }
+                Object.defineProperty(RigidBody3.prototype, "centerOfMassLocal", {
+                    get: function () {
+                        return this.centerOfMassLocal_;
+                    },
+                    set: function (centerOfMassLocal) {
+                        this.centerOfMassLocal_ = Vec3_1.Vec3.fromVector(centerOfMassLocal);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "M", {
+                    get: function () {
+                        return this.mass_;
+                    },
+                    set: function (M) {
+                        mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.Unit.KILOGRAM);
+                        this.mass_.unlock(this.massLock_);
+                        this.mass_.copy(M);
+                        this.massLock_ = this.mass_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "Q", {
+                    get: function () {
+                        return this.charge_;
+                    },
+                    set: function (Q) {
+                        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.Unit.COULOMB);
+                        this.charge_.unlock(this.chargeLock_);
+                        this.charge_.copy(Q);
+                        this.chargeLock_ = this.charge_.lock();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                RigidBody3.prototype.updateAngularVelocity = function () {
+                    this.Ω.copy(this.L);
+                    this.Ω.rotate(this.R.rev());
+                    this.Ω_scratch.copy(this.Ω);
+                    this.Ω_scratch.applyMatrix(this.Iinv);
+                    this.Ω.copyBivector(this.Ω_scratch);
+                    this.Ω.rotate(this.R.rev());
+                };
+                RigidBody3.prototype.updateInertiaTensor = function () {};
+                Object.defineProperty(RigidBody3.prototype, "I", {
+                    get: function () {
+                        var I = Matrix3_1.Matrix3.zero().copy(this.inertiaTensorInverse_).inv();
+                        return new Mat3_1.Mat3(I);
+                    },
+                    set: function (I) {
+                        var Iinv = Matrix3_1.Matrix3.zero().copy(I).inv();
+                        this.inertiaTensorInverse_ = new Mat3_1.Mat3(Iinv);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "Iinv", {
+                    get: function () {
+                        return this.inertiaTensorInverse_;
+                    },
+                    set: function (source) {
+                        mustBeNonNullObject_1.default('Iinv', source);
+                        mustBeNumber_1.default('dimensions', source.dimensions);
+                        mustBeFunction_1.default('getElement', source.getElement);
+                        this.inertiaTensorInverse_ = new Mat3_1.Mat3(source);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "X", {
+                    get: function () {
+                        return this.position_;
+                    },
+                    set: function (position) {
+                        mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER);
+                        this.position_.copy(position);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "R", {
+                    get: function () {
+                        return this.attitude_;
+                    },
+                    set: function (attitude) {
+                        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE);
+                        this.attitude_.copy(attitude);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "P", {
+                    get: function () {
+                        return this.linearMomentum_;
+                    },
+                    set: function (momentum) {
+                        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND);
+                        this.linearMomentum_.copy(momentum);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "L", {
+                    get: function () {
+                        return this.angularMomentum_;
+                    },
+                    set: function (angularMomentum) {
+                        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND);
+                        this.angularMomentum_.copy(angularMomentum);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "\u03A9", {
+                    get: function () {
+                        return this.angularVelocity_;
+                    },
+                    set: function (angularVelocity) {
+                        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit_1.Unit.INV_SECOND);
+                        this.angularVelocity_.copy(angularVelocity);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "expireTime", {
+                    get: function () {
+                        return Number.POSITIVE_INFINITY;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(RigidBody3.prototype, "varsIndex", {
+                    get: function () {
+                        return this.varsIndex_;
+                    },
+                    set: function (index) {
+                        this.varsIndex_ = index;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                RigidBody3.prototype.rotationalEnergy = function () {
+                    assertConsistentUnits('Ω', this.Ω, 'L', this.L);
+                    this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
+                    this.rotationalEnergy_.copyBivector(this.Ω).rev().scp(this.L).mulByNumber(0.5);
+                    this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
+                    return this.rotationalEnergy_;
+                };
+                RigidBody3.prototype.translationalEnergy = function () {
+                    assertConsistentUnits('M', this.M, 'P', this.P);
+                    this.translationalEnergy_.unlock(this.translationalEnergyLock_);
+                    this.translationalEnergy_.copyVector(this.P).mulByVector(this.P).divByScalar(this.M.a, this.M.uom).mulByNumber(0.5);
+                    this.translationalEnergyLock_ = this.translationalEnergy_.lock();
+                    return this.translationalEnergy_;
+                };
+                RigidBody3.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
+                    this.worldPoint_.copyVector(localPoint).subVector(this.centerOfMassLocal_);
+                    this.worldPoint_.rotate(this.attitude_).addVector(this.position_);
+                    this.worldPoint_.writeVector(worldPoint);
+                };
+                return RigidBody3;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("RigidBody3", RigidBody3);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "../math/Matrix3", "../math/Unit", "./RigidBody3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var Geometric3_1, Matrix3_1, Unit_1, RigidBody3_1, Sphere3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractSubject_1_1) {
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (RigidBody3_1_1) {
+            RigidBody3_1 = RigidBody3_1_1;
+        }],
+        execute: function () {
+            Sphere3 = function (_super) {
+                __extends(Sphere3, _super);
+                function Sphere3(radius) {
+                    if (radius === void 0) {
+                        radius = Geometric3_1.Geometric3.one;
+                    }
+                    var _this = _super.call(this) || this;
+                    _this.radius_ = Geometric3_1.Geometric3.fromScalar(radius);
+                    _this.radiusLock_ = _this.radius_.lock();
+                    _this.updateInertiaTensor();
+                    return _this;
+                }
+                Object.defineProperty(Sphere3.prototype, "radius", {
+                    get: function () {
+                        return this.radius_;
+                    },
+                    set: function (radius) {
+                        this.radius_.unlock(this.radiusLock_);
+                        this.radius_.copyScalar(radius.a, radius.uom);
+                        this.radiusLock_ = this.radius_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Sphere3.prototype.updateAngularVelocity = function () {
+                    this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
+                    this.Ω.quaditude(true);
+                    this.Ω.mulByScalar(this.M.a, this.M.uom);
+                    this.Ω.mulByNumber(2 / 5);
+                    this.Ω.inv();
+                    this.Ω.mulByBivector(this.L);
+                };
+                Sphere3.prototype.updateInertiaTensor = function () {
+                    var r = this.radius_;
+                    var s = 2 * this.M.a * r.a * r.a / 5;
+                    var I = Matrix3_1.Matrix3.zero();
+                    I.setElement(0, 0, s);
+                    I.setElement(1, 1, s);
+                    I.setElement(2, 2, s);
+                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
+                    this.I = I;
+                };
+                return Sphere3;
+            }(RigidBody3_1.RigidBody3);
+            exports_1("Sphere3", Sphere3);
+        }
+    };
+});
+System.register("davinci-newton/math/isBivectorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var isNull_1, isNumber_1, isObject_1;
+    var __moduleName = context_1 && context_1.id;
+    function isBivectorE3(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.xy) && isNumber_1.default(v.yz) && isNumber_1.default(v.zx);
+        } else {
+            return false;
+        }
+    }
+    exports_1("default", isBivectorE3);
+    return {
+        setters: [function (isNull_1_1) {
+            isNull_1 = isNull_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/mustBeBivectorE3.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function mustBeBivectorE3(name, B) {
+        if (isNaN(B.yz) || isNaN(B.zx) || isNaN(B.xy)) {
+            throw new Error(name + ", (" + B.yz + ", " + B.zx + ", " + B.xy + "), must be a BivectorE3.");
+        }
+        return B;
+    }
+    exports_1("default", mustBeBivectorE3);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/mustBeVectorE3.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function mustBeVectorE3(name, v) {
+        if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
+            throw new Error(name + ", (" + v.x + ", " + v.y + ", " + v.z + "), must be a VectorE3.");
+        }
+        return v;
+    }
+    exports_1("default", mustBeVectorE3);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/Bivector3.js", ["../checks/isNumber", "../checks/mustBeNumber", "./isBivectorE3", "./isVectorE3", "./mustBeBivectorE3", "./mustBeVectorE3", "./Unit", "./wedge3"], function (exports_1, context_1) {
+    "use strict";
+
+    var isNumber_1, mustBeNumber_1, isBivectorE3_1, isVectorE3_1, mustBeBivectorE3_1, mustBeVectorE3_1, Unit_1, wedge3_1, Bivector3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (mustBeNumber_1_1) {
+            mustBeNumber_1 = mustBeNumber_1_1;
+        }, function (isBivectorE3_1_1) {
+            isBivectorE3_1 = isBivectorE3_1_1;
+        }, function (isVectorE3_1_1) {
+            isVectorE3_1 = isVectorE3_1_1;
+        }, function (mustBeBivectorE3_1_1) {
+            mustBeBivectorE3_1 = mustBeBivectorE3_1_1;
+        }, function (mustBeVectorE3_1_1) {
+            mustBeVectorE3_1 = mustBeVectorE3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (wedge3_1_1) {
+            wedge3_1 = wedge3_1_1;
+        }],
+        execute: function () {
+            Bivector3 = function () {
+                function Bivector3(yz, zx, xy, uom) {
+                    this.yz = mustBeNumber_1.default('yz', yz);
+                    this.zx = mustBeNumber_1.default('zx', zx);
+                    this.xy = mustBeNumber_1.default('xy', xy);
+                    this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
+                }
+                Bivector3.prototype.add = function (B) {
+                    mustBeBivectorE3_1.default('B', B);
+                    this.yz += B.yz;
+                    this.zx += B.zx;
+                    this.xy += B.xy;
+                    this.uom = Unit_1.Unit.compatible(this.uom, B.uom);
+                    return this;
+                };
+                Bivector3.prototype.applyMatrix = function (σ) {
+                    var x = this.yz;
+                    var y = this.zx;
+                    var z = this.xy;
+                    var n11 = σ.getElement(0, 0),
+                        n12 = σ.getElement(0, 1),
+                        n13 = σ.getElement(0, 2);
+                    var n21 = σ.getElement(1, 0),
+                        n22 = σ.getElement(1, 1),
+                        n23 = σ.getElement(1, 2);
+                    var n31 = σ.getElement(2, 0),
+                        n32 = σ.getElement(2, 1),
+                        n33 = σ.getElement(2, 2);
+                    this.yz = n11 * x + n12 * y + n13 * z;
+                    this.zx = n21 * x + n22 * y + n23 * z;
+                    this.xy = n31 * x + n32 * y + n33 * z;
+                    return this;
+                };
+                Bivector3.prototype.copy = function (B) {
+                    mustBeBivectorE3_1.default('B', B);
+                    this.yz = B.yz;
+                    this.zx = B.zx;
+                    this.xy = B.xy;
+                    return this;
+                };
+                Bivector3.prototype.isZero = function () {
+                    return this.xy === 0 && this.yz === 0 && this.zx === 0;
+                };
+                Bivector3.prototype.rev = function () {
+                    this.yz = -this.yz;
+                    this.zx = -this.zx;
+                    this.xy = -this.xy;
+                    return this;
+                };
+                Bivector3.prototype.rotate = function (R) {
+                    if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
+                        return this;
+                    } else {
+                        var yz = this.yz;
+                        var zx = this.zx;
+                        var xy = this.xy;
+                        var Rxy = R.xy;
+                        var Ryz = R.yz;
+                        var Rzx = R.zx;
+                        var Ra = R.a;
+                        var Syz = Ra * yz - Rzx * xy + Rxy * zx;
+                        var Szx = Ra * zx - Rxy * yz + Ryz * xy;
+                        var Sxy = Ra * xy - Ryz * zx + Rzx * yz;
+                        var Sa = Ryz * yz + Rzx * zx + Rxy * xy;
+                        this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
+                        this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
+                        this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
+                        return this;
+                    }
+                };
+                Bivector3.prototype.sub = function (B) {
+                    mustBeBivectorE3_1.default('B', B);
+                    this.yz -= B.yz;
+                    this.zx -= B.zx;
+                    this.xy -= B.xy;
+                    return this;
+                };
+                Bivector3.prototype.toExponential = function (fractionDigits) {
+                    return "new Bivector3(yz: " + this.yz.toExponential(fractionDigits) + ", zx: " + this.zx.toExponential(fractionDigits) + ", xy: " + this.xy.toExponential(fractionDigits) + ")";
+                };
+                Bivector3.prototype.toFixed = function (fractionDigits) {
+                    return "new Bivector3(yz: " + this.yz.toFixed(fractionDigits) + ", zx: " + this.zx.toFixed(fractionDigits) + ", xy: " + this.xy.toFixed(fractionDigits) + ")";
+                };
+                Bivector3.prototype.toPrecision = function (precision) {
+                    return "new Bivector3(yz: " + this.yz.toPrecision(precision) + ", zx: " + this.zx.toPrecision(precision) + ", xy: " + this.xy.toPrecision(precision) + ")";
+                };
+                Bivector3.prototype.toString = function (radix) {
+                    return "new Bivector3(yz: " + this.yz.toString(radix) + ", zx: " + this.zx.toString(radix) + ", xy: " + this.xy.toString(radix) + ")";
+                };
+                Bivector3.prototype.wedge = function (a, b) {
+                    mustBeVectorE3_1.default('a', a);
+                    mustBeVectorE3_1.default('b', b);
+                    this.yz = wedge3_1.wedgeYZ(a, b);
+                    this.zx = wedge3_1.wedgeZX(a, b);
+                    this.xy = wedge3_1.wedgeXY(a, b);
+                    this.uom = Unit_1.Unit.mul(a.uom, b.uom);
+                    return this;
+                };
+                Bivector3.prototype.write = function (B) {
+                    B.xy = this.xy;
+                    B.yz = this.yz;
+                    B.zx = this.zx;
+                    B.uom = this.uom;
+                    return this;
+                };
+                Bivector3.prototype.zero = function () {
+                    this.yz = 0;
+                    this.zx = 0;
+                    this.xy = 0;
+                    return this;
+                };
+                Bivector3.prototype.__add__ = function (rhs) {
+                    if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
+                        var yz = this.yz + rhs.yz;
+                        var zx = this.zx + rhs.zx;
+                        var xy = this.xy + rhs.xy;
+                        var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
+                        return new Bivector3(yz, zx, xy, uom);
+                    } else {
+                        return void 0;
+                    }
+                };
+                Bivector3.prototype.__mul__ = function (rhs) {
+                    if (isNumber_1.default(rhs)) {
+                        var yz = this.yz * rhs;
+                        var zx = this.zx * rhs;
+                        var xy = this.xy * rhs;
+                        return new Bivector3(yz, zx, xy, this.uom);
+                    } else {
+                        return void 0;
+                    }
+                };
+                Bivector3.prototype.__rmul__ = function (lhs) {
+                    if (isNumber_1.default(lhs)) {
+                        var yz = lhs * this.yz;
+                        var zx = lhs * this.zx;
+                        var xy = lhs * this.xy;
+                        return new Bivector3(yz, zx, xy, this.uom);
+                    } else {
+                        return void 0;
+                    }
+                };
+                Bivector3.prototype.__sub__ = function (rhs) {
+                    if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
+                        var yz = this.yz - rhs.yz;
+                        var zx = this.zx - rhs.zx;
+                        var xy = this.xy - rhs.xy;
+                        var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
+                        return new Bivector3(yz, zx, xy, uom);
+                    } else {
+                        return void 0;
+                    }
+                };
+                Bivector3.wedge = function (a, b) {
+                    return new Bivector3(0, 0, 0).wedge(a, b);
+                };
+                return Bivector3;
+            }();
+            exports_1("Bivector3", Bivector3);
+        }
+    };
+});
+System.register("davinci-newton/model/CoordType.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var COORD_TYPE_LOCAL, COORD_TYPE_WORLD;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            exports_1("COORD_TYPE_LOCAL", COORD_TYPE_LOCAL = 0);
+            exports_1("COORD_TYPE_WORLD", COORD_TYPE_WORLD = 1);
+        }
+    };
+});
+System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var AbstractSimObject;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            AbstractSimObject = function () {
+                function AbstractSimObject() {
+                    this.expireTime_ = Number.POSITIVE_INFINITY;
+                }
+                Object.defineProperty(AbstractSimObject.prototype, "expireTime", {
+                    get: function () {
+                        return this.expireTime_;
+                    },
+                    set: function (expireTime) {
+                        this.expireTime_ = expireTime;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                return AbstractSimObject;
+            }();
+            exports_1("AbstractSimObject", AbstractSimObject);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Force3.js", ["../math/Bivector3", "../math/Geometric3", "../model/CoordType", "../objects/AbstractSimObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var Bivector3_1, Geometric3_1, CoordType_1, AbstractSimObject_1, Force3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Bivector3_1_1) {
+            Bivector3_1 = Bivector3_1_1;
+        }, function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }],
+        execute: function () {
+            Force3 = function (_super) {
+                __extends(Force3, _super);
+                function Force3(body_) {
+                    var _this = _super.call(this) || this;
+                    _this.body_ = body_;
+                    _this.location = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.vector = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.position_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.force_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.torque_ = new Bivector3_1.Bivector3(0, 0, 0);
+                    return _this;
+                }
+                Force3.prototype.getBody = function () {
+                    return this.body_;
+                };
+                Force3.prototype.computeForce = function (force) {
+                    switch (this.vectorCoordType) {
+                        case CoordType_1.COORD_TYPE_LOCAL:
+                            {
+                                this.force_.copyVector(this.vector);
+                                this.force_.rotate(this.body_.R);
+                                this.force_.writeVector(force);
+                                break;
+                            }
+                        case CoordType_1.COORD_TYPE_WORLD:
+                            {
+                                this.force_.copyVector(this.vector);
+                                this.force_.writeVector(force);
+                                break;
+                            }
+                    }
+                };
+                Object.defineProperty(Force3.prototype, "F", {
+                    get: function () {
+                        this.computeForce(this.force_);
+                        return this.force_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Force3.prototype, "x", {
+                    get: function () {
+                        this.computePosition(this.position_);
+                        return this.position_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Force3.prototype.computePosition = function (position) {
+                    switch (this.locationCoordType) {
+                        case CoordType_1.COORD_TYPE_LOCAL:
+                            {
+                                this.position_.copyVector(this.location);
+                                this.position_.rotate(this.body_.R);
+                                this.position_.addVector(this.body_.X);
+                                this.position_.writeVector(position);
+                                break;
+                            }
+                        case CoordType_1.COORD_TYPE_WORLD:
+                            {
+                                this.position_.copyVector(this.location);
+                                this.position_.writeVector(position);
+                                break;
+                            }
+                    }
+                };
+                Force3.prototype.computeTorque = function (torque) {
+                    this.computePosition(this.position_);
+                    this.computeForce(this.force_);
+                    this.torque_.wedge(this.position_.subVector(this.body_.X), this.force_);
+                    this.torque_.write(torque);
+                };
+                return Force3;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("Force3", Force3);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Spring3.js", ["../math/Geometric3", "../math/Unit", "../math/Vec3", "../model/CoordType", "../objects/AbstractSimObject", "./Force3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var Geometric3_1, Unit_1, Vec3_1, CoordType_1, AbstractSimObject_1, Force3_1, Spring3;
+    var __moduleName = context_1 && context_1.id;
+    function assertConsistentUnits(aName, A, bName, B) {
+        if (!A.isZero() && !B.isZero()) {
+            if (Unit_1.Unit.isOne(A.uom)) {
+                if (!Unit_1.Unit.isOne(B.uom)) {
+                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
+                }
+            } else {
+                if (Unit_1.Unit.isOne(B.uom)) {
+                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
+                }
+            }
+        }
+    }
+    return {
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (Vec3_1_1) {
+            Vec3_1 = Vec3_1_1;
+        }, function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (Force3_1_1) {
+            Force3_1 = Force3_1_1;
+        }],
+        execute: function () {
+            Spring3 = function (_super) {
+                __extends(Spring3, _super);
+                function Spring3(body1_, body2_) {
+                    var _this = _super.call(this) || this;
+                    _this.body1_ = body1_;
+                    _this.body2_ = body2_;
+                    _this.restLength = Geometric3_1.Geometric3.one;
+                    _this.stiffness = Geometric3_1.Geometric3.one;
+                    _this.attach1_ = Vec3_1.Vec3.zero;
+                    _this.attach2_ = Vec3_1.Vec3.zero;
+                    _this.forces = [];
+                    _this.end1_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.end1Lock_ = _this.end1_.lock();
+                    _this.end2_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.end2Lock_ = _this.end2_.lock();
+                    _this.potentialEnergy_ = Geometric3_1.Geometric3.scalar(0);
+                    _this.potentialEnergyLock_ = _this.potentialEnergy_.lock();
+                    _this.F1 = new Force3_1.Force3(_this.body1_);
+                    _this.F1.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2 = new Force3_1.Force3(_this.body2_);
+                    _this.F2.locationCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.COORD_TYPE_WORLD;
+                    _this.forces = [_this.F1, _this.F2];
+                    return _this;
+                }
+                Spring3.prototype.computeBody1AttachPointInWorldCoords = function (x) {
+                    if (this.attach1_ == null || this.body1_ == null) {
+                        throw new Error();
+                    }
+                    this.body1_.localPointToWorldPoint(this.attach1_, x);
+                };
+                Spring3.prototype.computeBody2AttachPointInWorldCoords = function (x) {
+                    if (this.attach2_ == null || this.body2_ == null) {
+                        throw new Error();
+                    }
+                    this.body2_.localPointToWorldPoint(this.attach2_, x);
+                };
+                Object.defineProperty(Spring3.prototype, "attach1", {
+                    get: function () {
+                        return this.attach1_;
+                    },
+                    set: function (attach1) {
+                        this.attach1_ = Vec3_1.Vec3.fromVector(attach1);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring3.prototype, "attach2", {
+                    get: function () {
+                        return this.attach2_;
+                    },
+                    set: function (attach2) {
+                        this.attach2_ = Vec3_1.Vec3.fromVector(attach2);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring3.prototype, "end1", {
+                    get: function () {
+                        this.end1.unlock(this.end1Lock_);
+                        this.computeBody1AttachPointInWorldCoords(this.end1_);
+                        this.end1Lock_ = this.end1.lock();
+                        return this.end1_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring3.prototype, "end2", {
+                    get: function () {
+                        this.end2.unlock(this.end2Lock_);
+                        this.computeBody2AttachPointInWorldCoords(this.end2_);
+                        this.end2Lock_ = this.end2.lock();
+                        return this.end2_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Spring3.prototype.updateForces = function () {
+                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
+                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
+                    this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
+                    this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude(true).subScalar(this.restLength);
+                    this.F1.vector.mulByScalar(this.stiffness.a, this.stiffness.uom);
+                    this.F1.vector.mulByVector(this.F2.vector);
+                    this.F2.vector.copyVector(this.F1.vector).neg();
+                    return this.forces;
+                };
+                Spring3.prototype.disconnect = function () {};
+                Spring3.prototype.potentialEnergy = function () {
+                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
+                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
+                    this.potentialEnergy_.unlock(this.potentialEnergyLock_);
+                    assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
+                    this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude(true);
+                    assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
+                    this.potentialEnergy_.sub(this.restLength);
+                    this.potentialEnergy_.quaditude(true);
+                    this.potentialEnergy_.mulByScalar(this.stiffness.a, this.stiffness.uom);
+                    this.potentialEnergy_.mulByNumber(0.5);
+                    this.potentialEnergyLock_ = this.potentialEnergy_.lock();
+                    return this.potentialEnergy_;
+                };
+                return Spring3;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("Spring3", Spring3);
+        }
+    };
+});
+System.register("davinci-newton/core/SimList.js", ["../checks/mustBeNonNullObject", "../util/AbstractSubject", "../util/contains", "../util/GenericEvent", "../util/remove"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var mustBeNonNullObject_1, AbstractSubject_1, contains_1, GenericEvent_1, remove_1, SimList;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }, function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
         }, function (contains_1_1) {
             contains_1 = contains_1_1;
         }, function (GenericEvent_1_1) {
             GenericEvent_1 = GenericEvent_1_1;
-        }, function (mustBeNonNullObject_1_1) {
-            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
         }, function (remove_1_1) {
             remove_1 = remove_1_1;
         }],
@@ -2773,7 +1619,113 @@ System.register("davinci-newton/core/SimList.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject", "../util/contains", "../math/Geometric3", "../math/isZeroBivectorE3", "../math/isZeroVectorE3", "../util/remove", "../core/SimList", "../math/Unit", "../core/VarsList", "../math/wedge3"], function (exports_1, context_1) {
+System.register("davinci-newton/model/ConcreteVariable.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var toName_1, validName_1, ConcreteVariable;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            ConcreteVariable = function () {
+                function ConcreteVariable(varsList_, name) {
+                    this.varsList_ = varsList_;
+                    this.value_ = 0;
+                    this.seq_ = 0;
+                    this.isComputed_ = false;
+                    this.doesBroadcast_ = false;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                }
+                ConcreteVariable.prototype.getBroadcast = function () {
+                    return this.doesBroadcast_;
+                };
+                Object.defineProperty(ConcreteVariable.prototype, "name", {
+                    get: function () {
+                        return this.name_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                ConcreteVariable.prototype.getSequence = function () {
+                    return this.seq_;
+                };
+                ConcreteVariable.prototype.getSubject = function () {
+                    return this.varsList_;
+                };
+                ConcreteVariable.prototype.getValue = function () {
+                    return this.value_;
+                };
+                ConcreteVariable.prototype.nameEquals = function (name) {
+                    return this.name_ === toName_1.default(name);
+                };
+                ConcreteVariable.prototype.setBroadcast = function (value) {
+                    this.doesBroadcast_ = value;
+                };
+                ConcreteVariable.prototype.setComputed = function (value) {
+                    this.isComputed_ = value;
+                };
+                ConcreteVariable.prototype.setValue = function (value) {
+                    if (this.value_ !== value) {
+                        this.value_ = value;
+                        this.seq_++;
+                        if (this.doesBroadcast_) {
+                            this.varsList_.broadcast(this);
+                        }
+                    }
+                };
+                ConcreteVariable.prototype.setValueSmooth = function (value) {
+                    this.value_ = value;
+                };
+                ConcreteVariable.prototype.incrSequence = function () {
+                    this.seq_++;
+                };
+                return ConcreteVariable;
+            }();
+            exports_1("ConcreteVariable", ConcreteVariable);
+        }
+    };
+});
+System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var isArray_1;
+    var __moduleName = context_1 && context_1.id;
+    function extendArray(array, quantity, value) {
+        if (quantity === 0) {
+            return;
+        }
+        if (quantity < 0) {
+            throw new Error();
+        }
+        var startIdx = array.length;
+        array.length = startIdx + quantity;
+        if (isArray_1.default(value)) {
+            var vs = value;
+            if (vs.length !== quantity) {
+                throw new Error();
+            }
+            for (var i = startIdx, n = array.length; i < n; i++) {
+                array[i] = value[i - startIdx];
+            }
+        } else {
+            for (var i = startIdx, n = array.length; i < n; i++) {
+                array[i] = value;
+            }
+        }
+    }
+    exports_1("default", extendArray);
+    return {
+        setters: [function (isArray_1_1) {
+            isArray_1 = isArray_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/core/VarsList.js", ["../checks/isNumber", "../checks/isString", "../model/ConcreteVariable", "../util/AbstractSubject", "../util/clone", "../util/extendArray", "../util/find", "../util/findIndex", "../util/GenericEvent", "../util/toName", "../util/validName"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -2793,7 +1745,319 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSubject_1, contains_1, Geometric3_1, isZeroBivectorE3_1, isZeroVectorE3_1, remove_1, SimList_1, Unit_1, VarsList_1, wedge3_1, var_names, NUM_VARIABLES_PER_BODY, Physics3;
+    var isNumber_1, isString_1, ConcreteVariable_1, AbstractSubject_1, clone_1, extendArray_1, find_1, findIndex_1, GenericEvent_1, toName_1, validName_1, VarsList;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (isString_1_1) {
+            isString_1 = isString_1_1;
+        }, function (ConcreteVariable_1_1) {
+            ConcreteVariable_1 = ConcreteVariable_1_1;
+        }, function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (clone_1_1) {
+            clone_1 = clone_1_1;
+        }, function (extendArray_1_1) {
+            extendArray_1 = extendArray_1_1;
+        }, function (find_1_1) {
+            find_1 = find_1_1;
+        }, function (findIndex_1_1) {
+            findIndex_1 = findIndex_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            VarsList = function (_super) {
+                __extends(VarsList, _super);
+                function VarsList(names) {
+                    var _this = _super.call(this) || this;
+                    _this.timeIdx_ = -1;
+                    _this.varList_ = [];
+                    _this.history_ = true;
+                    _this.histArray_ = [];
+                    var howMany = names.length;
+                    if (howMany !== 0) {
+                        _this.addVariables(names);
+                    }
+                    return _this;
+                }
+                VarsList.prototype.findOpenSlot_ = function (quantity) {
+                    var found = 0;
+                    var startIdx = -1;
+                    for (var i = 0, n = this.varList_.length; i < n; i++) {
+                        if (this.varList_[i].name === VarsList.DELETED) {
+                            if (startIdx === -1) {
+                                startIdx = i;
+                            }
+                            found++;
+                            if (found >= quantity) {
+                                return startIdx;
+                            }
+                        } else {
+                            startIdx = -1;
+                            found = 0;
+                        }
+                    }
+                    var expand;
+                    if (found > 0) {
+                        expand = quantity - found;
+                    } else {
+                        startIdx = this.varList_.length;
+                        expand = quantity;
+                    }
+                    var newVars = [];
+                    for (var i = 0; i < expand; i++) {
+                        newVars.push(new ConcreteVariable_1.ConcreteVariable(this, VarsList.DELETED));
+                    }
+                    extendArray_1.default(this.varList_, expand, newVars);
+                    return startIdx;
+                };
+                VarsList.prototype.addVariables = function (names) {
+                    var howMany = names.length;
+                    if (howMany === 0) {
+                        throw new Error();
+                    }
+                    var position = this.findOpenSlot_(howMany);
+                    for (var i = 0; i < howMany; i++) {
+                        var name_1 = validName_1.default(toName_1.default(names[i]));
+                        if (name_1 === VarsList.DELETED) {
+                            throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
+                        }
+                        var idx = position + i;
+                        this.varList_[idx] = new ConcreteVariable_1.ConcreteVariable(this, name_1);
+                        if (name_1 === VarsList.TIME) {
+                            this.timeIdx_ = idx;
+                        }
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+                    return position;
+                };
+                VarsList.prototype.deleteVariables = function (index, howMany) {
+                    if (howMany === 0) {
+                        return;
+                    }
+                    if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
+                        throw new Error('deleteVariables');
+                    }
+                    for (var i = index; i < index + howMany; i++) {
+                        this.varList_[i] = new ConcreteVariable_1.ConcreteVariable(this, VarsList.DELETED);
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+                };
+                VarsList.prototype.incrSequence = function () {
+                    var indexes = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        indexes[_i] = arguments[_i];
+                    }
+                    if (arguments.length === 0) {
+                        for (var i = 0, n = this.varList_.length; i < n; i++) {
+                            this.varList_[i].incrSequence();
+                        }
+                    } else {
+                        for (var i = 0, n = arguments.length; i < n; i++) {
+                            var idx = arguments[i];
+                            this.checkIndex_(idx);
+                            this.varList_[idx].incrSequence();
+                        }
+                    }
+                };
+                VarsList.prototype.getValue = function (index) {
+                    this.checkIndex_(index);
+                    return this.varList_[index].getValue();
+                };
+                VarsList.prototype.getName = function (index) {
+                    this.checkIndex_(index);
+                    return this.varList_[index].name;
+                };
+                VarsList.prototype.getSequence = function (index) {
+                    this.checkIndex_(index);
+                    return this.varList_[index].getSequence();
+                };
+                VarsList.prototype.getValues = function () {
+                    return this.varList_.map(function (v) {
+                        return v.getValue();
+                    });
+                };
+                VarsList.prototype.setValues = function (vars, continuous) {
+                    if (continuous === void 0) {
+                        continuous = false;
+                    }
+                    var N = this.varList_.length;
+                    var n = vars.length;
+                    if (n > N) {
+                        throw new Error("setValues bad length n = " + n + " > N = " + N);
+                    }
+                    for (var i = 0; i < N; i++) {
+                        if (i < n) {
+                            this.setValue(i, vars[i], continuous);
+                        }
+                    }
+                };
+                VarsList.prototype.setValue = function (index, value, continuous) {
+                    if (continuous === void 0) {
+                        continuous = false;
+                    }
+                    this.checkIndex_(index);
+                    var variable = this.varList_[index];
+                    if (isNaN(value)) {
+                        throw new Error('cannot set variable ' + variable.name + ' to NaN');
+                    }
+                    if (continuous) {
+                        variable.setValueSmooth(value);
+                    } else {
+                        variable.setValue(value);
+                    }
+                };
+                VarsList.prototype.checkIndex_ = function (index) {
+                    if (index < 0 || index >= this.varList_.length) {
+                        throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
+                    }
+                };
+                VarsList.prototype.addVariable = function (variable) {
+                    var name = variable.name;
+                    if (name === VarsList.DELETED) {
+                        throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
+                    }
+                    var position = this.findOpenSlot_(1);
+                    this.varList_[position] = variable;
+                    if (name === VarsList.TIME) {
+                        this.timeIdx_ = position;
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+                    return position;
+                };
+                VarsList.prototype.getHistory = function () {
+                    return this.history_;
+                };
+                VarsList.prototype.getParameter = function (name) {
+                    name = toName_1.default(name);
+                    var p = find_1.default(this.varList_, function (p) {
+                        return p.name === name;
+                    });
+                    if (p != null) {
+                        return p;
+                    }
+                    throw new Error('Parameter not found ' + name);
+                };
+                VarsList.prototype.getParameters = function () {
+                    return clone_1.default(this.varList_);
+                };
+                VarsList.prototype.getTime = function () {
+                    if (this.timeIdx_ < 0) {
+                        throw new Error('no time variable');
+                    }
+                    return this.getValue(this.timeIdx_);
+                };
+                VarsList.prototype.getVariable = function (id) {
+                    var index;
+                    if (isNumber_1.default(id)) {
+                        index = id;
+                    } else if (isString_1.default(id)) {
+                        id = toName_1.default(id);
+                        index = findIndex_1.default(this.varList_, function (v) {
+                            return v.name === id;
+                        });
+                        if (index < 0) {
+                            throw new Error('unknown variable name ' + id);
+                        }
+                    } else {
+                        throw new Error();
+                    }
+                    this.checkIndex_(index);
+                    return this.varList_[index];
+                };
+                VarsList.prototype.numVariables = function () {
+                    return this.varList_.length;
+                };
+                VarsList.prototype.saveHistory = function () {
+                    if (this.history_) {
+                        var v = this.getValues();
+                        v.push(this.getTime());
+                        this.histArray_.push(v);
+                        if (this.histArray_.length > 20) {
+                            this.histArray_.shift();
+                        }
+                    }
+                };
+                VarsList.prototype.setComputed = function () {
+                    var indexes = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        indexes[_i] = arguments[_i];
+                    }
+                    for (var i = 0, n = arguments.length; i < n; i++) {
+                        var idx = arguments[i];
+                        this.checkIndex_(idx);
+                        this.varList_[idx].setComputed(true);
+                    }
+                };
+                VarsList.prototype.setHistory = function (value) {
+                    this.history_ = value;
+                };
+                VarsList.prototype.setTime = function (time) {
+                    this.setValue(this.timeIdx_, time);
+                };
+                VarsList.prototype.timeIndex = function () {
+                    return this.timeIdx_;
+                };
+                VarsList.prototype.toArray = function () {
+                    return clone_1.default(this.varList_);
+                };
+                VarsList.DELETED = 'DELETED';
+                VarsList.TIME = 'TIME';
+                VarsList.VARS_MODIFIED = 'VARS_MODIFIED';
+                return VarsList;
+            }(AbstractSubject_1.default);
+            exports_1("VarsList", VarsList);
+        }
+    };
+});
+System.register("davinci-newton/math/wedge3.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function wedgeYZ(a, b) {
+        return a.y * b.z - a.z * b.y;
+    }
+    exports_1("wedgeYZ", wedgeYZ);
+    function wedgeZX(a, b) {
+        return a.z * b.x - a.x * b.z;
+    }
+    exports_1("wedgeZX", wedgeZX);
+    function wedgeXY(a, b) {
+        return a.x * b.y - a.y * b.x;
+    }
+    exports_1("wedgeXY", wedgeXY);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/engine3D/Physics3.js", ["../core/SimList", "../core/VarsList", "../math/Geometric3", "../math/isZeroBivectorE3", "../math/isZeroVectorE3", "../math/Unit", "../math/wedge3", "../util/AbstractSubject", "../util/contains", "../util/remove"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var SimList_1, VarsList_1, Geometric3_1, isZeroBivectorE3_1, isZeroVectorE3_1, Unit_1, wedge3_1, AbstractSubject_1, contains_1, remove_1, var_names, NUM_VARIABLES_PER_BODY, Physics3;
     var __moduleName = context_1 && context_1.id;
     function getVarName(index) {
         switch (index) {
@@ -2827,29 +2091,29 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
         throw new Error("getVarName(" + index + ")");
     }
     return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (contains_1_1) {
-            contains_1 = contains_1_1;
+        setters: [function (SimList_1_1) {
+            SimList_1 = SimList_1_1;
+        }, function (VarsList_1_1) {
+            VarsList_1 = VarsList_1_1;
         }, function (Geometric3_1_1) {
             Geometric3_1 = Geometric3_1_1;
         }, function (isZeroBivectorE3_1_1) {
             isZeroBivectorE3_1 = isZeroBivectorE3_1_1;
         }, function (isZeroVectorE3_1_1) {
             isZeroVectorE3_1 = isZeroVectorE3_1_1;
-        }, function (remove_1_1) {
-            remove_1 = remove_1_1;
-        }, function (SimList_1_1) {
-            SimList_1 = SimList_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
-        }, function (VarsList_1_1) {
-            VarsList_1 = VarsList_1_1;
         }, function (wedge3_1_1) {
             wedge3_1 = wedge3_1_1;
+        }, function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (remove_1_1) {
+            remove_1 = remove_1_1;
         }],
         execute: function () {
-            var_names = [VarsList_1.default.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total linear momentum - z", "total angular momentum - yz", "total angular momentum - zx", "total angular momentum - xy"];
+            var_names = [VarsList_1.VarsList.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total linear momentum - z", "total angular momentum - yz", "total angular momentum - zx", "total angular momentum - xy"];
             NUM_VARIABLES_PER_BODY = 13;
             Physics3 = function (_super) {
                 __extends(Physics3, _super);
@@ -2859,12 +2123,12 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                     _this.bodies_ = [];
                     _this.forceLaws_ = [];
                     _this.showForces_ = false;
-                    _this.potentialOffset_ = Geometric3_1.default.scalar(0);
-                    _this.force_ = Geometric3_1.default.vector(0, 0, 0);
-                    _this.torque_ = Geometric3_1.default.bivector(0, 0, 0);
-                    _this.totalEnergy_ = Geometric3_1.default.scalar(0);
+                    _this.potentialOffset_ = Geometric3_1.Geometric3.scalar(0);
+                    _this.force_ = Geometric3_1.Geometric3.vector(0, 0, 0);
+                    _this.torque_ = Geometric3_1.Geometric3.bivector(0, 0, 0);
+                    _this.totalEnergy_ = Geometric3_1.Geometric3.scalar(0);
                     _this.totalEnergyLock_ = _this.totalEnergy_.lock();
-                    _this.varsList_ = new VarsList_1.default(var_names);
+                    _this.varsList_ = new VarsList_1.VarsList(var_names);
                     return _this;
                 }
                 Object.defineProperty(Physics3.prototype, "showForces", {
@@ -3180,440 +2444,10 @@ System.register("davinci-newton/engine3D/Physics3.js", ["../util/AbstractSubject
                 return Physics3;
             }(AbstractSubject_1.default);
             exports_1("Physics3", Physics3);
-            exports_1("default", Physics3);
         }
     };
 });
-System.register("davinci-newton/util/zeroArray.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function zeroArray(xs) {
-        var length = xs.length;
-        for (var i = 0; i < length; i++) {
-            xs[i] = 0;
-        }
-    }
-    exports_1("default", zeroArray);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], function (exports_1, context_1) {
-    "use strict";
-
-    var zeroArray_1, RungeKutta;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (zeroArray_1_1) {
-            zeroArray_1 = zeroArray_1_1;
-        }],
-        execute: function () {
-            RungeKutta = function () {
-                function RungeKutta(simulation) {
-                    this.inp_ = [];
-                    this.k1_ = [];
-                    this.k2_ = [];
-                    this.k3_ = [];
-                    this.k4_ = [];
-                    this.sim_ = simulation;
-                }
-                RungeKutta.prototype.step = function (stepSize, uomStep) {
-                    var vars = this.sim_.getState();
-                    var N = vars.length;
-                    if (this.inp_.length < N) {
-                        this.inp_ = new Array(N);
-                        this.k1_ = new Array(N);
-                        this.k2_ = new Array(N);
-                        this.k3_ = new Array(N);
-                        this.k4_ = new Array(N);
-                    }
-                    var inp = this.inp_;
-                    var k1 = this.k1_;
-                    var k2 = this.k2_;
-                    var k3 = this.k3_;
-                    var k4 = this.k4_;
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i];
-                    }
-                    zeroArray_1.default(k1);
-                    this.sim_.evaluate(inp, k1, 0, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i] + k1[i] * stepSize / 2;
-                    }
-                    zeroArray_1.default(k2);
-                    this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i] + k2[i] * stepSize / 2;
-                    }
-                    zeroArray_1.default(k3);
-                    this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        inp[i] = vars[i] + k3[i] * stepSize;
-                    }
-                    zeroArray_1.default(k4);
-                    this.sim_.evaluate(inp, k4, stepSize, uomStep);
-                    for (var i = 0; i < N; i++) {
-                        vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
-                    }
-                    this.sim_.setState(vars);
-                };
-                return RungeKutta;
-            }();
-            exports_1("RungeKutta", RungeKutta);
-            exports_1("default", RungeKutta);
-        }
-    };
-});
-System.register("davinci-newton/view/AffineTransform.js", ["./Point"], function (exports_1, context_1) {
-    "use strict";
-
-    var Point_1, AffineTransform;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (Point_1_1) {
-            Point_1 = Point_1_1;
-        }],
-        execute: function () {
-            AffineTransform = function () {
-                function AffineTransform(m11, m12, m21, m22, dx, dy) {
-                    this.m11_ = m11;
-                    this.m12_ = m12;
-                    this.m21_ = m21;
-                    this.m22_ = m22;
-                    this.dx_ = dx;
-                    this.dy_ = dy;
-                }
-                AffineTransform.prototype.applyTransform = function (context) {
-                    context.transform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
-                    return this;
-                };
-                AffineTransform.prototype.concatenate = function (at) {
-                    var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
-                    var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
-                    var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
-                    var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
-                    var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
-                    var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
-                    return new AffineTransform(m11, m12, m21, m22, dx, dy);
-                };
-                AffineTransform.prototype.lineTo = function (x, y, context) {
-                    var p = this.transform(x, y);
-                    context.lineTo(p.x, p.y);
-                    return this;
-                };
-                AffineTransform.prototype.moveTo = function (x, y, context) {
-                    var p = this.transform(x, y);
-                    context.moveTo(p.x, p.y);
-                    return this;
-                };
-                AffineTransform.prototype.rotate = function (angle) {
-                    var c = Math.cos(angle);
-                    var s = Math.sin(angle);
-                    var m11 = c * this.m11_ + s * this.m21_;
-                    var m12 = c * this.m12_ + s * this.m22_;
-                    var m21 = -s * this.m11_ + c * this.m21_;
-                    var m22 = -s * this.m12_ + c * this.m22_;
-                    return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
-                };
-                AffineTransform.prototype.scale = function (x, y) {
-                    var m11 = this.m11_ * x;
-                    var m12 = this.m12_ * x;
-                    var m21 = this.m21_ * y;
-                    var m22 = this.m22_ * y;
-                    return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
-                };
-                AffineTransform.prototype.setTransform = function (context) {
-                    context.setTransform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
-                    return this;
-                };
-                AffineTransform.prototype.transform = function (x, y) {
-                    var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
-                    var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
-                    return new Point_1.default(x2, y2);
-                };
-                AffineTransform.prototype.translate = function (x, y) {
-                    var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
-                    var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
-                    return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
-                };
-                AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
-                return AffineTransform;
-            }();
-            exports_1("default", AffineTransform);
-        }
-    };
-});
-System.register("davinci-newton/view/AlignH.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var AlignH;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            (function (AlignH) {
-                AlignH[AlignH["LEFT"] = 0] = "LEFT";
-                AlignH[AlignH["MIDDLE"] = 1] = "MIDDLE";
-                AlignH[AlignH["RIGHT"] = 2] = "RIGHT";
-                AlignH[AlignH["FULL"] = 3] = "FULL";
-            })(AlignH || (AlignH = {}));
-            exports_1("AlignH", AlignH);
-            exports_1("default", AlignH);
-        }
-    };
-});
-System.register("davinci-newton/view/AlignV.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var AlignV;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            (function (AlignV) {
-                AlignV[AlignV["TOP"] = 0] = "TOP";
-                AlignV[AlignV["MIDDLE"] = 1] = "MIDDLE";
-                AlignV[AlignV["BOTTOM"] = 2] = "BOTTOM";
-                AlignV[AlignV["FULL"] = 3] = "FULL";
-            })(AlignV || (AlignV = {}));
-            exports_1("AlignV", AlignV);
-            exports_1("default", AlignV);
-        }
-    };
-});
-System.register('davinci-newton/checks/mustBeFinite.js', [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function mustBeFinite(value) {
-        if (typeof value !== 'number' || !isFinite(value)) {
-            throw new Error('not a finite number ' + value);
-        }
-        return value;
-    }
-    exports_1("default", mustBeFinite);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/view/CoordMap.js", ["./AffineTransform", "./AlignH", "./AlignV", "./DoubleRect", "../checks/mustBeFinite", "./Point", "./ScreenRect"], function (exports_1, context_1) {
-    "use strict";
-
-    var AffineTransform_1, AlignH_1, AlignV_1, DoubleRect_1, mustBeFinite_1, Point_1, ScreenRect_1, MIN_SIZE, CoordMap;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AffineTransform_1_1) {
-            AffineTransform_1 = AffineTransform_1_1;
-        }, function (AlignH_1_1) {
-            AlignH_1 = AlignH_1_1;
-        }, function (AlignV_1_1) {
-            AlignV_1 = AlignV_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
-        }, function (mustBeFinite_1_1) {
-            mustBeFinite_1 = mustBeFinite_1_1;
-        }, function (Point_1_1) {
-            Point_1 = Point_1_1;
-        }, function (ScreenRect_1_1) {
-            ScreenRect_1 = ScreenRect_1_1;
-        }],
-        execute: function () {
-            MIN_SIZE = 1E-15;
-            CoordMap = function () {
-                function CoordMap(screen_left, screen_bottom, sim_left, sim_bottom, pixel_per_unit_x, pixel_per_unit_y) {
-                    this.screen_left_ = mustBeFinite_1.default(screen_left);
-                    this.screen_bottom_ = mustBeFinite_1.default(screen_bottom);
-                    this.sim_left_ = mustBeFinite_1.default(sim_left);
-                    this.sim_bottom_ = mustBeFinite_1.default(sim_bottom);
-                    this.pixel_per_unit_x_ = mustBeFinite_1.default(pixel_per_unit_x);
-                    this.pixel_per_unit_y_ = mustBeFinite_1.default(pixel_per_unit_y);
-                    var at = AffineTransform_1.default.IDENTITY;
-                    at = at.translate(this.screen_left_, this.screen_bottom_);
-                    at = at.scale(this.pixel_per_unit_x_, -this.pixel_per_unit_y_);
-                    at = at.translate(-this.sim_left_, -this.sim_bottom_);
-                    this.transform_ = at;
-                }
-                CoordMap.make = function (screenRect, simRect, horizAlign, verticalAlign, aspectRatio) {
-                    if (horizAlign === void 0) {
-                        horizAlign = AlignH_1.default.MIDDLE;
-                    }
-                    if (verticalAlign === void 0) {
-                        verticalAlign = AlignV_1.default.MIDDLE;
-                    }
-                    if (aspectRatio === void 0) {
-                        aspectRatio = 1;
-                    }
-                    if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
-                        throw new Error('bad aspectRatio ' + aspectRatio);
-                    }
-                    var simLeft = simRect.getLeft();
-                    var simBottom = simRect.getBottom();
-                    var sim_width = simRect.getRight() - simLeft;
-                    var sim_height = simRect.getTop() - simBottom;
-                    if (sim_width < MIN_SIZE || sim_height < MIN_SIZE) {
-                        throw new Error('simRect cannot be empty ' + simRect);
-                    }
-                    var screen_top = screenRect.getTop();
-                    var screen_left = screenRect.getLeft();
-                    var screen_width = screenRect.getWidth();
-                    var screen_height = screenRect.getHeight();
-                    var offset_x = 0;
-                    var offset_y = 0;
-                    var pixel_per_unit_x = 0;
-                    var pixel_per_unit_y = 0;
-                    if (horizAlign === AlignH_1.default.FULL) {
-                        pixel_per_unit_x = screen_width / sim_width;
-                        offset_x = 0;
-                    }
-                    if (verticalAlign === AlignV_1.default.FULL) {
-                        pixel_per_unit_y = screen_height / sim_height;
-                        offset_y = 0;
-                    }
-                    if (horizAlign !== AlignH_1.default.FULL || verticalAlign !== AlignV_1.default.FULL) {
-                        var horizFull = void 0;
-                        if (horizAlign === AlignH_1.default.FULL) {
-                            pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
-                            horizFull = true;
-                        } else if (verticalAlign === AlignV_1.default.FULL) {
-                            pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
-                            horizFull = false;
-                        } else {
-                            pixel_per_unit_x = screen_width / sim_width;
-                            pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
-                            horizFull = true;
-                            var ideal_height = Math.floor(0.5 + pixel_per_unit_y * sim_height);
-                            if (screen_height < ideal_height) {
-                                pixel_per_unit_y = screen_height / sim_height;
-                                pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
-                                horizFull = false;
-                            }
-                        }
-                        if (!horizFull) {
-                            offset_y = 0;
-                            var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
-                            switch (horizAlign) {
-                                case AlignH_1.default.LEFT:
-                                    offset_x = 0;
-                                    break;
-                                case AlignH_1.default.MIDDLE:
-                                    offset_x = (screen_width - ideal_width) / 2;
-                                    break;
-                                case AlignH_1.default.RIGHT:
-                                    offset_x = screen_width - ideal_width;
-                                    break;
-                                default:
-                                    throw new Error();
-                            }
-                        } else {
-                            offset_x = 0;
-                            var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
-                            switch (verticalAlign) {
-                                case AlignV_1.default.BOTTOM:
-                                    offset_y = 0;
-                                    break;
-                                case AlignV_1.default.MIDDLE:
-                                    offset_y = (screen_height - ideal_height) / 2;
-                                    break;
-                                case AlignV_1.default.TOP:
-                                    offset_y = screen_height - ideal_height;
-                                    break;
-                                default:
-                                    {
-                                        throw new Error();
-                                    }
-                            }
-                        }
-                    }
-                    var coordMap = new CoordMap(screen_left, screen_top + screen_height, simLeft - offset_x / pixel_per_unit_x, simBottom - offset_y / pixel_per_unit_y, pixel_per_unit_x, pixel_per_unit_y);
-                    return coordMap;
-                };
-                CoordMap.isDuckType = function (obj) {
-                    if (obj instanceof CoordMap) {
-                        return true;
-                    }
-                    return obj.getAffineTransform !== undefined && obj.simToScreenX !== undefined && obj.simToScreenY !== undefined && obj.screenToSimX !== undefined && obj.screenToSimY !== undefined && obj.getScaleX !== undefined && obj.getScaleY !== undefined;
-                };
-                CoordMap.prototype.getAffineTransform = function () {
-                    return this.transform_;
-                };
-                CoordMap.prototype.getScaleX = function () {
-                    return this.pixel_per_unit_x_;
-                };
-                CoordMap.prototype.getScaleY = function () {
-                    return this.pixel_per_unit_y_;
-                };
-                CoordMap.prototype.screenToSim = function (scr_x, scr_y) {
-                    return new Point_1.default(this.screenToSimX(scr_x), this.screenToSimY(scr_y));
-                };
-                CoordMap.prototype.screenToSimRect = function (rect) {
-                    return new DoubleRect_1.default(this.screenToSimX(rect.getLeft()), this.screenToSimY(rect.getTop() + rect.getHeight()), this.screenToSimX(rect.getLeft() + rect.getWidth()), this.screenToSimY(rect.getTop()));
-                };
-                CoordMap.prototype.screenToSimScaleX = function (scr_x) {
-                    return scr_x / this.pixel_per_unit_x_;
-                };
-                CoordMap.prototype.screenToSimScaleY = function (scr_y) {
-                    return scr_y / this.pixel_per_unit_y_;
-                };
-                CoordMap.prototype.screenToSimX = function (scr_x) {
-                    return this.sim_left_ + (scr_x - this.screen_left_) / this.pixel_per_unit_x_;
-                };
-                CoordMap.prototype.screenToSimY = function (scr_y) {
-                    return this.sim_bottom_ + (this.screen_bottom_ - scr_y) / this.pixel_per_unit_y_;
-                };
-                CoordMap.prototype.simToScreen = function (p_sim) {
-                    return new Point_1.default(this.simToScreenX(p_sim.x), this.simToScreenY(p_sim.y));
-                };
-                CoordMap.prototype.simToScreenRect = function (r) {
-                    return new ScreenRect_1.default(this.simToScreenX(r.getLeft()), this.simToScreenY(r.getTop()), this.simToScreenScaleX(r.getWidth()), this.simToScreenScaleY(r.getHeight()));
-                };
-                CoordMap.prototype.simToScreenScaleX = function (length_x) {
-                    return length_x * this.pixel_per_unit_x_;
-                };
-                CoordMap.prototype.simToScreenScaleY = function (length_y) {
-                    return length_y * this.pixel_per_unit_y_;
-                };
-                CoordMap.prototype.simToScreenX = function (sim_x) {
-                    return this.screen_left_ + (sim_x - this.sim_left_) * this.pixel_per_unit_x_;
-                };
-                CoordMap.prototype.simToScreenY = function (sim_y) {
-                    return this.screen_bottom_ - (sim_y - this.sim_bottom_) * this.pixel_per_unit_y_;
-                };
-                return CoordMap;
-            }();
-            exports_1("default", CoordMap);
-        }
-    };
-});
-System.register("davinci-newton/util/insertAt.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function slice(xs, start, opt_end) {
-        if (arguments.length <= 2) {
-            return Array.prototype.slice.call(xs, start);
-        } else {
-            return Array.prototype.slice.call(xs, start, opt_end);
-        }
-    }
-    function splice(xs, index, howMany, var_args) {
-        return Array.prototype.splice.apply(xs, slice(arguments, 1));
-    }
-    function insertAt(xs, x, index) {
-        if (index === void 0) {
-            index = 0;
-        }
-        splice(xs, index, 0, x);
-    }
-    exports_1("default", insertAt);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject", "../util/GenericEvent", "../util/insertAt", "../checks/isObject"], function (exports_1, context_1) {
+System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../engine3D/Physics3", "../view/AlignH", "../view/AlignV", "./Graph"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -3633,376 +2467,89 @@ System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject"
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1, DisplayList;
+    var Physics3_1, AlignH_1, AlignV_1, Graph_1, EnergyTimeGraph;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (GenericEvent_1_1) {
-            GenericEvent_1 = GenericEvent_1_1;
-        }, function (insertAt_1_1) {
-            insertAt_1 = insertAt_1_1;
-        }, function (isObject_1_1) {
-            isObject_1 = isObject_1_1;
+        setters: [function (Physics3_1_1) {
+            Physics3_1 = Physics3_1_1;
+        }, function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (Graph_1_1) {
+            Graph_1 = Graph_1_1;
         }],
         execute: function () {
-            DisplayList = function (_super) {
-                __extends(DisplayList, _super);
-                function DisplayList() {
-                    var _this = _super.call(this) || this;
-                    _this.drawables_ = [];
+            EnergyTimeGraph = function (_super) {
+                __extends(EnergyTimeGraph, _super);
+                function EnergyTimeGraph(canvasId, varsList) {
+                    var _this = _super.call(this, canvasId, varsList) || this;
+                    _this.translationalEnergyGraphLine = _this.addGraphLine(Physics3_1.Physics3.INDEX_TIME, Physics3_1.Physics3.INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
+                    _this.rotationalEnergyGraphLine = _this.addGraphLine(Physics3_1.Physics3.INDEX_TIME, Physics3_1.Physics3.INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
+                    _this.potentialEnergyGraphLine = _this.addGraphLine(Physics3_1.Physics3.INDEX_TIME, Physics3_1.Physics3.INDEX_POTENTIAL_ENERGY, 'blue');
+                    _this.totalEnergyGraphLine = _this.addGraphLine(Physics3_1.Physics3.INDEX_TIME, Physics3_1.Physics3.INDEX_TOTAL_ENERGY, 'white');
+                    _this.autoScale.timeWindow = 5;
+                    _this.autoScale.addGraphLine(_this.translationalEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.rotationalEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.potentialEnergyGraphLine);
+                    _this.autoScale.addGraphLine(_this.totalEnergyGraphLine);
+                    _this.axes.hAxisAlign = AlignV_1.AlignV.BOTTOM;
+                    _this.axes.vAxisAlign = AlignH_1.AlignH.LEFT;
+                    _this.axes.hAxisLabel = 'time';
+                    _this.axes.vAxisLabel = 'energy';
                     return _this;
                 }
-                DisplayList.prototype.add = function (dispObj) {
-                    if (!isObject_1.default(dispObj)) {
-                        throw new Error('non-object passed to DisplayList.add');
-                    }
-                    var zIndex = dispObj.getZIndex();
-                    this.sort();
-                    var iLen = this.drawables_.length;
-                    var i = 0;
-                    for (i = 0; i < iLen; i++) {
-                        var z = this.drawables_[i].getZIndex();
-                        if (zIndex < z) {
-                            break;
-                        }
-                    }
-                    insertAt_1.default(this.drawables_, dispObj, i);
-                    this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
-                };
-                DisplayList.prototype.draw = function (context, coordMap) {
-                    this.sort();
-                    var ds = this.drawables_;
-                    var N = ds.length;
-                    for (var i = 0; i < N; i++) {
-                        ds[i].draw(context, coordMap);
-                    }
-                };
-                DisplayList.prototype.prepend = function (dispObj) {
-                    if (!isObject_1.default(dispObj)) {
-                        throw new Error('non-object passed to DisplayList.add');
-                    }
-                    var zIndex = dispObj.getZIndex();
-                    this.sort();
-                    var N = this.drawables_.length;
-                    var i = N;
-                    for (i = N; i > 0; i--) {
-                        var z = this.drawables_[i - 1].getZIndex();
-                        if (zIndex > z) {
-                            break;
-                        }
-                    }
-                    insertAt_1.default(this.drawables_, dispObj, i);
-                    this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
-                };
-                DisplayList.prototype.sort = function () {};
-                DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
-                DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
-                return DisplayList;
-            }(AbstractSubject_1.default);
-            exports_1("DisplayList", DisplayList);
-            exports_1("default", DisplayList);
+                return EnergyTimeGraph;
+            }(Graph_1.Graph);
+            exports_1("EnergyTimeGraph", EnergyTimeGraph);
         }
     };
 });
-System.register("davinci-newton/view/Point.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/util/GenericObserver.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var Point;
+    var GenericObserver;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Point = function () {
-                function Point(x_, y_) {
-                    this.x_ = x_;
-                    this.y_ = y_;
+            GenericObserver = function () {
+                function GenericObserver(subject, observeFn) {
+                    this.subject_ = subject;
+                    subject.addObserver(this);
+                    this.observeFn_ = observeFn;
                 }
-                Object.defineProperty(Point.prototype, "x", {
-                    get: function () {
-                        return this.x_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Point.prototype, "y", {
-                    get: function () {
-                        return this.y_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return Point;
+                GenericObserver.prototype.disconnect = function () {
+                    this.subject_.removeObserver(this);
+                };
+                GenericObserver.prototype.observe = function (event) {
+                    this.observeFn_(event);
+                };
+                return GenericObserver;
             }();
-            exports_1("default", Point);
+            exports_1("GenericObserver", GenericObserver);
+            exports_1("default", GenericObserver);
         }
     };
 });
-System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDifferent"], function (exports_1, context_1) {
+System.register("davinci-newton/graph/AxisChoice.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var Point_1, veryDifferent_1, DoubleRect;
+    var AxisChoice;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (Point_1_1) {
-            Point_1 = Point_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
+        setters: [],
         execute: function () {
-            DoubleRect = function () {
-                function DoubleRect(left, bottom, right, top) {
-                    this.left_ = left;
-                    this.right_ = right;
-                    this.bottom_ = bottom;
-                    this.top_ = top;
-                    if (left > right) {
-                        throw new Error('DoubleRect: left > right ' + left + ' > ' + right);
-                    }
-                    if (bottom > top) {
-                        throw new Error('DoubleRect: bottom > top ' + bottom + ' > ' + top);
-                    }
-                }
-                DoubleRect.clone = function (rect) {
-                    return new DoubleRect(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
-                };
-                DoubleRect.isDuckType = function (obj) {
-                    if (obj instanceof DoubleRect) {
-                        return true;
-                    }
-                    return obj.getLeft !== undefined && obj.getRight !== undefined && obj.getTop !== undefined && obj.getBottom !== undefined && obj.translate !== undefined && obj.scale !== undefined;
-                };
-                DoubleRect.make = function (point1, point2) {
-                    var left = Math.min(point1.x, point2.x);
-                    var right = Math.max(point1.x, point2.x);
-                    var bottom = Math.min(point1.y, point2.y);
-                    var top_ = Math.max(point1.y, point2.y);
-                    return new DoubleRect(left, bottom, right, top_);
-                };
-                DoubleRect.makeCentered = function (center, width, height) {
-                    var x = center.x;
-                    var y = center.y;
-                    return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
-                };
-                DoubleRect.makeCentered2 = function (center, size) {
-                    var x = center.x;
-                    var y = center.y;
-                    var w = size.x;
-                    var h = size.y;
-                    return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
-                };
-                DoubleRect.prototype.contains = function (point) {
-                    return point.x >= this.left_ && point.x <= this.right_ && point.y >= this.bottom_ && point.y <= this.top_;
-                };
-                DoubleRect.prototype.equals = function (obj) {
-                    if (obj === this) return true;
-                    if (obj instanceof DoubleRect) {
-                        return obj.getLeft() === this.left_ && obj.getRight() === this.right_ && obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
-                    } else {
-                        return false;
-                    }
-                };
-                DoubleRect.prototype.expand = function (marginX, marginY) {
-                    marginY = marginY === undefined ? marginX : marginY;
-                    return new DoubleRect(this.getLeft() - marginX, this.getBottom() - marginY, this.getRight() + marginX, this.getTop() + marginX);
-                };
-                DoubleRect.prototype.getBottom = function () {
-                    return this.bottom_;
-                };
-                DoubleRect.prototype.getCenter = function () {
-                    return new Point_1.default(this.getCenterX(), this.getCenterY());
-                };
-                DoubleRect.prototype.getCenterX = function () {
-                    return (this.left_ + this.right_) / 2.0;
-                };
-                DoubleRect.prototype.getCenterY = function () {
-                    return (this.bottom_ + this.top_) / 2.0;
-                };
-                DoubleRect.prototype.getHeight = function () {
-                    return this.top_ - this.bottom_;
-                };
-                DoubleRect.prototype.getLeft = function () {
-                    return this.left_;
-                };
-                DoubleRect.prototype.getRight = function () {
-                    return this.right_;
-                };
-                DoubleRect.prototype.getTop = function () {
-                    return this.top_;
-                };
-                DoubleRect.prototype.getWidth = function () {
-                    return this.right_ - this.left_;
-                };
-                DoubleRect.prototype.isEmpty = function (tolerance) {
-                    if (tolerance === void 0) {
-                        tolerance = 1E-16;
-                    }
-                    return this.getWidth() < tolerance || this.getHeight() < tolerance;
-                };
-                DoubleRect.prototype.maybeVisible = function (p1, p2) {
-                    if (this.contains(p1) || this.contains(p2)) {
-                        return true;
-                    }
-                    var p1x = p1.x;
-                    var p1y = p1.y;
-                    var p2x = p2.x;
-                    var p2y = p2.y;
-                    var d = this.left_;
-                    if (p1x < d && p2x < d) {
-                        return false;
-                    }
-                    d = this.right_;
-                    if (p1x > d && p2x > d) {
-                        return false;
-                    }
-                    d = this.bottom_;
-                    if (p1y < d && p2y < d) {
-                        return false;
-                    }
-                    d = this.top_;
-                    if (p1y > d && p2y > d) {
-                        return false;
-                    }
-                    return true;
-                };
-                DoubleRect.prototype.nearEqual = function (rect, opt_tolerance) {
-                    if (veryDifferent_1.default(this.left_, rect.getLeft(), opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.bottom_, rect.getBottom(), opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.right_, rect.getRight(), opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.top_, rect.getTop(), opt_tolerance)) {
-                        return false;
-                    }
-                    return true;
-                };
-                DoubleRect.prototype.scale = function (factorX, factorY) {
-                    factorY = factorY === undefined ? factorX : factorY;
-                    var x0 = this.getCenterX();
-                    var y0 = this.getCenterY();
-                    var w = this.getWidth();
-                    var h = this.getHeight();
-                    return new DoubleRect(x0 - factorX * w / 2, y0 - factorY * h / 2, x0 + factorX * w / 2, y0 + factorY * h / 2);
-                };
-                DoubleRect.prototype.translate = function (x, y) {
-                    return new DoubleRect(this.left_ + x, this.bottom_ + y, this.right_ + x, this.top_ + y);
-                };
-                DoubleRect.prototype.union = function (rect) {
-                    return new DoubleRect(Math.min(this.left_, rect.getLeft()), Math.min(this.bottom_, rect.getBottom()), Math.max(this.right_, rect.getRight()), Math.max(this.top_, rect.getTop()));
-                };
-                DoubleRect.prototype.unionPoint = function (point) {
-                    return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
-                };
-                DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
-                return DoubleRect;
-            }();
-            exports_1("default", DoubleRect);
+            (function (AxisChoice) {
+                AxisChoice[AxisChoice["HORIZONTAL"] = 1] = "HORIZONTAL";
+                AxisChoice[AxisChoice["VERTICAL"] = 2] = "VERTICAL";
+                AxisChoice[AxisChoice["BOTH"] = 3] = "BOTH";
+            })(AxisChoice || (AxisChoice = {}));
+            exports_1("AxisChoice", AxisChoice);
         }
     };
 });
-System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var isFunction_1, veryDifferent_1, ScreenRect;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (isFunction_1_1) {
-            isFunction_1 = isFunction_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
-        }],
-        execute: function () {
-            ScreenRect = function () {
-                function ScreenRect(left, top_, width, height) {
-                    if (width < 0 || height < 0) {
-                        throw new Error();
-                    }
-                    this.left_ = left;
-                    this.top_ = top_;
-                    this.width_ = width;
-                    this.height_ = height;
-                }
-                ScreenRect.clone = function (rect) {
-                    return new ScreenRect(rect.left_, rect.top_, rect.width_, rect.height_);
-                };
-                ScreenRect.prototype.equals = function (otherRect) {
-                    return this.left_ === otherRect.left_ && this.top_ === otherRect.top_ && this.width_ === otherRect.width_ && this.height_ === otherRect.height_;
-                };
-                ScreenRect.isDuckType = function (obj) {
-                    if (obj instanceof ScreenRect) {
-                        return true;
-                    }
-                    return obj.getLeft !== undefined && obj.getTop !== undefined && obj.getWidth !== undefined && obj.getHeight !== undefined && obj.isEmpty !== undefined && obj.equals !== undefined && obj.nearEqual !== undefined;
-                };
-                ScreenRect.prototype.getCenterX = function () {
-                    return this.left_ + this.width_ / 2;
-                };
-                ScreenRect.prototype.getCenterY = function () {
-                    return this.top_ + this.height_ / 2;
-                };
-                ScreenRect.prototype.getHeight = function () {
-                    return this.height_;
-                };
-                ScreenRect.prototype.getLeft = function () {
-                    return this.left_;
-                };
-                ScreenRect.prototype.getTop = function () {
-                    return this.top_;
-                };
-                ScreenRect.prototype.getWidth = function () {
-                    return this.width_;
-                };
-                ScreenRect.prototype.isEmpty = function (tolerance) {
-                    if (tolerance === void 0) {
-                        tolerance = 1E-14;
-                    }
-                    return this.width_ < tolerance || this.height_ < tolerance;
-                };
-                ScreenRect.prototype.makeOval = function (context) {
-                    var w = this.width_ / 2;
-                    var h = this.height_ / 2;
-                    if (isFunction_1.default(context.ellipse)) {
-                        context.beginPath();
-                        context.moveTo(this.left_ + this.width_, this.top_ + h);
-                        context.ellipse(this.left_ + w, this.top_ + h, w, h, 0, 0, 2 * Math.PI, false);
-                    } else {
-                        var min = Math.min(w, h);
-                        context.beginPath();
-                        context.moveTo(this.left_ + this.width_, this.top_);
-                        context.arc(this.left_ + w, this.top_ + h, min, 0, 2 * Math.PI, false);
-                        context.closePath();
-                    }
-                };
-                ScreenRect.prototype.makeRect = function (context) {
-                    context.rect(this.left_, this.top_, this.width_, this.height_);
-                };
-                ScreenRect.prototype.nearEqual = function (otherRect, opt_tolerance) {
-                    if (veryDifferent_1.default(this.left_, otherRect.left_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.top_, otherRect.top_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.width_, otherRect.width_, opt_tolerance)) {
-                        return false;
-                    }
-                    if (veryDifferent_1.default(this.height_, otherRect.height_, opt_tolerance)) {
-                        return false;
-                    }
-                    return true;
-                };
-                ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
-                return ScreenRect;
-            }();
-            exports_1("default", ScreenRect);
-        }
-    };
-});
-System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", "./AlignH", "./AlignV", "../util/clone", "../util/contains", "./CoordMap", "./DisplayList", "./DoubleRect", "../util/GenericEvent", "../util/ParameterBoolean", "../util/ParameterNumber", "../util/remove", "./ScreenRect", "../util/veryDifferent"], function (exports_1, context_1) {
+System.register("davinci-newton/graph/AutoScale.js", ["../util/AbstractSubject", "../util/contains", "../util/GenericEvent", "../util/ParameterNumber", "../util/removeAt", "../util/repeat", "../util/veryDifferent", "../view/DoubleRect", "../view/SimView", "./AxisChoice", "./GraphLine"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -4022,611 +2569,841 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSubject_1, AlignH_1, AlignV_1, clone_1, contains_1, CoordMap_1, DisplayList_1, DoubleRect_1, GenericEvent_1, ParameterBoolean_1, ParameterNumber_1, remove_1, ScreenRect_1, veryDifferent_1, SimView;
+    var AbstractSubject_1, contains_1, GenericEvent_1, ParameterNumber_1, removeAt_1, repeat_1, veryDifferent_1, DoubleRect_1, SimView_1, AxisChoice_1, GraphLine_1, AutoScale;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (AbstractSubject_1_1) {
             AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (AlignH_1_1) {
-            AlignH_1 = AlignH_1_1;
-        }, function (AlignV_1_1) {
-            AlignV_1 = AlignV_1_1;
-        }, function (clone_1_1) {
-            clone_1 = clone_1_1;
         }, function (contains_1_1) {
             contains_1 = contains_1_1;
-        }, function (CoordMap_1_1) {
-            CoordMap_1 = CoordMap_1_1;
-        }, function (DisplayList_1_1) {
-            DisplayList_1 = DisplayList_1_1;
-        }, function (DoubleRect_1_1) {
-            DoubleRect_1 = DoubleRect_1_1;
         }, function (GenericEvent_1_1) {
             GenericEvent_1 = GenericEvent_1_1;
-        }, function (ParameterBoolean_1_1) {
-            ParameterBoolean_1 = ParameterBoolean_1_1;
         }, function (ParameterNumber_1_1) {
             ParameterNumber_1 = ParameterNumber_1_1;
-        }, function (remove_1_1) {
-            remove_1 = remove_1_1;
-        }, function (ScreenRect_1_1) {
-            ScreenRect_1 = ScreenRect_1_1;
+        }, function (removeAt_1_1) {
+            removeAt_1 = removeAt_1_1;
+        }, function (repeat_1_1) {
+            repeat_1 = repeat_1_1;
         }, function (veryDifferent_1_1) {
             veryDifferent_1 = veryDifferent_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
+        }, function (SimView_1_1) {
+            SimView_1 = SimView_1_1;
+        }, function (AxisChoice_1_1) {
+            AxisChoice_1 = AxisChoice_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
         }],
         execute: function () {
-            SimView = function (_super) {
-                __extends(SimView, _super);
-                function SimView(simRect) {
+            AutoScale = function (_super) {
+                __extends(AutoScale, _super);
+                function AutoScale(simView) {
                     var _this = _super.call(this) || this;
-                    _this.panX = 0.05;
-                    _this.panY = 0.05;
-                    _this.zoom = 1.1;
-                    _this.screenRect_ = new ScreenRect_1.default(0, 0, 800, 600);
-                    _this.horizAlign_ = AlignH_1.default.MIDDLE;
-                    _this.verticalAlign_ = AlignV_1.default.MIDDLE;
-                    _this.aspectRatio_ = 1.0;
-                    _this.displayList_ = new DisplayList_1.default();
-                    _this.scaleTogether_ = true;
-                    _this.opaqueness = 1.0;
-                    _this.memorizables_ = [];
-                    if (!(simRect instanceof DoubleRect_1.default) || simRect.isEmpty()) {
-                        throw new Error('bad simRect: ' + simRect);
-                    }
-                    _this.simRect_ = simRect;
-                    _this.coordMap_ = CoordMap_1.default.make(_this.screenRect_, _this.simRect_, _this.horizAlign_, _this.verticalAlign_, _this.aspectRatio_);
-                    _this.width_ = simRect.getWidth();
-                    _this.height_ = simRect.getHeight();
-                    _this.centerX_ = simRect.getCenterX();
-                    _this.centerY_ = simRect.getCenterY();
-                    _this.ratio_ = _this.height_ / _this.width_;
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_WIDTH, function () {
-                        return _this.getWidth();
-                    }, function (width) {
-                        return _this.setWidth(width);
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HEIGHT, function () {
-                        return _this.getHeight();
-                    }, function (height) {
-                        return _this.setHeight(height);
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_X, function () {
-                        return _this.getCenterX();
-                    }, function (centerX) {
-                        return _this.setCenterX(centerX);
-                    }).setLowerLimit(Number.NEGATIVE_INFINITY));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_Y, function () {
-                        return _this.getCenterY();
-                    }, function (centerY) {
-                        return _this.setCenterY(centerY);
-                    }).setLowerLimit(Number.NEGATIVE_INFINITY));
-                    _this.addParameter(new ParameterBoolean_1.default(_this, SimView.PARAM_NAME_SCALE_TOGETHER, function () {
-                        return _this.getScaleTogether();
-                    }, function (scaleTogether) {
-                        return _this.setScaleTogether(scaleTogether);
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_VERTICAL_ALIGN, function () {
-                        return _this.vAxisAlign;
-                    }, function (vAxisAlign) {
-                        return _this.vAxisAlign = vAxisAlign;
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, function () {
-                        return _this.hAxisAlign;
-                    }, function (hAxisAlign) {
-                        return _this.hAxisAlign = hAxisAlign;
-                    }));
-                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_ASPECT_RATIO, function () {
-                        return _this.getAspectRatio();
-                    }, function (aspectRatio) {
-                        return _this.setAspectRatio(aspectRatio);
-                    }));
+                    _this.graphLines_ = [];
+                    _this.enabled_ = true;
+                    _this.isActive_ = true;
+                    _this.ownEvent_ = false;
+                    _this.rangeSetX_ = false;
+                    _this.rangeSetY_ = false;
+                    _this.rangeXHi_ = 0;
+                    _this.rangeXLo_ = 0;
+                    _this.rangeYHi_ = 0;
+                    _this.rangeYLo_ = 0;
+                    _this.timeWindow_ = 10;
+                    _this.extraMargin = 0.01;
+                    _this.minSize = 1E-14;
+                    _this.axisChoice_ = AxisChoice_1.AxisChoice.BOTH;
+                    _this.simView_ = simView;
+                    simView.addMemo(_this);
+                    simView.addObserver(_this);
+                    _this.lastIndex_ = repeat_1.default(-1, _this.graphLines_.length);
+                    _this.addParameter(new ParameterNumber_1.default(_this, AutoScale.TIME_WINDOW, function () {
+                        return _this.timeWindow;
+                    }, function (timeWindow) {
+                        return _this.timeWindow = timeWindow;
+                    }).setSignifDigits(3));
+                    var choiceNames = ['VERTICAL', 'HORIZONTAL', 'BOTH'];
+                    var choices = [AxisChoice_1.AxisChoice.VERTICAL, AxisChoice_1.AxisChoice.HORIZONTAL, AxisChoice_1.AxisChoice.BOTH];
+                    _this.addParameter(new ParameterNumber_1.default(_this, AutoScale.AXIS, function () {
+                        return _this.axisChoice;
+                    }, function (axisChoice) {
+                        return _this.axisChoice = axisChoice;
+                    }, choiceNames, choices));
+                    _this.setComputed(_this.isActive_);
                     return _this;
                 }
-                SimView.prototype.addMemo = function (memorizable) {
-                    if (!contains_1.default(this.memorizables_, memorizable)) {
-                        this.memorizables_.push(memorizable);
-                    }
-                };
-                SimView.prototype.gainFocus = function () {};
-                SimView.prototype.getAspectRatio = function () {
-                    return this.aspectRatio_;
-                };
-                SimView.prototype.getCenterX = function () {
-                    return this.centerX_;
-                };
-                SimView.prototype.getCenterY = function () {
-                    return this.centerY_;
-                };
-                SimView.prototype.getCoordMap = function () {
-                    return this.coordMap_;
-                };
-                SimView.prototype.getDisplayList = function () {
-                    return this.displayList_;
-                };
-                SimView.prototype.getHeight = function () {
-                    return this.height_;
-                };
-                Object.defineProperty(SimView.prototype, "hAxisAlign", {
-                    get: function () {
-                        return this.horizAlign_;
-                    },
-                    set: function (alignHoriz) {
-                        this.horizAlign_ = alignHoriz;
-                        this.realign();
-                        this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                SimView.prototype.getMemos = function () {
-                    return clone_1.default(this.memorizables_);
-                };
-                SimView.prototype.getScaleTogether = function () {
-                    return this.scaleTogether_;
-                };
-                SimView.prototype.getScreenRect = function () {
-                    return this.screenRect_;
-                };
-                SimView.prototype.getSimRect = function () {
-                    return this.simRect_;
-                };
-                Object.defineProperty(SimView.prototype, "vAxisAlign", {
-                    get: function () {
-                        return this.verticalAlign_;
-                    },
-                    set: function (alignVert) {
-                        this.verticalAlign_ = alignVert;
-                        this.realign();
-                        this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                SimView.prototype.getWidth = function () {
-                    return this.width_;
-                };
-                SimView.prototype.loseFocus = function () {};
-                SimView.prototype.paint = function (context) {
-                    context.save();
-                    context.globalAlpha = this.opaqueness;
-                    this.displayList_.draw(context, this.coordMap_);
-                    context.restore();
-                };
-                SimView.prototype.setCoordMap = function (map) {
-                    if (!CoordMap_1.default.isDuckType(map)) throw new Error('not a CoordMap: ' + map);
-                    this.coordMap_ = map;
-                    this.broadcast(new GenericEvent_1.default(this, SimView.COORD_MAP_CHANGED));
-                };
-                SimView.prototype.setScreenRect = function (screenRect) {
-                    if (!ScreenRect_1.default.isDuckType(screenRect)) throw new Error('not a ScreenRect: ' + screenRect);
-                    if (screenRect.isEmpty()) {
-                        throw new Error('empty screenrect');
-                    }
-                    if (!this.screenRect_.equals(screenRect)) {
-                        this.screenRect_ = screenRect;
-                        this.realign();
-                        this.broadcast(new GenericEvent_1.default(this, SimView.SCREEN_RECT_CHANGED));
-                    }
-                };
-                SimView.prototype.setSimRect = function (simRect) {
-                    if (!DoubleRect_1.default.isDuckType(simRect)) throw new Error('not a DoubleRect: ' + simRect);
-                    if (!simRect.equals(this.simRect_)) {
-                        this.simRect_ = simRect;
-                        this.realign();
-                        this.broadcastParameter(SimView.PARAM_NAME_WIDTH);
-                        this.broadcastParameter(SimView.PARAM_NAME_HEIGHT);
-                        this.broadcastParameter(SimView.PARAM_NAME_CENTER_X);
-                        this.broadcastParameter(SimView.PARAM_NAME_CENTER_Y);
-                        this.broadcast(new GenericEvent_1.default(this, SimView.SIM_RECT_CHANGED));
-                    }
-                };
-                SimView.prototype.memorize = function () {
-                    for (var i = 0, n = this.memorizables_.length; i < n; i++) {
-                        this.memorizables_[i].memorize();
-                    }
-                };
-                SimView.prototype.realign = function () {
-                    this.setCoordMap(CoordMap_1.default.make(this.screenRect_, this.simRect_, this.horizAlign_, this.verticalAlign_, this.aspectRatio_));
-                    this.width_ = this.simRect_.getWidth();
-                    this.height_ = this.simRect_.getHeight();
-                    this.centerX_ = this.simRect_.getCenterX();
-                    this.centerY_ = this.simRect_.getCenterY();
-                    this.ratio_ = this.height_ / this.width_;
-                };
-                SimView.prototype.modifySimRect = function () {
-                    var left = this.centerX_ - this.width_ / 2.0;
-                    var bottom = this.centerY_ - this.height_ / 2.0;
-                    var r = new DoubleRect_1.default(left, bottom, left + this.width_, bottom + this.height_);
-                    this.setSimRect(r);
-                };
-                SimView.prototype.panDown = function () {
-                    this.setCenterY(this.centerY_ - this.panY * this.height_);
-                };
-                SimView.prototype.panLeft = function () {
-                    this.setCenterX(this.centerX_ - this.panX * this.width_);
-                };
-                SimView.prototype.panRight = function () {
-                    this.setCenterX(this.centerX_ + this.panX * this.width_);
-                };
-                SimView.prototype.panUp = function () {
-                    this.setCenterY(this.centerY_ + this.panY * this.height_);
-                };
-                SimView.prototype.removeMemo = function (memorizable) {
-                    remove_1.default(this.memorizables_, memorizable);
-                };
-                SimView.prototype.setAspectRatio = function (aspectRatio) {
-                    if (veryDifferent_1.default(this.aspectRatio_, aspectRatio)) {
-                        this.aspectRatio_ = aspectRatio;
-                        this.realign();
-                        this.broadcastParameter(SimView.PARAM_NAME_ASPECT_RATIO);
-                    }
-                };
-                SimView.prototype.setCenterX = function (centerX) {
-                    if (veryDifferent_1.default(this.centerX_, centerX)) {
-                        this.centerX_ = centerX;
-                        this.modifySimRect();
-                    }
-                };
-                SimView.prototype.setCenterY = function (value) {
-                    if (veryDifferent_1.default(this.centerY_, value)) {
-                        this.centerY_ = value;
-                        this.modifySimRect();
-                    }
-                };
-                SimView.prototype.setHeight = function (value) {
-                    if (veryDifferent_1.default(this.height_, value)) {
-                        this.height_ = value;
-                        if (this.scaleTogether_) {
-                            this.width_ = this.height_ / this.ratio_;
+                AutoScale.prototype.addGraphLine = function (graphLine) {
+                    if (GraphLine_1.GraphLine.isDuckType(graphLine)) {
+                        if (!contains_1.default(this.graphLines_, graphLine)) {
+                            this.graphLines_.push(graphLine);
+                            graphLine.addObserver(this);
+                            this.lastIndex_.push(-1);
                         }
-                        this.modifySimRect();
+                    } else {
+                        throw new Error('not a GraphLine ' + graphLine);
                     }
                 };
-                SimView.prototype.setScaleTogether = function (value) {
-                    if (this.scaleTogether_ !== value) {
-                        this.scaleTogether_ = value;
-                        if (this.scaleTogether_) {
-                            this.ratio_ = this.height_ / this.width_;
-                        }
-                        this.broadcastParameter(SimView.PARAM_NAME_SCALE_TOGETHER);
-                    }
+                AutoScale.prototype.clearRange = function () {
+                    this.rangeXLo_ = 0;
+                    this.rangeXHi_ = 0;
+                    this.rangeSetX_ = false;
+                    this.rangeYLo_ = 0;
+                    this.rangeYHi_ = 0;
+                    this.rangeSetY_ = false;
                 };
-                SimView.prototype.setWidth = function (value) {
-                    if (veryDifferent_1.default(this.width_, value)) {
-                        this.width_ = value;
-                        if (this.scaleTogether_) {
-                            this.height_ = this.width_ * this.ratio_;
-                        }
-                        this.modifySimRect();
-                    }
-                };
-                SimView.prototype.zoomIn = function () {
-                    this.setHeight(this.height_ / this.zoom);
-                };
-                SimView.prototype.zoomOut = function () {
-                    this.setHeight(this.height_ * this.zoom);
-                };
-                SimView.PARAM_NAME_WIDTH = 'width';
-                SimView.PARAM_NAME_HEIGHT = 'height';
-                SimView.PARAM_NAME_CENTER_X = 'center-x';
-                SimView.PARAM_NAME_CENTER_Y = 'center-y';
-                SimView.PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
-                SimView.PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
-                SimView.PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
-                SimView.PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
-                SimView.COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
-                SimView.SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
-                SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
-                return SimView;
-            }(AbstractSubject_1.default);
-            exports_1("SimView", SimView);
-            exports_1("default", SimView);
-        }
-    };
-});
-System.register("davinci-newton/math/Mat3.js", ["./Matrix3", "./Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var Matrix3_1, Unit_1, Mat3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {
-            Mat3 = function () {
-                function Mat3(source) {
-                    this.data = Matrix3_1.default.one();
-                    var n11 = source.getElement(0, 0);
-                    var n12 = source.getElement(0, 1);
-                    var n13 = source.getElement(0, 2);
-                    var n21 = source.getElement(1, 0);
-                    var n22 = source.getElement(1, 1);
-                    var n23 = source.getElement(1, 2);
-                    var n31 = source.getElement(2, 0);
-                    var n32 = source.getElement(2, 1);
-                    var n33 = source.getElement(2, 2);
-                    this.data.set(n11, n12, n13, n21, n22, n23, n31, n32, n33);
-                    this.uom = Unit_1.Unit.mustBeUnit('uom', source.uom);
-                }
-                Object.defineProperty(Mat3.prototype, "dimensions", {
+                Object.defineProperty(AutoScale.prototype, "active", {
                     get: function () {
-                        return 3;
+                        return this.isActive_;
                     },
-                    enumerable: false,
-                    configurable: true
-                });
-                Mat3.prototype.getElement = function (row, column) {
-                    return this.data.getElement(row, column);
-                };
-                Mat3.prototype.row = function (i) {
-                    return this.data.row(i);
-                };
-                Mat3.prototype.toString = function (radix) {
-                    return this.data.toString(radix);
-                };
-                return Mat3;
-            }();
-            exports_1("Mat3", Mat3);
-            exports_1("default", Mat3);
-        }
-    };
-});
-System.register("davinci-newton/checks/mustBeDefined.js", ["../checks/mustSatisfy", "../checks/isDefined"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustSatisfy_1, isDefined_1;
-    var __moduleName = context_1 && context_1.id;
-    function beDefined() {
-        return "not be 'undefined'";
-    }
-    function mustBeDefined(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isDefined_1.default(value), beDefined, contextBuilder);
-        return value;
-    }
-    exports_1("default", mustBeDefined);
-    return {
-        setters: [function (mustSatisfy_1_1) {
-            mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isDefined_1_1) {
-            isDefined_1 = isDefined_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isInteger.js", ["../checks/isNumber"], function (exports_1, context_1) {
-    "use strict";
-
-    var isNumber_1;
-    var __moduleName = context_1 && context_1.id;
-    function isInteger(x) {
-        return isNumber_1.default(x) && x % 1 === 0;
-    }
-    exports_1("default", isInteger);
-    return {
-        setters: [function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisfy", "../checks/isInteger"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustSatisfy_1, isInteger_1;
-    var __moduleName = context_1 && context_1.id;
-    function beAnInteger() {
-        return "be an integer";
-    }
-    function mustBeInteger(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isInteger_1.default(value), beAnInteger, contextBuilder);
-        return value;
-    }
-    exports_1("default", mustBeInteger);
-    return {
-        setters: [function (mustSatisfy_1_1) {
-            mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isInteger_1_1) {
-            isInteger_1 = isInteger_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefined", "../checks/mustBeInteger", "./Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustBeDefined_1, mustBeInteger_1, Unit_1, AbstractMatrix;
-    var __moduleName = context_1 && context_1.id;
-    function checkElementsLength(elements, length) {
-        if (elements.length !== length) {
-            throw new Error("elements must have length " + length);
-        }
-    }
-    return {
-        setters: [function (mustBeDefined_1_1) {
-            mustBeDefined_1 = mustBeDefined_1_1;
-        }, function (mustBeInteger_1_1) {
-            mustBeInteger_1 = mustBeInteger_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {
-            AbstractMatrix = function () {
-                function AbstractMatrix(elements, dimensions, uom) {
-                    this._elements = mustBeDefined_1.default('elements', elements);
-                    this._dimensions = mustBeInteger_1.default('dimensions', dimensions);
-                    this._length = dimensions * dimensions;
-                    checkElementsLength(elements, this._length);
-                    this.modified = false;
-                    this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
-                }
-                Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
-                    get: function () {
-                        return this._dimensions;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(AbstractMatrix.prototype, "elements", {
-                    get: function () {
-                        return this._elements;
-                    },
-                    set: function (elements) {
-                        checkElementsLength(elements, this._length);
-                        this._elements = elements;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                AbstractMatrix.prototype.copy = function (source) {
-                    var N = this.dimensions;
-                    for (var i = 0; i < N; i++) {
-                        for (var j = 0; j < N; j++) {
-                            var value = source.getElement(i, j);
-                            this.setElement(i, j, value);
-                        }
-                    }
-                    this.uom = source.uom;
-                    return this;
-                };
-                AbstractMatrix.prototype.getElement = function (row, column) {
-                    return this.elements[row + column * this._dimensions];
-                };
-                AbstractMatrix.prototype.isOne = function () {
-                    for (var i = 0; i < this._dimensions; i++) {
-                        for (var j = 0; j < this._dimensions; j++) {
-                            var value = this.getElement(i, j);
-                            if (i === j) {
-                                if (value !== 1) {
-                                    return false;
+                    set: function (value) {
+                        if (this.isActive_ !== value) {
+                            if (value) {
+                                if (this.enabled_) {
+                                    this.reset();
+                                    this.simView_.addMemo(this);
+                                    this.setComputed(true);
+                                    this.isActive_ = true;
+                                    this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
                                 }
                             } else {
-                                if (value !== 0) {
-                                    return false;
-                                }
+                                this.simView_.removeMemo(this);
+                                this.setComputed(false);
+                                this.isActive_ = false;
+                                this.broadcast(new GenericEvent_1.default(this, AutoScale.ACTIVE, this.isActive_));
+                            }
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(AutoScale.prototype, "axisChoice", {
+                    get: function () {
+                        return this.axisChoice_;
+                    },
+                    set: function (value) {
+                        if (value === AxisChoice_1.AxisChoice.VERTICAL || value === AxisChoice_1.AxisChoice.HORIZONTAL || value === AxisChoice_1.AxisChoice.BOTH) {
+                            this.axisChoice_ = value;
+                            this.broadcastParameter(AutoScale.AXIS);
+                        } else {
+                            throw new Error('unknown ' + value);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(AutoScale.prototype, "enabled", {
+                    get: function () {
+                        return this.enabled_;
+                    },
+                    set: function (enabled) {
+                        if (this.enabled_ !== enabled) {
+                            this.enabled_ = enabled;
+                            this.active = enabled;
+                            this.broadcast(new GenericEvent_1.default(this, AutoScale.ENABLED, this.enabled_));
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                AutoScale.prototype.getRangeRect = function () {
+                    return new DoubleRect_1.default(this.rangeXLo_, this.rangeYLo_, this.rangeXHi_, this.rangeYHi_);
+                };
+                Object.defineProperty(AutoScale.prototype, "timeWindow", {
+                    get: function () {
+                        return this.timeWindow_;
+                    },
+                    set: function (timeWindow) {
+                        if (veryDifferent_1.default(timeWindow, this.timeWindow_)) {
+                            this.timeWindow_ = timeWindow;
+                            this.reset();
+                            this.active = true;
+                            this.broadcastParameter(AutoScale.TIME_WINDOW);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                AutoScale.prototype.memorize = function () {
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        var graphPts = this.graphLines_[i].getGraphPoints();
+                        if (this.lastIndex_[i] > graphPts.getEndIndex()) {
+                            this.reset();
+                        }
+                    }
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        var graphPts = this.graphLines_[i].getGraphPoints();
+                        var iter = graphPts.getIterator(this.lastIndex_[i]);
+                        while (iter.hasNext()) {
+                            var gp = iter.nextValue();
+                            this.updateRange_(this.graphLines_[i], gp.x, gp.y);
+                            this.lastIndex_[i] = iter.getIndex();
+                        }
+                    }
+                    this.rangeCheck_();
+                };
+                AutoScale.prototype.observe = function (event) {
+                    if (event.getSubject() === this.simView_) {
+                        if (event.nameEquals(SimView_1.SimView.SIM_RECT_CHANGED)) {
+                            if (!this.ownEvent_) {
+                                this.active = false;
+                            }
+                        }
+                    } else if (contains_1.default(this.graphLines_, event.getSubject())) {
+                        if (event.nameEquals(GraphLine_1.GraphLine.PARAM_NAME_X_VARIABLE) || event.nameEquals(GraphLine_1.GraphLine.PARAM_NAME_Y_VARIABLE)) {
+                            this.reset();
+                        } else if (event.nameEquals(GraphLine_1.GraphLine.RESET)) {
+                            this.active = true;
+                        }
+                    }
+                };
+                AutoScale.prototype.rangeCheck_ = function () {
+                    var e = this.minSize;
+                    if (this.rangeXHi_ - this.rangeXLo_ < e) {
+                        var avg = (this.rangeXHi_ + this.rangeXLo_) / 2;
+                        var incr = Math.max(avg * e, e);
+                        this.rangeXHi_ = avg + incr;
+                        this.rangeXLo_ = avg - incr;
+                    }
+                    if (this.rangeYHi_ - this.rangeYLo_ < e) {
+                        var avg = (this.rangeYHi_ + this.rangeYLo_) / 2;
+                        var incr = Math.max(avg * e, e);
+                        this.rangeYHi_ = avg + incr;
+                        this.rangeYLo_ = avg - incr;
+                    }
+                    var nr = this.getRangeRect();
+                    var sr = this.simView_.getSimRect();
+                    if (this.axisChoice_ === AxisChoice_1.AxisChoice.VERTICAL) {
+                        nr = new DoubleRect_1.default(sr.getLeft(), nr.getBottom(), sr.getRight(), nr.getTop());
+                    } else if (this.axisChoice_ === AxisChoice_1.AxisChoice.HORIZONTAL) {
+                        nr = new DoubleRect_1.default(nr.getLeft(), sr.getBottom(), nr.getRight(), sr.getTop());
+                    }
+                    if (this.isActive_ && !nr.nearEqual(sr)) {
+                        this.ownEvent_ = true;
+                        this.simView_.setSimRect(nr);
+                        this.ownEvent_ = false;
+                        this.broadcast(new GenericEvent_1.default(this, AutoScale.AUTO_SCALE, nr));
+                    }
+                };
+                AutoScale.prototype.removeGraphLine = function (graphLine) {
+                    if (GraphLine_1.GraphLine.isDuckType(graphLine)) {
+                        var idx = this.graphLines_.indexOf(graphLine);
+                        removeAt_1.default(this.graphLines_, idx);
+                        removeAt_1.default(this.lastIndex_, idx);
+                        this.reset();
+                    } else {
+                        throw new Error('not a GraphLine ' + graphLine);
+                    }
+                };
+                AutoScale.prototype.reset = function () {
+                    this.clearRange();
+                    for (var i = 0, n = this.lastIndex_.length; i < n; i++) {
+                        this.lastIndex_[i] = -1;
+                    }
+                };
+                AutoScale.prototype.setComputed = function (value) {
+                    var _this = this;
+                    var names = [SimView_1.SimView.PARAM_NAME_WIDTH, SimView_1.SimView.PARAM_NAME_HEIGHT, SimView_1.SimView.PARAM_NAME_CENTER_X, SimView_1.SimView.PARAM_NAME_CENTER_Y];
+                    names.forEach(function (name) {
+                        var p = _this.simView_.getParameter(name);
+                        p.setComputed(value);
+                    });
+                };
+                AutoScale.prototype.updateRange_ = function (line, nowX, nowY) {
+                    if (!isFinite(nowX)) {
+                        if (nowX === Number.POSITIVE_INFINITY) {
+                            nowX = 1e308;
+                        } else if (nowX === Number.NEGATIVE_INFINITY) {
+                            nowX = -1e308;
+                        }
+                    }
+                    if (!isFinite(nowY)) {
+                        if (nowY === Number.POSITIVE_INFINITY) {
+                            nowY = 1e308;
+                        } else if (nowY === Number.NEGATIVE_INFINITY) {
+                            nowY = -1e308;
+                        }
+                    }
+                    var timeIdx = line.varsList.timeIndex();
+                    var xIsTimeVar = line.hCoordIndex === timeIdx;
+                    var yIsTimeVar = line.vCoordIndex === timeIdx;
+                    if (!this.rangeSetX_) {
+                        this.rangeXLo_ = nowX;
+                        this.rangeXHi_ = nowX + (xIsTimeVar ? this.timeWindow_ : 0);
+                        this.rangeSetX_ = true;
+                    } else {
+                        if (nowX < this.rangeXLo_) {
+                            if (xIsTimeVar) {
+                                this.rangeXLo_ = nowX;
+                                this.rangeXHi_ = nowX + this.timeWindow_;
+                            } else {
+                                this.rangeXLo_ = nowX - this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
+                            }
+                        }
+                        if (xIsTimeVar) {
+                            if (nowX > this.rangeXHi_ - this.extraMargin * this.timeWindow_) {
+                                this.rangeXHi_ = nowX + this.extraMargin * this.timeWindow_;
+                                this.rangeXLo_ = this.rangeXHi_ - this.timeWindow_;
+                            }
+                        } else {
+                            if (nowX > this.rangeXHi_) {
+                                this.rangeXHi_ = nowX + this.extraMargin * (this.rangeXHi_ - this.rangeXLo_);
                             }
                         }
                     }
-                    return true;
+                    if (!this.rangeSetY_) {
+                        this.rangeYLo_ = nowY;
+                        this.rangeYHi_ = nowY + (yIsTimeVar ? this.timeWindow_ : 0);
+                        this.rangeSetY_ = true;
+                    } else {
+                        if (nowY < this.rangeYLo_) {
+                            if (yIsTimeVar) {
+                                this.rangeYLo_ = nowY;
+                                this.rangeYHi_ = nowY + this.timeWindow_;
+                            } else {
+                                this.rangeYLo_ = nowY - this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                            }
+                        }
+                        if (yIsTimeVar) {
+                            if (nowY > this.rangeYHi_ - this.extraMargin * this.timeWindow_) {
+                                this.rangeYHi_ = nowY + this.extraMargin * this.timeWindow_;
+                                this.rangeYLo_ = this.rangeYHi_ - this.timeWindow_;
+                            }
+                        } else {
+                            if (nowY > this.rangeYHi_) {
+                                this.rangeYHi_ = nowY + this.extraMargin * (this.rangeYHi_ - this.rangeYLo_);
+                            }
+                        }
+                    }
                 };
-                AbstractMatrix.prototype.setElement = function (row, column, value) {
-                    this.elements[row + column * this._dimensions] = value;
-                };
-                return AbstractMatrix;
-            }();
-            exports_1("default", AbstractMatrix);
+                AutoScale.AXIS = 'AXIS';
+                AutoScale.TIME_WINDOW = 'TIME_WINDOW';
+                AutoScale.ACTIVE = 'ACTIVE';
+                AutoScale.AUTO_SCALE = 'AUTO_SCALE';
+                AutoScale.ENABLED = 'ENABLED';
+                return AutoScale;
+            }(AbstractSubject_1.default);
+            exports_1("default", AutoScale);
         }
     };
 });
-System.register("davinci-newton/math/det3x3.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/graph/DisplayAxes.js", ["../checks/isDefined", "../math/Unit", "../view/AlignH", "../view/AlignV", "../view/DoubleRect"], function (exports_1, context_1) {
     "use strict";
 
+    var isDefined_1, Unit_1, AlignH_1, AlignV_1, DoubleRect_1, DisplayAxes;
     var __moduleName = context_1 && context_1.id;
-    function det3x3(m) {
-        var m00 = m[0x0],
-            m01 = m[0x3],
-            m02 = m[0x6];
-        var m10 = m[0x1],
-            m11 = m[0x4],
-            m12 = m[0x7];
-        var m20 = m[0x2],
-            m21 = m[0x5],
-            m22 = m[0x8];
-        return m00 * m11 * m22 + m01 * m12 * m20 + m02 * m10 * m21 - m00 * m12 * m21 - m01 * m10 * m22 - m02 * m11 * m20;
+    function makeLabelScale(label, scale) {
+        if (Unit_1.Unit.isOne(scale)) {
+            return label;
+        } else {
+            return label + " / (" + scale + ")";
+        }
     }
-    exports_1("default", det3x3);
     return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/inv3x3.js", ["../math/det3x3"], function (exports_1, context_1) {
-    "use strict";
-
-    var det3x3_1;
-    var __moduleName = context_1 && context_1.id;
-    function inv3x3(m, te) {
-        var det = det3x3_1.default(m);
-        var m11 = m[0x0],
-            m12 = m[0x3],
-            m13 = m[0x6];
-        var m21 = m[0x1],
-            m22 = m[0x4],
-            m23 = m[0x7];
-        var m31 = m[0x2],
-            m32 = m[0x5],
-            m33 = m[0x8];
-        var o11 = m22 * m33 - m23 * m32;
-        var o12 = m13 * m32 - m12 * m33;
-        var o13 = m12 * m23 - m13 * m22;
-        var o21 = m23 * m31 - m21 * m33;
-        var o22 = m11 * m33 - m13 * m31;
-        var o23 = m13 * m21 - m11 * m23;
-        var o31 = m21 * m32 - m22 * m31;
-        var o32 = m12 * m31 - m11 * m32;
-        var o33 = m11 * m22 - m12 * m21;
-        var α = 1 / det;
-        te[0x0] = o11 * α;
-        te[0x3] = o12 * α;
-        te[0x6] = o13 * α;
-        te[0x1] = o21 * α;
-        te[0x4] = o22 * α;
-        te[0x7] = o23 * α;
-        te[0x2] = o31 * α;
-        te[0x5] = o32 * α;
-        te[0x8] = o33 * α;
-    }
-    exports_1("default", inv3x3);
-    return {
-        setters: [function (det3x3_1_1) {
-            det3x3_1 = det3x3_1_1;
+        setters: [function (isDefined_1_1) {
+            isDefined_1 = isDefined_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
         }],
-        execute: function () {}
+        execute: function () {
+            DisplayAxes = function () {
+                function DisplayAxes(simRect, font, color) {
+                    if (simRect === void 0) {
+                        simRect = DoubleRect_1.default.EMPTY_RECT;
+                    }
+                    if (font === void 0) {
+                        font = '14pt sans-serif';
+                    }
+                    if (color === void 0) {
+                        color = 'gray';
+                    }
+                    this.simRect_ = simRect;
+                    this.numFont_ = font;
+                    this.drawColor_ = color;
+                    this.fontDescent = 8;
+                    this.fontAscent = 12;
+                    this.hAxisAlign_ = AlignV_1.AlignV.BOTTOM;
+                    this.vAxisAlign_ = AlignH_1.AlignH.LEFT;
+                    this.numDecimal_ = 0;
+                    this.needRedraw_ = true;
+                    this.hLabel_ = 'x';
+                    this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
+                    this.vLabel_ = 'y';
+                    this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
+                    this.zIndex_ = 100;
+                }
+                DisplayAxes.prototype.draw = function (context, map) {
+                    context.save();
+                    context.strokeStyle = this.drawColor_;
+                    context.fillStyle = this.drawColor_;
+                    context.font = this.numFont_;
+                    context.textAlign = 'start';
+                    context.textBaseline = 'alphabetic';
+                    var x0;
+                    var y0;
+                    var r = this.simRect_;
+                    var sim_x1 = r.getLeft();
+                    var sim_x2 = r.getRight();
+                    var sim_y1 = r.getBottom();
+                    var sim_y2 = r.getTop();
+                    switch (this.vAxisAlign_) {
+                        case AlignH_1.AlignH.RIGHT:
+                            x0 = map.simToScreenX(sim_x2 - 0.05 * (sim_x2 - sim_x1));
+                            break;
+                        case AlignH_1.AlignH.LEFT:
+                            x0 = map.simToScreenX(sim_x1 + 0.05 * (sim_x2 - sim_x1));
+                            break;
+                        default:
+                            x0 = map.simToScreenX(r.getCenterX());
+                    }
+                    switch (this.hAxisAlign_) {
+                        case AlignV_1.AlignV.TOP:
+                            y0 = map.simToScreenY(sim_y2) + (10 + this.fontDescent + this.fontAscent);
+                            break;
+                        case AlignV_1.AlignV.BOTTOM:
+                            y0 = map.simToScreenY(sim_y1) - (10 + this.fontDescent + this.fontAscent);
+                            break;
+                        default:
+                            y0 = map.simToScreenY(r.getCenterY());
+                    }
+                    context.beginPath();
+                    context.moveTo(map.simToScreenX(sim_x1), y0);
+                    context.lineTo(map.simToScreenX(sim_x2), y0);
+                    context.stroke();
+                    this.drawHorizTicks(y0, context, map, this.simRect_);
+                    context.beginPath();
+                    context.moveTo(x0, map.simToScreenY(sim_y1));
+                    context.lineTo(x0, map.simToScreenY(sim_y2));
+                    context.stroke();
+                    this.drawVertTicks(x0, context, map, this.simRect_);
+                    context.restore();
+                    this.needRedraw_ = false;
+                };
+                DisplayAxes.prototype.drawHorizTicks = function (y0, context, map, r) {
+                    var y1 = y0 - 4;
+                    var y2 = y1 + 8;
+                    var sim_x1 = r.getLeft();
+                    var sim_x2 = r.getRight();
+                    var graphDelta = this.getNiceIncrement(sim_x2 - sim_x1);
+                    var x_sim = DisplayAxes.getNiceStart(sim_x1, graphDelta);
+                    while (x_sim < sim_x2) {
+                        var x_screen = map.simToScreenX(x_sim);
+                        context.beginPath();
+                        context.moveTo(x_screen, y1);
+                        context.lineTo(x_screen, y2);
+                        context.stroke();
+                        var next_x_sim = x_sim + graphDelta;
+                        if (next_x_sim > x_sim) {
+                            var s = x_sim.toFixed(this.numDecimal_);
+                            var textWidth = context.measureText(s).width;
+                            context.fillText(s, x_screen - textWidth / 2, y2 + this.fontAscent);
+                        } else {
+                            context.fillText('scale is too small', x_screen, y2 + this.fontAscent);
+                            break;
+                        }
+                        x_sim = next_x_sim;
+                    }
+                    var hLabel = this.hLabelScaleCache_;
+                    var w = context.measureText(hLabel).width;
+                    context.fillText(hLabel, map.simToScreenX(sim_x2) - w - 5, y0 - 8);
+                };
+                DisplayAxes.prototype.drawVertTicks = function (x0, context, map, r) {
+                    var x1 = x0 - 4;
+                    var x2 = x1 + 8;
+                    var sim_y1 = r.getBottom();
+                    var sim_y2 = r.getTop();
+                    var graphDelta = this.getNiceIncrement(sim_y2 - sim_y1);
+                    var y_sim = DisplayAxes.getNiceStart(sim_y1, graphDelta);
+                    while (y_sim < sim_y2) {
+                        var y_screen = map.simToScreenY(y_sim);
+                        context.beginPath();
+                        context.moveTo(x1, y_screen);
+                        context.lineTo(x2, y_screen);
+                        context.stroke();
+                        var next_y_sim = y_sim + graphDelta;
+                        if (next_y_sim > y_sim) {
+                            var s = y_sim.toFixed(this.numDecimal_);
+                            var textWidth = context.measureText(s).width;
+                            if (this.vAxisAlign_ === AlignH_1.AlignH.RIGHT) {
+                                context.fillText(s, x2 - (textWidth + 10), y_screen + this.fontAscent / 2);
+                            } else {
+                                context.fillText(s, x2 + 5, y_screen + this.fontAscent / 2);
+                            }
+                        } else {
+                            context.fillText('scale is too small', x2, y_screen);
+                            break;
+                        }
+                        y_sim = next_y_sim;
+                    }
+                    var vLabel = this.vLabelScaleCache_;
+                    var w = context.measureText(vLabel).width;
+                    if (this.vAxisAlign_ === AlignH_1.AlignH.RIGHT) {
+                        context.fillText(vLabel, x0 - (w + 6), map.simToScreenY(sim_y2) + 13);
+                    } else {
+                        context.fillText(vLabel, x0 + 6, map.simToScreenY(sim_y2) + 13);
+                    }
+                };
+                Object.defineProperty(DisplayAxes.prototype, "color", {
+                    get: function () {
+                        return this.drawColor_;
+                    },
+                    set: function (color) {
+                        this.drawColor_ = color;
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                DisplayAxes.prototype.getFont = function () {
+                    return this.numFont_;
+                };
+                Object.defineProperty(DisplayAxes.prototype, "hAxisLabel", {
+                    get: function () {
+                        return this.hLabel_;
+                    },
+                    set: function (hAxisLabel) {
+                        this.hLabel_ = hAxisLabel;
+                        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(DisplayAxes.prototype, "hAxisScale", {
+                    get: function () {
+                        return this.hScale_;
+                    },
+                    set: function (hAxisScale) {
+                        this.hScale_ = hAxisScale;
+                        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                DisplayAxes.prototype.getNiceIncrement = function (range) {
+                    var power = Math.pow(10, Math.floor(Math.log(range) / Math.LN10));
+                    var logTot = range / power;
+                    var incr;
+                    if (logTot >= 8) incr = 2;else if (logTot >= 5) incr = 1;else if (logTot >= 3) incr = 0.5;else if (logTot >= 2) incr = 0.4;else incr = 0.2;
+                    incr *= power;
+                    var dlog = Math.log(incr) / Math.LN10;
+                    this.numDecimal_ = dlog < 0 ? Math.ceil(-dlog) : 0;
+                    return incr;
+                };
+                DisplayAxes.getNiceStart = function (start, incr) {
+                    return Math.ceil(start / incr) * incr;
+                };
+                DisplayAxes.prototype.getSimRect = function () {
+                    return this.simRect_;
+                };
+                Object.defineProperty(DisplayAxes.prototype, "vAxisLabel", {
+                    get: function () {
+                        return this.vLabel_;
+                    },
+                    set: function (vAxisLabel) {
+                        this.vLabel_ = vAxisLabel;
+                        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(DisplayAxes.prototype, "vAxisScale", {
+                    get: function () {
+                        return this.vScale_;
+                    },
+                    set: function (vAxisScale) {
+                        this.vScale_ = vAxisScale;
+                        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(DisplayAxes.prototype, "hAxisAlign", {
+                    get: function () {
+                        return this.hAxisAlign_;
+                    },
+                    set: function (alignment) {
+                        this.hAxisAlign_ = alignment;
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(DisplayAxes.prototype, "vAxisAlign", {
+                    get: function () {
+                        return this.vAxisAlign_;
+                    },
+                    set: function (alignment) {
+                        this.vAxisAlign_ = alignment;
+                        this.needRedraw_ = true;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                DisplayAxes.prototype.getZIndex = function () {
+                    return this.zIndex_;
+                };
+                DisplayAxes.prototype.isDragable = function () {
+                    return false;
+                };
+                DisplayAxes.prototype.needsRedraw = function () {
+                    return this.needRedraw_;
+                };
+                DisplayAxes.prototype.setDragable = function (dragable) {};
+                DisplayAxes.prototype.setFont = function (font) {
+                    this.numFont_ = font;
+                    this.needRedraw_ = true;
+                };
+                DisplayAxes.prototype.setSimRect = function (simRect) {
+                    this.simRect_ = simRect;
+                    this.needRedraw_ = true;
+                };
+                DisplayAxes.prototype.setZIndex = function (zIndex) {
+                    if (isDefined_1.default(zIndex)) {
+                        this.zIndex_ = zIndex;
+                    }
+                };
+                return DisplayAxes;
+            }();
+            exports_1("default", DisplayAxes);
+        }
     };
 });
-System.register("davinci-newton/math/mul3x3.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/util/repeat.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function mul3x3(a, b, c) {
-        var a11 = a[0x0],
-            a12 = a[0x3],
-            a13 = a[0x6];
-        var a21 = a[0x1],
-            a22 = a[0x4],
-            a23 = a[0x7];
-        var a31 = a[0x2],
-            a32 = a[0x5],
-            a33 = a[0x8];
-        var b11 = b[0x0],
-            b12 = b[0x3],
-            b13 = b[0x6];
-        var b21 = b[0x1],
-            b22 = b[0x4],
-            b23 = b[0x7];
-        var b31 = b[0x2],
-            b32 = b[0x5],
-            b33 = b[0x8];
-        c[0x0] = a11 * b11 + a12 * b21 + a13 * b31;
-        c[0x3] = a11 * b12 + a12 * b22 + a13 * b32;
-        c[0x6] = a11 * b13 + a12 * b23 + a13 * b33;
-        c[0x1] = a21 * b11 + a22 * b21 + a23 * b31;
-        c[0x4] = a21 * b12 + a22 * b22 + a23 * b32;
-        c[0x7] = a21 * b13 + a22 * b23 + a23 * b33;
-        c[0x2] = a31 * b11 + a32 * b21 + a33 * b31;
-        c[0x5] = a31 * b12 + a32 * b22 + a33 * b32;
-        c[0x8] = a31 * b13 + a32 * b23 + a33 * b33;
-        return c;
+    function repeat(value, N) {
+        var xs = [];
+        for (var i = 0; i < N; i++) {
+            xs[i] = value;
+        }
+        return xs;
     }
-    exports_1("default", mul3x3);
+    exports_1("default", repeat);
     return {
         setters: [],
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix", "./inv3x3", "./mul3x3"], function (exports_1, context_1) {
+System.register("davinci-newton/graph/DisplayGraph.js", ["../checks/isDefined", "../util/contains", "../util/removeAt", "../util/repeat", "../view/DrawingMode", "../view/ScreenRect", "./GraphLine"], function (exports_1, context_1) {
+    "use strict";
+
+    var isDefined_1, contains_1, removeAt_1, repeat_1, DrawingMode_1, ScreenRect_1, GraphLine_1, DisplayGraph;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isDefined_1_1) {
+            isDefined_1 = isDefined_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (removeAt_1_1) {
+            removeAt_1 = removeAt_1_1;
+        }, function (repeat_1_1) {
+            repeat_1 = repeat_1_1;
+        }, function (DrawingMode_1_1) {
+            DrawingMode_1 = DrawingMode_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
+        }],
+        execute: function () {
+            DisplayGraph = function () {
+                function DisplayGraph() {
+                    this.graphLines_ = [];
+                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
+                    this.offScreen_ = null;
+                    this.lastMap_ = null;
+                    this.screenRect_ = ScreenRect_1.default.EMPTY_RECT;
+                    this.needRedraw_ = false;
+                    this.useBuffer_ = false;
+                    this.zIndex = 0;
+                }
+                DisplayGraph.prototype.draw = function (context, map) {
+                    if (this.screenRect_.isEmpty()) {
+                        return;
+                    }
+                    var graphLines = this.graphLines_;
+                    var N = graphLines.length;
+                    context.save();
+                    if (this.lastMap_ == null || this.lastMap_ !== map) {
+                        this.lastMap_ = map;
+                        this.needRedraw_ = true;
+                    }
+                    for (var i = 0; i < N; i++) {
+                        if (this.memDraw_[i] > graphLines[i].getGraphPoints().getEndIndex()) {
+                            this.reset();
+                            break;
+                        }
+                    }
+                    if (!this.useBuffer_) {
+                        this.needRedraw_ = true;
+                        if (this.needRedraw_) {
+                            this.fullDraw(context, map);
+                            this.needRedraw_ = false;
+                        } else {
+                            this.incrementalDraw(context, map);
+                        }
+                    } else {
+                        var w = this.screenRect_.getWidth();
+                        var h = this.screenRect_.getHeight();
+                        if (this.offScreen_ == null) {
+                            this.offScreen_ = document.createElement('canvas');
+                            this.offScreen_.width = w;
+                            this.offScreen_.height = h;
+                            this.needRedraw_ = true;
+                        }
+                        var osb = this.offScreen_.getContext('2d');
+                        if (this.needRedraw_) {
+                            osb.clearRect(0, 0, w, h);
+                            this.fullDraw(osb, map);
+                            this.needRedraw_ = false;
+                        } else {
+                            this.incrementalDraw(osb, map);
+                        }
+                        context.drawImage(this.offScreen_, 0, 0, w, h);
+                    }
+                    for (var i = 0; i < N; i++) {
+                        this.drawHotSpot(context, map, graphLines[i]);
+                    }
+                    context.restore();
+                };
+                DisplayGraph.prototype.drawHotSpot = function (context, coordMap, graphLine) {
+                    var p = graphLine.getGraphPoints().getEndValue();
+                    if (p != null) {
+                        var x = coordMap.simToScreenX(p.x);
+                        var y = coordMap.simToScreenY(p.y);
+                        var color = graphLine.hotspotColor;
+                        if (color) {
+                            context.fillStyle = color;
+                            context.fillRect(x - 2, y - 2, 5, 5);
+                        }
+                    }
+                };
+                DisplayGraph.prototype.drawPoints = function (context, coordMap, from, graphLine) {
+                    var simRect = coordMap.screenToSimRect(this.screenRect_);
+                    var iter = graphLine.getGraphPoints().getIterator(from);
+                    if (!iter.hasNext()) {
+                        return from;
+                    }
+                    var next = iter.nextValue();
+                    var style = graphLine.getGraphStyle(iter.getIndex());
+                    if (style.drawingMode === DrawingMode_1.DrawingMode.DOTS) {
+                        var x = coordMap.simToScreenX(next.x);
+                        var y = coordMap.simToScreenY(next.y);
+                        var w = style.lineWidth;
+                        context.fillStyle = style.color_;
+                        context.fillRect(x, y, w, w);
+                    }
+                    while (iter.hasNext()) {
+                        var last = next;
+                        next = iter.nextValue();
+                        if (next.x === last.x && next.y === last.y) {
+                            continue;
+                        }
+                        var style_1 = graphLine.getGraphStyle(iter.getIndex());
+                        var continuous = next.seqX === last.seqX && next.seqY === last.seqY;
+                        if (style_1.drawingMode === DrawingMode_1.DrawingMode.DOTS || !continuous) {
+                            if (!simRect.contains(next)) {
+                                continue;
+                            }
+                            var x = coordMap.simToScreenX(next.x);
+                            var y = coordMap.simToScreenY(next.y);
+                            var w = style_1.lineWidth;
+                            context.fillStyle = style_1.color_;
+                            context.fillRect(x, y, w, w);
+                        } else {
+                            if (!simRect.maybeVisible(last, next)) {
+                                continue;
+                            }
+                            var x1 = coordMap.simToScreenX(last.x);
+                            var y1 = coordMap.simToScreenY(last.y);
+                            var x2 = coordMap.simToScreenX(next.x);
+                            var y2 = coordMap.simToScreenY(next.y);
+                            context.strokeStyle = style_1.color_;
+                            context.lineWidth = style_1.lineWidth;
+                            context.beginPath();
+                            context.moveTo(x1, y1);
+                            context.lineTo(x2, y2);
+                            context.stroke();
+                        }
+                    }
+                    return iter.getIndex();
+                };
+                DisplayGraph.prototype.fullDraw = function (context, coordMap) {
+                    this.memDraw_ = repeat_1.default(-1, this.graphLines_.length);
+                    this.incrementalDraw(context, coordMap);
+                };
+                DisplayGraph.prototype.getZIndex = function () {
+                    return this.zIndex;
+                };
+                DisplayGraph.prototype.setZIndex = function (zIndex) {
+                    this.zIndex = isDefined_1.default(zIndex) ? zIndex : 0;
+                };
+                DisplayGraph.prototype.incrementalDraw = function (context, coordMap) {
+                    for (var i = 0, n = this.graphLines_.length; i < n; i++) {
+                        this.memDraw_[i] = this.drawPoints(context, coordMap, this.memDraw_[i], this.graphLines_[i]);
+                    }
+                };
+                DisplayGraph.prototype.isDragable = function () {
+                    return false;
+                };
+                DisplayGraph.prototype.addGraphLine = function (graphLine) {
+                    if (GraphLine_1.GraphLine.isDuckType(graphLine)) {
+                        if (!contains_1.default(this.graphLines_, graphLine)) {
+                            this.graphLines_.push(graphLine);
+                            this.memDraw_.push(-1);
+                        }
+                    } else {
+                        throw new Error('not a GraphLine ' + graphLine);
+                    }
+                };
+                DisplayGraph.prototype.removeGraphLine = function (graphLine) {
+                    if (GraphLine_1.GraphLine.isDuckType(graphLine)) {
+                        var idx = this.graphLines_.indexOf(graphLine);
+                        removeAt_1.default(this.graphLines_, idx);
+                        removeAt_1.default(this.memDraw_, idx);
+                        this.needRedraw_ = true;
+                    } else {
+                        throw new Error('not a GraphLine ' + graphLine);
+                    }
+                };
+                DisplayGraph.prototype.setDragable = function (dragable) {};
+                DisplayGraph.prototype.setScreenRect = function (screenRect) {
+                    this.screenRect_ = screenRect;
+                    this.offScreen_ = null;
+                };
+                DisplayGraph.prototype.setUseBuffer = function (value) {
+                    this.useBuffer_ = value;
+                    if (!this.useBuffer_) {
+                        this.offScreen_ = null;
+                    }
+                };
+                DisplayGraph.prototype.reset = function () {
+                    var graphLines = this.graphLines_;
+                    var N = graphLines.length;
+                    this.memDraw_ = repeat_1.default(-1, N);
+                    for (var i = 0; i < N; i++) {
+                        graphLines[i].reset();
+                    }
+                    this.needRedraw_ = true;
+                };
+                return DisplayGraph;
+            }();
+            exports_1("DisplayGraph", DisplayGraph);
+        }
+    };
+});
+System.register("davinci-newton/graph/Graph.js", ["../checks/mustBeNumber", "../checks/mustBeString", "../util/AbstractSubject", "../util/GenericObserver", "../view/AlignH", "../view/AlignV", "../view/DoubleRect", "../view/LabCanvas", "../view/SimView", "./AutoScale", "./DisplayAxes", "./DisplayGraph", "./GraphLine"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -4646,930 +3423,468 @@ System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix", "./inv3x3
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractMatrix_1, inv3x3_1, mul3x3_1, Matrix3;
+    var mustBeNumber_1, mustBeString_1, AbstractSubject_1, GenericObserver_1, AlignH_1, AlignV_1, DoubleRect_1, LabCanvas_1, SimView_1, AutoScale_1, DisplayAxes_1, DisplayGraph_1, GraphLine_1, Graph;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractMatrix_1_1) {
-            AbstractMatrix_1 = AbstractMatrix_1_1;
-        }, function (inv3x3_1_1) {
-            inv3x3_1 = inv3x3_1_1;
-        }, function (mul3x3_1_1) {
-            mul3x3_1 = mul3x3_1_1;
+        setters: [function (mustBeNumber_1_1) {
+            mustBeNumber_1 = mustBeNumber_1_1;
+        }, function (mustBeString_1_1) {
+            mustBeString_1 = mustBeString_1_1;
+        }, function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (GenericObserver_1_1) {
+            GenericObserver_1 = GenericObserver_1_1;
+        }, function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
+        }, function (LabCanvas_1_1) {
+            LabCanvas_1 = LabCanvas_1_1;
+        }, function (SimView_1_1) {
+            SimView_1 = SimView_1_1;
+        }, function (AutoScale_1_1) {
+            AutoScale_1 = AutoScale_1_1;
+        }, function (DisplayAxes_1_1) {
+            DisplayAxes_1 = DisplayAxes_1_1;
+        }, function (DisplayGraph_1_1) {
+            DisplayGraph_1 = DisplayGraph_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
         }],
         execute: function () {
-            Matrix3 = function (_super) {
-                __extends(Matrix3, _super);
-                function Matrix3(elements, uom) {
-                    return _super.call(this, elements, 3, uom) || this;
+            Graph = function (_super) {
+                __extends(Graph, _super);
+                function Graph(canvasId, varsList) {
+                    var _this = _super.call(this) || this;
+                    _this.varsList = varsList;
+                    _this.view = new SimView_1.SimView(new DoubleRect_1.default(0, 0, 1, 1));
+                    _this.autoScale = new AutoScale_1.default(_this.view);
+                    var canvas = document.getElementById(canvasId);
+                    _this.labCanvas = new LabCanvas_1.LabCanvas(canvas);
+                    _this.view.hAxisAlign = AlignH_1.AlignH.FULL;
+                    _this.view.vAxisAlign = AlignV_1.AlignV.FULL;
+                    _this.labCanvas.addView(_this.view);
+                    _this.displayGraph = new DisplayGraph_1.DisplayGraph();
+                    _this.displayGraph.setScreenRect(_this.view.getScreenRect());
+                    _this.view.getDisplayList().prepend(_this.displayGraph);
+                    _this.timeIdx_ = varsList.timeIndex();
+                    _this.axes = new DisplayAxes_1.default(_this.view.getSimRect());
+                    _this.subscription = new GenericObserver_1.default(_this.view, function (event) {
+                        if (event.nameEquals(SimView_1.SimView.COORD_MAP_CHANGED)) {
+                            var simRect = _this.view.getCoordMap().screenToSimRect(_this.view.getScreenRect());
+                            _this.axes.setSimRect(simRect);
+                        }
+                    });
+                    _this.view.getDisplayList().add(_this.axes);
+                    _this.autoScale.extraMargin = 0.05;
+                    return _this;
                 }
-                Matrix3.prototype.inv = function () {
-                    inv3x3_1.default(this.elements, this.elements);
-                    return this;
-                };
-                Matrix3.prototype.mul = function (rhs) {
-                    return this.mul2(this, rhs);
-                };
-                Matrix3.prototype.rmul = function (lhs) {
-                    mul3x3_1.default(lhs.elements, this.elements, this.elements);
-                    return this;
-                };
-                Matrix3.prototype.mul2 = function (a, b) {
-                    mul3x3_1.default(a.elements, b.elements, this.elements);
-                    return this;
-                };
-                Matrix3.prototype.rotation = function (spinor) {
-                    var x = -spinor.yz;
-                    var y = -spinor.zx;
-                    var z = -spinor.xy;
-                    var α = spinor.a;
-                    var x2 = x + x;
-                    var y2 = y + y;
-                    var z2 = z + z;
-                    var xx = x * x2;
-                    var xy = x * y2;
-                    var xz = x * z2;
-                    var yy = y * y2;
-                    var yz = y * z2;
-                    var zz = z * z2;
-                    var wx = α * x2;
-                    var wy = α * y2;
-                    var wz = α * z2;
-                    this.set(1 - yy - zz, xy - wz, xz + wy, xy + wz, 1 - xx - zz, yz - wx, xz - wy, yz + wx, 1 - xx - yy);
-                    return this;
-                };
-                Matrix3.prototype.row = function (i) {
-                    var te = this.elements;
-                    return [te[0 + i], te[3 + i], te[6 + i]];
-                };
-                Matrix3.prototype.set = function (n11, n12, n13, n21, n22, n23, n31, n32, n33) {
-                    var te = this.elements;
-                    te[0] = n11;
-                    te[3] = n12;
-                    te[6] = n13;
-                    te[1] = n21;
-                    te[4] = n22;
-                    te[7] = n23;
-                    te[2] = n31;
-                    te[5] = n32;
-                    te[8] = n33;
-                    return this;
-                };
-                Matrix3.prototype.toString = function (radix) {
-                    var text = [];
-                    for (var i = 0; i < this.dimensions; i++) {
-                        text.push(this.row(i).map(function (element, index) {
-                            return element.toString(radix);
-                        }).join(' '));
+                Graph.prototype.destructor = function () {
+                    if (this.subscription) {
+                        this.subscription.disconnect();
+                        this.subscription = void 0;
                     }
-                    return text.join('\n');
                 };
-                Matrix3.prototype.transpose = function () {
-                    var tmp;
-                    var m = this.elements;
-                    tmp = m[1];
-                    m[1] = m[3];
-                    m[3] = tmp;
-                    tmp = m[2];
-                    m[2] = m[6];
-                    m[6] = tmp;
-                    tmp = m[5];
-                    m[5] = m[7];
-                    m[7] = tmp;
-                    return this;
+                Graph.prototype.addGraphLine = function (hCoordIndex, vCoordIndex, color) {
+                    if (color === void 0) {
+                        color = 'black';
+                    }
+                    mustBeNumber_1.default('hCoordIndex', hCoordIndex);
+                    mustBeNumber_1.default('vCoordIndex', vCoordIndex);
+                    mustBeString_1.default('color', color);
+                    var graphLine = new GraphLine_1.GraphLine(this.varsList);
+                    this.view.addMemo(graphLine);
+                    graphLine.hCoordIndex = hCoordIndex;
+                    graphLine.vCoordIndex = vCoordIndex;
+                    graphLine.color = color;
+                    graphLine.hotspotColor = color;
+                    this.displayGraph.addGraphLine(graphLine);
+                    this.displayGraph.setUseBuffer(graphLine.hCoordIndex !== this.timeIdx_);
+                    return graphLine;
                 };
-                Matrix3.one = function () {
-                    return new Matrix3(new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]));
+                Graph.prototype.removeGraphLine = function (graphLine) {
+                    this.displayGraph.removeGraphLine(graphLine);
                 };
-                Matrix3.zero = function () {
-                    return new Matrix3(new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]));
+                Graph.prototype.memorize = function () {
+                    this.labCanvas.memorize();
                 };
-                return Matrix3;
-            }(AbstractMatrix_1.default);
-            exports_1("Matrix3", Matrix3);
-            exports_1("default", Matrix3);
+                Graph.prototype.render = function () {
+                    this.labCanvas.paint();
+                };
+                Graph.prototype.reset = function () {
+                    this.autoScale.reset();
+                    this.displayGraph.reset();
+                };
+                return Graph;
+            }(AbstractSubject_1.default);
+            exports_1("Graph", Graph);
         }
     };
 });
-System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/graph/GraphPoint.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var GraphPoint;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            GraphPoint = function () {
+                function GraphPoint(x, y, seqX, seqY) {
+                    this.x = x;
+                    this.y = y;
+                    this.seqX = seqX;
+                    this.seqY = seqY;
+                }
+                GraphPoint.prototype.equals = function (other) {
+                    return this.x === other.x && this.y === other.y && this.seqX === other.seqX && this.seqY === other.seqY;
+                };
+                return GraphPoint;
+            }();
+            exports_1("default", GraphPoint);
+        }
+    };
+});
+System.register("davinci-newton/graph/GraphStyle.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var GraphStyle;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            GraphStyle = function () {
+                function GraphStyle(index_, drawingMode, color_, lineWidth) {
+                    this.index_ = index_;
+                    this.drawingMode = drawingMode;
+                    this.color_ = color_;
+                    this.lineWidth = lineWidth;
+                }
+                return GraphStyle;
+            }();
+            exports_1("GraphStyle", GraphStyle);
+        }
+    };
+});
+System.register("davinci-newton/graph/GraphLine.js", ["../checks/isObject", "../util/AbstractSubject", "../util/CircularList", "../util/GenericEvent", "../util/ParameterNumber", "../util/ParameterString", "../util/veryDifferent", "../view/DrawingMode", "./GraphPoint", "./GraphStyle"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var isObject_1, AbstractSubject_1, CircularList_1, GenericEvent_1, ParameterNumber_1, ParameterString_1, veryDifferent_1, DrawingMode_1, GraphPoint_1, GraphStyle_1, GraphLine;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }, function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (CircularList_1_1) {
+            CircularList_1 = CircularList_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (ParameterNumber_1_1) {
+            ParameterNumber_1 = ParameterNumber_1_1;
+        }, function (ParameterString_1_1) {
+            ParameterString_1 = ParameterString_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }, function (DrawingMode_1_1) {
+            DrawingMode_1 = DrawingMode_1_1;
+        }, function (GraphPoint_1_1) {
+            GraphPoint_1 = GraphPoint_1_1;
+        }, function (GraphStyle_1_1) {
+            GraphStyle_1 = GraphStyle_1_1;
+        }],
+        execute: function () {
+            GraphLine = function (_super) {
+                __extends(GraphLine, _super);
+                function GraphLine(varsList, capacity) {
+                    var _this = _super.call(this) || this;
+                    _this.lineWidth_ = 1.0;
+                    _this.hotspotColor_ = 'red';
+                    _this.styles_ = [];
+                    _this.varsList_ = varsList;
+                    varsList.addObserver(_this);
+                    _this.xVar_ = -1;
+                    _this.yVar_ = -1;
+                    _this.xVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_X_VARIABLE, function () {
+                        return _this.hCoordIndex;
+                    }, function (hCoordIndex) {
+                        return _this.hCoordIndex = hCoordIndex;
+                    });
+                    _this.xVarParam_.setLowerLimit(-1);
+                    _this.addParameter(_this.xVarParam_);
+                    _this.yVarParam_ = new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_Y_VARIABLE, function () {
+                        return _this.vCoordIndex;
+                    }, function (vCoordIndex) {
+                        return _this.vCoordIndex = vCoordIndex;
+                    });
+                    _this.yVarParam_.setLowerLimit(-1);
+                    _this.addParameter(_this.yVarParam_);
+                    _this.dataPoints_ = new CircularList_1.CircularList(capacity || 100000);
+                    _this.drawColor_ = 'lime';
+                    _this.drawingMode_ = DrawingMode_1.DrawingMode.LINES;
+                    _this.addGraphStyle();
+                    _this.xTransform = function (x, y) {
+                        return x;
+                    };
+                    _this.yTransform = function (x, y) {
+                        return y;
+                    };
+                    _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_LINE_WIDTH, function () {
+                        return _this.lineWidth;
+                    }, function (lineWidth) {
+                        return _this.lineWidth = lineWidth;
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, GraphLine.PARAM_NAME_DRAWING_MODE, function () {
+                        return _this.drawingMode;
+                    }, function (drawingMode) {
+                        return _this.drawingMode = drawingMode;
+                    }));
+                    _this.addParameter(new ParameterString_1.default(_this, GraphLine.PARAM_NAME_COLOR, function () {
+                        return _this.color;
+                    }, function (color) {
+                        return _this.color = color;
+                    }));
+                    return _this;
+                }
+                GraphLine.prototype.addGraphStyle = function () {
+                    this.styles_.push(new GraphStyle_1.GraphStyle(this.dataPoints_.getEndIndex() + 1, this.drawingMode_, this.drawColor_, this.lineWidth_));
+                };
+                GraphLine.isDuckType = function (obj) {
+                    if (obj instanceof GraphLine) {
+                        return true;
+                    }
+                    return isObject_1.default(obj) && obj.setXVariable !== undefined && obj.setYVariable !== undefined && obj.color !== undefined && obj.lineWidth !== undefined && obj.setAxes !== undefined && obj.varsList !== undefined && obj.reset !== undefined && obj.getGraphStyle !== undefined;
+                };
+                Object.defineProperty(GraphLine.prototype, "color", {
+                    get: function () {
+                        return this.drawColor_;
+                    },
+                    set: function (color) {
+                        if (this.drawColor_ !== color) {
+                            this.drawColor_ = color;
+                            this.addGraphStyle();
+                            this.broadcastParameter(GraphLine.PARAM_NAME_COLOR);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(GraphLine.prototype, "drawingMode", {
+                    get: function () {
+                        return this.drawingMode_;
+                    },
+                    set: function (drawingMode) {
+                        if (this.drawingMode_ !== drawingMode) {
+                            this.drawingMode_ = drawingMode;
+                            this.addGraphStyle();
+                        }
+                        this.broadcastParameter(GraphLine.PARAM_NAME_DRAWING_MODE);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                GraphLine.prototype.getGraphPoints = function () {
+                    return this.dataPoints_;
+                };
+                GraphLine.prototype.getGraphStyle = function (index) {
+                    var styles = this.styles_;
+                    if (styles.length === 0) {
+                        throw new Error('graph styles list is empty');
+                    }
+                    var last = styles[0];
+                    for (var i = 1, len = styles.length; i < len; i++) {
+                        var s = styles[i];
+                        if (s.index_ > index) {
+                            break;
+                        }
+                        last = s;
+                    }
+                    return last;
+                };
+                Object.defineProperty(GraphLine.prototype, "hotspotColor", {
+                    get: function () {
+                        return this.hotspotColor_;
+                    },
+                    set: function (color) {
+                        this.hotspotColor_ = color;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(GraphLine.prototype, "lineWidth", {
+                    get: function () {
+                        return this.lineWidth_;
+                    },
+                    set: function (lineWidth) {
+                        if (veryDifferent_1.default(lineWidth, this.lineWidth_)) {
+                            this.lineWidth_ = lineWidth;
+                            this.addGraphStyle();
+                            this.broadcastParameter(GraphLine.PARAM_NAME_LINE_WIDTH);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(GraphLine.prototype, "varsList", {
+                    get: function () {
+                        return this.varsList_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(GraphLine.prototype, "hCoordIndex", {
+                    get: function () {
+                        return this.xVar_;
+                    },
+                    set: function (xVar) {
+                        this.checkVarIndex(GraphLine.PARAM_NAME_X_VARIABLE, xVar);
+                        if (xVar !== this.xVar_) {
+                            this.xVar_ = xVar;
+                            this.reset();
+                            this.broadcastParameter(GraphLine.PARAM_NAME_X_VARIABLE);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                GraphLine.prototype.getXVarName = function () {
+                    return this.xVar_ > -1 ? this.varsList_.getName(this.xVar_) : '';
+                };
+                Object.defineProperty(GraphLine.prototype, "vCoordIndex", {
+                    get: function () {
+                        return this.yVar_;
+                    },
+                    set: function (yVar) {
+                        this.checkVarIndex(GraphLine.PARAM_NAME_Y_VARIABLE, yVar);
+                        if (yVar !== this.yVar_) {
+                            this.yVar_ = yVar;
+                            this.reset();
+                            this.broadcastParameter(GraphLine.PARAM_NAME_Y_VARIABLE);
+                        }
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                GraphLine.prototype.getYVarName = function () {
+                    return this.yVar_ > -1 ? this.varsList_.getName(this.yVar_) : '';
+                };
+                GraphLine.prototype.memorize = function () {
+                    if (this.xVar_ > -1 && this.yVar_ > -1) {
+                        var varsList = this.varsList_;
+                        var x = varsList.getValue(this.xVar_);
+                        var y = varsList.getValue(this.yVar_);
+                        var nextX = this.xTransform(x, y);
+                        var nextY = this.yTransform(x, y);
+                        var seqX = varsList.getSequence(this.xVar_);
+                        var seqY = varsList.getSequence(this.xVar_);
+                        var newPoint = new GraphPoint_1.default(nextX, nextY, seqX, seqY);
+                        var last = this.dataPoints_.getEndValue();
+                        if (last == null || !last.equals(newPoint)) {
+                            this.dataPoints_.store(newPoint);
+                        }
+                    }
+                };
+                GraphLine.prototype.observe = function (event) {};
+                GraphLine.prototype.reset = function () {
+                    this.dataPoints_.reset();
+                    this.resetStyle();
+                    this.broadcast(new GenericEvent_1.default(this, GraphLine.RESET));
+                };
+                GraphLine.prototype.resetStyle = function () {
+                    this.styles_ = [];
+                    this.addGraphStyle();
+                };
+                GraphLine.prototype.checkVarIndex = function (name, index) {
+                    if (index < -1 || index > this.varsList_.numVariables() - 1) {
+                        throw new Error(name + " bad index: " + index);
+                    }
+                };
+                GraphLine.PARAM_NAME_X_VARIABLE = 'X variable';
+                GraphLine.PARAM_NAME_Y_VARIABLE = 'Y variable';
+                GraphLine.PARAM_NAME_LINE_WIDTH = 'line width';
+                GraphLine.PARAM_NAME_COLOR = 'color';
+                GraphLine.PARAM_NAME_DRAWING_MODE = 'drawing mode';
+                GraphLine.RESET = 'RESET';
+                return GraphLine;
+            }(AbstractSubject_1.default);
+            exports_1("GraphLine", GraphLine);
+        }
+    };
+});
+System.register("davinci-newton/checks/isString.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function isFunction(x) {
-        return typeof x === 'function';
+    function isString(s) {
+        return typeof s === 'string';
     }
-    exports_1("default", isFunction);
+    exports_1("default", isString);
     return {
         setters: [],
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatisfy", "../checks/isFunction"], function (exports_1, context_1) {
+System.register("davinci-newton/checks/mustBeString.js", ["../checks/mustSatisfy", "../checks/isString"], function (exports_1, context_1) {
     "use strict";
 
-    var mustSatisfy_1, isFunction_1;
+    var mustSatisfy_1, isString_1;
     var __moduleName = context_1 && context_1.id;
-    function beFunction() {
-        return "be a function";
+    function beAString() {
+        return "be a string";
     }
-    function mustBeFunction(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isFunction_1.default(value), beFunction, contextBuilder);
+    function default_1(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isString_1.default(value), beAString, contextBuilder);
         return value;
     }
-    exports_1("default", mustBeFunction);
+    exports_1("default", default_1);
     return {
         setters: [function (mustSatisfy_1_1) {
             mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isFunction_1_1) {
-            isFunction_1 = isFunction_1_1;
+        }, function (isString_1_1) {
+            isString_1 = isString_1_1;
         }],
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (exports_1, context_1) {
+System.register("davinci-newton/i18n/readOnly.js", ["../checks/mustBeString"], function (exports_1, context_1) {
     "use strict";
 
-    var mustSatisfy_1, isNull_1, isObject_1;
+    var mustBeString_1;
     var __moduleName = context_1 && context_1.id;
-    function beObject() {
-        return "be a non-null `object`";
-    }
-    function mustBeObject(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
-        return value;
-    }
-    exports_1("default", mustBeObject);
-    return {
-        setters: [function (mustSatisfy_1_1) {
-            mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isNull_1_1) {
-            isNull_1 = isNull_1_1;
-        }, function (isObject_1_1) {
-            isObject_1 = isObject_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/engine3D/RigidBody3.js", ["../objects/AbstractSimObject", "../math/Bivector3", "../math/Geometric3", "../math/Mat3", "../math/Matrix3", "../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Unit", "../math/Vec3"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
+    function readOnly(name) {
+        mustBeString_1.default('name', name);
+        var message = {
+            get message() {
+                return "Property `" + name + "` is readonly.";
             }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
-    }();
-    var AbstractSimObject_1, Bivector3_1, Geometric3_1, Mat3_1, Matrix3_1, mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Unit_1, Vec3_1, RigidBody3;
-    var __moduleName = context_1 && context_1.id;
-    function assertConsistentUnits(aName, A, bName, B) {
-        if (!A.isZero() && !B.isZero()) {
-            if (Unit_1.Unit.isOne(A.uom)) {
-                if (!Unit_1.Unit.isOne(B.uom)) {
-                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
-                }
-            } else {
-                if (Unit_1.Unit.isOne(B.uom)) {
-                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
-                }
-            }
-        }
+        return message;
     }
-    function mustBeDimensionlessOrCorrectUnits(name, value, unit) {
-        if (!Unit_1.Unit.isOne(value.uom) && !Unit_1.Unit.isCompatible(value.uom, unit)) {
-            throw new Error(name + " unit of measure, " + value.uom + ", must be compatible with " + unit);
-        } else {
-            return value;
-        }
-    }
+    exports_1("default", readOnly);
     return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (Bivector3_1_1) {
-            Bivector3_1 = Bivector3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Mat3_1_1) {
-            Mat3_1 = Mat3_1_1;
-        }, function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (mustBeFunction_1_1) {
-            mustBeFunction_1 = mustBeFunction_1_1;
-        }, function (mustBeNonNullObject_1_1) {
-            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
-        }, function (mustBeNumber_1_1) {
-            mustBeNumber_1 = mustBeNumber_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (Vec3_1_1) {
-            Vec3_1 = Vec3_1_1;
-        }],
-        execute: function () {
-            RigidBody3 = function (_super) {
-                __extends(RigidBody3, _super);
-                function RigidBody3() {
-                    var _this = _super.call(this) || this;
-                    _this.mass_ = Geometric3_1.default.scalar(1);
-                    _this.massLock_ = _this.mass_.lock();
-                    _this.charge_ = Geometric3_1.default.scalar(0);
-                    _this.chargeLock_ = _this.charge_.lock();
-                    _this.inertiaTensorInverse_ = new Mat3_1.default(Matrix3_1.default.one());
-                    _this.varsIndex_ = -1;
-                    _this.position_ = Geometric3_1.default.zero.clone();
-                    _this.attitude_ = Geometric3_1.default.one.clone();
-                    _this.linearMomentum_ = Geometric3_1.default.zero.clone();
-                    _this.angularMomentum_ = Geometric3_1.default.zero.clone();
-                    _this.Ω_scratch = new Bivector3_1.default(0, 0, 0);
-                    _this.angularVelocity_ = Geometric3_1.default.bivector(0, 0, 0);
-                    _this.centerOfMassLocal_ = Vec3_1.default.zero;
-                    _this.rotationalEnergy_ = Geometric3_1.default.zero.clone();
-                    _this.rotationalEnergyLock_ = _this.rotationalEnergy_.lock();
-                    _this.translationalEnergy_ = Geometric3_1.default.zero.clone();
-                    _this.translationalEnergyLock_ = _this.translationalEnergy_.lock();
-                    _this.worldPoint_ = Geometric3_1.default.vector(0, 0, 0);
-                    return _this;
-                }
-                Object.defineProperty(RigidBody3.prototype, "centerOfMassLocal", {
-                    get: function () {
-                        return this.centerOfMassLocal_;
-                    },
-                    set: function (centerOfMassLocal) {
-                        this.centerOfMassLocal_ = Vec3_1.default.fromVector(centerOfMassLocal);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "M", {
-                    get: function () {
-                        return this.mass_;
-                    },
-                    set: function (M) {
-                        mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.Unit.KILOGRAM);
-                        this.mass_.unlock(this.massLock_);
-                        this.mass_.copy(M);
-                        this.massLock_ = this.mass_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "Q", {
-                    get: function () {
-                        return this.charge_;
-                    },
-                    set: function (Q) {
-                        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.Unit.COULOMB);
-                        this.charge_.unlock(this.chargeLock_);
-                        this.charge_.copy(Q);
-                        this.chargeLock_ = this.charge_.lock();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                RigidBody3.prototype.updateAngularVelocity = function () {
-                    this.Ω.copy(this.L);
-                    this.Ω.rotate(this.R.rev());
-                    this.Ω_scratch.copy(this.Ω);
-                    this.Ω_scratch.applyMatrix(this.Iinv);
-                    this.Ω.copyBivector(this.Ω_scratch);
-                    this.Ω.rotate(this.R.rev());
-                };
-                RigidBody3.prototype.updateInertiaTensor = function () {};
-                Object.defineProperty(RigidBody3.prototype, "I", {
-                    get: function () {
-                        var I = Matrix3_1.default.zero().copy(this.inertiaTensorInverse_).inv();
-                        return new Mat3_1.default(I);
-                    },
-                    set: function (I) {
-                        var Iinv = Matrix3_1.default.zero().copy(I).inv();
-                        this.inertiaTensorInverse_ = new Mat3_1.default(Iinv);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "Iinv", {
-                    get: function () {
-                        return this.inertiaTensorInverse_;
-                    },
-                    set: function (source) {
-                        mustBeNonNullObject_1.default('Iinv', source);
-                        mustBeNumber_1.default('dimensions', source.dimensions);
-                        mustBeFunction_1.default('getElement', source.getElement);
-                        this.inertiaTensorInverse_ = new Mat3_1.default(source);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "X", {
-                    get: function () {
-                        return this.position_;
-                    },
-                    set: function (position) {
-                        mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER);
-                        this.position_.copy(position);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "R", {
-                    get: function () {
-                        return this.attitude_;
-                    },
-                    set: function (attitude) {
-                        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE);
-                        this.attitude_.copy(attitude);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "P", {
-                    get: function () {
-                        return this.linearMomentum_;
-                    },
-                    set: function (momentum) {
-                        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND);
-                        this.linearMomentum_.copy(momentum);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "L", {
-                    get: function () {
-                        return this.angularMomentum_;
-                    },
-                    set: function (angularMomentum) {
-                        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND);
-                        this.angularMomentum_.copy(angularMomentum);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "\u03A9", {
-                    get: function () {
-                        return this.angularVelocity_;
-                    },
-                    set: function (angularVelocity) {
-                        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit_1.Unit.INV_SECOND);
-                        this.angularVelocity_.copy(angularVelocity);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "expireTime", {
-                    get: function () {
-                        return Number.POSITIVE_INFINITY;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(RigidBody3.prototype, "varsIndex", {
-                    get: function () {
-                        return this.varsIndex_;
-                    },
-                    set: function (index) {
-                        this.varsIndex_ = index;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                RigidBody3.prototype.rotationalEnergy = function () {
-                    assertConsistentUnits('Ω', this.Ω, 'L', this.L);
-                    this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
-                    this.rotationalEnergy_.copyBivector(this.Ω).rev().scp(this.L).mulByNumber(0.5);
-                    this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
-                    return this.rotationalEnergy_;
-                };
-                RigidBody3.prototype.translationalEnergy = function () {
-                    assertConsistentUnits('M', this.M, 'P', this.P);
-                    this.translationalEnergy_.unlock(this.translationalEnergyLock_);
-                    this.translationalEnergy_.copyVector(this.P).mulByVector(this.P).divByScalar(this.M.a, this.M.uom).mulByNumber(0.5);
-                    this.translationalEnergyLock_ = this.translationalEnergy_.lock();
-                    return this.translationalEnergy_;
-                };
-                RigidBody3.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
-                    this.worldPoint_.copyVector(localPoint).subVector(this.centerOfMassLocal_);
-                    this.worldPoint_.rotate(this.attitude_).addVector(this.position_);
-                    this.worldPoint_.writeVector(worldPoint);
-                };
-                return RigidBody3;
-            }(AbstractSimObject_1.default);
-            exports_1("RigidBody3", RigidBody3);
-            exports_1("default", RigidBody3);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/Sphere3.js", ["../math/Geometric3", "../math/Matrix3", "./RigidBody3", "../math/Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var Geometric3_1, Matrix3_1, RigidBody3_1, Unit_1, Sphere3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (RigidBody3_1_1) {
-            RigidBody3_1 = RigidBody3_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {
-            Sphere3 = function (_super) {
-                __extends(Sphere3, _super);
-                function Sphere3(radius) {
-                    if (radius === void 0) {
-                        radius = Geometric3_1.default.one;
-                    }
-                    var _this = _super.call(this) || this;
-                    _this.radius_ = Geometric3_1.default.fromScalar(radius);
-                    _this.radiusLock_ = _this.radius_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Sphere3.prototype, "radius", {
-                    get: function () {
-                        return this.radius_;
-                    },
-                    set: function (radius) {
-                        this.radius_.unlock(this.radiusLock_);
-                        this.radius_.copyScalar(radius.a, radius.uom);
-                        this.radiusLock_ = this.radius_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Sphere3.prototype.updateAngularVelocity = function () {
-                    this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
-                    this.Ω.quaditude(true);
-                    this.Ω.mulByScalar(this.M.a, this.M.uom);
-                    this.Ω.mulByNumber(2 / 5);
-                    this.Ω.inv();
-                    this.Ω.mulByBivector(this.L);
-                };
-                Sphere3.prototype.updateInertiaTensor = function () {
-                    var r = this.radius_;
-                    var s = 2 * this.M.a * r.a * r.a / 5;
-                    var I = Matrix3_1.default.zero();
-                    I.setElement(0, 0, s);
-                    I.setElement(1, 1, s);
-                    I.setElement(2, 2, s);
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
-                    this.I = I;
-                };
-                return Sphere3;
-            }(RigidBody3_1.default);
-            exports_1("Sphere3", Sphere3);
-            exports_1("default", Sphere3);
-        }
-    };
-});
-System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var AbstractSimObject;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            AbstractSimObject = function () {
-                function AbstractSimObject() {
-                    this.expireTime_ = Number.POSITIVE_INFINITY;
-                }
-                Object.defineProperty(AbstractSimObject.prototype, "expireTime", {
-                    get: function () {
-                        return this.expireTime_;
-                    },
-                    set: function (expireTime) {
-                        this.expireTime_ = expireTime;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return AbstractSimObject;
-            }();
-            exports_1("AbstractSimObject", AbstractSimObject);
-            exports_1("default", AbstractSimObject);
-        }
-    };
-});
-System.register("davinci-newton/math/isBivectorE3.js", ["../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (exports_1, context_1) {
-    "use strict";
-
-    var isNull_1, isNumber_1, isObject_1;
-    var __moduleName = context_1 && context_1.id;
-    function isBivectorE3(v) {
-        if (isObject_1.default(v) && !isNull_1.default(v)) {
-            return isNumber_1.default(v.xy) && isNumber_1.default(v.yz) && isNumber_1.default(v.zx);
-        } else {
-            return false;
-        }
-    }
-    exports_1("default", isBivectorE3);
-    return {
-        setters: [function (isNull_1_1) {
-            isNull_1 = isNull_1_1;
-        }, function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }, function (isObject_1_1) {
-            isObject_1 = isObject_1_1;
+        setters: [function (mustBeString_1_1) {
+            mustBeString_1 = mustBeString_1_1;
         }],
         execute: function () {}
-    };
-});
-System.register("davinci-newton/math/mustBeBivectorE3.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function mustBeBivectorE3(name, B) {
-        if (isNaN(B.yz) || isNaN(B.zx) || isNaN(B.xy)) {
-            throw new Error(name + ", (" + B.yz + ", " + B.zx + ", " + B.xy + "), must be a BivectorE3.");
-        }
-        return B;
-    }
-    exports_1("default", mustBeBivectorE3);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/mustBeVectorE3.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function mustBeVectorE3(name, v) {
-        if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
-            throw new Error(name + ", (" + v.x + ", " + v.y + ", " + v.z + "), must be a VectorE3.");
-        }
-        return v;
-    }
-    exports_1("default", mustBeVectorE3);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/wedge3.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function wedgeYZ(a, b) {
-        return a.y * b.z - a.z * b.y;
-    }
-    exports_1("wedgeYZ", wedgeYZ);
-    function wedgeZX(a, b) {
-        return a.z * b.x - a.x * b.z;
-    }
-    exports_1("wedgeZX", wedgeZX);
-    function wedgeXY(a, b) {
-        return a.x * b.y - a.y * b.x;
-    }
-    exports_1("wedgeXY", wedgeXY);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/Bivector3.js", ["./isBivectorE3", "../checks/isNumber", "./isVectorE3", "./mustBeBivectorE3", "../checks/mustBeNumber", "./mustBeVectorE3", "./Unit", "./wedge3"], function (exports_1, context_1) {
-    "use strict";
-
-    var isBivectorE3_1, isNumber_1, isVectorE3_1, mustBeBivectorE3_1, mustBeNumber_1, mustBeVectorE3_1, Unit_1, wedge3_1, Bivector3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (isBivectorE3_1_1) {
-            isBivectorE3_1 = isBivectorE3_1_1;
-        }, function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }, function (isVectorE3_1_1) {
-            isVectorE3_1 = isVectorE3_1_1;
-        }, function (mustBeBivectorE3_1_1) {
-            mustBeBivectorE3_1 = mustBeBivectorE3_1_1;
-        }, function (mustBeNumber_1_1) {
-            mustBeNumber_1 = mustBeNumber_1_1;
-        }, function (mustBeVectorE3_1_1) {
-            mustBeVectorE3_1 = mustBeVectorE3_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (wedge3_1_1) {
-            wedge3_1 = wedge3_1_1;
-        }],
-        execute: function () {
-            Bivector3 = function () {
-                function Bivector3(yz, zx, xy, uom) {
-                    this.yz = mustBeNumber_1.default('yz', yz);
-                    this.zx = mustBeNumber_1.default('zx', zx);
-                    this.xy = mustBeNumber_1.default('xy', xy);
-                    this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
-                }
-                Bivector3.prototype.add = function (B) {
-                    mustBeBivectorE3_1.default('B', B);
-                    this.yz += B.yz;
-                    this.zx += B.zx;
-                    this.xy += B.xy;
-                    this.uom = Unit_1.Unit.compatible(this.uom, B.uom);
-                    return this;
-                };
-                Bivector3.prototype.applyMatrix = function (σ) {
-                    var x = this.yz;
-                    var y = this.zx;
-                    var z = this.xy;
-                    var n11 = σ.getElement(0, 0),
-                        n12 = σ.getElement(0, 1),
-                        n13 = σ.getElement(0, 2);
-                    var n21 = σ.getElement(1, 0),
-                        n22 = σ.getElement(1, 1),
-                        n23 = σ.getElement(1, 2);
-                    var n31 = σ.getElement(2, 0),
-                        n32 = σ.getElement(2, 1),
-                        n33 = σ.getElement(2, 2);
-                    this.yz = n11 * x + n12 * y + n13 * z;
-                    this.zx = n21 * x + n22 * y + n23 * z;
-                    this.xy = n31 * x + n32 * y + n33 * z;
-                    return this;
-                };
-                Bivector3.prototype.copy = function (B) {
-                    mustBeBivectorE3_1.default('B', B);
-                    this.yz = B.yz;
-                    this.zx = B.zx;
-                    this.xy = B.xy;
-                    return this;
-                };
-                Bivector3.prototype.isZero = function () {
-                    return this.xy === 0 && this.yz === 0 && this.zx === 0;
-                };
-                Bivector3.prototype.rev = function () {
-                    this.yz = -this.yz;
-                    this.zx = -this.zx;
-                    this.xy = -this.xy;
-                    return this;
-                };
-                Bivector3.prototype.rotate = function (R) {
-                    if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
-                        return this;
-                    } else {
-                        var yz = this.yz;
-                        var zx = this.zx;
-                        var xy = this.xy;
-                        var Rxy = R.xy;
-                        var Ryz = R.yz;
-                        var Rzx = R.zx;
-                        var Ra = R.a;
-                        var Syz = Ra * yz - Rzx * xy + Rxy * zx;
-                        var Szx = Ra * zx - Rxy * yz + Ryz * xy;
-                        var Sxy = Ra * xy - Ryz * zx + Rzx * yz;
-                        var Sa = Ryz * yz + Rzx * zx + Rxy * xy;
-                        this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
-                        this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
-                        this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
-                        return this;
-                    }
-                };
-                Bivector3.prototype.sub = function (B) {
-                    mustBeBivectorE3_1.default('B', B);
-                    this.yz -= B.yz;
-                    this.zx -= B.zx;
-                    this.xy -= B.xy;
-                    return this;
-                };
-                Bivector3.prototype.toExponential = function (fractionDigits) {
-                    return "new Bivector3(yz: " + this.yz.toExponential(fractionDigits) + ", zx: " + this.zx.toExponential(fractionDigits) + ", xy: " + this.xy.toExponential(fractionDigits) + ")";
-                };
-                Bivector3.prototype.toFixed = function (fractionDigits) {
-                    return "new Bivector3(yz: " + this.yz.toFixed(fractionDigits) + ", zx: " + this.zx.toFixed(fractionDigits) + ", xy: " + this.xy.toFixed(fractionDigits) + ")";
-                };
-                Bivector3.prototype.toPrecision = function (precision) {
-                    return "new Bivector3(yz: " + this.yz.toPrecision(precision) + ", zx: " + this.zx.toPrecision(precision) + ", xy: " + this.xy.toPrecision(precision) + ")";
-                };
-                Bivector3.prototype.toString = function (radix) {
-                    return "new Bivector3(yz: " + this.yz.toString(radix) + ", zx: " + this.zx.toString(radix) + ", xy: " + this.xy.toString(radix) + ")";
-                };
-                Bivector3.prototype.wedge = function (a, b) {
-                    mustBeVectorE3_1.default('a', a);
-                    mustBeVectorE3_1.default('b', b);
-                    this.yz = wedge3_1.wedgeYZ(a, b);
-                    this.zx = wedge3_1.wedgeZX(a, b);
-                    this.xy = wedge3_1.wedgeXY(a, b);
-                    this.uom = Unit_1.Unit.mul(a.uom, b.uom);
-                    return this;
-                };
-                Bivector3.prototype.write = function (B) {
-                    B.xy = this.xy;
-                    B.yz = this.yz;
-                    B.zx = this.zx;
-                    B.uom = this.uom;
-                    return this;
-                };
-                Bivector3.prototype.zero = function () {
-                    this.yz = 0;
-                    this.zx = 0;
-                    this.xy = 0;
-                    return this;
-                };
-                Bivector3.prototype.__add__ = function (rhs) {
-                    if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
-                        var yz = this.yz + rhs.yz;
-                        var zx = this.zx + rhs.zx;
-                        var xy = this.xy + rhs.xy;
-                        var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
-                        return new Bivector3(yz, zx, xy, uom);
-                    } else {
-                        return void 0;
-                    }
-                };
-                Bivector3.prototype.__mul__ = function (rhs) {
-                    if (isNumber_1.default(rhs)) {
-                        var yz = this.yz * rhs;
-                        var zx = this.zx * rhs;
-                        var xy = this.xy * rhs;
-                        return new Bivector3(yz, zx, xy, this.uom);
-                    } else {
-                        return void 0;
-                    }
-                };
-                Bivector3.prototype.__rmul__ = function (lhs) {
-                    if (isNumber_1.default(lhs)) {
-                        var yz = lhs * this.yz;
-                        var zx = lhs * this.zx;
-                        var xy = lhs * this.xy;
-                        return new Bivector3(yz, zx, xy, this.uom);
-                    } else {
-                        return void 0;
-                    }
-                };
-                Bivector3.prototype.__sub__ = function (rhs) {
-                    if (isBivectorE3_1.default(rhs) && !isVectorE3_1.default(rhs)) {
-                        var yz = this.yz - rhs.yz;
-                        var zx = this.zx - rhs.zx;
-                        var xy = this.xy - rhs.xy;
-                        var uom = Unit_1.Unit.compatible(this.uom, rhs.uom);
-                        return new Bivector3(yz, zx, xy, uom);
-                    } else {
-                        return void 0;
-                    }
-                };
-                Bivector3.wedge = function (a, b) {
-                    return new Bivector3(0, 0, 0).wedge(a, b);
-                };
-                return Bivector3;
-            }();
-            exports_1("Bivector3", Bivector3);
-            exports_1("default", Bivector3);
-        }
-    };
-});
-System.register("davinci-newton/model/CoordType.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var CoordType;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            (function (CoordType) {
-                CoordType[CoordType["LOCAL"] = 0] = "LOCAL";
-                CoordType[CoordType["WORLD"] = 1] = "WORLD";
-            })(CoordType || (CoordType = {}));
-            exports_1("CoordType", CoordType);
-            exports_1("default", CoordType);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/Force3.js", ["../objects/AbstractSimObject", "../math/Bivector3", "../model/CoordType", "../math/Geometric3"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSimObject_1, Bivector3_1, CoordType_1, Geometric3_1, Force3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (Bivector3_1_1) {
-            Bivector3_1 = Bivector3_1_1;
-        }, function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }],
-        execute: function () {
-            Force3 = function (_super) {
-                __extends(Force3, _super);
-                function Force3(body_) {
-                    var _this = _super.call(this) || this;
-                    _this.body_ = body_;
-                    _this.location = Geometric3_1.default.vector(0, 0, 0);
-                    _this.vector = Geometric3_1.default.vector(0, 0, 0);
-                    _this.position_ = Geometric3_1.default.vector(0, 0, 0);
-                    _this.force_ = Geometric3_1.default.vector(0, 0, 0);
-                    _this.torque_ = new Bivector3_1.default(0, 0, 0);
-                    return _this;
-                }
-                Force3.prototype.getBody = function () {
-                    return this.body_;
-                };
-                Force3.prototype.computeForce = function (force) {
-                    switch (this.vectorCoordType) {
-                        case CoordType_1.default.LOCAL:
-                            {
-                                this.force_.copyVector(this.vector);
-                                this.force_.rotate(this.body_.R);
-                                this.force_.writeVector(force);
-                                break;
-                            }
-                        case CoordType_1.default.WORLD:
-                            {
-                                this.force_.copyVector(this.vector);
-                                this.force_.writeVector(force);
-                                break;
-                            }
-                    }
-                };
-                Object.defineProperty(Force3.prototype, "F", {
-                    get: function () {
-                        this.computeForce(this.force_);
-                        return this.force_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Force3.prototype, "x", {
-                    get: function () {
-                        this.computePosition(this.position_);
-                        return this.position_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Force3.prototype.computePosition = function (position) {
-                    switch (this.locationCoordType) {
-                        case CoordType_1.default.LOCAL:
-                            {
-                                this.position_.copyVector(this.location);
-                                this.position_.rotate(this.body_.R);
-                                this.position_.addVector(this.body_.X);
-                                this.position_.writeVector(position);
-                                break;
-                            }
-                        case CoordType_1.default.WORLD:
-                            {
-                                this.position_.copyVector(this.location);
-                                this.position_.writeVector(position);
-                                break;
-                            }
-                    }
-                };
-                Force3.prototype.computeTorque = function (torque) {
-                    this.computePosition(this.position_);
-                    this.computeForce(this.force_);
-                    this.torque_.wedge(this.position_.subVector(this.body_.X), this.force_);
-                    this.torque_.write(torque);
-                };
-                return Force3;
-            }(AbstractSimObject_1.default);
-            exports_1("Force3", Force3);
-            exports_1("default", Force3);
-        }
     };
 });
 System.register("davinci-newton/math/approx.js", [], function (exports_1, context_1) {
@@ -5719,10 +4034,10 @@ System.register("davinci-newton/math/extE3.js", [], function (exports_1, context
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./extE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./compG3Set", "./extE3", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var compG3Get_1, extE3_1, compG3Set_1, Unit_1;
+    var compG3Get_1, compG3Set_1, extE3_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function extG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -5751,10 +4066,10 @@ System.register("davinci-newton/math/extG3.js", ["./compG3Get", "./extE3", "./co
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
-        }, function (extE3_1_1) {
-            extE3_1 = extE3_1_1;
         }, function (compG3Set_1_1) {
             compG3Set_1 = compG3Set_1_1;
+        }, function (extE3_1_1) {
+            extE3_1 = extE3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
@@ -5843,19 +4158,6 @@ System.register("davinci-newton/math/isScalarG3.js", [], function (exports_1, co
         return m.x === 0 && m.y === 0 && m.z === 0 && m.xy === 0 && m.yz === 0 && m.zx === 0 && m.b === 0;
     }
     exports_1("default", isScalarG3);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isNull.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function default_1(x) {
-        return x === null;
-    }
-    exports_1("default", default_1);
     return {
         setters: [],
         execute: function () {}
@@ -6019,10 +4321,10 @@ System.register("davinci-newton/math/lcoE3.js", [], function (exports_1, context
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/lcoG3.js", ["./compG3Get", "./lcoE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/lcoG3.js", ["./compG3Get", "./compG3Set", "./lcoE3", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var compG3Get_1, lcoE3_1, compG3Set_1, Unit_1;
+    var compG3Get_1, compG3Set_1, lcoE3_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function lcoG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -6051,26 +4353,13 @@ System.register("davinci-newton/math/lcoG3.js", ["./compG3Get", "./lcoE3", "./co
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
-        }, function (lcoE3_1_1) {
-            lcoE3_1 = lcoE3_1_1;
         }, function (compG3Set_1_1) {
             compG3Set_1 = compG3Set_1_1;
+        }, function (lcoE3_1_1) {
+            lcoE3_1 = lcoE3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isObject.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isObject(x) {
-        return typeof x === 'object';
-    }
-    exports_1("default", isObject);
-    return {
-        setters: [],
         execute: function () {}
     };
 });
@@ -6156,50 +4445,6 @@ System.register("davinci-newton/math/randomRange.js", [], function (exports_1, c
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/mustBeString.js", ["../checks/mustSatisfy", "../checks/isString"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustSatisfy_1, isString_1;
-    var __moduleName = context_1 && context_1.id;
-    function beAString() {
-        return "be a string";
-    }
-    function default_1(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isString_1.default(value), beAString, contextBuilder);
-        return value;
-    }
-    exports_1("default", default_1);
-    return {
-        setters: [function (mustSatisfy_1_1) {
-            mustSatisfy_1 = mustSatisfy_1_1;
-        }, function (isString_1_1) {
-            isString_1 = isString_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/i18n/readOnly.js", ["../checks/mustBeString"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustBeString_1;
-    var __moduleName = context_1 && context_1.id;
-    function readOnly(name) {
-        mustBeString_1.default('name', name);
-        var message = {
-            get message() {
-                return "Property `" + name + "` is readonly.";
-            }
-        };
-        return message;
-    }
-    exports_1("default", readOnly);
-    return {
-        setters: [function (mustBeString_1_1) {
-            mustBeString_1 = mustBeString_1_1;
-        }],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/math/rcoE3.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -6277,10 +4522,10 @@ System.register("davinci-newton/math/rcoE3.js", [], function (exports_1, context
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/rcoG3.js", ["./compG3Get", "./rcoE3", "./compG3Set", "./Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/rcoG3.js", ["./compG3Get", "./compG3Set", "./rcoE3", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var compG3Get_1, rcoE3_1, compG3Set_1, Unit_1;
+    var compG3Get_1, compG3Set_1, rcoE3_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function rcoG3(a, b, out) {
         out.uom = Unit_1.Unit.mul(a.uom, b.uom);
@@ -6309,10 +4554,10 @@ System.register("davinci-newton/math/rcoG3.js", ["./compG3Get", "./rcoE3", "./co
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
-        }, function (rcoE3_1_1) {
-            rcoE3_1 = rcoE3_1_1;
         }, function (compG3Set_1_1) {
             compG3Set_1 = compG3Set_1_1;
+        }, function (rcoE3_1_1) {
+            rcoE3_1 = rcoE3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
@@ -6581,56 +4826,6 @@ System.register("davinci-newton/math/compG3Get.js", [], function (exports_1, con
         }
     };
 });
-System.register("davinci-newton/math/mulE3.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
-        switch (index) {
-            case 0:
-                {
-                    return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3 - a4 * b4 - a5 * b5 - a6 * b6 - a7 * b7;
-                }
-            case 1:
-                {
-                    return a0 * b1 + a1 * b0 - a2 * b4 + a3 * b6 + a4 * b2 - a5 * b7 - a6 * b3 - a7 * b5;
-                }
-            case 2:
-                {
-                    return a0 * b2 + a1 * b4 + a2 * b0 - a3 * b5 - a4 * b1 + a5 * b3 - a6 * b7 - a7 * b6;
-                }
-            case 3:
-                {
-                    return a0 * b3 - a1 * b6 + a2 * b5 + a3 * b0 - a4 * b7 - a5 * b2 + a6 * b1 - a7 * b4;
-                }
-            case 4:
-                {
-                    return a0 * b4 + a1 * b2 - a2 * b1 + a3 * b7 + a4 * b0 - a5 * b6 + a6 * b5 + a7 * b3;
-                }
-            case 5:
-                {
-                    return a0 * b5 + a1 * b7 + a2 * b3 - a3 * b2 + a4 * b6 + a5 * b0 - a6 * b4 + a7 * b1;
-                }
-            case 6:
-                {
-                    return a0 * b6 - a1 * b3 + a2 * b7 + a3 * b1 - a4 * b5 + a5 * b4 + a6 * b0 + a7 * b2;
-                }
-            case 7:
-                {
-                    return a0 * b7 + a1 * b5 + a2 * b6 + a3 * b4 + a4 * b3 + a5 * b1 + a6 * b2 + a7 * b0;
-                }
-            default:
-                {
-                    throw new Error("index must be in the range [0..7]");
-                }
-        }
-    }
-    exports_1("default", mulE3);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/math/compG3Set.js", [], function (exports_1, context_1) {
     "use strict";
 
@@ -6697,10 +4892,60 @@ System.register("davinci-newton/math/compG3Set.js", [], function (exports_1, con
         }
     };
 });
-System.register("davinci-newton/math/scpG3.js", ["../math/compG3Get", "../math/mulE3", "../math/compG3Set", "../math/Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/mulE3.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var compG3Get_1, mulE3_1, compG3Set_1, Unit_1;
+    var __moduleName = context_1 && context_1.id;
+    function mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
+        switch (index) {
+            case 0:
+                {
+                    return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3 - a4 * b4 - a5 * b5 - a6 * b6 - a7 * b7;
+                }
+            case 1:
+                {
+                    return a0 * b1 + a1 * b0 - a2 * b4 + a3 * b6 + a4 * b2 - a5 * b7 - a6 * b3 - a7 * b5;
+                }
+            case 2:
+                {
+                    return a0 * b2 + a1 * b4 + a2 * b0 - a3 * b5 - a4 * b1 + a5 * b3 - a6 * b7 - a7 * b6;
+                }
+            case 3:
+                {
+                    return a0 * b3 - a1 * b6 + a2 * b5 + a3 * b0 - a4 * b7 - a5 * b2 + a6 * b1 - a7 * b4;
+                }
+            case 4:
+                {
+                    return a0 * b4 + a1 * b2 - a2 * b1 + a3 * b7 + a4 * b0 - a5 * b6 + a6 * b5 + a7 * b3;
+                }
+            case 5:
+                {
+                    return a0 * b5 + a1 * b7 + a2 * b3 - a3 * b2 + a4 * b6 + a5 * b0 - a6 * b4 + a7 * b1;
+                }
+            case 6:
+                {
+                    return a0 * b6 - a1 * b3 + a2 * b7 + a3 * b1 - a4 * b5 + a5 * b4 + a6 * b0 + a7 * b2;
+                }
+            case 7:
+                {
+                    return a0 * b7 + a1 * b5 + a2 * b6 + a3 * b4 + a4 * b3 + a5 * b1 + a6 * b2 + a7 * b0;
+                }
+            default:
+                {
+                    throw new Error("index must be in the range [0..7]");
+                }
+        }
+    }
+    exports_1("default", mulE3);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/scpG3.js", ["../math/compG3Get", "../math/compG3Set", "../math/mulE3", "../math/Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var compG3Get_1, compG3Set_1, mulE3_1, Unit_1;
     var __moduleName = context_1 && context_1.id;
     function scpG3(a, b, out) {
         var a0 = compG3Get_1.default(a, 0);
@@ -6734,10 +4979,10 @@ System.register("davinci-newton/math/scpG3.js", ["../math/compG3Get", "../math/m
     return {
         setters: [function (compG3Get_1_1) {
             compG3Get_1 = compG3Get_1_1;
-        }, function (mulE3_1_1) {
-            mulE3_1 = mulE3_1_1;
         }, function (compG3Set_1_1) {
             compG3Set_1 = compG3Set_1_1;
+        }, function (mulE3_1_1) {
+            mulE3_1 = mulE3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
@@ -6765,14 +5010,14 @@ System.register("davinci-newton/math/squaredNormG3.js", [], function (exports_1,
         execute: function () {}
     };
 });
-System.register("davinci-newton/checks/isDefined.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/checks/isArray.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function isDefined(arg) {
-        return typeof arg !== 'undefined';
+    function isArray(x) {
+        return Object.prototype.toString.call(x) === '[object Array]';
     }
-    exports_1("default", isDefined);
+    exports_1("default", isArray);
     return {
         setters: [],
         execute: function () {}
@@ -6939,10 +5184,10 @@ System.register("davinci-newton/math/wedgeZX.js", [], function (exports_1, conte
         }
     };
 });
-System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", "./dotVectorE3", "./extG3", "./gauss", "../checks/isDefined", "./isScalarG3", "./isVectorE3", "./isVectorG3", "./isZeroGeometricE3", "./isZeroVectorE3", "./lcoG3", "./maskG3", "./mulE3", "./QQ", "./randomRange", "../i18n/readOnly", "./rcoG3", "./rotorFromDirectionsE3", "./scpG3", "./squaredNormG3", "./stringFromCoordinates", "./Unit", "./wedgeXY", "./wedgeYZ", "./wedgeZX"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Geometric3.js", ["../checks/isDefined", "../i18n/readOnly", "./approx", "./arraysEQ", "./dotVectorE3", "./extG3", "./gauss", "./isScalarG3", "./isVectorE3", "./isVectorG3", "./isZeroGeometricE3", "./isZeroVectorE3", "./lcoG3", "./maskG3", "./mulE3", "./QQ", "./randomRange", "./rcoG3", "./rotorFromDirectionsE3", "./scpG3", "./squaredNormG3", "./stringFromCoordinates", "./Unit", "./wedgeXY", "./wedgeYZ", "./wedgeZX"], function (exports_1, context_1) {
     "use strict";
 
-    var approx_1, arraysEQ_1, dotVectorE3_1, extG3_1, gauss_1, isDefined_1, isScalarG3_1, isVectorE3_1, isVectorG3_1, isZeroGeometricE3_1, isZeroVectorE3_1, lcoG3_1, maskG3_1, mulE3_1, QQ_1, randomRange_1, readOnly_1, rcoG3_1, rotorFromDirectionsE3_1, scpG3_1, squaredNormG3_1, stringFromCoordinates_1, Unit_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, bivector, spinor, multivector, pseudo, coordinates, cosines, UNLOCKED, Geometric3;
+    var isDefined_1, readOnly_1, approx_1, arraysEQ_1, dotVectorE3_1, extG3_1, gauss_1, isScalarG3_1, isVectorE3_1, isVectorG3_1, isZeroGeometricE3_1, isZeroVectorE3_1, lcoG3_1, maskG3_1, mulE3_1, QQ_1, randomRange_1, rcoG3_1, rotorFromDirectionsE3_1, scpG3_1, squaredNormG3_1, stringFromCoordinates_1, Unit_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_Z, COORD_XY, COORD_YZ, COORD_ZX, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, bivector, spinor, multivector, pseudo, coordinates, cosines, UNLOCKED, Geometric3;
     var __moduleName = context_1 && context_1.id;
     function cosVectorVector(a, b) {
         function scp(a, b) {
@@ -6958,7 +5203,11 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
         return m;
     }
     return {
-        setters: [function (approx_1_1) {
+        setters: [function (isDefined_1_1) {
+            isDefined_1 = isDefined_1_1;
+        }, function (readOnly_1_1) {
+            readOnly_1 = readOnly_1_1;
+        }, function (approx_1_1) {
             approx_1 = approx_1_1;
         }, function (arraysEQ_1_1) {
             arraysEQ_1 = arraysEQ_1_1;
@@ -6968,8 +5217,6 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
             extG3_1 = extG3_1_1;
         }, function (gauss_1_1) {
             gauss_1 = gauss_1_1;
-        }, function (isDefined_1_1) {
-            isDefined_1 = isDefined_1_1;
         }, function (isScalarG3_1_1) {
             isScalarG3_1 = isScalarG3_1_1;
         }, function (isVectorE3_1_1) {
@@ -6990,8 +5237,6 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
             QQ_1 = QQ_1_1;
         }, function (randomRange_1_1) {
             randomRange_1 = randomRange_1_1;
-        }, function (readOnly_1_1) {
-            readOnly_1 = readOnly_1_1;
         }, function (rcoG3_1_1) {
             rcoG3_1 = rcoG3_1_1;
         }, function (rotorFromDirectionsE3_1_1) {
@@ -7586,7 +5831,7 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                         var x = v.x;
                         var y = v.y;
                         var z = v.z;
-                        var uom2 = Unit_1.Unit.pow(v.uom, QQ_1.default.valueOf(2, 1));
+                        var uom2 = Unit_1.Unit.pow(v.uom, QQ_1.QQ.valueOf(2, 1));
                         var squaredNorm = x * x + y * y + z * z;
                         return this.mulByVector(v).divByScalar(squaredNorm, uom2);
                     }
@@ -8629,747 +6874,275 @@ System.register("davinci-newton/math/Geometric3.js", ["./approx", "./arraysEQ", 
                 return Geometric3;
             }();
             exports_1("Geometric3", Geometric3);
-            exports_1("default", Geometric3);
         }
     };
 });
-System.register("davinci-newton/engine3D/Spring3.js", ["../objects/AbstractSimObject", "../model/CoordType", "./Force3", "../math/Geometric3", "../math/Vec3", "../math/Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/checks/isDefined.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var AbstractSimObject_1, CoordType_1, Force3_1, Geometric3_1, Vec3_1, Unit_1, Spring3;
     var __moduleName = context_1 && context_1.id;
-    function assertConsistentUnits(aName, A, bName, B) {
-        if (!A.isZero() && !B.isZero()) {
-            if (Unit_1.Unit.isOne(A.uom)) {
-                if (!Unit_1.Unit.isOne(B.uom)) {
-                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
-                }
-            } else {
-                if (Unit_1.Unit.isOne(B.uom)) {
-                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
-                }
-            }
+    function isDefined(arg) {
+        return typeof arg !== 'undefined';
+    }
+    exports_1("default", isDefined);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustBeDefined.js", ["../checks/mustSatisfy", "../checks/isDefined"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustSatisfy_1, isDefined_1;
+    var __moduleName = context_1 && context_1.id;
+    function beDefined() {
+        return "not be 'undefined'";
+    }
+    function mustBeDefined(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isDefined_1.default(value), beDefined, contextBuilder);
+        return value;
+    }
+    exports_1("default", mustBeDefined);
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isDefined_1_1) {
+            isDefined_1 = isDefined_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isInteger.js", ["../checks/isNumber"], function (exports_1, context_1) {
+    "use strict";
+
+    var isNumber_1;
+    var __moduleName = context_1 && context_1.id;
+    function isInteger(x) {
+        return isNumber_1.default(x) && x % 1 === 0;
+    }
+    exports_1("default", isInteger);
+    return {
+        setters: [function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustBeInteger.js", ["../checks/mustSatisfy", "../checks/isInteger"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustSatisfy_1, isInteger_1;
+    var __moduleName = context_1 && context_1.id;
+    function beAnInteger() {
+        return "be an integer";
+    }
+    function mustBeInteger(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isInteger_1.default(value), beAnInteger, contextBuilder);
+        return value;
+    }
+    exports_1("default", mustBeInteger);
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isInteger_1_1) {
+            isInteger_1 = isInteger_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/AbstractMatrix.js", ["../checks/mustBeDefined", "../checks/mustBeInteger", "./Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustBeDefined_1, mustBeInteger_1, Unit_1, AbstractMatrix;
+    var __moduleName = context_1 && context_1.id;
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
         }
     }
     return {
-        setters: [function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (Force3_1_1) {
-            Force3_1 = Force3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Vec3_1_1) {
-            Vec3_1 = Vec3_1_1;
+        setters: [function (mustBeDefined_1_1) {
+            mustBeDefined_1 = mustBeDefined_1_1;
+        }, function (mustBeInteger_1_1) {
+            mustBeInteger_1 = mustBeInteger_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
         execute: function () {
-            Spring3 = function (_super) {
-                __extends(Spring3, _super);
-                function Spring3(body1_, body2_) {
-                    var _this = _super.call(this) || this;
-                    _this.body1_ = body1_;
-                    _this.body2_ = body2_;
-                    _this.restLength = Geometric3_1.default.one;
-                    _this.stiffness = Geometric3_1.default.one;
-                    _this.attach1_ = Vec3_1.default.zero;
-                    _this.attach2_ = Vec3_1.default.zero;
-                    _this.forces = [];
-                    _this.end1_ = Geometric3_1.default.vector(0, 0, 0);
-                    _this.end1Lock_ = _this.end1_.lock();
-                    _this.end2_ = Geometric3_1.default.vector(0, 0, 0);
-                    _this.end2Lock_ = _this.end2_.lock();
-                    _this.potentialEnergy_ = Geometric3_1.default.scalar(0);
-                    _this.potentialEnergyLock_ = _this.potentialEnergy_.lock();
-                    _this.F1 = new Force3_1.default(_this.body1_);
-                    _this.F1.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F1.vectorCoordType = CoordType_1.default.WORLD;
-                    _this.F2 = new Force3_1.default(_this.body2_);
-                    _this.F2.locationCoordType = CoordType_1.default.WORLD;
-                    _this.F2.vectorCoordType = CoordType_1.default.WORLD;
-                    _this.forces = [_this.F1, _this.F2];
-                    return _this;
+            AbstractMatrix = function () {
+                function AbstractMatrix(elements, dimensions, uom) {
+                    this._elements = mustBeDefined_1.default('elements', elements);
+                    this._dimensions = mustBeInteger_1.default('dimensions', dimensions);
+                    this._length = dimensions * dimensions;
+                    checkElementsLength(elements, this._length);
+                    this.modified = false;
+                    this.uom = Unit_1.Unit.mustBeUnit('uom', uom);
                 }
-                Spring3.prototype.computeBody1AttachPointInWorldCoords = function (x) {
-                    if (this.attach1_ == null || this.body1_ == null) {
-                        throw new Error();
-                    }
-                    this.body1_.localPointToWorldPoint(this.attach1_, x);
-                };
-                Spring3.prototype.computeBody2AttachPointInWorldCoords = function (x) {
-                    if (this.attach2_ == null || this.body2_ == null) {
-                        throw new Error();
-                    }
-                    this.body2_.localPointToWorldPoint(this.attach2_, x);
-                };
-                Object.defineProperty(Spring3.prototype, "attach1", {
+                Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
                     get: function () {
-                        return this.attach1_;
-                    },
-                    set: function (attach1) {
-                        this.attach1_ = Vec3_1.default.fromVector(attach1);
+                        return this._dimensions;
                     },
                     enumerable: false,
                     configurable: true
                 });
-                Object.defineProperty(Spring3.prototype, "attach2", {
+                Object.defineProperty(AbstractMatrix.prototype, "elements", {
                     get: function () {
-                        return this.attach2_;
+                        return this._elements;
                     },
-                    set: function (attach2) {
-                        this.attach2_ = Vec3_1.default.fromVector(attach2);
+                    set: function (elements) {
+                        checkElementsLength(elements, this._length);
+                        this._elements = elements;
                     },
                     enumerable: false,
                     configurable: true
                 });
-                Object.defineProperty(Spring3.prototype, "end1", {
-                    get: function () {
-                        this.end1.unlock(this.end1Lock_);
-                        this.computeBody1AttachPointInWorldCoords(this.end1_);
-                        this.end1Lock_ = this.end1.lock();
-                        return this.end1_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Spring3.prototype, "end2", {
-                    get: function () {
-                        this.end2.unlock(this.end2Lock_);
-                        this.computeBody2AttachPointInWorldCoords(this.end2_);
-                        this.end2Lock_ = this.end2.lock();
-                        return this.end2_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Spring3.prototype.updateForces = function () {
-                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
-                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
-                    this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
-                    this.F1.vector.copyVector(this.F1.location).subVector(this.F2.location).magnitude(true).subScalar(this.restLength);
-                    this.F1.vector.mulByScalar(this.stiffness.a, this.stiffness.uom);
-                    this.F1.vector.mulByVector(this.F2.vector);
-                    this.F2.vector.copyVector(this.F1.vector).neg();
-                    return this.forces;
-                };
-                Spring3.prototype.disconnect = function () {};
-                Spring3.prototype.potentialEnergy = function () {
-                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
-                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
-                    this.potentialEnergy_.unlock(this.potentialEnergyLock_);
-                    assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
-                    this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude(true);
-                    assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
-                    this.potentialEnergy_.sub(this.restLength);
-                    this.potentialEnergy_.quaditude(true);
-                    this.potentialEnergy_.mulByScalar(this.stiffness.a, this.stiffness.uom);
-                    this.potentialEnergy_.mulByNumber(0.5);
-                    this.potentialEnergyLock_ = this.potentialEnergy_.lock();
-                    return this.potentialEnergy_;
-                };
-                return Spring3;
-            }(AbstractSimObject_1.default);
-            exports_1("Spring3", Spring3);
-            exports_1("default", Spring3);
-        }
-    };
-});
-System.register("davinci-newton/util/contains.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function contains(xs, x) {
-        var N = xs.length;
-        for (var i = 0; i < N; i++) {
-            if (xs[i] === x) {
-                return true;
-            }
-        }
-        return false;
-    }
-    exports_1("default", contains);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var toName_1, validName_1, ParameterBoolean;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
-        execute: function () {
-            ParameterBoolean = function () {
-                function ParameterBoolean(subject, name, getter, setter, choices, values) {
-                    this.subject_ = subject;
-                    this.name_ = validName_1.default(toName_1.default(name));
-                    this.getter_ = getter;
-                    this.setter_ = setter;
-                    this.isComputed_ = false;
-                    this.choices_ = [];
-                    this.values_ = [];
-                }
-                Object.defineProperty(ParameterBoolean.prototype, "name", {
-                    get: function () {
-                        return this.name_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ParameterBoolean.prototype.getSubject = function () {
-                    return this.subject_;
-                };
-                ParameterBoolean.prototype.nameEquals = function (name) {
-                    return this.name_ === toName_1.default(name);
-                };
-                ParameterBoolean.prototype.setComputed = function (value) {
-                    this.isComputed_ = value;
-                };
-                return ParameterBoolean;
-            }();
-            exports_1("ParameterBoolean", ParameterBoolean);
-            exports_1("default", ParameterBoolean);
-        }
-    };
-});
-System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var toName_1, validName_1, ParameterNumber;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
-        execute: function () {
-            ParameterNumber = function () {
-                function ParameterNumber(subject, name, getter, setter, choices, values) {
-                    this.subject_ = subject;
-                    this.name_ = validName_1.default(toName_1.default(name));
-                    this.getter_ = getter;
-                    this.setter_ = setter;
-                    this.isComputed_ = false;
-                    this.signifDigits_ = 3;
-                    this.decimalPlaces_ = -1;
-                    this.lowerLimit_ = 0;
-                    this.upperLimit_ = Number.POSITIVE_INFINITY;
-                    this.choices_ = [];
-                    this.values_ = [];
-                }
-                Object.defineProperty(ParameterNumber.prototype, "name", {
-                    get: function () {
-                        return this.name_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ParameterNumber.prototype.getSubject = function () {
-                    return this.subject_;
-                };
-                ParameterNumber.prototype.getValue = function () {
-                    return this.getter_();
-                };
-                ParameterNumber.prototype.nameEquals = function (name) {
-                    return this.name_ === toName_1.default(name);
-                };
-                ParameterNumber.prototype.setComputed = function (value) {
-                    this.isComputed_ = value;
-                };
-                ParameterNumber.prototype.setLowerLimit = function (lowerLimit) {
-                    if (lowerLimit > this.getValue() || lowerLimit > this.upperLimit_) throw new Error('out of range');
-                    this.lowerLimit_ = lowerLimit;
-                    return this;
-                };
-                ParameterNumber.prototype.setSignifDigits = function (signifDigits) {
-                    this.signifDigits_ = signifDigits;
-                    return this;
-                };
-                return ParameterNumber;
-            }();
-            exports_1("ParameterNumber", ParameterNumber);
-            exports_1("default", ParameterNumber);
-        }
-    };
-});
-System.register("davinci-newton/util/ParameterString.js", ["./toName", "./validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var toName_1, validName_1, ParameterString;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
-        execute: function () {
-            ParameterString = function () {
-                function ParameterString(subject, name, getter, setter, choices, values) {
-                    this.subject_ = subject;
-                    this.name_ = validName_1.default(toName_1.default(name));
-                    this.getter_ = getter;
-                    this.setter_ = setter;
-                    this.isComputed_ = false;
-                    this.suggestedLength_ = 20;
-                    this.maxLength_ = Number.POSITIVE_INFINITY;
-                    this.choices_ = [];
-                    this.values_ = [];
-                    this.inputFunction_ = null;
-                }
-                Object.defineProperty(ParameterString.prototype, "name", {
-                    get: function () {
-                        return this.name_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ParameterString.prototype.getSubject = function () {
-                    return this.subject_;
-                };
-                ParameterString.prototype.getValue = function () {
-                    return this.getter_();
-                };
-                ParameterString.prototype.nameEquals = function (name) {
-                    return this.name_ === toName_1.default(name);
-                };
-                ParameterString.prototype.setComputed = function (value) {
-                    this.isComputed_ = value;
-                };
-                return ParameterString;
-            }();
-            exports_1("ParameterString", ParameterString);
-            exports_1("default", ParameterString);
-        }
-    };
-});
-System.register("davinci-newton/util/removeAt.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function removeAt(xs, index) {
-        return Array.prototype.splice.call(xs, index, 1).length === 1;
-    }
-    exports_1("default", removeAt);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/remove.js", ["./removeAt"], function (exports_1, context_1) {
-    "use strict";
-
-    var removeAt_1;
-    var __moduleName = context_1 && context_1.id;
-    function remove(xs, x) {
-        var i = xs.indexOf(x);
-        var rv;
-        if (rv = i >= 0) {
-            removeAt_1.default(xs, i);
-        }
-        return rv;
-    }
-    exports_1("default", remove);
-    return {
-        setters: [function (removeAt_1_1) {
-            removeAt_1 = removeAt_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contains", "./find", "./ParameterBoolean", "./ParameterNumber", "./ParameterString", "./remove", "../util/toName"], function (exports_1, context_1) {
-    "use strict";
-
-    var clone_1, contains_1, find_1, ParameterBoolean_1, ParameterNumber_1, ParameterString_1, remove_1, toName_1, AbstractSubject;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (clone_1_1) {
-            clone_1 = clone_1_1;
-        }, function (contains_1_1) {
-            contains_1 = contains_1_1;
-        }, function (find_1_1) {
-            find_1 = find_1_1;
-        }, function (ParameterBoolean_1_1) {
-            ParameterBoolean_1 = ParameterBoolean_1_1;
-        }, function (ParameterNumber_1_1) {
-            ParameterNumber_1 = ParameterNumber_1_1;
-        }, function (ParameterString_1_1) {
-            ParameterString_1 = ParameterString_1_1;
-        }, function (remove_1_1) {
-            remove_1 = remove_1_1;
-        }, function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }],
-        execute: function () {
-            AbstractSubject = function () {
-                function AbstractSubject() {
-                    this.doBroadcast_ = true;
-                    this.observers_ = [];
-                    this.paramList_ = [];
-                }
-                AbstractSubject.prototype.addObserver = function (observer) {
-                    if (!contains_1.default(this.observers_, observer)) {
-                        this.observers_.push(observer);
-                    }
-                };
-                AbstractSubject.prototype.removeObserver = function (observer) {
-                    remove_1.default(this.observers_, observer);
-                };
-                AbstractSubject.prototype.addParameter = function (parameter) {
-                    var name = parameter.name;
-                    var p = this.getParam(name);
-                    if (p != null) {
-                        throw new Error('parameter ' + name + ' already exists: ' + p);
-                    }
-                    this.paramList_.push(parameter);
-                };
-                AbstractSubject.prototype.getParam = function (name) {
-                    name = toName_1.default(name);
-                    return find_1.default(this.paramList_, function (p) {
-                        return p.name === name;
-                    });
-                };
-                AbstractSubject.prototype.getParameter = function (name) {
-                    var p = this.getParam(name);
-                    if (p != null) {
-                        return p;
-                    }
-                    throw new Error('Parameter not found ' + name);
-                };
-                AbstractSubject.prototype.getParameterBoolean = function (name) {
-                    var p = this.getParam(name);
-                    if (p instanceof ParameterBoolean_1.default) {
-                        return p;
-                    }
-                    throw new Error('ParameterBoolean not found ' + name);
-                };
-                AbstractSubject.prototype.getParameterNumber = function (name) {
-                    var p = this.getParam(name);
-                    if (p instanceof ParameterNumber_1.default) {
-                        return p;
-                    }
-                    throw new Error('ParameterNumber not found ' + name);
-                };
-                AbstractSubject.prototype.getParameterString = function (name) {
-                    var p = this.getParam(name);
-                    if (p instanceof ParameterString_1.default) {
-                        return p;
-                    }
-                    throw new Error('ParameterString not found ' + name);
-                };
-                AbstractSubject.prototype.getParameters = function () {
-                    return clone_1.default(this.paramList_);
-                };
-                AbstractSubject.prototype.broadcast = function (event) {
-                    if (this.doBroadcast_) {
-                        var len = this.observers_.length;
-                        for (var i = 0; i < len; i++) {
-                            this.observers_[i].observe(event);
+                AbstractMatrix.prototype.copy = function (source) {
+                    var N = this.dimensions;
+                    for (var i = 0; i < N; i++) {
+                        for (var j = 0; j < N; j++) {
+                            var value = source.getElement(i, j);
+                            this.setElement(i, j, value);
                         }
                     }
+                    this.uom = source.uom;
+                    return this;
                 };
-                AbstractSubject.prototype.broadcastParameter = function (name) {
-                    var p = this.getParam(name);
-                    if (p === null) {
-                        throw new Error('unknown Parameter ' + name);
-                    }
-                    this.broadcast(p);
+                AbstractMatrix.prototype.getElement = function (row, column) {
+                    return this.elements[row + column * this._dimensions];
                 };
-                AbstractSubject.prototype.getBroadcast = function () {
-                    return this.doBroadcast_;
-                };
-                AbstractSubject.prototype.getObservers = function () {
-                    return clone_1.default(this.observers_);
-                };
-                return AbstractSubject;
-            }();
-            exports_1("AbstractSubject", AbstractSubject);
-            exports_1("default", AbstractSubject);
-        }
-    };
-});
-System.register("davinci-newton/util/clone.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function clone(xs) {
-        var length = xs.length;
-        var rv = new Array(length);
-        for (var i = 0; i < length; i++) {
-            rv[i] = xs[i];
-        }
-        return rv;
-    }
-    exports_1("default", clone);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/model/ConcreteVariable.js", ["../util/toName", "../util/validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var toName_1, validName_1, ConcreteVariable;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
-        execute: function () {
-            ConcreteVariable = function () {
-                function ConcreteVariable(varsList_, name) {
-                    this.varsList_ = varsList_;
-                    this.value_ = 0;
-                    this.seq_ = 0;
-                    this.isComputed_ = false;
-                    this.doesBroadcast_ = false;
-                    this.name_ = validName_1.default(toName_1.default(name));
-                }
-                ConcreteVariable.prototype.getBroadcast = function () {
-                    return this.doesBroadcast_;
-                };
-                Object.defineProperty(ConcreteVariable.prototype, "name", {
-                    get: function () {
-                        return this.name_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ConcreteVariable.prototype.getSequence = function () {
-                    return this.seq_;
-                };
-                ConcreteVariable.prototype.getSubject = function () {
-                    return this.varsList_;
-                };
-                ConcreteVariable.prototype.getValue = function () {
-                    return this.value_;
-                };
-                ConcreteVariable.prototype.nameEquals = function (name) {
-                    return this.name_ === toName_1.default(name);
-                };
-                ConcreteVariable.prototype.setBroadcast = function (value) {
-                    this.doesBroadcast_ = value;
-                };
-                ConcreteVariable.prototype.setComputed = function (value) {
-                    this.isComputed_ = value;
-                };
-                ConcreteVariable.prototype.setValue = function (value) {
-                    if (this.value_ !== value) {
-                        this.value_ = value;
-                        this.seq_++;
-                        if (this.doesBroadcast_) {
-                            this.varsList_.broadcast(this);
+                AbstractMatrix.prototype.isOne = function () {
+                    for (var i = 0; i < this._dimensions; i++) {
+                        for (var j = 0; j < this._dimensions; j++) {
+                            var value = this.getElement(i, j);
+                            if (i === j) {
+                                if (value !== 1) {
+                                    return false;
+                                }
+                            } else {
+                                if (value !== 0) {
+                                    return false;
+                                }
+                            }
                         }
                     }
+                    return true;
                 };
-                ConcreteVariable.prototype.setValueSmooth = function (value) {
-                    this.value_ = value;
+                AbstractMatrix.prototype.setElement = function (row, column, value) {
+                    this.elements[row + column * this._dimensions] = value;
                 };
-                ConcreteVariable.prototype.incrSequence = function () {
-                    this.seq_++;
-                };
-                return ConcreteVariable;
+                return AbstractMatrix;
             }();
-            exports_1("ConcreteVariable", ConcreteVariable);
-            exports_1("default", ConcreteVariable);
+            exports_1("default", AbstractMatrix);
         }
     };
 });
-System.register("davinci-newton/checks/isArray.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/math/det3x3.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function isArray(x) {
-        return Object.prototype.toString.call(x) === '[object Array]';
+    function det3x3(m) {
+        var m00 = m[0x0],
+            m01 = m[0x3],
+            m02 = m[0x6];
+        var m10 = m[0x1],
+            m11 = m[0x4],
+            m12 = m[0x7];
+        var m20 = m[0x2],
+            m21 = m[0x5],
+            m22 = m[0x8];
+        return m00 * m11 * m22 + m01 * m12 * m20 + m02 * m10 * m21 - m00 * m12 * m21 - m01 * m10 * m22 - m02 * m11 * m20;
     }
-    exports_1("default", isArray);
+    exports_1("default", det3x3);
     return {
         setters: [],
         execute: function () {}
     };
 });
-System.register("davinci-newton/util/extendArray.js", ["../checks/isArray"], function (exports_1, context_1) {
+System.register("davinci-newton/math/inv3x3.js", ["../math/det3x3"], function (exports_1, context_1) {
     "use strict";
 
-    var isArray_1;
+    var det3x3_1;
     var __moduleName = context_1 && context_1.id;
-    function extendArray(array, quantity, value) {
-        if (quantity === 0) {
-            return;
-        }
-        if (quantity < 0) {
-            throw new Error();
-        }
-        var startIdx = array.length;
-        array.length = startIdx + quantity;
-        if (isArray_1.default(value)) {
-            var vs = value;
-            if (vs.length !== quantity) {
-                throw new Error();
-            }
-            for (var i = startIdx, n = array.length; i < n; i++) {
-                array[i] = value[i - startIdx];
-            }
-        } else {
-            for (var i = startIdx, n = array.length; i < n; i++) {
-                array[i] = value;
-            }
-        }
+    function inv3x3(m, te) {
+        var det = det3x3_1.default(m);
+        var m11 = m[0x0],
+            m12 = m[0x3],
+            m13 = m[0x6];
+        var m21 = m[0x1],
+            m22 = m[0x4],
+            m23 = m[0x7];
+        var m31 = m[0x2],
+            m32 = m[0x5],
+            m33 = m[0x8];
+        var o11 = m22 * m33 - m23 * m32;
+        var o12 = m13 * m32 - m12 * m33;
+        var o13 = m12 * m23 - m13 * m22;
+        var o21 = m23 * m31 - m21 * m33;
+        var o22 = m11 * m33 - m13 * m31;
+        var o23 = m13 * m21 - m11 * m23;
+        var o31 = m21 * m32 - m22 * m31;
+        var o32 = m12 * m31 - m11 * m32;
+        var o33 = m11 * m22 - m12 * m21;
+        var α = 1 / det;
+        te[0x0] = o11 * α;
+        te[0x3] = o12 * α;
+        te[0x6] = o13 * α;
+        te[0x1] = o21 * α;
+        te[0x4] = o22 * α;
+        te[0x7] = o23 * α;
+        te[0x2] = o31 * α;
+        te[0x5] = o32 * α;
+        te[0x8] = o33 * α;
     }
-    exports_1("default", extendArray);
+    exports_1("default", inv3x3);
     return {
-        setters: [function (isArray_1_1) {
-            isArray_1 = isArray_1_1;
+        setters: [function (det3x3_1_1) {
+            det3x3_1 = det3x3_1_1;
         }],
         execute: function () {}
     };
 });
-System.register("davinci-newton/util/find.js", ["./findIndex"], function (exports_1, context_1) {
-    "use strict";
-
-    var findIndex_1;
-    var __moduleName = context_1 && context_1.id;
-    function find(xs, test) {
-        var i = findIndex_1.default(xs, test);
-        return i < 0 ? null : xs[i];
-    }
-    exports_1("default", find);
-    return {
-        setters: [function (findIndex_1_1) {
-            findIndex_1 = findIndex_1_1;
-        }],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/findIndex.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/math/mul3x3.js", [], function (exports_1, context_1) {
     "use strict";
 
     var __moduleName = context_1 && context_1.id;
-    function findIndex(xs, test) {
-        var N = xs.length;
-        for (var i = 0; i < N; i++) {
-            var x = xs[i];
-            if (test(x, i)) {
-                return i;
-            }
-        }
-        return -1;
+    function mul3x3(a, b, c) {
+        var a11 = a[0x0],
+            a12 = a[0x3],
+            a13 = a[0x6];
+        var a21 = a[0x1],
+            a22 = a[0x4],
+            a23 = a[0x7];
+        var a31 = a[0x2],
+            a32 = a[0x5],
+            a33 = a[0x8];
+        var b11 = b[0x0],
+            b12 = b[0x3],
+            b13 = b[0x6];
+        var b21 = b[0x1],
+            b22 = b[0x4],
+            b23 = b[0x7];
+        var b31 = b[0x2],
+            b32 = b[0x5],
+            b33 = b[0x8];
+        c[0x0] = a11 * b11 + a12 * b21 + a13 * b31;
+        c[0x3] = a11 * b12 + a12 * b22 + a13 * b32;
+        c[0x6] = a11 * b13 + a12 * b23 + a13 * b33;
+        c[0x1] = a21 * b11 + a22 * b21 + a23 * b31;
+        c[0x4] = a21 * b12 + a22 * b22 + a23 * b32;
+        c[0x7] = a21 * b13 + a22 * b23 + a23 * b33;
+        c[0x2] = a31 * b11 + a32 * b21 + a33 * b31;
+        c[0x5] = a31 * b12 + a32 * b22 + a33 * b32;
+        c[0x8] = a31 * b13 + a32 * b23 + a33 * b33;
+        return c;
     }
-    exports_1("default", findIndex);
+    exports_1("default", mul3x3);
     return {
         setters: [],
         execute: function () {}
     };
 });
-System.register("davinci-newton/util/GenericEvent.js", ["./toName", "./validName"], function (exports_1, context_1) {
-    "use strict";
-
-    var toName_1, validName_1, GenericEvent;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
-        }],
-        execute: function () {
-            GenericEvent = function () {
-                function GenericEvent(subject_, name, value_) {
-                    this.subject_ = subject_;
-                    this.value_ = value_;
-                    this.name_ = validName_1.default(toName_1.default(name));
-                }
-                Object.defineProperty(GenericEvent.prototype, "name", {
-                    get: function () {
-                        return this.name_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                GenericEvent.prototype.getSubject = function () {
-                    return this.subject_;
-                };
-                GenericEvent.prototype.nameEquals = function (name) {
-                    return this.name_ === toName_1.default(name);
-                };
-                return GenericEvent;
-            }();
-            exports_1("GenericEvent", GenericEvent);
-            exports_1("default", GenericEvent);
-        }
-    };
-});
-System.register("davinci-newton/checks/isString.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isString(s) {
-        return typeof s === 'string';
-    }
-    exports_1("default", isString);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/toName.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function toName(text) {
-        return text.toUpperCase().replace(/[ -]/g, '_');
-    }
-    exports_1("default", toName);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/util/validName.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function validName(text) {
-        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
-            throw new Error('not a valid name: ' + text);
-        }
-        return text;
-    }
-    exports_1("default", validName);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "../util/clone", "../model/ConcreteVariable", "../util/extendArray", "../util/find", "../util/findIndex", "../util/GenericEvent", "../checks/isNumber", "../checks/isString", "../util/toName", "../util/validName"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Matrix3.js", ["./AbstractMatrix", "./inv3x3", "./mul3x3"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -9389,306 +7162,107 @@ System.register("davinci-newton/core/VarsList.js", ["../util/AbstractSubject", "
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AbstractSubject_1, clone_1, ConcreteVariable_1, extendArray_1, find_1, findIndex_1, GenericEvent_1, isNumber_1, isString_1, toName_1, validName_1, VarsList;
+    var AbstractMatrix_1, inv3x3_1, mul3x3_1, Matrix3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AbstractSubject_1_1) {
-            AbstractSubject_1 = AbstractSubject_1_1;
-        }, function (clone_1_1) {
-            clone_1 = clone_1_1;
-        }, function (ConcreteVariable_1_1) {
-            ConcreteVariable_1 = ConcreteVariable_1_1;
-        }, function (extendArray_1_1) {
-            extendArray_1 = extendArray_1_1;
-        }, function (find_1_1) {
-            find_1 = find_1_1;
-        }, function (findIndex_1_1) {
-            findIndex_1 = findIndex_1_1;
-        }, function (GenericEvent_1_1) {
-            GenericEvent_1 = GenericEvent_1_1;
-        }, function (isNumber_1_1) {
-            isNumber_1 = isNumber_1_1;
-        }, function (isString_1_1) {
-            isString_1 = isString_1_1;
-        }, function (toName_1_1) {
-            toName_1 = toName_1_1;
-        }, function (validName_1_1) {
-            validName_1 = validName_1_1;
+        setters: [function (AbstractMatrix_1_1) {
+            AbstractMatrix_1 = AbstractMatrix_1_1;
+        }, function (inv3x3_1_1) {
+            inv3x3_1 = inv3x3_1_1;
+        }, function (mul3x3_1_1) {
+            mul3x3_1 = mul3x3_1_1;
         }],
         execute: function () {
-            VarsList = function (_super) {
-                __extends(VarsList, _super);
-                function VarsList(names) {
-                    var _this = _super.call(this) || this;
-                    _this.timeIdx_ = -1;
-                    _this.varList_ = [];
-                    _this.history_ = true;
-                    _this.histArray_ = [];
-                    var howMany = names.length;
-                    if (howMany !== 0) {
-                        _this.addVariables(names);
-                    }
-                    return _this;
+            Matrix3 = function (_super) {
+                __extends(Matrix3, _super);
+                function Matrix3(elements, uom) {
+                    return _super.call(this, elements, 3, uom) || this;
                 }
-                VarsList.prototype.findOpenSlot_ = function (quantity) {
-                    var found = 0;
-                    var startIdx = -1;
-                    for (var i = 0, n = this.varList_.length; i < n; i++) {
-                        if (this.varList_[i].name === VarsList.DELETED) {
-                            if (startIdx === -1) {
-                                startIdx = i;
-                            }
-                            found++;
-                            if (found >= quantity) {
-                                return startIdx;
-                            }
-                        } else {
-                            startIdx = -1;
-                            found = 0;
-                        }
-                    }
-                    var expand;
-                    if (found > 0) {
-                        expand = quantity - found;
-                    } else {
-                        startIdx = this.varList_.length;
-                        expand = quantity;
-                    }
-                    var newVars = [];
-                    for (var i = 0; i < expand; i++) {
-                        newVars.push(new ConcreteVariable_1.default(this, VarsList.DELETED));
-                    }
-                    extendArray_1.default(this.varList_, expand, newVars);
-                    return startIdx;
+                Matrix3.prototype.inv = function () {
+                    inv3x3_1.default(this.elements, this.elements);
+                    return this;
                 };
-                VarsList.prototype.addVariables = function (names) {
-                    var howMany = names.length;
-                    if (howMany === 0) {
-                        throw new Error();
+                Matrix3.prototype.mul = function (rhs) {
+                    return this.mul2(this, rhs);
+                };
+                Matrix3.prototype.rmul = function (lhs) {
+                    mul3x3_1.default(lhs.elements, this.elements, this.elements);
+                    return this;
+                };
+                Matrix3.prototype.mul2 = function (a, b) {
+                    mul3x3_1.default(a.elements, b.elements, this.elements);
+                    return this;
+                };
+                Matrix3.prototype.rotation = function (spinor) {
+                    var x = -spinor.yz;
+                    var y = -spinor.zx;
+                    var z = -spinor.xy;
+                    var α = spinor.a;
+                    var x2 = x + x;
+                    var y2 = y + y;
+                    var z2 = z + z;
+                    var xx = x * x2;
+                    var xy = x * y2;
+                    var xz = x * z2;
+                    var yy = y * y2;
+                    var yz = y * z2;
+                    var zz = z * z2;
+                    var wx = α * x2;
+                    var wy = α * y2;
+                    var wz = α * z2;
+                    this.set(1 - yy - zz, xy - wz, xz + wy, xy + wz, 1 - xx - zz, yz - wx, xz - wy, yz + wx, 1 - xx - yy);
+                    return this;
+                };
+                Matrix3.prototype.row = function (i) {
+                    var te = this.elements;
+                    return [te[0 + i], te[3 + i], te[6 + i]];
+                };
+                Matrix3.prototype.set = function (n11, n12, n13, n21, n22, n23, n31, n32, n33) {
+                    var te = this.elements;
+                    te[0] = n11;
+                    te[3] = n12;
+                    te[6] = n13;
+                    te[1] = n21;
+                    te[4] = n22;
+                    te[7] = n23;
+                    te[2] = n31;
+                    te[5] = n32;
+                    te[8] = n33;
+                    return this;
+                };
+                Matrix3.prototype.toString = function (radix) {
+                    var text = [];
+                    for (var i = 0; i < this.dimensions; i++) {
+                        text.push(this.row(i).map(function (element, index) {
+                            return element.toString(radix);
+                        }).join(' '));
                     }
-                    var position = this.findOpenSlot_(howMany);
-                    for (var i = 0; i < howMany; i++) {
-                        var name_1 = validName_1.default(toName_1.default(names[i]));
-                        if (name_1 === VarsList.DELETED) {
-                            throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
-                        }
-                        var idx = position + i;
-                        this.varList_[idx] = new ConcreteVariable_1.default(this, name_1);
-                        if (name_1 === VarsList.TIME) {
-                            this.timeIdx_ = idx;
-                        }
-                    }
-                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
-                    return position;
+                    return text.join('\n');
                 };
-                VarsList.prototype.deleteVariables = function (index, howMany) {
-                    if (howMany === 0) {
-                        return;
-                    }
-                    if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
-                        throw new Error('deleteVariables');
-                    }
-                    for (var i = index; i < index + howMany; i++) {
-                        this.varList_[i] = new ConcreteVariable_1.default(this, VarsList.DELETED);
-                    }
-                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
+                Matrix3.prototype.transpose = function () {
+                    var tmp;
+                    var m = this.elements;
+                    tmp = m[1];
+                    m[1] = m[3];
+                    m[3] = tmp;
+                    tmp = m[2];
+                    m[2] = m[6];
+                    m[6] = tmp;
+                    tmp = m[5];
+                    m[5] = m[7];
+                    m[7] = tmp;
+                    return this;
                 };
-                VarsList.prototype.incrSequence = function () {
-                    var indexes = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        indexes[_i] = arguments[_i];
-                    }
-                    if (arguments.length === 0) {
-                        for (var i = 0, n = this.varList_.length; i < n; i++) {
-                            this.varList_[i].incrSequence();
-                        }
-                    } else {
-                        for (var i = 0, n = arguments.length; i < n; i++) {
-                            var idx = arguments[i];
-                            this.checkIndex_(idx);
-                            this.varList_[idx].incrSequence();
-                        }
-                    }
+                Matrix3.one = function () {
+                    return new Matrix3(new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]));
                 };
-                VarsList.prototype.getValue = function (index) {
-                    this.checkIndex_(index);
-                    return this.varList_[index].getValue();
+                Matrix3.zero = function () {
+                    return new Matrix3(new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]));
                 };
-                VarsList.prototype.getName = function (index) {
-                    this.checkIndex_(index);
-                    return this.varList_[index].name;
-                };
-                VarsList.prototype.getSequence = function (index) {
-                    this.checkIndex_(index);
-                    return this.varList_[index].getSequence();
-                };
-                VarsList.prototype.getValues = function () {
-                    return this.varList_.map(function (v) {
-                        return v.getValue();
-                    });
-                };
-                VarsList.prototype.setValues = function (vars, continuous) {
-                    if (continuous === void 0) {
-                        continuous = false;
-                    }
-                    var N = this.varList_.length;
-                    var n = vars.length;
-                    if (n > N) {
-                        throw new Error("setValues bad length n = " + n + " > N = " + N);
-                    }
-                    for (var i = 0; i < N; i++) {
-                        if (i < n) {
-                            this.setValue(i, vars[i], continuous);
-                        }
-                    }
-                };
-                VarsList.prototype.setValue = function (index, value, continuous) {
-                    if (continuous === void 0) {
-                        continuous = false;
-                    }
-                    this.checkIndex_(index);
-                    var variable = this.varList_[index];
-                    if (isNaN(value)) {
-                        throw new Error('cannot set variable ' + variable.name + ' to NaN');
-                    }
-                    if (continuous) {
-                        variable.setValueSmooth(value);
-                    } else {
-                        variable.setValue(value);
-                    }
-                };
-                VarsList.prototype.checkIndex_ = function (index) {
-                    if (index < 0 || index >= this.varList_.length) {
-                        throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
-                    }
-                };
-                VarsList.prototype.addVariable = function (variable) {
-                    var name = variable.name;
-                    if (name === VarsList.DELETED) {
-                        throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
-                    }
-                    var position = this.findOpenSlot_(1);
-                    this.varList_[position] = variable;
-                    if (name === VarsList.TIME) {
-                        this.timeIdx_ = position;
-                    }
-                    this.broadcast(new GenericEvent_1.default(this, VarsList.VARS_MODIFIED));
-                    return position;
-                };
-                VarsList.prototype.getHistory = function () {
-                    return this.history_;
-                };
-                VarsList.prototype.getParameter = function (name) {
-                    name = toName_1.default(name);
-                    var p = find_1.default(this.varList_, function (p) {
-                        return p.name === name;
-                    });
-                    if (p != null) {
-                        return p;
-                    }
-                    throw new Error('Parameter not found ' + name);
-                };
-                VarsList.prototype.getParameters = function () {
-                    return clone_1.default(this.varList_);
-                };
-                VarsList.prototype.getTime = function () {
-                    if (this.timeIdx_ < 0) {
-                        throw new Error('no time variable');
-                    }
-                    return this.getValue(this.timeIdx_);
-                };
-                VarsList.prototype.getVariable = function (id) {
-                    var index;
-                    if (isNumber_1.default(id)) {
-                        index = id;
-                    } else if (isString_1.default(id)) {
-                        id = toName_1.default(id);
-                        index = findIndex_1.default(this.varList_, function (v) {
-                            return v.name === id;
-                        });
-                        if (index < 0) {
-                            throw new Error('unknown variable name ' + id);
-                        }
-                    } else {
-                        throw new Error();
-                    }
-                    this.checkIndex_(index);
-                    return this.varList_[index];
-                };
-                VarsList.prototype.numVariables = function () {
-                    return this.varList_.length;
-                };
-                VarsList.prototype.saveHistory = function () {
-                    if (this.history_) {
-                        var v = this.getValues();
-                        v.push(this.getTime());
-                        this.histArray_.push(v);
-                        if (this.histArray_.length > 20) {
-                            this.histArray_.shift();
-                        }
-                    }
-                };
-                VarsList.prototype.setComputed = function () {
-                    var indexes = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        indexes[_i] = arguments[_i];
-                    }
-                    for (var i = 0, n = arguments.length; i < n; i++) {
-                        var idx = arguments[i];
-                        this.checkIndex_(idx);
-                        this.varList_[idx].setComputed(true);
-                    }
-                };
-                VarsList.prototype.setHistory = function (value) {
-                    this.history_ = value;
-                };
-                VarsList.prototype.setTime = function (time) {
-                    this.setValue(this.timeIdx_, time);
-                };
-                VarsList.prototype.timeIndex = function () {
-                    return this.timeIdx_;
-                };
-                VarsList.prototype.toArray = function () {
-                    return clone_1.default(this.varList_);
-                };
-                VarsList.DELETED = 'DELETED';
-                VarsList.TIME = 'TIME';
-                VarsList.VARS_MODIFIED = 'VARS_MODIFIED';
-                return VarsList;
-            }(AbstractSubject_1.default);
-            exports_1("VarsList", VarsList);
-            exports_1("default", VarsList);
+                return Matrix3;
+            }(AbstractMatrix_1.default);
+            exports_1("Matrix3", Matrix3);
         }
-    };
-});
-System.register("davinci-newton/checks/mustSatisfy.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
-        if (!condition) {
-            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
-            var context = contextBuilder ? " in " + contextBuilder() : "";
-            throw new Error(name + " must " + message + context + ".");
-        }
-    }
-    exports_1("default", mustSatisfy);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/checks/isNumber.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var __moduleName = context_1 && context_1.id;
-    function isNumber(x) {
-        return typeof x === 'number';
-    }
-    exports_1("default", isNumber);
-    return {
-        setters: [],
-        execute: function () {}
     };
 });
 System.register("davinci-newton/checks/mustBeNumber.js", ["../checks/mustSatisfy", "../checks/isNumber"], function (exports_1, context_1) {
@@ -9748,6 +7322,19 @@ System.register("davinci-newton/math/Scalar3.js", [], function (exports_1, conte
             exports_1("Scalar3", Scalar3);
             exports_1("default", Scalar3);
         }
+    };
+});
+System.register("davinci-newton/checks/isUndefined.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isUndefined(arg) {
+        return typeof arg === 'undefined';
+    }
+    exports_1("default", isUndefined);
+    return {
+        setters: [],
+        execute: function () {}
     };
 });
 System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1) {
@@ -10016,7 +7603,6 @@ System.register("davinci-newton/math/QQ.js", [], function (exports_1, context_1)
                 return QQ;
             }();
             exports_1("QQ", QQ);
-            exports_1("default", QQ);
         }
     };
 });
@@ -10614,33 +8200,33 @@ System.register("davinci-newton/math/detectDimensions.js", ["./DimensionsSummary
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "../math/QQ", "./detectDimensions"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Dimensions.js", ["../math/QQ", "./detectDimensions", "./DimensionsSummary"], function (exports_1, context_1) {
     "use strict";
 
-    var DimensionsSummary_1, QQ_1, detectDimensions_1, R0, R1, R2, R3, M1, M2, Dimensions;
+    var QQ_1, detectDimensions_1, DimensionsSummary_1, R0, R1, R2, R3, M1, M2, Dimensions;
     var __moduleName = context_1 && context_1.id;
     function assertArgRational(name, arg) {
-        if (arg instanceof QQ_1.default) {
+        if (arg instanceof QQ_1.QQ) {
             return arg;
         } else {
             throw new Error("Argument " + name + " => " + arg + " must be a QQ");
         }
     }
     return {
-        setters: [function (DimensionsSummary_1_1) {
-            DimensionsSummary_1 = DimensionsSummary_1_1;
-        }, function (QQ_1_1) {
+        setters: [function (QQ_1_1) {
             QQ_1 = QQ_1_1;
         }, function (detectDimensions_1_1) {
             detectDimensions_1 = detectDimensions_1_1;
+        }, function (DimensionsSummary_1_1) {
+            DimensionsSummary_1 = DimensionsSummary_1_1;
         }],
         execute: function () {
-            R0 = QQ_1.default.valueOf(0, 1);
-            R1 = QQ_1.default.valueOf(1, 1);
-            R2 = QQ_1.default.valueOf(2, 1);
-            R3 = QQ_1.default.valueOf(3, 1);
-            M1 = QQ_1.default.valueOf(-1, 1);
-            M2 = QQ_1.default.valueOf(-2, 1);
+            R0 = QQ_1.QQ.valueOf(0, 1);
+            R1 = QQ_1.QQ.valueOf(1, 1);
+            R2 = QQ_1.QQ.valueOf(2, 1);
+            R3 = QQ_1.QQ.valueOf(3, 1);
+            M1 = QQ_1.QQ.valueOf(-1, 1);
+            M2 = QQ_1.QQ.valueOf(-2, 1);
             Dimensions = function () {
                 function Dimensions(M, L, T, Q, temperature, amount, intensity, summary) {
                     this.M = assertArgRational('M', M);
@@ -10882,7 +8468,6 @@ System.register("davinci-newton/math/Dimensions.js", ["./DimensionsSummary", "..
                 return Dimensions;
             }();
             exports_1("Dimensions", Dimensions);
-            exports_1("default", Dimensions);
         }
     };
 });
@@ -10929,23 +8514,10 @@ System.register("davinci-newton/math/DimensionsSummary.js", [], function (export
         }
     };
 });
-System.register("davinci-newton/checks/isUndefined.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/math/Unit.js", ["../checks/isUndefined", "../math/Dimensions", "../math/DimensionsSummary"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
-    function isUndefined(arg) {
-        return typeof arg === 'undefined';
-    }
-    exports_1("default", isUndefined);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/DimensionsSummary", "../checks/isUndefined"], function (exports_1, context_1) {
-    "use strict";
-
-    var Dimensions_1, DimensionsSummary_1, isUndefined_1, SYMBOLS_SI, patterns, decodes, dumbString, unitString, Unit;
+    var isUndefined_1, Dimensions_1, DimensionsSummary_1, SYMBOLS_SI, patterns, decodes, dumbString, unitString, Unit;
     var __moduleName = context_1 && context_1.id;
     function add(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
@@ -10963,12 +8535,12 @@ System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/D
         return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
     }
     return {
-        setters: [function (Dimensions_1_1) {
+        setters: [function (isUndefined_1_1) {
+            isUndefined_1 = isUndefined_1_1;
+        }, function (Dimensions_1_1) {
             Dimensions_1 = Dimensions_1_1;
         }, function (DimensionsSummary_1_1) {
             DimensionsSummary_1 = DimensionsSummary_1_1;
-        }, function (isUndefined_1_1) {
-            isUndefined_1 = isUndefined_1_1;
         }],
         execute: function () {
             SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
@@ -11354,81 +8926,54 @@ System.register("davinci-newton/math/Unit.js", ["../math/Dimensions", "../math/D
                     }
                     return new Unit(multiplier, dimensions, labels);
                 };
-                Unit.ONE = new Unit(1, Dimensions_1.default.ONE, SYMBOLS_SI);
-                Unit.KILOGRAM = new Unit(1, Dimensions_1.default.MASS, SYMBOLS_SI);
-                Unit.METER = new Unit(1, Dimensions_1.default.LENGTH, SYMBOLS_SI);
-                Unit.SECOND = new Unit(1, Dimensions_1.default.TIME, SYMBOLS_SI);
-                Unit.COULOMB = new Unit(1, Dimensions_1.default.ELECTRIC_CHARGE, SYMBOLS_SI);
-                Unit.AMPERE = new Unit(1, Dimensions_1.default.ELECTRIC_CURRENT, SYMBOLS_SI);
-                Unit.KELVIN = new Unit(1, Dimensions_1.default.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
-                Unit.MOLE = new Unit(1, Dimensions_1.default.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
-                Unit.CANDELA = new Unit(1, Dimensions_1.default.LUMINOUS_INTENSITY, SYMBOLS_SI);
-                Unit.COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions_1.default.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
-                Unit.ELECTRIC_FIELD = new Unit(1, Dimensions_1.default.ELECTRIC_FIELD, SYMBOLS_SI);
-                Unit.NEWTON = new Unit(1, Dimensions_1.default.FORCE, SYMBOLS_SI);
-                Unit.JOULE = new Unit(1, Dimensions_1.default.ENERGY_OR_TORQUE, SYMBOLS_SI);
-                Unit.JOULE_SECOND = new Unit(1, Dimensions_1.default.ANGULAR_MOMENTUM, SYMBOLS_SI);
-                Unit.METER_SQUARED = new Unit(1, Dimensions_1.default.AREA, SYMBOLS_SI);
-                Unit.METER_CUBED = new Unit(1, Dimensions_1.default.VOLUME, SYMBOLS_SI);
-                Unit.SECOND_SQUARED = new Unit(1, Dimensions_1.default.TIME_SQUARED, SYMBOLS_SI);
-                Unit.INV_KILOGRAM = new Unit(1, Dimensions_1.default.INV_MASS, SYMBOLS_SI);
-                Unit.INV_METER = new Unit(1, Dimensions_1.default.INV_LENGTH, SYMBOLS_SI);
-                Unit.INV_SECOND = new Unit(1, Dimensions_1.default.INV_TIME, SYMBOLS_SI);
-                Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.MOMENT_OF_INERTIA, SYMBOLS_SI);
-                Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions_1.default.MOMENTUM, SYMBOLS_SI);
-                Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.MOMENTUM_SQUARED, SYMBOLS_SI);
-                Unit.INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.default.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
-                Unit.STIFFNESS = new Unit(1, Dimensions_1.default.STIFFNESS, SYMBOLS_SI);
-                Unit.METER_PER_SECOND = new Unit(1, Dimensions_1.default.VELOCITY, SYMBOLS_SI);
-                Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions_1.default.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
-                Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.default.VELOCITY_SQUARED, SYMBOLS_SI);
+                Unit.ONE = new Unit(1, Dimensions_1.Dimensions.ONE, SYMBOLS_SI);
+                Unit.KILOGRAM = new Unit(1, Dimensions_1.Dimensions.MASS, SYMBOLS_SI);
+                Unit.METER = new Unit(1, Dimensions_1.Dimensions.LENGTH, SYMBOLS_SI);
+                Unit.SECOND = new Unit(1, Dimensions_1.Dimensions.TIME, SYMBOLS_SI);
+                Unit.COULOMB = new Unit(1, Dimensions_1.Dimensions.ELECTRIC_CHARGE, SYMBOLS_SI);
+                Unit.AMPERE = new Unit(1, Dimensions_1.Dimensions.ELECTRIC_CURRENT, SYMBOLS_SI);
+                Unit.KELVIN = new Unit(1, Dimensions_1.Dimensions.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
+                Unit.MOLE = new Unit(1, Dimensions_1.Dimensions.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
+                Unit.CANDELA = new Unit(1, Dimensions_1.Dimensions.LUMINOUS_INTENSITY, SYMBOLS_SI);
+                Unit.COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions_1.Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
+                Unit.ELECTRIC_FIELD = new Unit(1, Dimensions_1.Dimensions.ELECTRIC_FIELD, SYMBOLS_SI);
+                Unit.NEWTON = new Unit(1, Dimensions_1.Dimensions.FORCE, SYMBOLS_SI);
+                Unit.JOULE = new Unit(1, Dimensions_1.Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
+                Unit.JOULE_SECOND = new Unit(1, Dimensions_1.Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
+                Unit.METER_SQUARED = new Unit(1, Dimensions_1.Dimensions.AREA, SYMBOLS_SI);
+                Unit.METER_CUBED = new Unit(1, Dimensions_1.Dimensions.VOLUME, SYMBOLS_SI);
+                Unit.SECOND_SQUARED = new Unit(1, Dimensions_1.Dimensions.TIME_SQUARED, SYMBOLS_SI);
+                Unit.INV_KILOGRAM = new Unit(1, Dimensions_1.Dimensions.INV_MASS, SYMBOLS_SI);
+                Unit.INV_METER = new Unit(1, Dimensions_1.Dimensions.INV_LENGTH, SYMBOLS_SI);
+                Unit.INV_SECOND = new Unit(1, Dimensions_1.Dimensions.INV_TIME, SYMBOLS_SI);
+                Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
+                Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions_1.Dimensions.MOMENTUM, SYMBOLS_SI);
+                Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
+                Unit.INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions_1.Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
+                Unit.STIFFNESS = new Unit(1, Dimensions_1.Dimensions.STIFFNESS, SYMBOLS_SI);
+                Unit.METER_PER_SECOND = new Unit(1, Dimensions_1.Dimensions.VELOCITY, SYMBOLS_SI);
+                Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions_1.Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
+                Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions_1.Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
                 return Unit;
             }();
             exports_1("Unit", Unit);
         }
     };
 });
-System.register("davinci-newton/util/veryDifferent.js", [], function (exports_1, context_1) {
+System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "../util/veryDifferent", "./Scalar3", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var __moduleName = context_1 && context_1.id;
-    function veryDifferent(arg1, arg2, epsilon, magnitude) {
-        if (epsilon === void 0) {
-            epsilon = 1E-14;
-        }
-        if (magnitude === void 0) {
-            magnitude = 1;
-        }
-        if (epsilon <= 0) {
-            throw new Error("epsilon (" + epsilon + ") must be positive.");
-        }
-        if (magnitude <= 0) {
-            throw new Error("magnitude (" + magnitude + ") must be positive.");
-        }
-        var maxArg = Math.max(Math.abs(arg1), Math.abs(arg2));
-        var max = maxArg > magnitude ? maxArg : magnitude;
-        return Math.abs(arg1 - arg2) > max * epsilon;
-    }
-    exports_1("default", veryDifferent);
-    return {
-        setters: [],
-        execute: function () {}
-    };
-});
-System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Scalar3", "./Unit", "../util/veryDifferent"], function (exports_1, context_1) {
-    "use strict";
-
-    var mustBeNumber_1, Scalar3_1, Unit_1, veryDifferent_1, Vec3;
+    var mustBeNumber_1, veryDifferent_1, Scalar3_1, Unit_1, Vec3;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (mustBeNumber_1_1) {
             mustBeNumber_1 = mustBeNumber_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
         }, function (Scalar3_1_1) {
             Scalar3_1 = Scalar3_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
-        }, function (veryDifferent_1_1) {
-            veryDifferent_1 = veryDifferent_1_1;
         }],
         execute: function () {
             Vec3 = function () {
@@ -11603,206 +9148,2616 @@ System.register("davinci-newton/math/Vec3.js", ["../checks/mustBeNumber", "./Sca
                 return Vec3;
             }();
             exports_1("Vec3", Vec3);
-            exports_1("default", Vec3);
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/graph/AxisChoice", "./davinci-newton/engine3D/Block3", "./davinci-newton/util/CircularList", "./davinci-newton/config", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/model/CoordType", "./davinci-newton/engine3D/CoulombLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/math/Dimensions", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/view/DrawingMode", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/engine3D/Force3", "./davinci-newton/math/Geometric3", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/view/LabCanvas", "./davinci-newton/math/Matrix3", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/math/QQ", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Particle3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/view/SimView", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/math/Unit", "./davinci-newton/core/VarsList", "./davinci-newton/math/Vec3"], function (exports_1, context_1) {
+System.register("davinci-newton/solvers/AdaptiveStepSolver.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var AdaptiveStepSolver_1, AlignH_1, AlignV_1, AxisChoice_1, Block3_1, CircularList_1, config_1, ConstantEnergySolver_1, ConstantForceLaw3_1, CoordType_1, CoulombLaw3_1, Cylinder3_1, DefaultAdvanceStrategy_1, Dimensions_1, DisplayGraph_1, DrawingMode_1, EnergyTimeGraph_1, EulerMethod_1, Force3_1, Geometric3_1, Graph_1, GraphLine_1, GravitationLaw3_1, LabCanvas_1, Matrix3_1, ModifiedEuler_1, QQ_1, RigidBody3_1, Particle3_1, Physics3_1, RungeKutta_1, SimView_1, Sphere3_1, Spring3_1, Unit_1, VarsList_1, Vec3_1, newton;
+    var AdaptiveStepSolver;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AdaptiveStepSolver_1_1) {
-            AdaptiveStepSolver_1 = AdaptiveStepSolver_1_1;
+        setters: [],
+        execute: function () {
+            AdaptiveStepSolver = function () {
+                function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver) {
+                    this.stepUBound = 1;
+                    this.stepLBound = 1E-5;
+                    this.diffEq_ = diffEq;
+                    this.energySystem_ = energySystem;
+                    this.odeSolver_ = diffEqSolver;
+                    this.totSteps_ = 0;
+                    this.secondDiff_ = true;
+                    this.tolerance_ = 1E-6;
+                }
+                AdaptiveStepSolver.prototype.step = function (stepSize, uomStep) {
+                    this.savedState = this.diffEq_.getState();
+                    var startTime = this.diffEq_.time;
+                    var d_t = stepSize;
+                    var steps = 0;
+                    this.diffEq_.epilog();
+                    var startEnergy = this.energySystem_.totalEnergy().a;
+                    var lastEnergyDiff = Number.POSITIVE_INFINITY;
+                    var value = Number.POSITIVE_INFINITY;
+                    var firstTime = true;
+                    if (stepSize < this.stepLBound) {
+                        return;
+                    }
+                    do {
+                        var t = startTime;
+                        if (!firstTime) {
+                            this.diffEq_.setState(this.savedState);
+                            this.diffEq_.epilog();
+                            d_t = d_t / 5;
+                            if (d_t < this.stepLBound) {
+                                throw new Error("time step " + d_t + " too small. startEnergy => " + startEnergy + " lastEnergyDiff => " + lastEnergyDiff);
+                            }
+                        }
+                        steps = 0;
+                        while (t < startTime + stepSize) {
+                            var h = d_t;
+                            if (t + h > startTime + stepSize - 1E-10) {
+                                h = startTime + stepSize - t;
+                            }
+                            steps++;
+                            this.odeSolver_.step(h, uomStep);
+                            this.diffEq_.epilog();
+                            t += h;
+                        }
+                        var finishEnergy = this.energySystem_.totalEnergy().a;
+                        var energyDiff = Math.abs(startEnergy - finishEnergy);
+                        if (this.secondDiff_) {
+                            if (!firstTime) {
+                                value = Math.abs(energyDiff - lastEnergyDiff);
+                            }
+                        } else {
+                            value = energyDiff;
+                        }
+                        lastEnergyDiff = energyDiff;
+                        firstTime = false;
+                    } while (value > this.tolerance_);
+                    this.totSteps_ += steps;
+                };
+                Object.defineProperty(AdaptiveStepSolver.prototype, "secondDiff", {
+                    get: function () {
+                        return this.secondDiff_;
+                    },
+                    set: function (value) {
+                        this.secondDiff_ = value;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(AdaptiveStepSolver.prototype, "tolerance", {
+                    get: function () {
+                        return this.tolerance_;
+                    },
+                    set: function (value) {
+                        this.tolerance_ = value;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                return AdaptiveStepSolver;
+            }();
+            exports_1("AdaptiveStepSolver", AdaptiveStepSolver);
+        }
+    };
+});
+System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var ConstantEnergySolver;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            ConstantEnergySolver = function () {
+                function ConstantEnergySolver(simulation, energySystem, solverMethod) {
+                    this.stepUpperBound = 1;
+                    this.stepLowerBound = 1E-5;
+                    this.tolerance_ = 1E-6;
+                    this.simulation_ = simulation;
+                    this.energySystem_ = energySystem;
+                    this.solverMethod_ = solverMethod;
+                    this.totSteps_ = 0;
+                }
+                ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
+                    this.savedState = this.simulation_.getState();
+                    var startTime = this.simulation_.time;
+                    var adaptedStepSize = Δt;
+                    var steps = 0;
+                    this.simulation_.epilog();
+                    var startEnergy = this.energySystem_.totalEnergy().a;
+                    var lastEnergyDiff = Number.POSITIVE_INFINITY;
+                    var value = Number.POSITIVE_INFINITY;
+                    var firstTime = true;
+                    if (Δt < this.stepLowerBound) {
+                        return;
+                    }
+                    do {
+                        var t = startTime;
+                        if (!firstTime) {
+                            this.simulation_.setState(this.savedState);
+                            this.simulation_.epilog();
+                            adaptedStepSize = adaptedStepSize / 5;
+                            if (adaptedStepSize < this.stepLowerBound) {
+                                throw new Error("Unable to achieve tolerance " + this.tolerance + " with stepLowerBound " + this.stepLowerBound);
+                            }
+                        }
+                        steps = 0;
+                        while (t < startTime + Δt) {
+                            var h = adaptedStepSize;
+                            if (t + h > startTime + Δt - 1E-10) {
+                                h = startTime + Δt - t;
+                            }
+                            steps++;
+                            this.solverMethod_.step(h, uomTime);
+                            this.simulation_.epilog();
+                            t += h;
+                        }
+                        var finishEnergy = this.energySystem_.totalEnergy().a;
+                        var energyDiff = Math.abs(startEnergy - finishEnergy);
+                        value = energyDiff;
+                        lastEnergyDiff = energyDiff;
+                        firstTime = false;
+                    } while (value > this.tolerance_);
+                    this.totSteps_ += steps;
+                };
+                Object.defineProperty(ConstantEnergySolver.prototype, "tolerance", {
+                    get: function () {
+                        return this.tolerance_;
+                    },
+                    set: function (value) {
+                        this.tolerance_ = value;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                return ConstantEnergySolver;
+            }();
+            exports_1("ConstantEnergySolver", ConstantEnergySolver);
+        }
+    };
+});
+System.register("davinci-newton/solvers/EulerMethod.js", ["../util/zeroArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var zeroArray_1, EulerMethod;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (zeroArray_1_1) {
+            zeroArray_1 = zeroArray_1_1;
+        }],
+        execute: function () {
+            EulerMethod = function () {
+                function EulerMethod(sim_) {
+                    this.sim_ = sim_;
+                    this.inp_ = [];
+                    this.k1_ = [];
+                }
+                EulerMethod.prototype.step = function (stepSize, uomStep) {
+                    var vars = this.sim_.getState();
+                    var N = vars.length;
+                    if (this.inp_.length !== N) {
+                        this.inp_ = new Array(N);
+                        this.k1_ = new Array(N);
+                    }
+                    var inp = this.inp_;
+                    var k1 = this.k1_;
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i];
+                    }
+                    zeroArray_1.default(k1);
+                    this.sim_.evaluate(inp, k1, 0, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        vars[i] += k1[i] * stepSize;
+                    }
+                    this.sim_.setState(vars);
+                };
+                return EulerMethod;
+            }();
+            exports_1("EulerMethod", EulerMethod);
+        }
+    };
+});
+System.register("davinci-newton/solvers/ModifiedEuler.js", ["../util/zeroArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var zeroArray_1, ModifiedEuler;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (zeroArray_1_1) {
+            zeroArray_1 = zeroArray_1_1;
+        }],
+        execute: function () {
+            ModifiedEuler = function () {
+                function ModifiedEuler(sim_) {
+                    this.sim_ = sim_;
+                    this.inp_ = [];
+                    this.k1_ = [];
+                    this.k2_ = [];
+                }
+                ModifiedEuler.prototype.step = function (stepSize, uomStep) {
+                    var vars = this.sim_.getState();
+                    var N = vars.length;
+                    if (this.inp_.length !== N) {
+                        this.inp_ = new Array(N);
+                        this.k1_ = new Array(N);
+                        this.k2_ = new Array(N);
+                    }
+                    var inp = this.inp_;
+                    var k1 = this.k1_;
+                    var k2 = this.k2_;
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i];
+                    }
+                    zeroArray_1.default(k1);
+                    this.sim_.evaluate(inp, k1, 0, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i] + k1[i] * stepSize;
+                    }
+                    zeroArray_1.default(k2);
+                    this.sim_.evaluate(inp, k2, stepSize, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        vars[i] += (k1[i] + k2[i]) * stepSize / 2;
+                    }
+                    this.sim_.setState(vars);
+                };
+                return ModifiedEuler;
+            }();
+            exports_1("ModifiedEuler", ModifiedEuler);
+        }
+    };
+});
+System.register("davinci-newton/util/zeroArray.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function zeroArray(xs) {
+        var length = xs.length;
+        for (var i = 0; i < length; i++) {
+            xs[i] = 0;
+        }
+    }
+    exports_1("default", zeroArray);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/solvers/RungeKutta.js", ["../util/zeroArray"], function (exports_1, context_1) {
+    "use strict";
+
+    var zeroArray_1, RungeKutta;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (zeroArray_1_1) {
+            zeroArray_1 = zeroArray_1_1;
+        }],
+        execute: function () {
+            RungeKutta = function () {
+                function RungeKutta(simulation) {
+                    this.inp_ = [];
+                    this.k1_ = [];
+                    this.k2_ = [];
+                    this.k3_ = [];
+                    this.k4_ = [];
+                    this.sim_ = simulation;
+                }
+                RungeKutta.prototype.step = function (stepSize, uomStep) {
+                    var vars = this.sim_.getState();
+                    var N = vars.length;
+                    if (this.inp_.length < N) {
+                        this.inp_ = new Array(N);
+                        this.k1_ = new Array(N);
+                        this.k2_ = new Array(N);
+                        this.k3_ = new Array(N);
+                        this.k4_ = new Array(N);
+                    }
+                    var inp = this.inp_;
+                    var k1 = this.k1_;
+                    var k2 = this.k2_;
+                    var k3 = this.k3_;
+                    var k4 = this.k4_;
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i];
+                    }
+                    zeroArray_1.default(k1);
+                    this.sim_.evaluate(inp, k1, 0, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i] + k1[i] * stepSize / 2;
+                    }
+                    zeroArray_1.default(k2);
+                    this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i] + k2[i] * stepSize / 2;
+                    }
+                    zeroArray_1.default(k3);
+                    this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        inp[i] = vars[i] + k3[i] * stepSize;
+                    }
+                    zeroArray_1.default(k4);
+                    this.sim_.evaluate(inp, k4, stepSize, uomStep);
+                    for (var i = 0; i < N; i++) {
+                        vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
+                    }
+                    this.sim_.setState(vars);
+                };
+                return RungeKutta;
+            }();
+            exports_1("RungeKutta", RungeKutta);
+        }
+    };
+});
+System.register("davinci-newton/strategy/DefaultAdvanceStrategy.js", ["../checks/mustBeNonNullObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustBeNonNullObject_1, DefaultAdvanceStrategy;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }],
+        execute: function () {
+            DefaultAdvanceStrategy = function () {
+                function DefaultAdvanceStrategy(simulation, solver) {
+                    this.simulation_ = mustBeNonNullObject_1.default('simulation', simulation);
+                    this.solver_ = mustBeNonNullObject_1.default('solver', solver);
+                }
+                DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
+                    this.simulation_.prolog();
+                    this.solver_.step(stepSize, uomStep);
+                    this.simulation_.epilog();
+                };
+                return DefaultAdvanceStrategy;
+            }();
+            exports_1("DefaultAdvanceStrategy", DefaultAdvanceStrategy);
+        }
+    };
+});
+System.register("davinci-newton/util/UtilityCore.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var UtilityCore;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            UtilityCore = function () {
+                function UtilityCore() {}
+                UtilityCore.MAX_INTEGER = Math.pow(2, 53);
+                return UtilityCore;
+            }();
+            exports_1("default", UtilityCore);
+        }
+    };
+});
+System.register("davinci-newton/util/CircularList.js", ["./UtilityCore"], function (exports_1, context_1) {
+    "use strict";
+
+    var UtilityCore_1, MAX_INDEX_ERROR, CircularList, CircularListIterator;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (UtilityCore_1_1) {
+            UtilityCore_1 = UtilityCore_1_1;
+        }],
+        execute: function () {
+            MAX_INDEX_ERROR = 'exceeded max int';
+            CircularList = function () {
+                function CircularList(capacity) {
+                    if (capacity === void 0) {
+                        capacity = 3000;
+                    }
+                    this.size_ = 0;
+                    this.cycles_ = 0;
+                    this.nextPtr_ = 0;
+                    this.lastPtr_ = -1;
+                    this.capacity_ = capacity || 3000;
+                    if (this.capacity_ < 2) {
+                        throw new Error();
+                    }
+                    this.size_ = 0;
+                    this.cycles_ = 0;
+                    this.nextPtr_ = 0;
+                    this.lastPtr_ = -1;
+                    this.values_ = new Array(this.capacity_);
+                    this.lastValue_ = null;
+                }
+                CircularList.prototype.causeMaxIntError = function () {
+                    this.size_ = this.capacity_;
+                    this.cycles_ = Math.floor(UtilityCore_1.default.MAX_INTEGER / this.capacity_) - 1;
+                };
+                CircularList.prototype.getEndIndex = function () {
+                    if (this.size_ === 0) {
+                        return -1;
+                    }
+                    var idx;
+                    if (this.nextPtr_ === 0) idx = this.pointerToIndex(this.size_ - 1);else idx = this.pointerToIndex(this.nextPtr_ - 1);
+                    return idx;
+                };
+                CircularList.prototype.getEndValue = function () {
+                    var idx = this.getEndIndex();
+                    return idx === -1 ? null : this.values_[this.indexToPointer_(idx)];
+                };
+                CircularList.prototype.getIterator = function (index) {
+                    return new CircularListIterator(this, index);
+                };
+                CircularList.prototype.getSize = function () {
+                    return this.size_;
+                };
+                CircularList.prototype.getStartIndex = function () {
+                    var idx = this.size_ < this.capacity_ ? 0 : this.pointerToIndex(this.nextPtr_);
+                    return idx;
+                };
+                CircularList.prototype.getValue = function (index) {
+                    var i = this.indexToPointer_(index);
+                    return this.values_[i];
+                };
+                CircularList.prototype.indexToPointer_ = function (index) {
+                    if (this.size_ < this.capacity_) return index;
+                    var p = index % this.capacity_;
+                    var idx = index - (this.cycles_ - (p < this.nextPtr_ ? 0 : 1)) * this.capacity_;
+                    return idx;
+                };
+                CircularList.prototype.pointerToIndex = function (pointer) {
+                    if (this.size_ < this.capacity_) return pointer;
+                    var idx = pointer + (this.cycles_ - (pointer < this.nextPtr_ ? 0 : 1)) * this.capacity_;
+                    if (idx >= UtilityCore_1.default.MAX_INTEGER) throw new Error(MAX_INDEX_ERROR);
+                    return idx;
+                };
+                CircularList.prototype.reset = function () {
+                    this.nextPtr_ = this.size_ = 0;
+                    this.cycles_ = 0;
+                    this.lastPtr_ = -1;
+                };
+                CircularList.prototype.store = function (value) {
+                    this.lastPtr_ = this.nextPtr_;
+                    this.values_[this.nextPtr_] = value;
+                    this.nextPtr_++;
+                    if (this.size_ < this.capacity_) this.size_++;
+                    if (this.nextPtr_ >= this.capacity_) {
+                        this.cycles_++;
+                        this.nextPtr_ = 0;
+                    }
+                    return this.pointerToIndex(this.lastPtr_);
+                };
+                return CircularList;
+            }();
+            exports_1("CircularList", CircularList);
+            CircularListIterator = function () {
+                function CircularListIterator(cList, startIndex) {
+                    this.cList = cList;
+                    this.first_ = cList.size_ > 0;
+                    this.cList_ = cList;
+                    if (startIndex === undefined || startIndex < 0) {
+                        startIndex = cList.getStartIndex();
+                    }
+                    if (cList.size_ > 0 && (startIndex < cList.getStartIndex() || startIndex > cList.getEndIndex())) {
+                        throw new Error('out of range startIndex=' + startIndex);
+                    }
+                    this.index_ = startIndex;
+                    this.pointer_ = cList.indexToPointer_(startIndex);
+                }
+                CircularListIterator.prototype.getIndex = function () {
+                    if (this.cList_.size_ === 0) {
+                        throw new Error('no data');
+                    }
+                    return this.index_;
+                };
+                CircularListIterator.prototype.getValue = function () {
+                    if (this.cList_.size_ === 0) {
+                        throw new Error('no data');
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                CircularListIterator.prototype.hasNext = function () {
+                    return this.first_ || this.index_ < this.cList_.getEndIndex();
+                };
+                CircularListIterator.prototype.hasPrevious = function () {
+                    return this.first_ || this.index_ > this.cList_.getStartIndex();
+                };
+                CircularListIterator.prototype.nextValue = function () {
+                    if (this.cList_.size_ === 0) throw new Error('no data');
+                    if (this.first_) {
+                        this.first_ = false;
+                    } else {
+                        if (this.index_ + 1 > this.cList_.getEndIndex()) {
+                            throw new Error('cannot iterate past end of list');
+                        }
+                        this.index_++;
+                        this.pointer_ = this.cList_.indexToPointer_(this.index_);
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                CircularListIterator.prototype.previousValue = function () {
+                    if (this.cList_.size_ === 0) throw new Error('no data');
+                    if (this.first_) {
+                        this.first_ = false;
+                    } else {
+                        if (this.index_ - 1 < this.cList_.getStartIndex()) {
+                            throw new Error('cannot iterate prior to start of list');
+                        }
+                        this.index_--;
+                        this.pointer_ = this.cList_.indexToPointer_(this.index_);
+                    }
+                    return this.cList_.values_[this.pointer_];
+                };
+                return CircularListIterator;
+            }();
+        }
+    };
+});
+System.register("davinci-newton/view/DrawingMode.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var DrawingMode;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            (function (DrawingMode) {
+                DrawingMode[DrawingMode["DOTS"] = 0] = "DOTS";
+                DrawingMode[DrawingMode["LINES"] = 1] = "LINES";
+            })(DrawingMode || (DrawingMode = {}));
+            exports_1("DrawingMode", DrawingMode);
+        }
+    };
+});
+System.register("davinci-newton/checks/isNumber.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isNumber(x) {
+        return typeof x === 'number';
+    }
+    exports_1("default", isNumber);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustSatisfy.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
+        if (!condition) {
+            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
+            var context = contextBuilder ? " in " + contextBuilder() : "";
+            throw new Error(name + " must " + message + context + ".");
+        }
+    }
+    exports_1("default", mustSatisfy);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isNull.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function default_1(x) {
+        return x === null;
+    }
+    exports_1("default", default_1);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/mustBeNonNullObject.js", ["../checks/mustSatisfy", "../checks/isNull", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustSatisfy_1, isNull_1, isObject_1;
+    var __moduleName = context_1 && context_1.id;
+    function beObject() {
+        return "be a non-null `object`";
+    }
+    function mustBeObject(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isObject_1.default(value) && !isNull_1.default(value), beObject, contextBuilder);
+        return value;
+    }
+    exports_1("default", mustBeObject);
+    return {
+        setters: [function (mustSatisfy_1_1) {
+            mustSatisfy_1 = mustSatisfy_1_1;
+        }, function (isNull_1_1) {
+            isNull_1 = isNull_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/isEmpty.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isEmpty(xs) {
+        return xs.length === 0;
+    }
+    exports_1("default", isEmpty);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/LabCanvas.js", ["../checks/isNumber", "../checks/mustBeNonNullObject", "../util/AbstractSubject", "../util/clone", "../util/contains", "../util/GenericEvent", "../util/isEmpty", "../util/remove", "../util/veryDifferent", "./ScreenRect"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var isNumber_1, mustBeNonNullObject_1, AbstractSubject_1, clone_1, contains_1, GenericEvent_1, isEmpty_1, remove_1, veryDifferent_1, ScreenRect_1, WIDTH, HEIGHT, ALPHA, BACKGROUND, LabCanvas;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }, function (mustBeNonNullObject_1_1) {
+            mustBeNonNullObject_1 = mustBeNonNullObject_1_1;
+        }, function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (clone_1_1) {
+            clone_1 = clone_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (isEmpty_1_1) {
+            isEmpty_1 = isEmpty_1_1;
+        }, function (remove_1_1) {
+            remove_1 = remove_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }],
+        execute: function () {
+            WIDTH = 'width';
+            HEIGHT = 'height';
+            ALPHA = 'alpha';
+            BACKGROUND = 'background';
+            LabCanvas = function (_super) {
+                __extends(LabCanvas, _super);
+                function LabCanvas(canvas) {
+                    var _this = _super.call(this) || this;
+                    _this.labViews_ = [];
+                    _this.memorizables_ = [];
+                    _this.focusView_ = null;
+                    _this.alpha_ = 1;
+                    _this.background_ = '';
+                    _this.canvas_ = canvas;
+                    canvas.contentEditable = 'false';
+                    return _this;
+                }
+                LabCanvas.prototype.addMemo = function (memorizable) {
+                    if (!contains_1.default(this.memorizables_, memorizable)) {
+                        this.memorizables_.push(memorizable);
+                    }
+                };
+                LabCanvas.prototype.addView = function (view) {
+                    mustBeNonNullObject_1.default('view', view);
+                    if (this.getWidth() > 0 && this.getHeight() > 0) {
+                        var screenRect = new ScreenRect_1.default(0, 0, this.getWidth(), this.getHeight());
+                        view.setScreenRect(screenRect);
+                    }
+                    this.labViews_.push(view);
+                    this.addMemo(view);
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_ADDED, view));
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+                    if (this.focusView_ == null) {
+                        this.setFocusView(view);
+                    }
+                };
+                LabCanvas.prototype.focus = function () {
+                    this.canvas_.focus();
+                };
+                LabCanvas.prototype.getAlpha = function () {
+                    return this.alpha_;
+                };
+                LabCanvas.prototype.getBackground = function () {
+                    return this.background_;
+                };
+                LabCanvas.prototype.getCanvas = function () {
+                    return this.canvas_;
+                };
+                LabCanvas.prototype.getContext = function () {
+                    return this.canvas_.getContext('2d');
+                };
+                LabCanvas.prototype.getFocusView = function () {
+                    return this.focusView_;
+                };
+                LabCanvas.prototype.getHeight = function () {
+                    return this.canvas_.height;
+                };
+                LabCanvas.prototype.getMemos = function () {
+                    return clone_1.default(this.memorizables_);
+                };
+                LabCanvas.prototype.getScreenRect = function () {
+                    return new ScreenRect_1.default(0, 0, this.canvas_.width, this.canvas_.height);
+                };
+                LabCanvas.prototype.getViews = function () {
+                    return clone_1.default(this.labViews_);
+                };
+                LabCanvas.prototype.getWidth = function () {
+                    return this.canvas_.width;
+                };
+                LabCanvas.prototype.memorize = function () {
+                    for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                        this.memorizables_[i].memorize();
+                    }
+                };
+                LabCanvas.prototype.notifySizeChanged = function () {
+                    var r = this.getScreenRect();
+                    this.labViews_.forEach(function (view) {
+                        view.setScreenRect(r);
+                    });
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.SIZE_CHANGED));
+                };
+                LabCanvas.prototype.paint = function () {
+                    if (this.canvas_.offsetParent != null) {
+                        var context = this.canvas_.getContext('2d');
+                        context.save();
+                        if (this.background_ !== '') {
+                            context.globalAlpha = this.alpha_;
+                            context.fillStyle = this.background_;
+                            context.fillRect(0, 0, this.canvas_.width, this.canvas_.height);
+                            context.globalAlpha = 1;
+                        } else {
+                            context.clearRect(0, 0, this.canvas_.width, this.canvas_.height);
+                        }
+                        var vs = this.labViews_;
+                        var N = vs.length;
+                        for (var i = 0; i < N; i++) {
+                            vs[i].paint(context);
+                        }
+                        context.restore();
+                    }
+                };
+                LabCanvas.prototype.removeMemo = function (memorizable) {
+                    remove_1.default(this.memorizables_, memorizable);
+                };
+                LabCanvas.prototype.removeView = function (view) {
+                    mustBeNonNullObject_1.default('view', view);
+                    remove_1.default(this.labViews_, view);
+                    this.removeMemo(view);
+                    if (this.focusView_ === view) {
+                        this.setFocusView(isEmpty_1.default(this.labViews_) ? null : this.labViews_[0]);
+                    }
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_REMOVED, view));
+                    this.broadcast(new GenericEvent_1.default(this, LabCanvas.VIEW_LIST_MODIFIED));
+                };
+                LabCanvas.prototype.setAlpha = function (value) {
+                    if (veryDifferent_1.default(this.alpha_, value)) {
+                        this.alpha_ = value;
+                        if (veryDifferent_1.default(value, 1) && this.background_ === '') {
+                            this.setBackground('white');
+                        }
+                        this.broadcastParameter(ALPHA);
+                    }
+                };
+                LabCanvas.prototype.setBackground = function (value) {
+                    if (this.background_ !== value) {
+                        this.background_ = value;
+                        this.broadcastParameter(BACKGROUND);
+                    }
+                };
+                LabCanvas.prototype.setFocusView = function (view) {
+                    if (view != null && !contains_1.default(this.labViews_, view)) throw new Error('cannot set focus to unknown view ' + view);
+                    if (this.focusView_ !== view) {
+                        if (this.focusView_ != null) {
+                            this.focusView_.loseFocus();
+                        }
+                        this.focusView_ = view;
+                        if (view != null) {
+                            view.gainFocus();
+                        }
+                        this.broadcast(new GenericEvent_1.default(this, LabCanvas.FOCUS_VIEW_CHANGED, view));
+                    }
+                };
+                LabCanvas.prototype.setHeight = function (value) {
+                    if (veryDifferent_1.default(value, this.canvas_.height)) {
+                        this.canvas_.height = value;
+                    }
+                    this.notifySizeChanged();
+                    this.broadcastParameter(HEIGHT);
+                };
+                LabCanvas.prototype.setScreenRect = function (sr) {
+                    if (!ScreenRect_1.default.isDuckType(sr)) {
+                        throw new Error('not a ScreenRect ' + sr);
+                    }
+                    if (sr.getTop() !== 0 || sr.getLeft() !== 0) {
+                        throw new Error('top left must be 0,0, was: ' + sr);
+                    }
+                    this.setSize(sr.getWidth(), sr.getHeight());
+                };
+                LabCanvas.prototype.setSize = function (width, height) {
+                    if (!isNumber_1.default(width) || width <= 0 || !isNumber_1.default(height) || height <= 0) {
+                        throw new Error('bad size ' + width + ', ' + height);
+                    }
+                    this.canvas_.width = width;
+                    this.canvas_.height = height;
+                    this.notifySizeChanged();
+                    this.broadcastParameter(WIDTH);
+                    this.broadcastParameter(HEIGHT);
+                };
+                LabCanvas.prototype.setWidth = function (value) {
+                    if (veryDifferent_1.default(value, this.canvas_.width)) {
+                        this.canvas_.width = value;
+                    }
+                    this.notifySizeChanged();
+                    this.broadcastParameter(WIDTH);
+                };
+                LabCanvas.FOCUS_VIEW_CHANGED = 'FOCUS_VIEW_CHANGED';
+                LabCanvas.SIZE_CHANGED = 'SIZE_CHANGED';
+                LabCanvas.VIEW_LIST_MODIFIED = 'VIEW_LIST_MODIFIED';
+                LabCanvas.VIEW_ADDED = 'VIEW_ADDED';
+                LabCanvas.VIEW_REMOVED = 'VIEW_REMOVED';
+                return LabCanvas;
+            }(AbstractSubject_1.default);
+            exports_1("LabCanvas", LabCanvas);
+        }
+    };
+});
+System.register('davinci-newton/checks/mustBeFinite.js', [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function mustBeFinite(value) {
+        if (typeof value !== 'number' || !isFinite(value)) {
+            throw new Error('not a finite number ' + value);
+        }
+        return value;
+    }
+    exports_1("default", mustBeFinite);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/AffineTransform.js", ["./Point"], function (exports_1, context_1) {
+    "use strict";
+
+    var Point_1, AffineTransform;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Point_1_1) {
+            Point_1 = Point_1_1;
+        }],
+        execute: function () {
+            AffineTransform = function () {
+                function AffineTransform(m11, m12, m21, m22, dx, dy) {
+                    this.m11_ = m11;
+                    this.m12_ = m12;
+                    this.m21_ = m21;
+                    this.m22_ = m22;
+                    this.dx_ = dx;
+                    this.dy_ = dy;
+                }
+                AffineTransform.prototype.applyTransform = function (context) {
+                    context.transform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+                    return this;
+                };
+                AffineTransform.prototype.concatenate = function (at) {
+                    var m11 = this.m11_ * at.m11_ + this.m21_ * at.m12_;
+                    var m12 = this.m12_ * at.m11_ + this.m22_ * at.m12_;
+                    var m21 = this.m11_ * at.m21_ + this.m21_ * at.m22_;
+                    var m22 = this.m12_ * at.m21_ + this.m22_ * at.m22_;
+                    var dx = this.m11_ * at.dx_ + this.m21_ * at.dy_ + this.dx_;
+                    var dy = this.m12_ * at.dx_ + this.m22_ * at.dy_ + this.dy_;
+                    return new AffineTransform(m11, m12, m21, m22, dx, dy);
+                };
+                AffineTransform.prototype.lineTo = function (x, y, context) {
+                    var p = this.transform(x, y);
+                    context.lineTo(p.x, p.y);
+                    return this;
+                };
+                AffineTransform.prototype.moveTo = function (x, y, context) {
+                    var p = this.transform(x, y);
+                    context.moveTo(p.x, p.y);
+                    return this;
+                };
+                AffineTransform.prototype.rotate = function (angle) {
+                    var c = Math.cos(angle);
+                    var s = Math.sin(angle);
+                    var m11 = c * this.m11_ + s * this.m21_;
+                    var m12 = c * this.m12_ + s * this.m22_;
+                    var m21 = -s * this.m11_ + c * this.m21_;
+                    var m22 = -s * this.m12_ + c * this.m22_;
+                    return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+                };
+                AffineTransform.prototype.scale = function (x, y) {
+                    var m11 = this.m11_ * x;
+                    var m12 = this.m12_ * x;
+                    var m21 = this.m21_ * y;
+                    var m22 = this.m22_ * y;
+                    return new AffineTransform(m11, m12, m21, m22, this.dx_, this.dy_);
+                };
+                AffineTransform.prototype.setTransform = function (context) {
+                    context.setTransform(this.m11_, this.m12_, this.m21_, this.m22_, this.dx_, this.dy_);
+                    return this;
+                };
+                AffineTransform.prototype.transform = function (x, y) {
+                    var x2 = this.m11_ * x + this.m21_ * y + this.dx_;
+                    var y2 = this.m12_ * x + this.m22_ * y + this.dy_;
+                    return new Point_1.default(x2, y2);
+                };
+                AffineTransform.prototype.translate = function (x, y) {
+                    var dx = this.dx_ + this.m11_ * x + this.m21_ * y;
+                    var dy = this.dy_ + this.m12_ * x + this.m22_ * y;
+                    return new AffineTransform(this.m11_, this.m12_, this.m21_, this.m22_, dx, dy);
+                };
+                AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
+                return AffineTransform;
+            }();
+            exports_1("default", AffineTransform);
+        }
+    };
+});
+System.register("davinci-newton/view/AlignH.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var AlignH;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            (function (AlignH) {
+                AlignH[AlignH["LEFT"] = 0] = "LEFT";
+                AlignH[AlignH["MIDDLE"] = 1] = "MIDDLE";
+                AlignH[AlignH["RIGHT"] = 2] = "RIGHT";
+                AlignH[AlignH["FULL"] = 3] = "FULL";
+            })(AlignH || (AlignH = {}));
+            exports_1("AlignH", AlignH);
+        }
+    };
+});
+System.register("davinci-newton/view/AlignV.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var AlignV;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            (function (AlignV) {
+                AlignV[AlignV["TOP"] = 0] = "TOP";
+                AlignV[AlignV["MIDDLE"] = 1] = "MIDDLE";
+                AlignV[AlignV["BOTTOM"] = 2] = "BOTTOM";
+                AlignV[AlignV["FULL"] = 3] = "FULL";
+            })(AlignV || (AlignV = {}));
+            exports_1("AlignV", AlignV);
+        }
+    };
+});
+System.register("davinci-newton/view/CoordMap.js", ["../checks/mustBeFinite", "./AffineTransform", "./AlignH", "./AlignV", "./DoubleRect", "./Point", "./ScreenRect"], function (exports_1, context_1) {
+    "use strict";
+
+    var mustBeFinite_1, AffineTransform_1, AlignH_1, AlignV_1, DoubleRect_1, Point_1, ScreenRect_1, MIN_SIZE, CoordMap;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (mustBeFinite_1_1) {
+            mustBeFinite_1 = mustBeFinite_1_1;
+        }, function (AffineTransform_1_1) {
+            AffineTransform_1 = AffineTransform_1_1;
         }, function (AlignH_1_1) {
             AlignH_1 = AlignH_1_1;
         }, function (AlignV_1_1) {
             AlignV_1 = AlignV_1_1;
-        }, function (AxisChoice_1_1) {
-            AxisChoice_1 = AxisChoice_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
+        }, function (Point_1_1) {
+            Point_1 = Point_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }],
+        execute: function () {
+            MIN_SIZE = 1E-15;
+            CoordMap = function () {
+                function CoordMap(screen_left, screen_bottom, sim_left, sim_bottom, pixel_per_unit_x, pixel_per_unit_y) {
+                    this.screen_left_ = mustBeFinite_1.default(screen_left);
+                    this.screen_bottom_ = mustBeFinite_1.default(screen_bottom);
+                    this.sim_left_ = mustBeFinite_1.default(sim_left);
+                    this.sim_bottom_ = mustBeFinite_1.default(sim_bottom);
+                    this.pixel_per_unit_x_ = mustBeFinite_1.default(pixel_per_unit_x);
+                    this.pixel_per_unit_y_ = mustBeFinite_1.default(pixel_per_unit_y);
+                    var at = AffineTransform_1.default.IDENTITY;
+                    at = at.translate(this.screen_left_, this.screen_bottom_);
+                    at = at.scale(this.pixel_per_unit_x_, -this.pixel_per_unit_y_);
+                    at = at.translate(-this.sim_left_, -this.sim_bottom_);
+                    this.transform_ = at;
+                }
+                CoordMap.make = function (screenRect, simRect, horizAlign, verticalAlign, aspectRatio) {
+                    if (horizAlign === void 0) {
+                        horizAlign = AlignH_1.AlignH.MIDDLE;
+                    }
+                    if (verticalAlign === void 0) {
+                        verticalAlign = AlignV_1.AlignV.MIDDLE;
+                    }
+                    if (aspectRatio === void 0) {
+                        aspectRatio = 1;
+                    }
+                    if (aspectRatio < MIN_SIZE || !isFinite(aspectRatio)) {
+                        throw new Error('bad aspectRatio ' + aspectRatio);
+                    }
+                    var simLeft = simRect.getLeft();
+                    var simBottom = simRect.getBottom();
+                    var sim_width = simRect.getRight() - simLeft;
+                    var sim_height = simRect.getTop() - simBottom;
+                    if (sim_width < MIN_SIZE || sim_height < MIN_SIZE) {
+                        throw new Error('simRect cannot be empty ' + simRect);
+                    }
+                    var screen_top = screenRect.getTop();
+                    var screen_left = screenRect.getLeft();
+                    var screen_width = screenRect.getWidth();
+                    var screen_height = screenRect.getHeight();
+                    var offset_x = 0;
+                    var offset_y = 0;
+                    var pixel_per_unit_x = 0;
+                    var pixel_per_unit_y = 0;
+                    if (horizAlign === AlignH_1.AlignH.FULL) {
+                        pixel_per_unit_x = screen_width / sim_width;
+                        offset_x = 0;
+                    }
+                    if (verticalAlign === AlignV_1.AlignV.FULL) {
+                        pixel_per_unit_y = screen_height / sim_height;
+                        offset_y = 0;
+                    }
+                    if (horizAlign !== AlignH_1.AlignH.FULL || verticalAlign !== AlignV_1.AlignV.FULL) {
+                        var horizFull = void 0;
+                        if (horizAlign === AlignH_1.AlignH.FULL) {
+                            pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                            horizFull = true;
+                        } else if (verticalAlign === AlignV_1.AlignV.FULL) {
+                            pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                            horizFull = false;
+                        } else {
+                            pixel_per_unit_x = screen_width / sim_width;
+                            pixel_per_unit_y = pixel_per_unit_x * aspectRatio;
+                            horizFull = true;
+                            var ideal_height = Math.floor(0.5 + pixel_per_unit_y * sim_height);
+                            if (screen_height < ideal_height) {
+                                pixel_per_unit_y = screen_height / sim_height;
+                                pixel_per_unit_x = pixel_per_unit_y / aspectRatio;
+                                horizFull = false;
+                            }
+                        }
+                        if (!horizFull) {
+                            offset_y = 0;
+                            var ideal_width = Math.floor(0.5 + sim_width * pixel_per_unit_x);
+                            switch (horizAlign) {
+                                case AlignH_1.AlignH.LEFT:
+                                    offset_x = 0;
+                                    break;
+                                case AlignH_1.AlignH.MIDDLE:
+                                    offset_x = (screen_width - ideal_width) / 2;
+                                    break;
+                                case AlignH_1.AlignH.RIGHT:
+                                    offset_x = screen_width - ideal_width;
+                                    break;
+                                default:
+                                    throw new Error();
+                            }
+                        } else {
+                            offset_x = 0;
+                            var ideal_height = Math.floor(0.5 + sim_height * pixel_per_unit_y);
+                            switch (verticalAlign) {
+                                case AlignV_1.AlignV.BOTTOM:
+                                    offset_y = 0;
+                                    break;
+                                case AlignV_1.AlignV.MIDDLE:
+                                    offset_y = (screen_height - ideal_height) / 2;
+                                    break;
+                                case AlignV_1.AlignV.TOP:
+                                    offset_y = screen_height - ideal_height;
+                                    break;
+                                default:
+                                    {
+                                        throw new Error();
+                                    }
+                            }
+                        }
+                    }
+                    var coordMap = new CoordMap(screen_left, screen_top + screen_height, simLeft - offset_x / pixel_per_unit_x, simBottom - offset_y / pixel_per_unit_y, pixel_per_unit_x, pixel_per_unit_y);
+                    return coordMap;
+                };
+                CoordMap.isDuckType = function (obj) {
+                    if (obj instanceof CoordMap) {
+                        return true;
+                    }
+                    return obj.getAffineTransform !== undefined && obj.simToScreenX !== undefined && obj.simToScreenY !== undefined && obj.screenToSimX !== undefined && obj.screenToSimY !== undefined && obj.getScaleX !== undefined && obj.getScaleY !== undefined;
+                };
+                CoordMap.prototype.getAffineTransform = function () {
+                    return this.transform_;
+                };
+                CoordMap.prototype.getScaleX = function () {
+                    return this.pixel_per_unit_x_;
+                };
+                CoordMap.prototype.getScaleY = function () {
+                    return this.pixel_per_unit_y_;
+                };
+                CoordMap.prototype.screenToSim = function (scr_x, scr_y) {
+                    return new Point_1.default(this.screenToSimX(scr_x), this.screenToSimY(scr_y));
+                };
+                CoordMap.prototype.screenToSimRect = function (rect) {
+                    return new DoubleRect_1.default(this.screenToSimX(rect.getLeft()), this.screenToSimY(rect.getTop() + rect.getHeight()), this.screenToSimX(rect.getLeft() + rect.getWidth()), this.screenToSimY(rect.getTop()));
+                };
+                CoordMap.prototype.screenToSimScaleX = function (scr_x) {
+                    return scr_x / this.pixel_per_unit_x_;
+                };
+                CoordMap.prototype.screenToSimScaleY = function (scr_y) {
+                    return scr_y / this.pixel_per_unit_y_;
+                };
+                CoordMap.prototype.screenToSimX = function (scr_x) {
+                    return this.sim_left_ + (scr_x - this.screen_left_) / this.pixel_per_unit_x_;
+                };
+                CoordMap.prototype.screenToSimY = function (scr_y) {
+                    return this.sim_bottom_ + (this.screen_bottom_ - scr_y) / this.pixel_per_unit_y_;
+                };
+                CoordMap.prototype.simToScreen = function (p_sim) {
+                    return new Point_1.default(this.simToScreenX(p_sim.x), this.simToScreenY(p_sim.y));
+                };
+                CoordMap.prototype.simToScreenRect = function (r) {
+                    return new ScreenRect_1.default(this.simToScreenX(r.getLeft()), this.simToScreenY(r.getTop()), this.simToScreenScaleX(r.getWidth()), this.simToScreenScaleY(r.getHeight()));
+                };
+                CoordMap.prototype.simToScreenScaleX = function (length_x) {
+                    return length_x * this.pixel_per_unit_x_;
+                };
+                CoordMap.prototype.simToScreenScaleY = function (length_y) {
+                    return length_y * this.pixel_per_unit_y_;
+                };
+                CoordMap.prototype.simToScreenX = function (sim_x) {
+                    return this.screen_left_ + (sim_x - this.sim_left_) * this.pixel_per_unit_x_;
+                };
+                CoordMap.prototype.simToScreenY = function (sim_y) {
+                    return this.screen_bottom_ - (sim_y - this.sim_bottom_) * this.pixel_per_unit_y_;
+                };
+                return CoordMap;
+            }();
+            exports_1("default", CoordMap);
+        }
+    };
+});
+System.register("davinci-newton/util/clone.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function clone(xs) {
+        var length = xs.length;
+        var rv = new Array(length);
+        for (var i = 0; i < length; i++) {
+            rv[i] = xs[i];
+        }
+        return rv;
+    }
+    exports_1("default", clone);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/contains.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function contains(xs, x) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
+            if (xs[i] === x) {
+                return true;
+            }
+        }
+        return false;
+    }
+    exports_1("default", contains);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/findIndex.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function findIndex(xs, test) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
+            var x = xs[i];
+            if (test(x, i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    exports_1("default", findIndex);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/find.js", ["./findIndex"], function (exports_1, context_1) {
+    "use strict";
+
+    var findIndex_1;
+    var __moduleName = context_1 && context_1.id;
+    function find(xs, test) {
+        var i = findIndex_1.default(xs, test);
+        return i < 0 ? null : xs[i];
+    }
+    exports_1("default", find);
+    return {
+        setters: [function (findIndex_1_1) {
+            findIndex_1 = findIndex_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/ParameterBoolean.js", ["./toName", "./validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var toName_1, validName_1, ParameterBoolean;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            ParameterBoolean = function () {
+                function ParameterBoolean(subject, name, getter, setter, choices, values) {
+                    this.subject_ = subject;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                    this.getter_ = getter;
+                    this.setter_ = setter;
+                    this.isComputed_ = false;
+                    this.choices_ = [];
+                    this.values_ = [];
+                }
+                Object.defineProperty(ParameterBoolean.prototype, "name", {
+                    get: function () {
+                        return this.name_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                ParameterBoolean.prototype.getSubject = function () {
+                    return this.subject_;
+                };
+                ParameterBoolean.prototype.nameEquals = function (name) {
+                    return this.name_ === toName_1.default(name);
+                };
+                ParameterBoolean.prototype.setComputed = function (value) {
+                    this.isComputed_ = value;
+                };
+                return ParameterBoolean;
+            }();
+            exports_1("ParameterBoolean", ParameterBoolean);
+            exports_1("default", ParameterBoolean);
+        }
+    };
+});
+System.register("davinci-newton/util/ParameterNumber.js", ["./toName", "./validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var toName_1, validName_1, ParameterNumber;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            ParameterNumber = function () {
+                function ParameterNumber(subject, name, getter, setter, choices, values) {
+                    this.subject_ = subject;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                    this.getter_ = getter;
+                    this.setter_ = setter;
+                    this.isComputed_ = false;
+                    this.signifDigits_ = 3;
+                    this.decimalPlaces_ = -1;
+                    this.lowerLimit_ = 0;
+                    this.upperLimit_ = Number.POSITIVE_INFINITY;
+                    this.choices_ = [];
+                    this.values_ = [];
+                }
+                Object.defineProperty(ParameterNumber.prototype, "name", {
+                    get: function () {
+                        return this.name_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                ParameterNumber.prototype.getSubject = function () {
+                    return this.subject_;
+                };
+                ParameterNumber.prototype.getValue = function () {
+                    return this.getter_();
+                };
+                ParameterNumber.prototype.nameEquals = function (name) {
+                    return this.name_ === toName_1.default(name);
+                };
+                ParameterNumber.prototype.setComputed = function (value) {
+                    this.isComputed_ = value;
+                };
+                ParameterNumber.prototype.setLowerLimit = function (lowerLimit) {
+                    if (lowerLimit > this.getValue() || lowerLimit > this.upperLimit_) throw new Error('out of range');
+                    this.lowerLimit_ = lowerLimit;
+                    return this;
+                };
+                ParameterNumber.prototype.setSignifDigits = function (signifDigits) {
+                    this.signifDigits_ = signifDigits;
+                    return this;
+                };
+                return ParameterNumber;
+            }();
+            exports_1("ParameterNumber", ParameterNumber);
+            exports_1("default", ParameterNumber);
+        }
+    };
+});
+System.register("davinci-newton/util/ParameterString.js", ["./toName", "./validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var toName_1, validName_1, ParameterString;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            ParameterString = function () {
+                function ParameterString(subject, name, getter, setter, choices, values) {
+                    this.subject_ = subject;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                    this.getter_ = getter;
+                    this.setter_ = setter;
+                    this.isComputed_ = false;
+                    this.suggestedLength_ = 20;
+                    this.maxLength_ = Number.POSITIVE_INFINITY;
+                    this.choices_ = [];
+                    this.values_ = [];
+                    this.inputFunction_ = null;
+                }
+                Object.defineProperty(ParameterString.prototype, "name", {
+                    get: function () {
+                        return this.name_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                ParameterString.prototype.getSubject = function () {
+                    return this.subject_;
+                };
+                ParameterString.prototype.getValue = function () {
+                    return this.getter_();
+                };
+                ParameterString.prototype.nameEquals = function (name) {
+                    return this.name_ === toName_1.default(name);
+                };
+                ParameterString.prototype.setComputed = function (value) {
+                    this.isComputed_ = value;
+                };
+                return ParameterString;
+            }();
+            exports_1("ParameterString", ParameterString);
+            exports_1("default", ParameterString);
+        }
+    };
+});
+System.register("davinci-newton/util/removeAt.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function removeAt(xs, index) {
+        return Array.prototype.splice.call(xs, index, 1).length === 1;
+    }
+    exports_1("default", removeAt);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/remove.js", ["./removeAt"], function (exports_1, context_1) {
+    "use strict";
+
+    var removeAt_1;
+    var __moduleName = context_1 && context_1.id;
+    function remove(xs, x) {
+        var i = xs.indexOf(x);
+        var rv;
+        if (rv = i >= 0) {
+            removeAt_1.default(xs, i);
+        }
+        return rv;
+    }
+    exports_1("default", remove);
+    return {
+        setters: [function (removeAt_1_1) {
+            removeAt_1 = removeAt_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/AbstractSubject.js", ["./clone", "./contains", "./find", "./ParameterBoolean", "./ParameterNumber", "./ParameterString", "./remove", "../util/toName"], function (exports_1, context_1) {
+    "use strict";
+
+    var clone_1, contains_1, find_1, ParameterBoolean_1, ParameterNumber_1, ParameterString_1, remove_1, toName_1, AbstractSubject;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (clone_1_1) {
+            clone_1 = clone_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (find_1_1) {
+            find_1 = find_1_1;
+        }, function (ParameterBoolean_1_1) {
+            ParameterBoolean_1 = ParameterBoolean_1_1;
+        }, function (ParameterNumber_1_1) {
+            ParameterNumber_1 = ParameterNumber_1_1;
+        }, function (ParameterString_1_1) {
+            ParameterString_1 = ParameterString_1_1;
+        }, function (remove_1_1) {
+            remove_1 = remove_1_1;
+        }, function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }],
+        execute: function () {
+            AbstractSubject = function () {
+                function AbstractSubject() {
+                    this.doBroadcast_ = true;
+                    this.observers_ = [];
+                    this.paramList_ = [];
+                }
+                AbstractSubject.prototype.addObserver = function (observer) {
+                    if (!contains_1.default(this.observers_, observer)) {
+                        this.observers_.push(observer);
+                    }
+                };
+                AbstractSubject.prototype.removeObserver = function (observer) {
+                    remove_1.default(this.observers_, observer);
+                };
+                AbstractSubject.prototype.addParameter = function (parameter) {
+                    var name = parameter.name;
+                    var p = this.getParam(name);
+                    if (p != null) {
+                        throw new Error('parameter ' + name + ' already exists: ' + p);
+                    }
+                    this.paramList_.push(parameter);
+                };
+                AbstractSubject.prototype.getParam = function (name) {
+                    name = toName_1.default(name);
+                    return find_1.default(this.paramList_, function (p) {
+                        return p.name === name;
+                    });
+                };
+                AbstractSubject.prototype.getParameter = function (name) {
+                    var p = this.getParam(name);
+                    if (p != null) {
+                        return p;
+                    }
+                    throw new Error('Parameter not found ' + name);
+                };
+                AbstractSubject.prototype.getParameterBoolean = function (name) {
+                    var p = this.getParam(name);
+                    if (p instanceof ParameterBoolean_1.default) {
+                        return p;
+                    }
+                    throw new Error('ParameterBoolean not found ' + name);
+                };
+                AbstractSubject.prototype.getParameterNumber = function (name) {
+                    var p = this.getParam(name);
+                    if (p instanceof ParameterNumber_1.default) {
+                        return p;
+                    }
+                    throw new Error('ParameterNumber not found ' + name);
+                };
+                AbstractSubject.prototype.getParameterString = function (name) {
+                    var p = this.getParam(name);
+                    if (p instanceof ParameterString_1.default) {
+                        return p;
+                    }
+                    throw new Error('ParameterString not found ' + name);
+                };
+                AbstractSubject.prototype.getParameters = function () {
+                    return clone_1.default(this.paramList_);
+                };
+                AbstractSubject.prototype.broadcast = function (event) {
+                    if (this.doBroadcast_) {
+                        var len = this.observers_.length;
+                        for (var i = 0; i < len; i++) {
+                            this.observers_[i].observe(event);
+                        }
+                    }
+                };
+                AbstractSubject.prototype.broadcastParameter = function (name) {
+                    var p = this.getParam(name);
+                    if (p === null) {
+                        throw new Error('unknown Parameter ' + name);
+                    }
+                    this.broadcast(p);
+                };
+                AbstractSubject.prototype.getBroadcast = function () {
+                    return this.doBroadcast_;
+                };
+                AbstractSubject.prototype.getObservers = function () {
+                    return clone_1.default(this.observers_);
+                };
+                return AbstractSubject;
+            }();
+            exports_1("AbstractSubject", AbstractSubject);
+            exports_1("default", AbstractSubject);
+        }
+    };
+});
+System.register("davinci-newton/util/toName.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function toName(text) {
+        return text.toUpperCase().replace(/[ -]/g, '_');
+    }
+    exports_1("default", toName);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/validName.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function validName(text) {
+        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
+            throw new Error('not a valid name: ' + text);
+        }
+        return text;
+    }
+    exports_1("default", validName);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/GenericEvent.js", ["./toName", "./validName"], function (exports_1, context_1) {
+    "use strict";
+
+    var toName_1, validName_1, GenericEvent;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (toName_1_1) {
+            toName_1 = toName_1_1;
+        }, function (validName_1_1) {
+            validName_1 = validName_1_1;
+        }],
+        execute: function () {
+            GenericEvent = function () {
+                function GenericEvent(subject_, name, value_) {
+                    this.subject_ = subject_;
+                    this.value_ = value_;
+                    this.name_ = validName_1.default(toName_1.default(name));
+                }
+                Object.defineProperty(GenericEvent.prototype, "name", {
+                    get: function () {
+                        return this.name_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                GenericEvent.prototype.getSubject = function () {
+                    return this.subject_;
+                };
+                GenericEvent.prototype.nameEquals = function (name) {
+                    return this.name_ === toName_1.default(name);
+                };
+                return GenericEvent;
+            }();
+            exports_1("GenericEvent", GenericEvent);
+            exports_1("default", GenericEvent);
+        }
+    };
+});
+System.register("davinci-newton/util/insertAt.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function slice(xs, start, opt_end) {
+        if (arguments.length <= 2) {
+            return Array.prototype.slice.call(xs, start);
+        } else {
+            return Array.prototype.slice.call(xs, start, opt_end);
+        }
+    }
+    function splice(xs, index, howMany, var_args) {
+        return Array.prototype.splice.apply(xs, slice(arguments, 1));
+    }
+    function insertAt(xs, x, index) {
+        if (index === void 0) {
+            index = 0;
+        }
+        splice(xs, index, 0, x);
+    }
+    exports_1("default", insertAt);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/checks/isObject.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isObject(x) {
+        return typeof x === 'object';
+    }
+    exports_1("default", isObject);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/DisplayList.js", ["../util/AbstractSubject", "../util/GenericEvent", "../util/insertAt", "../checks/isObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var AbstractSubject_1, GenericEvent_1, insertAt_1, isObject_1, DisplayList;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (insertAt_1_1) {
+            insertAt_1 = insertAt_1_1;
+        }, function (isObject_1_1) {
+            isObject_1 = isObject_1_1;
+        }],
+        execute: function () {
+            DisplayList = function (_super) {
+                __extends(DisplayList, _super);
+                function DisplayList() {
+                    var _this = _super.call(this) || this;
+                    _this.drawables_ = [];
+                    return _this;
+                }
+                DisplayList.prototype.add = function (dispObj) {
+                    if (!isObject_1.default(dispObj)) {
+                        throw new Error('non-object passed to DisplayList.add');
+                    }
+                    var zIndex = dispObj.getZIndex();
+                    this.sort();
+                    var iLen = this.drawables_.length;
+                    var i = 0;
+                    for (i = 0; i < iLen; i++) {
+                        var z = this.drawables_[i].getZIndex();
+                        if (zIndex < z) {
+                            break;
+                        }
+                    }
+                    insertAt_1.default(this.drawables_, dispObj, i);
+                    this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
+                };
+                DisplayList.prototype.draw = function (context, coordMap) {
+                    this.sort();
+                    var ds = this.drawables_;
+                    var N = ds.length;
+                    for (var i = 0; i < N; i++) {
+                        ds[i].draw(context, coordMap);
+                    }
+                };
+                DisplayList.prototype.prepend = function (dispObj) {
+                    if (!isObject_1.default(dispObj)) {
+                        throw new Error('non-object passed to DisplayList.add');
+                    }
+                    var zIndex = dispObj.getZIndex();
+                    this.sort();
+                    var N = this.drawables_.length;
+                    var i = N;
+                    for (i = N; i > 0; i--) {
+                        var z = this.drawables_[i - 1].getZIndex();
+                        if (zIndex > z) {
+                            break;
+                        }
+                    }
+                    insertAt_1.default(this.drawables_, dispObj, i);
+                    this.broadcast(new GenericEvent_1.default(this, DisplayList.OBJECT_ADDED, dispObj));
+                };
+                DisplayList.prototype.sort = function () {};
+                DisplayList.OBJECT_ADDED = 'OBJECT_ADDED';
+                DisplayList.OBJECT_REMOVED = 'OBJECT_REMOVED';
+                return DisplayList;
+            }(AbstractSubject_1.default);
+            exports_1("DisplayList", DisplayList);
+            exports_1("default", DisplayList);
+        }
+    };
+});
+System.register("davinci-newton/view/Point.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var Point;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            Point = function () {
+                function Point(x_, y_) {
+                    this.x_ = x_;
+                    this.y_ = y_;
+                }
+                Object.defineProperty(Point.prototype, "x", {
+                    get: function () {
+                        return this.x_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Point.prototype, "y", {
+                    get: function () {
+                        return this.y_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                return Point;
+            }();
+            exports_1("default", Point);
+        }
+    };
+});
+System.register("davinci-newton/view/DoubleRect.js", ["./Point", "../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var Point_1, veryDifferent_1, DoubleRect;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Point_1_1) {
+            Point_1 = Point_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            DoubleRect = function () {
+                function DoubleRect(left, bottom, right, top) {
+                    this.left_ = left;
+                    this.right_ = right;
+                    this.bottom_ = bottom;
+                    this.top_ = top;
+                    if (left > right) {
+                        throw new Error('DoubleRect: left > right ' + left + ' > ' + right);
+                    }
+                    if (bottom > top) {
+                        throw new Error('DoubleRect: bottom > top ' + bottom + ' > ' + top);
+                    }
+                }
+                DoubleRect.clone = function (rect) {
+                    return new DoubleRect(rect.getLeft(), rect.getBottom(), rect.getRight(), rect.getTop());
+                };
+                DoubleRect.isDuckType = function (obj) {
+                    if (obj instanceof DoubleRect) {
+                        return true;
+                    }
+                    return obj.getLeft !== undefined && obj.getRight !== undefined && obj.getTop !== undefined && obj.getBottom !== undefined && obj.translate !== undefined && obj.scale !== undefined;
+                };
+                DoubleRect.make = function (point1, point2) {
+                    var left = Math.min(point1.x, point2.x);
+                    var right = Math.max(point1.x, point2.x);
+                    var bottom = Math.min(point1.y, point2.y);
+                    var top_ = Math.max(point1.y, point2.y);
+                    return new DoubleRect(left, bottom, right, top_);
+                };
+                DoubleRect.makeCentered = function (center, width, height) {
+                    var x = center.x;
+                    var y = center.y;
+                    return new DoubleRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
+                };
+                DoubleRect.makeCentered2 = function (center, size) {
+                    var x = center.x;
+                    var y = center.y;
+                    var w = size.x;
+                    var h = size.y;
+                    return new DoubleRect(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
+                };
+                DoubleRect.prototype.contains = function (point) {
+                    return point.x >= this.left_ && point.x <= this.right_ && point.y >= this.bottom_ && point.y <= this.top_;
+                };
+                DoubleRect.prototype.equals = function (obj) {
+                    if (obj === this) return true;
+                    if (obj instanceof DoubleRect) {
+                        return obj.getLeft() === this.left_ && obj.getRight() === this.right_ && obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
+                    } else {
+                        return false;
+                    }
+                };
+                DoubleRect.prototype.expand = function (marginX, marginY) {
+                    marginY = marginY === undefined ? marginX : marginY;
+                    return new DoubleRect(this.getLeft() - marginX, this.getBottom() - marginY, this.getRight() + marginX, this.getTop() + marginX);
+                };
+                DoubleRect.prototype.getBottom = function () {
+                    return this.bottom_;
+                };
+                DoubleRect.prototype.getCenter = function () {
+                    return new Point_1.default(this.getCenterX(), this.getCenterY());
+                };
+                DoubleRect.prototype.getCenterX = function () {
+                    return (this.left_ + this.right_) / 2.0;
+                };
+                DoubleRect.prototype.getCenterY = function () {
+                    return (this.bottom_ + this.top_) / 2.0;
+                };
+                DoubleRect.prototype.getHeight = function () {
+                    return this.top_ - this.bottom_;
+                };
+                DoubleRect.prototype.getLeft = function () {
+                    return this.left_;
+                };
+                DoubleRect.prototype.getRight = function () {
+                    return this.right_;
+                };
+                DoubleRect.prototype.getTop = function () {
+                    return this.top_;
+                };
+                DoubleRect.prototype.getWidth = function () {
+                    return this.right_ - this.left_;
+                };
+                DoubleRect.prototype.isEmpty = function (tolerance) {
+                    if (tolerance === void 0) {
+                        tolerance = 1E-16;
+                    }
+                    return this.getWidth() < tolerance || this.getHeight() < tolerance;
+                };
+                DoubleRect.prototype.maybeVisible = function (p1, p2) {
+                    if (this.contains(p1) || this.contains(p2)) {
+                        return true;
+                    }
+                    var p1x = p1.x;
+                    var p1y = p1.y;
+                    var p2x = p2.x;
+                    var p2y = p2.y;
+                    var d = this.left_;
+                    if (p1x < d && p2x < d) {
+                        return false;
+                    }
+                    d = this.right_;
+                    if (p1x > d && p2x > d) {
+                        return false;
+                    }
+                    d = this.bottom_;
+                    if (p1y < d && p2y < d) {
+                        return false;
+                    }
+                    d = this.top_;
+                    if (p1y > d && p2y > d) {
+                        return false;
+                    }
+                    return true;
+                };
+                DoubleRect.prototype.nearEqual = function (rect, opt_tolerance) {
+                    if (veryDifferent_1.default(this.left_, rect.getLeft(), opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.bottom_, rect.getBottom(), opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.right_, rect.getRight(), opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.top_, rect.getTop(), opt_tolerance)) {
+                        return false;
+                    }
+                    return true;
+                };
+                DoubleRect.prototype.scale = function (factorX, factorY) {
+                    factorY = factorY === undefined ? factorX : factorY;
+                    var x0 = this.getCenterX();
+                    var y0 = this.getCenterY();
+                    var w = this.getWidth();
+                    var h = this.getHeight();
+                    return new DoubleRect(x0 - factorX * w / 2, y0 - factorY * h / 2, x0 + factorX * w / 2, y0 + factorY * h / 2);
+                };
+                DoubleRect.prototype.translate = function (x, y) {
+                    return new DoubleRect(this.left_ + x, this.bottom_ + y, this.right_ + x, this.top_ + y);
+                };
+                DoubleRect.prototype.union = function (rect) {
+                    return new DoubleRect(Math.min(this.left_, rect.getLeft()), Math.min(this.bottom_, rect.getBottom()), Math.max(this.right_, rect.getRight()), Math.max(this.top_, rect.getTop()));
+                };
+                DoubleRect.prototype.unionPoint = function (point) {
+                    return new DoubleRect(Math.min(this.left_, point.x), Math.min(this.bottom_, point.y), Math.max(this.right_, point.x), Math.max(this.top_, point.y));
+                };
+                DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
+                return DoubleRect;
+            }();
+            exports_1("default", DoubleRect);
+        }
+    };
+});
+System.register("davinci-newton/checks/isFunction.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function isFunction(x) {
+        return typeof x === 'function';
+    }
+    exports_1("default", isFunction);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/util/veryDifferent.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var __moduleName = context_1 && context_1.id;
+    function veryDifferent(arg1, arg2, epsilon, magnitude) {
+        if (epsilon === void 0) {
+            epsilon = 1E-14;
+        }
+        if (magnitude === void 0) {
+            magnitude = 1;
+        }
+        if (epsilon <= 0) {
+            throw new Error("epsilon (" + epsilon + ") must be positive.");
+        }
+        if (magnitude <= 0) {
+            throw new Error("magnitude (" + magnitude + ") must be positive.");
+        }
+        var maxArg = Math.max(Math.abs(arg1), Math.abs(arg2));
+        var max = maxArg > magnitude ? maxArg : magnitude;
+        return Math.abs(arg1 - arg2) > max * epsilon;
+    }
+    exports_1("default", veryDifferent);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/view/ScreenRect.js", ["../checks/isFunction", "../util/veryDifferent"], function (exports_1, context_1) {
+    "use strict";
+
+    var isFunction_1, veryDifferent_1, ScreenRect;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (isFunction_1_1) {
+            isFunction_1 = isFunction_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }],
+        execute: function () {
+            ScreenRect = function () {
+                function ScreenRect(left, top_, width, height) {
+                    if (width < 0 || height < 0) {
+                        throw new Error();
+                    }
+                    this.left_ = left;
+                    this.top_ = top_;
+                    this.width_ = width;
+                    this.height_ = height;
+                }
+                ScreenRect.clone = function (rect) {
+                    return new ScreenRect(rect.left_, rect.top_, rect.width_, rect.height_);
+                };
+                ScreenRect.prototype.equals = function (otherRect) {
+                    return this.left_ === otherRect.left_ && this.top_ === otherRect.top_ && this.width_ === otherRect.width_ && this.height_ === otherRect.height_;
+                };
+                ScreenRect.isDuckType = function (obj) {
+                    if (obj instanceof ScreenRect) {
+                        return true;
+                    }
+                    return obj.getLeft !== undefined && obj.getTop !== undefined && obj.getWidth !== undefined && obj.getHeight !== undefined && obj.isEmpty !== undefined && obj.equals !== undefined && obj.nearEqual !== undefined;
+                };
+                ScreenRect.prototype.getCenterX = function () {
+                    return this.left_ + this.width_ / 2;
+                };
+                ScreenRect.prototype.getCenterY = function () {
+                    return this.top_ + this.height_ / 2;
+                };
+                ScreenRect.prototype.getHeight = function () {
+                    return this.height_;
+                };
+                ScreenRect.prototype.getLeft = function () {
+                    return this.left_;
+                };
+                ScreenRect.prototype.getTop = function () {
+                    return this.top_;
+                };
+                ScreenRect.prototype.getWidth = function () {
+                    return this.width_;
+                };
+                ScreenRect.prototype.isEmpty = function (tolerance) {
+                    if (tolerance === void 0) {
+                        tolerance = 1E-14;
+                    }
+                    return this.width_ < tolerance || this.height_ < tolerance;
+                };
+                ScreenRect.prototype.makeOval = function (context) {
+                    var w = this.width_ / 2;
+                    var h = this.height_ / 2;
+                    if (isFunction_1.default(context.ellipse)) {
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_ + h);
+                        context.ellipse(this.left_ + w, this.top_ + h, w, h, 0, 0, 2 * Math.PI, false);
+                    } else {
+                        var min = Math.min(w, h);
+                        context.beginPath();
+                        context.moveTo(this.left_ + this.width_, this.top_);
+                        context.arc(this.left_ + w, this.top_ + h, min, 0, 2 * Math.PI, false);
+                        context.closePath();
+                    }
+                };
+                ScreenRect.prototype.makeRect = function (context) {
+                    context.rect(this.left_, this.top_, this.width_, this.height_);
+                };
+                ScreenRect.prototype.nearEqual = function (otherRect, opt_tolerance) {
+                    if (veryDifferent_1.default(this.left_, otherRect.left_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.top_, otherRect.top_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.width_, otherRect.width_, opt_tolerance)) {
+                        return false;
+                    }
+                    if (veryDifferent_1.default(this.height_, otherRect.height_, opt_tolerance)) {
+                        return false;
+                    }
+                    return true;
+                };
+                ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
+                return ScreenRect;
+            }();
+            exports_1("default", ScreenRect);
+        }
+    };
+});
+System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", "../util/clone", "../util/contains", "../util/GenericEvent", "../util/ParameterBoolean", "../util/ParameterNumber", "../util/remove", "../util/veryDifferent", "./AlignH", "./AlignV", "./CoordMap", "./DisplayList", "./DoubleRect", "./ScreenRect"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var AbstractSubject_1, clone_1, contains_1, GenericEvent_1, ParameterBoolean_1, ParameterNumber_1, remove_1, veryDifferent_1, AlignH_1, AlignV_1, CoordMap_1, DisplayList_1, DoubleRect_1, ScreenRect_1, SimView;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (AbstractSubject_1_1) {
+            AbstractSubject_1 = AbstractSubject_1_1;
+        }, function (clone_1_1) {
+            clone_1 = clone_1_1;
+        }, function (contains_1_1) {
+            contains_1 = contains_1_1;
+        }, function (GenericEvent_1_1) {
+            GenericEvent_1 = GenericEvent_1_1;
+        }, function (ParameterBoolean_1_1) {
+            ParameterBoolean_1 = ParameterBoolean_1_1;
+        }, function (ParameterNumber_1_1) {
+            ParameterNumber_1 = ParameterNumber_1_1;
+        }, function (remove_1_1) {
+            remove_1 = remove_1_1;
+        }, function (veryDifferent_1_1) {
+            veryDifferent_1 = veryDifferent_1_1;
+        }, function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (CoordMap_1_1) {
+            CoordMap_1 = CoordMap_1_1;
+        }, function (DisplayList_1_1) {
+            DisplayList_1 = DisplayList_1_1;
+        }, function (DoubleRect_1_1) {
+            DoubleRect_1 = DoubleRect_1_1;
+        }, function (ScreenRect_1_1) {
+            ScreenRect_1 = ScreenRect_1_1;
+        }],
+        execute: function () {
+            SimView = function (_super) {
+                __extends(SimView, _super);
+                function SimView(simRect) {
+                    var _this = _super.call(this) || this;
+                    _this.panX = 0.05;
+                    _this.panY = 0.05;
+                    _this.zoom = 1.1;
+                    _this.screenRect_ = new ScreenRect_1.default(0, 0, 800, 600);
+                    _this.horizAlign_ = AlignH_1.AlignH.MIDDLE;
+                    _this.verticalAlign_ = AlignV_1.AlignV.MIDDLE;
+                    _this.aspectRatio_ = 1.0;
+                    _this.displayList_ = new DisplayList_1.default();
+                    _this.scaleTogether_ = true;
+                    _this.opaqueness = 1.0;
+                    _this.memorizables_ = [];
+                    if (!(simRect instanceof DoubleRect_1.default) || simRect.isEmpty()) {
+                        throw new Error('bad simRect: ' + simRect);
+                    }
+                    _this.simRect_ = simRect;
+                    _this.coordMap_ = CoordMap_1.default.make(_this.screenRect_, _this.simRect_, _this.horizAlign_, _this.verticalAlign_, _this.aspectRatio_);
+                    _this.width_ = simRect.getWidth();
+                    _this.height_ = simRect.getHeight();
+                    _this.centerX_ = simRect.getCenterX();
+                    _this.centerY_ = simRect.getCenterY();
+                    _this.ratio_ = _this.height_ / _this.width_;
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_WIDTH, function () {
+                        return _this.getWidth();
+                    }, function (width) {
+                        return _this.setWidth(width);
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HEIGHT, function () {
+                        return _this.getHeight();
+                    }, function (height) {
+                        return _this.setHeight(height);
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_X, function () {
+                        return _this.getCenterX();
+                    }, function (centerX) {
+                        return _this.setCenterX(centerX);
+                    }).setLowerLimit(Number.NEGATIVE_INFINITY));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_CENTER_Y, function () {
+                        return _this.getCenterY();
+                    }, function (centerY) {
+                        return _this.setCenterY(centerY);
+                    }).setLowerLimit(Number.NEGATIVE_INFINITY));
+                    _this.addParameter(new ParameterBoolean_1.default(_this, SimView.PARAM_NAME_SCALE_TOGETHER, function () {
+                        return _this.getScaleTogether();
+                    }, function (scaleTogether) {
+                        return _this.setScaleTogether(scaleTogether);
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_VERTICAL_ALIGN, function () {
+                        return _this.vAxisAlign;
+                    }, function (vAxisAlign) {
+                        return _this.vAxisAlign = vAxisAlign;
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_HORIZONTAL_ALIGN, function () {
+                        return _this.hAxisAlign;
+                    }, function (hAxisAlign) {
+                        return _this.hAxisAlign = hAxisAlign;
+                    }));
+                    _this.addParameter(new ParameterNumber_1.default(_this, SimView.PARAM_NAME_ASPECT_RATIO, function () {
+                        return _this.getAspectRatio();
+                    }, function (aspectRatio) {
+                        return _this.setAspectRatio(aspectRatio);
+                    }));
+                    return _this;
+                }
+                SimView.prototype.addMemo = function (memorizable) {
+                    if (!contains_1.default(this.memorizables_, memorizable)) {
+                        this.memorizables_.push(memorizable);
+                    }
+                };
+                SimView.prototype.gainFocus = function () {};
+                SimView.prototype.getAspectRatio = function () {
+                    return this.aspectRatio_;
+                };
+                SimView.prototype.getCenterX = function () {
+                    return this.centerX_;
+                };
+                SimView.prototype.getCenterY = function () {
+                    return this.centerY_;
+                };
+                SimView.prototype.getCoordMap = function () {
+                    return this.coordMap_;
+                };
+                SimView.prototype.getDisplayList = function () {
+                    return this.displayList_;
+                };
+                SimView.prototype.getHeight = function () {
+                    return this.height_;
+                };
+                Object.defineProperty(SimView.prototype, "hAxisAlign", {
+                    get: function () {
+                        return this.horizAlign_;
+                    },
+                    set: function (alignHoriz) {
+                        this.horizAlign_ = alignHoriz;
+                        this.realign();
+                        this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                SimView.prototype.getMemos = function () {
+                    return clone_1.default(this.memorizables_);
+                };
+                SimView.prototype.getScaleTogether = function () {
+                    return this.scaleTogether_;
+                };
+                SimView.prototype.getScreenRect = function () {
+                    return this.screenRect_;
+                };
+                SimView.prototype.getSimRect = function () {
+                    return this.simRect_;
+                };
+                Object.defineProperty(SimView.prototype, "vAxisAlign", {
+                    get: function () {
+                        return this.verticalAlign_;
+                    },
+                    set: function (alignVert) {
+                        this.verticalAlign_ = alignVert;
+                        this.realign();
+                        this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                SimView.prototype.getWidth = function () {
+                    return this.width_;
+                };
+                SimView.prototype.loseFocus = function () {};
+                SimView.prototype.paint = function (context) {
+                    context.save();
+                    context.globalAlpha = this.opaqueness;
+                    this.displayList_.draw(context, this.coordMap_);
+                    context.restore();
+                };
+                SimView.prototype.setCoordMap = function (map) {
+                    if (!CoordMap_1.default.isDuckType(map)) throw new Error('not a CoordMap: ' + map);
+                    this.coordMap_ = map;
+                    this.broadcast(new GenericEvent_1.default(this, SimView.COORD_MAP_CHANGED));
+                };
+                SimView.prototype.setScreenRect = function (screenRect) {
+                    if (!ScreenRect_1.default.isDuckType(screenRect)) throw new Error('not a ScreenRect: ' + screenRect);
+                    if (screenRect.isEmpty()) {
+                        throw new Error('empty screenrect');
+                    }
+                    if (!this.screenRect_.equals(screenRect)) {
+                        this.screenRect_ = screenRect;
+                        this.realign();
+                        this.broadcast(new GenericEvent_1.default(this, SimView.SCREEN_RECT_CHANGED));
+                    }
+                };
+                SimView.prototype.setSimRect = function (simRect) {
+                    if (!DoubleRect_1.default.isDuckType(simRect)) throw new Error('not a DoubleRect: ' + simRect);
+                    if (!simRect.equals(this.simRect_)) {
+                        this.simRect_ = simRect;
+                        this.realign();
+                        this.broadcastParameter(SimView.PARAM_NAME_WIDTH);
+                        this.broadcastParameter(SimView.PARAM_NAME_HEIGHT);
+                        this.broadcastParameter(SimView.PARAM_NAME_CENTER_X);
+                        this.broadcastParameter(SimView.PARAM_NAME_CENTER_Y);
+                        this.broadcast(new GenericEvent_1.default(this, SimView.SIM_RECT_CHANGED));
+                    }
+                };
+                SimView.prototype.memorize = function () {
+                    for (var i = 0, n = this.memorizables_.length; i < n; i++) {
+                        this.memorizables_[i].memorize();
+                    }
+                };
+                SimView.prototype.realign = function () {
+                    this.setCoordMap(CoordMap_1.default.make(this.screenRect_, this.simRect_, this.horizAlign_, this.verticalAlign_, this.aspectRatio_));
+                    this.width_ = this.simRect_.getWidth();
+                    this.height_ = this.simRect_.getHeight();
+                    this.centerX_ = this.simRect_.getCenterX();
+                    this.centerY_ = this.simRect_.getCenterY();
+                    this.ratio_ = this.height_ / this.width_;
+                };
+                SimView.prototype.modifySimRect = function () {
+                    var left = this.centerX_ - this.width_ / 2.0;
+                    var bottom = this.centerY_ - this.height_ / 2.0;
+                    var r = new DoubleRect_1.default(left, bottom, left + this.width_, bottom + this.height_);
+                    this.setSimRect(r);
+                };
+                SimView.prototype.panDown = function () {
+                    this.setCenterY(this.centerY_ - this.panY * this.height_);
+                };
+                SimView.prototype.panLeft = function () {
+                    this.setCenterX(this.centerX_ - this.panX * this.width_);
+                };
+                SimView.prototype.panRight = function () {
+                    this.setCenterX(this.centerX_ + this.panX * this.width_);
+                };
+                SimView.prototype.panUp = function () {
+                    this.setCenterY(this.centerY_ + this.panY * this.height_);
+                };
+                SimView.prototype.removeMemo = function (memorizable) {
+                    remove_1.default(this.memorizables_, memorizable);
+                };
+                SimView.prototype.setAspectRatio = function (aspectRatio) {
+                    if (veryDifferent_1.default(this.aspectRatio_, aspectRatio)) {
+                        this.aspectRatio_ = aspectRatio;
+                        this.realign();
+                        this.broadcastParameter(SimView.PARAM_NAME_ASPECT_RATIO);
+                    }
+                };
+                SimView.prototype.setCenterX = function (centerX) {
+                    if (veryDifferent_1.default(this.centerX_, centerX)) {
+                        this.centerX_ = centerX;
+                        this.modifySimRect();
+                    }
+                };
+                SimView.prototype.setCenterY = function (value) {
+                    if (veryDifferent_1.default(this.centerY_, value)) {
+                        this.centerY_ = value;
+                        this.modifySimRect();
+                    }
+                };
+                SimView.prototype.setHeight = function (value) {
+                    if (veryDifferent_1.default(this.height_, value)) {
+                        this.height_ = value;
+                        if (this.scaleTogether_) {
+                            this.width_ = this.height_ / this.ratio_;
+                        }
+                        this.modifySimRect();
+                    }
+                };
+                SimView.prototype.setScaleTogether = function (value) {
+                    if (this.scaleTogether_ !== value) {
+                        this.scaleTogether_ = value;
+                        if (this.scaleTogether_) {
+                            this.ratio_ = this.height_ / this.width_;
+                        }
+                        this.broadcastParameter(SimView.PARAM_NAME_SCALE_TOGETHER);
+                    }
+                };
+                SimView.prototype.setWidth = function (value) {
+                    if (veryDifferent_1.default(this.width_, value)) {
+                        this.width_ = value;
+                        if (this.scaleTogether_) {
+                            this.height_ = this.width_ * this.ratio_;
+                        }
+                        this.modifySimRect();
+                    }
+                };
+                SimView.prototype.zoomIn = function () {
+                    this.setHeight(this.height_ / this.zoom);
+                };
+                SimView.prototype.zoomOut = function () {
+                    this.setHeight(this.height_ * this.zoom);
+                };
+                SimView.PARAM_NAME_WIDTH = 'width';
+                SimView.PARAM_NAME_HEIGHT = 'height';
+                SimView.PARAM_NAME_CENTER_X = 'center-x';
+                SimView.PARAM_NAME_CENTER_Y = 'center-y';
+                SimView.PARAM_NAME_HORIZONTAL_ALIGN = 'horizontal-align';
+                SimView.PARAM_NAME_VERTICAL_ALIGN = 'vertical-align';
+                SimView.PARAM_NAME_ASPECT_RATIO = 'aspect-ratio';
+                SimView.PARAM_NAME_SCALE_TOGETHER = 'scale X-Y together';
+                SimView.COORD_MAP_CHANGED = 'COORD_MAP_CHANGED';
+                SimView.SCREEN_RECT_CHANGED = 'SCREEN_RECT_CHANGED';
+                SimView.SIM_RECT_CHANGED = 'SIM_RECT_CHANGED';
+                return SimView;
+            }(AbstractSubject_1.default);
+            exports_1("SimView", SimView);
+        }
+    };
+});
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/VarsList", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/engine3D/CoulombLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/GravitationLaw3", "./davinci-newton/engine3D/Particle3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/RigidBody3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
+    "use strict";
+
+    var config_1, VarsList_1, Block3_1, ConstantForceLaw3_1, CoulombLaw3_1, Cylinder3_1, Force3_1, GravitationLaw3_1, Particle3_1, Physics3_1, RigidBody3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (config_1_1) {
+            config_1 = config_1_1;
+        }, function (VarsList_1_1) {
+            VarsList_1 = VarsList_1_1;
         }, function (Block3_1_1) {
             Block3_1 = Block3_1_1;
-        }, function (CircularList_1_1) {
-            CircularList_1 = CircularList_1_1;
-        }, function (config_1_1) {
-            config_1 = config_1_1;
-        }, function (ConstantEnergySolver_1_1) {
-            ConstantEnergySolver_1 = ConstantEnergySolver_1_1;
         }, function (ConstantForceLaw3_1_1) {
             ConstantForceLaw3_1 = ConstantForceLaw3_1_1;
-        }, function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
         }, function (CoulombLaw3_1_1) {
             CoulombLaw3_1 = CoulombLaw3_1_1;
         }, function (Cylinder3_1_1) {
             Cylinder3_1 = Cylinder3_1_1;
-        }, function (DefaultAdvanceStrategy_1_1) {
-            DefaultAdvanceStrategy_1 = DefaultAdvanceStrategy_1_1;
-        }, function (Dimensions_1_1) {
-            Dimensions_1 = Dimensions_1_1;
-        }, function (DisplayGraph_1_1) {
-            DisplayGraph_1 = DisplayGraph_1_1;
-        }, function (DrawingMode_1_1) {
-            DrawingMode_1 = DrawingMode_1_1;
-        }, function (EnergyTimeGraph_1_1) {
-            EnergyTimeGraph_1 = EnergyTimeGraph_1_1;
-        }, function (EulerMethod_1_1) {
-            EulerMethod_1 = EulerMethod_1_1;
         }, function (Force3_1_1) {
             Force3_1 = Force3_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Graph_1_1) {
-            Graph_1 = Graph_1_1;
-        }, function (GraphLine_1_1) {
-            GraphLine_1 = GraphLine_1_1;
         }, function (GravitationLaw3_1_1) {
             GravitationLaw3_1 = GravitationLaw3_1_1;
-        }, function (LabCanvas_1_1) {
-            LabCanvas_1 = LabCanvas_1_1;
-        }, function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (ModifiedEuler_1_1) {
-            ModifiedEuler_1 = ModifiedEuler_1_1;
-        }, function (QQ_1_1) {
-            QQ_1 = QQ_1_1;
-        }, function (RigidBody3_1_1) {
-            RigidBody3_1 = RigidBody3_1_1;
         }, function (Particle3_1_1) {
             Particle3_1 = Particle3_1_1;
         }, function (Physics3_1_1) {
             Physics3_1 = Physics3_1_1;
-        }, function (RungeKutta_1_1) {
-            RungeKutta_1 = RungeKutta_1_1;
-        }, function (SimView_1_1) {
-            SimView_1 = SimView_1_1;
+        }, function (RigidBody3_1_1) {
+            RigidBody3_1 = RigidBody3_1_1;
         }, function (Sphere3_1_1) {
             Sphere3_1 = Sphere3_1_1;
         }, function (Spring3_1_1) {
             Spring3_1 = Spring3_1_1;
+        }, function (AxisChoice_1_1) {
+            AxisChoice_1 = AxisChoice_1_1;
+        }, function (DisplayGraph_1_1) {
+            DisplayGraph_1 = DisplayGraph_1_1;
+        }, function (EnergyTimeGraph_1_1) {
+            EnergyTimeGraph_1 = EnergyTimeGraph_1_1;
+        }, function (Graph_1_1) {
+            Graph_1 = Graph_1_1;
+        }, function (GraphLine_1_1) {
+            GraphLine_1 = GraphLine_1_1;
+        }, function (Dimensions_1_1) {
+            Dimensions_1 = Dimensions_1_1;
+        }, function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (QQ_1_1) {
+            QQ_1 = QQ_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
-        }, function (VarsList_1_1) {
-            VarsList_1 = VarsList_1_1;
         }, function (Vec3_1_1) {
             Vec3_1 = Vec3_1_1;
+        }, function (AdaptiveStepSolver_1_1) {
+            AdaptiveStepSolver_1 = AdaptiveStepSolver_1_1;
+        }, function (ConstantEnergySolver_1_1) {
+            ConstantEnergySolver_1 = ConstantEnergySolver_1_1;
+        }, function (EulerMethod_1_1) {
+            EulerMethod_1 = EulerMethod_1_1;
+        }, function (ModifiedEuler_1_1) {
+            ModifiedEuler_1 = ModifiedEuler_1_1;
+        }, function (RungeKutta_1_1) {
+            RungeKutta_1 = RungeKutta_1_1;
+        }, function (DefaultAdvanceStrategy_1_1) {
+            DefaultAdvanceStrategy_1 = DefaultAdvanceStrategy_1_1;
+        }, function (CircularList_1_1) {
+            CircularList_1 = CircularList_1_1;
+        }, function (AlignH_1_1) {
+            AlignH_1 = AlignH_1_1;
+        }, function (AlignV_1_1) {
+            AlignV_1 = AlignV_1_1;
+        }, function (DrawingMode_1_1) {
+            DrawingMode_1 = DrawingMode_1_1;
+        }, function (LabCanvas_1_1) {
+            LabCanvas_1 = LabCanvas_1_1;
+        }, function (SimView_1_1) {
+            SimView_1 = SimView_1_1;
         }],
         execute: function () {
             newton = {
                 get LAST_MODIFIED() {
-                    return config_1.default.LAST_MODIFIED;
+                    return config_1.config.LAST_MODIFIED;
                 },
                 get VERSION() {
-                    return config_1.default.VERSION;
+                    return config_1.config.VERSION;
                 },
                 get AdaptiveStepSolver() {
-                    return AdaptiveStepSolver_1.default;
+                    return AdaptiveStepSolver_1.AdaptiveStepSolver;
                 },
                 get AlignH() {
-                    return AlignH_1.default;
+                    return AlignH_1.AlignH;
                 },
                 get AlignV() {
-                    return AlignV_1.default;
+                    return AlignV_1.AlignV;
                 },
                 get AxisChoice() {
-                    return AxisChoice_1.default;
+                    return AxisChoice_1.AxisChoice;
                 },
                 get Block3() {
-                    return Block3_1.default;
+                    return Block3_1.Block3;
                 },
                 get CircularList() {
-                    return CircularList_1.default;
+                    return CircularList_1.CircularList;
                 },
                 get ConstantEnergySolver() {
-                    return ConstantEnergySolver_1.default;
+                    return ConstantEnergySolver_1.ConstantEnergySolver;
                 },
                 get ConstantForceLaw3() {
-                    return ConstantForceLaw3_1.default;
-                },
-                get CoordType() {
-                    return CoordType_1.default;
+                    return ConstantForceLaw3_1.ConstantForceLaw3;
                 },
                 get CoulombLaw3() {
-                    return CoulombLaw3_1.default;
+                    return CoulombLaw3_1.CoulombLaw3;
                 },
                 get Cylinder3() {
-                    return Cylinder3_1.default;
+                    return Cylinder3_1.Cylinder3;
                 },
                 get DefaultAdvanceStrategy() {
-                    return DefaultAdvanceStrategy_1.default;
+                    return DefaultAdvanceStrategy_1.DefaultAdvanceStrategy;
                 },
                 get Dimensions() {
-                    return Dimensions_1.default;
+                    return Dimensions_1.Dimensions;
                 },
                 get DisplayGraph() {
-                    return DisplayGraph_1.default;
+                    return DisplayGraph_1.DisplayGraph;
                 },
                 get DrawingMode() {
-                    return DrawingMode_1.default;
+                    return DrawingMode_1.DrawingMode;
                 },
                 get EnergyTimeGraph() {
-                    return EnergyTimeGraph_1.default;
+                    return EnergyTimeGraph_1.EnergyTimeGraph;
                 },
                 get EulerMethod() {
-                    return EulerMethod_1.default;
+                    return EulerMethod_1.EulerMethod;
                 },
                 get Force3() {
-                    return Force3_1.default;
+                    return Force3_1.Force3;
                 },
                 get Geometric3() {
-                    return Geometric3_1.default;
+                    return Geometric3_1.Geometric3;
                 },
                 get Graph() {
-                    return Graph_1.default;
+                    return Graph_1.Graph;
                 },
                 get GraphLine() {
-                    return GraphLine_1.default;
+                    return GraphLine_1.GraphLine;
                 },
                 get GravitationLaw3() {
-                    return GravitationLaw3_1.default;
+                    return GravitationLaw3_1.GravitationLaw3;
                 },
                 get LabCanvas() {
-                    return LabCanvas_1.default;
+                    return LabCanvas_1.LabCanvas;
                 },
                 get Matrix3() {
-                    return Matrix3_1.default;
+                    return Matrix3_1.Matrix3;
                 },
                 get ModifiedEuler() {
-                    return ModifiedEuler_1.default;
+                    return ModifiedEuler_1.ModifiedEuler;
                 },
                 get QQ() {
-                    return QQ_1.default;
+                    return QQ_1.QQ;
                 },
                 get Particle3() {
-                    return Particle3_1.default;
+                    return Particle3_1.Particle3;
                 },
                 get Physics3() {
-                    return Physics3_1.default;
+                    return Physics3_1.Physics3;
                 },
                 get RigidBody3() {
-                    return RigidBody3_1.default;
+                    return RigidBody3_1.RigidBody3;
                 },
                 get RungeKutta() {
-                    return RungeKutta_1.default;
+                    return RungeKutta_1.RungeKutta;
                 },
                 get SimView() {
-                    return SimView_1.default;
+                    return SimView_1.SimView;
                 },
                 get Sphere3() {
-                    return Sphere3_1.default;
+                    return Sphere3_1.Sphere3;
                 },
                 get Spring3() {
-                    return Spring3_1.default;
+                    return Spring3_1.Spring3;
                 },
                 get Unit() {
                     return Unit_1.Unit;
                 },
                 get VarsList() {
-                    return VarsList_1.default;
+                    return VarsList_1.VarsList;
                 },
                 get Vec3() {
-                    return Vec3_1.default;
+                    return Vec3_1.Vec3;
                 }
             };
             exports_1("default", newton);

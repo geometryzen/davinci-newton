@@ -1,4 +1,4 @@
-import Scalar from './Scalar';
+import { Scalar } from './Scalar';
 import { Unit } from './Unit';
 
 export class Scalar3 implements Scalar {

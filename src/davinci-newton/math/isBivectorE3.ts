@@ -1,7 +1,7 @@
 import isNull from '../checks/isNull';
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
-import BivectorE3 from './BivectorE3';
+import { BivectorE3 } from './BivectorE3';
 
 /**
  * Determines whether the argument supports the BivectorE3 interface.

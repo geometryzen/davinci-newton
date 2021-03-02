@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -51,5 +51,3 @@ export class EulerMethod implements DiffEqSolver {
         this.sim_.setState(vars);
     }
 }
-
-export default EulerMethod;

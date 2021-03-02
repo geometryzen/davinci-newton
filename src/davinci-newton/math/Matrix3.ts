@@ -1,7 +1,7 @@
 import AbstractMatrix from './AbstractMatrix';
 import inv3x3 from './inv3x3';
 import mul3x3 from './mul3x3';
-import SpinorE3 from './SpinorE3';
+import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 
 /**
@@ -163,5 +163,3 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
         return new Matrix3(new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0]));
     }
 }
-
-export default Matrix3;

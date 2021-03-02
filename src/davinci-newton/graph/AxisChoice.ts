@@ -3,5 +3,3 @@ export enum AxisChoice {
     VERTICAL = 2,
     BOTH = 3
 }
-
-export default AxisChoice;

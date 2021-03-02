@@ -1,9 +1,9 @@
+import { BivectorE3 } from './BivectorE3';
 import { Geometric3 } from './Geometric3';
-import BivectorE3 from './BivectorE3';
-import Spinor3 from './Spinor3';
+import { Spinor3 } from './Spinor3';
 import { Unit } from './Unit';
-import Vector3 from './Vector3';
-import VectorE3 from './VectorE3';
+import { Vector3 } from './Vector3';
+import { VectorE3 } from './VectorE3';
 
 const one = Geometric3.one;
 const e1 = Geometric3.e1;

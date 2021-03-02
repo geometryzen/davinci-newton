@@ -1,7 +1,7 @@
-import Dimensions from '../math/Dimensions';
-import DimensionsSummary from '../math/DimensionsSummary';
 import isUndefined from '../checks/isUndefined';
-import QQ from '../math/QQ';
+import { Dimensions } from '../math/Dimensions';
+import DimensionsSummary from '../math/DimensionsSummary';
+import { QQ } from '../math/QQ';
 
 // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
 const SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];

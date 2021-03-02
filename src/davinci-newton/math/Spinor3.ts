@@ -1,8 +1,8 @@
-import CartesianG3 from './CartesianG3';
 import mustBeNumber from '../checks/mustBeNumber';
-import randomRange from './randomRange';
 import readOnly from '../i18n/readOnly';
-import SpinorE3 from './SpinorE3';
+import CartesianG3 from './CartesianG3';
+import randomRange from './randomRange';
+import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 
 /**
@@ -201,5 +201,3 @@ export class Spinor3 implements SpinorE3, CartesianG3 {
         return new Spinor3(α, yz, zx, xy, uom);
     }
 }
-
-export default Spinor3;

@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,27 +13,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
-import CircularList from '../util/CircularList';
-import DrawingMode from '../view/DrawingMode';
-import GenericEvent from '../util/GenericEvent';
-import GraphPoint from './GraphPoint';
-import GraphStyle from './GraphStyle';
-import GraphVarsList from './GraphVarsList';
 import isObject from '../checks/isObject';
+import AbstractSubject from '../util/AbstractSubject';
+import { CircularList } from '../util/CircularList';
+import GenericEvent from '../util/GenericEvent';
 import Memorizable from '../util/Memorizable';
 import Observer from '../util/Observer';
 import ParameterNumber from '../util/ParameterNumber';
 import ParameterString from '../util/ParameterString';
 import SubjectEvent from '../util/SubjectEvent';
 import veryDifferent from '../util/veryDifferent';
+import { DrawingMode } from '../view/DrawingMode';
+import GraphPoint from './GraphPoint';
+import { GraphStyle } from './GraphStyle';
+import GraphVarsList from './GraphVarsList';
 
 // const GRAPH_DRAW_MODE = 'graph draw mode';
 // const GRAPH_POINTS = 'graph points';
 // const CLEAR_GRAPH = 'clear graph';
 // const NONE = '-none-';
 
-export default class GraphLine extends AbstractSubject implements Memorizable, Observer {
+export class GraphLine extends AbstractSubject implements Memorizable, Observer {
     public static readonly PARAM_NAME_X_VARIABLE = 'X variable';
     public static readonly PARAM_NAME_Y_VARIABLE = 'Y variable';
 

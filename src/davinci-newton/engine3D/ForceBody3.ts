@@ -1,9 +1,9 @@
-import BivectorE3 from '../math/BivectorE3';
-import Geometric3 from '../math/Geometric3';
-import GeometricE3 from '../math/GeometricE3';
-import SimObject from '../core/SimObject';
-import SpinorE3 from '../math/SpinorE3';
-import VectorE3 from '../math/VectorE3';
+import { SimObject } from '../core/SimObject';
+import { BivectorE3 } from '../math/BivectorE3';
+import { Geometric3 } from '../math/Geometric3';
+import { GeometricE3 } from '../math/GeometricE3';
+import { SpinorE3 } from '../math/SpinorE3';
+import { VectorE3 } from '../math/VectorE3';
 
 export interface ForceBody3 extends SimObject {
     /**
@@ -51,5 +51,3 @@ export interface ForceBody3 extends SimObject {
      */
     updateAngularVelocity(): void;
 }
-
-export default ForceBody3;

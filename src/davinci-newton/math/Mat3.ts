@@ -1,4 +1,4 @@
-import Matrix3 from './Matrix3';
+import { Matrix3 } from './Matrix3';
 import MatrixLike from './MatrixLike';
 import { Unit } from './Unit';
 
@@ -64,5 +64,3 @@ export class Mat3 implements MatrixLike {
         return this.data.toString(radix);
     }
 }
-
-export default Mat3;

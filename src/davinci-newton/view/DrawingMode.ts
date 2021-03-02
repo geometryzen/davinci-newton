@@ -17,5 +17,3 @@ export enum DrawingMode {
     DOTS = 0,
     LINES = 1
 }
-
-export default DrawingMode;
