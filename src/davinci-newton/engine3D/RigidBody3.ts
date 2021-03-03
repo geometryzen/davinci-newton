@@ -29,25 +29,6 @@ import { Charged3 } from './Charged3';
 import { ForceBody3 } from './ForceBody3';
 import { Massive3 } from './Massive3';
 
-/**
- * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
- * If either measure is zero, the unit of dimensions are meaningless
- */
-function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: Geometric3): void {
-    if (!A.isZero() && !B.isZero()) {
-        if (Unit.isOne(A.uom)) {
-            if (!Unit.isOne(B.uom)) {
-                throw new Error(`${aName} => ${A} must have dimensions if ${bName} => ${B} has dimensions.`);
-            }
-        }
-        else {
-            if (Unit.isOne(B.uom)) {
-                throw new Error(`${bName} => ${B} must have dimensions if ${aName} => ${A} has dimensions.`);
-            }
-        }
-    }
-}
-
 function mustBeDimensionlessOrCorrectUnits(name: string, value: Geometric3, unit: Unit): Geometric3 {
     if (!Unit.isOne(value.uom) && !Unit.isCompatible(value.uom, unit)) {
         throw new Error(`${name} unit of measure, ${value.uom}, must be compatible with ${unit}`);
@@ -328,7 +309,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
      * (1/2) Ω * ~L(Ω) = (1/2) ~Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
      */
     rotationalEnergy(): Geometric3 {
-        assertConsistentUnits('Ω', this.Ω, 'L', this.L);
+        // TODO: assertConsistentUnits('Ω', this.Ω, 'L', this.L);
         this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
         this.rotationalEnergy_.copyBivector(this.Ω).rev().scp(this.L).mulByNumber(0.5);
         this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
@@ -339,7 +320,7 @@ export class RigidBody3 extends AbstractSimObject implements ForceBody3, Massive
      * (1/2) (P * P) / M
      */
     translationalEnergy(): Geometric3 {
-        assertConsistentUnits('M', this.M, 'P', this.P);
+        // TODO: assertConsistentUnits('M', this.M, 'P', this.P);
         this.translationalEnergy_.unlock(this.translationalEnergyLock_);
         this.translationalEnergy_.copyVector(this.P).mulByVector(this.P).divByScalar(this.M.a, this.M.uom).mulByNumber(0.5);
         this.translationalEnergyLock_ = this.translationalEnergy_.lock();

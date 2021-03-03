@@ -1,4 +1,4 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
+// Copyright 2017-2021 David Holmes.  All Rights Reserved.
 // Copyright 2016 Erik Neumann.  All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,11 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AdvanceStrategy from '../runner/AdvanceStrategy';
-import DiffEqSolver from '../core/DiffEqSolver';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
+import { DiffEqSolver } from '../core/DiffEqSolver';
 import Simulation from '../core/Simulation';
 import { Unit } from '../math/Unit';
+import AdvanceStrategy from '../runner/AdvanceStrategy';
 
 /**
  * 

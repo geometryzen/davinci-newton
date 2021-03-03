@@ -1,30 +1,33 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import { Bivector2 } from '../math/Bivector2';
 import { Geometric2 } from '../math/Geometric2';
 import { Unit } from '../math/Unit';
-// import { Vector2 } from '../math/Vector2';
-import { Block2 } from './Block2';
-import { Physics2 } from './Physics2';
+import { Block } from './Block';
+import { Engine } from './Engine';
+import { Euclidean2D } from './Euclidean2D';
+import { Dynamics2D } from './Dynamics2D';
+import { State } from './State';
 
-describe("Physics2", function () {
+describe("engine", function () {
+    describe("example", function () {
+        it("", function () {
+            const metric = new Euclidean2D();
+            const dynamics = new Dynamics2D();
+            const engine = new Engine(metric, dynamics);
+
+            const block = new Block(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER), metric);
+            block.M = Geometric2.scalar(12);
+
+            engine.contents.addBody(block);
+
+            engine.strategy.advance(0.1, Unit.SECOND);
+        });
+    });
     describe("Ω calculation", function () {
         xit("calculated using (1/2) Ω * L(Ω) should be same as (1/2) ω * L(ω)", function () {
-            // Not actually using this yet, other than to test construction.
-            const sim = new Physics2();
-            const body = new Block2(Geometric2.scalar(1), Geometric2.scalar(2));
+            const metric = new Euclidean2D();
+            const dynamics = new Dynamics2D();
+            const state = new State(metric, dynamics);
+            const body = new Block(Geometric2.scalar(1), Geometric2.scalar(2), metric);
             body.M = Geometric2.scalar(12);
             body.L.xy = 7;
             body.L.uom = Unit.KILOGRAM.mul(Unit.METER).mul(Unit.METER).div(Unit.SECOND);
@@ -46,7 +49,7 @@ describe("Physics2", function () {
             */
 
             // Just to make the sim be used.
-            sim.addBody(body);
+            state.addBody(body);
 
             // const Ω = new Bivector2().copy(body.L).applyMatrix(Tmat).applyMatrix(body.Iinv).applyMatrix(Rmat);
             const Ω = new Bivector2(0, Unit.inv(Unit.SECOND)).copy(body.L).rotate(body.R.rev()).applyMatrix(body.Iinv).rotate(body.R.rev());

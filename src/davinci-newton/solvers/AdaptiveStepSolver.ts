@@ -1,11 +1,12 @@
-import DiffEqSolver from '../core/DiffEqSolver';
+import { DiffEqSolver } from '../core/DiffEqSolver';
 import Simulation from '../core/Simulation';
+import { Measure } from '../engine/Measure';
 import { Unit } from '../math/Unit';
 import { EnergySystem } from './EnergySystem';
 
-export class AdaptiveStepSolver implements DiffEqSolver {
+export class AdaptiveStepSolver<T> implements DiffEqSolver {
     private diffEq_: Simulation;
-    private energySystem_: EnergySystem;
+    private energySystem_: EnergySystem<T>;
     private odeSolver_: DiffEqSolver;
     private totSteps_: number;
     private secondDiff_: boolean;
@@ -20,7 +21,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
      * enables debug code for particular test
      */
     private tolerance_: number;
-    constructor(diffEq: Simulation, energySystem: EnergySystem, diffEqSolver: DiffEqSolver) {
+    constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver, private readonly metric: Measure<T>) {
         this.diffEq_ = diffEq;
         this.energySystem_ = energySystem;
         this.odeSolver_ = diffEqSolver;
@@ -29,6 +30,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
         this.tolerance_ = 1E-6;
     }
     step(stepSize: number, uomStep?: Unit): void {
+        const metric = this.metric;
         // save the vars in case we need to back up and start again
         this.savedState = this.diffEq_.getState();
         const startTime = this.diffEq_.time;
@@ -41,7 +43,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
          */
         let steps = 0;
         this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy: number = this.energySystem_.totalEnergy().a;
+        const startEnergy: number = metric.a(this.energySystem_.totalEnergy());
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -78,7 +80,7 @@ export class AdaptiveStepSolver implements DiffEqSolver {
                 this.diffEq_.epilog();
                 t += h;
             }
-            const finishEnergy: number = this.energySystem_.totalEnergy().a;
+            const finishEnergy: number = metric.a(this.energySystem_.totalEnergy());
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             if (this.secondDiff_) {
                 // reduce time step until change in energy stabilizes

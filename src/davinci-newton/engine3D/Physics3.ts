@@ -80,7 +80,7 @@ const NUM_VARIABLES_PER_BODY = 13;
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * </p>
  */
-export class Physics3 extends AbstractSubject implements Simulation, EnergySystem {
+export class Physics3 extends AbstractSubject implements Simulation, EnergySystem<Geometric3> {
     public static readonly INDEX_TIME = 0;
     public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
     public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;

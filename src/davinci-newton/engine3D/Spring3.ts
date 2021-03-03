@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { assertConsistentUnits } from '../core/assertConsistentUnits';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { Vec3 } from '../math/Vec3';
@@ -22,25 +23,6 @@ import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force3 } from './Force3';
 import { ForceLaw3 } from './ForceLaw3';
 import { RigidBody3 } from './RigidBody3';
-
-/**
- * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
- * If either measure is zero, the unit of dimensions are meaningless
- */
-function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: Geometric3): void {
-    if (!A.isZero() && !B.isZero()) {
-        if (Unit.isOne(A.uom)) {
-            if (!Unit.isOne(B.uom)) {
-                throw new Error(`${aName} => ${A} must have dimensions if ${bName} => ${B} has dimensions.`);
-            }
-        }
-        else {
-            if (Unit.isOne(B.uom)) {
-                throw new Error(`${bName} => ${B} must have dimensions if ${aName} => ${A} has dimensions.`);
-            }
-        }
-    }
-}
 
 /**
  * 
@@ -206,10 +188,10 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
         // spring potential energy = 0.5 * stiffness * (stretch * stretch)
 
         // 1. Compute the magnitude of the distance between the endpoints.
-        assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
+        // TODO: assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location);
         this.potentialEnergy_.copyVector(this.F2.location).subVector(this.F1.location).magnitude(true);
         // 2. Compute the stretch.
-        assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
+        // TOOD: assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength);
         this.potentialEnergy_.sub(this.restLength);
         // 3. Square it.
         this.potentialEnergy_.quaditude(true);

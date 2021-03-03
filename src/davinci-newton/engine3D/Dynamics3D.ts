@@ -1,0 +1,174 @@
+import { Dynamics } from '../core/Dynamics';
+import { Geometric3 } from "../math/Geometric3";
+import { ForceBody2 } from '../engine/ForceBody2';
+import { VarsList } from '../core/VarsList';
+import { ForceLaw2 } from '../engine/ForceLaw2';
+import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
+
+export class Dynamics3D implements Dynamics<Geometric3> {
+    public static readonly INDEX_TIME = 0;
+    public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+    public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+    public static readonly INDEX_POTENTIAL_ENERGY = 3;
+    public static readonly INDEX_TOTAL_ENERGY = 4;
+    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
+    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
+    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7;
+    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8;
+    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9;
+    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10;
+    public static readonly OFFSET_POSITION_X = 0;
+    public static readonly OFFSET_POSITION_Y = 1;
+    public static readonly OFFSET_POSITION_Z = 2;
+    public static readonly OFFSET_ATTITUDE_A = 3;
+    public static readonly OFFSET_ATTITUDE_YZ = 4;
+    public static readonly OFFSET_ATTITUDE_ZX = 5;
+    public static readonly OFFSET_ATTITUDE_XY = 6;
+    public static readonly OFFSET_LINEAR_MOMENTUM_X = 7;
+    public static readonly OFFSET_LINEAR_MOMENTUM_Y = 8;
+    public static readonly OFFSET_LINEAR_MOMENTUM_Z = 9;
+    public static readonly OFFSET_ANGULAR_MOMENTUM_YZ = 10;
+    public static readonly OFFSET_ANGULAR_MOMENTUM_ZX = 11;
+    public static readonly OFFSET_ANGULAR_MOMENTUM_XY = 12;
+    epilog(bodies: ForceBody2<Geometric3>[], forceLaws: ForceLaw2<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void {
+
+        // update the variables that track energy
+        let pe = potentialOffset.a;
+        let re = 0;
+        let te = 0;
+        // update the variable that track linear momentum (vector)
+        let Px = 0;
+        let Py = 0;
+        let Pz = 0;
+        // update the variable that track angular momentum (bivector)
+        let Lyz = 0;
+        let Lzx = 0;
+        let Lxy = 0;
+
+        const bs = bodies;
+        const Nb = bs.length;
+        for (let i = 0; i < Nb; i++) {
+            const b = bs[i];
+            if (isFinite(b.M.a)) {
+                re += b.rotationalEnergy().a;
+                te += b.translationalEnergy().a;
+                // linear momentum
+                Px += b.P.x;
+                Py += b.P.y;
+                Pz += b.P.z;
+                // orbital angular momentum
+                Lyz += wedgeYZ(b.X, b.P);
+                Lzx += wedgeZX(b.X, b.P);
+                Lxy += wedgeXY(b.X, b.P);
+                // spin angular momentum
+                Lyz += b.L.yz;
+                Lzx += b.L.zx;
+                Lxy += b.L.xy;
+            }
+        }
+
+        const fs = forceLaws;
+        const Nf = fs.length;
+        for (let i = 0; i < Nf; i++) {
+            pe += fs[i].potentialEnergy().a;
+        }
+
+        varsList.setValue(Dynamics3D.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+        varsList.setValue(Dynamics3D.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+        varsList.setValue(Dynamics3D.INDEX_POTENTIAL_ENERGY, pe, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_ENERGY, te + re + pe, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_LINEAR_MOMENTUM_Z, Pz, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, Lyz, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
+        varsList.setValue(Dynamics3D.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+    }
+    updateVarsFromBody(body: ForceBody2<Geometric3>, idx: number, vars: VarsList): void {
+        vars.setValue(Dynamics3D.OFFSET_POSITION_X + idx, body.X.x);
+        vars.setValue(Dynamics3D.OFFSET_POSITION_Y + idx, body.X.y);
+        vars.setValue(Dynamics3D.OFFSET_POSITION_Z + idx, body.X.z);
+
+        vars.setValue(Dynamics3D.OFFSET_ATTITUDE_A + idx, body.R.a);
+        vars.setValue(Dynamics3D.OFFSET_ATTITUDE_XY + idx, body.R.xy);
+        vars.setValue(Dynamics3D.OFFSET_ATTITUDE_YZ + idx, body.R.yz);
+        vars.setValue(Dynamics3D.OFFSET_ATTITUDE_ZX + idx, body.R.zx);
+
+        vars.setValue(Dynamics3D.OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
+        vars.setValue(Dynamics3D.OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
+        vars.setValue(Dynamics3D.OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
+
+        vars.setValue(Dynamics3D.OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
+        vars.setValue(Dynamics3D.OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
+        vars.setValue(Dynamics3D.OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
+    }
+    addForce(rateOfChange: number[], idx: number, force: Geometric3): void {
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_X] += force.x;
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Y] += force.y;
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Z] += force.z;
+    }
+    addTorque(rateOfChange: number[], idx: number, torque: Geometric3): void {
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
+    }
+    updateBody(vars: number[], idx: number, body: ForceBody2<Geometric3>): void {
+        body.X.x = vars[idx + Dynamics3D.OFFSET_POSITION_X];
+        body.X.y = vars[idx + Dynamics3D.OFFSET_POSITION_Y];
+        body.X.z = vars[idx + Dynamics3D.OFFSET_POSITION_Z];
+
+        body.R.a = vars[idx + Dynamics3D.OFFSET_ATTITUDE_A];
+        body.R.xy = vars[idx + Dynamics3D.OFFSET_ATTITUDE_XY];
+        body.R.yz = vars[idx + Dynamics3D.OFFSET_ATTITUDE_YZ];
+        body.R.zx = vars[idx + Dynamics3D.OFFSET_ATTITUDE_ZX];
+
+        // Keep the magnitude of the attitude as close to 1 as possible.
+        const R = body.R;
+        const magR = Math.sqrt(R.a * R.a + R.xy * R.xy + R.yz * R.yz + R.zx * R.zx);
+        body.R.a = body.R.a / magR;
+        body.R.xy = body.R.xy / magR;
+        body.R.yz = body.R.yz / magR;
+        body.R.zx = body.R.zx / magR;
+
+        body.P.x = vars[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_X];
+        body.P.y = vars[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Y];
+        body.P.z = vars[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Z];
+
+        body.L.xy = vars[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_XY];
+        body.L.yz = vars[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_YZ];
+        body.L.zx = vars[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_ZX];
+
+        body.updateAngularVelocity();
+    }
+    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric3>) {
+        // The rate of change of position is the velocity.
+        // dX/dt = V = P / M
+        const P = body.P;
+        const mass = body.M.a;
+        rateOfChange[idx + Dynamics3D.OFFSET_POSITION_X] = P.x / mass;
+        rateOfChange[idx + Dynamics3D.OFFSET_POSITION_Y] = P.y / mass;
+        rateOfChange[idx + Dynamics3D.OFFSET_POSITION_Z] = P.z / mass;
+    }
+    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric3>): void {
+        // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
+        // requiring the geometric product of Ω and R.
+        // Ω and R are auxiliary and primary variables that have already been computed.
+        const R = body.R;
+        const Ω = body.Ω;
+        rateOfChange[idx + Dynamics3D.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+        rateOfChange[idx + Dynamics3D.OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+        rateOfChange[idx + Dynamics3D.OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+        rateOfChange[idx + Dynamics3D.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+    }
+    zeroLinearMomentum(rateOfChange: number[], idx: number): void {
+        // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_X] = 0;
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Y] = 0;
+        rateOfChange[idx + Dynamics3D.OFFSET_LINEAR_MOMENTUM_Z] = 0;
+    }
+    zeroAngularMomentum(rateOfChange: number[], idx: number): void {
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
+        rateOfChange[idx + Dynamics3D.OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+    }
+}

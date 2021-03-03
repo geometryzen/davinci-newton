@@ -1,18 +1,3 @@
-// Copyright 2017-2021 David Holmes.  All Rights Reserved.
-// Copyright 2016 Erik Neumann.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import SimList from '../core/SimList';
 import Simulation from '../core/Simulation';
 import { VarsList } from '../core/VarsList';
@@ -27,6 +12,8 @@ import remove from '../util/remove';
 import { Force2 } from './Force2';
 import { ForceBody2 } from './ForceBody2';
 import { ForceLaw2 } from './ForceLaw2';
+import { Measure } from './Measure';
+import { Dynamics } from '../core/Dynamics';
 
 const var_names = [
     VarsList.TIME,
@@ -47,13 +34,13 @@ const var_names = [
  */
 function getVarName(index: number): string {
     switch (index) {
-        case Physics2.OFFSET_POSITION_X: return "position x";
-        case Physics2.OFFSET_POSITION_Y: return "position y";
-        case Physics2.OFFSET_ATTITUDE_A: return "attitude a";
-        case Physics2.OFFSET_ATTITUDE_XY: return "attitude xy";
-        case Physics2.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
-        case Physics2.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
-        case Physics2.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
+        case State.OFFSET_POSITION_X: return "position x";
+        case State.OFFSET_POSITION_Y: return "position y";
+        case State.OFFSET_ATTITUDE_A: return "attitude a";
+        case State.OFFSET_ATTITUDE_XY: return "attitude xy";
+        case State.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
+        case State.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
+        case State.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
     }
     throw new Error(`getVarName(${index})`);
 }
@@ -73,7 +60,7 @@ const NUM_VARIABLES_PER_BODY = 7;
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * </p>
  */
-export class Physics2 extends AbstractSubject implements Simulation, EnergySystem {
+export class State<T> extends AbstractSubject implements Simulation {
     public static readonly INDEX_TIME = 0;
     public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
     public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
@@ -101,11 +88,11 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * The RigidBody(s) in this simulation.
      */
-    private readonly bodies_: ForceBody2[] = [];
+    private readonly bodies_: ForceBody2<T>[] = [];
     /**
      * 
      */
-    private readonly forceLaws_: ForceLaw2[] = [];
+    private readonly forceLaws_: ForceLaw2<T>[] = [];
 
     /**
      * 
@@ -115,28 +102,33 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private readonly potentialOffset_ = Geometric2.scalar(0);
+    private readonly potentialOffset_: T;
 
     /**
      * Scratch variable for computing force.
      */
-    private readonly force_ = Geometric2.vector(0, 0);
+    private readonly force_: T;
     /**
      * Scratch variable for computing torque.
      */
-    private readonly torque_ = Geometric2.bivector(0);
+    private readonly torque_: T;
     /**
      * Scratch variable for computing total energy.
      */
-    private readonly totalEnergy_ = Geometric2.scalar(0);
-    private totalEnergyLock_ = this.totalEnergy_.lock();
+    private readonly totalEnergy_: T;
+    private totalEnergyLock_: number;
 
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor() {
+    constructor(private readonly metric: Measure<T>, private readonly dynamics: Dynamics<T>) {
         super();
         this.varsList_ = new VarsList(var_names);
+        this.potentialOffset_ = metric.zero();
+        this.force_ = metric.zero();
+        this.torque_ = metric.zero();
+        this.totalEnergy_ = metric.zero();
+        this.totalEnergyLock_ = metric.lock(this.totalEnergy_);
     }
 
     /**
@@ -152,7 +144,7 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    addBody(body: ForceBody2): void {
+    addBody(body: ForceBody2<T>): void {
         if (!contains(this.bodies_, body)) {
             // create variables in vars array for this body
             const names = [];
@@ -171,7 +163,7 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    removeBody(body: ForceBody2): void {
+    removeBody(body: ForceBody2<T>): void {
         if (contains(this.bodies_, body)) {
             this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
             remove(this.bodies_, body);
@@ -184,7 +176,7 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    addForceLaw(forceLaw: ForceLaw2): void {
+    addForceLaw(forceLaw: ForceLaw2<T>): void {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
         }
@@ -194,21 +186,22 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    removeForceLaw(forceLaw: ForceLaw2): void {
+    removeForceLaw(forceLaw: ForceLaw2<T>): void {
         forceLaw.disconnect();
         this.discontinuosChangeToEnergy();
         remove(this.forceLaws_, forceLaw);
     }
 
     private discontinuosChangeToEnergy(): void {
+        // const dynamics = this.dynamics;
         this.varsList_.incrSequence(
-            Physics2.INDEX_TRANSLATIONAL_KINETIC_ENERGY,
-            Physics2.INDEX_ROTATIONAL_KINETIC_ENERGY,
-            Physics2.INDEX_POTENTIAL_ENERGY,
-            Physics2.INDEX_TOTAL_ENERGY,
-            Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_X,
-            Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_Y,
-            Physics2.INDEX_TOTAL_ANGULAR_MOMENTUM_XY
+            State.INDEX_TRANSLATIONAL_KINETIC_ENERGY,
+            State.INDEX_ROTATIONAL_KINETIC_ENERGY,
+            State.INDEX_POTENTIAL_ENERGY,
+            State.INDEX_TOTAL_ENERGY,
+            State.INDEX_TOTAL_LINEAR_MOMENTUM_X,
+            State.INDEX_TOTAL_LINEAR_MOMENTUM_Y,
+            State.INDEX_TOTAL_ANGULAR_MOMENTUM_XY
         );
     }
 
@@ -217,7 +210,7 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
     private updateBodies(vars: number[]): void {
-
+        const dynamics = this.dynamics;
         const bodies = this.bodies_;
         const N = bodies.length;
         for (let i = 0; i < N; i++) {
@@ -226,26 +219,8 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
             if (idx < 0) {
                 return;
             }
-
             // Update state variables.
-            body.X.x = vars[idx + Physics2.OFFSET_POSITION_X];
-            body.X.y = vars[idx + Physics2.OFFSET_POSITION_Y];
-
-            body.R.a = vars[idx + Physics2.OFFSET_ATTITUDE_A];
-            body.R.xy = vars[idx + Physics2.OFFSET_ATTITUDE_XY];
-
-            // Keep the magnitude of the attitude as close to 1 as possible.
-            const R = body.R;
-            const magR = Math.sqrt(R.a * R.a + R.xy * R.xy);
-            body.R.a = body.R.a / magR;
-            body.R.xy = body.R.xy / magR;
-
-            body.P.x = vars[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X];
-            body.P.y = vars[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y];
-
-            body.L.xy = vars[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY];
-
-            body.updateAngularVelocity();
+            dynamics.updateBody(vars, idx, body);
         }
     }
 
@@ -278,6 +253,8 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
      * If anything it could be passed to forceLaw.updateForces.
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+        const metric = this.metric;
+        const dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
         this.updateBodies(state);
         const bodies = this.bodies_;
@@ -288,32 +265,17 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
             if (idx < 0) {
                 return;
             }
-            const mass = body.M.a;
+            const mass = metric.a(body.M);
             if (mass === Number.POSITIVE_INFINITY) {
                 for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
                     rateOfChange[idx + k] = 0;  // infinite mass objects don't move
                 }
             }
             else {
-                // The rate of change of position is the velocity.
-                // dX/dt = V = P / M
-                const P = body.P;
-                rateOfChange[idx + Physics2.OFFSET_POSITION_X] = P.x / mass;
-                rateOfChange[idx + Physics2.OFFSET_POSITION_Y] = P.y / mass;
-
-                // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
-                // requiring the geometric product of Ω and R.
-                // Ω and R are auxiliary and primary variables that have already been computed.
-                const R = body.R;
-                const Ω = body.Ω;
-                rateOfChange[idx + Physics2.OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
-                rateOfChange[idx + Physics2.OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
-
-                // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-                rateOfChange[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X] = 0;
-                rateOfChange[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y] = 0;
-
-                rateOfChange[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+                dynamics.setPositionRateOfChange(rateOfChange, idx, body);
+                dynamics.setAttitudeRateOfChange(rateOfChange, idx, body);
+                dynamics.zeroLinearMomentum(rateOfChange, idx);
+                dynamics.zeroAngularMomentum(rateOfChange, idx);
             }
         }
         const forceLaws = this.forceLaws_;
@@ -336,7 +298,7 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
      * @param rateOfChange The (output) rate of change of the state variables.
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
-    private applyForce(rateOfChange: number[], forceApp: Force2, Δt: number, uomTime?: Unit): void {
+    private applyForce(rateOfChange: number[], forceApp: Force2<T>, Δt: number, uomTime?: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
@@ -346,26 +308,28 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
             return;
         }
 
+        const metric = this.metric;
+        const dynamics = this.dynamics;
+
         // The rate of change of momentum is force.
         // dP/dt = F
         forceApp.computeForce(this.force_);
         const F = this.force_;
         // Bootstrap the linear momentum unit of measure.
-        if (Unit.isOne(body.P.uom) && isZeroVectorE2(body.P)) {
-            body.P.uom = Unit.mul(F.uom, uomTime);
+        if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
+            metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
         }
-        rateOfChange[idx + Physics2.OFFSET_LINEAR_MOMENTUM_X] += F.x;
-        rateOfChange[idx + Physics2.OFFSET_LINEAR_MOMENTUM_Y] += F.y;
+        dynamics.addForce(rateOfChange, idx, F);
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
         forceApp.computeTorque(this.torque_);
         const T = this.torque_;
         // Bootstrap the angular momentum unit of measure.
-        if (Unit.isOne(body.L.uom) && isZeroBivectorE2(body.L)) {
-            body.L.uom = Unit.mul(T.uom, uomTime);
+        if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
         }
-        rateOfChange[idx + Physics2.OFFSET_ANGULAR_MOMENTUM_XY] += T.xy;
+        dynamics.addTorque(rateOfChange, idx, T);
 
         if (this.showForces_) {
             forceApp.expireTime = this.varsList_.getTime();
@@ -392,21 +356,10 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
     /**
      * 
      */
-    private updateFromBody(body: ForceBody2): void {
+    private updateFromBody(body: ForceBody2<T>): void {
         const idx = body.varsIndex;
         if (idx > -1) {
-            const va = this.varsList_;
-
-            va.setValue(Physics2.OFFSET_POSITION_X + idx, body.X.x);
-            va.setValue(Physics2.OFFSET_POSITION_Y + idx, body.X.y);
-
-            va.setValue(Physics2.OFFSET_ATTITUDE_A + idx, body.R.a);
-            va.setValue(Physics2.OFFSET_ATTITUDE_XY + idx, body.R.xy);
-
-            va.setValue(Physics2.OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-            va.setValue(Physics2.OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-
-            va.setValue(Physics2.OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
+            this.dynamics.updateVarsFromBody(body, idx, this.varsList_);
         }
     }
 
@@ -415,62 +368,19 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
      * Computes the system energy, linear momentum and angular momentum.
      */
     epilog(): void {
+        const metric = this.metric;
         const varsList = this.varsList_;
         const vars = varsList.getValues();
         this.updateBodies(vars);
+        const dynamics = this.dynamics;
 
-        // update the variables that track energy
-        let pe = this.potentialOffset_.a;
-        let re = 0;
-        let te = 0;
-        // update the variable that track linear momentum (vector)
-        let Px = 0;
-        let Py = 0;
-        let Pz = 0;
-        // update the variable that track angular momentum (bivector)
-        let Lyz = 0;
-        let Lzx = 0;
-        let Lxy = 0;
-
-        const bs = this.bodies_;
-        const Nb = bs.length;
-        for (let i = 0; i < Nb; i++) {
-            const b = bs[i];
-            if (isFinite(b.M.a)) {
-                re += b.rotationalEnergy().a;
-                te += b.translationalEnergy().a;
-                // linear momentum
-                Px += b.P.x;
-                Py += b.P.y;
-                // orbital angular momentum
-                // Lyz += wedgeYZ(b.X, b.P);
-                // Lzx += wedgeZX(b.X, b.P);
-                // Lxy += wedgeXY(b.X, b.P);
-                Lxy += b.X.x * b.P.y - b.X.y * b.P.x;
-                // spin angular momentum
-                Lxy += b.L.xy;
-            }
-        }
-
-        const fs = this.forceLaws_;
-        const Nf = fs.length;
-        for (let i = 0; i < Nf; i++) {
-            pe += fs[i].potentialEnergy().a;
-        }
-
-        varsList.setValue(Physics2.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-        varsList.setValue(Physics2.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-        varsList.setValue(Physics2.INDEX_POTENTIAL_ENERGY, pe, true);
-        varsList.setValue(Physics2.INDEX_TOTAL_ENERGY, te + re + pe, true);
-        varsList.setValue(Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
-        varsList.setValue(Physics2.INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
-        varsList.setValue(Physics2.INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+        dynamics.epilog(this.bodies_, this.forceLaws_, this.potentialOffset_, varsList);
     }
 
     /**
      * Provides a reference to the bodies in the simulation.
      */
-    get bodies(): ForceBody2[] {
+    get bodies(): ForceBody2<T>[] {
         return this.bodies_;
     }
 
@@ -492,30 +402,33 @@ export class Physics2 extends AbstractSubject implements Simulation, EnergySyste
      * Computes the sum of the translational and rotational kinetic energy of all bodies,
      * and the potential energy due to body interactions for the force laws.
      */
-    totalEnergy(): Geometric2 {
-        this.totalEnergy_.unlock(this.totalEnergyLock_);
+    totalEnergy(): T {
+        const metric = this.metric;
 
-        this.totalEnergy_.zero();
+        metric.unlock(this.totalEnergy_, this.totalEnergyLock_);
 
-        this.totalEnergy_.add(this.potentialOffset_);
+        // TODO: Could be more efficient...
+        metric.write(metric.zero(), this.totalEnergy_);
+
+        metric.add(this.totalEnergy_, this.potentialOffset_);
 
         const bs = this.bodies_;
         const Nb = bs.length;
         for (let i = 0; i < Nb; i++) {
             const body = bs[i];
-            if (isFinite(body.M.a)) {
-                this.totalEnergy_.add(body.rotationalEnergy());
-                this.totalEnergy_.add(body.translationalEnergy());
+            if (isFinite(metric.a(body.M))) {
+                metric.add(this.totalEnergy_, body.rotationalEnergy());
+                metric.add(this.totalEnergy_, body.translationalEnergy());
             }
         }
 
         const fs = this.forceLaws_;
         const Nf = fs.length;
         for (let i = 0; i < Nf; i++) {
-            this.totalEnergy_.add(fs[i].potentialEnergy());
+            metric.add(this.totalEnergy_, fs[i].potentialEnergy());
         }
 
-        this.totalEnergyLock_ = this.totalEnergy_.lock();
+        this.totalEnergyLock_ = metric.lock(this.totalEnergy_);
 
         return this.totalEnergy_;
     }

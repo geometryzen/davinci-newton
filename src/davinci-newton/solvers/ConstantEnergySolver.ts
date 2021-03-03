@@ -1,5 +1,6 @@
-import DiffEqSolver from '../core/DiffEqSolver';
+import { DiffEqSolver } from '../core/DiffEqSolver';
 import Simulation from '../core/Simulation';
+import { Measure } from '../engine/Measure';
 import { Unit } from '../math/Unit';
 import { EnergySystem } from './EnergySystem';
 
@@ -7,9 +8,9 @@ import { EnergySystem } from './EnergySystem';
  * An adaptive step solver that adjusts the step size in order to
  * ensure that the energy change be less than a tolerance amount.
  */
-export class ConstantEnergySolver implements DiffEqSolver {
+export class ConstantEnergySolver<T> implements DiffEqSolver {
     private simulation_: Simulation;
-    private energySystem_: EnergySystem;
+    private energySystem_: EnergySystem<T>;
     private solverMethod_: DiffEqSolver;
     private totSteps_: number;
     private savedState: number[];
@@ -27,7 +28,7 @@ export class ConstantEnergySolver implements DiffEqSolver {
      * Constructs an adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
      */
-    constructor(simulation: Simulation, energySystem: EnergySystem, solverMethod: DiffEqSolver) {
+    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver, private readonly metric: Measure<T>) {
         this.simulation_ = simulation;
         this.energySystem_ = energySystem;
         this.solverMethod_ = solverMethod;
@@ -46,7 +47,7 @@ export class ConstantEnergySolver implements DiffEqSolver {
          */
         let steps = 0;
         this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy: number = this.energySystem_.totalEnergy().a;
+        const startEnergy: number = this.metric.a(this.energySystem_.totalEnergy());
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -83,7 +84,7 @@ export class ConstantEnergySolver implements DiffEqSolver {
                 this.simulation_.epilog();
                 t += h;
             }
-            const finishEnergy: number = this.energySystem_.totalEnergy().a;
+            const finishEnergy: number = this.metric.a(this.energySystem_.totalEnergy());
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             // reduce time step until change in energy goes to zero.
             value = energyDiff;

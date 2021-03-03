@@ -16,41 +16,20 @@
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import { Bivector2 } from '../math/Bivector2';
-import { Geometric2 } from '../math/Geometric2';
+import { assertConsistentUnits } from '../core/assertConsistentUnits';
 import { Mat3 } from '../math/Mat3';
 import { Matrix3 } from '../math/Matrix3';
 import MatrixLike from '../math/MatrixLike';
 import { Unit } from '../math/Unit';
-import { Vec2 } from '../math/Vec2';
-import { VectorE2 } from '../math/VectorE2';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Charged2 } from './Charged2';
 import { ForceBody2 } from './ForceBody2';
 import { Massive2 } from './Massive2';
+import { Measure } from './Measure';
 
-/**
- * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
- * If either measure is zero, the unit of dimensions are meaningless
- */
-function assertConsistentUnits(aName: string, A: Geometric2, bName: string, B: Geometric2): void {
-    if (!A.isZero() && !B.isZero()) {
-        if (Unit.isOne(A.uom)) {
-            if (!Unit.isOne(B.uom)) {
-                throw new Error(`${aName} => ${A} must have dimensions if ${bName} => ${B} has dimensions.`);
-            }
-        }
-        else {
-            if (Unit.isOne(B.uom)) {
-                throw new Error(`${bName} => ${B} must have dimensions if ${aName} => ${A} has dimensions.`);
-            }
-        }
-    }
-}
-
-function mustBeDimensionlessOrCorrectUnits(name: string, value: Geometric2, unit: Unit): Geometric2 {
-    if (!Unit.isOne(value.uom) && !Unit.isCompatible(value.uom, unit)) {
-        throw new Error(`${name} unit of measure, ${value.uom}, must be compatible with ${unit}`);
+function mustBeDimensionlessOrCorrectUnits<T>(name: string, value: T, unit: Unit, metric: Measure<T>): T {
+    if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
+        throw new Error(`${name} unit of measure, ${metric.uom(value)}, must be compatible with ${unit}`);
     }
     else {
         return value;
@@ -60,7 +39,7 @@ function mustBeDimensionlessOrCorrectUnits(name: string, value: Geometric2, unit
 /**
  * 
  */
-export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive2, Charged2 {
+export class RigidBody<T> extends AbstractSimObject implements ForceBody2<T>, Massive2<T>, Charged2<T> {
     /**
      * A uniquie identifier assigned by applications.
      * This is not used internally.
@@ -72,14 +51,14 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
      * Changing the mass requires an update to the intertia tensor,
      * so we want to control the mutability.
      */
-    private readonly mass_ = Geometric2.scalar(1);
-    private massLock_ = this.mass_.lock();
+    private readonly mass_: T;
+    private massLock_: number;
 
     /**
      * Charge, Q. Default is zero (0).
      */
-    private readonly charge_ = Geometric2.scalar(0);
-    private chargeLock_ = this.charge_.lock();
+    private readonly charge_: T;
+    private chargeLock_: number;
 
     /**
      * Inverse of the Inertia tensor in body coordinates.
@@ -94,82 +73,102 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
     /**
      * The position (vector).
      */
-    private readonly position_ = Geometric2.zero.clone();
+    private readonly position_: T;
     /**
      * The attitude (spinor).
      */
-    private readonly attitude_ = Geometric2.one.clone();
+    private readonly attitude_: T;
     /**
      * The linear momentum (vector).
      */
-    private readonly linearMomentum_ = Geometric2.zero.clone();
+    private readonly linearMomentum_: T;
     /**
      * The angular momentum (bivector).
      */
-    private readonly angularMomentum_ = Geometric2.zero.clone();
+    private readonly angularMomentum_: T;
     /**
      * Scratch member variable used only during updateAngularVelocity.
      * The purpose is to avoid temporary object creation. 
      */
-    private Ω_scratch = new Bivector2(0);
+    private Ω_scratch: T;
     /**
      * Angular velocity (bivector).
      * The angular velocity is initially created in the unlocked state.
      */
-    private angularVelocity_ = Geometric2.bivector(0);
+    private angularVelocity_: T;
     // private angularVelocityLock_ = this.angularVelocity_.lock();
 
     /**
      * center of mass in local coordinates.
      */
-    protected centerOfMassLocal_ = Vec2.zero;
+    protected centerOfMassLocal_: T;
+    protected centerOfMassLocalLock_: number;
 
     /**
      * Scratch variable for rotational energy.
      */
-    private rotationalEnergy_ = Geometric2.zero.clone();
-    private rotationalEnergyLock_ = this.rotationalEnergy_.lock();
+    private rotationalEnergy_: T;
+    private rotationalEnergyLock_: number;
 
     /**
      * Scratch variable for translational energy.
      */
-    private translationalEnergy_ = Geometric2.zero.clone();
-    private translationalEnergyLock_ = this.translationalEnergy_.lock();
+    private translationalEnergy_: T;
+    private translationalEnergyLock_: number;
 
     /**
      * Scratch variable for calculation worldPoint.
      */
-    private readonly worldPoint_ = Geometric2.vector(0, 0);
+    private readonly worldPoint_: T;
 
     /**
      * 
      */
-    constructor() {
+    constructor(public readonly metric: Measure<T>) {
         super();
+        this.mass_ = metric.scalar(1);
+        this.massLock_ = metric.lock(this.mass_);
+        this.charge_ = metric.zero();
+        this.chargeLock_ = metric.lock(this.charge_);
+        this.position_ = metric.zero();
+        this.attitude_ = metric.scalar(1);
+        this.linearMomentum_ = metric.zero();
+        this.angularMomentum_ = metric.zero();
+        this.angularVelocity_ = metric.zero();
+        this.rotationalEnergy_ = metric.zero();
+        this.rotationalEnergyLock_ = metric.lock(this.rotationalEnergy_);
+        this.translationalEnergy_ = metric.zero();
+        this.translationalEnergyLock_ = metric.lock(this.translationalEnergy_);
+        this.worldPoint_ = metric.zero();
+        this.Ω_scratch = metric.zero();
+        this.centerOfMassLocal_ = metric.zero();
+        this.centerOfMassLocalLock_ = metric.lock(this.centerOfMassLocal_);
     }
 
     /**
      * The center of mass position vector in local coordinates.
      */
-    get centerOfMassLocal(): VectorE2 {
+    get centerOfMassLocal(): T {
         return this.centerOfMassLocal_;
     }
-    set centerOfMassLocal(centerOfMassLocal: VectorE2) {
-        this.centerOfMassLocal_ = Vec2.fromVector(centerOfMassLocal);
+    set centerOfMassLocal(centerOfMassLocal: T) {
+        this.metric.unlock(this.centerOfMassLocal_, this.centerOfMassLocalLock_);
+        this.metric.copyVector(centerOfMassLocal, this.centerOfMassLocal_);
+        this.centerOfMassLocalLock_ = this.metric.lock(this.centerOfMassLocal_);
     }
 
     /**
      * Mass (scalar). Default is one (1).
      * If dimensioned units are used, they must be compatible with the unit of mass.
      */
-    get M(): Geometric2 {
+    get M(): T {
         return this.mass_;
     }
-    set M(M: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM);
-        this.mass_.unlock(this.massLock_);
-        this.mass_.copy(M);
-        this.massLock_ = this.mass_.lock();
+    set M(M: T) {
+        mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
+        this.metric.unlock(this.mass_, this.massLock_);
+        this.metric.copy(M, this.mass_);
+        this.massLock_ = this.metric.lock(this.mass_);
         this.updateInertiaTensor();
     }
 
@@ -177,14 +176,14 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
      * Charge (scalar). Default is zero (0).
      * If dimensioned units are used, they must be compatible with the unit of electric charge.
      */
-    get Q(): Geometric2 {
+    get Q(): T {
         return this.charge_;
     }
-    set Q(Q: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB);
-        this.charge_.unlock(this.chargeLock_);
-        this.charge_.copy(Q);
-        this.chargeLock_ = this.charge_.lock();
+    set Q(Q: T) {
+        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
+        this.metric.unlock(this.charge_, this.chargeLock_);
+        this.metric.copy(Q, this.charge_);
+        this.chargeLock_ = this.metric.lock(this.charge_);
     }
 
     /**
@@ -199,12 +198,14 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
         // Ω back to world coordinates.
         // Notice that in the following we avoid creating temporary variables by computing
         // the reversion of the mutable body.R twice.
-        this.Ω.copy(this.L); // Ω contains L
-        this.Ω.rotate(this.R.rev()); // Ω contains R L ~R
-        this.Ω_scratch.copy(this.Ω); // scratch contains R L ~R
-        this.Ω_scratch.applyMatrix(this.Iinv); // scratch contains Iinv (R L ~R)
-        this.Ω.copyBivector(this.Ω_scratch); // Ω contains Iinv (R L ~R)
-        this.Ω.rotate(this.R.rev()); // Ω contains R (Iinv (R L ~R)) ~R
+        this.metric.copy(this.L, this.Ω); // Ω contains L
+        this.metric.rev(this.R);
+        this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R
+        this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R
+        this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R)
+        this.metric.copyBivector(this.Ω_scratch, this.Ω); // Ω contains Iinv (R L ~R)
+        this.metric.rev(this.R);
+        this.metric.rotate(this.Ω, this.R); // Ω contains R (Iinv (R L ~R)) ~R
     }
 
     /**
@@ -246,62 +247,62 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
      * Position (vector).
      * If dimensioned units are used, they must be compatible with the unit of length.
      */
-    get X(): Geometric2 {
+    get X(): T {
         return this.position_;
     }
-    set X(position: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER);
-        this.position_.copy(position);
+    set X(position: T) {
+        mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
+        this.metric.copy(position, this.position_);
     }
 
     /**
      * Attitude (spinor).
      * Effects a rotation from local coordinates to world coordinates.
      */
-    get R(): Geometric2 {
+    get R(): T {
         return this.attitude_;
     }
-    set R(attitude: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE);
-        this.attitude_.copy(attitude);
+    set R(attitude: T) {
+        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
+        this.metric.copy(attitude, this.attitude_);
     }
 
     /**
      * Linear momentum (vector).
      * If dimensioned units are used, they must be compatible with the unit of momentum.
      */
-    get P(): Geometric2 {
+    get P(): T {
         return this.linearMomentum_;
     }
-    set P(momentum: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND);
-        this.linearMomentum_.copy(momentum);
+    set P(momentum: T) {
+        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
+        this.metric.copy(momentum, this.linearMomentum_);
     }
 
     /**
      * Angular momentum (bivector) in world coordinates.
      * If dimensioned units are used, they must be compatible with the unit of angular momentum.
      */
-    get L(): Geometric2 {
+    get L(): T {
         return this.angularMomentum_;
     }
-    set L(angularMomentum: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND);
-        this.angularMomentum_.copy(angularMomentum);
+    set L(angularMomentum: T) {
+        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
+        this.metric.copy(angularMomentum, this.angularMomentum_);
     }
 
     /**
      * Angular velocity (bivector).
      * If dimensioned units are used, they must be compatible with the unit of angular velocity.
      */
-    get Ω(): Geometric2 {
+    get Ω(): T {
         // A getter is required in order to support the setter existence.
         return this.angularVelocity_;
     }
-    set Ω(angularVelocity: Geometric2) {
-        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND);
+    set Ω(angularVelocity: T) {
+        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
         // A setter is used so that assignments do not cause the member vaiable to become immutable.
-        this.angularVelocity_.copy(angularVelocity);
+        this.metric.copy(angularVelocity, this.angularVelocity_);
     }
 
     /**
@@ -327,22 +328,28 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
      * A * ~B = |A||B|cos(...).
      * (1/2) Ω * ~L(Ω) = (1/2) ~Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
      */
-    rotationalEnergy(): Geometric2 {
-        assertConsistentUnits('Ω', this.Ω, 'L', this.L);
-        this.rotationalEnergy_.unlock(this.rotationalEnergyLock_);
-        this.rotationalEnergy_.copyBivector(this.Ω).rev().scp(this.L).mulByNumber(0.5);
-        this.rotationalEnergyLock_ = this.rotationalEnergy_.lock();
+    rotationalEnergy(): T {
+        assertConsistentUnits('Ω', this.Ω, 'L', this.L, this.metric);
+        this.metric.unlock(this.rotationalEnergy_, this.rotationalEnergyLock_);
+        this.metric.copyBivector(this.Ω, this.rotationalEnergy_); // rotationalEnergy contains Ω.
+        this.metric.rev(this.rotationalEnergy_);                  // rotationalEnergy contains ~Ω.
+        this.metric.scp(this.rotationalEnergy_, this.L);          // rotationalEnergy contains ~Ω * L, where * means scalar product.
+        this.metric.mulByNumber(this.rotationalEnergy_, 0.5);
+        this.rotationalEnergyLock_ = this.metric.lock(this.rotationalEnergy_);
         return this.rotationalEnergy_;
     }
 
     /**
      * (1/2) (P * P) / M
      */
-    translationalEnergy(): Geometric2 {
-        assertConsistentUnits('M', this.M, 'P', this.P);
-        this.translationalEnergy_.unlock(this.translationalEnergyLock_);
-        this.translationalEnergy_.copyVector(this.P).mulByVector(this.P).divByScalar(this.M.a, this.M.uom).mulByNumber(0.5);
-        this.translationalEnergyLock_ = this.translationalEnergy_.lock();
+    translationalEnergy(): T {
+        assertConsistentUnits('M', this.M, 'P', this.P, this.metric);
+        this.metric.unlock(this.translationalEnergy_, this.translationalEnergyLock_);
+        this.metric.copyVector(this.P, this.translationalEnergy_);  // translationalEnergy contains P.
+        this.metric.mulByVector(this.translationalEnergy_, this.P); // translationalEnergy contains P * P.
+        this.metric.divByScalar(this.translationalEnergy_, this.metric.a(this.M), this.metric.uom(this.M)); // translationalEnergy contains P * P / M.
+        this.metric.mulByNumber(this.translationalEnergy_, 0.5);
+        this.translationalEnergyLock_ = this.metric.lock(this.translationalEnergy_);
         return this.translationalEnergy_;
     }
 
@@ -350,10 +357,14 @@ export class RigidBody2 extends AbstractSimObject implements ForceBody2, Massive
      * Converts a point in local coordinates to the same point in world coordinates.
      * x = R (localPoint - centerOfMassLocal) * ~R + X
      */
-    localPointToWorldPoint(localPoint: VectorE2, worldPoint: VectorE2): void {
-        this.worldPoint_.copyVector(localPoint).subVector(this.centerOfMassLocal_);
-        this.worldPoint_.rotate(this.attitude_).addVector(this.position_);
-        this.worldPoint_.writeVector(worldPoint);
+    localPointToWorldPoint(localPoint: T, worldPoint: T): void {
+        // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
+        // However, it may not have all the features that we need for the intermediate operations.
+        this.metric.copyVector(localPoint, this.worldPoint_);
+        this.metric.subVector(this.worldPoint_, this.centerOfMassLocal_);
+        this.metric.rotate(this.worldPoint_, this.attitude_);
+        this.metric.addVector(this.worldPoint_, this.position_);
+        this.metric.writeVector(this.worldPoint_, worldPoint);
     }
 
     /**

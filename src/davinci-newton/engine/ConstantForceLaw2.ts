@@ -18,46 +18,52 @@ import { VectorE2 } from '../math/VectorE2';
 import { CoordType, LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force2 } from './Force2';
+import { ForceBody2 } from './ForceBody2';
 import { ForceLaw2 } from './ForceLaw2';
-import { RigidBody2 } from './RigidBody2';
+import { Measure } from './Measure';
 
 /**
  * 
  */
-export class ConstantForceLaw2 extends AbstractSimObject implements ForceLaw2 {
+export class ConstantForceLaw2<T> extends AbstractSimObject implements ForceLaw2<T> {
     /**
      * The attachment point to the body in body coordinates.
      */
-    private readonly force_: Force2;
-    private readonly forces: Force2[] = [];
-    private readonly potentialEnergy_ = Geometric2.scalar(0);
-    private potentialEnergyLock_ = this.potentialEnergy_.lock();
+    private readonly force_: Force2<T>;
+    private readonly forces: Force2<T>[] = [];
+    private readonly potentialEnergy_: T;
+    private potentialEnergyLock_: number;
 
     /**
      * 
      */
-    constructor(private body_: RigidBody2, vector: VectorE2, vectorCoordType: CoordType = WORLD) {
+    constructor(private body_: ForceBody2<T>, vector: T, vectorCoordType: CoordType = WORLD) {
         super();
-        this.force_ = new Force2(this.body_);
+        const metric = this.body_.metric;
+        this.force_ = new Force2(this.body_, metric);
 
         this.force_.locationCoordType = LOCAL;
-        this.force_.vector.copyVector(vector);
+        metric.copyVector(vector, this.force_.vector);
         this.force_.vectorCoordType = vectorCoordType;
 
         this.forces = [this.force_];
+
+        this.potentialEnergy_ = metric.zero();
+        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
     }
 
-    get location(): VectorE2 {
+    get location(): T {
         return this.force_.location;
     }
-    set location(location: VectorE2) {
-        this.force_.location.copyVector(location);
+    set location(location: T) {
+        const metric = this.body_.metric;
+        metric.copyVector(location, this.force_.location);
     }
 
     /**
      * 
      */
-    updateForces(): Force2[] {
+    updateForces(): Force2<T>[] {
         return this.forces;
     }
 
@@ -71,10 +77,12 @@ export class ConstantForceLaw2 extends AbstractSimObject implements ForceLaw2 {
     /**
      * 
      */
-    potentialEnergy(): Geometric2 {
-        this.potentialEnergy_.unlock(this.potentialEnergyLock_);
-        this.potentialEnergy_.a = 0;
-        this.potentialEnergyLock_ = this.potentialEnergy_.lock();
+    potentialEnergy(): T {
+        // TODO: Why do we do this initialization to zero then return a locked object?
+        const metric = this.body_.metric;
+        metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+        // this.potentialEnergy_.a = 0;
+        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
         return this.potentialEnergy_;
     }
 }

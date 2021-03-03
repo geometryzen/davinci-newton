@@ -19,68 +19,83 @@ import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Charged2 } from './Charged2';
 import { Force2 as Force } from './Force2';
 import { ForceLaw2 as ForceLaw } from './ForceLaw2';
+import { Measure } from './Measure';
 
 /**
  * 
  */
-export class CoulombLaw2 extends AbstractSimObject implements ForceLaw {
+export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * The proportionality constant, Coulomb's constant.
      * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
      * The default value is one (1).
      */
-    public k: Geometric2;
+    public k: T;
 
-    private readonly F1: Force;
-    private readonly F2: Force;
-    private readonly forces: Force[] = [];
+    private readonly F1: Force<T>;
+    private readonly F2: Force<T>;
+    private readonly forces: Force<T>[] = [];
 
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = Geometric2.scalar(0);
-    private potentialEnergyLock_ = this.potentialEnergy_.lock();
+    private readonly potentialEnergy_: T;
+    private potentialEnergyLock_: number;
 
     /**
      * 
      */
-    constructor(private body1_: Charged2, private body2_: Charged2, k = Geometric2.scalar(1)) {
+    constructor(private body1_: Charged2<T>, private body2_: Charged2<T>, k: T, private readonly metric: Measure<T>) {
         super();
 
-        this.F1 = new Force(this.body1_);
+        this.F1 = new Force(this.body1_, metric);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
 
-        this.F2 = new Force(this.body2_);
+        this.F2 = new Force(this.body2_, metric);
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
         this.k = k;
 
         this.forces = [this.F1, this.F2];
+        this.potentialEnergy_ = metric.zero();
+        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
     }
 
     /**
      * Computes the forces due to the Coulomb interaction.
      * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    updateForces(): Force[] {
+    updateForces(): Force<T>[] {
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         const numer = this.F1.location;
         const denom = this.F2.location;
 
-        // The direction of the force is computed such that like charges repel each other.
-        numer.copyVector(this.body1_.X).subVector(this.body2_.X);
-        denom.copyVector(numer).quaditude(true);
-        numer.direction(true).mulByScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
+        const metric = this.metric;
 
-        this.F1.vector.copyVector(numer).divByScalar(denom.a, denom.uom);
-        this.F2.vector.copyVector(this.F1.vector).neg();
+        // The direction of the force is computed such that like charges repel each other.
+        metric.copyVector(this.body1_.X, numer);
+        metric.subVector(numer, this.body2_.X);
+
+        metric.copyVector(numer, denom);
+        metric.quaditude(denom, true);
+
+        metric.direction(numer, true);
+        metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
+        metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
+        metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
+
+        metric.copyVector(numer, this.F1.vector);
+        metric.divByScalar(numer, metric.a(denom), metric.uom(denom));
+
+        metric.copyVector(this.F1.vector, this.F2.vector);
+        metric.neg(this.F2.vector);
 
         // Restore the contents of the location variables.
-        this.F1.location.copyVector(this.body1_.X);
-        this.F2.location.copyVector(this.body2_.X);
+        metric.copyVector(this.body1_.X, this.F1.location);
+        metric.copyVector(this.body2_.X, this.F2.location);
 
         return this.forces;
     }
@@ -97,27 +112,33 @@ export class CoulombLaw2 extends AbstractSimObject implements ForceLaw {
      * U = k q1 q2 / r, where
      * r is the center to center separation of m1 and m2.
      */
-    potentialEnergy(): Geometric2 {
+    potentialEnergy(): T {
+        const metric = this.metric;
         // Unlock the variable that we will use for the result.
-        this.potentialEnergy_.unlock(this.potentialEnergyLock_);
+        metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
 
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         const numer = this.F1.location;
         const denom = this.F2.location;
         // The numerator of the potential energy formula is k * Q1 * Q2.
-        numer.copyScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
+        metric.copyScalar(metric.a(this.k), metric.uom(this.k), numer);
+        metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
+        metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
         // The denominator is |r1 - r2|.
-        denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude(true);
+        metric.copyVector(this.body1_.X, denom);
+        metric.subVector(denom, this.body2_.X);
+        metric.magnitude(denom, true);
         // Combine the numerator and denominator.
-        this.potentialEnergy_.copyScalar(numer.a, numer.uom).divByScalar(denom.a, denom.uom);
+        metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
+        metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
 
         // Restore the contents of the location variables.
-        this.F1.location.copyVector(this.body1_.X);
-        this.F2.location.copyVector(this.body2_.X);
+        metric.copyVector(this.body1_.X, this.F1.location);
+        metric.copyVector(this.body2_.X, this.F2.location);
 
         // We're done. Lock down the result.
-        this.potentialEnergyLock_ = this.potentialEnergy_.lock();
+        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
         return this.potentialEnergy_;
     }
 }

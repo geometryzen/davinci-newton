@@ -29,5 +29,3 @@ import { Unit } from '../math/Unit';
 export interface DiffEqSolver {
     step(stepSize: number, uomStep: Unit): void;
 }
-
-export default DiffEqSolver;

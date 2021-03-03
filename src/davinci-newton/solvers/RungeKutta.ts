@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import DiffEqSolver from '../core/DiffEqSolver';
+import { DiffEqSolver } from '../core/DiffEqSolver';
 import Simulation from '../core/Simulation';
 import { Unit } from '../math/Unit';
 import zeroArray from '../util/zeroArray';

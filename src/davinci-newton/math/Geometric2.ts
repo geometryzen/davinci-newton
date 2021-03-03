@@ -852,6 +852,7 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
             return this;
         }
     }
+
     /**
      * @param m
      * @returns this | m
@@ -968,6 +969,27 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
             this.y -= v.y * α;
             return this;
         }
+    }
+
+    /**
+     * @param m
+     * @returns this | m
+     */
+    wedge(m: GeometricE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().wedge(m));
+        }
+        else {
+            throw new Error("TODO: wedge");
+        }
+    }
+
+    write(mv: GeometricE2): void {
+        mv.a = this.a;
+        mv.x = this.x;
+        mv.y = this.y;
+        mv.b = this.b;
+        mv.uom = this.uom;
     }
 
     writeVector(vector: VectorE2): void {

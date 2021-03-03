@@ -13,19 +13,21 @@
 // limitations under the License.
 
 import { Geometric2 } from '../math/Geometric2';
-import { RigidBody2 } from './RigidBody2';
+import { Measure } from './Measure';
+import { RigidBody } from './RigidBody';
 
 /**
  * An object with no internal structure.
+ * TODO: Perhaps a particle can be a parameterized abstract tupe?
  */
-export class Particle2 extends RigidBody2 {
+export class Particle2 extends RigidBody<Geometric2> {
 
     /**
      * @param M The mass of the particle.
      * @param Q The electric charge of the particle.
      */
-    constructor(M = Geometric2.one, Q = Geometric2.zero) {
-        super();
+    constructor(M = Geometric2.one, Q = Geometric2.zero, measure: Measure<Geometric2>) {
+        super(measure);
         this.M = M;
         this.Q = Q;
     }

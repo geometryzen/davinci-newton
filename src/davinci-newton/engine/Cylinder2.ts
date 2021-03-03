@@ -15,12 +15,13 @@
 import { Geometric2 } from '../math/Geometric2';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { RigidBody2 } from './RigidBody2';
+import { Measure } from './Measure';
+import { RigidBody } from './RigidBody';
 
 /**
  * A solid cylinder of uniform density.
  */
-export class Cylinder2 extends RigidBody2 {
+export class Cylinder2 extends RigidBody<Geometric2> {
 
     /**
      * The dimension corresponding to the radius.
@@ -37,8 +38,8 @@ export class Cylinder2 extends RigidBody2 {
     /**
      * 
      */
-    constructor(radius = Geometric2.one, height = Geometric2.one) {
-        super();
+    constructor(radius = Geometric2.one, height = Geometric2.one, measure: Measure<Geometric2>) {
+        super(measure);
 
         this.radius_ = Geometric2.copy(radius);
         this.radiusLock_ = this.radius_.lock();
