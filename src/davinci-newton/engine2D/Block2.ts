@@ -15,13 +15,13 @@
 import { Geometric2 } from '../math/Geometric2';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { Measure } from './Measure';
-import { RigidBody } from './RigidBody';
+import { Euclidean2 } from './Euclidean2';
+import { RigidBody } from '../core/RigidBody';
 
 /**
  * A rectangular block of constant surface density.
  */
-export class Block extends RigidBody<Geometric2> {
+export class Block2 extends RigidBody<Geometric2> {
     /**
      * The dimension corresponding to the width.
      */
@@ -37,8 +37,8 @@ export class Block extends RigidBody<Geometric2> {
     /**
      * 
      */
-    constructor(width = Geometric2.one, height = Geometric2.one, measure: Measure<Geometric2>) {
-        super(measure);
+    constructor(width = Geometric2.one, height = Geometric2.one) {
+        super(new Euclidean2());
 
         this.width_ = Geometric2.copy(width);
         this.widthLock_ = this.width_.lock();

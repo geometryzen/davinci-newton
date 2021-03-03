@@ -1,12 +1,12 @@
 import { config } from './davinci-newton/config';
+import { Force } from './davinci-newton/core/Force';
+import { Particle } from './davinci-newton/core/Particle';
+import { State } from './davinci-newton/core/State';
 import { VarsList } from './davinci-newton/core/VarsList';
-import { Block } from './davinci-newton/engine/Block';
-import { ConstantForceLaw2 } from './davinci-newton/engine/ConstantForceLaw2';
-import { CoulombLaw2 } from './davinci-newton/engine/CoulombLaw2';
-import { Cylinder2 } from './davinci-newton/engine/Cylinder2';
-import { Force2 } from './davinci-newton/engine/Force2';
-import { Particle2 } from './davinci-newton/engine/Particle2';
-import { State } from './davinci-newton/engine/State';
+import { Block2 } from './davinci-newton/engine2D/Block2';
+import { ConstantForceLaw2 } from './davinci-newton/engine2D/ConstantForceLaw2';
+import { CoulombLaw2 } from './davinci-newton/engine2D/CoulombLaw2';
+import { Cylinder2 } from './davinci-newton/engine2D/Cylinder2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
 import { ConstantForceLaw3 } from './davinci-newton/engine3D/ConstantForceLaw3';
 import { CoulombLaw3 } from './davinci-newton/engine3D/CoulombLaw3';
@@ -75,7 +75,7 @@ const newton = {
     /**
      * 
      */
-    get Block() { return Block; },
+    get Block() { return Block2; },
     /**
      * 
      */
@@ -147,7 +147,7 @@ const newton = {
     /**
      * 
      */
-    get Force2() { return Force2; },
+    get Force2() { return Force; },
     /**
      * 
      */
@@ -191,7 +191,7 @@ const newton = {
     /**
      * 
      */
-    get Particle2() { return Particle2; },
+    get Particle2() { return Particle; },
     /**
      * 
      */

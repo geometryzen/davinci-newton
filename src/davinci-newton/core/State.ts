@@ -1,15 +1,15 @@
-import { Dynamics } from '../core/Dynamics';
-import SimList from '../core/SimList';
-import { Simulation } from '../core/Simulation';
-import { VarsList } from '../core/VarsList';
+import { Dynamics } from './Dynamics';
+import SimList from './SimList';
+import { Simulation } from './Simulation';
+import { VarsList } from './VarsList';
 import { Unit } from '../math/Unit';
 import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import remove from '../util/remove';
-import { Force2 } from './Force2';
-import { ForceBody2 } from './ForceBody2';
-import { ForceLaw2 } from './ForceLaw2';
-import { Measure } from './Measure';
+import { Force } from './Force';
+import { ForceBody } from './ForceBody';
+import { ForceLaw } from './ForceLaw';
+import { Metric } from './Metric';
 
 /**
  * <p>
@@ -29,11 +29,11 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * The RigidBody(s) in this simulation.
      */
-    private readonly bodies_: ForceBody2<T>[] = [];
+    private readonly bodies_: ForceBody<T>[] = [];
     /**
      * 
      */
-    private readonly forceLaws_: ForceLaw2<T>[] = [];
+    private readonly forceLaws_: ForceLaw<T>[] = [];
 
     /**
      * 
@@ -64,7 +64,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor(private readonly metric: Measure<T>, private readonly dynamics: Dynamics<T>) {
+    constructor(private readonly metric: Metric<T>, private readonly dynamics: Dynamics<T>) {
         super();
         this.varsList_ = new VarsList(dynamics.getVarNames());
         this.potentialOffset_ = metric.zero();
@@ -88,7 +88,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    addBody(body: ForceBody2<T>): void {
+    addBody(body: ForceBody<T>): void {
         if (!contains(this.bodies_, body)) {
             const dynamics = this.dynamics;
             // create variables in vars array for this body
@@ -108,7 +108,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    removeBody(body: ForceBody2<T>): void {
+    removeBody(body: ForceBody<T>): void {
         if (contains(this.bodies_, body)) {
             this.varsList_.deleteVariables(body.varsIndex, this.numVariablesPerBody);
             remove(this.bodies_, body);
@@ -121,7 +121,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    addForceLaw(forceLaw: ForceLaw2<T>): void {
+    addForceLaw(forceLaw: ForceLaw<T>): void {
         if (!contains(this.forceLaws_, forceLaw)) {
             this.forceLaws_.push(forceLaw);
         }
@@ -131,7 +131,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    removeForceLaw(forceLaw: ForceLaw2<T>): void {
+    removeForceLaw(forceLaw: ForceLaw<T>): void {
         forceLaw.disconnect();
         this.discontinuosChangeToEnergy();
         remove(this.forceLaws_, forceLaw);
@@ -235,7 +235,7 @@ export class State<T> extends AbstractSubject implements Simulation {
      * @param rateOfChange The (output) rate of change of the state variables.
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
-    private applyForce(rateOfChange: number[], forceApp: Force2<T>, Δt: number, uomTime?: Unit): void {
+    private applyForce(rateOfChange: number[], forceApp: Force<T>, Δt: number, uomTime?: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.bodies_, body))) {
             return;
@@ -293,7 +293,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * 
      */
-    private updateFromBody(body: ForceBody2<T>): void {
+    private updateFromBody(body: ForceBody<T>): void {
         const idx = body.varsIndex;
         if (idx > -1) {
             this.dynamics.updateVarsFromBody(body, idx, this.varsList_);
@@ -317,7 +317,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * Provides a reference to the bodies in the simulation.
      */
-    get bodies(): ForceBody2<T>[] {
+    get bodies(): ForceBody<T>[] {
         return this.bodies_;
     }
 

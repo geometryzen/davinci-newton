@@ -1,7 +1,7 @@
 import MatrixLike from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 
-export interface Measure<T> {
+export interface Metric<T> {
     a(mv: T): number;
 
     add(lhs: T, rhs: T): T;

@@ -1,8 +1,8 @@
 import { Dynamics } from '../core/Dynamics';
 import { VarsList } from "../core/VarsList";
 import { Geometric2 } from "../math/Geometric2";
-import { ForceBody2 } from "./ForceBody2";
-import { ForceLaw2 } from "./ForceLaw2";
+import { ForceBody } from "../core/ForceBody";
+import { ForceLaw } from "../core/ForceLaw";
 
 export const INDEX_TIME = 0;
 export const INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
@@ -41,7 +41,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TOTAL_ANGULAR_MOMENTUM_XY
 ];
 
-export class Dynamics2D implements Dynamics<Geometric2> {
+export class Dynamics2 implements Dynamics<Geometric2> {
     numVariablesPerBody(): number {
         // Each body is described by 7 kinematic components.
         // 2 position
@@ -68,7 +68,7 @@ export class Dynamics2D implements Dynamics<Geometric2> {
     discontinuousEnergyVariables(): number[] {
         return DISCONTINUOUS_ENERGY_VARIABLES;
     }
-    epilog(bodies: ForceBody2<Geometric2>[], forceLaws: ForceLaw2<Geometric2>[], potentialOffset: Geometric2, varsList: VarsList): void {
+    epilog(bodies: ForceBody<Geometric2>[], forceLaws: ForceLaw<Geometric2>[], potentialOffset: Geometric2, varsList: VarsList): void {
 
         // update the variables that track energy
         let pe = potentialOffset.a;
@@ -117,7 +117,7 @@ export class Dynamics2D implements Dynamics<Geometric2> {
         varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
         varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
     }
-    updateVarsFromBody(body: ForceBody2<Geometric2>, idx: number, vars: VarsList): void {
+    updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void {
         vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
         vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
 
@@ -136,7 +136,7 @@ export class Dynamics2D implements Dynamics<Geometric2> {
     addTorque(rateOfChange: number[], idx: number, torque: Geometric2): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
     }
-    updateBody(vars: number[], idx: number, body: ForceBody2<Geometric2>): void {
+    updateBody(vars: number[], idx: number, body: ForceBody<Geometric2>): void {
         body.X.a = 0;
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
@@ -165,13 +165,13 @@ export class Dynamics2D implements Dynamics<Geometric2> {
 
         body.updateAngularVelocity();
     }
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric2>) {
+    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>) {
         const P = body.P;
         const mass = body.M.a;
         rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
     }
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric2>): void {
+    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void {
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
         // requiring the geometric product of Ω and R.
         // Ω and R are auxiliary and primary variables that have already been computed.

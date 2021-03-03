@@ -1,20 +1,20 @@
+import { Engine } from '../core/Engine';
+import { State } from '../core/State';
 import { Bivector2 } from '../math/Bivector2';
 import { Geometric2 } from '../math/Geometric2';
 import { Unit } from '../math/Unit';
-import { Block } from './Block';
-import { Engine } from './Engine';
-import { Euclidean2D } from './Euclidean2D';
-import { Dynamics2D } from './Dynamics2D';
-import { State } from './State';
+import { Block2 } from './Block2';
+import { Dynamics2 } from './Dynamics2';
+import { Euclidean2 } from './Euclidean2';
 
 describe("engine", function () {
     describe("example", function () {
-        it("", function () {
-            const metric = new Euclidean2D();
-            const dynamics = new Dynamics2D();
+        it("setup", function () {
+            const metric = new Euclidean2();
+            const dynamics = new Dynamics2();
             const engine = new Engine(metric, dynamics);
 
-            const block = new Block(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER), metric);
+            const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
             block.M = Geometric2.scalar(12);
 
             engine.contents.addBody(block);
@@ -24,10 +24,10 @@ describe("engine", function () {
     });
     describe("Ω calculation", function () {
         xit("calculated using (1/2) Ω * L(Ω) should be same as (1/2) ω * L(ω)", function () {
-            const metric = new Euclidean2D();
-            const dynamics = new Dynamics2D();
+            const metric = new Euclidean2();
+            const dynamics = new Dynamics2();
             const state = new State(metric, dynamics);
-            const body = new Block(Geometric2.scalar(1), Geometric2.scalar(2), metric);
+            const body = new Block2(Geometric2.scalar(1), Geometric2.scalar(2));
             body.M = Geometric2.scalar(12);
             body.L.xy = 7;
             body.L.uom = Unit.KILOGRAM.mul(Unit.METER).mul(Unit.METER).div(Unit.SECOND);

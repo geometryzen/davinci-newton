@@ -1,5 +1,3 @@
-import { Scalar } from '../math/Scalar';
-
 /**
  * @hidden
  */

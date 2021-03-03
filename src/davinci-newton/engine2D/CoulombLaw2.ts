@@ -13,14 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric2 } from '../math/Geometric2';
+import { Force } from '../core/Force';
+import { ForceLaw } from '../core/ForceLaw';
+import { Metric } from '../core/Metric';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Charged2 } from './Charged2';
-import { Force2 as Force } from './Force2';
-import { ForceLaw2 as ForceLaw } from './ForceLaw2';
-import { Measure } from './Measure';
-
+import { Charged } from '../core/Charged';
 /**
  * 
  */
@@ -45,7 +43,7 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    constructor(private body1_: Charged2<T>, private body2_: Charged2<T>, k: T, private readonly metric: Measure<T>) {
+    constructor(private body1_: Charged<T>, private body2_: Charged<T>, k: T, private readonly metric: Metric<T>) {
         super();
 
         this.F1 = new Force(this.body1_, metric);

@@ -1,5 +1,5 @@
-import { ForceBody2 } from "../engine/ForceBody2";
-import { ForceLaw2 } from "../engine/ForceLaw2";
+import { ForceBody } from "./ForceBody";
+import { ForceLaw } from "./ForceLaw";
 import { VarsList } from "./VarsList";
 
 export interface Dynamics<T> {
@@ -11,14 +11,14 @@ export interface Dynamics<T> {
      * @param idx 
      * @param body 
      */
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<T>): void;
+    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
     /**
      * 
      * @param rateOfChange 
      * @param idx 
      * @param body 
      */
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<T>): void;
+    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
     /**
      * 
      * @param rateOfChange
@@ -37,12 +37,12 @@ export interface Dynamics<T> {
      * @param idx 
      * @param body 
      */
-    updateBody(vars: number[], idx: number, body: ForceBody2<T>): void;
-    updateVarsFromBody(body: ForceBody2<T>, idx: number, vars: VarsList): void;
+    updateBody(vars: number[], idx: number, body: ForceBody<T>): void;
+    updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
 
     addForce(rateOfChange: number[], idx: number, force: T): void;
     addTorque(rateOfChange: number[], idx: number, torque: T): void;
-    epilog(bodies: ForceBody2<T>[], forceLaws: ForceLaw2<T>[], potentialOffset: T, vars: VarsList): void;
+    epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
     discontinuousEnergyVariables(): number[];
     getOffsetName(offset: number): string;
     getVarNames(): string[];

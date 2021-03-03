@@ -1,30 +1,15 @@
-// Copyright 2017-2021 David Holmes.  All Rights Reserved.
-// Copyright 2016 Erik Neumann.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import { assertConsistentUnits } from '../core/assertConsistentUnits';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force2 } from './Force2';
-import { ForceLaw2 } from './ForceLaw2';
-import { Measure } from './Measure';
+import { assertConsistentUnits } from './assertConsistentUnits';
+import { Force } from './Force';
+import { ForceLaw } from './ForceLaw';
+import { Metric } from './Metric';
 import { RigidBody } from './RigidBody';
 
 /**
  * 
  */
-export class Spring3<T> extends AbstractSimObject implements ForceLaw2<T> {
+export class Spring3<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
@@ -46,15 +31,15 @@ export class Spring3<T> extends AbstractSimObject implements ForceLaw2<T> {
     /**
      * The force information on body1 due to body2.
      */
-    private readonly F1: Force2<T>;
+    private readonly F1: Force<T>;
     /**
      * The force information on body2 due to body1.
      */
-    private readonly F2: Force2<T>;
+    private readonly F2: Force<T>;
     /**
      * 
      */
-    private readonly forces: Force2<T>[] = [];
+    private readonly forces: Force<T>[] = [];
 
     /**
      * Scratch variable for computing endpoint in world coordinates.
@@ -77,7 +62,7 @@ export class Spring3<T> extends AbstractSimObject implements ForceLaw2<T> {
     /**
      * 
      */
-    constructor(private body1_: RigidBody<T>, private body2_: RigidBody<T>, private readonly metric: Measure<T>) {
+    constructor(private body1_: RigidBody<T>, private body2_: RigidBody<T>, private readonly metric: Metric<T>) {
         super();
 
         this.restLength = metric.scalar(1);
@@ -98,11 +83,11 @@ export class Spring3<T> extends AbstractSimObject implements ForceLaw2<T> {
         this.end2_ = metric.zero();
         this.end2Lock_ = metric.lock(this.end2_);
 
-        this.F1 = new Force2(this.body1_, metric);
+        this.F1 = new Force(this.body1_, metric);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
 
-        this.F2 = new Force2(this.body2_, metric);
+        this.F2 = new Force(this.body2_, metric);
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
@@ -161,7 +146,7 @@ export class Spring3<T> extends AbstractSimObject implements ForceLaw2<T> {
     /**
      * 
      */
-    updateForces(): Force2<T>[] {
+    updateForces(): Force<T>[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);

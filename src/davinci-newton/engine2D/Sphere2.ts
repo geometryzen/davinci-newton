@@ -15,38 +15,27 @@
 import { Geometric2 } from '../math/Geometric2';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { Measure } from './Measure';
-import { RigidBody } from './RigidBody';
+import { Metric } from '../core/Metric';
+import { RigidBody } from '../core/RigidBody';
 
 /**
- * A solid cylinder of uniform density.
+ * A solid sphere of constant density.
  */
-export class Cylinder2 extends RigidBody<Geometric2> {
+export class Sphere2 extends RigidBody<Geometric2> {
 
     /**
-     * The dimension corresponding to the radius.
+     * The dimension corresponding to the width.
      */
     private readonly radius_: Geometric2;
     private radiusLock_: number;
 
     /**
-     * The dimension corresponding to the height.
-     */
-    private readonly height_: Geometric2;
-    private heightLock_: number;
-
-    /**
      * 
      */
-    constructor(radius = Geometric2.one, height = Geometric2.one, measure: Measure<Geometric2>) {
+    constructor(radius = Geometric2.one, measure: Metric<Geometric2>) {
         super(measure);
-
-        this.radius_ = Geometric2.copy(radius);
+        this.radius_ = Geometric2.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
-
-        this.height_ = Geometric2.copy(height);
-        this.heightLock_ = this.height_.lock();
-
         this.updateInertiaTensor();
     }
 
@@ -55,19 +44,21 @@ export class Cylinder2 extends RigidBody<Geometric2> {
     }
     set radius(radius: Geometric2) {
         this.radius_.unlock(this.radiusLock_);
-        this.radius_.copy(radius);
+        this.radius_.copyScalar(radius.a, radius.uom);
         this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();
     }
 
-    get height(): Geometric2 {
-        return this.height_;
-    }
-    set height(height: Geometric2) {
-        this.height.unlock(this.heightLock_);
-        this.height_.copy(height);
-        this.heightLock_ = this.height_.lock();
-        this.updateInertiaTensor();
+    /**
+     * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
+     */
+    public updateAngularVelocity(): void {
+        this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
+        this.Ω.quaditude(true);
+        this.Ω.mulByScalar(this.M.a, this.M.uom);
+        this.Ω.mulByNumber(2 / 5);
+        this.Ω.inv();
+        this.Ω.mulByBivector(this.L);
     }
 
     /**
@@ -75,16 +66,12 @@ export class Cylinder2 extends RigidBody<Geometric2> {
      */
     protected updateInertiaTensor(): void {
         const r = this.radius_;
-        const h = this.height_;
-        const rr = r.a * r.a;
-        const hh = h.a * h.a;
-        const Irr = this.M.a * (3 * rr + hh) / 12;
-        const Ihh = this.M.a * rr / 2;
+        const s = 2 * this.M.a * r.a * r.a / 5;
         const I = Matrix3.zero();
-        I.setElement(0, 0, Irr);
-        I.setElement(1, 1, Ihh);
-        I.setElement(2, 2, Irr);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
+        I.setElement(0, 0, s);
+        I.setElement(1, 1, s);
+        I.setElement(2, 2, s);
+        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
         this.I = I;
     }
 }

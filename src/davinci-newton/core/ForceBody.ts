@@ -1,11 +1,11 @@
-import { SimObject } from '../core/SimObject';
-import { Measure } from './Measure';
+import { SimObject } from './SimObject';
+import { Metric } from './Metric';
 
-export interface ForceBody2<T> extends SimObject {
+export interface ForceBody<T> extends SimObject {
     /**
      * The metric must be known in order to compute the energies and angular velocity.
      */
-    metric: Measure<T>;
+    metric: Metric<T>;
     /**
      * A placeholder for applications to define a unique identifier.
      */

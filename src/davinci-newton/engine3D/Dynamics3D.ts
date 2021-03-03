@@ -1,8 +1,8 @@
 import { Dynamics } from '../core/Dynamics';
-import { Geometric3 } from "../math/Geometric3";
-import { ForceBody2 } from '../engine/ForceBody2';
+import { ForceBody } from '../core/ForceBody';
+import { ForceLaw } from '../core/ForceLaw';
 import { VarsList } from '../core/VarsList';
-import { ForceLaw2 } from '../engine/ForceLaw2';
+import { Geometric3 } from "../math/Geometric3";
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 
 export const INDEX_TIME = 0;
@@ -86,7 +86,7 @@ export class Dynamics3D implements Dynamics<Geometric3> {
     discontinuousEnergyVariables(): number[] {
         return DISCONTINUOUS_ENERGY_VARIABLES;
     }
-    epilog(bodies: ForceBody2<Geometric3>[], forceLaws: ForceLaw2<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void {
+    epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void {
 
         // update the variables that track energy
         let pe = potentialOffset.a;
@@ -140,7 +140,7 @@ export class Dynamics3D implements Dynamics<Geometric3> {
         varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
         varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
     }
-    updateVarsFromBody(body: ForceBody2<Geometric3>, idx: number, vars: VarsList): void {
+    updateVarsFromBody(body: ForceBody<Geometric3>, idx: number, vars: VarsList): void {
         vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
         vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
         vars.setValue(OFFSET_POSITION_Z + idx, body.X.z);
@@ -168,7 +168,7 @@ export class Dynamics3D implements Dynamics<Geometric3> {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
     }
-    updateBody(vars: number[], idx: number, body: ForceBody2<Geometric3>): void {
+    updateBody(vars: number[], idx: number, body: ForceBody<Geometric3>): void {
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
         body.X.z = vars[idx + OFFSET_POSITION_Z];
@@ -196,7 +196,7 @@ export class Dynamics3D implements Dynamics<Geometric3> {
 
         body.updateAngularVelocity();
     }
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric3>) {
+    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>) {
         // The rate of change of position is the velocity.
         // dX/dt = V = P / M
         const P = body.P;
@@ -205,7 +205,7 @@ export class Dynamics3D implements Dynamics<Geometric3> {
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
         rateOfChange[idx + OFFSET_POSITION_Z] = P.z / mass;
     }
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody2<Geometric3>): void {
+    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void {
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
         // requiring the geometric product of Ω and R.
         // Ω and R are auxiliary and primary variables that have already been computed.

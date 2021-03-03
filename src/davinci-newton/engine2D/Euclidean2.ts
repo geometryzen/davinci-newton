@@ -1,9 +1,9 @@
 import { Geometric2 } from "../math/Geometric2";
 import MatrixLike from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
-import { Measure } from "./Measure";
+import { Metric } from "../core/Metric";
 
-export class Euclidean2D implements Measure<Geometric2> {
+export class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number {
         return mv.a;
     }

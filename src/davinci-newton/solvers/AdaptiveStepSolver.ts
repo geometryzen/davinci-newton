@@ -1,8 +1,8 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
+import { Metric } from '../core/Metric';
 import { Simulation } from '../core/Simulation';
-import { Measure } from '../engine/Measure';
 import { Unit } from '../math/Unit';
-import { EnergySystem } from './EnergySystem';
+import { EnergySystem } from '../core/EnergySystem';
 
 export class AdaptiveStepSolver<T> implements DiffEqSolver {
     private diffEq_: Simulation;
@@ -21,7 +21,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
      * enables debug code for particular test
      */
     private tolerance_: number;
-    constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver, private readonly metric: Measure<T>) {
+    constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver, private readonly metric: Metric<T>) {
         this.diffEq_ = diffEq;
         this.energySystem_ = energySystem;
         this.odeSolver_ = diffEqSolver;

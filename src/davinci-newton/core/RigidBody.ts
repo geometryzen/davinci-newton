@@ -1,33 +1,18 @@
-// Copyright 2017-2021 David Holmes.  All Rights Reserved.
-// Copyright 2016 Erik Neumann.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import { assertConsistentUnits } from '../core/assertConsistentUnits';
+import { Massive } from './Massive';
 import { Mat3 } from '../math/Mat3';
 import { Matrix3 } from '../math/Matrix3';
 import MatrixLike from '../math/MatrixLike';
 import { Unit } from '../math/Unit';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Charged2 } from './Charged2';
-import { ForceBody2 } from './ForceBody2';
-import { Massive2 } from './Massive2';
-import { Measure } from './Measure';
+import { assertConsistentUnits } from './assertConsistentUnits';
+import { Charged } from './Charged';
+import { ForceBody } from './ForceBody';
+import { Metric } from './Metric';
 
-function mustBeDimensionlessOrCorrectUnits<T>(name: string, value: T, unit: Unit, metric: Measure<T>): T {
+function mustBeDimensionlessOrCorrectUnits<T>(name: string, value: T, unit: Unit, metric: Metric<T>): T {
     if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
         throw new Error(`${name} unit of measure, ${metric.uom(value)}, must be compatible with ${unit}`);
     }
@@ -39,7 +24,7 @@ function mustBeDimensionlessOrCorrectUnits<T>(name: string, value: T, unit: Unit
 /**
  * 
  */
-export class RigidBody<T> extends AbstractSimObject implements ForceBody2<T>, Massive2<T>, Charged2<T> {
+export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Massive<T>, Charged<T> {
     /**
      * A uniquie identifier assigned by applications.
      * This is not used internally.
@@ -124,7 +109,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody2<T>, Ma
     /**
      * 
      */
-    constructor(public readonly metric: Measure<T>) {
+    constructor(public readonly metric: Metric<T>) {
         super();
         this.mass_ = metric.scalar(1);
         this.massLock_ = metric.lock(this.mass_);

@@ -13,34 +13,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric2 } from '../math/Geometric2';
-import { VectorE2 } from '../math/VectorE2';
+import { Force } from '../core/Force';
+import { ForceBody } from '../core/ForceBody';
+import { ForceLaw } from '../core/ForceLaw';
 import { CoordType, LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force2 } from './Force2';
-import { ForceBody2 } from './ForceBody2';
-import { ForceLaw2 } from './ForceLaw2';
-import { Measure } from './Measure';
 
 /**
  * 
  */
-export class ConstantForceLaw2<T> extends AbstractSimObject implements ForceLaw2<T> {
+export class ConstantForceLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * The attachment point to the body in body coordinates.
      */
-    private readonly force_: Force2<T>;
-    private readonly forces: Force2<T>[] = [];
+    private readonly force_: Force<T>;
+    private readonly forces: Force<T>[] = [];
     private readonly potentialEnergy_: T;
     private potentialEnergyLock_: number;
 
     /**
      * 
      */
-    constructor(private body_: ForceBody2<T>, vector: T, vectorCoordType: CoordType = WORLD) {
+    constructor(private body_: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
         super();
         const metric = this.body_.metric;
-        this.force_ = new Force2(this.body_, metric);
+        this.force_ = new Force(this.body_, metric);
 
         this.force_.locationCoordType = LOCAL;
         metric.copyVector(vector, this.force_.vector);
@@ -63,7 +60,7 @@ export class ConstantForceLaw2<T> extends AbstractSimObject implements ForceLaw2
     /**
      * 
      */
-    updateForces(): Force2<T>[] {
+    updateForces(): Force<T>[] {
         return this.forces;
     }
 

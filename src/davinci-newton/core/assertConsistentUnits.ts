@@ -1,11 +1,11 @@
 import { Unit } from "../math/Unit";
-import { Measure } from "../engine/Measure";
+import { Metric } from "./Metric";
 
 /**
  * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
  * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
  */
-export function assertConsistentUnits<T>(aName: string, A: T, bName: string, B: T, metric: Measure<T>): void {
+export function assertConsistentUnits<T>(aName: string, A: T, bName: string, B: T, metric: Metric<T>): void {
     if (!metric.isZero(A) && !metric.isZero(B)) {
         if (Unit.isOne(metric.uom(A))) {
             if (!Unit.isOne(metric.uom(B))) {

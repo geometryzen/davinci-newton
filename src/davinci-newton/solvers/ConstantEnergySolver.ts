@@ -1,8 +1,8 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { Simulation } from '../core/Simulation';
-import { Measure } from '../engine/Measure';
+import { Metric } from '../core/Metric';
 import { Unit } from '../math/Unit';
-import { EnergySystem } from './EnergySystem';
+import { EnergySystem } from '../core/EnergySystem';
 
 /**
  * An adaptive step solver that adjusts the step size in order to
@@ -28,7 +28,7 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
      * Constructs an adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
      */
-    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver, private readonly metric: Measure<T>) {
+    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver, private readonly metric: Metric<T>) {
         this.simulation_ = simulation;
         this.energySystem_ = energySystem;
         this.solverMethod_ = solverMethod;

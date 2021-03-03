@@ -21,7 +21,7 @@ import isZeroBivectorE3 from '../math/isZeroBivectorE3';
 import isZeroVectorE3 from '../math/isZeroVectorE3';
 import { Unit } from '../math/Unit';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
-import { EnergySystem } from '../solvers/EnergySystem';
+import { EnergySystem } from '../core/EnergySystem';
 import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import remove from '../util/remove';
