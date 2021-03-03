@@ -1,5 +1,5 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
-import Simulation from '../core/Simulation';
+import { Simulation } from '../core/Simulation';
 import { Measure } from '../engine/Measure';
 import { Unit } from '../math/Unit';
 import { EnergySystem } from './EnergySystem';

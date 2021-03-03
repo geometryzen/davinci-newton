@@ -4926,32 +4926,6 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.State = void 0;
-    var var_names = [
-        VarsList_1.VarsList.TIME,
-        "translational kinetic energy",
-        "rotational kinetic energy",
-        "potential energy",
-        "total energy",
-        "total linear momentum - x",
-        "total linear momentum - y",
-        "total linear momentum - z",
-        "total angular momentum - yz",
-        "total angular momentum - zx",
-        "total angular momentum - xy"
-    ];
-    function getVarName(index) {
-        switch (index) {
-            case State.OFFSET_POSITION_X: return "position x";
-            case State.OFFSET_POSITION_Y: return "position y";
-            case State.OFFSET_ATTITUDE_A: return "attitude a";
-            case State.OFFSET_ATTITUDE_XY: return "attitude xy";
-            case State.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
-            case State.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
-            case State.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
-        }
-        throw new Error("getVarName(" + index + ")");
-    }
-    var NUM_VARIABLES_PER_BODY = 7;
     var State = (function (_super) {
         __extends(State, _super);
         function State(metric, dynamics) {
@@ -4962,12 +4936,13 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
             _this.bodies_ = [];
             _this.forceLaws_ = [];
             _this.showForces_ = false;
-            _this.varsList_ = new VarsList_1.VarsList(var_names);
+            _this.varsList_ = new VarsList_1.VarsList(dynamics.getVarNames());
             _this.potentialOffset_ = metric.zero();
             _this.force_ = metric.zero();
             _this.torque_ = metric.zero();
             _this.totalEnergy_ = metric.zero();
             _this.totalEnergyLock_ = metric.lock(_this.totalEnergy_);
+            _this.numVariablesPerBody = dynamics.numVariablesPerBody();
             return _this;
         }
         Object.defineProperty(State.prototype, "showForces", {
@@ -4982,9 +4957,10 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
         });
         State.prototype.addBody = function (body) {
             if (!contains_1.default(this.bodies_, body)) {
+                var dynamics = this.dynamics;
                 var names = [];
-                for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
-                    names.push(getVarName(k));
+                for (var k = 0; k < this.numVariablesPerBody; k++) {
+                    names.push(dynamics.getOffsetName(k));
                 }
                 body.varsIndex = this.varsList_.addVariables(names);
                 this.bodies_.push(body);
@@ -4995,7 +4971,7 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
         };
         State.prototype.removeBody = function (body) {
             if (contains_1.default(this.bodies_, body)) {
-                this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
+                this.varsList_.deleteVariables(body.varsIndex, this.numVariablesPerBody);
                 remove_1.default(this.bodies_, body);
                 body.varsIndex = -1;
             }
@@ -5014,7 +4990,9 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
             remove_1.default(this.forceLaws_, forceLaw);
         };
         State.prototype.discontinuosChangeToEnergy = function () {
-            this.varsList_.incrSequence(State.INDEX_TRANSLATIONAL_KINETIC_ENERGY, State.INDEX_ROTATIONAL_KINETIC_ENERGY, State.INDEX_POTENTIAL_ENERGY, State.INDEX_TOTAL_ENERGY, State.INDEX_TOTAL_LINEAR_MOMENTUM_X, State.INDEX_TOTAL_LINEAR_MOMENTUM_Y, State.INDEX_TOTAL_ANGULAR_MOMENTUM_XY);
+            var _a;
+            var dynamics = this.dynamics;
+            (_a = this.varsList_).incrSequence.apply(_a, dynamics.discontinuousEnergyVariables());
         };
         State.prototype.updateBodies = function (vars) {
             var dynamics = this.dynamics;
@@ -5052,7 +5030,7 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
                 }
                 var mass = metric.a(body.M);
                 if (mass === Number.POSITIVE_INFINITY) {
-                    for (var k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
+                    for (var k = 0; k < this.numVariablesPerBody; k++) {
                         rateOfChange[idx + k] = 0;
                     }
                 }
@@ -5176,21 +5154,6 @@ define('davinci-newton/engine/State',["require", "exports", "../core/SimList", "
             this.totalEnergyLock_ = metric.lock(this.totalEnergy_);
             return this.totalEnergy_;
         };
-        State.INDEX_TIME = 0;
-        State.INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
-        State.INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
-        State.INDEX_POTENTIAL_ENERGY = 3;
-        State.INDEX_TOTAL_ENERGY = 4;
-        State.INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
-        State.INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
-        State.INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 7;
-        State.OFFSET_POSITION_X = 0;
-        State.OFFSET_POSITION_Y = 1;
-        State.OFFSET_ATTITUDE_A = 2;
-        State.OFFSET_ATTITUDE_XY = 3;
-        State.OFFSET_LINEAR_MOMENTUM_X = 4;
-        State.OFFSET_LINEAR_MOMENTUM_Y = 5;
-        State.OFFSET_ANGULAR_MOMENTUM_XY = 6;
         return State;
     }(AbstractSubject_1.default));
     exports.State = State;

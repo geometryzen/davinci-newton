@@ -43,4 +43,8 @@ export interface Dynamics<T> {
     addForce(rateOfChange: number[], idx: number, force: T): void;
     addTorque(rateOfChange: number[], idx: number, torque: T): void;
     epilog(bodies: ForceBody2<T>[], forceLaws: ForceLaw2<T>[], potentialOffset: T, vars: VarsList): void;
+    discontinuousEnergyVariables(): number[];
+    getOffsetName(offset: number): string;
+    getVarNames(): string[];
+    numVariablesPerBody(): number;
 }

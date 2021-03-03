@@ -15,9 +15,9 @@
 
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import { DiffEqSolver } from '../core/DiffEqSolver';
-import Simulation from '../core/Simulation';
+import { Simulation } from '../core/Simulation';
 import { Unit } from '../math/Unit';
-import AdvanceStrategy from '../runner/AdvanceStrategy';
+import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 
 /**
  * 

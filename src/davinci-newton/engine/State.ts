@@ -1,11 +1,8 @@
+import { Dynamics } from '../core/Dynamics';
 import SimList from '../core/SimList';
-import Simulation from '../core/Simulation';
+import { Simulation } from '../core/Simulation';
 import { VarsList } from '../core/VarsList';
-import { Geometric2 } from '../math/Geometric2';
-import { isZeroBivectorE2 } from '../math/isZeroBivectorE2';
-import { isZeroVectorE2 } from '../math/isZeroVectorE2';
 import { Unit } from '../math/Unit';
-import { EnergySystem } from '../solvers/EnergySystem';
 import AbstractSubject from '../util/AbstractSubject';
 import contains from '../util/contains';
 import remove from '../util/remove';
@@ -13,46 +10,6 @@ import { Force2 } from './Force2';
 import { ForceBody2 } from './ForceBody2';
 import { ForceLaw2 } from './ForceLaw2';
 import { Measure } from './Measure';
-import { Dynamics } from '../core/Dynamics';
-
-const var_names = [
-    VarsList.TIME,
-    "translational kinetic energy",
-    "rotational kinetic energy",
-    "potential energy",
-    "total energy",
-    "total linear momentum - x",
-    "total linear momentum - y",
-    "total linear momentum - z",
-    "total angular momentum - yz",
-    "total angular momentum - zx",
-    "total angular momentum - xy"
-];
-
-/**
- *
- */
-function getVarName(index: number): string {
-    switch (index) {
-        case State.OFFSET_POSITION_X: return "position x";
-        case State.OFFSET_POSITION_Y: return "position y";
-        case State.OFFSET_ATTITUDE_A: return "attitude a";
-        case State.OFFSET_ATTITUDE_XY: return "attitude xy";
-        case State.OFFSET_LINEAR_MOMENTUM_X: return "linear momentum x";
-        case State.OFFSET_LINEAR_MOMENTUM_Y: return "linear momentum y";
-        case State.OFFSET_ANGULAR_MOMENTUM_XY: return "angular momentum xy";
-    }
-    throw new Error(`getVarName(${index})`);
-}
-
-/**
- * Each body is described by 7 kinematic components.
- * 2 position
- * 2 attitude (though normalized should be only 1)
- * 2 linear momentum
- * 1 angular momentum
- */
-const NUM_VARIABLES_PER_BODY = 7;
 
 /**
  * <p>
@@ -61,22 +18,6 @@ const NUM_VARIABLES_PER_BODY = 7;
  * </p>
  */
 export class State<T> extends AbstractSubject implements Simulation {
-    public static readonly INDEX_TIME = 0;
-    public static readonly INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
-    public static readonly INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
-    public static readonly INDEX_POTENTIAL_ENERGY = 3;
-    public static readonly INDEX_TOTAL_ENERGY = 4;
-    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
-    public static readonly INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
-    public static readonly INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 7;
-    public static readonly OFFSET_POSITION_X = 0;
-    public static readonly OFFSET_POSITION_Y = 1;
-    public static readonly OFFSET_ATTITUDE_A = 2;
-    public static readonly OFFSET_ATTITUDE_XY = 3;
-    public static readonly OFFSET_LINEAR_MOMENTUM_X = 4;
-    public static readonly OFFSET_LINEAR_MOMENTUM_Y = 5;
-    public static readonly OFFSET_ANGULAR_MOMENTUM_XY = 6;
-
     /**
      * 
      */
@@ -118,17 +59,20 @@ export class State<T> extends AbstractSubject implements Simulation {
     private readonly totalEnergy_: T;
     private totalEnergyLock_: number;
 
+    private readonly numVariablesPerBody: number;
+
     /**
      * Constructs a Physics engine for 3D simulations.
      */
     constructor(private readonly metric: Measure<T>, private readonly dynamics: Dynamics<T>) {
         super();
-        this.varsList_ = new VarsList(var_names);
+        this.varsList_ = new VarsList(dynamics.getVarNames());
         this.potentialOffset_ = metric.zero();
         this.force_ = metric.zero();
         this.torque_ = metric.zero();
         this.totalEnergy_ = metric.zero();
         this.totalEnergyLock_ = metric.lock(this.totalEnergy_);
+        this.numVariablesPerBody = dynamics.numVariablesPerBody();
     }
 
     /**
@@ -146,10 +90,11 @@ export class State<T> extends AbstractSubject implements Simulation {
      */
     addBody(body: ForceBody2<T>): void {
         if (!contains(this.bodies_, body)) {
+            const dynamics = this.dynamics;
             // create variables in vars array for this body
             const names = [];
-            for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
-                names.push(getVarName(k));
+            for (let k = 0; k < this.numVariablesPerBody; k++) {
+                names.push(dynamics.getOffsetName(k));
             }
             body.varsIndex = this.varsList_.addVariables(names);
             // add body to end of list of bodies
@@ -165,7 +110,7 @@ export class State<T> extends AbstractSubject implements Simulation {
      */
     removeBody(body: ForceBody2<T>): void {
         if (contains(this.bodies_, body)) {
-            this.varsList_.deleteVariables(body.varsIndex, NUM_VARIABLES_PER_BODY);
+            this.varsList_.deleteVariables(body.varsIndex, this.numVariablesPerBody);
             remove(this.bodies_, body);
             body.varsIndex = -1;
         }
@@ -193,16 +138,8 @@ export class State<T> extends AbstractSubject implements Simulation {
     }
 
     private discontinuosChangeToEnergy(): void {
-        // const dynamics = this.dynamics;
-        this.varsList_.incrSequence(
-            State.INDEX_TRANSLATIONAL_KINETIC_ENERGY,
-            State.INDEX_ROTATIONAL_KINETIC_ENERGY,
-            State.INDEX_POTENTIAL_ENERGY,
-            State.INDEX_TOTAL_ENERGY,
-            State.INDEX_TOTAL_LINEAR_MOMENTUM_X,
-            State.INDEX_TOTAL_LINEAR_MOMENTUM_Y,
-            State.INDEX_TOTAL_ANGULAR_MOMENTUM_XY
-        );
+        const dynamics = this.dynamics;
+        this.varsList_.incrSequence(...dynamics.discontinuousEnergyVariables());
     }
 
     /**
@@ -267,7 +204,7 @@ export class State<T> extends AbstractSubject implements Simulation {
             }
             const mass = metric.a(body.M);
             if (mass === Number.POSITIVE_INFINITY) {
-                for (let k = 0; k < NUM_VARIABLES_PER_BODY; k++) {
+                for (let k = 0; k < this.numVariablesPerBody; k++) {
                     rateOfChange[idx + k] = 0;  // infinite mass objects don't move
                 }
             }

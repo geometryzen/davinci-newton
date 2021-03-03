@@ -1,6 +1,6 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { Dynamics } from '../core/Dynamics';
-import AdvanceStrategy from '../runner/AdvanceStrategy';
+import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 import { ConstantEnergySolver } from '../solvers/ConstantEnergySolver';
 import { RungeKutta } from '../solvers/RungeKutta';
 import { DefaultAdvanceStrategy } from '../strategy/DefaultAdvanceStrategy';

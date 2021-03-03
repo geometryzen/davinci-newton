@@ -14,7 +14,7 @@
 // limitations under the License.
 
 import SimList from '../core/SimList';
-import Simulation from '../core/Simulation';
+import { Simulation } from '../core/Simulation';
 import { VarsList } from '../core/VarsList';
 import { Geometric3 } from '../math/Geometric3';
 import isZeroBivectorE3 from '../math/isZeroBivectorE3';
