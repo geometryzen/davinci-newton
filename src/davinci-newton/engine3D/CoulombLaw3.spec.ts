@@ -1,5 +1,6 @@
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
+import { LOCAL, WORLD } from '../model/CoordType';
 import { CoulombLaw3 } from './CoulombLaw3';
 import { Sphere3 } from './Sphere3';
 
@@ -25,6 +26,10 @@ describe("CoulombLaw3", function () {
     const q1 = body1.Q.a;
     const q2 = body2.Q.a;
     const r = Math.abs(body1.X.x - body2.X.x);
+    it("CoordType", function () {
+        expect(LOCAL).toBeDefined();
+        expect(WORLD).toBeDefined();
+    });
     it("potentialEnergy", function () {
         const pe = interaction.potentialEnergy();
         expect(pe.a).toBe(k.a * q1 * q2 / r);

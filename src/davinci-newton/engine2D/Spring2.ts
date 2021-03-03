@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric3 } from '../math/Geometric3';
+import { Geometric2 } from '../math/Geometric2';
 import { Unit } from '../math/Unit';
-import { Vec3 } from '../math/Vec3';
-import { VectorE3 } from '../math/VectorE3';
+import { Vec2 } from '../math/Vec2';
+import { VectorE2 } from '../math/VectorE2';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force3 } from './Force3';
-import { ForceLaw3 } from './ForceLaw3';
-import { RigidBody3 } from './RigidBody3';
+import { Force2 } from './Force2';
+import { ForceLaw2 } from './ForceLaw2';
+import { RigidBody2 } from './RigidBody2';
 
 /**
  * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
  * If either measure is zero, the unit of dimensions are meaningless
  */
-function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: Geometric3): void {
+function assertConsistentUnits(aName: string, A: Geometric2, bName: string, B: Geometric2): void {
     if (!A.isZero() && !B.isZero()) {
         if (Unit.isOne(A.uom)) {
             if (!Unit.isOne(B.uom)) {
@@ -45,107 +45,107 @@ function assertConsistentUnits(aName: string, A: Geometric3, bName: string, B: G
 /**
  * 
  */
-export class Spring3 extends AbstractSimObject implements ForceLaw3 {
+export class Spring3 extends AbstractSimObject implements ForceLaw2 {
     /**
      * 
      */
-    public restLength = Geometric3.one;
+    public restLength = Geometric2.one;
     /**
      * 
      */
-    public stiffness = Geometric3.one;
+    public stiffness = Geometric2.one;
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
-    private attach1_ = Vec3.zero;
+    private attach1_ = Vec2.zero;
     /**
      * The attachment point to body2 in the local coordinates frame of body 2.
      */
-    private attach2_ = Vec3.zero;
+    private attach2_ = Vec2.zero;
     /**
      * The force information on body1 due to body2.
      */
-    private readonly F1: Force3;
+    private readonly F1: Force2;
     /**
      * The force information on body2 due to body1.
      */
-    private readonly F2: Force3;
+    private readonly F2: Force2;
     /**
      * 
      */
-    private readonly forces: Force3[] = [];
+    private readonly forces: Force2[] = [];
 
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end1_ = Geometric3.vector(0, 0, 0);
+    private readonly end1_ = Geometric2.vector(0, 0);
     private end1Lock_ = this.end1_.lock();
 
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
-    private readonly end2_ = Geometric3.vector(0, 0, 0);
+    private readonly end2_ = Geometric2.vector(0, 0);
     private end2Lock_ = this.end2_.lock();
 
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = Geometric3.scalar(0);
+    private readonly potentialEnergy_ = Geometric2.scalar(0);
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**
      * 
      */
-    constructor(private body1_: RigidBody3, private body2_: RigidBody3) {
+    constructor(private body1_: RigidBody2, private body2_: RigidBody2) {
         super();
 
-        this.F1 = new Force3(this.body1_);
+        this.F1 = new Force2(this.body1_);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
 
-        this.F2 = new Force3(this.body2_);
+        this.F2 = new Force2(this.body2_);
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
         this.forces = [this.F1, this.F2];
     }
 
-    private computeBody1AttachPointInWorldCoords(x: VectorE3): void {
+    private computeBody1AttachPointInWorldCoords(x: VectorE2): void {
         if (this.attach1_ == null || this.body1_ == null) {
             throw new Error();
         }
         this.body1_.localPointToWorldPoint(this.attach1_, x);
     }
 
-    private computeBody2AttachPointInWorldCoords(x: VectorE3): void {
+    private computeBody2AttachPointInWorldCoords(x: VectorE2): void {
         if (this.attach2_ == null || this.body2_ == null) {
             throw new Error();
         }
         this.body2_.localPointToWorldPoint(this.attach2_, x);
     }
 
-    get attach1(): VectorE3 {
+    get attach1(): VectorE2 {
         return this.attach1_;
     }
-    set attach1(attach1: VectorE3) {
-        this.attach1_ = Vec3.fromVector(attach1);
+    set attach1(attach1: VectorE2) {
+        this.attach1_ = Vec2.fromVector(attach1);
     }
 
-    get attach2(): VectorE3 {
+    get attach2(): VectorE2 {
         return this.attach2_;
     }
-    set attach2(attach2: VectorE3) {
-        this.attach2_ = Vec3.fromVector(attach2);
+    set attach2(attach2: VectorE2) {
+        this.attach2_ = Vec2.fromVector(attach2);
     }
 
-    get end1(): Geometric3 {
+    get end1(): Geometric2 {
         this.end1.unlock(this.end1Lock_);
         this.computeBody1AttachPointInWorldCoords(this.end1_);
         this.end1Lock_ = this.end1.lock();
         return this.end1_;
     }
 
-    get end2(): Geometric3 {
+    get end2(): Geometric2 {
         this.end2.unlock(this.end2Lock_);
         this.computeBody2AttachPointInWorldCoords(this.end2_);
         this.end2Lock_ = this.end2.lock();
@@ -155,7 +155,7 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    updateForces(): Force3[] {
+    updateForces(): Force2[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
@@ -197,7 +197,7 @@ export class Spring3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    potentialEnergy(): Geometric3 {
+    potentialEnergy(): Geometric2 {
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
 

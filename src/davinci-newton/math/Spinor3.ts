@@ -1,6 +1,6 @@
 import mustBeNumber from '../checks/mustBeNumber';
 import readOnly from '../i18n/readOnly';
-import CartesianG3 from './CartesianG3';
+import { GradeMasked } from './CartesianG3';
 import randomRange from './randomRange';
 import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
@@ -8,7 +8,7 @@ import { Unit } from './Unit';
 /**
  * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.
  */
-export class Spinor3 implements SpinorE3, CartesianG3 {
+export class Spinor3 implements SpinorE3, GradeMasked {
 
     /**
      * The scalar coordinate of the spinor.
@@ -49,7 +49,7 @@ export class Spinor3 implements SpinorE3, CartesianG3 {
     /**
      *
      */
-    get maskG3(): number {
+    get grades(): number {
         const α = this.a;
         const yz = this.yz;
         const zx = this.zx;
@@ -63,8 +63,8 @@ export class Spinor3 implements SpinorE3, CartesianG3 {
         }
         return m;
     }
-    set maskG3(unused: number) {
-        throw new Error(readOnly('maskG3').message);
+    set grades(unused: number) {
+        throw new Error(readOnly('grades').message);
     }
 
     /**

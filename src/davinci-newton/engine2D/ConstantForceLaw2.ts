@@ -13,32 +13,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric3 } from '../math/Geometric3';
-import { VectorE3 } from '../math/VectorE3';
+import { Geometric2 } from '../math/Geometric2';
+import { VectorE2 } from '../math/VectorE2';
 import { CoordType, LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force3 } from './Force3';
-import { ForceLaw3 } from './ForceLaw3';
-import { RigidBody3 } from './RigidBody3';
+import { Force2 } from './Force2';
+import { ForceLaw2 } from './ForceLaw2';
+import { RigidBody2 } from './RigidBody2';
 
 /**
  * 
  */
-export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
+export class ConstantForceLaw2 extends AbstractSimObject implements ForceLaw2 {
     /**
      * The attachment point to the body in body coordinates.
      */
-    private readonly force_: Force3;
-    private readonly forces: Force3[] = [];
-    private readonly potentialEnergy_ = Geometric3.scalar(0);
+    private readonly force_: Force2;
+    private readonly forces: Force2[] = [];
+    private readonly potentialEnergy_ = Geometric2.scalar(0);
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**
      * 
      */
-    constructor(private body_: RigidBody3, vector: VectorE3, vectorCoordType: CoordType = WORLD) {
+    constructor(private body_: RigidBody2, vector: VectorE2, vectorCoordType: CoordType = WORLD) {
         super();
-        this.force_ = new Force3(this.body_);
+        this.force_ = new Force2(this.body_);
 
         this.force_.locationCoordType = LOCAL;
         this.force_.vector.copyVector(vector);
@@ -47,17 +47,17 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
         this.forces = [this.force_];
     }
 
-    get location(): VectorE3 {
+    get location(): VectorE2 {
         return this.force_.location;
     }
-    set location(location: VectorE3) {
+    set location(location: VectorE2) {
         this.force_.location.copyVector(location);
     }
 
     /**
      * 
      */
-    updateForces(): Force3[] {
+    updateForces(): Force2[] {
         return this.forces;
     }
 
@@ -71,7 +71,7 @@ export class ConstantForceLaw3 extends AbstractSimObject implements ForceLaw3 {
     /**
      * 
      */
-    potentialEnergy(): Geometric3 {
+    potentialEnergy(): Geometric2 {
         this.potentialEnergy_.unlock(this.potentialEnergyLock_);
         this.potentialEnergy_.a = 0;
         this.potentialEnergyLock_ = this.potentialEnergy_.lock();

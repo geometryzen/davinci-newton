@@ -1,8 +1,8 @@
-import { Geometric3 } from '../math/Geometric3';
+import { Scalar } from '../math/Scalar';
 
 /**
- * 
+ * @hidden
  */
 export interface EnergySystem {
-    totalEnergy(): Geometric3;
+    totalEnergy(): Scalar;
 }

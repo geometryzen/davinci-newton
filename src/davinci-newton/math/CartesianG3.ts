@@ -6,7 +6,7 @@
  * No units of measure
  * Euclidean metric.
  */
-export interface CartesianG3 {
+export interface GradeMasked {
   /**
    * A bitmask describing the grades.
    *
@@ -16,7 +16,5 @@ export interface CartesianG3 {
    * 0x4 = bivector
    * 0x8 = pseudoscalar
    */
-  maskG3: number;
+  grades: number;
 }
-
-export default CartesianG3;

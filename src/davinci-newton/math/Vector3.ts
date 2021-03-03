@@ -2,7 +2,7 @@ import isNumber from '../checks/isNumber';
 import mustBeNumber from '../checks/mustBeNumber';
 import readOnly from '../i18n/readOnly';
 import { BivectorE3 } from './BivectorE3';
-import CartesianG3 from './CartesianG3';
+import { GradeMasked } from './CartesianG3';
 import isSpinorE3 from './isSpinorE3';
 import isVectorE3 from './isVectorE3';
 import MatrixLike from './MatrixLike';
@@ -15,7 +15,7 @@ import { VectorE3 } from './VectorE3';
 /**
  * 
  */
-export class Vector3 implements VectorE3, CartesianG3 {
+export class Vector3 implements VectorE3, GradeMasked {
     public x: number;
     public y: number;
     public z: number;
@@ -34,11 +34,11 @@ export class Vector3 implements VectorE3, CartesianG3 {
     /**
      *
      */
-    get maskG3(): number {
+    get grades(): number {
         return this.isZero() ? 0x0 : 0x2;
     }
-    set maskG3(unused: number) {
-        throw new Error(readOnly('maskG3').message);
+    set grades(unused: number) {
+        throw new Error(readOnly('grades').message);
     }
 
     /**

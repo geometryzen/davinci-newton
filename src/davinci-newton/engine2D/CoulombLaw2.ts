@@ -13,23 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric3 } from '../math/Geometric3';
+import { Geometric2 } from '../math/Geometric2';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Charged3 } from './Charged3';
-import { Force3 as Force } from './Force3';
-import { ForceLaw3 as ForceLaw } from './ForceLaw3';
+import { Charged2 } from './Charged2';
+import { Force2 as Force } from './Force2';
+import { ForceLaw2 as ForceLaw } from './ForceLaw2';
 
 /**
  * 
  */
-export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
+export class CoulombLaw2 extends AbstractSimObject implements ForceLaw {
     /**
      * The proportionality constant, Coulomb's constant.
      * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
      * The default value is one (1).
      */
-    public k: Geometric3;
+    public k: Geometric2;
 
     private readonly F1: Force;
     private readonly F2: Force;
@@ -38,13 +38,13 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = Geometric3.scalar(0);
+    private readonly potentialEnergy_ = Geometric2.scalar(0);
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**
      * 
      */
-    constructor(private body1_: Charged3, private body2_: Charged3, k = Geometric3.scalar(1)) {
+    constructor(private body1_: Charged2, private body2_: Charged2, k = Geometric2.scalar(1)) {
         super();
 
         this.F1 = new Force(this.body1_);
@@ -97,7 +97,7 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
      * U = k q1 q2 / r, where
      * r is the center to center separation of m1 and m2.
      */
-    potentialEnergy(): Geometric3 {
+    potentialEnergy(): Geometric2 {
         // Unlock the variable that we will use for the result.
         this.potentialEnergy_.unlock(this.potentialEnergyLock_);
 

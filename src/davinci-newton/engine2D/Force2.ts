@@ -13,22 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Bivector3 } from '../math/Bivector3';
-import { BivectorE3 } from '../math/BivectorE3';
-import { Geometric3 } from '../math/Geometric3';
-import { VectorE3 } from '../math/VectorE3';
+import { Bivector2 } from '../math/Bivector2';
+import { BivectorE2 } from '../math/BivectorE2';
+import { Geometric2 } from '../math/Geometric2';
+import { VectorE2 } from '../math/VectorE2';
 import { CoordType, LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { ForceBody3 } from './ForceBody3';
+import { ForceBody2 } from './ForceBody2';
 
 /**
  * 
  */
-export class Force3 extends AbstractSimObject {
+export class Force2 extends AbstractSimObject {
     /**
      * 
      */
-    public readonly location = Geometric3.vector(0, 0, 0);
+    public readonly location = Geometric2.vector(0, 0);
     /**
      * 
      */
@@ -36,7 +36,7 @@ export class Force3 extends AbstractSimObject {
     /**
      * The force vector, may be in local or world coordinates.
      */
-    public readonly vector = Geometric3.vector(0, 0, 0);
+    public readonly vector = Geometric2.vector(0, 0);
     /**
      * 
      */
@@ -45,36 +45,36 @@ export class Force3 extends AbstractSimObject {
     /**
      * Scratch variable for computing position (world coordinates).
      */
-    private readonly position_ = Geometric3.vector(0, 0, 0);
+    private readonly position_ = Geometric2.vector(0, 0);
     // private positionLock_ = this.position_.lock();
     /**
      * Scratch variable for computing force (world coordinates).
      */
-    private readonly force_ = Geometric3.vector(0, 0, 0);
+    private readonly force_ = Geometric2.vector(0, 0);
     // private forceLock_ = this.force_.lock();
     /**
      * Scratch variable for computing torque (world coordinates).
      */
-    private readonly torque_ = new Bivector3(0, 0, 0);
+    private readonly torque_ = new Bivector2(0);
 
     /**
      * 
      */
-    constructor(private body_: ForceBody3) {
+    constructor(private body_: ForceBody2) {
         super();
     }
 
     /**
      * 
      */
-    getBody(): ForceBody3 {
+    getBody(): ForceBody2 {
         return this.body_;
     }
 
     /**
      * Computes the force being applied (vector).
      */
-    computeForce(force: VectorE3): void {
+    computeForce(force: VectorE2): void {
         switch (this.vectorCoordType) {
             case LOCAL: {
                 this.force_.copyVector(this.vector);
@@ -90,12 +90,12 @@ export class Force3 extends AbstractSimObject {
         }
     }
 
-    get F(): Geometric3 {
+    get F(): Geometric2 {
         this.computeForce(this.force_);
         return this.force_;
     }
 
-    get x(): Geometric3 {
+    get x(): Geometric2 {
         this.computePosition(this.position_);
         return this.position_;
     }
@@ -103,7 +103,7 @@ export class Force3 extends AbstractSimObject {
     /**
      * Computes the point of application of the force in world coordinates.
      */
-    computePosition(position: VectorE3): void {
+    computePosition(position: VectorE2): void {
         switch (this.locationCoordType) {
             case LOCAL: {
                 this.position_.copyVector(this.location);
@@ -127,7 +127,7 @@ export class Force3 extends AbstractSimObject {
      * Γ = (x - X) ^ F, so the torque is being computed with center of mass as origin.
      * Γ = r ^ F because r = x - X
      */
-    computeTorque(torque: BivectorE3): void {
+    computeTorque(torque: BivectorE2): void {
         this.computePosition(this.position_);
         this.computeForce(this.force_);
         this.torque_.wedge(this.position_.subVector(this.body_.X), this.force_);

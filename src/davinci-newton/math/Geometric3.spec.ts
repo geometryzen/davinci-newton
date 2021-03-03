@@ -354,40 +354,40 @@ describe("Geometric3", function () {
         });
     });
 
-    describe("maskG3", function () {
+    describe("grades", function () {
         it("0 => 0x0", function () {
-            expect(Geometric3.zero.maskG3).toBe(0x0);
+            expect(Geometric3.zero.grades).toBe(0x0);
         });
         it("1 => 0x1", function () {
-            expect(Geometric3.one.maskG3).toBe(0x1);
+            expect(Geometric3.one.grades).toBe(0x1);
         });
         it("e1 => 0x2", function () {
-            expect(e1.maskG3).toBe(0x2);
+            expect(e1.grades).toBe(0x2);
         });
         it("e2 => 0x2", function () {
-            expect(e2.maskG3).toBe(0x2);
+            expect(e2.grades).toBe(0x2);
         });
         it("e3 => 0x2", function () {
-            expect(e3.maskG3).toBe(0x2);
+            expect(e3.grades).toBe(0x2);
         });
         it("1+e1 => 0x3", function () {
-            expect(e1.clone().addScalar(1).maskG3).toBe(0x3);
+            expect(e1.clone().addScalar(1).grades).toBe(0x3);
         });
         it("e1 ^ e2 => 0x4", function () {
-            expect(Geometric3.wedge(e1, e2).maskG3).toBe(0x4);
+            expect(Geometric3.wedge(e1, e2).grades).toBe(0x4);
         });
         it("e2 ^ e3 => 0x4", function () {
-            expect(Geometric3.wedge(e2, e3).maskG3).toBe(0x4);
+            expect(Geometric3.wedge(e2, e3).grades).toBe(0x4);
         });
         it("e3 ^ e1 => 0x4", function () {
-            expect(Geometric3.wedge(e3, e1).maskG3).toBe(0x4);
+            expect(Geometric3.wedge(e3, e1).grades).toBe(0x4);
         });
         it("rotorFromDirections(e1, e2) => 0x5", function () {
-            expect(Geometric3.rotorFromDirections(e1, e2).maskG3).toBe(0x5);
+            expect(Geometric3.rotorFromDirections(e1, e2).grades).toBe(0x5);
         });
         it("pseudoscalar => 0x8", function () {
             const I = Geometric3.I;
-            expect(I.maskG3).toBe(0x8);
+            expect(I.grades).toBe(0x8);
         });
     });
 

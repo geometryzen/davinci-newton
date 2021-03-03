@@ -354,7 +354,6 @@ declare namespace NEWTON {
         getTime(): number;
         timeIndex(): number;
     }
-
     interface Scalar {
         a: number;
         uom: Unit;
@@ -381,7 +380,6 @@ declare namespace NEWTON {
 
     interface SpinorE3 extends Scalar, BivectorE3 {
     }
-
     /**
      * The coordinates for a multivector in 3D in geometric Cartesian basis.
      */
@@ -1281,6 +1279,17 @@ declare namespace NEWTON {
         constructor(radius?: GeometricE3);
     }
 
+    enum CoordType {
+        /**
+         * The coordinate frame that is fixed in relation to the rigid body.
+         */
+        LOCAL = 0,
+        /**
+         * The coordinate frame used as the basis for position and attitude of all bodies.
+         */
+        WORLD = 1
+    }
+
     /**
      * The application of a force to a particle in a rigid body.
      */
@@ -1605,8 +1614,6 @@ declare namespace NEWTON {
          */
         updateAngularVelocity(): void;
     }
-
-    type CoordType = 0 | 1;
 
     /**
      * 

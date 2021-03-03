@@ -3,7 +3,7 @@ import readOnly from '../i18n/readOnly';
 import approx from './approx';
 import arraysEQ from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
-import CartesianG3 from './CartesianG3';
+import { GradeMasked } from './CartesianG3';
 import dotVector from './dotVectorE3';
 import extG3 from './extG3';
 import gauss from './gauss';
@@ -14,7 +14,7 @@ import isVectorG3 from './isVectorG3';
 import isZeroGeometricE3 from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
-import maskG3 from './maskG3';
+import { maskG3 } from './maskG3';
 import mulE3 from './mulE3';
 import { QQ } from './QQ';
 import randomRange from './randomRange';
@@ -157,7 +157,7 @@ const UNLOCKED = -1 * Math.random();
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export class Geometric3 implements CartesianG3, GeometricE3 {
+export class Geometric3 implements GradeMasked, GeometricE3 {
 
     /**
      * 
@@ -280,7 +280,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
      * 0x4 = bivector
      * 0x8 = pseudoscalar
      */
-    get maskG3(): number {
+    get grades(): number {
         const coords = this.coords_;
         const α = coords[COORD_SCALAR];
         const x = coords[COORD_X];
@@ -2124,7 +2124,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     /**
      * Implements `this + rhs`.
      */
-    __add__(rhs: number | CartesianG3): Geometric3 {
+    __add__(rhs: number | GradeMasked): Geometric3 {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().add(duckR));
@@ -2140,7 +2140,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     /**
      * Implements `this / rhs`.
      */
-    __div__(rhs: number | CartesianG3) {
+    __div__(rhs: number | GradeMasked) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().div(duckR));
@@ -2168,7 +2168,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     /**
      * Implements `this * rhs`.
      */
-    __mul__(rhs: number | CartesianG3) {
+    __mul__(rhs: number | GradeMasked) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().mul(duckR));
@@ -2214,7 +2214,7 @@ export class Geometric3 implements CartesianG3, GeometricE3 {
     /**
      * Implements `this - rhs`.
      */
-    __sub__(rhs: number | CartesianG3) {
+    __sub__(rhs: number | GradeMasked) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().sub(duckR));

@@ -13,24 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric3 } from '../math/Geometric3';
+import { Geometric2 } from '../math/Geometric2';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Charged3 } from './Charged3';
-import { Force3 as Force } from './Force3';
-import { ForceLaw3 as ForceLaw } from './ForceLaw3';
+import { Force2 as Force } from './Force2';
+import { ForceLaw2 as ForceLaw } from './ForceLaw2';
+import { Massive2 as Massive } from './Massive2';
 
 /**
  * 
  */
-export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
+export class GravitationLaw2 extends AbstractSimObject implements ForceLaw {
     /**
-     * The proportionality constant, Coulomb's constant.
-     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
-     * The default value is one (1).
+     * 
      */
-    public k: Geometric3;
-
+    public G: Geometric2;
     private readonly F1: Force;
     private readonly F2: Force;
     private readonly forces: Force[] = [];
@@ -38,13 +35,13 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
     /**
      * Scratch variable for computing potential energy.
      */
-    private readonly potentialEnergy_ = Geometric3.scalar(0);
+    private readonly potentialEnergy_ = Geometric2.scalar(0);
     private potentialEnergyLock_ = this.potentialEnergy_.lock();
 
     /**
      * 
      */
-    constructor(private body1_: Charged3, private body2_: Charged3, k = Geometric3.scalar(1)) {
+    constructor(private body1_: Massive, private body2_: Massive, G = Geometric2.scalar(1)) {
         super();
 
         this.F1 = new Force(this.body1_);
@@ -55,14 +52,14 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
-        this.k = k;
+        this.G = G;
 
         this.forces = [this.F1, this.F2];
     }
 
     /**
-     * Computes the forces due to the Coulomb interaction.
-     * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
+     * Computes the forces due to the gravitational interaction.
+     * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
     updateForces(): Force[] {
         // We can use the F1.location and F2.location as temporary variables
@@ -70,10 +67,10 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         const numer = this.F1.location;
         const denom = this.F2.location;
 
-        // The direction of the force is computed such that like charges repel each other.
-        numer.copyVector(this.body1_.X).subVector(this.body2_.X);
+        // The direction of the force is computed such that masses always attract each other.
+        numer.copyVector(this.body2_.X).subVector(this.body1_.X);
         denom.copyVector(numer).quaditude(true);
-        numer.direction(true).mulByScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
+        numer.direction(true).mulByScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom);
 
         this.F1.vector.copyVector(numer).divByScalar(denom.a, denom.uom);
         this.F2.vector.copyVector(this.F1.vector).neg();
@@ -94,10 +91,10 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
 
     /**
      * Computes the potential energy of the gravitational interaction.
-     * U = k q1 q2 / r, where
-     * r is the center to center separation of m1 and m2.
+     * U = -G m1 m2 / r, where
+     * r is the center-of-mass to center-of-mass separation of m1 and m2.
      */
-    potentialEnergy(): Geometric3 {
+    potentialEnergy(): Geometric2 {
         // Unlock the variable that we will use for the result.
         this.potentialEnergy_.unlock(this.potentialEnergyLock_);
 
@@ -105,8 +102,8 @@ export class CoulombLaw3 extends AbstractSimObject implements ForceLaw {
         // as long as we restore their contents.
         const numer = this.F1.location;
         const denom = this.F2.location;
-        // The numerator of the potential energy formula is k * Q1 * Q2.
-        numer.copyScalar(this.k.a, this.k.uom).mulByScalar(this.body1_.Q.a, this.body1_.Q.uom).mulByScalar(this.body2_.Q.a, this.body2_.Q.uom);
+        // The numerator of the potential energy formula is -G * m1 * m2.
+        numer.copyScalar(this.G.a, this.G.uom).mulByScalar(this.body1_.M.a, this.body1_.M.uom).mulByScalar(this.body2_.M.a, this.body2_.M.uom).neg();
         // The denominator is |r1 - r2|.
         denom.copyVector(this.body1_.X).subVector(this.body2_.X).magnitude(true);
         // Combine the numerator and denominator.

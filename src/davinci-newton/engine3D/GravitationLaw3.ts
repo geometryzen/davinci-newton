@@ -14,7 +14,7 @@
 // limitations under the License.
 
 import { Geometric3 } from '../math/Geometric3';
-import { COORD_TYPE_WORLD } from '../model/CoordType';
+import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force3 as Force } from './Force3';
 import { ForceLaw3 as ForceLaw } from './ForceLaw3';
@@ -45,12 +45,12 @@ export class GravitationLaw3 extends AbstractSimObject implements ForceLaw {
         super();
 
         this.F1 = new Force(this.body1_);
-        this.F1.locationCoordType = COORD_TYPE_WORLD;
-        this.F1.vectorCoordType = COORD_TYPE_WORLD;
+        this.F1.locationCoordType = WORLD;
+        this.F1.vectorCoordType = WORLD;
 
         this.F2 = new Force(this.body2_);
-        this.F2.locationCoordType = COORD_TYPE_WORLD;
-        this.F2.vectorCoordType = COORD_TYPE_WORLD;
+        this.F2.locationCoordType = WORLD;
+        this.F2.vectorCoordType = WORLD;
 
         this.G = G;
 

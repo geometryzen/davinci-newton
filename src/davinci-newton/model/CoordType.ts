@@ -17,15 +17,8 @@ export type CoordType = 0 | 1;
 /**
  * The coordinate frame that is fixed in relation to the rigid body.
  */
-export const COORD_TYPE_LOCAL = 0;
+export const LOCAL = 0;
 /**
  * The coordinate frame used as the basis for position and attitude of all bodies.
  */
-export const COORD_TYPE_WORLD = 1;
-
-/*
-export enum CoordType {
-    LOCAL = 0,
-    WORLD = 1
-}
-*/
+export const WORLD = 1;

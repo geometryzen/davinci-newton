@@ -25,6 +25,7 @@
         "src/davinci-newton/math/detectDimensions.spec.ts",
         "src/davinci-newton/math/Dimensions.spec.ts",
         "src/davinci-newton/math/gauss.spec.ts",
+        "src/davinci-newton/math/Geometric2.spec.ts",
         "src/davinci-newton/math/Geometric3.spec.ts",
         "src/davinci-newton/math/QQ.spec.ts",
         "src/davinci-newton/math/Unit.spec.ts",
