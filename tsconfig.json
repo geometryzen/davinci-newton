@@ -15,6 +15,7 @@
         "inlineSources": false
     },
     "files": [
+        "src/davinci-newton/engine2D/Physics2.spec.ts",
         "src/davinci-newton/engine3D/Block3.spec.ts",
         "src/davinci-newton/engine3D/CoulombLaw3.spec.ts",
         "src/davinci-newton/engine3D/GravitationLaw3.spec.ts",
