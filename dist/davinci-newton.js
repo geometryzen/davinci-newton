@@ -5273,7 +5273,7 @@ define('davinci-newton/engine2D/Physics2',["require", "exports", "../core/SimLis
         }
         throw new Error("getVarName(" + index + ")");
     }
-    var NUM_VARIABLES_PER_BODY = 13;
+    var NUM_VARIABLES_PER_BODY = 7;
     var Physics2 = (function (_super) {
         __extends(Physics2, _super);
         function Physics2() {

@@ -1249,7 +1249,7 @@ System.register("davinci-newton/engine2D/Physics2.js", ["../core/SimList", "../c
         }],
         execute: function () {
             var_names = [VarsList_1.VarsList.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total linear momentum - z", "total angular momentum - yz", "total angular momentum - zx", "total angular momentum - xy"];
-            NUM_VARIABLES_PER_BODY = 13;
+            NUM_VARIABLES_PER_BODY = 7;
             Physics2 = function (_super) {
                 __extends(Physics2, _super);
                 function Physics2() {

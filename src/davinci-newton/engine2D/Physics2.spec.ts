@@ -15,7 +15,7 @@
 import { Bivector2 } from '../math/Bivector2';
 import { Geometric2 } from '../math/Geometric2';
 import { Unit } from '../math/Unit';
-import { Vector2 } from '../math/Vector2';
+// import { Vector2 } from '../math/Vector2';
 import { Block2 } from './Block2';
 import { Physics2 } from './Physics2';
 

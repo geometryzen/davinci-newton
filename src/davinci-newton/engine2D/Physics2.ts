@@ -59,9 +59,13 @@ function getVarName(index: number): string {
 }
 
 /**
- * Each body is descrived by 13 kinematic components.
+ * Each body is described by 7 kinematic components.
+ * 2 position
+ * 2 attitude (though normalized should be only 1)
+ * 2 linear momentum
+ * 1 angular momentum
  */
-const NUM_VARIABLES_PER_BODY = 13;
+const NUM_VARIABLES_PER_BODY = 7;
 
 /**
  * <p>
