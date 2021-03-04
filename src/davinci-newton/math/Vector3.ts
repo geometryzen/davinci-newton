@@ -5,7 +5,7 @@ import { BivectorE3 } from './BivectorE3';
 import { GradeMasked } from './CartesianG3';
 import isSpinorE3 from './isSpinorE3';
 import isVectorE3 from './isVectorE3';
-import MatrixLike from './MatrixLike';
+import { MatrixLike } from './MatrixLike';
 import mustBeVectorE3 from './mustBeVectorE3';
 import randomRange from './randomRange';
 import { SpinorE3 } from './SpinorE3';

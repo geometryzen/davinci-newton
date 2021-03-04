@@ -3,7 +3,7 @@ import mustBeNumber from '../checks/mustBeNumber';
 import { BivectorE2 } from './BivectorE2';
 import isBivectorE3 from './isBivectorE3';
 import { isVectorE2 } from './isVectorE2';
-import MatrixLike from './MatrixLike';
+import { MatrixLike } from './MatrixLike';
 import { mustBeBivectorE2 } from './mustBeBivectorE2';
 import { mustBeVectorE2 } from './mustBeVectorE2';
 import { SpinorE2 } from './SpinorE2';

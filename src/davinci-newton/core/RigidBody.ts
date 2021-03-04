@@ -1,15 +1,13 @@
 import mustBeFunction from '../checks/mustBeFunction';
 import mustBeNonNullObject from '../checks/mustBeNonNullObject';
 import mustBeNumber from '../checks/mustBeNumber';
-import { Massive } from './Massive';
-import { Mat3 } from '../math/Mat3';
-import { Matrix3 } from '../math/Matrix3';
-import MatrixLike from '../math/MatrixLike';
+import { MatrixLike } from '../math/MatrixLike';
 import { Unit } from '../math/Unit';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { Charged } from './Charged';
 import { ForceBody } from './ForceBody';
+import { Massive } from './Massive';
 import { Metric } from './Metric';
 
 function mustBeDimensionlessOrCorrectUnits<T>(name: string, value: T, unit: Unit, metric: Metric<T>): T {
@@ -48,7 +46,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
-    private inertiaTensorInverse_ = new Mat3(Matrix3.one());
+    private inertiaTensorInverse_: MatrixLike;
 
     /**
      * the index into the variables array for this rigid body, or -1 if not in vars array.
@@ -128,6 +126,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         this.Ω_scratch = metric.zero();
         this.centerOfMassLocal_ = metric.zero();
         this.centerOfMassLocalLock_ = metric.lock(this.centerOfMassLocal_);
+        this.inertiaTensorInverse_ = metric.identityMatrix();
     }
 
     /**
@@ -204,15 +203,13 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * Inertia Tensor (in body coordinates) (3x3 matrix).
      */
     get I(): MatrixLike {
-        const I = Matrix3.zero().copy(this.inertiaTensorInverse_).inv();
-        return new Mat3(I);
+        return this.metric.invertMatrix(this.inertiaTensorInverse_);
     }
     /**
      * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
      */
     set I(I: MatrixLike) {
-        const Iinv = Matrix3.zero().copy(I).inv();
-        this.inertiaTensorInverse_ = new Mat3(Iinv);
+        this.inertiaTensorInverse_ = this.metric.invertMatrix(I);
     }
 
     /**
@@ -225,7 +222,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         mustBeNonNullObject('Iinv', source);
         mustBeNumber('dimensions', source.dimensions);
         mustBeFunction('getElement', source.getElement);
-        this.inertiaTensorInverse_ = new Mat3(source);
+        this.inertiaTensorInverse_ = this.metric.copyMatrix(source);
     }
 
     /**

@@ -118,7 +118,7 @@ export class Force<T> extends AbstractSimObject {
         this.computePosition(this.position_);
         this.computeForce(this.force_);
         this.metric.subVector(this.position_, this.body_.X);    // position contains x - X
-        this.metric.wedge(this.position_, this.force_);         // 
+        this.metric.ext(this.position_, this.force_);         // 
         this.metric.write(this.position_, torque);
     }
 }

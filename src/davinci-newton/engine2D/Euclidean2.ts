@@ -1,7 +1,8 @@
-import { Geometric2 } from "../math/Geometric2";
-import MatrixLike from "../math/MatrixLike";
-import { Unit } from "../math/Unit";
 import { Metric } from "../core/Metric";
+import { Geometric2 } from "../math/Geometric2";
+import { MatrixLike } from "../math/MatrixLike";
+import { Unit } from "../math/Unit";
+import { Mat1 } from "../math/Mat1";
 
 export class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number {
@@ -22,6 +23,13 @@ export class Euclidean2 implements Metric<Geometric2> {
     copyBivector(source: Geometric2, target: Geometric2): Geometric2 {
         return target.copyBivector(source);
     }
+    copyMatrix(m: MatrixLike): MatrixLike {
+        if (m.dimensions !== 1) {
+            throw new Error("matrix dimensions must be 1.");
+        }
+        const value = m.getElement(0, 0);
+        return new Mat1(value);
+    }
     copyVector(source: Geometric2, target: Geometric2): Geometric2 {
         return target.copyVector(source);
     }
@@ -33,6 +41,16 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2 {
         return lhs.divByScalar(a, uom);
+    }
+    identityMatrix(): MatrixLike {
+        return new Mat1(1);
+    }
+    invertMatrix(m: MatrixLike): MatrixLike {
+        if (m.dimensions !== 1) {
+            throw new Error("matrix dimensions must be 1.");
+        }
+        const value = m.getElement(0, 0);
+        return new Mat1(1 / value);
     }
     isZero(mv: Geometric2): boolean {
         return mv.isZero();
@@ -91,8 +109,8 @@ export class Euclidean2 implements Metric<Geometric2> {
     uom(mv: Geometric2): Unit {
         return mv.uom;
     }
-    wedge(lhs: Geometric2, rhs: Geometric2): Geometric2 {
-        return lhs.wedge(rhs);
+    ext(lhs: Geometric2, rhs: Geometric2): Geometric2 {
+        return lhs.ext(rhs);
     }
     write(source: Geometric2, target: Geometric2): void {
         source.write(target);

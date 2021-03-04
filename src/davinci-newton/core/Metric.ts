@@ -1,4 +1,4 @@
-import MatrixLike from "../math/MatrixLike";
+import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 
 export interface Metric<T> {
@@ -14,6 +14,8 @@ export interface Metric<T> {
 
     copyBivector(source: T, target: T): T;
 
+    copyMatrix(m: MatrixLike): MatrixLike;
+
     copyScalar(a: number, uom: Unit, target: T): T;
 
     copyVector(source: T, target: T): T;
@@ -21,6 +23,12 @@ export interface Metric<T> {
     direction(mv: T, mutate: boolean): T;
 
     divByScalar(lhs: T, a: number, uom: Unit): T;
+
+    ext(lhs: T, rhs: T): T;
+
+    identityMatrix(): MatrixLike;
+
+    invertMatrix(m: MatrixLike): MatrixLike;
 
     isZero(mv: T): boolean;
 
@@ -63,8 +71,6 @@ export interface Metric<T> {
     unlock(mv: T, token: number): void;
 
     uom(mv: T): Unit;
-
-    wedge(lhs: T, rhs: T): T;
 
     write(source: T, target: T): void;
 

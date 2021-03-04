@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric2 } from '../math/Geometric2';
-import { Matrix3 } from '../math/Matrix3';
-import { Unit } from '../math/Unit';
 import { Metric } from '../core/Metric';
 import { RigidBody } from '../core/RigidBody';
+import { Geometric2 } from '../math/Geometric2';
+import { Mat1 } from '../math/Mat1';
+import { Unit } from '../math/Unit';
 
 /**
  * A solid sphere of constant density.
@@ -67,10 +67,7 @@ export class Sphere2 extends RigidBody<Geometric2> {
     protected updateInertiaTensor(): void {
         const r = this.radius_;
         const s = 2 * this.M.a * r.a * r.a / 5;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, s);
-        I.setElement(1, 1, s);
-        I.setElement(2, 2, s);
+        const I = new Mat1(s);
         I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
         this.I = I;
     }

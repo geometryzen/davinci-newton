@@ -13,10 +13,10 @@
 // limitations under the License.
 
 import { Metric } from '../core/Metric';
-import { Geometric2 } from '../math/Geometric2';
-import { Matrix3 } from '../math/Matrix3';
-import { Unit } from '../math/Unit';
 import { RigidBody } from '../core/RigidBody';
+import { Geometric2 } from '../math/Geometric2';
+import { Mat1 } from '../math/Mat1';
+import { Unit } from '../math/Unit';
 
 /**
  * A solid cylinder of uniform density.
@@ -77,13 +77,7 @@ export class Cylinder2 extends RigidBody<Geometric2> {
         const r = this.radius_;
         const h = this.height_;
         const rr = r.a * r.a;
-        const hh = h.a * h.a;
-        const Irr = this.M.a * (3 * rr + hh) / 12;
-        const Ihh = this.M.a * rr / 2;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, Irr);
-        I.setElement(1, 1, Ihh);
-        I.setElement(2, 2, Irr);
+        const I = new Mat1(rr);
         I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
         this.I = I;
     }

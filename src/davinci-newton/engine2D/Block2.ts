@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
-import { Matrix3 } from '../math/Matrix3';
+import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
 import { Euclidean2 } from './Euclidean2';
-import { RigidBody } from '../core/RigidBody';
 
 /**
  * A rectangular block of constant surface density.
@@ -88,13 +88,10 @@ export class Block2 extends RigidBody<Geometric2> {
     protected updateInertiaTensor(): void {
         const w = this.width_;
         const h = this.height_;
-        const ww = w.a * w.a;
-        const hh = h.a * h.a;
+        //        const ww = w.a * w.a;
+        //        const hh = h.a * h.a;
         const s = this.M.a / 12;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, s * hh);
-        I.setElement(1, 1, s * ww);
-        I.setElement(2, 2, s * (ww + hh));
+        const I = new Mat1(s);
         I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
         this.I = I;
     }

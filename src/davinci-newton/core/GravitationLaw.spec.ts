@@ -1,7 +1,7 @@
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
-import { GravitationLaw3 } from './GravitationLaw3';
-import { Sphere3 } from './Sphere3';
+import { GravitationLaw } from './GravitationLaw';
+import { Sphere3 } from '../engine3D/Sphere3';
 
 const KILOGRAM = Unit.KILOGRAM;
 const METER = Unit.METER;
@@ -10,7 +10,7 @@ const MOTION = KILOGRAM.mul(METER).div(SECOND);
 const NEWTON = MOTION.div(SECOND);
 const G = Geometric3.scalar(6.7E-11, NEWTON.mul(METER).mul(METER).div(KILOGRAM).div(KILOGRAM));
 
-describe("GravitationLaw3", function () {
+describe("GravitationLaw", function () {
     const body1 = new Sphere3();
     const body2 = new Sphere3();
 
@@ -20,7 +20,7 @@ describe("GravitationLaw3", function () {
     body1.X = Geometric3.vector(-1, 0, 0, METER);
     body2.X = Geometric3.vector(+1, 0, 0, METER);
 
-    const gravity = new GravitationLaw3(body1, body2, G);
+    const gravity = new GravitationLaw(body1, body2, G);
     const m1 = body1.M.a;
     const m2 = body2.M.a;
     const r = Math.abs(body1.X.x - body2.X.x);

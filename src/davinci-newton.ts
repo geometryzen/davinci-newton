@@ -1,23 +1,23 @@
 import { config } from './davinci-newton/config';
+import { ConstantForceLaw } from './davinci-newton/core/ConstantForceLaw';
+import { CoulombLaw } from './davinci-newton/core/CoulombLaw';
 import { Force } from './davinci-newton/core/Force';
+import { GravitationLaw } from './davinci-newton/core/GravitationLaw';
 import { Particle } from './davinci-newton/core/Particle';
+import { RigidBody } from './davinci-newton/core/RigidBody';
+import { Spring } from './davinci-newton/core/Spring';
 import { State } from './davinci-newton/core/State';
 import { VarsList } from './davinci-newton/core/VarsList';
 import { Block2 } from './davinci-newton/engine2D/Block2';
-import { ConstantForceLaw2 } from './davinci-newton/engine2D/ConstantForceLaw2';
-import { CoulombLaw2 } from './davinci-newton/engine2D/CoulombLaw2';
 import { Cylinder2 } from './davinci-newton/engine2D/Cylinder2';
+import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
+import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
+import { Sphere2 } from './davinci-newton/engine2D/Sphere2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
-import { ConstantForceLaw3 } from './davinci-newton/engine3D/ConstantForceLaw3';
-import { CoulombLaw3 } from './davinci-newton/engine3D/CoulombLaw3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
-import { Force3 } from './davinci-newton/engine3D/Force3';
-import { GravitationLaw3 } from './davinci-newton/engine3D/GravitationLaw3';
-import { Particle3 } from './davinci-newton/engine3D/Particle3';
-import { Physics3 } from './davinci-newton/engine3D/Physics3';
-import { RigidBody3 } from './davinci-newton/engine3D/RigidBody3';
+import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
+import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
 import { Sphere3 } from './davinci-newton/engine3D/Sphere3';
-import { Spring3 } from './davinci-newton/engine3D/Spring3';
 import { AxisChoice } from './davinci-newton/graph/AxisChoice';
 import { DisplayGraph } from './davinci-newton/graph/DisplayGraph';
 import { EnergyTimeGraph } from './davinci-newton/graph/EnergyTimeGraph';
@@ -91,11 +91,7 @@ const newton = {
     /**
      * 
      */
-    get ConstantForceLaw2() { return ConstantForceLaw2; },
-    /**
-     * 
-     */
-    get ConstantForceLaw3() { return ConstantForceLaw3; },
+    get ConstantForceLaw() { return ConstantForceLaw; },
     /**
      * 
      */
@@ -107,11 +103,11 @@ const newton = {
     /**
      * 
      */
-    get CoulombLaw2() { return CoulombLaw2; },
+    get CoulombLaw() { return CoulombLaw; },
     /**
      * 
      */
-    get CoulombLaw3() { return CoulombLaw3; },
+    get Sphere2() { return Sphere2; },
     /**
      * 
      */
@@ -139,6 +135,14 @@ const newton = {
     /**
      * 
      */
+    get Dynamic2() { return Dynamics2; },
+    /**
+     * 
+     */
+    get Dynamic3() { return Dynamics3; },
+    /**
+     * 
+     */
     get EnergyTimeGraph() { return EnergyTimeGraph; },
     /**
      * 
@@ -147,11 +151,15 @@ const newton = {
     /**
      * 
      */
-    get Force2() { return Force; },
+    get Euclidean2() { return Euclidean2; },
     /**
      * 
      */
-    get Force3() { return Force3; },
+    get Euclidean3() { return Euclidean3; },
+    /**
+     * 
+     */
+    get Force() { return Force; },
     /**
      * 
      */
@@ -171,7 +179,7 @@ const newton = {
     /**
      * 
      */
-    get GravitationLaw3() { return GravitationLaw3; },
+    get GravitationLaw() { return GravitationLaw; },
     /**
      * 
      */
@@ -191,11 +199,7 @@ const newton = {
     /**
      * 
      */
-    get Particle2() { return Particle; },
-    /**
-     * 
-     */
-    get Particle3() { return Particle3; },
+    get Particle() { return Particle; },
     /**
      * 
      */
@@ -203,11 +207,7 @@ const newton = {
     /**
      * 
      */
-    get Physics3() { return Physics3; },
-    /**
-     * 
-     */
-    get RigidBody3() { return RigidBody3; },
+    get RigidBody() { return RigidBody; },
     /**
      * 
      */
@@ -223,7 +223,7 @@ const newton = {
     /**
      * 
      */
-    get Spring3() { return Spring3; },
+    get Spring() { return Spring; },
     /**
      * 
      */

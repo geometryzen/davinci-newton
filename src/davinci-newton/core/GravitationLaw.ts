@@ -1,34 +1,18 @@
-// Copyright 2017-2021 David Holmes.  All Rights Reserved.
-// Copyright 2016 Erik Neumann.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import { Force } from '../core/Force';
-import { ForceLaw } from '../core/ForceLaw';
-import { Metric } from '../core/Metric';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Charged } from '../core/Charged';
+import { Massive } from './Massive';
+import { Force } from './Force';
+import { ForceLaw } from './ForceLaw';
+import { Metric } from './Metric';
 /**
  * 
  */
-export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
+export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
-     * The proportionality constant, Coulomb's constant.
-     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
+     * The proportionality constant, Newton's constant.
      * The default value is one (1).
      */
-    public k: T;
+    public G: T;
 
     private readonly F1: Force<T>;
     private readonly F2: Force<T>;
@@ -39,13 +23,15 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
      */
     private readonly potentialEnergy_: T;
     private potentialEnergyLock_: number;
+    private readonly metric: Metric<T>;
 
     /**
      * 
      */
-    constructor(private body1_: Charged<T>, private body2_: Charged<T>, k: T, private readonly metric: Metric<T>) {
+    constructor(private body1_: Massive<T>, private body2_: Massive<T>, G: T) {
         super();
-
+        this.metric = body1_.metric;
+        const metric = this.metric;
         this.F1 = new Force(this.body1_, metric);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
@@ -54,7 +40,7 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
-        this.k = k;
+        this.G = G;
 
         this.forces = [this.F1, this.F2];
         this.potentialEnergy_ = metric.zero();
@@ -62,8 +48,8 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
     }
 
     /**
-     * Computes the forces due to the Coulomb interaction.
-     * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
+     * Computes the forces due to the gravitational interaction.
+     * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
     updateForces(): Force<T>[] {
         // We can use the F1.location and F2.location as temporary variables
@@ -73,20 +59,20 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
 
         const metric = this.metric;
 
-        // The direction of the force is computed such that like charges repel each other.
-        metric.copyVector(this.body1_.X, numer);
-        metric.subVector(numer, this.body2_.X);
+        // The direction of the force is computed such that masses always attract each other.
+        metric.copyVector(this.body2_.X, numer);
+        metric.subVector(numer, this.body1_.X);
 
         metric.copyVector(numer, denom);
         metric.quaditude(denom, true);
 
         metric.direction(numer, true);
-        metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
-        metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
-        metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
+        metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
+        metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+        metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
 
         metric.copyVector(numer, this.F1.vector);
-        metric.divByScalar(numer, metric.a(denom), metric.uom(denom));
+        metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
 
         metric.copyVector(this.F1.vector, this.F2.vector);
         metric.neg(this.F2.vector);
@@ -107,8 +93,8 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
 
     /**
      * Computes the potential energy of the gravitational interaction.
-     * U = k q1 q2 / r, where
-     * r is the center to center separation of m1 and m2.
+     * U = -G m1 m2 / r, where
+     * r is the center-of-mass to center-of-mass separation of m1 and m2.
      */
     potentialEnergy(): T {
         const metric = this.metric;
@@ -119,10 +105,11 @@ export class CoulombLaw2<T> extends AbstractSimObject implements ForceLaw<T> {
         // as long as we restore their contents.
         const numer = this.F1.location;
         const denom = this.F2.location;
-        // The numerator of the potential energy formula is k * Q1 * Q2.
-        metric.copyScalar(metric.a(this.k), metric.uom(this.k), numer);
-        metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
-        metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
+        // The numerator of the potential energy formula is -G * m1 * m2.
+        metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
+        metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+        metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
+        metric.neg(numer);
         // The denominator is |r1 - r2|.
         metric.copyVector(this.body1_.X, denom);
         metric.subVector(denom, this.body2_.X);

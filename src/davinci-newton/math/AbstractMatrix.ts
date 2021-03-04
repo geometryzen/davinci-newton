@@ -1,6 +1,6 @@
-import MatrixLike from './MatrixLike';
 import mustBeDefined from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
+import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 
 function checkElementsLength(elements: Float32Array, length: number): void {

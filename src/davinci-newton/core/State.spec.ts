@@ -1,29 +1,19 @@
-// Copyright 2017 David Holmes.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+import { State } from './State';
 import { Bivector3 } from '../math/Bivector3';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { Vector3 } from '../math/Vector3';
-import { Block3 } from './Block3';
-import { Physics3 } from './Physics3';
+import { Block3 } from '../engine3D/Block3';
+import { Dynamics3 } from '../engine3D/Dynamics3';
+import { Euclidean3 } from '../engine3D/Euclidean3';
 
-describe("Physics3", function () {
+describe("State", function () {
     describe("Ω calculation", function () {
         it("calculated using (1/2) Ω * L(Ω) should be same as (1/2) ω * L(ω)", function () {
             // Not actually using this yet, other than to test construction.
-            const sim = new Physics3();
+            const metric = new Euclidean3();
+            const dynamics = new Dynamics3();
+            const sim = new State(metric, dynamics);
             const body = new Block3(Geometric3.scalar(1), Geometric3.scalar(2), Geometric3.scalar(3));
             body.M = Geometric3.scalar(12);
             body.L.yz = 3;

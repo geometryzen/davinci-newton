@@ -15,12 +15,13 @@
 import { Geometric3 } from '../math/Geometric3';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { RigidBody3 } from './RigidBody3';
+import { RigidBody } from '../core/RigidBody';
+import { Euclidean3 } from './Euclidean3';
 
 /**
  * A rectangular block of constant density.
  */
-export class Block3 extends RigidBody3 {
+export class Block3 extends RigidBody<Geometric3> {
     /**
      * The dimension corresponding to the width.
      */
@@ -43,7 +44,7 @@ export class Block3 extends RigidBody3 {
      * 
      */
     constructor(width = Geometric3.one, height = Geometric3.one, depth = Geometric3.one) {
-        super();
+        super(new Euclidean3());
 
         this.width_ = Geometric3.copy(width);
         this.widthLock_ = this.width_.lock();

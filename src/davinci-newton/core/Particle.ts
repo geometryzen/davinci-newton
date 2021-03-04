@@ -7,13 +7,13 @@ import { RigidBody } from './RigidBody';
 export class Particle<T> extends RigidBody<T> {
 
     /**
-     * @param M The mass of the particle.
-     * @param Q The electric charge of the particle.
+     * @param mass The mass of the particle.
+     * @param charge The electric charge of the particle.
      */
-    constructor(M: T, Q: T, metric: Metric<T>) {
+    constructor(mass: T, charge: T, metric: Metric<T>) {
         super(metric);
-        this.M = M;
-        this.Q = Q;
+        this.M = mass;
+        this.Q = charge;
     }
 
     /**

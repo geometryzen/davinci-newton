@@ -1,5 +1,5 @@
 import { Matrix3 } from './Matrix3';
-import MatrixLike from './MatrixLike';
+import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 
 /**

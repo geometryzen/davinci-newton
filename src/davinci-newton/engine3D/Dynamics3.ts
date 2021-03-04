@@ -58,7 +58,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
 ];
 
 
-export class Dynamics3D implements Dynamics<Geometric3> {
+export class Dynamics3 implements Dynamics<Geometric3> {
     numVariablesPerBody(): number {
         return 13;
     }

@@ -1848,6 +1848,18 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
         return this;
     }
 
+    write(mv: GeometricE3): void {
+        mv.a = this.a;
+        mv.x = this.x;
+        mv.y = this.y;
+        mv.z = this.z;
+        mv.xy = this.xy;
+        mv.yz = this.yz;
+        mv.zx = this.zx;
+        mv.b = this.b;
+        mv.uom = this.uom;
+    }
+
     writeVector(vector: VectorE3): void {
         vector.x = this.x;
         vector.y = this.y;

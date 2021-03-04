@@ -973,14 +973,27 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
 
     /**
      * @param m
-     * @returns this | m
+     * @returns this ^ m
      */
-    wedge(m: GeometricE2): Geometric2 {
+    ext(m: GeometricE2): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().wedge(m));
+            return lock(this.clone().ext(m));
         }
         else {
-            throw new Error("TODO: wedge");
+            const a0 = this.a;
+            const a1 = this.x;
+            const a2 = this.y;
+            const a3 = this.b;
+            const b0 = m.a;
+            const b1 = m.x;
+            const b2 = m.y;
+            const b3 = m.b;
+            this.a = a0 * b0;
+            this.x = a0 * b1 + a1 * b0;
+            this.y = a0 * b2 + a2 * b0;
+            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            this.uom = Unit.mul(this.uom, m.uom);
+            return this;
         }
     }
 

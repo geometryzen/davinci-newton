@@ -9,7 +9,7 @@ import { RigidBody } from './RigidBody';
 /**
  * 
  */
-export class Spring3<T> extends AbstractSimObject implements ForceLaw<T> {
+export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
@@ -59,11 +59,16 @@ export class Spring3<T> extends AbstractSimObject implements ForceLaw<T> {
     private readonly potentialEnergy_: T;
     private potentialEnergyLock_: number;
 
+    public readonly metric: Metric<T>;
+
     /**
      * 
      */
-    constructor(private body1_: RigidBody<T>, private body2_: RigidBody<T>, private readonly metric: Metric<T>) {
+    constructor(private body1_: RigidBody<T>, private body2_: RigidBody<T>) {
         super();
+
+        this.metric = body1_.metric;
+        const metric = this.metric;
 
         this.restLength = metric.scalar(1);
         metric.lock(this.restLength);

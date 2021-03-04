@@ -1,8 +1,8 @@
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { LOCAL, WORLD } from '../model/CoordType';
-import { CoulombLaw3 } from './CoulombLaw3';
-import { Sphere3 } from './Sphere3';
+import { CoulombLaw } from './CoulombLaw';
+import { Sphere3 } from '../engine3D/Sphere3';
 
 const COULOMB = Unit.COULOMB;
 const KILOGRAM = Unit.KILOGRAM;
@@ -12,7 +12,7 @@ const MOTION = KILOGRAM.mul(METER).div(SECOND);
 const NEWTON = MOTION.div(SECOND);
 const k = Geometric3.scalar(9.0E9, NEWTON.mul(METER).mul(METER).div(COULOMB).div(COULOMB));
 
-describe("CoulombLaw3", function () {
+describe("CoulombLaw", function () {
     const body1 = new Sphere3();
     const body2 = new Sphere3();
 
@@ -22,7 +22,7 @@ describe("CoulombLaw3", function () {
     body1.X = Geometric3.vector(-0.0075, 0, 0, METER);
     body2.X = Geometric3.vector(+0.0075, 0, 0, METER);
 
-    const interaction = new CoulombLaw3(body1, body2, k);
+    const interaction = new CoulombLaw(body1, body2, k);
     const q1 = body1.Q.a;
     const q2 = body2.Q.a;
     const r = Math.abs(body1.X.x - body2.X.x);

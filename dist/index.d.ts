@@ -354,6 +354,7 @@ declare namespace NEWTON {
         getTime(): number;
         timeIndex(): number;
     }
+
     interface Scalar {
         a: number;
         uom: Unit;
@@ -364,10 +365,21 @@ declare namespace NEWTON {
         uom: Unit;
     }
 
+    interface VectorE2 {
+        x: number;
+        y: number;
+        uom: Unit;
+    }
+
     interface VectorE3 {
         x: number;
         y: number;
         z: number;
+        uom: Unit;
+    }
+
+    interface BivectorE2 {
+        xy: number;
         uom: Unit;
     }
 
@@ -378,13 +390,709 @@ declare namespace NEWTON {
         uom: Unit;
     }
 
+    interface SpinorE2 extends Scalar, BivectorE2 {
+    }
+
     interface SpinorE3 extends Scalar, BivectorE3 {
     }
+
+    /**
+     * The coordinates for a multivector in 2D in geometric Cartesian basis.
+     */
+    interface GeometricE2 extends Pseudo, Scalar, SpinorE2, VectorE2 {
+
+    }
+
     /**
      * The coordinates for a multivector in 3D in geometric Cartesian basis.
      */
     interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 
+    }
+
+    /**
+     * A mutable multivector in 3D with a Euclidean metric and optional unit of measure.
+     */
+    class Geometric2 implements GeometricE2 {
+        /**
+         * The coordinate corresponding to the unit standard basis scalar.
+         */
+        a: number;
+
+        /**
+         * The coordinate corresponding to the e1 standard basis vector.
+         */
+        x: number;
+
+        /**
+         * The coordinate corresponding to the e2 standard basis vector.
+         */
+        y: number;
+
+        /**
+         * The coordinate corresponding to the e1e2 standard basis bivector.
+         */
+        xy: number;
+
+        /**
+         * The pseudoscalar coordinate of the multivector.
+         */
+        b: number;
+
+        /**
+         * The optional unit of measure.
+         */
+        uom: Unit;
+
+        /**
+         * Do not call this constructor. Use the static construction methods instead.
+         */
+        constructor(coords?: number[], uom?: Unit, code?: number);
+
+        /**
+         * Adds M * α to this multivector.
+         *
+         * this ⟼ this + M * α
+         */
+        add(M: GeometricE2, α?: number): Geometric2;
+
+        /**
+         * Sets this multivector to the sum of a and b.
+         *
+         * this ⟼ a + b
+         */
+        add2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * Adds the pseudoscalar coordinate to this multivector.
+         */
+        addPseudo(β: number, uom?: Unit): Geometric2;
+
+        /**
+         * Adds the scalar coordinate to this multivector.
+         */
+        addScalar(α: number, uom?: Unit): Geometric2;
+
+        /**
+         * Adds v * α to this multivector where v is a vector and α is an optional scalar.
+         *
+         * this ⟼ this + v * α
+         */
+        addVector(v: VectorE2, α?: number): Geometric2;
+
+        /**
+         * The bivector whose area (magnitude) is θ/2, where θ is the radian measure. 
+         */
+        angle(): Geometric2;
+
+        /**
+         * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
+         */
+        approx(n: number): Geometric2;
+
+        /**
+         * Returns a clone of this multivector.
+         */
+        clone(): Geometric2;
+
+        /**
+         * Sets this <em>multivector</em> to its <em>Clifford conjugate</em>.
+         * 
+         * this ⟼ conj(this)
+         */
+        conj(): Geometric2;
+
+        /**
+         * Copies the multivector M into this multivector.
+         *
+         * this ⟼ copy(M)
+         */
+        copy(M: GeometricE2): Geometric2;
+
+        /**
+         * 
+         */
+        copyBivector(B: BivectorE2): Geometric2;
+
+        /**
+         * Copies the scalar α into this multivector.
+         *
+         * this ⟼ copy(α, uom)
+         */
+        copyScalar(α: number, uom?: Unit): Geometric2;
+
+        /**
+         * Copies the spinor into this multivector.
+         *
+         * this ⟼ copy(spinor)
+         */
+        copySpinor(spinor: SpinorE2): Geometric2;
+
+        /**
+         * Copies the vector into this multivector.
+         *
+         * this ⟼ copyVector(vector)
+         */
+        copyVector(vector: VectorE2): Geometric2;
+
+        /**
+         * Normalizes this multivector by dividing it by its magnitude.
+         */
+        direction(mutate?: boolean): Geometric2;
+
+        /**
+         * Sets this multivector to the result of division by another multivector.
+         * 
+         * this ⟼ this / m
+         * 
+         */
+        div(m: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ a / b
+         * 
+         * a
+         * b
+         */
+        div2(a: SpinorE2, b: SpinorE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this / α
+         * 
+         */
+        divByNumber(α: number): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this / (α * uom)
+         * 
+         */
+        divByScalar(α: number, uom: Unit): Geometric2;
+
+        /**
+         * 
+         */
+        divByVector(vector: VectorE2): Geometric2;
+
+        /**
+         * 
+         */
+        dual(m?: GeometricE2): Geometric2;
+
+        /**
+         * 
+         */
+        equals(other: any): boolean;
+
+        /**
+         * 
+         * this ⟼ e<sup>this</sup>
+         * 
+         */
+        exp(): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this ^ m
+         * 
+         * m
+         */
+        ext(m: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ a ^ b
+         * 
+         * a
+         * b
+         */
+        ext2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * Sets this multivector to the result of keeping only the specified grade.
+         * This is the grade extraction operation.
+         */
+        grade(grade: number): Geometric2;
+
+        /**
+         * Sets this multivector to its inverse.
+         * this ⟼ conj(this) / quad(this)
+         */
+        inv(): Geometric2;
+
+        /**
+         * 
+         */
+        isLocked(): boolean;
+
+        isOne(): boolean;
+
+        isZero(): boolean;
+
+        /**
+         * Sets this multivector to the unit pseudoscalar.
+         */
+        I(): Geometric2;
+
+        /**
+         * Sets this multivector to the left contraction with another multivector.
+         * 
+         * this ⟼ this << m
+         * 
+         * m
+         */
+        lco(m: GeometricE2): Geometric2;
+
+        /**
+         * Sets this multivector to the left contraction of two multivectors. 
+         * 
+         * this ⟼ a << b
+         * 
+         * a
+         * b
+         */
+        lco2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this + α * (target - this)
+         * 
+         * target
+         * α
+         */
+        lerp(target: GeometricE2, α: number): Geometric2;
+
+        /**
+         * 
+         * this ⟼ a + α * (b - a)
+         * 
+         * a {GeometricE3}
+         * b {GeometricE3}
+         * α {number}
+         */
+        lerp2(a: GeometricE2, b: GeometricE2, α: number): Geometric2;
+
+        /**
+         * 
+         */
+        lock(): number;
+
+        /**
+         * 
+         * this ⟼ log(this)
+         * 
+         */
+        log(): Geometric3;
+
+        /**
+         * Computes the <em>square root</em> of the <em>squared norm</em>.
+         */
+        magnitude(mutate?: boolean): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this * s
+         * 
+         * m {GeometricE3}
+         */
+        mul(m: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ a * b
+         * 
+         * a
+         * b
+         */
+        mul2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * this ⟼ this * α
+         */
+        mulByNumber(α: number): Geometric2;
+
+        /**
+         * this ⟼ this * (α * uom)
+         */
+        mulByScalar(α: number, uom: Unit): Geometric2;
+
+        /**
+         * 
+         * this ⟼ -1 * this
+         * 
+         */
+        neg(): Geometric2;
+
+        /**
+         * 
+         * this ⟼ sqrt(this * conj(this))
+         * 
+         */
+        norm(): Geometric2;
+
+        /**
+         * Sets this multivector to the identity element for multiplication, 1.
+         */
+        one(): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this | ~this = scp(this, rev(this))
+         * 
+         */
+        quaditude(mutate?: boolean): Geometric2;
+
+        /**
+         * Sets this multivector to the right contraction with another multivector.
+         * 
+         * this ⟼ this >> m
+         * 
+         * m
+         */
+        rco(m: GeometricE2): Geometric2;
+
+        /**
+         * Sets this multivector to the right contraction of two multivectors.
+         * 
+         * this ⟼ a >> b
+         * 
+         * a
+         * b
+         */
+        rco2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ - n * this * n
+         * 
+         * n
+         */
+        reflect(n: VectorE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ rev(this)
+         * 
+         */
+        rev(): Geometric2;
+
+        /**
+         * 
+         * this ⟼ R * this * rev(R)
+         * 
+         * R
+         */
+        rotate(R: SpinorE2): Geometric2;
+
+        /**
+         * Sets this multivector to a rotor representing a rotation from a to b.
+         * this = ⟼ R, where
+         * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+         *
+         * a The <em>from</em> vector.
+         * b The <em>to</em> vector.
+         */
+        rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2;
+
+        /**
+         * 
+         */
+        rotorFromFrameToFrame(es: VectorE2[], fs: VectorE2[]): Geometric2;
+
+        /**
+         * Sets this multivector to a rotor represented by the plane B and angle θ.
+         * this = ⟼ R = exp(- B * θ / 2)
+         *
+         * B is the (unit) bivector generating the rotation, B * B = -1.
+         * θ The rotation angle in radians.
+         */
+        rotorFromGeneratorAngle(B: BivectorE2, θ: number): Geometric2;
+
+        /**
+         * R = (|b||a| + b a) / sqrt(2 |b||a|(|b||a| + b << a))
+         * 
+         * The result is independent of the magnitudes of a and b.
+         */
+        rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ scp(this, m)
+         * 
+         * m
+         */
+        scp(m: GeometricE2): Geometric2;
+
+        /**
+         * 
+         * this ⟼ scp(a, b)
+         * 
+         * a
+         * b
+         */
+        scp2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * Currently limited to taking the square root of a positive scalar quantity.
+         */
+        sqrt(): Geometric2;
+
+        /**
+         * Computes the <em>squared norm</em> of this multivector.
+         */
+        squaredNorm(mutate?: boolean): Geometric2;
+
+        /**
+         * 
+         * this ⟼ this - M * α
+         * 
+         * M
+         * α
+         */
+        sub(M: GeometricE2, α?: number): Geometric2;
+
+        /**
+         * 
+         * this ⟼ a - b
+         * 
+         * a
+         * b
+         */
+        sub2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+        /**
+         * Subtracts v * α from this multivector where v is a vector and α is an optional scalar.
+         *
+         * this ⟼ this - v * α
+         */
+        subVector(v: VectorE2, α?: number): Geometric2;
+
+        /**
+         * Returns a string representing the number in exponential notation.
+         */
+        toExponential(fractionDigits?: number): string;
+
+        /**
+         * Returns a string representing the number in fixed-point notation.
+         * fractionDigits
+         */
+        toFixed(fractionDigits?: number): string;
+
+        /**
+         *
+         */
+        toPrecision(precision?: number): string;
+
+        /**
+         * Returns a string representation of the number.
+         */
+        toString(radix?: number): string;
+
+        /**
+         * 
+         */
+        unlock(token: number): boolean;
+
+        /**
+         * 
+         * this ⟼ a * b
+         * 
+         * Sets this Geometric2 to the geometric product a * b of the vector arguments.
+         * a
+         * b
+         */
+        versor(a: VectorE2, b: VectorE2): Geometric2;
+
+        /**
+         * 
+         */
+        writeVector(vector: VectorE2): void;
+
+        /**
+         * Sets this multivector to the identity element for addition, 0.
+         */
+        zero(): Geometric2;
+
+        /**
+         * Standard Basis vector corresponding to the x coordinate.
+         * The e1 multivector (vector) is immutable (locked).
+         */
+        static readonly e1: Geometric2;
+
+        /**
+         * Basis vector corresponding to the y coordinate.
+         * The e2 multivector (vector) is immutable (locked).
+         */
+        static readonly e2: Geometric2;
+
+        /**
+         * Basis vector corresponding to the pseudoscalar coordinate.
+         * The I multivector (pseudoscalar) is immutable (locked).
+         */
+        static readonly I: Geometric2;
+
+        /**
+         * The identity element for multiplication, 1 (scalar).
+         * The one multivector (scalar) is immutable (locked).
+         */
+        static readonly one: Geometric2;
+
+        /**
+         * The identity element for addition, 0.
+         * The zero multivector is immutable (locked).
+         */
+        static readonly zero: Geometric2;
+
+        /**
+         * SI base unit of length.
+         * The meter is the length of the path travelled by light in vacuum
+         * during a time interval of 1 / 299 792 458 of a second.
+         * The meter multivector (scalar) is immutable (locked).
+         */
+        static readonly meter: Geometric2;
+
+        /**
+         * SI base unit of mass.
+         * The kilogram is the unit of mass; it is equal to the mass of the
+         * international prototype of the kilogram.
+         * The kilogram multivector (scalar) is immutable (locked).
+         */
+        static readonly kilogram: Geometric2;
+
+        /**
+         * SI base unit of time.
+         * The second is the duration of 9 192 631 770 periods of the radiation
+         * corresponding to the transition between
+         * the two hyperfine levels of the ground state of the cesium 133 atom.
+         * The second multivector (scalar) is immutable (locked).
+         */
+        static readonly second: Geometric2;
+
+        /**
+         * SI base unit of electric current.
+         * The ampere is that constant current which, if maintained in two straight parallel
+         * conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum,
+         * would produce between these conductors a force equal to 2E-7 newton per meter of length.
+         * The ampere multivector (scalar) is immutable (locked).
+         */
+        static readonly ampere: Geometric2;
+
+        /**
+         * SI base unit of thermodynamic temperature.
+         * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature
+         * of the triple point of water.
+         * The kelvin multivector (scalar) is immutable (locked).
+         */
+        static readonly kelvin: Geometric2;
+
+        /**
+         * SI base unit of amount of substance.
+         * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are
+         * atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+         * 
+         * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions,
+         * electrons, other particles, or specified groups of such particles.
+         * The mole multivector (scalar) is immutable (locked).
+         */
+        static readonly mole: Geometric2;
+
+        /**
+         * SI base unit of luminous intensity.
+         * The candela is the luminous intensity, in a given direction,
+         * of a source that emits monochromatic radiation of frequency 540 x 10E12
+         * hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
+         * The candela multivector (scalar) is immutable (locked).
+         */
+        static readonly candela: Geometric2;
+
+        /**
+         * SI derived unit of electric charge, quantity of electricity.
+         * The coulomb multivector (scalar) is immutable (locked).
+         */
+        static readonly coulomb: Geometric2;
+
+        /**
+         * SI derived unit of force.
+         * The newton multivector (scalar) is immutable (locked).
+         */
+        static readonly newton: Geometric2;
+
+        /**
+         * SI derived unit of energy, work, quantity of heat.
+         * The joule multivector (scalar) is immutable (locked).
+         */
+        static readonly joule: Geometric2;
+
+        /**
+         * Creates a grade 2 (bivector) multivector from the specified cartesian coordinates.
+         */
+        static bivector(xy: number, uom?: Unit): Geometric2;
+
+        static copy(m: GeometricE2): Geometric2;
+
+        static dual(m: GeometricE2): Geometric2;
+
+        static dualOfBivector(B: BivectorE2): Geometric2;
+
+        static dualOfVector(v: VectorE2): Geometric2;
+
+        /**
+         * Creates a copy of a bivector.
+         */
+        static fromBivector(B: BivectorE3): Geometric3;
+
+        /**
+         * Creates a copy of a scalar.
+         */
+        static fromScalar(scalar: Scalar): Geometric2;
+
+        /**
+         * Creates a copy of a spinor.
+         */
+        static fromSpinor(spinor: SpinorE2): Geometric2;
+
+        /**
+         * Creates a copy of a vector.
+         */
+        static fromVector(vector: VectorE2): Geometric2;
+
+        /**
+         * Computes a random multivector.
+         */
+        static random(): Geometric2;
+
+        /**
+         * Computes the rotor that rotates vector a to vector b.
+         * a The from vector.
+         * b The to vector.
+         */
+        static rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2;
+
+        /**
+         * Computes the rotor that rotates vector a to vector b.
+         * a The from vector.
+         * b The to vector.
+         * B The plane of rotation when the rotation plane is ambiguous.
+         */
+        static rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2;
+
+        /**
+         * Constructs a new scalar from a number and a unit of measure.
+         * The multivector (scalar) is mutable (unlocked).
+         */
+        static scalar(α: number, uom?: Unit): Geometric2;
+
+        static spinor(a: number, xy: number, uom?: Unit): Geometric2;
+
+        /**
+         * Constructs a new vector from Cartesian coordinates and a unit of measure.
+         * The multivector (vector) is mutable (unlocked).
+         */
+        static vector(x: number, y: number, uom?: Unit): Geometric2;
+
+        static wedge(a: Geometric2, b: Geometric2): Geometric2;
     }
 
     /**
@@ -1141,10 +1849,232 @@ declare namespace NEWTON {
         static zero(): Matrix3;
     }
 
+    export interface Metric<T> {
+        a(mv: T): number;
+
+        add(lhs: T, rhs: T): T;
+
+        addVector(lhs: T, rhs: T): T;
+
+        applyMatrix(mv: T, matrix: MatrixLike): T;
+
+        copy(source: T, target: T): T;
+
+        copyBivector(source: T, target: T): T;
+
+        copyScalar(a: number, uom: Unit, target: T): T;
+
+        copyVector(source: T, target: T): T;
+
+        direction(mv: T, mutate: boolean): T;
+
+        divByScalar(lhs: T, a: number, uom: Unit): T;
+
+        ext(lhs: T, rhs: T): T;
+
+        isZero(mv: T): boolean;
+
+        lock(mv: T): number;
+
+        magnitude(mv: T, mutate: boolean): T;
+
+        mulByNumber(lhs: T, alpha: number): T;
+
+        mulByScalar(lhs: T, a: number, uom: Unit): T;
+
+        mulByVector(lhs: T, rhs: T): T;
+
+        neg(mv: T): T;
+
+        quaditude(mv: T, mutate: boolean): T;
+
+        rev(mv: T): T;
+
+        rotate(mv: T, spinor: T): T;
+
+        /**
+         * Creates a grade 0 (scalar) multivector with value `a * uom`.
+         * The scalar returned is in the unlocked (mutable) state.
+         * @param a The scaling factor for the unit of measure.
+         * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+         */
+        scalar(a: number, uom?: Unit): T;
+
+        scp(lhs: T, rhs: T): T;
+
+        setUom(mv: T, uom: Unit): void;
+
+        sub(lhs: T, rhs: T): T;
+
+        subScalar(lhs: T, rhs: T): T;
+
+        subVector(lhs: T, rhs: T): T;
+
+        unlock(mv: T, token: number): void;
+
+        uom(mv: T): Unit;
+
+        write(source: T, target: T): void;
+
+        writeVector(source: T, target: T): void;
+
+        zero(): T;
+    }
+
+    class Euclidean2 implements Metric<Geometric2> {
+        a(mv: Geometric2): number;
+        add(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        addVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        applyMatrix(mv: Geometric2, matrix: MatrixLike): Geometric2;
+        copy(source: Geometric2, target: Geometric2): Geometric2;
+        copyBivector(source: Geometric2, target: Geometric2): Geometric2;
+        copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
+        copyVector(source: Geometric2, target: Geometric2): Geometric2;
+        direction(mv: Geometric2, mutate: boolean): Geometric2;
+        divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
+        ext(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        isZero(mv: Geometric2): boolean;
+        lock(mv: Geometric2): number;
+        magnitude(mv: Geometric2, mutate: boolean): Geometric2;
+        mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
+        mulByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
+        mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        neg(mv: Geometric2): Geometric2;
+        quaditude(mv: Geometric2, mutate: boolean): Geometric2;
+        rev(mv: Geometric2): Geometric2;
+        rotate(mv: Geometric2, spinor: Geometric2): Geometric2;
+        scalar(a: number, uom?: Unit): Geometric2;
+        scp(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        setUom(mv: Geometric2, uom: Unit): void;
+        sub(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        subScalar(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        subVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
+        unlock(mv: Geometric2, token: number): void;
+        uom(mv: Geometric2): Unit;
+        write(source: Geometric2, target: Geometric2): void;
+        writeVector(source: Geometric2, target: Geometric2): void;
+        zero(): Geometric2;
+    }
+
+    class Euclidean3 implements Metric<Geometric3> {
+        a(mv: Geometric3): number;
+        add(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        addVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        applyMatrix(mv: Geometric3, matrix: MatrixLike): Geometric3;
+        copy(source: Geometric3, target: Geometric3): Geometric3;
+        copyBivector(source: Geometric3, target: Geometric3): Geometric3;
+        copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
+        copyVector(source: Geometric3, target: Geometric3): Geometric3;
+        direction(mv: Geometric3, mutate: boolean): Geometric3;
+        divByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
+        ext(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        isZero(mv: Geometric3): boolean;
+        lock(mv: Geometric3): number;
+        magnitude(mv: Geometric3, mutate: boolean): Geometric3;
+        mulByNumber(lhs: Geometric3, alpha: number): Geometric3;
+        mulByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
+        mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        neg(mv: Geometric3): Geometric3;
+        quaditude(mv: Geometric3, mutate: boolean): Geometric3;
+        rev(mv: Geometric3): Geometric3;
+        rotate(mv: Geometric3, spinor: Geometric3): Geometric3;
+        scalar(a: number, uom?: Unit): Geometric3;
+        scp(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        setUom(mv: Geometric3, uom: Unit): void;
+        sub(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        subScalar(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        subVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
+        unlock(mv: Geometric3, token: number): void;
+        uom(mv: Geometric3): Unit;
+        write(source: Geometric3, target: Geometric3): void;
+        writeVector(source: Geometric3, target: Geometric3): void;
+        zero(): Geometric3;
+    }
+
+    export interface Dynamics<T> {
+        /**
+         * The rate of change of position is the velocity.
+         * dX/dt = V = P / M
+         * 
+         * @param rateOfChange 
+         * @param idx 
+         * @param body 
+         */
+        setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+        /**
+         * 
+         * @param rateOfChange 
+         * @param idx 
+         * @param body 
+         */
+        setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+        /**
+         * 
+         * @param rateOfChange
+         * @param idx 
+         */
+        zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+        /**
+         * 
+         * @param rateOfChange
+         * @param idx 
+         */
+        zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+        /**
+         * 
+         * @param vars 
+         * @param idx 
+         * @param body 
+         */
+        updateBody(vars: number[], idx: number, body: ForceBody<T>): void;
+        updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
+
+        addForce(rateOfChange: number[], idx: number, force: T): void;
+        addTorque(rateOfChange: number[], idx: number, torque: T): void;
+        epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
+        discontinuousEnergyVariables(): number[];
+        getOffsetName(offset: number): string;
+        getVarNames(): string[];
+        numVariablesPerBody(): number;
+    }
+
+    class Dynamics2 implements Dynamics<Geometric2> {
+        setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void;
+        setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void;
+        zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+        zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+        updateBody(vars: number[], idx: number, body: ForceBody<Geometric2>): void;
+        updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void;
+        addForce(rateOfChange: number[], idx: number, force: Geometric2): void;
+        addTorque(rateOfChange: number[], idx: number, torque: Geometric2): void;
+        epilog(bodies: ForceBody<Geometric2>[], forceLaws: ForceLaw<Geometric2>[], potentialOffset: Geometric2, vars: VarsList): void;
+        discontinuousEnergyVariables(): number[];
+        getOffsetName(offset: number): string;
+        getVarNames(): string[];
+        numVariablesPerBody(): number;
+    }
+
+    class Dynamics3 implements Dynamics<Geometric3> {
+        setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
+        setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
+        zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+        zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+        updateBody(vars: number[], idx: number, body: ForceBody<Geometric3>): void;
+        updateVarsFromBody(body: ForceBody<Geometric3>, idx: number, vars: VarsList): void;
+        addForce(rateOfChange: number[], idx: number, force: Geometric3): void;
+        addTorque(rateOfChange: number[], idx: number, torque: Geometric3): void;
+        epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, vars: VarsList): void;
+        discontinuousEnergyVariables(): number[];
+        getOffsetName(offset: number): string;
+        getVarNames(): string[];
+        numVariablesPerBody(): number;
+    }
+
     /**
      * 
      */
-    class RigidBody3 implements ForceBody3, SimObject {
+    class RigidBody<T> implements ForceBody<T>, SimObject {
+        metric: Metric<T>;
         /**
          * The application defined unique identifier.
          */
@@ -1152,15 +2082,15 @@ declare namespace NEWTON {
         /**
          * The center of mass position vector in local coordinates.
          */
-        centerOfMassLocal: VectorE3;
+        centerOfMassLocal: T;
         /**
          * Mass (scalar).
          */
-        M: Geometric3;
+        M: T;
         /**
          * Electric Charge (scalar).
          */
-        Q: Geometric3;
+        Q: T;
         /**
          * Inertia Tensor (in body coordinates) (3x3 matrix).
          */
@@ -1172,23 +2102,23 @@ declare namespace NEWTON {
         /**
          * Position (vector).
          */
-        X: Geometric3;
+        X: T;
         /**
          * Attitude (spinor)
          */
-        R: Geometric3;
+        R: T;
         /**
          * Linear momentum (vector).
          */
-        P: Geometric3;
+        P: T;
         /**
          * Angular momentum (bivector).
          */
-        L: Geometric3;
+        L: T;
         /**
          * Angular velocity (bivector).
          */
-        Ω: Geometric3;
+        Ω: T;
         /**
          * 
          */
@@ -1200,7 +2130,7 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor();
+        constructor(metric: Metric<T>);
         /**
          * Converts a point in local coordinates to the same point in world coordinates.
          * x = R (localPoint - centerOfMassLocal) * ~R + X
@@ -1218,17 +2148,17 @@ declare namespace NEWTON {
         /**
          * 
          */
-        rotationalEnergy(): Geometric3;
+        rotationalEnergy(): T;
         /**
          * 
          */
-        translationalEnergy(): Geometric3;
+        translationalEnergy(): T;
     }
 
     /**
      * A rectangular block of uniform density.
      */
-    class Block3 extends RigidBody3 {
+    class Block3 extends RigidBody<Geometric3> {
         width: Geometric3;
         height: Geometric3;
         depth: Geometric3;
@@ -1238,7 +2168,7 @@ declare namespace NEWTON {
     /**
      * A solid cylinder of uniform density.
      */
-    class Cylinder3 extends RigidBody3 {
+    class Cylinder3 extends RigidBody<Geometric3> {
         /**
          * 
          */
@@ -1256,19 +2186,19 @@ declare namespace NEWTON {
     /**
      * An object with no internal structure.
      */
-    class Particle3 extends RigidBody3 {
+    class Particle<T> extends RigidBody<T> {
 
         /**
          * M is the mass of the particle. Defaults to 1.
          * Q is the electric charge of the particle. Defaults to 0.
          */
-        constructor(M?: Geometric3, Q?: Geometric3);
+        constructor(mass: T, charge: T, metric: Metric<T>);
     }
 
     /**
      * A solid sphere of uniform density.
      */
-    class Sphere3 extends RigidBody3 {
+    class Sphere3 extends RigidBody<Geometric3> {
         /**
          * 
          */
@@ -1293,15 +2223,15 @@ declare namespace NEWTON {
     /**
      * The application of a force to a particle in a rigid body.
      */
-    class Force3 implements SimObject {
+    class Force<T> implements SimObject {
         /**
          * 
          */
-        F: Geometric3;
+        F: T;
         /**
          * 
          */
-        x: Geometric3;
+        x: T;
         /**
          * 
          */
@@ -1309,50 +2239,25 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(body: RigidBody3);
-        getBody(): RigidBody3;
+        constructor(body: RigidBody<T>, metric: Metric<T>);
+        getBody(): RigidBody<T>;
     }
 
-    interface ForceLaw3 extends SimObject {
-        updateForces(): Force3[];
+    interface ForceLaw<T> extends SimObject {
+        updateForces(): Force<T>[];
         disconnect(): void;
-        potentialEnergy(): Geometric3;
+        potentialEnergy(): T;
     }
 
     /**
-     * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+     * The State engine computes the derivatives of the kinematic variables X, R, P, J for each body,
      * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
      */
-    class Physics3 implements Simulation, EnergySystem {
-        static INDEX_TIME: number;
-        static INDEX_TRANSLATIONAL_KINETIC_ENERGY: number;
-        static INDEX_ROTATIONAL_KINETIC_ENERGY: number;
-        static INDEX_POTENTIAL_ENERGY: number;
-        static INDEX_TOTAL_ENERGY: number;
-        static INDEX_TOTAL_LINEAR_MOMENTUM_X: number;
-        static INDEX_TOTAL_LINEAR_MOMENTUM_Y: number;
-        static INDEX_TOTAL_LINEAR_MOMENTUM_Z: number;
-        static INDEX_TOTAL_ANGULAR_MOMENTUM_YZ: number;
-        static INDEX_TOTAL_ANGULAR_MOMENTUM_ZX: number;
-        static INDEX_TOTAL_ANGULAR_MOMENTUM_XY: number;
-        static OFFSET_POSITION_X: number;
-        static OFFSET_POSITION_Y: number;
-        static OFFSET_POSITION_Z: number;
-        static OFFSET_ATTITUDE_A: number;
-        static OFFSET_ATTITUDE_YZ: number;
-        static OFFSET_ATTITUDE_ZX: number;
-        static OFFSET_ATTITUDE_XY: number;
-        static OFFSET_LINEAR_MOMENTUM_X: number;
-        static OFFSET_LINEAR_MOMENTUM_Y: number;
-        static OFFSET_LINEAR_MOMENTUM_Z: number;
-        static OFFSET_ANGULAR_MOMENTUM_YZ: number;
-        static OFFSET_ANGULAR_MOMENTUM_ZX: number;
-        static OFFSET_ANGULAR_MOMENTUM_XY: number;
-
+    class State<T> implements Simulation, EnergySystem {
         /**
          * 
          */
-        bodies: ForceBody3[];
+        bodies: ForceBody<T>[];
 
         /**
          * Determines whether calculated forces will be added to the simulation list.
@@ -1377,17 +2282,17 @@ declare namespace NEWTON {
         /**
          * Constructs a Physics engine for 3D simulations.
          */
-        constructor();
+        constructor(metric: Metric<T>, dynamics: Dynamics<T>);
 
         /**
          * 
          */
-        addBody(body: ForceBody3): void;
+        addBody(body: ForceBody<T>): void;
 
         /**
          * 
          */
-        addForceLaw(forceLaw: ForceLaw3): void;
+        addForceLaw(forceLaw: ForceLaw<T>): void;
 
         /**
          * Handler for actions to be performed after the evaluate calls and setState.
@@ -1412,11 +2317,11 @@ declare namespace NEWTON {
         /**
          * 
          */
-        removeBody(body: ForceBody3): void;
+        removeBody(body: ForceBody<T>): void;
         /**
          * 
          */
-        removeForceLaw(forceLaw: ForceLaw3): void;
+        removeForceLaw(forceLaw: ForceLaw<T>): void;
         /**
          * Sets the 
          */
@@ -1553,7 +2458,7 @@ declare namespace NEWTON {
     /**
      * 
      */
-    interface ForceBody3 {
+    interface ForceBody<T> {
         /**
          * A placeholder for applications to define a unique identifier. 
          */
@@ -1562,27 +2467,27 @@ declare namespace NEWTON {
         /**
          * 
          */
-        L: BivectorE3;
+        L: T;
 
         /**
          * 
          */
-        M: GeometricE3;
+        M: T;
 
         /**
          * 
          */
-        P: VectorE3;
+        P: T;
 
         /**
          * 
          */
-        R: SpinorE3;
+        R: T;
 
         /**
          * 
          */
-        X: VectorE3;
+        X: T;
 
         /**
          * 
@@ -1597,17 +2502,17 @@ declare namespace NEWTON {
         /**
          * 
          */
-        Ω: BivectorE3;
+        Ω: T;
 
         /**
          * 
          */
-        rotationalEnergy(): Geometric3;
+        rotationalEnergy(): T;
 
         /**
          * 
          */
-        translationalEnergy(): Geometric3;
+        translationalEnergy(): T;
 
         /**
          * 
@@ -1618,7 +2523,7 @@ declare namespace NEWTON {
     /**
      * 
      */
-    class ConstantForceLaw3 implements ForceLaw3 {
+    class ConstantForceLaw<T> implements ForceLaw<T> {
         /**
          * 
          */
@@ -1630,11 +2535,11 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(body: RigidBody3, vector: VectorE3, vectorCoordType?: CoordType);
+        constructor(body: RigidBody<T>, vector: T, vectorCoordType?: CoordType);
         /**
          * 
          */
-        updateForces(): Force3[];
+        updateForces(): Force<T>[];
         /**
          * 
          */
@@ -1642,13 +2547,13 @@ declare namespace NEWTON {
         /**
          * 
          */
-        potentialEnergy(): Geometric3;
+        potentialEnergy(): T;
     }
 
     /**
      * 
      */
-    class CoulombLaw3 implements ForceLaw3 {
+    class CoulombLaw<T> implements ForceLaw<T> {
         /**
          * 
          */
@@ -1660,20 +2565,40 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(body1: RigidBody3, body2: RigidBody3, G?: Geometric3);
-        updateForces(): Force3[];
+        constructor(body1: RigidBody<T>, body2: RigidBody<T>, G?: T);
+        updateForces(): Force<T>[];
         disconnect(): void;
-        potentialEnergy(): Geometric3;
+        potentialEnergy(): T;
     }
 
     /**
      * 
      */
-    class GravitationLaw3 implements ForceLaw3 {
+    class Spring<T> implements ForceLaw<T> {
         /**
          * 
          */
-        G: Geometric3;
+        restLength: T;
+        /**
+         * 
+         */
+        stiffness: T;
+        /**
+         * 
+         */
+        attach1: T;
+        /**
+         * 
+         */
+        attach2: T;
+        /**
+         * 
+         */
+        end1: T;
+        /**
+         * 
+         */
+        end2: T;
         /**
          * 
          */
@@ -1681,51 +2606,10 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(body1: RigidBody3, body2: RigidBody3, G?: Geometric3);
-        updateForces(): Force3[];
+        constructor(body1: RigidBody<T>, body2: RigidBody<T>);
+        updateForces(): Force<T>[];
         disconnect(): void;
-        potentialEnergy(): Geometric3;
-    }
-
-    /**
-     * 
-     */
-    class Spring3 implements ForceLaw3 {
-        /**
-         * 
-         */
-        restLength: Geometric3;
-        /**
-         * 
-         */
-        stiffness: Geometric3;
-        /**
-         * 
-         */
-        attach1: VectorE3;
-        /**
-         * 
-         */
-        attach2: VectorE3;
-        /**
-         * 
-         */
-        end1: Geometric3;
-        /**
-         * 
-         */
-        end2: Geometric3;
-        /**
-         * 
-         */
-        expireTime: number;
-        /**
-         * 
-         */
-        constructor(body1: RigidBody3, body2: RigidBody3);
-        updateForces(): Force3[];
-        disconnect(): void;
-        potentialEnergy(): Geometric3;
+        potentialEnergy(): T;
     }
 
     /**
@@ -1989,6 +2873,6 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(canvasId: string, varsList: VarsList);
+        constructor(canvasId: string, varsList: VarsList, timeIndex: number, transKeIndex: number, rotKeIndex: number, peIndex: number, totalEnergyIndex: number);
     }
 }

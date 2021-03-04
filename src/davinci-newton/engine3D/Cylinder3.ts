@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { RigidBody } from '../core/RigidBody';
 import { Geometric3 } from '../math/Geometric3';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { RigidBody3 } from './RigidBody3';
+import { Euclidean3 } from './Euclidean3';
 
 /**
  * A solid cylinder of uniform density.
  */
-export class Cylinder3 extends RigidBody3 {
+export class Cylinder3 extends RigidBody<Geometric3> {
 
     /**
      * The dimension corresponding to the radius.
@@ -38,7 +39,7 @@ export class Cylinder3 extends RigidBody3 {
      * 
      */
     constructor(radius = Geometric3.one, height = Geometric3.one) {
-        super();
+        super(new Euclidean3());
 
         this.radius_ = Geometric3.copy(radius);
         this.radiusLock_ = this.radius_.lock();

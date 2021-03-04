@@ -11,5 +11,3 @@ export interface MatrixLike {
     uom: Unit;
     getElement(row: number, column: number): number;
 }
-
-export default MatrixLike;
