@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.6';
+                    this.VERSION = '1.0.7';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -4924,6 +4924,26 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                         return this;
                     }
                 };
+                Geometric2.prototype.ext = function (m) {
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().ext(m));
+                    } else {
+                        var a0 = this.a;
+                        var a1 = this.x;
+                        var a2 = this.y;
+                        var a3 = this.b;
+                        var b0 = m.a;
+                        var b1 = m.x;
+                        var b2 = m.y;
+                        var b3 = m.b;
+                        this.a = a0 * b0;
+                        this.x = a0 * b1 + a1 * b0;
+                        this.y = a0 * b2 + a2 * b0;
+                        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+                        this.uom = Unit_1.Unit.mul(this.uom, m.uom);
+                        return this;
+                    }
+                };
                 Geometric2.prototype.inv = function () {
                     if (this.lock_ !== UNLOCKED) {
                         return lock(this.clone().inv());
@@ -4967,6 +4987,27 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                 };
                 Geometric2.prototype.magnitudeSansUnits = function () {
                     return Math.sqrt(this.squaredNormSansUnits());
+                };
+                Geometric2.prototype.mul = function (rhs) {
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().mul(rhs));
+                    } else {
+                        var lhs = this;
+                        var a0 = lhs.a;
+                        var a1 = lhs.x;
+                        var a2 = lhs.y;
+                        var a3 = lhs.b;
+                        var b0 = rhs.a;
+                        var b1 = rhs.x;
+                        var b2 = rhs.y;
+                        var b3 = rhs.b;
+                        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+                        this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
+                        this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
+                        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+                        this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
+                        return this;
+                    }
                 };
                 Geometric2.prototype.mulByBivector = function (B) {
                     if (this.lock_ !== UNLOCKED) {
@@ -5171,26 +5212,6 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                         }
                         this.x -= v.x * α;
                         this.y -= v.y * α;
-                        return this;
-                    }
-                };
-                Geometric2.prototype.ext = function (m) {
-                    if (this.lock_ !== UNLOCKED) {
-                        return lock(this.clone().ext(m));
-                    } else {
-                        var a0 = this.a;
-                        var a1 = this.x;
-                        var a2 = this.y;
-                        var a3 = this.b;
-                        var b0 = m.a;
-                        var b1 = m.x;
-                        var b2 = m.y;
-                        var b3 = m.b;
-                        this.a = a0 * b0;
-                        this.x = a0 * b1 + a1 * b0;
-                        this.y = a0 * b2 + a2 * b0;
-                        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
-                        this.uom = Unit_1.Unit.mul(this.uom, m.uom);
                         return this;
                     }
                 };

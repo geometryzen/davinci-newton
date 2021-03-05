@@ -593,6 +593,32 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
     }
 
     /**
+     * @param m
+     * @returns this ^ m
+     */
+    ext(m: GeometricE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().ext(m));
+        }
+        else {
+            const a0 = this.a;
+            const a1 = this.x;
+            const a2 = this.y;
+            const a3 = this.b;
+            const b0 = m.a;
+            const b1 = m.x;
+            const b2 = m.y;
+            const b3 = m.b;
+            this.a = a0 * b0;
+            this.x = a0 * b1 + a1 * b0;
+            this.y = a0 * b2 + a2 * b0;
+            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            this.uom = Unit.mul(this.uom, m.uom);
+            return this;
+        }
+    }
+
+    /**
      * Computes the inverse of this multivector.
      * TODO: Define what inverse means. 
      * @returns inverse(this)
@@ -671,6 +697,33 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
      */
     private magnitudeSansUnits(): number {
         return Math.sqrt(this.squaredNormSansUnits());
+    }
+
+    /**
+     * @param rhs
+     * @returns this * m
+     */
+    mul(rhs: GeometricE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().mul(rhs));
+        }
+        else {
+            const lhs = this;
+            const a0 = lhs.a;
+            const a1 = lhs.x;
+            const a2 = lhs.y;
+            const a3 = lhs.b;
+            const b0 = rhs.a;
+            const b1 = rhs.x;
+            const b2 = rhs.y;
+            const b3 = rhs.b;
+            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+            this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
+            this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
+            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        }
     }
 
     public mulByBivector(B: BivectorE2): Geometric2 {
@@ -967,32 +1020,6 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
             }
             this.x -= v.x * α;
             this.y -= v.y * α;
-            return this;
-        }
-    }
-
-    /**
-     * @param m
-     * @returns this ^ m
-     */
-    ext(m: GeometricE2): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().ext(m));
-        }
-        else {
-            const a0 = this.a;
-            const a1 = this.x;
-            const a2 = this.y;
-            const a3 = this.b;
-            const b0 = m.a;
-            const b1 = m.x;
-            const b2 = m.y;
-            const b3 = m.b;
-            this.a = a0 * b0;
-            this.x = a0 * b1 + a1 * b0;
-            this.y = a0 * b2 + a2 * b0;
-            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
-            this.uom = Unit.mul(this.uom, m.uom);
             return this;
         }
     }
