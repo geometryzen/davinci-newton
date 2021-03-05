@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.4
+// Type definitions for davinci-newton 1.0.5
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2247,7 +2247,14 @@ declare namespace NEWTON {
     }
 
     /**
-     * @deprecated Force3 is deprecated. Please use Force instead.
+     *
+     */
+    export class Force2 extends Force<Geometric2> {
+        constructor(body: ForceBody<Geometric2>);
+    }
+
+    /**
+     *
      */
     export class Force3 extends Force<Geometric3> {
         constructor(body: ForceBody<Geometric3>);
@@ -2643,7 +2650,13 @@ declare namespace NEWTON {
     }
 
     /**
-     * @deprecated Spring3 is deprecated. Please use Spring instead.
+     *
+     */
+    export class Spring2 extends Spring<Geometric2> {
+        constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
+    }
+    /**
+     *
      */
     export class Spring3 extends Spring<Geometric3> {
         constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);

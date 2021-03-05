@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.4';
+            this.VERSION = '1.0.5';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5379,6 +5379,33 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+define('davinci-newton/engine2D/Force2',["require", "exports", "../core/Force"], function (require, exports, Force_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Force2 = void 0;
+    var Force2 = (function (_super) {
+        __extends(Force2, _super);
+        function Force2(body) {
+            return _super.call(this, body, body.metric) || this;
+        }
+        return Force2;
+    }(Force_1.Force));
+    exports.Force2 = Force2;
+});
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define('davinci-newton/engine2D/Physics2',["require", "exports", "../core/State", "./Dynamics2", "./Euclidean2"], function (require, exports, State_1, Dynamics2_1, Euclidean2_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -5391,6 +5418,33 @@ define('davinci-newton/engine2D/Physics2',["require", "exports", "../core/State"
         return Physics2;
     }(State_1.State));
     exports.Physics2 = Physics2;
+});
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define('davinci-newton/engine2D/Spring2',["require", "exports", "../core/Spring"], function (require, exports, Spring_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Spring2 = void 0;
+    var Spring2 = (function (_super) {
+        __extends(Spring2, _super);
+        function Spring2(body1, body2) {
+            return _super.call(this, body1, body2) || this;
+        }
+        return Spring2;
+    }(Spring_1.Spring));
+    exports.Spring2 = Spring2;
 });
 
 define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
@@ -9014,9 +9068,7 @@ define('davinci-newton/engine3D/Force3',["require", "exports", "../core/Force"],
     var Force3 = (function (_super) {
         __extends(Force3, _super);
         function Force3(body) {
-            var _this = _super.call(this, body, body.metric) || this;
-            console.warn("Force3 is deprecated. Please use Force instead.");
-            return _this;
+            return _super.call(this, body, body.metric) || this;
         }
         return Force3;
     }(Force_1.Force));
@@ -9133,9 +9185,7 @@ define('davinci-newton/engine3D/Spring3',["require", "exports", "../core/Spring"
     var Spring3 = (function (_super) {
         __extends(Spring3, _super);
         function Spring3(body1, body2) {
-            var _this = _super.call(this, body1, body2) || this;
-            console.warn("Spring3 is deprecated. Please use Spring instead.");
-            return _this;
+            return _super.call(this, body1, body2) || this;
         }
         return Spring3;
     }(Spring_1.Spring));
@@ -12232,7 +12282,7 @@ define('davinci-newton/strategy/DefaultAdvanceStrategy',["require", "exports", "
     exports.DefaultAdvanceStrategy = DefaultAdvanceStrategy;
 });
 
-define('davinci-newton',["require", "exports", "./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (require, exports, config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Physics2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1) {
+define('davinci-newton',["require", "exports", "./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Force2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine2D/Spring2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (require, exports, config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Force2_1, Physics2_1, Spring2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var newton = {
@@ -12263,6 +12313,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/config", "./dav
         get Euclidean2() { return Euclidean2_1.Euclidean2; },
         get Euclidean3() { return Euclidean3_1.Euclidean3; },
         get Force() { return Force_1.Force; },
+        get Force2() { return Force2_1.Force2; },
         get Force3() { return Force3_1.Force3; },
         get Geometric2() { return Geometric2_1.Geometric2; },
         get Geometric3() { return Geometric3_1.Geometric3; },
@@ -12282,6 +12333,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/config", "./dav
         get SimView() { return SimView_1.SimView; },
         get Sphere3() { return Sphere3_1.Sphere3; },
         get Spring() { return Spring_1.Spring; },
+        get Spring2() { return Spring2_1.Spring2; },
         get Spring3() { return Spring3_1.Spring3; },
         get Unit() { return Unit_1.Unit; },
         get VarsList() { return VarsList_1.VarsList; },

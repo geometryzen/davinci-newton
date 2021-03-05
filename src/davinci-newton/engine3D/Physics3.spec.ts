@@ -9,7 +9,7 @@ import { Spring3 } from './Spring3';
 import { EnergyTimeGraph } from '../graph/EnergyTimeGraph';
 
 describe("Physics3", function () {
-    it("shoulkd be backwards compatible.", function () {
+    it("should be backwards compatible.", function () {
         const e1 = G3.e1;
         const e2 = G3.e2;
         const e3 = G3.e3;

@@ -12,7 +12,9 @@ import { Block2 } from './davinci-newton/engine2D/Block2';
 import { Disc2 } from './davinci-newton/engine2D/Disc2';
 import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
 import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
+import { Force2 } from './davinci-newton/engine2D/Force2';
 import { Physics2 } from './davinci-newton/engine2D/Physics2';
+import { Spring2 } from './davinci-newton/engine2D/Spring2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
@@ -162,6 +164,10 @@ const newton = {
     /**
      * 
      */
+    get Force2() { return Force2; },
+    /**
+     * 
+     */
     get Force3() { return Force3; },
     /**
      * 
@@ -236,8 +242,11 @@ const newton = {
      */
     get Spring() { return Spring; },
     /**
-     * @deprecated Use Spring instead.
-     * This will be removed in version 2.0.
+     *
+     */
+    get Spring2() { return Spring2; },
+    /**
+     *
      */
     get Spring3() { return Spring3; },
     /**

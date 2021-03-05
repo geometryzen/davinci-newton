@@ -4,10 +4,6 @@ import { Geometric3 } from "../math/Geometric3";
 import { Dynamics3 } from "./Dynamics3";
 import { Euclidean3 } from "./Euclidean3";
 
-//
-// Implementation of the Physics3 engine for backwards compatibility.
-//
-
 /**
  *
  */
