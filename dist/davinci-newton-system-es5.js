@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.9';
+                    this.VERSION = '1.0.10';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -141,104 +141,6 @@ System.register("davinci-newton/core/CoulombLaw.js", ["../model/CoordType", "../
                 return CoulombLaw;
             }(AbstractSimObject_1.AbstractSimObject);
             exports_1("CoulombLaw", CoulombLaw);
-        }
-    };
-});
-System.register("davinci-newton/core/GravitationLaw.js", ["../model/CoordType", "../objects/AbstractSimObject", "./Force"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var CoordType_1, AbstractSimObject_1, Force_1, GravitationLaw;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (Force_1_1) {
-            Force_1 = Force_1_1;
-        }],
-        execute: function () {
-            GravitationLaw = function (_super) {
-                __extends(GravitationLaw, _super);
-                function GravitationLaw(body1_, body2_, G) {
-                    var _this = _super.call(this) || this;
-                    _this.body1_ = body1_;
-                    _this.body2_ = body2_;
-                    _this.forces = [];
-                    _this.metric = body1_.metric;
-                    var metric = _this.metric;
-                    _this.F1 = new Force_1.Force(_this.body1_, metric);
-                    _this.F1.locationCoordType = CoordType_1.WORLD;
-                    _this.F1.vectorCoordType = CoordType_1.WORLD;
-                    _this.F2 = new Force_1.Force(_this.body2_, metric);
-                    _this.F2.locationCoordType = CoordType_1.WORLD;
-                    _this.F2.vectorCoordType = CoordType_1.WORLD;
-                    _this.G = G;
-                    _this.forces = [_this.F1, _this.F2];
-                    _this.potentialEnergy_ = metric.zero();
-                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-                    return _this;
-                }
-                GravitationLaw.prototype.updateForces = function () {
-                    var numer = this.F1.location;
-                    var denom = this.F2.location;
-                    var metric = this.metric;
-                    metric.copyVector(this.body2_.X, numer);
-                    metric.subVector(numer, this.body1_.X);
-                    metric.copyVector(numer, denom);
-                    metric.quaditude(denom, true);
-                    metric.direction(numer, true);
-                    metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
-                    metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-                    metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-                    metric.copyVector(numer, this.F1.vector);
-                    metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
-                    metric.copyVector(this.F1.vector, this.F2.vector);
-                    metric.neg(this.F2.vector);
-                    metric.copyVector(this.body1_.X, this.F1.location);
-                    metric.copyVector(this.body2_.X, this.F2.location);
-                    return this.forces;
-                };
-                GravitationLaw.prototype.disconnect = function () {};
-                GravitationLaw.prototype.potentialEnergy = function () {
-                    var metric = this.metric;
-                    metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-                    var numer = this.F1.location;
-                    var denom = this.F2.location;
-                    metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
-                    metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-                    metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-                    metric.neg(numer);
-                    metric.copyVector(this.body1_.X, denom);
-                    metric.subVector(denom, this.body2_.X);
-                    metric.magnitude(denom, true);
-                    metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
-                    metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
-                    metric.copyVector(this.body1_.X, this.F1.location);
-                    metric.copyVector(this.body2_.X, this.F2.location);
-                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-                    return this.potentialEnergy_;
-                };
-                return GravitationLaw;
-            }(AbstractSimObject_1.AbstractSimObject);
-            exports_1("GravitationLaw", GravitationLaw);
         }
     };
 });
@@ -549,6 +451,46 @@ System.register("davinci-newton/engine2D/Force2.js", ["../core/Force"], function
                 return Force2;
             }(Force_1.Force);
             exports_1("Force2", Force2);
+        }
+    };
+});
+System.register("davinci-newton/engine2D/GravitationForceLaw2.js", ["../core/GravitationLaw", "../math/Geometric2"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var GravitationLaw_1, Geometric2_1, GravitationForceLaw2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (GravitationLaw_1_1) {
+            GravitationLaw_1 = GravitationLaw_1_1;
+        }, function (Geometric2_1_1) {
+            Geometric2_1 = Geometric2_1_1;
+        }],
+        execute: function () {
+            GravitationForceLaw2 = function (_super) {
+                __extends(GravitationForceLaw2, _super);
+                function GravitationForceLaw2(body1, body2) {
+                    return _super.call(this, body1, body2, Geometric2_1.Geometric2.one) || this;
+                }
+                return GravitationForceLaw2;
+            }(GravitationLaw_1.GravitationLaw);
+            exports_1("GravitationForceLaw2", GravitationForceLaw2);
         }
     };
 });
@@ -1334,6 +1276,144 @@ System.register("davinci-newton/engine3D/Force3.js", ["../core/Force"], function
                 return Force3;
             }(Force_1.Force);
             exports_1("Force3", Force3);
+        }
+    };
+});
+System.register("davinci-newton/core/GravitationLaw.js", ["../model/CoordType", "../objects/AbstractSimObject", "./Force"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var CoordType_1, AbstractSimObject_1, Force_1, GravitationLaw;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
+        }],
+        execute: function () {
+            GravitationLaw = function (_super) {
+                __extends(GravitationLaw, _super);
+                function GravitationLaw(body1_, body2_, G) {
+                    var _this = _super.call(this) || this;
+                    _this.body1_ = body1_;
+                    _this.body2_ = body2_;
+                    _this.forces = [];
+                    _this.metric = body1_.metric;
+                    var metric = _this.metric;
+                    _this.F1 = new Force_1.Force(_this.body1_, metric);
+                    _this.F1.locationCoordType = CoordType_1.WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.WORLD;
+                    _this.F2 = new Force_1.Force(_this.body2_, metric);
+                    _this.F2.locationCoordType = CoordType_1.WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.WORLD;
+                    _this.G = G;
+                    _this.forces = [_this.F1, _this.F2];
+                    _this.potentialEnergy_ = metric.zero();
+                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+                    return _this;
+                }
+                GravitationLaw.prototype.updateForces = function () {
+                    var numer = this.F1.location;
+                    var denom = this.F2.location;
+                    var metric = this.metric;
+                    metric.copyVector(this.body2_.X, numer);
+                    metric.subVector(numer, this.body1_.X);
+                    metric.copyVector(numer, denom);
+                    metric.quaditude(denom, true);
+                    metric.direction(numer, true);
+                    metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
+                    metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+                    metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
+                    metric.copyVector(numer, this.F1.vector);
+                    metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
+                    metric.copyVector(this.F1.vector, this.F2.vector);
+                    metric.neg(this.F2.vector);
+                    metric.copyVector(this.body1_.X, this.F1.location);
+                    metric.copyVector(this.body2_.X, this.F2.location);
+                    return this.forces;
+                };
+                GravitationLaw.prototype.disconnect = function () {};
+                GravitationLaw.prototype.potentialEnergy = function () {
+                    var metric = this.metric;
+                    metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+                    var numer = this.F1.location;
+                    var denom = this.F2.location;
+                    metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
+                    metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+                    metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
+                    metric.neg(numer);
+                    metric.copyVector(this.body1_.X, denom);
+                    metric.subVector(denom, this.body2_.X);
+                    metric.magnitude(denom, true);
+                    metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
+                    metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
+                    metric.copyVector(this.body1_.X, this.F1.location);
+                    metric.copyVector(this.body2_.X, this.F2.location);
+                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+                    return this.potentialEnergy_;
+                };
+                return GravitationLaw;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("GravitationLaw", GravitationLaw);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/GravitationForceLaw3.js", ["../core/GravitationLaw", "../math/Geometric3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var GravitationLaw_1, Geometric3_1, GravitationForceLaw3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (GravitationLaw_1_1) {
+            GravitationLaw_1 = GravitationLaw_1_1;
+        }, function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }],
+        execute: function () {
+            GravitationForceLaw3 = function (_super) {
+                __extends(GravitationForceLaw3, _super);
+                function GravitationForceLaw3(body1, body2) {
+                    return _super.call(this, body1, body2, Geometric3_1.Geometric3.one) || this;
+                }
+                return GravitationForceLaw3;
+            }(GravitationLaw_1.GravitationLaw);
+            exports_1("GravitationForceLaw3", GravitationForceLaw3);
         }
     };
 });
@@ -13178,10 +13258,10 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/ConstantForceLaw2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Force2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine2D/Spring2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/ConstantForceLaw2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Force2", "./davinci-newton/engine2D/GravitationForceLaw2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine2D/Spring2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/GravitationForceLaw3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
     "use strict";
 
-    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, ConstantForceLaw2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Force2_1, Physics2_1, Spring2_1, Block3_1, ConstantForceLaw3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
+    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, ConstantForceLaw2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Force2_1, GravitationForceLaw2_1, Physics2_1, Spring2_1, Block3_1, ConstantForceLaw3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, GravitationForceLaw3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (config_1_1) {
@@ -13216,6 +13296,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             Euclidean2_1 = Euclidean2_1_1;
         }, function (Force2_1_1) {
             Force2_1 = Force2_1_1;
+        }, function (GravitationForceLaw2_1_1) {
+            GravitationForceLaw2_1 = GravitationForceLaw2_1_1;
         }, function (Physics2_1_1) {
             Physics2_1 = Physics2_1_1;
         }, function (Spring2_1_1) {
@@ -13232,6 +13314,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             Euclidean3_1 = Euclidean3_1_1;
         }, function (Force3_1_1) {
             Force3_1 = Force3_1_1;
+        }, function (GravitationForceLaw3_1_1) {
+            GravitationForceLaw3_1 = GravitationForceLaw3_1_1;
         }, function (Physics3_1_1) {
             Physics3_1 = Physics3_1_1;
         }, function (Sphere3_1_1) {
@@ -13398,6 +13482,12 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get GravitationLaw() {
                     return GravitationLaw_1.GravitationLaw;
+                },
+                get GravitationForceLaw2() {
+                    return GravitationForceLaw2_1.GravitationForceLaw2;
+                },
+                get GravitationForceLaw3() {
+                    return GravitationForceLaw3_1.GravitationForceLaw3;
                 },
                 get LabCanvas() {
                     return LabCanvas_1.LabCanvas;

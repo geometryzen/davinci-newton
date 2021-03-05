@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.9
+// Type definitions for davinci-newton 1.0.10
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2226,16 +2226,7 @@ declare namespace NEWTON {
         constructor(radius?: GeometricE3);
     }
 
-    enum CoordType {
-        /**
-         * The coordinate frame that is fixed in relation to the rigid body.
-         */
-        LOCAL = 0,
-        /**
-         * The coordinate frame used as the basis for position and attitude of all bodies.
-         */
-        WORLD = 1
-    }
+    type CoordType = 0 | 1;
 
     /**
      * The application of a force to a particle in a rigid body.
@@ -2605,11 +2596,11 @@ declare namespace NEWTON {
     }
 
     export class ConstantForceLaw2 extends ConstantForceLaw<Geometric2> {
-        constructor(body: ForceBody<Geometric2>, vector: Geometric2, vectorCoordType: CoordType);
+        constructor(body: ForceBody<Geometric2>, vector: Geometric2, vectorCoordType?: CoordType);
     }
 
     export class ConstantForceLaw3 extends ConstantForceLaw<Geometric3> {
-        constructor(body: ForceBody<Geometric3>, vector: Geometric3, vectorCoordType: CoordType);
+        constructor(body: ForceBody<Geometric3>, vector: Geometric3, vectorCoordType?: CoordType);
     }
 
     /**
@@ -2617,7 +2608,7 @@ declare namespace NEWTON {
      */
     class CoulombLaw<T> implements ForceLaw<T> {
         /**
-         * 
+         *
          */
         k: Geometric3;
         /**
@@ -2631,6 +2622,45 @@ declare namespace NEWTON {
         updateForces(): Force<T>[];
         disconnect(): void;
         potentialEnergy(): T;
+    }
+
+    export class GravitationLaw<T> implements ForceLaw<T> {
+        /**
+         * The proportionality constant, Newton's constant.
+         * The default value is one (1).
+         */
+        public G: T;
+        /**
+         * 
+         */
+        expireTime: number;
+        /**
+         * 
+         */
+        constructor(body1_: RigidBody<T>, body2_: RigidBody<T>, G: T);
+        /**
+         * Computes the forces due to the gravitational interaction.
+         * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
+         */
+        updateForces(): Force<T>[];
+        /**
+         * 
+         */
+        disconnect(): void;
+        /**
+         * Computes the potential energy of the gravitational interaction.
+         * U = -G m1 m2 / r, where
+         * r is the center-of-mass to center-of-mass separation of m1 and m2.
+         */
+        potentialEnergy(): T;
+    }
+
+    export class GravitationForceLaw2 extends GravitationLaw<Geometric2> {
+        constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
+    }
+
+    export class GravitationForceLaw3 extends GravitationLaw<Geometric3> {
+        constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);
     }
 
     /**

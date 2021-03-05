@@ -14,6 +14,7 @@ import { Disc2 } from './davinci-newton/engine2D/Disc2';
 import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
 import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
 import { Force2 } from './davinci-newton/engine2D/Force2';
+import { GravitationForceLaw2 } from './davinci-newton/engine2D/GravitationForceLaw2';
 import { Physics2 } from './davinci-newton/engine2D/Physics2';
 import { Spring2 } from './davinci-newton/engine2D/Spring2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
@@ -22,6 +23,7 @@ import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
 import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
 import { Force3 } from './davinci-newton/engine3D/Force3';
+import { GravitationForceLaw3 } from './davinci-newton/engine3D/GravitationForceLaw3';
 import { Physics3 } from './davinci-newton/engine3D/Physics3';
 import { Sphere3 } from './davinci-newton/engine3D/Sphere3';
 import { Spring3 } from './davinci-newton/engine3D/Spring3';
@@ -199,6 +201,14 @@ const newton = {
      * 
      */
     get GravitationLaw() { return GravitationLaw; },
+    /**
+     * 
+     */
+    get GravitationForceLaw2() { return GravitationForceLaw2; },
+    /**
+     * 
+     */
+    get GravitationForceLaw3() { return GravitationForceLaw3; },
     /**
      * 
      */
