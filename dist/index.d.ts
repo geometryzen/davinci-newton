@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.3
+// Type definitions for davinci-newton 1.0.4
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2246,6 +2246,9 @@ declare namespace NEWTON {
         getBody(): RigidBody<T>;
     }
 
+    /**
+     * @deprecated Force3 is deprecated. Please use Force instead.
+     */
     export class Force3 extends Force<Geometric3> {
         constructor(body: ForceBody<Geometric3>);
     }
@@ -2348,8 +2351,18 @@ declare namespace NEWTON {
     }
 
     /**
+     * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+     * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
+     * It uses Geometric2 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
+     */
+    export class Physics2 extends State<Geometric2> implements EnergySystem<Geometric2> {
+        constructor();
+    }
+
+    /**
      * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
      * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
+     * It uses Geometric3 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
      */
     export class Physics3 extends State<Geometric3> implements EnergySystem<Geometric3> {
         constructor();
@@ -2630,8 +2643,7 @@ declare namespace NEWTON {
     }
 
     /**
-     * @deprecated Please use Spring instead.
-     * This will be removed in version 2.0.
+     * @deprecated Spring3 is deprecated. Please use Spring instead.
      */
     export class Spring3 extends Spring<Geometric3> {
         constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);

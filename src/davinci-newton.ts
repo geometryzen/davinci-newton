@@ -12,6 +12,7 @@ import { Block2 } from './davinci-newton/engine2D/Block2';
 import { Disc2 } from './davinci-newton/engine2D/Disc2';
 import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
 import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
+import { Physics2 } from './davinci-newton/engine2D/Physics2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
@@ -202,6 +203,10 @@ const newton = {
      * 
      */
     get Particle() { return Particle; },
+    /**
+     * 
+     */
+    get Physics2() { return Physics2; },
     /**
      * 
      */
