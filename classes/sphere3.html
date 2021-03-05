@@ -52,7 +52,13 @@
 					<a href="sphere3.html#constructor" class="tsd-kind-icon">constructor</a>
 				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+					<a href="sphere3.html#centerofmasslocallock_" class="tsd-kind-icon">center<wbr>OfMass<wbr>Local<wbr>Lock_</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
 					<a href="sphere3.html#centerofmasslocal_" class="tsd-kind-icon">center<wbr>OfMass<wbr>Local_</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
+					<a href="sphere3.html#metric" class="tsd-kind-icon">metric</a>
 				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a href="sphere3.html#uuid" class="tsd-kind-icon">uuid</a>
@@ -128,7 +134,7 @@
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<a href="rigidbody3.html" class="tsd-signature-type">RigidBody3</a>
+					<a href="rigidbody.html" class="tsd-signature-type">RigidBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span>
 					<ul class="tsd-hierarchy">
 						<li>
 							<span class="target">Sphere3</span>
@@ -141,9 +147,9 @@
 			<h3>Implements</h3>
 			<ul class="tsd-hierarchy">
 				<li><a href="../interfaces/simobject.html" class="tsd-signature-type">SimObject</a></li>
-				<li><a href="../interfaces/forcebody3.html" class="tsd-signature-type">ForceBody3</a></li>
-				<li><a href="../interfaces/massive3.html" class="tsd-signature-type">Massive3</a></li>
-				<li><a href="../interfaces/charged3.html" class="tsd-signature-type">Charged3</a></li>
+				<li><a href="../interfaces/forcebody.html" class="tsd-signature-type">ForceBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></li>
+				<li><a href="../interfaces/massive.html" class="tsd-signature-type">Massive</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></li>
+				<li><a href="../interfaces/charged.html" class="tsd-signature-type">Charged</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -159,7 +165,9 @@
 					<section class="tsd-index-section tsd-is-inherited tsd-is-external">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="sphere3.html#centerofmasslocallock_" class="tsd-kind-icon">center<wbr>OfMass<wbr>Local<wbr>Lock_</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external"><a href="sphere3.html#centerofmasslocal_" class="tsd-kind-icon">center<wbr>OfMass<wbr>Local_</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="sphere3.html#metric" class="tsd-kind-icon">metric</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="sphere3.html#uuid" class="tsd-kind-icon">uuid</a></li>
 						</ul>
 					</section>
@@ -205,9 +213,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Overrides <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#constructor">constructor</a></p>
+							<p>Overrides <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#constructor">constructor</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/Sphere3.ts#L29">davinci-newton/engine3D/Sphere3.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/engine3D/Sphere3.ts#L30">davinci-newton/engine3D/Sphere3.ts:30</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -224,13 +232,24 @@
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-external">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
+				<a name="centerofmasslocallock_" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagProtected">Protected</span> center<wbr>OfMass<wbr>Local<wbr>Lock_</h3>
+				<div class="tsd-signature tsd-kind-icon">center<wbr>OfMass<wbr>Local<wbr>Lock_<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<aside class="tsd-sources">
+					<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#centerofmasslocallock_">centerOfMassLocalLock_</a></p>
+					<ul>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L88">davinci-newton/core/RigidBody.ts:88</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected tsd-is-external">
 				<a name="centerofmasslocal_" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagProtected">Protected</span> center<wbr>OfMass<wbr>Local_</h3>
-				<div class="tsd-signature tsd-kind-icon">center<wbr>OfMass<wbr>Local_<span class="tsd-signature-symbol">:</span> <a href="vec3.html" class="tsd-signature-type">Vec3</a><span class="tsd-signature-symbol"> = Vec3.zero</span></div>
+				<div class="tsd-signature tsd-kind-icon">center<wbr>OfMass<wbr>Local_<span class="tsd-signature-symbol">:</span> <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></div>
 				<aside class="tsd-sources">
-					<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#centerofmasslocal_">centerOfMassLocal_</a></p>
+					<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#centerofmasslocal_">centerOfMassLocal_</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L125">davinci-newton/engine3D/RigidBody3.ts:125</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L87">davinci-newton/core/RigidBody.ts:87</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -240,14 +259,26 @@
 				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
+				<a name="metric" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> metric</h3>
+				<div class="tsd-signature tsd-kind-icon">metric<span class="tsd-signature-symbol">:</span> <a href="../interfaces/metric.html" class="tsd-signature-type">Metric</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<p>Implementation of <a href="../interfaces/charged.html">Charged</a>.<a href="../interfaces/charged.html#metric">metric</a></p>
+					<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#metric">metric</a></p>
+					<ul>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L110">davinci-newton/core/RigidBody.ts:110</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 				<a name="uuid" class="tsd-anchor"></a>
 				<h3>uuid</h3>
 				<div class="tsd-signature tsd-kind-icon">uuid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
-					<p>Implementation of <a href="../interfaces/charged3.html">Charged3</a>.<a href="../interfaces/charged3.html#uuid">uuid</a></p>
-					<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#uuid">uuid</a></p>
+					<p>Implementation of <a href="../interfaces/charged.html">Charged</a>.<a href="../interfaces/charged.html#uuid">uuid</a></p>
+					<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#uuid">uuid</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L68">davinci-newton/engine3D/RigidBody3.ts:68</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L30">davinci-newton/core/RigidBody.ts:30</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -270,9 +301,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#i">I</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#i">I</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L220">davinci-newton/engine3D/RigidBody3.ts:220</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L205">davinci-newton/core/RigidBody.ts:205</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -284,9 +315,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#i">I</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#i">I</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L227">davinci-newton/engine3D/RigidBody3.ts:227</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L211">davinci-newton/core/RigidBody.ts:211</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -314,9 +345,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#iinv">Iinv</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#iinv">Iinv</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L235">davinci-newton/engine3D/RigidBody3.ts:235</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L218">davinci-newton/core/RigidBody.ts:218</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -328,9 +359,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#iinv">Iinv</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#iinv">Iinv</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L238">davinci-newton/engine3D/RigidBody3.ts:238</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L221">davinci-newton/core/RigidBody.ts:221</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -358,9 +389,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#l">L</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#l">L</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L285">davinci-newton/engine3D/RigidBody3.ts:285</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L268">davinci-newton/core/RigidBody.ts:268</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -373,9 +404,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#l">L</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#l">L</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L288">davinci-newton/engine3D/RigidBody3.ts:288</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L271">davinci-newton/core/RigidBody.ts:271</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -404,9 +435,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#m">M</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#m">M</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L165">davinci-newton/engine3D/RigidBody3.ts:165</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L148">davinci-newton/core/RigidBody.ts:148</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -419,9 +450,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#m">M</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#m">M</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L168">davinci-newton/engine3D/RigidBody3.ts:168</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L151">davinci-newton/core/RigidBody.ts:151</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -450,9 +481,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#p">P</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#p">P</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L273">davinci-newton/engine3D/RigidBody3.ts:273</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L256">davinci-newton/core/RigidBody.ts:256</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -465,9 +496,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#p">P</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#p">P</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L276">davinci-newton/engine3D/RigidBody3.ts:276</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L259">davinci-newton/core/RigidBody.ts:259</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -496,9 +527,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#q">Q</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#q">Q</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L180">davinci-newton/engine3D/RigidBody3.ts:180</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L163">davinci-newton/core/RigidBody.ts:163</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -511,9 +542,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#q">Q</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#q">Q</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L183">davinci-newton/engine3D/RigidBody3.ts:183</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L166">davinci-newton/core/RigidBody.ts:166</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -542,9 +573,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#r">R</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#r">R</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L261">davinci-newton/engine3D/RigidBody3.ts:261</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L244">davinci-newton/core/RigidBody.ts:244</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -557,9 +588,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#r">R</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#r">R</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L264">davinci-newton/engine3D/RigidBody3.ts:264</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L247">davinci-newton/core/RigidBody.ts:247</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -588,9 +619,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#x">X</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#x">X</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L249">davinci-newton/engine3D/RigidBody3.ts:249</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L232">davinci-newton/core/RigidBody.ts:232</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -603,9 +634,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#x">X</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#x">X</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L252">davinci-newton/engine3D/RigidBody3.ts:252</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L235">davinci-newton/core/RigidBody.ts:235</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -628,15 +659,15 @@
 				<a name="centerofmasslocal" class="tsd-anchor"></a>
 				<h3>center<wbr>OfMass<wbr>Local</h3>
 				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> centerOfMassLocal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> centerOfMassLocal<span class="tsd-signature-symbol">(</span>centerOfMassLocal<span class="tsd-signature-symbol">: </span><a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> centerOfMassLocal<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> centerOfMassLocal<span class="tsd-signature-symbol">(</span>centerOfMassLocal<span class="tsd-signature-symbol">: </span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#centerofmasslocal">centerOfMassLocal</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#centerofmasslocal">centerOfMassLocal</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L154">davinci-newton/engine3D/RigidBody3.ts:154</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L135">davinci-newton/core/RigidBody.ts:135</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -644,13 +675,13 @@
 								<p>The center of mass position vector in local coordinates.</p>
 							</div>
 						</div>
-						<h4 class="tsd-returns-title">Returns <a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a></h4>
+						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#centerofmasslocal">centerOfMassLocal</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#centerofmasslocal">centerOfMassLocal</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L157">davinci-newton/engine3D/RigidBody3.ts:157</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L138">davinci-newton/core/RigidBody.ts:138</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -661,7 +692,7 @@
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>centerOfMassLocal: <a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a></h5>
+								<h5>centerOfMassLocal: <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -677,10 +708,10 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#expiretime">expireTime</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#expiretime">expireTime</a></p>
 							<p>Overrides <a href="abstractsimobject.html">AbstractSimObject</a>.<a href="abstractsimobject.html#expiretime">expireTime</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L310">davinci-newton/engine3D/RigidBody3.ts:310</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L293">davinci-newton/core/RigidBody.ts:293</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -698,7 +729,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/Sphere3.ts#L41">davinci-newton/engine3D/Sphere3.ts:41</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/engine3D/Sphere3.ts#L42">davinci-newton/engine3D/Sphere3.ts:42</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -706,7 +737,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/Sphere3.ts#L44">davinci-newton/engine3D/Sphere3.ts:44</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/engine3D/Sphere3.ts#L45">davinci-newton/engine3D/Sphere3.ts:45</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -729,18 +760,18 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#varsindex">varsIndex</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#varsindex">varsIndex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L317">davinci-newton/engine3D/RigidBody3.ts:317</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L300">davinci-newton/core/RigidBody.ts:300</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#varsindex">varsIndex</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#varsindex">varsIndex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L320">davinci-newton/engine3D/RigidBody3.ts:320</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L303">davinci-newton/core/RigidBody.ts:303</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -763,9 +794,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#_">Ω</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#_">Ω</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L297">davinci-newton/engine3D/RigidBody3.ts:297</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L280">davinci-newton/core/RigidBody.ts:280</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -778,9 +809,9 @@
 					</li>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#_">Ω</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#_">Ω</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L301">davinci-newton/engine3D/RigidBody3.ts:301</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L284">davinci-newton/core/RigidBody.ts:284</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -806,14 +837,14 @@
 				<a name="localpointtoworldpoint" class="tsd-anchor"></a>
 				<h3>local<wbr>Point<wbr>ToWorld<wbr>Point</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-					<li class="tsd-signature tsd-kind-icon">local<wbr>Point<wbr>ToWorld<wbr>Point<span class="tsd-signature-symbol">(</span>localPoint<span class="tsd-signature-symbol">: </span><a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a>, worldPoint<span class="tsd-signature-symbol">: </span><a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">local<wbr>Point<wbr>ToWorld<wbr>Point<span class="tsd-signature-symbol">(</span>localPoint<span class="tsd-signature-symbol">: </span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a>, worldPoint<span class="tsd-signature-symbol">: </span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#localpointtoworldpoint">localPointToWorldPoint</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#localpointtoworldpoint">localPointToWorldPoint</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L353">davinci-newton/engine3D/RigidBody3.ts:353</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L342">davinci-newton/core/RigidBody.ts:342</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -825,10 +856,10 @@
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>localPoint: <a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a></h5>
+								<h5>localPoint: <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h5>
 							</li>
 							<li>
-								<h5>worldPoint: <a href="../interfaces/vectore3.html" class="tsd-signature-type">VectorE3</a></h5>
+								<h5>worldPoint: <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -844,10 +875,10 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Implementation of <a href="../interfaces/charged3.html">Charged3</a>.<a href="../interfaces/charged3.html#rotationalenergy">rotationalEnergy</a></p>
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#rotationalenergy">rotationalEnergy</a></p>
+							<p>Implementation of <a href="../interfaces/charged.html">Charged</a>.<a href="../interfaces/charged.html#rotationalenergy">rotationalEnergy</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#rotationalenergy">rotationalEnergy</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L330">davinci-newton/engine3D/RigidBody3.ts:330</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L313">davinci-newton/core/RigidBody.ts:313</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -871,10 +902,10 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Implementation of <a href="../interfaces/charged3.html">Charged3</a>.<a href="../interfaces/charged3.html#translationalenergy">translationalEnergy</a></p>
-							<p>Inherited from <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#translationalenergy">translationalEnergy</a></p>
+							<p>Implementation of <a href="../interfaces/charged.html">Charged</a>.<a href="../interfaces/charged.html#translationalenergy">translationalEnergy</a></p>
+							<p>Inherited from <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#translationalenergy">translationalEnergy</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/RigidBody3.ts#L341">davinci-newton/engine3D/RigidBody3.ts:341</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/core/RigidBody.ts#L327">davinci-newton/core/RigidBody.ts:327</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -895,10 +926,10 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Implementation of <a href="../interfaces/charged3.html">Charged3</a>.<a href="../interfaces/charged3.html#updateangularvelocity">updateAngularVelocity</a></p>
-							<p>Overrides <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#updateangularvelocity">updateAngularVelocity</a></p>
+							<p>Implementation of <a href="../interfaces/charged.html">Charged</a>.<a href="../interfaces/charged.html#updateangularvelocity">updateAngularVelocity</a></p>
+							<p>Overrides <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#updateangularvelocity">updateAngularVelocity</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/Sphere3.ts#L54">davinci-newton/engine3D/Sphere3.ts:54</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/engine3D/Sphere3.ts#L55">davinci-newton/engine3D/Sphere3.ts:55</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -919,9 +950,9 @@
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Overrides <a href="rigidbody3.html">RigidBody3</a>.<a href="rigidbody3.html#updateinertiatensor">updateInertiaTensor</a></p>
+							<p>Overrides <a href="rigidbody.html">RigidBody</a>.<a href="rigidbody.html#updateinertiatensor">updateInertiaTensor</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ff3d32f/src/davinci-newton/engine3D/Sphere3.ts#L66">davinci-newton/engine3D/Sphere3.ts:66</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/ef06ec8/src/davinci-newton/engine3D/Sphere3.ts#L67">davinci-newton/engine3D/Sphere3.ts:67</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
