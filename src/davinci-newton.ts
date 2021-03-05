@@ -80,7 +80,7 @@ const newton = {
     /**
      * 
      */
-    get Block() { return Block2; },
+    get Block2() { return Block2; },
     /**
      * 
      */

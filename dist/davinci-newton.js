@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.5';
+            this.VERSION = '1.0.6';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -12292,7 +12292,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/config", "./dav
         get AlignH() { return AlignH_1.AlignH; },
         get AlignV() { return AlignV_1.AlignV; },
         get AxisChoice() { return AxisChoice_1.AxisChoice; },
-        get Block() { return Block2_1.Block2; },
+        get Block2() { return Block2_1.Block2; },
         get Block3() { return Block3_1.Block3; },
         get CircularList() { return CircularList_1.CircularList; },
         get ConstantEnergySolver() { return ConstantEnergySolver_1.ConstantEnergySolver; },

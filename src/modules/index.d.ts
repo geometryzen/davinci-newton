@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.5
+// Type definitions for davinci-newton 1.0.6
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2156,7 +2156,16 @@ declare namespace NEWTON {
     }
 
     /**
-     * A rectangular block of uniform density.
+     * A rectangular block of uniform surface density.
+     */
+    class Block2 extends RigidBody<Geometric2> {
+        width: Geometric2;
+        height: Geometric2;
+        constructor(width?: GeometricE2, height?: GeometricE2);
+    }
+
+    /**
+     * A rectangular block of uniform volume density.
      */
     class Block3 extends RigidBody<Geometric3> {
         width: Geometric3;
