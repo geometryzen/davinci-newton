@@ -1,8 +1,8 @@
 import { Geometric2 } from "../math/Geometric2";
 import { Block2 } from "./Block2";
 
-describe("", function () {
-    it("", function () {
+describe("Block2", function () {
+    it("TODO", function () {
         const block = new Block2(Geometric2.scalar(1), Geometric2.scalar(1));
         expect(block.M.a).toBe(1);
         expect(block.width.a).toBe(1);

@@ -10,6 +10,7 @@ import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 import { Metric } from './Metric';
+import { EnergySystem } from './EnergySystem';
 
 /**
  * <p>
@@ -17,7 +18,7 @@ import { Metric } from './Metric';
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * </p>
  */
-export class State<T> extends AbstractSubject implements Simulation {
+export class State<T> extends AbstractSubject implements Simulation, EnergySystem<T> {
     /**
      * 
      */
@@ -64,7 +65,7 @@ export class State<T> extends AbstractSubject implements Simulation {
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor(private readonly metric: Metric<T>, private readonly dynamics: Dynamics<T>) {
+    constructor(public readonly metric: Metric<T>, private readonly dynamics: Dynamics<T>) {
         super();
         this.varsList_ = new VarsList(dynamics.getVarNames());
         this.potentialOffset_ = metric.zero();

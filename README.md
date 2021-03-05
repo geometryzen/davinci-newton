@@ -277,6 +277,7 @@ This project adds:
 * Geometric Algebra
 * Units of Measure
 * TypeScript integration
+* Generic n-dimensional Physics Engine
 
 
 

@@ -9,14 +9,14 @@ import { Spring } from './davinci-newton/core/Spring';
 import { State } from './davinci-newton/core/State';
 import { VarsList } from './davinci-newton/core/VarsList';
 import { Block2 } from './davinci-newton/engine2D/Block2';
-import { Cylinder2 } from './davinci-newton/engine2D/Cylinder2';
+import { Disc2 } from './davinci-newton/engine2D/Disc2';
 import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
 import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
-import { Sphere2 } from './davinci-newton/engine2D/Sphere2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
 import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
+import { Physics3 } from './davinci-newton/engine3D/Physics3';
 import { Sphere3 } from './davinci-newton/engine3D/Sphere3';
 import { AxisChoice } from './davinci-newton/graph/AxisChoice';
 import { DisplayGraph } from './davinci-newton/graph/DisplayGraph';
@@ -107,11 +107,7 @@ const newton = {
     /**
      * 
      */
-    get Sphere2() { return Sphere2; },
-    /**
-     * 
-     */
-    get Cylinder2() { return Cylinder2; },
+    get Disc2() { return Disc2; },
     /**
      * 
      */
@@ -200,6 +196,10 @@ const newton = {
      * 
      */
     get Particle() { return Particle; },
+    /**
+     * 
+     */
+    get Physics3() { return Physics3; },
     /**
      * 
      */

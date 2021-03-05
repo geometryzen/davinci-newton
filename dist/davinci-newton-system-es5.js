@@ -9,9 +9,9 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
             Newton = function () {
                 function Newton() {
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-                    this.LAST_MODIFIED = '2020-10-05';
+                    this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.0';
+                    this.VERSION = '1.0.1';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -636,6 +636,735 @@ System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../obje
         }
     };
 });
+System.register("davinci-newton/engine2D/Block2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit", "./Euclidean2"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Euclidean2_1, Block2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (RigidBody_1_1) {
+            RigidBody_1 = RigidBody_1_1;
+        }, function (Geometric2_1_1) {
+            Geometric2_1 = Geometric2_1_1;
+        }, function (Mat1_1_1) {
+            Mat1_1 = Mat1_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (Euclidean2_1_1) {
+            Euclidean2_1 = Euclidean2_1_1;
+        }],
+        execute: function () {
+            Block2 = function (_super) {
+                __extends(Block2, _super);
+                function Block2(width, height) {
+                    if (width === void 0) {
+                        width = Geometric2_1.Geometric2.one;
+                    }
+                    if (height === void 0) {
+                        height = Geometric2_1.Geometric2.one;
+                    }
+                    var _this = _super.call(this, new Euclidean2_1.Euclidean2()) || this;
+                    _this.width_ = Geometric2_1.Geometric2.copy(width);
+                    _this.widthLock_ = _this.width_.lock();
+                    _this.height_ = Geometric2_1.Geometric2.copy(height);
+                    _this.heightLock_ = _this.height_.lock();
+                    _this.updateInertiaTensor();
+                    return _this;
+                }
+                Object.defineProperty(Block2.prototype, "width", {
+                    get: function () {
+                        return this.width_;
+                    },
+                    set: function (width) {
+                        this.width_.unlock(this.widthLock_);
+                        this.width_.copy(width);
+                        this.widthLock_ = this.width_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Block2.prototype, "height", {
+                    get: function () {
+                        return this.height_;
+                    },
+                    set: function (height) {
+                        this.height_.unlock(this.heightLock_);
+                        this.height_.copy(height);
+                        this.heightLock_ = this.height_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Block2.prototype.updateAngularVelocity = function () {
+                    var w = this.width_;
+                    var h = this.height_;
+                    var ww = w.a * w.a;
+                    var hh = h.a * h.a;
+                    var k = 12 / this.M.a;
+                    this.Ω.xy = k * this.L.xy / (ww + hh);
+                    this.Ω.uom = Unit_1.Unit.div(Unit_1.Unit.div(this.L.uom, this.M.uom), Unit_1.Unit.mul(w.uom, w.uom));
+                };
+                Block2.prototype.updateInertiaTensor = function () {
+                    var w = this.width_;
+                    var h = this.height_;
+                    var ww = w.a * w.a;
+                    var hh = h.a * h.a;
+                    var s = this.M.a * (hh + ww) / 12;
+                    var I = new Mat1_1.Mat1(s);
+                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(w.uom, w.uom));
+                    this.I = I;
+                };
+                return Block2;
+            }(RigidBody_1.RigidBody);
+            exports_1("Block2", Block2);
+        }
+    };
+});
+System.register("davinci-newton/engine2D/Disc2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Disc2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (RigidBody_1_1) {
+            RigidBody_1 = RigidBody_1_1;
+        }, function (Geometric2_1_1) {
+            Geometric2_1 = Geometric2_1_1;
+        }, function (Mat1_1_1) {
+            Mat1_1 = Mat1_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }],
+        execute: function () {
+            Disc2 = function (_super) {
+                __extends(Disc2, _super);
+                function Disc2(radius, measure) {
+                    if (radius === void 0) {
+                        radius = Geometric2_1.Geometric2.one;
+                    }
+                    var _this = _super.call(this, measure) || this;
+                    _this.radius_ = Geometric2_1.Geometric2.fromScalar(radius);
+                    _this.radiusLock_ = _this.radius_.lock();
+                    _this.updateInertiaTensor();
+                    return _this;
+                }
+                Object.defineProperty(Disc2.prototype, "radius", {
+                    get: function () {
+                        return this.radius_;
+                    },
+                    set: function (radius) {
+                        this.radius_.unlock(this.radiusLock_);
+                        this.radius_.copyScalar(radius.a, radius.uom);
+                        this.radiusLock_ = this.radius_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Disc2.prototype.updateAngularVelocity = function () {
+                    this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
+                    this.Ω.quaditude(true);
+                    this.Ω.mulByScalar(this.M.a, this.M.uom);
+                    this.Ω.mulByNumber(0.5);
+                    this.Ω.inv();
+                    this.Ω.mulByBivector(this.L);
+                };
+                Disc2.prototype.updateInertiaTensor = function () {
+                    var r = this.radius_;
+                    var s = 0.5 * this.M.a * r.a * r.a;
+                    var I = new Mat1_1.Mat1(s);
+                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
+                    this.I = I;
+                };
+                return Disc2;
+            }(RigidBody_1.RigidBody);
+            exports_1("Disc2", Disc2);
+        }
+    };
+});
+System.register("davinci-newton/engine2D/Dynamics2.js", ["../core/Dynamics", "../core/VarsList"], function (exports_1, context_1) {
+    "use strict";
+
+    var Dynamics_1, VarsList_1, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_ANGULAR_MOMENTUM_XY, OFFSET_POSITION_X, OFFSET_POSITION_Y, OFFSET_ATTITUDE_A, OFFSET_ATTITUDE_XY, OFFSET_LINEAR_MOMENTUM_X, OFFSET_LINEAR_MOMENTUM_Y, OFFSET_ANGULAR_MOMENTUM_XY, varNames, DISCONTINUOUS_ENERGY_VARIABLES, Dynamics2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Dynamics_1_1) {
+            Dynamics_1 = Dynamics_1_1;
+        }, function (VarsList_1_1) {
+            VarsList_1 = VarsList_1_1;
+        }],
+        execute: function () {
+            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_X", INDEX_TOTAL_LINEAR_MOMENTUM_X = Dynamics_1.INDEX_RESERVED_LAST + 1);
+            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Y", INDEX_TOTAL_LINEAR_MOMENTUM_Y = Dynamics_1.INDEX_RESERVED_LAST + 2);
+            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_XY", INDEX_TOTAL_ANGULAR_MOMENTUM_XY = Dynamics_1.INDEX_RESERVED_LAST + 3);
+            exports_1("OFFSET_POSITION_X", OFFSET_POSITION_X = 0);
+            exports_1("OFFSET_POSITION_Y", OFFSET_POSITION_Y = 1);
+            exports_1("OFFSET_ATTITUDE_A", OFFSET_ATTITUDE_A = 2);
+            exports_1("OFFSET_ATTITUDE_XY", OFFSET_ATTITUDE_XY = 3);
+            exports_1("OFFSET_LINEAR_MOMENTUM_X", OFFSET_LINEAR_MOMENTUM_X = 4);
+            exports_1("OFFSET_LINEAR_MOMENTUM_Y", OFFSET_LINEAR_MOMENTUM_Y = 5);
+            exports_1("OFFSET_ANGULAR_MOMENTUM_XY", OFFSET_ANGULAR_MOMENTUM_XY = 6);
+            varNames = [VarsList_1.VarsList.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total angular momentum - xy"];
+            DISCONTINUOUS_ENERGY_VARIABLES = [Dynamics_1.INDEX_TRANSLATIONAL_KINETIC_ENERGY, Dynamics_1.INDEX_ROTATIONAL_KINETIC_ENERGY, Dynamics_1.INDEX_POTENTIAL_ENERGY, Dynamics_1.INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_ANGULAR_MOMENTUM_XY];
+            Dynamics2 = function () {
+                function Dynamics2() {}
+                Dynamics2.prototype.numVariablesPerBody = function () {
+                    return 7;
+                };
+                Dynamics2.prototype.getVarNames = function () {
+                    return varNames;
+                };
+                Dynamics2.prototype.getOffsetName = function (offset) {
+                    switch (offset) {
+                        case OFFSET_POSITION_X:
+                            return "position x";
+                        case OFFSET_POSITION_Y:
+                            return "position y";
+                        case OFFSET_ATTITUDE_A:
+                            return "attitude a";
+                        case OFFSET_ATTITUDE_XY:
+                            return "attitude xy";
+                        case OFFSET_LINEAR_MOMENTUM_X:
+                            return "linear momentum x";
+                        case OFFSET_LINEAR_MOMENTUM_Y:
+                            return "linear momentum y";
+                        case OFFSET_ANGULAR_MOMENTUM_XY:
+                            return "angular momentum xy";
+                    }
+                    throw new Error("getVarName(" + offset + ")");
+                };
+                Dynamics2.prototype.discontinuousEnergyVariables = function () {
+                    return DISCONTINUOUS_ENERGY_VARIABLES;
+                };
+                Dynamics2.prototype.epilog = function (bodies, forceLaws, potentialOffset, varsList) {
+                    var pe = potentialOffset.a;
+                    var re = 0;
+                    var te = 0;
+                    var Px = 0;
+                    var Py = 0;
+                    var Pz = 0;
+                    var Lyz = 0;
+                    var Lzx = 0;
+                    var Lxy = 0;
+                    var bs = bodies;
+                    var Nb = bs.length;
+                    for (var i = 0; i < Nb; i++) {
+                        var b = bs[i];
+                        if (isFinite(b.M.a)) {
+                            re += b.rotationalEnergy().a;
+                            te += b.translationalEnergy().a;
+                            Px += b.P.x;
+                            Py += b.P.y;
+                            Lxy += b.X.x * b.P.y - b.X.y * b.P.x;
+                            Lxy += b.L.xy;
+                        }
+                    }
+                    var fs = forceLaws;
+                    var Nf = fs.length;
+                    for (var i = 0; i < Nf; i++) {
+                        pe += fs[i].potentialEnergy().a;
+                    }
+                    varsList.setValue(Dynamics_1.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+                    varsList.setValue(Dynamics_1.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+                    varsList.setValue(Dynamics_1.INDEX_POTENTIAL_ENERGY, pe, true);
+                    varsList.setValue(Dynamics_1.INDEX_TOTAL_ENERGY, te + re + pe, true);
+                    varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
+                    varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
+                    varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+                };
+                Dynamics2.prototype.updateVarsFromBody = function (body, idx, vars) {
+                    vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
+                    vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
+                    vars.setValue(OFFSET_ATTITUDE_A + idx, body.R.a);
+                    vars.setValue(OFFSET_ATTITUDE_XY + idx, body.R.b);
+                    vars.setValue(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
+                    vars.setValue(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
+                    vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
+                };
+                Dynamics2.prototype.addForce = function (rateOfChange, idx, force) {
+                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
+                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
+                };
+                Dynamics2.prototype.addTorque = function (rateOfChange, idx, torque) {
+                    rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
+                };
+                Dynamics2.prototype.updateBody = function (vars, idx, body) {
+                    body.X.a = 0;
+                    body.X.x = vars[idx + OFFSET_POSITION_X];
+                    body.X.y = vars[idx + OFFSET_POSITION_Y];
+                    body.X.b = 0;
+                    body.R.a = vars[idx + OFFSET_ATTITUDE_A];
+                    body.R.x = 0;
+                    body.R.y = 0;
+                    body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
+                    var R = body.R;
+                    var magR = Math.sqrt(R.a * R.a + R.b * R.b);
+                    body.R.a = body.R.a / magR;
+                    body.R.b = body.R.b / magR;
+                    body.P.a = 0;
+                    body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
+                    body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
+                    body.P.b = 0;
+                    body.L.a = 0;
+                    body.L.x = 0;
+                    body.L.y = 0;
+                    body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
+                    body.updateAngularVelocity();
+                };
+                Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
+                    var P = body.P;
+                    var mass = body.M.a;
+                    rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
+                    rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
+                };
+                Dynamics2.prototype.setAttitudeRateOfChange = function (rateOfChange, idx, body) {
+                    var R = body.R;
+                    var Ω = body.Ω;
+                    rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
+                    rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
+                };
+                Dynamics2.prototype.zeroLinearMomentum = function (rateOfChange, idx) {
+                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
+                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
+                };
+                Dynamics2.prototype.zeroAngularMomentum = function (rateOfChange, idx) {
+                    rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+                };
+                return Dynamics2;
+            }();
+            exports_1("Dynamics2", Dynamics2);
+        }
+    };
+});
+System.register("davinci-newton/math/Mat1.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var Mat1;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            Mat1 = function () {
+                function Mat1(value) {
+                    this.value = value;
+                }
+                Object.defineProperty(Mat1.prototype, "dimensions", {
+                    get: function () {
+                        return 1;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Mat1.prototype.getElement = function (row, column) {
+                    if (row === 0 && column === 0) {
+                        return this.value;
+                    } else {
+                        throw new Error('row and column must both b zero.');
+                    }
+                };
+                return Mat1;
+            }();
+            exports_1("Mat1", Mat1);
+        }
+    };
+});
+System.register("davinci-newton/engine2D/Euclidean2.js", ["../math/Geometric2", "../math/Mat1"], function (exports_1, context_1) {
+    "use strict";
+
+    var Geometric2_1, Mat1_1, Euclidean2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Geometric2_1_1) {
+            Geometric2_1 = Geometric2_1_1;
+        }, function (Mat1_1_1) {
+            Mat1_1 = Mat1_1_1;
+        }],
+        execute: function () {
+            Euclidean2 = function () {
+                function Euclidean2() {}
+                Euclidean2.prototype.a = function (mv) {
+                    return mv.a;
+                };
+                Euclidean2.prototype.add = function (lhs, rhs) {
+                    return lhs.add(rhs);
+                };
+                Euclidean2.prototype.addVector = function (lhs, rhs) {
+                    return lhs.addVector(rhs);
+                };
+                Euclidean2.prototype.applyMatrix = function (mv, matrix) {
+                    throw new Error("applyMatrix(mv, matrix) method not implemented.");
+                };
+                Euclidean2.prototype.copy = function (source, target) {
+                    return target.copy(source);
+                };
+                Euclidean2.prototype.copyBivector = function (source, target) {
+                    return target.copyBivector(source);
+                };
+                Euclidean2.prototype.copyMatrix = function (m) {
+                    if (m.dimensions !== 1) {
+                        throw new Error("matrix dimensions must be 1.");
+                    }
+                    var value = m.getElement(0, 0);
+                    return new Mat1_1.Mat1(value);
+                };
+                Euclidean2.prototype.copyVector = function (source, target) {
+                    return target.copyVector(source);
+                };
+                Euclidean2.prototype.copyScalar = function (a, uom, target) {
+                    return target.copyScalar(a, uom);
+                };
+                Euclidean2.prototype.direction = function (mv, mutate) {
+                    return mv.direction(mutate);
+                };
+                Euclidean2.prototype.divByScalar = function (lhs, a, uom) {
+                    return lhs.divByScalar(a, uom);
+                };
+                Euclidean2.prototype.identityMatrix = function () {
+                    return new Mat1_1.Mat1(1);
+                };
+                Euclidean2.prototype.invertMatrix = function (m) {
+                    if (m.dimensions !== 1) {
+                        throw new Error("matrix dimensions must be 1.");
+                    }
+                    var value = m.getElement(0, 0);
+                    return new Mat1_1.Mat1(1 / value);
+                };
+                Euclidean2.prototype.isZero = function (mv) {
+                    return mv.isZero();
+                };
+                Euclidean2.prototype.lock = function (mv) {
+                    return mv.lock();
+                };
+                Euclidean2.prototype.magnitude = function (mv, mutate) {
+                    return mv.magnitude(mutate);
+                };
+                Euclidean2.prototype.mulByNumber = function (lhs, alpha) {
+                    return lhs.mulByNumber(alpha);
+                };
+                Euclidean2.prototype.mulByScalar = function (lhs, a, uom) {
+                    return lhs.mulByScalar(a, uom);
+                };
+                Euclidean2.prototype.mulByVector = function (lhs, rhs) {
+                    return lhs.mulByVector(rhs);
+                };
+                Euclidean2.prototype.neg = function (mv) {
+                    return mv.neg();
+                };
+                Euclidean2.prototype.quaditude = function (mv, mutate) {
+                    return mv.quaditude(mutate);
+                };
+                Euclidean2.prototype.rev = function (mv) {
+                    return mv.rev();
+                };
+                Euclidean2.prototype.rotate = function (mv, spinor) {
+                    return mv.rotate(spinor);
+                };
+                Euclidean2.prototype.scalar = function (a, uom) {
+                    return Geometric2_1.Geometric2.scalar(a, uom);
+                };
+                Euclidean2.prototype.scp = function (lhs, rhs) {
+                    return lhs.scp(rhs);
+                };
+                Euclidean2.prototype.setUom = function (mv, uom) {
+                    mv.uom = uom;
+                };
+                Euclidean2.prototype.sub = function (lhs, rhs) {
+                    return lhs.sub(rhs);
+                };
+                Euclidean2.prototype.subScalar = function (lhs, rhs) {
+                    return lhs.subScalar(rhs);
+                };
+                Euclidean2.prototype.subVector = function (lhs, rhs) {
+                    return lhs.subVector(rhs);
+                };
+                Euclidean2.prototype.unlock = function (mv, token) {
+                    mv.unlock(token);
+                };
+                Euclidean2.prototype.uom = function (mv) {
+                    return mv.uom;
+                };
+                Euclidean2.prototype.ext = function (lhs, rhs) {
+                    return lhs.ext(rhs);
+                };
+                Euclidean2.prototype.write = function (source, target) {
+                    source.write(target);
+                };
+                Euclidean2.prototype.writeVector = function (source, target) {
+                    source.writeVector(target);
+                };
+                Euclidean2.prototype.zero = function () {
+                    return Geometric2_1.Geometric2.zero.clone();
+                };
+                return Euclidean2;
+            }();
+            exports_1("Euclidean2", Euclidean2);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../math/Matrix3", "../math/Unit", "../core/RigidBody", "./Euclidean3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var Geometric3_1, Matrix3_1, Unit_1, RigidBody_1, Euclidean3_1, Block3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (RigidBody_1_1) {
+            RigidBody_1 = RigidBody_1_1;
+        }, function (Euclidean3_1_1) {
+            Euclidean3_1 = Euclidean3_1_1;
+        }],
+        execute: function () {
+            Block3 = function (_super) {
+                __extends(Block3, _super);
+                function Block3(width, height, depth) {
+                    if (width === void 0) {
+                        width = Geometric3_1.Geometric3.one;
+                    }
+                    if (height === void 0) {
+                        height = Geometric3_1.Geometric3.one;
+                    }
+                    if (depth === void 0) {
+                        depth = Geometric3_1.Geometric3.one;
+                    }
+                    var _this = _super.call(this, new Euclidean3_1.Euclidean3()) || this;
+                    _this.width_ = Geometric3_1.Geometric3.copy(width);
+                    _this.widthLock_ = _this.width_.lock();
+                    _this.height_ = Geometric3_1.Geometric3.copy(height);
+                    _this.heightLock_ = _this.height_.lock();
+                    _this.depth_ = Geometric3_1.Geometric3.copy(depth);
+                    _this.depthLock_ = _this.depth_.lock();
+                    _this.updateInertiaTensor();
+                    return _this;
+                }
+                Object.defineProperty(Block3.prototype, "width", {
+                    get: function () {
+                        return this.width_;
+                    },
+                    set: function (width) {
+                        this.width_.unlock(this.widthLock_);
+                        this.width_.copy(width);
+                        this.widthLock_ = this.width_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Block3.prototype, "height", {
+                    get: function () {
+                        return this.height_;
+                    },
+                    set: function (height) {
+                        this.height_.unlock(this.heightLock_);
+                        this.height_.copy(height);
+                        this.heightLock_ = this.height_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Block3.prototype, "depth", {
+                    get: function () {
+                        return this.depth_;
+                    },
+                    set: function (depth) {
+                        this.depth_.unlock(this.depthLock_);
+                        this.depth_.copy(depth);
+                        this.depthLock_ = this.depth_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Block3.prototype.updateAngularVelocity = function () {
+                    var w = this.width_;
+                    var h = this.height_;
+                    var d = this.depth_;
+                    var ww = w.a * w.a;
+                    var hh = h.a * h.a;
+                    var dd = d.a * d.a;
+                    var k = 12 / this.M.a;
+                    this.Ω.yz = k * this.L.yz / (hh + dd);
+                    this.Ω.zx = k * this.L.zx / (ww + dd);
+                    this.Ω.xy = k * this.L.xy / (ww + hh);
+                    this.Ω.uom = Unit_1.Unit.div(Unit_1.Unit.div(this.L.uom, this.M.uom), Unit_1.Unit.mul(w.uom, w.uom));
+                };
+                Block3.prototype.updateInertiaTensor = function () {
+                    var w = this.width_;
+                    var h = this.height_;
+                    var d = this.depth_;
+                    var ww = w.a * w.a;
+                    var hh = h.a * h.a;
+                    var dd = d.a * d.a;
+                    var s = this.M.a / 12;
+                    var I = Matrix3_1.Matrix3.zero();
+                    I.setElement(0, 0, s * (hh + dd));
+                    I.setElement(1, 1, s * (dd + ww));
+                    I.setElement(2, 2, s * (ww + hh));
+                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(w.uom, w.uom));
+                    this.I = I;
+                };
+                return Block3;
+            }(RigidBody_1.RigidBody);
+            exports_1("Block3", Block3);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Cylinder3.js", ["../core/RigidBody", "../math/Geometric3", "../math/Matrix3", "../math/Unit", "./Euclidean3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var RigidBody_1, Geometric3_1, Matrix3_1, Unit_1, Euclidean3_1, Cylinder3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (RigidBody_1_1) {
+            RigidBody_1 = RigidBody_1_1;
+        }, function (Geometric3_1_1) {
+            Geometric3_1 = Geometric3_1_1;
+        }, function (Matrix3_1_1) {
+            Matrix3_1 = Matrix3_1_1;
+        }, function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (Euclidean3_1_1) {
+            Euclidean3_1 = Euclidean3_1_1;
+        }],
+        execute: function () {
+            Cylinder3 = function (_super) {
+                __extends(Cylinder3, _super);
+                function Cylinder3(radius, height) {
+                    if (radius === void 0) {
+                        radius = Geometric3_1.Geometric3.one;
+                    }
+                    if (height === void 0) {
+                        height = Geometric3_1.Geometric3.one;
+                    }
+                    var _this = _super.call(this, new Euclidean3_1.Euclidean3()) || this;
+                    _this.radius_ = Geometric3_1.Geometric3.copy(radius);
+                    _this.radiusLock_ = _this.radius_.lock();
+                    _this.height_ = Geometric3_1.Geometric3.copy(height);
+                    _this.heightLock_ = _this.height_.lock();
+                    _this.updateInertiaTensor();
+                    return _this;
+                }
+                Object.defineProperty(Cylinder3.prototype, "radius", {
+                    get: function () {
+                        return this.radius_;
+                    },
+                    set: function (radius) {
+                        this.radius_.unlock(this.radiusLock_);
+                        this.radius_.copy(radius);
+                        this.radiusLock_ = this.radius_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Cylinder3.prototype, "height", {
+                    get: function () {
+                        return this.height_;
+                    },
+                    set: function (height) {
+                        this.height.unlock(this.heightLock_);
+                        this.height_.copy(height);
+                        this.heightLock_ = this.height_.lock();
+                        this.updateInertiaTensor();
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Cylinder3.prototype.updateInertiaTensor = function () {
+                    var r = this.radius_;
+                    var h = this.height_;
+                    var rr = r.a * r.a;
+                    var hh = h.a * h.a;
+                    var Irr = this.M.a * (3 * rr + hh) / 12;
+                    var Ihh = this.M.a * rr / 2;
+                    var I = Matrix3_1.Matrix3.zero();
+                    I.setElement(0, 0, Irr);
+                    I.setElement(1, 1, Ihh);
+                    I.setElement(2, 2, Irr);
+                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, h.uom));
+                    this.I = I;
+                };
+                return Cylinder3;
+            }(RigidBody_1.RigidBody);
+            exports_1("Cylinder3", Cylinder3);
+        }
+    };
+});
 System.register("davinci-newton/core/SimList.js", ["../checks/mustBeNonNullObject", "../util/AbstractSubject", "../util/contains", "../util/GenericEvent", "../util/remove"], function (exports_1, context_1) {
     "use strict";
 
@@ -981,826 +1710,6 @@ System.register("davinci-newton/core/State.js", ["./SimList", "./VarsList", "../
                 return State;
             }(AbstractSubject_1.default);
             exports_1("State", State);
-        }
-    };
-});
-System.register("davinci-newton/engine2D/Block2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit", "./Euclidean2"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Euclidean2_1, Block2;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (RigidBody_1_1) {
-            RigidBody_1 = RigidBody_1_1;
-        }, function (Geometric2_1_1) {
-            Geometric2_1 = Geometric2_1_1;
-        }, function (Mat1_1_1) {
-            Mat1_1 = Mat1_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (Euclidean2_1_1) {
-            Euclidean2_1 = Euclidean2_1_1;
-        }],
-        execute: function () {
-            Block2 = function (_super) {
-                __extends(Block2, _super);
-                function Block2(width, height) {
-                    if (width === void 0) {
-                        width = Geometric2_1.Geometric2.one;
-                    }
-                    if (height === void 0) {
-                        height = Geometric2_1.Geometric2.one;
-                    }
-                    var _this = _super.call(this, new Euclidean2_1.Euclidean2()) || this;
-                    _this.width_ = Geometric2_1.Geometric2.copy(width);
-                    _this.widthLock_ = _this.width_.lock();
-                    _this.height_ = Geometric2_1.Geometric2.copy(height);
-                    _this.heightLock_ = _this.height_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Block2.prototype, "width", {
-                    get: function () {
-                        return this.width_;
-                    },
-                    set: function (width) {
-                        this.width_.unlock(this.widthLock_);
-                        this.width_.copy(width);
-                        this.widthLock_ = this.width_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Block2.prototype, "height", {
-                    get: function () {
-                        return this.height_;
-                    },
-                    set: function (height) {
-                        this.height_.unlock(this.heightLock_);
-                        this.height_.copy(height);
-                        this.heightLock_ = this.height_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Block2.prototype.updateAngularVelocity = function () {
-                    var w = this.width_;
-                    var h = this.height_;
-                    var ww = w.a * w.a;
-                    var hh = h.a * h.a;
-                    var k = 12 / this.M.a;
-                    this.Ω.xy = k * this.L.xy / (ww + hh);
-                    this.Ω.uom = Unit_1.Unit.div(Unit_1.Unit.div(this.L.uom, this.M.uom), Unit_1.Unit.mul(w.uom, w.uom));
-                };
-                Block2.prototype.updateInertiaTensor = function () {
-                    var w = this.width_;
-                    var h = this.height_;
-                    var s = this.M.a / 12;
-                    var I = new Mat1_1.Mat1(s);
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(w.uom, w.uom));
-                    this.I = I;
-                };
-                return Block2;
-            }(RigidBody_1.RigidBody);
-            exports_1("Block2", Block2);
-        }
-    };
-});
-System.register("davinci-newton/engine2D/Cylinder2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Cylinder2;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (RigidBody_1_1) {
-            RigidBody_1 = RigidBody_1_1;
-        }, function (Geometric2_1_1) {
-            Geometric2_1 = Geometric2_1_1;
-        }, function (Mat1_1_1) {
-            Mat1_1 = Mat1_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {
-            Cylinder2 = function (_super) {
-                __extends(Cylinder2, _super);
-                function Cylinder2(radius, height, measure) {
-                    if (radius === void 0) {
-                        radius = Geometric2_1.Geometric2.one;
-                    }
-                    if (height === void 0) {
-                        height = Geometric2_1.Geometric2.one;
-                    }
-                    var _this = _super.call(this, measure) || this;
-                    _this.radius_ = Geometric2_1.Geometric2.copy(radius);
-                    _this.radiusLock_ = _this.radius_.lock();
-                    _this.height_ = Geometric2_1.Geometric2.copy(height);
-                    _this.heightLock_ = _this.height_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Cylinder2.prototype, "radius", {
-                    get: function () {
-                        return this.radius_;
-                    },
-                    set: function (radius) {
-                        this.radius_.unlock(this.radiusLock_);
-                        this.radius_.copy(radius);
-                        this.radiusLock_ = this.radius_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Cylinder2.prototype, "height", {
-                    get: function () {
-                        return this.height_;
-                    },
-                    set: function (height) {
-                        this.height.unlock(this.heightLock_);
-                        this.height_.copy(height);
-                        this.heightLock_ = this.height_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Cylinder2.prototype.updateInertiaTensor = function () {
-                    var r = this.radius_;
-                    var h = this.height_;
-                    var rr = r.a * r.a;
-                    var I = new Mat1_1.Mat1(rr);
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, h.uom));
-                    this.I = I;
-                };
-                return Cylinder2;
-            }(RigidBody_1.RigidBody);
-            exports_1("Cylinder2", Cylinder2);
-        }
-    };
-});
-System.register("davinci-newton/engine2D/Dynamics2.js", ["../core/VarsList"], function (exports_1, context_1) {
-    "use strict";
-
-    var VarsList_1, INDEX_TIME, INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_POTENTIAL_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_ANGULAR_MOMENTUM_XY, OFFSET_POSITION_X, OFFSET_POSITION_Y, OFFSET_ATTITUDE_A, OFFSET_ATTITUDE_XY, OFFSET_LINEAR_MOMENTUM_X, OFFSET_LINEAR_MOMENTUM_Y, OFFSET_ANGULAR_MOMENTUM_XY, varNames, DISCONTINUOUS_ENERGY_VARIABLES, Dynamics2;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (VarsList_1_1) {
-            VarsList_1 = VarsList_1_1;
-        }],
-        execute: function () {
-            exports_1("INDEX_TIME", INDEX_TIME = 0);
-            exports_1("INDEX_TRANSLATIONAL_KINETIC_ENERGY", INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1);
-            exports_1("INDEX_ROTATIONAL_KINETIC_ENERGY", INDEX_ROTATIONAL_KINETIC_ENERGY = 2);
-            exports_1("INDEX_POTENTIAL_ENERGY", INDEX_POTENTIAL_ENERGY = 3);
-            exports_1("INDEX_TOTAL_ENERGY", INDEX_TOTAL_ENERGY = 4);
-            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_X", INDEX_TOTAL_LINEAR_MOMENTUM_X = 5);
-            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Y", INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6);
-            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_XY", INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 7);
-            exports_1("OFFSET_POSITION_X", OFFSET_POSITION_X = 0);
-            exports_1("OFFSET_POSITION_Y", OFFSET_POSITION_Y = 1);
-            exports_1("OFFSET_ATTITUDE_A", OFFSET_ATTITUDE_A = 2);
-            exports_1("OFFSET_ATTITUDE_XY", OFFSET_ATTITUDE_XY = 3);
-            exports_1("OFFSET_LINEAR_MOMENTUM_X", OFFSET_LINEAR_MOMENTUM_X = 4);
-            exports_1("OFFSET_LINEAR_MOMENTUM_Y", OFFSET_LINEAR_MOMENTUM_Y = 5);
-            exports_1("OFFSET_ANGULAR_MOMENTUM_XY", OFFSET_ANGULAR_MOMENTUM_XY = 6);
-            varNames = [VarsList_1.VarsList.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total angular momentum - xy"];
-            DISCONTINUOUS_ENERGY_VARIABLES = [INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_POTENTIAL_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_ANGULAR_MOMENTUM_XY];
-            Dynamics2 = function () {
-                function Dynamics2() {}
-                Dynamics2.prototype.numVariablesPerBody = function () {
-                    return 7;
-                };
-                Dynamics2.prototype.getVarNames = function () {
-                    return varNames;
-                };
-                Dynamics2.prototype.getOffsetName = function (offset) {
-                    switch (offset) {
-                        case OFFSET_POSITION_X:
-                            return "position x";
-                        case OFFSET_POSITION_Y:
-                            return "position y";
-                        case OFFSET_ATTITUDE_A:
-                            return "attitude a";
-                        case OFFSET_ATTITUDE_XY:
-                            return "attitude xy";
-                        case OFFSET_LINEAR_MOMENTUM_X:
-                            return "linear momentum x";
-                        case OFFSET_LINEAR_MOMENTUM_Y:
-                            return "linear momentum y";
-                        case OFFSET_ANGULAR_MOMENTUM_XY:
-                            return "angular momentum xy";
-                    }
-                    throw new Error("getVarName(" + offset + ")");
-                };
-                Dynamics2.prototype.discontinuousEnergyVariables = function () {
-                    return DISCONTINUOUS_ENERGY_VARIABLES;
-                };
-                Dynamics2.prototype.epilog = function (bodies, forceLaws, potentialOffset, varsList) {
-                    var pe = potentialOffset.a;
-                    var re = 0;
-                    var te = 0;
-                    var Px = 0;
-                    var Py = 0;
-                    var Pz = 0;
-                    var Lyz = 0;
-                    var Lzx = 0;
-                    var Lxy = 0;
-                    var bs = bodies;
-                    var Nb = bs.length;
-                    for (var i = 0; i < Nb; i++) {
-                        var b = bs[i];
-                        if (isFinite(b.M.a)) {
-                            re += b.rotationalEnergy().a;
-                            te += b.translationalEnergy().a;
-                            Px += b.P.x;
-                            Py += b.P.y;
-                            Lxy += b.X.x * b.P.y - b.X.y * b.P.x;
-                            Lxy += b.L.xy;
-                        }
-                    }
-                    var fs = forceLaws;
-                    var Nf = fs.length;
-                    for (var i = 0; i < Nf; i++) {
-                        pe += fs[i].potentialEnergy().a;
-                    }
-                    varsList.setValue(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-                    varsList.setValue(INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-                    varsList.setValue(INDEX_POTENTIAL_ENERGY, pe, true);
-                    varsList.setValue(INDEX_TOTAL_ENERGY, te + re + pe, true);
-                    varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
-                    varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
-                    varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
-                };
-                Dynamics2.prototype.updateVarsFromBody = function (body, idx, vars) {
-                    vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
-                    vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
-                    vars.setValue(OFFSET_ATTITUDE_A + idx, body.R.a);
-                    vars.setValue(OFFSET_ATTITUDE_XY + idx, body.R.b);
-                    vars.setValue(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-                    vars.setValue(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-                    vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
-                };
-                Dynamics2.prototype.addForce = function (rateOfChange, idx, force) {
-                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
-                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
-                };
-                Dynamics2.prototype.addTorque = function (rateOfChange, idx, torque) {
-                    rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
-                };
-                Dynamics2.prototype.updateBody = function (vars, idx, body) {
-                    body.X.a = 0;
-                    body.X.x = vars[idx + OFFSET_POSITION_X];
-                    body.X.y = vars[idx + OFFSET_POSITION_Y];
-                    body.X.b = 0;
-                    body.R.a = vars[idx + OFFSET_ATTITUDE_A];
-                    body.R.x = 0;
-                    body.R.y = 0;
-                    body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
-                    var R = body.R;
-                    var magR = Math.sqrt(R.a * R.a + R.b * R.b);
-                    body.R.a = body.R.a / magR;
-                    body.R.b = body.R.b / magR;
-                    body.P.a = 0;
-                    body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
-                    body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
-                    body.P.b = 0;
-                    body.L.a = 0;
-                    body.L.x = 0;
-                    body.L.y = 0;
-                    body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
-                    body.updateAngularVelocity();
-                };
-                Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
-                    var P = body.P;
-                    var mass = body.M.a;
-                    rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
-                    rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
-                };
-                Dynamics2.prototype.setAttitudeRateOfChange = function (rateOfChange, idx, body) {
-                    var R = body.R;
-                    var Ω = body.Ω;
-                    rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
-                    rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
-                };
-                Dynamics2.prototype.zeroLinearMomentum = function (rateOfChange, idx) {
-                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
-                    rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
-                };
-                Dynamics2.prototype.zeroAngularMomentum = function (rateOfChange, idx) {
-                    rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
-                };
-                return Dynamics2;
-            }();
-            exports_1("Dynamics2", Dynamics2);
-        }
-    };
-});
-System.register("davinci-newton/engine2D/Euclidean2.js", ["../math/Geometric2", "../math/Mat1"], function (exports_1, context_1) {
-    "use strict";
-
-    var Geometric2_1, Mat1_1, Euclidean2;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (Geometric2_1_1) {
-            Geometric2_1 = Geometric2_1_1;
-        }, function (Mat1_1_1) {
-            Mat1_1 = Mat1_1_1;
-        }],
-        execute: function () {
-            Euclidean2 = function () {
-                function Euclidean2() {}
-                Euclidean2.prototype.a = function (mv) {
-                    return mv.a;
-                };
-                Euclidean2.prototype.add = function (lhs, rhs) {
-                    return lhs.add(rhs);
-                };
-                Euclidean2.prototype.addVector = function (lhs, rhs) {
-                    return lhs.addVector(rhs);
-                };
-                Euclidean2.prototype.applyMatrix = function (mv, matrix) {
-                    throw new Error("applyMatrix(mv, matrix) method not implemented.");
-                };
-                Euclidean2.prototype.copy = function (source, target) {
-                    return target.copy(source);
-                };
-                Euclidean2.prototype.copyBivector = function (source, target) {
-                    return target.copyBivector(source);
-                };
-                Euclidean2.prototype.copyMatrix = function (m) {
-                    if (m.dimensions !== 1) {
-                        throw new Error("matrix dimensions must be 1.");
-                    }
-                    var value = m.getElement(0, 0);
-                    return new Mat1_1.Mat1(value);
-                };
-                Euclidean2.prototype.copyVector = function (source, target) {
-                    return target.copyVector(source);
-                };
-                Euclidean2.prototype.copyScalar = function (a, uom, target) {
-                    return target.copyScalar(a, uom);
-                };
-                Euclidean2.prototype.direction = function (mv, mutate) {
-                    return mv.direction(mutate);
-                };
-                Euclidean2.prototype.divByScalar = function (lhs, a, uom) {
-                    return lhs.divByScalar(a, uom);
-                };
-                Euclidean2.prototype.identityMatrix = function () {
-                    return new Mat1_1.Mat1(1);
-                };
-                Euclidean2.prototype.invertMatrix = function (m) {
-                    if (m.dimensions !== 1) {
-                        throw new Error("matrix dimensions must be 1.");
-                    }
-                    var value = m.getElement(0, 0);
-                    return new Mat1_1.Mat1(1 / value);
-                };
-                Euclidean2.prototype.isZero = function (mv) {
-                    return mv.isZero();
-                };
-                Euclidean2.prototype.lock = function (mv) {
-                    return mv.lock();
-                };
-                Euclidean2.prototype.magnitude = function (mv, mutate) {
-                    return mv.magnitude(mutate);
-                };
-                Euclidean2.prototype.mulByNumber = function (lhs, alpha) {
-                    return lhs.mulByNumber(alpha);
-                };
-                Euclidean2.prototype.mulByScalar = function (lhs, a, uom) {
-                    return lhs.mulByScalar(a, uom);
-                };
-                Euclidean2.prototype.mulByVector = function (lhs, rhs) {
-                    return lhs.mulByVector(rhs);
-                };
-                Euclidean2.prototype.neg = function (mv) {
-                    return mv.neg();
-                };
-                Euclidean2.prototype.quaditude = function (mv, mutate) {
-                    return mv.quaditude(mutate);
-                };
-                Euclidean2.prototype.rev = function (mv) {
-                    return mv.rev();
-                };
-                Euclidean2.prototype.rotate = function (mv, spinor) {
-                    return mv.rotate(spinor);
-                };
-                Euclidean2.prototype.scalar = function (a, uom) {
-                    return Geometric2_1.Geometric2.scalar(a, uom);
-                };
-                Euclidean2.prototype.scp = function (lhs, rhs) {
-                    return lhs.scp(rhs);
-                };
-                Euclidean2.prototype.setUom = function (mv, uom) {
-                    mv.uom = uom;
-                };
-                Euclidean2.prototype.sub = function (lhs, rhs) {
-                    return lhs.sub(rhs);
-                };
-                Euclidean2.prototype.subScalar = function (lhs, rhs) {
-                    return lhs.subScalar(rhs);
-                };
-                Euclidean2.prototype.subVector = function (lhs, rhs) {
-                    return lhs.subVector(rhs);
-                };
-                Euclidean2.prototype.unlock = function (mv, token) {
-                    mv.unlock(token);
-                };
-                Euclidean2.prototype.uom = function (mv) {
-                    return mv.uom;
-                };
-                Euclidean2.prototype.ext = function (lhs, rhs) {
-                    return lhs.ext(rhs);
-                };
-                Euclidean2.prototype.write = function (source, target) {
-                    source.write(target);
-                };
-                Euclidean2.prototype.writeVector = function (source, target) {
-                    source.writeVector(target);
-                };
-                Euclidean2.prototype.zero = function () {
-                    return Geometric2_1.Geometric2.zero.clone();
-                };
-                return Euclidean2;
-            }();
-            exports_1("Euclidean2", Euclidean2);
-        }
-    };
-});
-System.register("davinci-newton/math/Mat1.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var Mat1;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            Mat1 = function () {
-                function Mat1(value) {
-                    this.value = value;
-                }
-                Object.defineProperty(Mat1.prototype, "dimensions", {
-                    get: function () {
-                        return 1;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Mat1.prototype.getElement = function (row, column) {
-                    if (row === 0 && column === 0) {
-                        return this.value;
-                    } else {
-                        throw new Error('row and column must both b zero.');
-                    }
-                };
-                return Mat1;
-            }();
-            exports_1("Mat1", Mat1);
-        }
-    };
-});
-System.register("davinci-newton/engine2D/Sphere2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Sphere2;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (RigidBody_1_1) {
-            RigidBody_1 = RigidBody_1_1;
-        }, function (Geometric2_1_1) {
-            Geometric2_1 = Geometric2_1_1;
-        }, function (Mat1_1_1) {
-            Mat1_1 = Mat1_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {
-            Sphere2 = function (_super) {
-                __extends(Sphere2, _super);
-                function Sphere2(radius, measure) {
-                    if (radius === void 0) {
-                        radius = Geometric2_1.Geometric2.one;
-                    }
-                    var _this = _super.call(this, measure) || this;
-                    _this.radius_ = Geometric2_1.Geometric2.fromScalar(radius);
-                    _this.radiusLock_ = _this.radius_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Sphere2.prototype, "radius", {
-                    get: function () {
-                        return this.radius_;
-                    },
-                    set: function (radius) {
-                        this.radius_.unlock(this.radiusLock_);
-                        this.radius_.copyScalar(radius.a, radius.uom);
-                        this.radiusLock_ = this.radius_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Sphere2.prototype.updateAngularVelocity = function () {
-                    this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
-                    this.Ω.quaditude(true);
-                    this.Ω.mulByScalar(this.M.a, this.M.uom);
-                    this.Ω.mulByNumber(2 / 5);
-                    this.Ω.inv();
-                    this.Ω.mulByBivector(this.L);
-                };
-                Sphere2.prototype.updateInertiaTensor = function () {
-                    var r = this.radius_;
-                    var s = 2 * this.M.a * r.a * r.a / 5;
-                    var I = new Mat1_1.Mat1(s);
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
-                    this.I = I;
-                };
-                return Sphere2;
-            }(RigidBody_1.RigidBody);
-            exports_1("Sphere2", Sphere2);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../math/Matrix3", "../math/Unit", "../core/RigidBody", "./Euclidean3"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var Geometric3_1, Matrix3_1, Unit_1, RigidBody_1, Euclidean3_1, Block3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (RigidBody_1_1) {
-            RigidBody_1 = RigidBody_1_1;
-        }, function (Euclidean3_1_1) {
-            Euclidean3_1 = Euclidean3_1_1;
-        }],
-        execute: function () {
-            Block3 = function (_super) {
-                __extends(Block3, _super);
-                function Block3(width, height, depth) {
-                    if (width === void 0) {
-                        width = Geometric3_1.Geometric3.one;
-                    }
-                    if (height === void 0) {
-                        height = Geometric3_1.Geometric3.one;
-                    }
-                    if (depth === void 0) {
-                        depth = Geometric3_1.Geometric3.one;
-                    }
-                    var _this = _super.call(this, new Euclidean3_1.Euclidean3()) || this;
-                    _this.width_ = Geometric3_1.Geometric3.copy(width);
-                    _this.widthLock_ = _this.width_.lock();
-                    _this.height_ = Geometric3_1.Geometric3.copy(height);
-                    _this.heightLock_ = _this.height_.lock();
-                    _this.depth_ = Geometric3_1.Geometric3.copy(depth);
-                    _this.depthLock_ = _this.depth_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Block3.prototype, "width", {
-                    get: function () {
-                        return this.width_;
-                    },
-                    set: function (width) {
-                        this.width_.unlock(this.widthLock_);
-                        this.width_.copy(width);
-                        this.widthLock_ = this.width_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Block3.prototype, "height", {
-                    get: function () {
-                        return this.height_;
-                    },
-                    set: function (height) {
-                        this.height_.unlock(this.heightLock_);
-                        this.height_.copy(height);
-                        this.heightLock_ = this.height_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Block3.prototype, "depth", {
-                    get: function () {
-                        return this.depth_;
-                    },
-                    set: function (depth) {
-                        this.depth_.unlock(this.depthLock_);
-                        this.depth_.copy(depth);
-                        this.depthLock_ = this.depth_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Block3.prototype.updateAngularVelocity = function () {
-                    var w = this.width_;
-                    var h = this.height_;
-                    var d = this.depth_;
-                    var ww = w.a * w.a;
-                    var hh = h.a * h.a;
-                    var dd = d.a * d.a;
-                    var k = 12 / this.M.a;
-                    this.Ω.yz = k * this.L.yz / (hh + dd);
-                    this.Ω.zx = k * this.L.zx / (ww + dd);
-                    this.Ω.xy = k * this.L.xy / (ww + hh);
-                    this.Ω.uom = Unit_1.Unit.div(Unit_1.Unit.div(this.L.uom, this.M.uom), Unit_1.Unit.mul(w.uom, w.uom));
-                };
-                Block3.prototype.updateInertiaTensor = function () {
-                    var w = this.width_;
-                    var h = this.height_;
-                    var d = this.depth_;
-                    var ww = w.a * w.a;
-                    var hh = h.a * h.a;
-                    var dd = d.a * d.a;
-                    var s = this.M.a / 12;
-                    var I = Matrix3_1.Matrix3.zero();
-                    I.setElement(0, 0, s * (hh + dd));
-                    I.setElement(1, 1, s * (dd + ww));
-                    I.setElement(2, 2, s * (ww + hh));
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(w.uom, w.uom));
-                    this.I = I;
-                };
-                return Block3;
-            }(RigidBody_1.RigidBody);
-            exports_1("Block3", Block3);
-        }
-    };
-});
-System.register("davinci-newton/engine3D/Cylinder3.js", ["../core/RigidBody", "../math/Geometric3", "../math/Matrix3", "../math/Unit", "./Euclidean3"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var RigidBody_1, Geometric3_1, Matrix3_1, Unit_1, Euclidean3_1, Cylinder3;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (RigidBody_1_1) {
-            RigidBody_1 = RigidBody_1_1;
-        }, function (Geometric3_1_1) {
-            Geometric3_1 = Geometric3_1_1;
-        }, function (Matrix3_1_1) {
-            Matrix3_1 = Matrix3_1_1;
-        }, function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }, function (Euclidean3_1_1) {
-            Euclidean3_1 = Euclidean3_1_1;
-        }],
-        execute: function () {
-            Cylinder3 = function (_super) {
-                __extends(Cylinder3, _super);
-                function Cylinder3(radius, height) {
-                    if (radius === void 0) {
-                        radius = Geometric3_1.Geometric3.one;
-                    }
-                    if (height === void 0) {
-                        height = Geometric3_1.Geometric3.one;
-                    }
-                    var _this = _super.call(this, new Euclidean3_1.Euclidean3()) || this;
-                    _this.radius_ = Geometric3_1.Geometric3.copy(radius);
-                    _this.radiusLock_ = _this.radius_.lock();
-                    _this.height_ = Geometric3_1.Geometric3.copy(height);
-                    _this.heightLock_ = _this.height_.lock();
-                    _this.updateInertiaTensor();
-                    return _this;
-                }
-                Object.defineProperty(Cylinder3.prototype, "radius", {
-                    get: function () {
-                        return this.radius_;
-                    },
-                    set: function (radius) {
-                        this.radius_.unlock(this.radiusLock_);
-                        this.radius_.copy(radius);
-                        this.radiusLock_ = this.radius_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Cylinder3.prototype, "height", {
-                    get: function () {
-                        return this.height_;
-                    },
-                    set: function (height) {
-                        this.height.unlock(this.heightLock_);
-                        this.height_.copy(height);
-                        this.heightLock_ = this.height_.lock();
-                        this.updateInertiaTensor();
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Cylinder3.prototype.updateInertiaTensor = function () {
-                    var r = this.radius_;
-                    var h = this.height_;
-                    var rr = r.a * r.a;
-                    var hh = h.a * h.a;
-                    var Irr = this.M.a * (3 * rr + hh) / 12;
-                    var Ihh = this.M.a * rr / 2;
-                    var I = Matrix3_1.Matrix3.zero();
-                    I.setElement(0, 0, Irr);
-                    I.setElement(1, 1, Ihh);
-                    I.setElement(2, 2, Irr);
-                    I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, h.uom));
-                    this.I = I;
-                };
-                return Cylinder3;
-            }(RigidBody_1.RigidBody);
-            exports_1("Cylinder3", Cylinder3);
         }
     };
 });
@@ -2222,29 +2131,26 @@ System.register("davinci-newton/math/wedge3.js", [], function (exports_1, contex
         execute: function () {}
     };
 });
-System.register("davinci-newton/engine3D/Dynamics3.js", ["../core/VarsList", "../math/wedge3"], function (exports_1, context_1) {
+System.register("davinci-newton/engine3D/Dynamics3.js", ["../core/Dynamics", "../core/VarsList", "../math/wedge3"], function (exports_1, context_1) {
     "use strict";
 
-    var VarsList_1, wedge3_1, INDEX_TIME, INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_POTENTIAL_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_LINEAR_MOMENTUM_Z, INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, INDEX_TOTAL_ANGULAR_MOMENTUM_XY, OFFSET_POSITION_X, OFFSET_POSITION_Y, OFFSET_POSITION_Z, OFFSET_ATTITUDE_A, OFFSET_ATTITUDE_YZ, OFFSET_ATTITUDE_ZX, OFFSET_ATTITUDE_XY, OFFSET_LINEAR_MOMENTUM_X, OFFSET_LINEAR_MOMENTUM_Y, OFFSET_LINEAR_MOMENTUM_Z, OFFSET_ANGULAR_MOMENTUM_YZ, OFFSET_ANGULAR_MOMENTUM_ZX, OFFSET_ANGULAR_MOMENTUM_XY, varNames, DISCONTINUOUS_ENERGY_VARIABLES, Dynamics3;
+    var Dynamics_1, VarsList_1, wedge3_1, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_LINEAR_MOMENTUM_Z, INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, INDEX_TOTAL_ANGULAR_MOMENTUM_XY, OFFSET_POSITION_X, OFFSET_POSITION_Y, OFFSET_POSITION_Z, OFFSET_ATTITUDE_A, OFFSET_ATTITUDE_YZ, OFFSET_ATTITUDE_ZX, OFFSET_ATTITUDE_XY, OFFSET_LINEAR_MOMENTUM_X, OFFSET_LINEAR_MOMENTUM_Y, OFFSET_LINEAR_MOMENTUM_Z, OFFSET_ANGULAR_MOMENTUM_YZ, OFFSET_ANGULAR_MOMENTUM_ZX, OFFSET_ANGULAR_MOMENTUM_XY, varNames, DISCONTINUOUS_ENERGY_VARIABLES, Dynamics3;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (VarsList_1_1) {
+        setters: [function (Dynamics_1_1) {
+            Dynamics_1 = Dynamics_1_1;
+        }, function (VarsList_1_1) {
             VarsList_1 = VarsList_1_1;
         }, function (wedge3_1_1) {
             wedge3_1 = wedge3_1_1;
         }],
         execute: function () {
-            exports_1("INDEX_TIME", INDEX_TIME = 0);
-            exports_1("INDEX_TRANSLATIONAL_KINETIC_ENERGY", INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1);
-            exports_1("INDEX_ROTATIONAL_KINETIC_ENERGY", INDEX_ROTATIONAL_KINETIC_ENERGY = 2);
-            exports_1("INDEX_POTENTIAL_ENERGY", INDEX_POTENTIAL_ENERGY = 3);
-            exports_1("INDEX_TOTAL_ENERGY", INDEX_TOTAL_ENERGY = 4);
-            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_X", INDEX_TOTAL_LINEAR_MOMENTUM_X = 5);
-            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Y", INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6);
-            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Z", INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7);
-            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_YZ", INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8);
-            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_ZX", INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9);
-            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_XY", INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10);
+            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_X", INDEX_TOTAL_LINEAR_MOMENTUM_X = Dynamics_1.INDEX_RESERVED_LAST + 1);
+            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Y", INDEX_TOTAL_LINEAR_MOMENTUM_Y = Dynamics_1.INDEX_RESERVED_LAST + 2);
+            exports_1("INDEX_TOTAL_LINEAR_MOMENTUM_Z", INDEX_TOTAL_LINEAR_MOMENTUM_Z = Dynamics_1.INDEX_RESERVED_LAST + 3);
+            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_YZ", INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = Dynamics_1.INDEX_RESERVED_LAST + 4);
+            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_ZX", INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = Dynamics_1.INDEX_RESERVED_LAST + 5);
+            exports_1("INDEX_TOTAL_ANGULAR_MOMENTUM_XY", INDEX_TOTAL_ANGULAR_MOMENTUM_XY = Dynamics_1.INDEX_RESERVED_LAST + 6);
             exports_1("OFFSET_POSITION_X", OFFSET_POSITION_X = 0);
             exports_1("OFFSET_POSITION_Y", OFFSET_POSITION_Y = 1);
             exports_1("OFFSET_POSITION_Z", OFFSET_POSITION_Z = 2);
@@ -2259,7 +2165,7 @@ System.register("davinci-newton/engine3D/Dynamics3.js", ["../core/VarsList", "..
             exports_1("OFFSET_ANGULAR_MOMENTUM_ZX", OFFSET_ANGULAR_MOMENTUM_ZX = 11);
             exports_1("OFFSET_ANGULAR_MOMENTUM_XY", OFFSET_ANGULAR_MOMENTUM_XY = 12);
             varNames = [VarsList_1.VarsList.TIME, "translational kinetic energy", "rotational kinetic energy", "potential energy", "total energy", "total linear momentum - x", "total linear momentum - y", "total linear momentum - z", "total angular momentum - yz", "total angular momentum - zx", "total angular momentum - xy"];
-            DISCONTINUOUS_ENERGY_VARIABLES = [INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_POTENTIAL_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_LINEAR_MOMENTUM_Z, INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, INDEX_TOTAL_ANGULAR_MOMENTUM_XY];
+            DISCONTINUOUS_ENERGY_VARIABLES = [Dynamics_1.INDEX_TRANSLATIONAL_KINETIC_ENERGY, Dynamics_1.INDEX_ROTATIONAL_KINETIC_ENERGY, Dynamics_1.INDEX_POTENTIAL_ENERGY, Dynamics_1.INDEX_TOTAL_ENERGY, INDEX_TOTAL_LINEAR_MOMENTUM_X, INDEX_TOTAL_LINEAR_MOMENTUM_Y, INDEX_TOTAL_LINEAR_MOMENTUM_Z, INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, INDEX_TOTAL_ANGULAR_MOMENTUM_XY];
             Dynamics3 = function () {
                 function Dynamics3() {}
                 Dynamics3.prototype.numVariablesPerBody = function () {
@@ -2335,10 +2241,10 @@ System.register("davinci-newton/engine3D/Dynamics3.js", ["../core/VarsList", "..
                     for (var i = 0; i < Nf; i++) {
                         pe += fs[i].potentialEnergy().a;
                     }
-                    varsList.setValue(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-                    varsList.setValue(INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-                    varsList.setValue(INDEX_POTENTIAL_ENERGY, pe, true);
-                    varsList.setValue(INDEX_TOTAL_ENERGY, te + re + pe, true);
+                    varsList.setValue(Dynamics_1.INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
+                    varsList.setValue(Dynamics_1.INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
+                    varsList.setValue(Dynamics_1.INDEX_POTENTIAL_ENERGY, pe, true);
+                    varsList.setValue(Dynamics_1.INDEX_TOTAL_ENERGY, te + re + pe, true);
                     varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
                     varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
                     varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Z, Pz, true);
@@ -2421,6 +2327,48 @@ System.register("davinci-newton/engine3D/Dynamics3.js", ["../core/VarsList", "..
                 return Dynamics3;
             }();
             exports_1("Dynamics3", Dynamics3);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Physics3.js", ["../core/State", "./Dynamics3", "./Euclidean3"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var State_1, Dynamics3_1, Euclidean3_1, Physics3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (State_1_1) {
+            State_1 = State_1_1;
+        }, function (Dynamics3_1_1) {
+            Dynamics3_1 = Dynamics3_1_1;
+        }, function (Euclidean3_1_1) {
+            Euclidean3_1 = Euclidean3_1_1;
+        }],
+        execute: function () {
+            Physics3 = function (_super) {
+                __extends(Physics3, _super);
+                function Physics3() {
+                    return _super.call(this, new Euclidean3_1.Euclidean3(), new Dynamics3_1.Dynamics3()) || this;
+                }
+                return Physics3;
+            }(State_1.State);
+            exports_1("Physics3", Physics3);
         }
     };
 });
@@ -3009,7 +2957,24 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../core/RigidBody", "../
         }
     };
 });
-System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", "../view/AlignV", "./Graph"], function (exports_1, context_1) {
+System.register("davinci-newton/core/Dynamics.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var INDEX_TIME, INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_POTENTIAL_ENERGY, INDEX_TOTAL_ENERGY, INDEX_RESERVED_LAST;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            exports_1("INDEX_TIME", INDEX_TIME = 0);
+            exports_1("INDEX_TRANSLATIONAL_KINETIC_ENERGY", INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1);
+            exports_1("INDEX_ROTATIONAL_KINETIC_ENERGY", INDEX_ROTATIONAL_KINETIC_ENERGY = 2);
+            exports_1("INDEX_POTENTIAL_ENERGY", INDEX_POTENTIAL_ENERGY = 3);
+            exports_1("INDEX_TOTAL_ENERGY", INDEX_TOTAL_ENERGY = 4);
+            exports_1("INDEX_RESERVED_LAST", INDEX_RESERVED_LAST = 4);
+        }
+    };
+});
+System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../core/Dynamics", "../view/AlignH", "../view/AlignV", "./Graph"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -3029,10 +2994,12 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var AlignH_1, AlignV_1, Graph_1, EnergyTimeGraph;
+    var Dynamics_1, AlignH_1, AlignV_1, Graph_1, EnergyTimeGraph;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (AlignH_1_1) {
+        setters: [function (Dynamics_1_1) {
+            Dynamics_1 = Dynamics_1_1;
+        }, function (AlignH_1_1) {
             AlignH_1 = AlignH_1_1;
         }, function (AlignV_1_1) {
             AlignV_1 = AlignV_1_1;
@@ -3042,12 +3009,12 @@ System.register("davinci-newton/graph/EnergyTimeGraph.js", ["../view/AlignH", ".
         execute: function () {
             EnergyTimeGraph = function (_super) {
                 __extends(EnergyTimeGraph, _super);
-                function EnergyTimeGraph(canvasId, varsList, timeIndex, transKeIndex, rotKeIndex, peIndex, totalEnergyIndex) {
+                function EnergyTimeGraph(canvasId, varsList) {
                     var _this = _super.call(this, canvasId, varsList) || this;
-                    _this.translationalEnergyGraphLine = _this.addGraphLine(timeIndex, transKeIndex, 'red');
-                    _this.rotationalEnergyGraphLine = _this.addGraphLine(timeIndex, rotKeIndex, 'yellow');
-                    _this.potentialEnergyGraphLine = _this.addGraphLine(timeIndex, peIndex, 'blue');
-                    _this.totalEnergyGraphLine = _this.addGraphLine(timeIndex, totalEnergyIndex, 'white');
+                    _this.translationalEnergyGraphLine = _this.addGraphLine(Dynamics_1.INDEX_TIME, Dynamics_1.INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
+                    _this.rotationalEnergyGraphLine = _this.addGraphLine(Dynamics_1.INDEX_TIME, Dynamics_1.INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
+                    _this.potentialEnergyGraphLine = _this.addGraphLine(Dynamics_1.INDEX_TIME, Dynamics_1.INDEX_POTENTIAL_ENERGY, 'blue');
+                    _this.totalEnergyGraphLine = _this.addGraphLine(Dynamics_1.INDEX_TIME, Dynamics_1.INDEX_TOTAL_ENERGY, 'white');
                     _this.autoScale.timeWindow = 5;
                     _this.autoScale.addGraphLine(_this.translationalEnergyGraphLine);
                     _this.autoScale.addGraphLine(_this.rotationalEnergyGraphLine);
@@ -10522,8 +10489,7 @@ System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (
         setters: [],
         execute: function () {
             ConstantEnergySolver = function () {
-                function ConstantEnergySolver(simulation, energySystem, solverMethod, metric) {
-                    this.metric = metric;
+                function ConstantEnergySolver(simulation, energySystem, solverMethod) {
                     this.stepUpperBound = 1;
                     this.stepLowerBound = 1E-5;
                     this.tolerance_ = 1E-6;
@@ -10538,7 +10504,8 @@ System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (
                     var adaptedStepSize = Δt;
                     var steps = 0;
                     this.simulation_.epilog();
-                    var startEnergy = this.metric.a(this.energySystem_.totalEnergy());
+                    var metric = this.energySystem_.metric;
+                    var startEnergy = metric.a(this.energySystem_.totalEnergy());
                     var lastEnergyDiff = Number.POSITIVE_INFINITY;
                     var value = Number.POSITIVE_INFINITY;
                     var firstTime = true;
@@ -10566,7 +10533,7 @@ System.register("davinci-newton/solvers/ConstantEnergySolver.js", [], function (
                             this.simulation_.epilog();
                             t += h;
                         }
-                        var finishEnergy = this.metric.a(this.energySystem_.totalEnergy());
+                        var finishEnergy = metric.a(this.energySystem_.totalEnergy());
                         var energyDiff = Math.abs(startEnergy - finishEnergy);
                         value = energyDiff;
                         lastEnergyDiff = energyDiff;
@@ -12837,10 +12804,10 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Cylinder2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Sphere2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
     "use strict";
 
-    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Cylinder2_1, Dynamics2_1, Euclidean2_1, Sphere2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Sphere3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
+    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Physics3_1, Sphere3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (config_1_1) {
@@ -12865,14 +12832,12 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             VarsList_1 = VarsList_1_1;
         }, function (Block2_1_1) {
             Block2_1 = Block2_1_1;
-        }, function (Cylinder2_1_1) {
-            Cylinder2_1 = Cylinder2_1_1;
+        }, function (Disc2_1_1) {
+            Disc2_1 = Disc2_1_1;
         }, function (Dynamics2_1_1) {
             Dynamics2_1 = Dynamics2_1_1;
         }, function (Euclidean2_1_1) {
             Euclidean2_1 = Euclidean2_1_1;
-        }, function (Sphere2_1_1) {
-            Sphere2_1 = Sphere2_1_1;
         }, function (Block3_1_1) {
             Block3_1 = Block3_1_1;
         }, function (Cylinder3_1_1) {
@@ -12881,6 +12846,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             Dynamics3_1 = Dynamics3_1_1;
         }, function (Euclidean3_1_1) {
             Euclidean3_1 = Euclidean3_1_1;
+        }, function (Physics3_1_1) {
+            Physics3_1 = Physics3_1_1;
         }, function (Sphere3_1_1) {
             Sphere3_1 = Sphere3_1_1;
         }, function (AxisChoice_1_1) {
@@ -12978,11 +12945,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 get CoulombLaw() {
                     return CoulombLaw_1.CoulombLaw;
                 },
-                get Sphere2() {
-                    return Sphere2_1.Sphere2;
-                },
-                get Cylinder2() {
-                    return Cylinder2_1.Cylinder2;
+                get Disc2() {
+                    return Disc2_1.Disc2;
                 },
                 get Cylinder3() {
                     return Cylinder3_1.Cylinder3;
@@ -13049,6 +13013,9 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get Particle() {
                     return Particle_1.Particle;
+                },
+                get Physics3() {
+                    return Physics3_1.Physics3;
                 },
                 get State() {
                     return State_1.State;

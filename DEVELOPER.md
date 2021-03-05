@@ -1,6 +1,6 @@
 ## Contributing
 
-### Building
+### Preparation
 
 Open a terminal window.
 
@@ -41,8 +41,10 @@ tsd install
 ```
 to install TypeScript definitions for Jasmine used in testing.
 
+### Building
+
 ```
-grunt
+npm run build
 ```
 to compile the source using the TypeScript compiler (For this you need to have [TypeScript](http://www.typescriptlang.org) installed) and to package the individual files into a single JavaScript file.
 
@@ -53,7 +55,7 @@ Make your changes to the TypeScript files in the _src_ directory. Do not edit th
 ## Testing
 
 ```
-karma start
+npm tun test
 ```
 
 ## Versioning
@@ -68,14 +70,14 @@ bower.json
 
 ## Deliverables
 
-The following files are created in the `dist` folder.
+The following files are created in the `dist` folder:
 
-The following files are in the `UMD` format.
+These files are in the `UMD` format.
 
 davinci-newton.js
 davinci-newton.min.js
 
-The following files are in the `System` format.
+These f files are in the `System` format.
 
 davinci-newton-system-es5.js
 davinci-newton-system-es5.min.js

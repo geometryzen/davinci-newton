@@ -7,7 +7,7 @@ import { Unit } from '../math/Unit';
 /**
  * A solid disk of uniform surface density.
  */
-export class Disc extends RigidBody<Geometric2> {
+export class Disc2 extends RigidBody<Geometric2> {
 
     /**
      * The dimension corresponding to the width.

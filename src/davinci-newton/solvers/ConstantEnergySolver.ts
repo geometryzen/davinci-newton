@@ -28,7 +28,7 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
      * Constructs an adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
      */
-    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver, private readonly metric: Metric<T>) {
+    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver) {
         this.simulation_ = simulation;
         this.energySystem_ = energySystem;
         this.solverMethod_ = solverMethod;
@@ -47,7 +47,8 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
          */
         let steps = 0;
         this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy: number = this.metric.a(this.energySystem_.totalEnergy());
+        const metric = this.energySystem_.metric;
+        const startEnergy: number = metric.a(this.energySystem_.totalEnergy());
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -84,7 +85,7 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
                 this.simulation_.epilog();
                 t += h;
             }
-            const finishEnergy: number = this.metric.a(this.energySystem_.totalEnergy());
+            const finishEnergy: number = metric.a(this.energySystem_.totalEnergy());
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             // reduce time step until change in energy goes to zero.
             value = energyDiff;

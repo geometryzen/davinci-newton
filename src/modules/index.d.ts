@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 0.0.41
+// Type definitions for davinci-newton 1.0.1
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2253,7 +2253,11 @@ declare namespace NEWTON {
      * The State engine computes the derivatives of the kinematic variables X, R, P, J for each body,
      * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
      */
-    class State<T> implements Simulation, EnergySystem {
+    class State<T> implements Simulation, EnergySystem<T> {
+        /**
+         * 
+         */
+        readonly metric: Metric<T>;
         /**
          * 
          */
@@ -2329,11 +2333,19 @@ declare namespace NEWTON {
         /**
          * 
          */
-        totalEnergy(): Geometric3;
+        totalEnergy(): T;
         /**
          * Update the state variables following a change to the simulation bodies.
          */
         updateFromBodies(): void;
+    }
+
+    /**
+     * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+     * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
+     */
+    export class Physics3 extends State<Geometric3> implements EnergySystem<Geometric3> {
+        constructor();
     }
 
     interface DiffEqSolver {
@@ -2371,14 +2383,12 @@ declare namespace NEWTON {
         step(stepSize: number, uomStep: Unit): void;
     }
 
-    interface EnergySystem {
-        /**
-         * 
-         */
-        totalEnergy(): Geometric3;
+    export interface EnergySystem<T> {
+        readonly metric: Metric<T>;
+        totalEnergy(): T;
     }
 
-    class AdaptiveStepSolver implements DiffEqSolver {
+    class AdaptiveStepSolver<T> implements DiffEqSolver {
         /**
          * Whether to use second order differences for deciding when to reduce the step size.
          * The first difference is the change in energy of the system over a time step.
@@ -2405,7 +2415,7 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(diffEq: Simulation, energySystem: EnergySystem, diffEqSolver: DiffEqSolver);
+        constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver);
         /**
          * 
          */
@@ -2416,7 +2426,7 @@ declare namespace NEWTON {
      * An adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
      */
-    class ConstantEnergySolver implements DiffEqSolver {
+    class ConstantEnergySolver<T> implements DiffEqSolver {
         /**
          * The smallest time step that will executed.
          * Setting a reasonable lower bound prevents the solver from taking too long to give up.
@@ -2433,7 +2443,7 @@ declare namespace NEWTON {
          * Constructs an adaptive step solver that adjusts the step size in order to
          * ensure that the energy change be less than a tolerance amount.
          */
-        constructor(simulation: Simulation, energySystem: EnergySystem, solverMethod: DiffEqSolver);
+        constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver);
         /**
          * 
          */

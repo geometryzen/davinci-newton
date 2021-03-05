@@ -20,6 +20,7 @@
         "src/davinci-newton/core/Spring.spec.ts",
         "src/davinci-newton/engine2D/Block2.spec.ts",
         "src/davinci-newton/engine3D/Block3.spec.ts",
+        "src/davinci-newton/engine3D/Physics3.spec.ts",
         "src/davinci-newton/core/CoulombLaw.spec.ts",
         "src/davinci-newton/core/GravitationLaw.spec.ts",
         "src/davinci-newton/core/State.spec.ts",

@@ -2,6 +2,16 @@ import { ForceBody } from "./ForceBody";
 import { ForceLaw } from "./ForceLaw";
 import { VarsList } from "./VarsList";
 
+//
+// Indices which MUST be common to all implementations.
+//
+export const INDEX_TIME = 0;
+export const INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+export const INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+export const INDEX_POTENTIAL_ENERGY = 3;
+export const INDEX_TOTAL_ENERGY = 4;
+export const INDEX_RESERVED_LAST = 4;
+
 export interface Dynamics<T> {
     /**
      * The rate of change of position is the velocity.

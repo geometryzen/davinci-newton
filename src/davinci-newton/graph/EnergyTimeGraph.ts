@@ -1,3 +1,4 @@
+import { INDEX_POTENTIAL_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TIME, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { VarsList } from '../core/VarsList';
 import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
@@ -32,13 +33,13 @@ export class EnergyTimeGraph extends Graph {
     /**
      * 
      */
-    constructor(canvasId: string, varsList: VarsList, timeIndex: number, transKeIndex: number, rotKeIndex: number, peIndex: number, totalEnergyIndex: number) {
+    constructor(canvasId: string, varsList: VarsList) {
         super(canvasId, varsList);
         // TODO: Make the indices independent of the number of dimensions.
-        this.translationalEnergyGraphLine = this.addGraphLine(timeIndex, transKeIndex, 'red');
-        this.rotationalEnergyGraphLine = this.addGraphLine(timeIndex, rotKeIndex, 'yellow');
-        this.potentialEnergyGraphLine = this.addGraphLine(timeIndex, peIndex, 'blue');
-        this.totalEnergyGraphLine = this.addGraphLine(timeIndex, totalEnergyIndex, 'white');
+        this.translationalEnergyGraphLine = this.addGraphLine(INDEX_TIME, INDEX_TRANSLATIONAL_KINETIC_ENERGY, 'red');
+        this.rotationalEnergyGraphLine = this.addGraphLine(INDEX_TIME, INDEX_ROTATIONAL_KINETIC_ENERGY, 'yellow');
+        this.potentialEnergyGraphLine = this.addGraphLine(INDEX_TIME, INDEX_POTENTIAL_ENERGY, 'blue');
+        this.totalEnergyGraphLine = this.addGraphLine(INDEX_TIME, INDEX_TOTAL_ENERGY, 'white');
 
         this.autoScale.timeWindow = 5;
         this.autoScale.addGraphLine(this.translationalEnergyGraphLine);

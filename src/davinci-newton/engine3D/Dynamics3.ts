@@ -1,21 +1,16 @@
-import { Dynamics } from '../core/Dynamics';
+import { Dynamics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { ForceBody } from '../core/ForceBody';
 import { ForceLaw } from '../core/ForceLaw';
 import { VarsList } from '../core/VarsList';
 import { Geometric3 } from "../math/Geometric3";
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 
-export const INDEX_TIME = 0;
-export const INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
-export const INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
-export const INDEX_POTENTIAL_ENERGY = 3;
-export const INDEX_TOTAL_ENERGY = 4;
-export const INDEX_TOTAL_LINEAR_MOMENTUM_X = 5;
-export const INDEX_TOTAL_LINEAR_MOMENTUM_Y = 6;
-export const INDEX_TOTAL_LINEAR_MOMENTUM_Z = 7;
-export const INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = 8;
-export const INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = 9;
-export const INDEX_TOTAL_ANGULAR_MOMENTUM_XY = 10;
+export const INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+export const INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+export const INDEX_TOTAL_LINEAR_MOMENTUM_Z = INDEX_RESERVED_LAST + 3;
+export const INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = INDEX_RESERVED_LAST + 4;
+export const INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = INDEX_RESERVED_LAST + 5;
+export const INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 6;
 export const OFFSET_POSITION_X = 0;
 export const OFFSET_POSITION_Y = 1;
 export const OFFSET_POSITION_Z = 2;
