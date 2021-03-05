@@ -5366,6 +5366,66 @@ define('davinci-newton/engine2D/Dynamics2',["require", "exports", "../core/VarsL
     exports.Dynamics2 = Dynamics2;
 });
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define('davinci-newton/engine2D/Sphere2',["require", "exports", "../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (require, exports, RigidBody_1, Geometric2_1, Mat1_1, Unit_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Sphere2 = void 0;
+    var Sphere2 = (function (_super) {
+        __extends(Sphere2, _super);
+        function Sphere2(radius, measure) {
+            if (radius === void 0) { radius = Geometric2_1.Geometric2.one; }
+            var _this = _super.call(this, measure) || this;
+            _this.radius_ = Geometric2_1.Geometric2.fromScalar(radius);
+            _this.radiusLock_ = _this.radius_.lock();
+            _this.updateInertiaTensor();
+            return _this;
+        }
+        Object.defineProperty(Sphere2.prototype, "radius", {
+            get: function () {
+                return this.radius_;
+            },
+            set: function (radius) {
+                this.radius_.unlock(this.radiusLock_);
+                this.radius_.copyScalar(radius.a, radius.uom);
+                this.radiusLock_ = this.radius_.lock();
+                this.updateInertiaTensor();
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Sphere2.prototype.updateAngularVelocity = function () {
+            this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
+            this.Ω.quaditude(true);
+            this.Ω.mulByScalar(this.M.a, this.M.uom);
+            this.Ω.mulByNumber(2 / 5);
+            this.Ω.inv();
+            this.Ω.mulByBivector(this.L);
+        };
+        Sphere2.prototype.updateInertiaTensor = function () {
+            var r = this.radius_;
+            var s = 2 * this.M.a * r.a * r.a / 5;
+            var I = new Mat1_1.Mat1(s);
+            I.uom = Unit_1.Unit.mul(this.M.uom, Unit_1.Unit.mul(r.uom, r.uom));
+            this.I = I;
+        };
+        return Sphere2;
+    }(RigidBody_1.RigidBody));
+    exports.Sphere2 = Sphere2;
+});
+
 define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12125,7 +12185,7 @@ define('davinci-newton/strategy/DefaultAdvanceStrategy',["require", "exports", "
     exports.DefaultAdvanceStrategy = DefaultAdvanceStrategy;
 });
 
-define('davinci-newton',["require", "exports", "./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Cylinder2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (require, exports, config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Cylinder2_1, Dynamics2_1, Euclidean2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Sphere3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1) {
+define('davinci-newton',["require", "exports", "./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Cylinder2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Sphere2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (require, exports, config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Cylinder2_1, Dynamics2_1, Euclidean2_1, Sphere2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Sphere3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var newton = {
@@ -12143,6 +12203,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/config", "./dav
         get LOCAL() { return CoordType_1.LOCAL; },
         get WORLD() { return CoordType_1.WORLD; },
         get CoulombLaw() { return CoulombLaw_1.CoulombLaw; },
+        get Sphere2() { return Sphere2_1.Sphere2; },
         get Cylinder2() { return Cylinder2_1.Cylinder2; },
         get Cylinder3() { return Cylinder3_1.Cylinder3; },
         get DefaultAdvanceStrategy() { return DefaultAdvanceStrategy_1.DefaultAdvanceStrategy; },

@@ -71,6 +71,7 @@ export class Block2 extends RigidBody<Geometric2> {
 
     /**
      * The angular velocity is updated from the angular momentum.
+     * Ω = 12 * L * (1/M) * 1 / (h^2+w^2)
      */
     public updateAngularVelocity(): void {
         const w = this.width_;
@@ -78,19 +79,20 @@ export class Block2 extends RigidBody<Geometric2> {
         const ww = w.a * w.a;
         const hh = h.a * h.a;
         const k = 12 / this.M.a;
-        this.Ω.xy = k * this.L.xy / (ww + hh);
-        this.Ω.uom = Unit.div(Unit.div(this.L.uom, this.M.uom), Unit.mul(w.uom, w.uom));
+        this.Ω.xy = k * this.L.xy / (ww + hh);  // Ω = 12 * L * (1/M) * 1/(h^2+w^2)
+        this.Ω.uom = Unit.div(Unit.div(this.L.uom, this.M.uom), Unit.mul(w.uom, w.uom));    // (L / M) * (1/w^2)
     }
 
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.
+     * L = J(Ω) = (1/12) * M * (h^2 + w^2) * Ω
      */
     protected updateInertiaTensor(): void {
         const w = this.width_;
         const h = this.height_;
-        //        const ww = w.a * w.a;
-        //        const hh = h.a * h.a;
-        const s = this.M.a / 12;
+        const ww = w.a * w.a;
+        const hh = h.a * h.a;
+        const s = this.M.a * (hh + ww) / 12;
         const I = new Mat1(s);
         I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
         this.I = I;

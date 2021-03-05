@@ -172,11 +172,14 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
     }
     setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void {
+        // Let Ω(t) be the (bivector) angular velocity.
+        // Let R(t) be the (spinor) attitude of the rigid body. 
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
         // requiring the geometric product of Ω and R.
         // Ω and R are auxiliary and primary variables that have already been computed.
         const R = body.R;
         const Ω = body.Ω;
+        // dR/dt = +(1/2)(Ω.b)(R.b) - (1/2)(Ω.b)(R.a) I, where I = e1e2. 
         rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
         rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
     }

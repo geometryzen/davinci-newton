@@ -1,17 +1,3 @@
-// Copyright 2017-2021 David Holmes.  All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import { Metric } from '../core/Metric';
 import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
@@ -19,9 +5,9 @@ import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
 
 /**
- * A solid sphere of constant density.
+ * A solid disk of uniform surface density.
  */
-export class Sphere2 extends RigidBody<Geometric2> {
+export class Disc extends RigidBody<Geometric2> {
 
     /**
      * The dimension corresponding to the width.
@@ -50,23 +36,24 @@ export class Sphere2 extends RigidBody<Geometric2> {
     }
 
     /**
-     * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
+     * L = J(Ω) = (1/2) M R^2 Ω => Ω = 2 * L * (1/M) * (1/R)^2 
      */
     public updateAngularVelocity(): void {
-        this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
-        this.Ω.quaditude(true);
-        this.Ω.mulByScalar(this.M.a, this.M.uom);
-        this.Ω.mulByNumber(2 / 5);
-        this.Ω.inv();
-        this.Ω.mulByBivector(this.L);
+        this.Ω.copyScalar(this.radius_.a, this.radius_.uom);    // Ω contains R 
+        this.Ω.quaditude(true);                                 // Ω contains R^2
+        this.Ω.mulByScalar(this.M.a, this.M.uom);               // Ω contains M * R^2
+        this.Ω.mulByNumber(0.5);                                // Ω contains (1/2) * M * R^2
+        this.Ω.inv();                                           // Ω contains 2 * (1/M) * (1/R)^2
+        this.Ω.mulByBivector(this.L);                           // Ω contains 2 * L * (1/M) * (1/R)^2
     }
 
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.
+     * I = (1/2) M * R^2
      */
     protected updateInertiaTensor(): void {
         const r = this.radius_;
-        const s = 2 * this.M.a * r.a * r.a / 5;
+        const s = 0.5 * this.M.a * r.a * r.a;
         const I = new Mat1(s);
         I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
         this.I = I;
