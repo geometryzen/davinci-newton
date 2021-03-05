@@ -16,6 +16,7 @@ import { Block3 } from './davinci-newton/engine3D/Block3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
 import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
+import { Force3 } from './davinci-newton/engine3D/Force3';
 import { Physics3 } from './davinci-newton/engine3D/Physics3';
 import { Sphere3 } from './davinci-newton/engine3D/Sphere3';
 import { Spring3 } from './davinci-newton/engine3D/Spring3';
@@ -157,6 +158,10 @@ const newton = {
      * 
      */
     get Force() { return Force; },
+    /**
+     * 
+     */
+    get Force3() { return Force3; },
     /**
      * 
      */

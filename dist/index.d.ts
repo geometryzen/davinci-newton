@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.1
+// Type definitions for davinci-newton 1.0.3
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2240,7 +2240,14 @@ declare namespace NEWTON {
          * 
          */
         constructor(body: RigidBody<T>, metric: Metric<T>);
+        /**
+         * 
+         */
         getBody(): RigidBody<T>;
+    }
+
+    export class Force3 extends Force<Geometric3> {
+        constructor(body: ForceBody<Geometric3>);
     }
 
     interface ForceLaw<T> extends SimObject {
@@ -2891,6 +2898,6 @@ declare namespace NEWTON {
         /**
          * 
          */
-        constructor(canvasId: string, varsList: VarsList, timeIndex: number, transKeIndex: number, rotKeIndex: number, peIndex: number, totalEnergyIndex: number);
+        constructor(canvasId: string, varsList: VarsList);
     }
 }

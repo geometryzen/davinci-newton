@@ -63,6 +63,7 @@ npm tun test
 The following files should be changed.
 
 ```
+src/modules/index.d.ts
 src/davinci-newton/config.ts
 package.json
 bower.json

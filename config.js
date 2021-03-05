@@ -172,7 +172,7 @@ System.config({
       "buffer": "github:jspm/nodelibs-buffer@0.1.1",
       "cipher-base": "npm:cipher-base@1.0.4",
       "crypto": "github:jspm/nodelibs-crypto@0.1.0",
-      "inherits": "npm:inherits@2.0.4",
+      "inherits": "npm:inherits@2.0.1",
       "md5.js": "npm:md5.js@1.3.5",
       "ripemd160": "npm:ripemd160@2.0.2",
       "sha.js": "npm:sha.js@2.4.11"
