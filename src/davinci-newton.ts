@@ -18,6 +18,7 @@ import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
 import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
 import { Physics3 } from './davinci-newton/engine3D/Physics3';
 import { Sphere3 } from './davinci-newton/engine3D/Sphere3';
+import { Spring3 } from './davinci-newton/engine3D/Spring3';
 import { AxisChoice } from './davinci-newton/graph/AxisChoice';
 import { DisplayGraph } from './davinci-newton/graph/DisplayGraph';
 import { EnergyTimeGraph } from './davinci-newton/graph/EnergyTimeGraph';
@@ -224,6 +225,11 @@ const newton = {
      * 
      */
     get Spring() { return Spring; },
+    /**
+     * @deprecated Use Spring instead.
+     * This will be removed in version 2.0.
+     */
+    get Spring3() { return Spring3; },
     /**
      * 
      */

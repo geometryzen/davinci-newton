@@ -2623,6 +2623,14 @@ declare namespace NEWTON {
     }
 
     /**
+     * @deprecated Please use Spring instead.
+     * This will be removed in version 2.0.
+     */
+    export class Spring3 extends Spring<Geometric3> {
+        constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);
+    }
+
+    /**
      * A rectangle whose boundaries are stored with double floating point precision.
      * This is an immutable class: once an instance is created it cannot be changed.
      * 

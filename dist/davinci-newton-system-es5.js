@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.1';
+                    this.VERSION = '1.0.2';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -361,278 +361,6 @@ System.register("davinci-newton/core/Particle.js", ["./RigidBody"], function (ex
                 return Particle;
             }(RigidBody_1.RigidBody);
             exports_1("Particle", Particle);
-        }
-    };
-});
-System.register("davinci-newton/core/Force.js", ["../model/CoordType", "../objects/AbstractSimObject"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var CoordType_1, AbstractSimObject_1, Force;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }],
-        execute: function () {
-            Force = function (_super) {
-                __extends(Force, _super);
-                function Force(body_, metric) {
-                    var _this = _super.call(this) || this;
-                    _this.body_ = body_;
-                    _this.metric = metric;
-                    _this.location = metric.zero();
-                    _this.vector = metric.zero();
-                    _this.position_ = metric.zero();
-                    _this.force_ = metric.zero();
-                    _this.torque_ = metric.zero();
-                    return _this;
-                }
-                Force.prototype.getBody = function () {
-                    return this.body_;
-                };
-                Force.prototype.computeForce = function (force) {
-                    switch (this.vectorCoordType) {
-                        case CoordType_1.LOCAL:
-                            {
-                                this.metric.copyVector(this.vector, this.force_);
-                                this.metric.rotate(this.force_, this.body_.R);
-                                this.metric.writeVector(this.force_, force);
-                                break;
-                            }
-                        case CoordType_1.WORLD:
-                            {
-                                this.metric.copyVector(this.vector, this.force_);
-                                this.metric.writeVector(this.force_, force);
-                                break;
-                            }
-                    }
-                };
-                Object.defineProperty(Force.prototype, "F", {
-                    get: function () {
-                        this.computeForce(this.force_);
-                        return this.force_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Force.prototype, "x", {
-                    get: function () {
-                        this.computePosition(this.position_);
-                        return this.position_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Force.prototype.computePosition = function (position) {
-                    switch (this.locationCoordType) {
-                        case CoordType_1.LOCAL:
-                            {
-                                this.metric.copyVector(this.location, this.position_);
-                                this.metric.rotate(this.position_, this.body_.R);
-                                this.metric.addVector(this.position_, this.body_.X);
-                                this.metric.writeVector(this.position_, position);
-                                break;
-                            }
-                        case CoordType_1.WORLD:
-                            {
-                                this.metric.copyVector(this.location, this.position_);
-                                this.metric.writeVector(this.position_, position);
-                                break;
-                            }
-                    }
-                };
-                Force.prototype.computeTorque = function (torque) {
-                    this.computePosition(this.position_);
-                    this.computeForce(this.force_);
-                    this.metric.subVector(this.position_, this.body_.X);
-                    this.metric.ext(this.position_, this.force_);
-                    this.metric.write(this.position_, torque);
-                };
-                return Force;
-            }(AbstractSimObject_1.AbstractSimObject);
-            exports_1("Force", Force);
-        }
-    };
-});
-System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../objects/AbstractSimObject", "./assertConsistentUnits", "./Force"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var CoordType_1, AbstractSimObject_1, assertConsistentUnits_1, Force_1, Spring;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (assertConsistentUnits_1_1) {
-            assertConsistentUnits_1 = assertConsistentUnits_1_1;
-        }, function (Force_1_1) {
-            Force_1 = Force_1_1;
-        }],
-        execute: function () {
-            Spring = function (_super) {
-                __extends(Spring, _super);
-                function Spring(body1_, body2_) {
-                    var _this = _super.call(this) || this;
-                    _this.body1_ = body1_;
-                    _this.body2_ = body2_;
-                    _this.forces = [];
-                    _this.metric = body1_.metric;
-                    var metric = _this.metric;
-                    _this.restLength = metric.scalar(1);
-                    metric.lock(_this.restLength);
-                    _this.stiffness = metric.scalar(1);
-                    metric.lock(_this.stiffness);
-                    _this.attach1_ = metric.zero();
-                    _this.attach1Lock = metric.lock(_this.attach1_);
-                    _this.attach2_ = metric.zero();
-                    _this.attach2Lock = metric.lock(_this.attach2_);
-                    _this.end1_ = metric.zero();
-                    _this.end1Lock_ = metric.lock(_this.end1_);
-                    _this.end2_ = metric.zero();
-                    _this.end2Lock_ = metric.lock(_this.end2_);
-                    _this.F1 = new Force_1.Force(_this.body1_, metric);
-                    _this.F1.locationCoordType = CoordType_1.WORLD;
-                    _this.F1.vectorCoordType = CoordType_1.WORLD;
-                    _this.F2 = new Force_1.Force(_this.body2_, metric);
-                    _this.F2.locationCoordType = CoordType_1.WORLD;
-                    _this.F2.vectorCoordType = CoordType_1.WORLD;
-                    _this.potentialEnergy_ = metric.zero();
-                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-                    _this.forces = [_this.F1, _this.F2];
-                    return _this;
-                }
-                Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
-                    if (this.attach1_ == null || this.body1_ == null) {
-                        throw new Error();
-                    }
-                    this.body1_.localPointToWorldPoint(this.attach1_, x);
-                };
-                Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
-                    if (this.attach2_ == null || this.body2_ == null) {
-                        throw new Error();
-                    }
-                    this.body2_.localPointToWorldPoint(this.attach2_, x);
-                };
-                Object.defineProperty(Spring.prototype, "attach1", {
-                    get: function () {
-                        return this.attach1_;
-                    },
-                    set: function (attach1) {
-                        this.metric.unlock(this.attach1_, this.attach1Lock);
-                        this.metric.copyVector(attach1, this.attach1_);
-                        this.attach1Lock = this.metric.lock(this.attach1_);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Spring.prototype, "attach2", {
-                    get: function () {
-                        return this.attach2_;
-                    },
-                    set: function (attach2) {
-                        this.metric.unlock(this.attach2_, this.attach2Lock);
-                        this.metric.copyVector(attach2, this.attach2_);
-                        this.attach2Lock = this.metric.lock(this.attach2_);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Spring.prototype, "end1", {
-                    get: function () {
-                        this.metric.unlock(this.end1_, this.end1Lock_);
-                        this.computeBody1AttachPointInWorldCoords(this.end1_);
-                        this.end1Lock_ = this.metric.lock(this.end1_);
-                        return this.end1_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(Spring.prototype, "end2", {
-                    get: function () {
-                        this.metric.unlock(this.end2_, this.end2Lock_);
-                        this.computeBody2AttachPointInWorldCoords(this.end2_);
-                        this.end2Lock_ = this.metric.lock(this.end2_);
-                        return this.end2_;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Spring.prototype.updateForces = function () {
-                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
-                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
-                    var metric = this.metric;
-                    metric.copyVector(this.F2.location, this.F2.vector);
-                    metric.subVector(this.F2.vector, this.F1.location);
-                    metric.direction(this.F2.vector, true);
-                    metric.copyVector(this.F1.location, this.F1.vector);
-                    metric.subVector(this.F1.vector, this.F2.location);
-                    metric.magnitude(this.F1.vector, true);
-                    metric.subScalar(this.F1.vector, this.restLength);
-                    metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
-                    metric.mulByVector(this.F1.vector, this.F2.vector);
-                    this.metric.copyVector(this.F1.vector, this.F2.vector);
-                    this.metric.neg(this.F2.vector);
-                    return this.forces;
-                };
-                Spring.prototype.disconnect = function () {};
-                Spring.prototype.potentialEnergy = function () {
-                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
-                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
-                    var metric = this.metric;
-                    this.metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-                    this.potentialEnergyLock_ = -1;
-                    assertConsistentUnits_1.assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
-                    metric.copyVector(this.F2.location, this.potentialEnergy_);
-                    metric.subVector(this.potentialEnergy_, this.F1.location);
-                    metric.magnitude(this.potentialEnergy_, true);
-                    assertConsistentUnits_1.assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
-                    metric.sub(this.potentialEnergy_, this.restLength);
-                    metric.quaditude(this.potentialEnergy_, true);
-                    metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
-                    metric.mulByNumber(this.potentialEnergy_, 0.5);
-                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-                    return this.potentialEnergy_;
-                };
-                return Spring;
-            }(AbstractSimObject_1.AbstractSimObject);
-            exports_1("Spring", Spring);
         }
     };
 });
@@ -2394,60 +2122,6 @@ System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatis
         execute: function () {}
     };
 });
-System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
-    "use strict";
-
-    var AbstractSimObject;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [],
-        execute: function () {
-            AbstractSimObject = function () {
-                function AbstractSimObject() {
-                    this.expireTime_ = Number.POSITIVE_INFINITY;
-                }
-                Object.defineProperty(AbstractSimObject.prototype, "expireTime", {
-                    get: function () {
-                        return this.expireTime_;
-                    },
-                    set: function (expireTime) {
-                        this.expireTime_ = expireTime;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return AbstractSimObject;
-            }();
-            exports_1("AbstractSimObject", AbstractSimObject);
-        }
-    };
-});
-System.register("davinci-newton/core/assertConsistentUnits.js", ["../math/Unit"], function (exports_1, context_1) {
-    "use strict";
-
-    var Unit_1;
-    var __moduleName = context_1 && context_1.id;
-    function assertConsistentUnits(aName, A, bName, B, metric) {
-        if (!metric.isZero(A) && !metric.isZero(B)) {
-            if (Unit_1.Unit.isOne(metric.uom(A))) {
-                if (!Unit_1.Unit.isOne(metric.uom(B))) {
-                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
-                }
-            } else {
-                if (Unit_1.Unit.isOne(metric.uom(B))) {
-                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
-                }
-            }
-        }
-    }
-    exports_1("assertConsistentUnits", assertConsistentUnits);
-    return {
-        setters: [function (Unit_1_1) {
-            Unit_1 = Unit_1_1;
-        }],
-        execute: function () {}
-    };
-});
 System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Unit", "../objects/AbstractSimObject", "./assertConsistentUnits"], function (exports_1, context_1) {
     "use strict";
 
@@ -2954,6 +2628,370 @@ System.register("davinci-newton/engine3D/Sphere3.js", ["../core/RigidBody", "../
                 return Sphere3;
             }(RigidBody_1.RigidBody);
             exports_1("Sphere3", Sphere3);
+        }
+    };
+});
+System.register("davinci-newton/core/assertConsistentUnits.js", ["../math/Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var Unit_1;
+    var __moduleName = context_1 && context_1.id;
+    function assertConsistentUnits(aName, A, bName, B, metric) {
+        if (!metric.isZero(A) && !metric.isZero(B)) {
+            if (Unit_1.Unit.isOne(metric.uom(A))) {
+                if (!Unit_1.Unit.isOne(metric.uom(B))) {
+                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
+                }
+            } else {
+                if (Unit_1.Unit.isOne(metric.uom(B))) {
+                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
+                }
+            }
+        }
+    }
+    exports_1("assertConsistentUnits", assertConsistentUnits);
+    return {
+        setters: [function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/objects/AbstractSimObject.js", [], function (exports_1, context_1) {
+    "use strict";
+
+    var AbstractSimObject;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+            AbstractSimObject = function () {
+                function AbstractSimObject() {
+                    this.expireTime_ = Number.POSITIVE_INFINITY;
+                }
+                Object.defineProperty(AbstractSimObject.prototype, "expireTime", {
+                    get: function () {
+                        return this.expireTime_;
+                    },
+                    set: function (expireTime) {
+                        this.expireTime_ = expireTime;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                return AbstractSimObject;
+            }();
+            exports_1("AbstractSimObject", AbstractSimObject);
+        }
+    };
+});
+System.register("davinci-newton/core/Force.js", ["../model/CoordType", "../objects/AbstractSimObject"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var CoordType_1, AbstractSimObject_1, Force;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }],
+        execute: function () {
+            Force = function (_super) {
+                __extends(Force, _super);
+                function Force(body_, metric) {
+                    var _this = _super.call(this) || this;
+                    _this.body_ = body_;
+                    _this.metric = metric;
+                    _this.location = metric.zero();
+                    _this.vector = metric.zero();
+                    _this.position_ = metric.zero();
+                    _this.force_ = metric.zero();
+                    _this.torque_ = metric.zero();
+                    return _this;
+                }
+                Force.prototype.getBody = function () {
+                    return this.body_;
+                };
+                Force.prototype.computeForce = function (force) {
+                    switch (this.vectorCoordType) {
+                        case CoordType_1.LOCAL:
+                            {
+                                this.metric.copyVector(this.vector, this.force_);
+                                this.metric.rotate(this.force_, this.body_.R);
+                                this.metric.writeVector(this.force_, force);
+                                break;
+                            }
+                        case CoordType_1.WORLD:
+                            {
+                                this.metric.copyVector(this.vector, this.force_);
+                                this.metric.writeVector(this.force_, force);
+                                break;
+                            }
+                    }
+                };
+                Object.defineProperty(Force.prototype, "F", {
+                    get: function () {
+                        this.computeForce(this.force_);
+                        return this.force_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Force.prototype, "x", {
+                    get: function () {
+                        this.computePosition(this.position_);
+                        return this.position_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Force.prototype.computePosition = function (position) {
+                    switch (this.locationCoordType) {
+                        case CoordType_1.LOCAL:
+                            {
+                                this.metric.copyVector(this.location, this.position_);
+                                this.metric.rotate(this.position_, this.body_.R);
+                                this.metric.addVector(this.position_, this.body_.X);
+                                this.metric.writeVector(this.position_, position);
+                                break;
+                            }
+                        case CoordType_1.WORLD:
+                            {
+                                this.metric.copyVector(this.location, this.position_);
+                                this.metric.writeVector(this.position_, position);
+                                break;
+                            }
+                    }
+                };
+                Force.prototype.computeTorque = function (torque) {
+                    this.computePosition(this.position_);
+                    this.computeForce(this.force_);
+                    this.metric.subVector(this.position_, this.body_.X);
+                    this.metric.ext(this.position_, this.force_);
+                    this.metric.write(this.position_, torque);
+                };
+                return Force;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("Force", Force);
+        }
+    };
+});
+System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../objects/AbstractSimObject", "./assertConsistentUnits", "./Force"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var CoordType_1, AbstractSimObject_1, assertConsistentUnits_1, Force_1, Spring;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (assertConsistentUnits_1_1) {
+            assertConsistentUnits_1 = assertConsistentUnits_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
+        }],
+        execute: function () {
+            Spring = function (_super) {
+                __extends(Spring, _super);
+                function Spring(body1_, body2_) {
+                    var _this = _super.call(this) || this;
+                    _this.body1_ = body1_;
+                    _this.body2_ = body2_;
+                    _this.forces = [];
+                    _this.metric = body1_.metric;
+                    var metric = _this.metric;
+                    _this.restLength = metric.scalar(1);
+                    metric.lock(_this.restLength);
+                    _this.stiffness = metric.scalar(1);
+                    metric.lock(_this.stiffness);
+                    _this.attach1_ = metric.zero();
+                    _this.attach1Lock = metric.lock(_this.attach1_);
+                    _this.attach2_ = metric.zero();
+                    _this.attach2Lock = metric.lock(_this.attach2_);
+                    _this.end1_ = metric.zero();
+                    _this.end1Lock_ = metric.lock(_this.end1_);
+                    _this.end2_ = metric.zero();
+                    _this.end2Lock_ = metric.lock(_this.end2_);
+                    _this.F1 = new Force_1.Force(_this.body1_, metric);
+                    _this.F1.locationCoordType = CoordType_1.WORLD;
+                    _this.F1.vectorCoordType = CoordType_1.WORLD;
+                    _this.F2 = new Force_1.Force(_this.body2_, metric);
+                    _this.F2.locationCoordType = CoordType_1.WORLD;
+                    _this.F2.vectorCoordType = CoordType_1.WORLD;
+                    _this.potentialEnergy_ = metric.zero();
+                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+                    _this.forces = [_this.F1, _this.F2];
+                    return _this;
+                }
+                Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
+                    if (this.attach1_ == null || this.body1_ == null) {
+                        throw new Error();
+                    }
+                    this.body1_.localPointToWorldPoint(this.attach1_, x);
+                };
+                Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
+                    if (this.attach2_ == null || this.body2_ == null) {
+                        throw new Error();
+                    }
+                    this.body2_.localPointToWorldPoint(this.attach2_, x);
+                };
+                Object.defineProperty(Spring.prototype, "attach1", {
+                    get: function () {
+                        return this.attach1_;
+                    },
+                    set: function (attach1) {
+                        this.metric.unlock(this.attach1_, this.attach1Lock);
+                        this.metric.copyVector(attach1, this.attach1_);
+                        this.attach1Lock = this.metric.lock(this.attach1_);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring.prototype, "attach2", {
+                    get: function () {
+                        return this.attach2_;
+                    },
+                    set: function (attach2) {
+                        this.metric.unlock(this.attach2_, this.attach2Lock);
+                        this.metric.copyVector(attach2, this.attach2_);
+                        this.attach2Lock = this.metric.lock(this.attach2_);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring.prototype, "end1", {
+                    get: function () {
+                        this.metric.unlock(this.end1_, this.end1Lock_);
+                        this.computeBody1AttachPointInWorldCoords(this.end1_);
+                        this.end1Lock_ = this.metric.lock(this.end1_);
+                        return this.end1_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring.prototype, "end2", {
+                    get: function () {
+                        this.metric.unlock(this.end2_, this.end2Lock_);
+                        this.computeBody2AttachPointInWorldCoords(this.end2_);
+                        this.end2Lock_ = this.metric.lock(this.end2_);
+                        return this.end2_;
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Spring.prototype.updateForces = function () {
+                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
+                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
+                    var metric = this.metric;
+                    metric.copyVector(this.F2.location, this.F2.vector);
+                    metric.subVector(this.F2.vector, this.F1.location);
+                    metric.direction(this.F2.vector, true);
+                    metric.copyVector(this.F1.location, this.F1.vector);
+                    metric.subVector(this.F1.vector, this.F2.location);
+                    metric.magnitude(this.F1.vector, true);
+                    metric.subScalar(this.F1.vector, this.restLength);
+                    metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
+                    metric.mulByVector(this.F1.vector, this.F2.vector);
+                    this.metric.copyVector(this.F1.vector, this.F2.vector);
+                    this.metric.neg(this.F2.vector);
+                    return this.forces;
+                };
+                Spring.prototype.disconnect = function () {};
+                Spring.prototype.potentialEnergy = function () {
+                    this.computeBody1AttachPointInWorldCoords(this.F1.location);
+                    this.computeBody2AttachPointInWorldCoords(this.F2.location);
+                    var metric = this.metric;
+                    this.metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+                    this.potentialEnergyLock_ = -1;
+                    assertConsistentUnits_1.assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
+                    metric.copyVector(this.F2.location, this.potentialEnergy_);
+                    metric.subVector(this.potentialEnergy_, this.F1.location);
+                    metric.magnitude(this.potentialEnergy_, true);
+                    assertConsistentUnits_1.assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
+                    metric.sub(this.potentialEnergy_, this.restLength);
+                    metric.quaditude(this.potentialEnergy_, true);
+                    metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
+                    metric.mulByNumber(this.potentialEnergy_, 0.5);
+                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+                    return this.potentialEnergy_;
+                };
+                return Spring;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("Spring", Spring);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/Spring3.js", ["../core/Spring"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var Spring_1, Spring3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (Spring_1_1) {
+            Spring_1 = Spring_1_1;
+        }],
+        execute: function () {
+            Spring3 = function (_super) {
+                __extends(Spring3, _super);
+                function Spring3(body1, body2) {
+                    return _super.call(this, body1, body2) || this;
+                }
+                return Spring3;
+            }(Spring_1.Spring);
+            exports_1("Spring3", Spring3);
         }
     };
 });
@@ -12804,10 +12842,10 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
     "use strict";
 
-    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Physics3_1, Sphere3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
+    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (config_1_1) {
@@ -12850,6 +12888,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             Physics3_1 = Physics3_1_1;
         }, function (Sphere3_1_1) {
             Sphere3_1 = Sphere3_1_1;
+        }, function (Spring3_1_1) {
+            Spring3_1 = Spring3_1_1;
         }, function (AxisChoice_1_1) {
             AxisChoice_1 = AxisChoice_1_1;
         }, function (DisplayGraph_1_1) {
@@ -13034,6 +13074,9 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get Spring() {
                     return Spring_1.Spring;
+                },
+                get Spring3() {
+                    return Spring3_1.Spring3;
                 },
                 get Unit() {
                     return Unit_1.Unit;

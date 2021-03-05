@@ -8,6 +8,9 @@ import { Euclidean3 } from "./Euclidean3";
 // Implementation of the Physics3 engine for backwards compatibility.
 //
 
+/**
+ *
+ */
 export class Physics3 extends State<Geometric3> implements EnergySystem<Geometric3> {
     constructor() {
         super(new Euclidean3(), new Dynamics3());
