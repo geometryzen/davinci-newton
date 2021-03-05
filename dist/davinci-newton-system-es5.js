@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.7';
+                    this.VERSION = '1.0.8';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -467,7 +467,7 @@ System.register("davinci-newton/engine2D/Block2.js", ["../core/RigidBody", "../m
         }
     };
 });
-System.register("davinci-newton/engine2D/Disc2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/engine2D/Disc2.js", ["../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit", "./Euclidean2"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -487,7 +487,7 @@ System.register("davinci-newton/engine2D/Disc2.js", ["../core/RigidBody", "../ma
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Disc2;
+    var RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Euclidean2_1, Disc2;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (RigidBody_1_1) {
@@ -498,15 +498,17 @@ System.register("davinci-newton/engine2D/Disc2.js", ["../core/RigidBody", "../ma
             Mat1_1 = Mat1_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
+        }, function (Euclidean2_1_1) {
+            Euclidean2_1 = Euclidean2_1_1;
         }],
         execute: function () {
             Disc2 = function (_super) {
                 __extends(Disc2, _super);
-                function Disc2(radius, measure) {
+                function Disc2(radius) {
                     if (radius === void 0) {
                         radius = Geometric2_1.Geometric2.one;
                     }
-                    var _this = _super.call(this, measure) || this;
+                    var _this = _super.call(this, new Euclidean2_1.Euclidean2()) || this;
                     _this.radius_ = Geometric2_1.Geometric2.fromScalar(radius);
                     _this.radiusLock_ = _this.radius_.lock();
                     _this.updateInertiaTensor();
@@ -4595,10 +4597,10 @@ System.register("davinci-newton/math/isZeroVectorE2.js", [], function (exports_1
         execute: function () {}
     };
 });
-System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gauss", "./isZeroGeometricE2", "./isZeroVectorE2", "./Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gauss", "./isZeroGeometricE2", "./isZeroVectorE2", "./stringFromCoordinates", "./Unit"], function (exports_1, context_1) {
     "use strict";
 
-    var readOnly_1, gauss_1, isZeroGeometricE2_1, isZeroVectorE2_1, Unit_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, pseudo, spinor, coordinates, UNLOCKED, Geometric2;
+    var readOnly_1, gauss_1, isZeroGeometricE2_1, isZeroVectorE2_1, stringFromCoordinates_1, Unit_1, COORD_SCALAR, COORD_X, COORD_Y, COORD_PSEUDO, BASIS_LABELS, zero, scalar, vector, pseudo, spinor, coordinates, UNLOCKED, Geometric2;
     var __moduleName = context_1 && context_1.id;
     function lock(m) {
         m.lock();
@@ -4613,6 +4615,8 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
             isZeroGeometricE2_1 = isZeroGeometricE2_1_1;
         }, function (isZeroVectorE2_1_1) {
             isZeroVectorE2_1 = isZeroVectorE2_1_1;
+        }, function (stringFromCoordinates_1_1) {
+            stringFromCoordinates_1 = stringFromCoordinates_1_1;
         }, function (Unit_1_1) {
             Unit_1 = Unit_1_1;
         }],
@@ -4720,7 +4724,7 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                             this.modified_ = true;
                         }
                     } else {
-                        throw new Error(readOnly_1.default(name).message);
+                        throw new Error(readOnly_1.readOnly(name).message);
                     }
                 };
                 Object.defineProperty(Geometric2.prototype, "a", {
@@ -4783,7 +4787,7 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                         if (this.lock_ === UNLOCKED) {
                             this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
                         } else {
-                            throw new Error(readOnly_1.default('uom').message);
+                            throw new Error(readOnly_1.readOnly('uom').message);
                         }
                     },
                     enumerable: false,
@@ -5215,6 +5219,30 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/readOnly", "./gau
                         return this;
                     }
                 };
+                Geometric2.prototype.toExponential = function (fractionDigits) {
+                    var coordToString = function (coord) {
+                        return coord.toExponential(fractionDigits);
+                    };
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                };
+                Geometric2.prototype.toFixed = function (fractionDigits) {
+                    var coordToString = function (coord) {
+                        return coord.toFixed(fractionDigits);
+                    };
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                };
+                Geometric2.prototype.toPrecision = function (precision) {
+                    var coordToString = function (coord) {
+                        return coord.toPrecision(precision);
+                    };
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                };
+                Geometric2.prototype.toString = function (radix) {
+                    var coordToString = function (coord) {
+                        return coord.toString(radix);
+                    };
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                };
                 Geometric2.prototype.write = function (mv) {
                     mv.a = this.a;
                     mv.x = this.x;
@@ -5304,7 +5332,7 @@ System.register("davinci-newton/i18n/readOnly.js", ["../checks/mustBeString"], f
         };
         return message;
     }
-    exports_1("default", readOnly);
+    exports_1("readOnly", readOnly);
     return {
         setters: [function (mustBeString_1_1) {
             mustBeString_1 = mustBeString_1_1;
@@ -6557,7 +6585,7 @@ System.register("davinci-newton/math/stringFromCoordinates.js", ["../checks/isDe
             return sb.length > 0 ? sb.join("") + " " + uom.toString(10, true) : "0";
         }
     }
-    exports_1("default", stringFromCoordinates);
+    exports_1("stringFromCoordinates", stringFromCoordinates);
     return {
         setters: [function (isDefined_1_1) {
             isDefined_1 = isDefined_1_1;
@@ -6798,7 +6826,7 @@ System.register("davinci-newton/math/Geometric3.js", ["../checks/isDefined", "..
                             this.modified_ = true;
                         }
                     } else {
-                        throw new Error(readOnly_1.default(name).message);
+                        throw new Error(readOnly_1.readOnly(name).message);
                     }
                 };
                 Object.defineProperty(Geometric3.prototype, "a", {
@@ -6858,7 +6886,7 @@ System.register("davinci-newton/math/Geometric3.js", ["../checks/isDefined", "..
                         if (this.lock_ === UNLOCKED) {
                             this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
                         } else {
-                            throw new Error(readOnly_1.default('uom').message);
+                            throw new Error(readOnly_1.readOnly('uom').message);
                         }
                     },
                     enumerable: false,
@@ -7958,25 +7986,25 @@ System.register("davinci-newton/math/Geometric3.js", ["../checks/isDefined", "..
                     var coordToString = function (coord) {
                         return coord.toExponential(fractionDigits);
                     };
-                    return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
                 };
                 Geometric3.prototype.toFixed = function (fractionDigits) {
                     var coordToString = function (coord) {
                         return coord.toFixed(fractionDigits);
                     };
-                    return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
                 };
                 Geometric3.prototype.toPrecision = function (precision) {
                     var coordToString = function (coord) {
                         return coord.toPrecision(precision);
                     };
-                    return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
                 };
                 Geometric3.prototype.toString = function (radix) {
                     var coordToString = function (coord) {
                         return coord.toString(radix);
                     };
-                    return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+                    return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
                 };
                 Geometric3.prototype.grade = function (n) {
                     if (this.lock_ !== UNLOCKED) {

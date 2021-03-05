@@ -1,4 +1,4 @@
-import readOnly from "../i18n/readOnly";
+import { readOnly } from "../i18n/readOnly";
 import { BivectorE2 } from "./BivectorE2";
 import { GradeMasked } from "./CartesianG3";
 import gauss from "./gauss";
@@ -7,6 +7,7 @@ import { isZeroGeometricE2 } from "./isZeroGeometricE2";
 import { isZeroVectorE2 } from "./isZeroVectorE2";
 import { Scalar } from "./Scalar";
 import { SpinorE2 } from "./SpinorE2";
+import { stringFromCoordinates } from "./stringFromCoordinates";
 import { Unit } from "./Unit";
 import { VectorE2 } from "./VectorE2";
 // Symbolic constants for the coordinate indices into the data array.
@@ -1022,6 +1023,48 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
             this.y -= v.y * α;
             return this;
         }
+    }
+
+    /**
+     * Returns a string representing the number in exponential notation.
+     *
+     * @param fractionDigits
+     * @returns
+     */
+    toExponential(fractionDigits?: number): string {
+        const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+
+    /**
+     * Returns a string representing the number in fixed-point notation.
+     *
+     * @param fractionDigits
+     * @returns
+     */
+    toFixed(fractionDigits?: number): string {
+        const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+
+    /**
+     * @param precision
+     * @returns
+     */
+    toPrecision(precision?: number): string {
+        const coordToString = function (coord: number): string { return coord.toPrecision(precision); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+
+    /**
+     * Returns a string representation of the number.
+     *
+     * @param radix
+     * @returns
+     */
+    toString(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
     write(mv: GeometricE2): void {

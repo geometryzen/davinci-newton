@@ -1,5 +1,5 @@
 import isDefined from '../checks/isDefined';
-import readOnly from '../i18n/readOnly';
+import { readOnly } from '../i18n/readOnly';
 import approx from './approx';
 import arraysEQ from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
@@ -24,7 +24,7 @@ import { Scalar } from './Scalar';
 import scpG3 from './scpG3';
 import { SpinorE3 } from './SpinorE3';
 import squaredNormG3 from './squaredNormG3';
-import stringFromCoordinates from './stringFromCoordinates';
+import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
 import { VectorE3 } from './VectorE3';
 import wedgeXY from './wedgeXY';

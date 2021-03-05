@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.7
+// Type definitions for davinci-newton 1.0.8
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2190,6 +2190,14 @@ declare namespace NEWTON {
          * 
          */
         constructor(radius?: GeometricE3, height?: GeometricE3);
+    }
+
+    /**
+     * A thin, solid disk of uniform surface density.
+     */
+    class Disc2 extends RigidBody<Geometric2> {
+        radius: Geometric2;
+        constructor(radius?: GeometricE2);
     }
 
     /**

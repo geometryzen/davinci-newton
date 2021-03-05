@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.7';
+            this.VERSION = '1.0.8';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4138,6 +4138,7 @@ define('davinci-newton/checks/mustBeString',["require", "exports", "../checks/mu
 define('davinci-newton/i18n/readOnly',["require", "exports", "../checks/mustBeString"], function (require, exports, mustBeString_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.readOnly = void 0;
     function readOnly(name) {
         mustBeString_1.default('name', name);
         var message = {
@@ -4147,7 +4148,7 @@ define('davinci-newton/i18n/readOnly',["require", "exports", "../checks/mustBeSt
         };
         return message;
     }
-    exports.default = readOnly;
+    exports.readOnly = readOnly;
 });
 
 define('davinci-newton/math/gauss',["require", "exports"], function (require, exports) {
@@ -4249,7 +4250,138 @@ define('davinci-newton/math/isZeroGeometricE2',["require", "exports", "./isZeroB
     exports.isZeroGeometricE2 = isZeroGeometricE2;
 });
 
-define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly", "./gauss", "./isZeroGeometricE2", "./isZeroVectorE2", "./Unit"], function (require, exports, readOnly_1, gauss_1, isZeroGeometricE2_1, isZeroVectorE2_1, Unit_1) {
+define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+    exports.default = isDefined;
+});
+
+define('davinci-newton/checks/mustBeArray',["require", "exports", "../checks/mustSatisfy", "../checks/isArray"], function (require, exports, mustSatisfy_1, isArray_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function beAnArray() {
+        return "be an array";
+    }
+    function default_1(name, value, contextBuilder) {
+        mustSatisfy_1.default(name, isArray_1.default(value), beAnArray, contextBuilder);
+        return value;
+    }
+    exports.default = default_1;
+});
+
+define('davinci-newton/math/stringFromCoordinates',["require", "exports", "../checks/isDefined", "../checks/mustBeArray", "./Unit"], function (require, exports, isDefined_1, mustBeArray_1, Unit_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.stringFromCoordinates = void 0;
+    function isLabelOne(label) {
+        if (typeof label === 'string') {
+            return label === "1";
+        }
+        else {
+            var labels = mustBeArray_1.default('label', label);
+            if (labels.length === 2) {
+                return isLabelOne(labels[0]) && isLabelOne(labels[1]);
+            }
+            else if (labels.length === 1) {
+                return isLabelOne(labels[0]);
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    function appendLabel(coord, label, sb) {
+        if (typeof label === 'string') {
+            sb.push(label);
+        }
+        else {
+            var labels = mustBeArray_1.default('label', label);
+            if (labels.length === 2) {
+                sb.push(coord > 0 ? labels[1] : labels[0]);
+            }
+            else if (labels.length === 1) {
+                sb.push(labels[0]);
+            }
+            else if (labels.length === 0) {
+            }
+            else {
+                throw new Error("Unexpected basis label array length: " + labels.length);
+            }
+        }
+    }
+    function appendCoord(coord, numberToString, label, sb) {
+        if (coord !== 0) {
+            if (coord >= 0) {
+                if (sb.length > 0) {
+                    sb.push("+");
+                }
+            }
+            else {
+                if (typeof label === 'string') {
+                    sb.push("-");
+                }
+                else {
+                    var labels = mustBeArray_1.default('label', label);
+                    if (labels.length === 2) {
+                        if (labels[0] !== labels[1]) {
+                            if (sb.length > 0) {
+                                sb.push("+");
+                            }
+                        }
+                        else {
+                            sb.push("-");
+                        }
+                    }
+                    else if (labels.length === 1) {
+                        sb.push("-");
+                    }
+                    else {
+                        sb.push("-");
+                    }
+                }
+            }
+            var n = Math.abs(coord);
+            if (n === 1) {
+                appendLabel(coord, label, sb);
+            }
+            else {
+                sb.push(numberToString(n));
+                if (!isLabelOne(label)) {
+                    sb.push("*");
+                    appendLabel(coord, label, sb);
+                }
+                else {
+                }
+            }
+        }
+        else {
+        }
+    }
+    function stringFromCoordinates(coordinates, numberToString, labels, uom) {
+        var sb = [];
+        for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
+            var coord = coordinates[i];
+            if (isDefined_1.default(coord)) {
+                appendCoord(coord, numberToString, labels[i], sb);
+            }
+            else {
+                return void 0;
+            }
+        }
+        if (Unit_1.Unit.isOne(uom)) {
+            return sb.length > 0 ? sb.join("") : "0";
+        }
+        else {
+            return sb.length > 0 ? sb.join("") + " " + uom.toString(10, true) : "0";
+        }
+    }
+    exports.stringFromCoordinates = stringFromCoordinates;
+});
+
+define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly", "./gauss", "./isZeroGeometricE2", "./isZeroVectorE2", "./stringFromCoordinates", "./Unit"], function (require, exports, readOnly_1, gauss_1, isZeroGeometricE2_1, isZeroVectorE2_1, stringFromCoordinates_1, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Geometric2 = void 0;
@@ -4362,7 +4494,7 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
                 }
             }
             else {
-                throw new Error(readOnly_1.default(name).message);
+                throw new Error(readOnly_1.readOnly(name).message);
             }
         };
         Object.defineProperty(Geometric2.prototype, "a", {
@@ -4426,7 +4558,7 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
                     this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
                 }
                 else {
-                    throw new Error(readOnly_1.default('uom').message);
+                    throw new Error(readOnly_1.readOnly('uom').message);
                 }
             },
             enumerable: false,
@@ -4888,6 +5020,22 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
                 return this;
             }
         };
+        Geometric2.prototype.toExponential = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Geometric2.prototype.toFixed = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Geometric2.prototype.toPrecision = function (precision) {
+            var coordToString = function (coord) { return coord.toPrecision(precision); };
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Geometric2.prototype.toString = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
         Geometric2.prototype.write = function (mv) {
             mv.a = this.a;
             mv.x = this.x;
@@ -5173,15 +5321,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define('davinci-newton/engine2D/Disc2',["require", "exports", "../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit"], function (require, exports, RigidBody_1, Geometric2_1, Mat1_1, Unit_1) {
+define('davinci-newton/engine2D/Disc2',["require", "exports", "../core/RigidBody", "../math/Geometric2", "../math/Mat1", "../math/Unit", "./Euclidean2"], function (require, exports, RigidBody_1, Geometric2_1, Mat1_1, Unit_1, Euclidean2_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Disc2 = void 0;
     var Disc2 = (function (_super) {
         __extends(Disc2, _super);
-        function Disc2(radius, measure) {
+        function Disc2(radius) {
             if (radius === void 0) { radius = Geometric2_1.Geometric2.one; }
-            var _this = _super.call(this, measure) || this;
+            var _this = _super.call(this, new Euclidean2_1.Euclidean2()) || this;
             _this.radius_ = Geometric2_1.Geometric2.fromScalar(radius);
             _this.radiusLock_ = _this.radius_.lock();
             _this.updateInertiaTensor();
@@ -5467,15 +5615,6 @@ define('davinci-newton/engine2D/Spring2',["require", "exports", "../core/Spring"
         return Spring2;
     }(Spring_1.Spring));
     exports.Spring2 = Spring2;
-});
-
-define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
-    }
-    exports.default = isDefined;
 });
 
 define('davinci-newton/math/approx',["require", "exports"], function (require, exports) {
@@ -6365,127 +6504,6 @@ define('davinci-newton/math/squaredNormG3',["require", "exports"], function (req
     exports.default = squaredNormG3;
 });
 
-define('davinci-newton/checks/mustBeArray',["require", "exports", "../checks/mustSatisfy", "../checks/isArray"], function (require, exports, mustSatisfy_1, isArray_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function beAnArray() {
-        return "be an array";
-    }
-    function default_1(name, value, contextBuilder) {
-        mustSatisfy_1.default(name, isArray_1.default(value), beAnArray, contextBuilder);
-        return value;
-    }
-    exports.default = default_1;
-});
-
-define('davinci-newton/math/stringFromCoordinates',["require", "exports", "../checks/isDefined", "../checks/mustBeArray", "./Unit"], function (require, exports, isDefined_1, mustBeArray_1, Unit_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function isLabelOne(label) {
-        if (typeof label === 'string') {
-            return label === "1";
-        }
-        else {
-            var labels = mustBeArray_1.default('label', label);
-            if (labels.length === 2) {
-                return isLabelOne(labels[0]) && isLabelOne(labels[1]);
-            }
-            else if (labels.length === 1) {
-                return isLabelOne(labels[0]);
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    function appendLabel(coord, label, sb) {
-        if (typeof label === 'string') {
-            sb.push(label);
-        }
-        else {
-            var labels = mustBeArray_1.default('label', label);
-            if (labels.length === 2) {
-                sb.push(coord > 0 ? labels[1] : labels[0]);
-            }
-            else if (labels.length === 1) {
-                sb.push(labels[0]);
-            }
-            else if (labels.length === 0) {
-            }
-            else {
-                throw new Error("Unexpected basis label array length: " + labels.length);
-            }
-        }
-    }
-    function appendCoord(coord, numberToString, label, sb) {
-        if (coord !== 0) {
-            if (coord >= 0) {
-                if (sb.length > 0) {
-                    sb.push("+");
-                }
-            }
-            else {
-                if (typeof label === 'string') {
-                    sb.push("-");
-                }
-                else {
-                    var labels = mustBeArray_1.default('label', label);
-                    if (labels.length === 2) {
-                        if (labels[0] !== labels[1]) {
-                            if (sb.length > 0) {
-                                sb.push("+");
-                            }
-                        }
-                        else {
-                            sb.push("-");
-                        }
-                    }
-                    else if (labels.length === 1) {
-                        sb.push("-");
-                    }
-                    else {
-                        sb.push("-");
-                    }
-                }
-            }
-            var n = Math.abs(coord);
-            if (n === 1) {
-                appendLabel(coord, label, sb);
-            }
-            else {
-                sb.push(numberToString(n));
-                if (!isLabelOne(label)) {
-                    sb.push("*");
-                    appendLabel(coord, label, sb);
-                }
-                else {
-                }
-            }
-        }
-        else {
-        }
-    }
-    function stringFromCoordinates(coordinates, numberToString, labels, uom) {
-        var sb = [];
-        for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
-            var coord = coordinates[i];
-            if (isDefined_1.default(coord)) {
-                appendCoord(coord, numberToString, labels[i], sb);
-            }
-            else {
-                return void 0;
-            }
-        }
-        if (Unit_1.Unit.isOne(uom)) {
-            return sb.length > 0 ? sb.join("") : "0";
-        }
-        else {
-            return sb.length > 0 ? sb.join("") + " " + uom.toString(10, true) : "0";
-        }
-    }
-    exports.default = stringFromCoordinates;
-});
-
 define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefined", "../i18n/readOnly", "./approx", "./arraysEQ", "./dotVectorE3", "./extG3", "./gauss", "./isScalarG3", "./isVectorE3", "./isVectorG3", "./isZeroGeometricE3", "./isZeroVectorE3", "./lcoG3", "./maskG3", "./mulE3", "./QQ", "./randomRange", "./rcoG3", "./rotorFromDirectionsE3", "./scpG3", "./squaredNormG3", "./stringFromCoordinates", "./Unit", "./wedgeXY", "./wedgeYZ", "./wedgeZX"], function (require, exports, isDefined_1, readOnly_1, approx_1, arraysEQ_1, dotVectorE3_1, extG3_1, gauss_1, isScalarG3_1, isVectorE3_1, isVectorG3_1, isZeroGeometricE3_1, isZeroVectorE3_1, lcoG3_1, maskG3_1, mulE3_1, QQ_1, randomRange_1, rcoG3_1, rotorFromDirectionsE3_1, scpG3_1, squaredNormG3_1, stringFromCoordinates_1, Unit_1, wedgeXY_1, wedgeYZ_1, wedgeZX_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -6621,7 +6639,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
                 }
             }
             else {
-                throw new Error(readOnly_1.default(name).message);
+                throw new Error(readOnly_1.readOnly(name).message);
             }
         };
         Object.defineProperty(Geometric3.prototype, "a", {
@@ -6682,7 +6700,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
                     this.uom_ = Unit_1.Unit.mustBeUnit('uom', uom);
                 }
                 else {
-                    throw new Error(readOnly_1.default('uom').message);
+                    throw new Error(readOnly_1.readOnly('uom').message);
                 }
             },
             enumerable: false,
@@ -7857,19 +7875,19 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
         };
         Geometric3.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         Geometric3.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         Geometric3.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         Geometric3.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates_1.default(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates_1.stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         Geometric3.prototype.grade = function (n) {
             if (this.lock_ !== UNLOCKED) {

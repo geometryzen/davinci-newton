@@ -97,7 +97,7 @@ function appendCoord(coord: number, numberToString: (x: number) => string, label
     }
 }
 
-export default function stringFromCoordinates(coordinates: number[], numberToString: (x: number) => string, labels: (string | string[])[], uom: Unit): string {
+export function stringFromCoordinates(coordinates: number[], numberToString: (x: number) => string, labels: (string | string[])[], uom: Unit): string {
     const sb: string[] = [];
     for (let i = 0, iLength = coordinates.length; i < iLength; i++) {
         const coord = coordinates[i];

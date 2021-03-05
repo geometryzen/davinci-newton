@@ -3,6 +3,7 @@ import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
 import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
+import { Euclidean2 } from './Euclidean2';
 
 /**
  * A solid disk of uniform surface density.
@@ -18,8 +19,8 @@ export class Disc2 extends RigidBody<Geometric2> {
     /**
      * 
      */
-    constructor(radius = Geometric2.one, measure: Metric<Geometric2>) {
-        super(measure);
+    constructor(radius = Geometric2.one) {
+        super(new Euclidean2());
         this.radius_ = Geometric2.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
         this.updateInertiaTensor();

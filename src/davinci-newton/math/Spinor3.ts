@@ -1,5 +1,5 @@
 import mustBeNumber from '../checks/mustBeNumber';
-import readOnly from '../i18n/readOnly';
+import { readOnly } from '../i18n/readOnly';
 import { GradeMasked } from './CartesianG3';
 import randomRange from './randomRange';
 import { SpinorE3 } from './SpinorE3';

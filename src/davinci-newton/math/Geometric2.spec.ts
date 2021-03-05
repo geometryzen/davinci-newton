@@ -557,4 +557,45 @@ describe("Geometric2", function () {
             expect(mag.b).toBe(0);
         });
     });
+    describe("toString", function () {
+        it("zero is scalar(0)", function () {
+            const M = Geometric2.zero;
+            expect(M.toString()).toBe("0");
+        });
+        it("one", function () {
+            const M = Geometric2.one;
+            expect(M.toString()).toBe("1");
+        });
+        it("e1", function () {
+            const M = Geometric2.e1;
+            expect(M.toString()).toBe("e1");
+        });
+        it("e2", function () {
+            const M = Geometric2.e2;
+            expect(M.toString()).toBe("e2");
+        });
+        it("I is e12", function () {
+            const M = Geometric2.I;
+            expect(M.toString()).toBe("e12");
+        });
+        it("10", function () {
+            const M = Geometric2.one.mulByNumber(10);
+            expect(M.toString()).toBe("10");
+            expect(M.toString(10)).toBe("10");
+            expect(M.toString(2)).toBe("1010");
+            expect(M.toString(16)).toBe("a");
+        });
+        it("kilogram", function () {
+            const M = Geometric2.kilogram;
+            expect(M.toString()).toBe("1 kg");
+        });
+        it("meter", function () {
+            const M = Geometric2.meter;
+            expect(M.toString()).toBe("1 m");
+        });
+        it("second", function () {
+            const M = Geometric2.second;
+            expect(M.toString()).toBe("1 s");
+        });
+    });
 });

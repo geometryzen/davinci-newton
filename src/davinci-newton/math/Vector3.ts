@@ -1,6 +1,6 @@
 import isNumber from '../checks/isNumber';
 import mustBeNumber from '../checks/mustBeNumber';
-import readOnly from '../i18n/readOnly';
+import { readOnly } from '../i18n/readOnly';
 import { BivectorE3 } from './BivectorE3';
 import { GradeMasked } from './CartesianG3';
 import isSpinorE3 from './isSpinorE3';
