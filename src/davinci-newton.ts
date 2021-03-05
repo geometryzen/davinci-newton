@@ -9,6 +9,7 @@ import { Spring } from './davinci-newton/core/Spring';
 import { State } from './davinci-newton/core/State';
 import { VarsList } from './davinci-newton/core/VarsList';
 import { Block2 } from './davinci-newton/engine2D/Block2';
+import { ConstantForceLaw2 } from './davinci-newton/engine2D/ConstantForceLaw2';
 import { Disc2 } from './davinci-newton/engine2D/Disc2';
 import { Dynamics2 } from './davinci-newton/engine2D/Dynamics2';
 import { Euclidean2 } from './davinci-newton/engine2D/Euclidean2';
@@ -16,6 +17,7 @@ import { Force2 } from './davinci-newton/engine2D/Force2';
 import { Physics2 } from './davinci-newton/engine2D/Physics2';
 import { Spring2 } from './davinci-newton/engine2D/Spring2';
 import { Block3 } from './davinci-newton/engine3D/Block3';
+import { ConstantForceLaw3 } from './davinci-newton/engine3D/ConstantForceLaw3';
 import { Cylinder3 } from './davinci-newton/engine3D/Cylinder3';
 import { Dynamics3 } from './davinci-newton/engine3D/Dynamics3';
 import { Euclidean3 } from './davinci-newton/engine3D/Euclidean3';
@@ -97,6 +99,14 @@ const newton = {
      * 
      */
     get ConstantForceLaw() { return ConstantForceLaw; },
+    /**
+     * 
+     */
+    get ConstantForceLaw2() { return ConstantForceLaw2; },
+    /**
+     * 
+     */
+    get ConstantForceLaw3() { return ConstantForceLaw3; },
     /**
      * 
      */

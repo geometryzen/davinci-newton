@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.8
+// Type definitions for davinci-newton 1.0.9
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2602,6 +2602,14 @@ declare namespace NEWTON {
          * 
          */
         potentialEnergy(): T;
+    }
+
+    export class ConstantForceLaw2 extends ConstantForceLaw<Geometric2> {
+        constructor(body: ForceBody<Geometric2>, vector: Geometric2, vectorCoordType: CoordType);
+    }
+
+    export class ConstantForceLaw3 extends ConstantForceLaw<Geometric3> {
+        constructor(body: ForceBody<Geometric3>, vector: Geometric3, vectorCoordType: CoordType);
     }
 
     /**

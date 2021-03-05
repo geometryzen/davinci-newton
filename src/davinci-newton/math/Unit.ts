@@ -281,7 +281,10 @@ export class Unit {
   public static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
   private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
   private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
-  private static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
+  /**
+   * The unit for a Spring constant, N/m.
+   */
+  public static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
   private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
   private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
   private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);

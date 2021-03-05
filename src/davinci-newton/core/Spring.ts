@@ -1,9 +1,11 @@
+import { Unit } from '../math/Unit';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
 import { Metric } from './Metric';
+import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 import { RigidBody } from './RigidBody';
 
 /**
@@ -13,11 +15,13 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    public restLength: T;
+    private $restLength: T;
+    private $restLengthLock: number;
     /**
      * 
      */
-    public stiffness: T;
+    private $stiffness: T;
+    private $stiffnessLock: number;
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
@@ -70,11 +74,11 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.metric = body1_.metric;
         const metric = this.metric;
 
-        this.restLength = metric.scalar(1);
-        metric.lock(this.restLength);
+        this.$restLength = metric.scalar(1);
+        this.$restLengthLock = metric.lock(this.$restLength);
 
-        this.stiffness = metric.scalar(1);
-        metric.lock(this.stiffness);
+        this.$stiffness = metric.scalar(1);
+        this.$stiffnessLock = metric.lock(this.$stiffness);
 
         this.attach1_ = metric.zero();
         this.attach1Lock = metric.lock(this.attach1_);
@@ -100,6 +104,26 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
 
         this.forces = [this.F1, this.F2];
+    }
+
+    get restLength(): T {
+        return this.$restLength;
+    }
+    set restLength(restLength: T) {
+        mustBeDimensionlessOrCorrectUnits('restLength', restLength, Unit.METER, this.metric);
+        this.metric.unlock(this.$restLength, this.$restLengthLock);
+        this.metric.copy(restLength, this.$restLength);
+        this.$restLengthLock = this.metric.lock(this.$restLength);
+    }
+
+    get stiffness(): T {
+        return this.$stiffness;
+    }
+    set stiffness(stiffness: T) {
+        mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
+        this.metric.unlock(this.$stiffness, this.$stiffnessLock);
+        this.metric.copy(stiffness, this.$stiffness);
+        this.$stiffnessLock = this.metric.lock(this.$stiffness);
     }
 
     private computeBody1AttachPointInWorldCoords(x: T): void {
@@ -178,17 +202,6 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.metric.copyVector(this.F1.vector, this.F2.vector);
         this.metric.neg(this.F2.vector);
 
-        /*
-        if (this.damping_ !== 0) {
-            // damping does not happen for 'compress only' when uncompressed
-            if (!this.compressOnly_ || len < this.restLength_ - 1E-10) {
-                const v1 = this.body1_.worldVelocityOfBodyPoint(this.attach1_);
-                const v2 = this.body2_.worldVelocityOfBodyPoint(this.attach2_);
-                const df = v1.subtract(v2).multiply(-this.damping_);
-                f12 = f12.add(df);
-            }
-        }
-        */
         return this.forces;
     }
 

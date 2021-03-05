@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.8';
+                    this.VERSION = '1.0.9';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -44,83 +44,6 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                 return Newton;
             }();
             exports_1("config", config = new Newton());
-        }
-    };
-});
-System.register("davinci-newton/core/ConstantForceLaw.js", ["../model/CoordType", "../objects/AbstractSimObject", "./Force"], function (exports_1, context_1) {
-    "use strict";
-
-    var __extends = this && this.__extends || function () {
-        var extendStatics = function (d, b) {
-            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-                d.__proto__ = b;
-            } || function (d, b) {
-                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-            };
-            return extendStatics(d, b);
-        };
-        return function (d, b) {
-            extendStatics(d, b);
-            function __() {
-                this.constructor = d;
-            }
-            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-        };
-    }();
-    var CoordType_1, AbstractSimObject_1, Force_1, ConstantForceLaw;
-    var __moduleName = context_1 && context_1.id;
-    return {
-        setters: [function (CoordType_1_1) {
-            CoordType_1 = CoordType_1_1;
-        }, function (AbstractSimObject_1_1) {
-            AbstractSimObject_1 = AbstractSimObject_1_1;
-        }, function (Force_1_1) {
-            Force_1 = Force_1_1;
-        }],
-        execute: function () {
-            ConstantForceLaw = function (_super) {
-                __extends(ConstantForceLaw, _super);
-                function ConstantForceLaw(body_, vector, vectorCoordType) {
-                    if (vectorCoordType === void 0) {
-                        vectorCoordType = CoordType_1.WORLD;
-                    }
-                    var _this = _super.call(this) || this;
-                    _this.body_ = body_;
-                    _this.forces = [];
-                    var metric = _this.body_.metric;
-                    _this.force_ = new Force_1.Force(_this.body_, metric);
-                    _this.force_.locationCoordType = CoordType_1.LOCAL;
-                    metric.copyVector(vector, _this.force_.vector);
-                    _this.force_.vectorCoordType = vectorCoordType;
-                    _this.forces = [_this.force_];
-                    _this.potentialEnergy_ = metric.zero();
-                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-                    return _this;
-                }
-                Object.defineProperty(ConstantForceLaw.prototype, "location", {
-                    get: function () {
-                        return this.force_.location;
-                    },
-                    set: function (location) {
-                        var metric = this.body_.metric;
-                        metric.copyVector(location, this.force_.location);
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ConstantForceLaw.prototype.updateForces = function () {
-                    return this.forces;
-                };
-                ConstantForceLaw.prototype.disconnect = function () {};
-                ConstantForceLaw.prototype.potentialEnergy = function () {
-                    var metric = this.body_.metric;
-                    metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-                    return this.potentialEnergy_;
-                };
-                return ConstantForceLaw;
-            }(AbstractSimObject_1.AbstractSimObject);
-            exports_1("ConstantForceLaw", ConstantForceLaw);
         }
     };
 });
@@ -464,6 +387,49 @@ System.register("davinci-newton/engine2D/Block2.js", ["../core/RigidBody", "../m
                 return Block2;
             }(RigidBody_1.RigidBody);
             exports_1("Block2", Block2);
+        }
+    };
+});
+System.register("davinci-newton/engine2D/ConstantForceLaw2.js", ["../core/ConstantForceLaw", "../model/CoordType"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var ConstantForceLaw_1, CoordType_1, ConstantForceLaw2;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (ConstantForceLaw_1_1) {
+            ConstantForceLaw_1 = ConstantForceLaw_1_1;
+        }, function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }],
+        execute: function () {
+            ConstantForceLaw2 = function (_super) {
+                __extends(ConstantForceLaw2, _super);
+                function ConstantForceLaw2(body, vector, vectorCoordType) {
+                    if (vectorCoordType === void 0) {
+                        vectorCoordType = CoordType_1.WORLD;
+                    }
+                    return _super.call(this, body, vector, vectorCoordType) || this;
+                }
+                return ConstantForceLaw2;
+            }(ConstantForceLaw_1.ConstantForceLaw);
+            exports_1("ConstantForceLaw2", ConstantForceLaw2);
         }
     };
 });
@@ -1112,6 +1078,126 @@ System.register("davinci-newton/engine3D/Block3.js", ["../math/Geometric3", "../
                 return Block3;
             }(RigidBody_1.RigidBody);
             exports_1("Block3", Block3);
+        }
+    };
+});
+System.register("davinci-newton/core/ConstantForceLaw.js", ["../model/CoordType", "../objects/AbstractSimObject", "./Force"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var CoordType_1, AbstractSimObject_1, Force_1, ConstantForceLaw;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }, function (AbstractSimObject_1_1) {
+            AbstractSimObject_1 = AbstractSimObject_1_1;
+        }, function (Force_1_1) {
+            Force_1 = Force_1_1;
+        }],
+        execute: function () {
+            ConstantForceLaw = function (_super) {
+                __extends(ConstantForceLaw, _super);
+                function ConstantForceLaw(body_, vector, vectorCoordType) {
+                    if (vectorCoordType === void 0) {
+                        vectorCoordType = CoordType_1.WORLD;
+                    }
+                    var _this = _super.call(this) || this;
+                    _this.body_ = body_;
+                    _this.forces = [];
+                    var metric = _this.body_.metric;
+                    _this.force_ = new Force_1.Force(_this.body_, metric);
+                    _this.force_.locationCoordType = CoordType_1.LOCAL;
+                    metric.copyVector(vector, _this.force_.vector);
+                    _this.force_.vectorCoordType = vectorCoordType;
+                    _this.forces = [_this.force_];
+                    _this.potentialEnergy_ = metric.zero();
+                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+                    return _this;
+                }
+                Object.defineProperty(ConstantForceLaw.prototype, "location", {
+                    get: function () {
+                        return this.force_.location;
+                    },
+                    set: function (location) {
+                        var metric = this.body_.metric;
+                        metric.copyVector(location, this.force_.location);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                ConstantForceLaw.prototype.updateForces = function () {
+                    return this.forces;
+                };
+                ConstantForceLaw.prototype.disconnect = function () {};
+                ConstantForceLaw.prototype.potentialEnergy = function () {
+                    var metric = this.body_.metric;
+                    metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+                    return this.potentialEnergy_;
+                };
+                return ConstantForceLaw;
+            }(AbstractSimObject_1.AbstractSimObject);
+            exports_1("ConstantForceLaw", ConstantForceLaw);
+        }
+    };
+});
+System.register("davinci-newton/engine3D/ConstantForceLaw3.js", ["../core/ConstantForceLaw", "../model/CoordType"], function (exports_1, context_1) {
+    "use strict";
+
+    var __extends = this && this.__extends || function () {
+        var extendStatics = function (d, b) {
+            extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            } || function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+            return extendStatics(d, b);
+        };
+        return function (d, b) {
+            extendStatics(d, b);
+            function __() {
+                this.constructor = d;
+            }
+            d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        };
+    }();
+    var ConstantForceLaw_1, CoordType_1, ConstantForceLaw3;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [function (ConstantForceLaw_1_1) {
+            ConstantForceLaw_1 = ConstantForceLaw_1_1;
+        }, function (CoordType_1_1) {
+            CoordType_1 = CoordType_1_1;
+        }],
+        execute: function () {
+            ConstantForceLaw3 = function (_super) {
+                __extends(ConstantForceLaw3, _super);
+                function ConstantForceLaw3(body, vector, vectorCoordType) {
+                    if (vectorCoordType === void 0) {
+                        vectorCoordType = CoordType_1.WORLD;
+                    }
+                    return _super.call(this, body, vector, vectorCoordType) || this;
+                }
+                return ConstantForceLaw3;
+            }(ConstantForceLaw_1.ConstantForceLaw);
+            exports_1("ConstantForceLaw3", ConstantForceLaw3);
         }
     };
 });
@@ -2280,7 +2366,7 @@ System.register("davinci-newton/checks/mustBeFunction.js", ["../checks/mustSatis
         execute: function () {}
     };
 });
-System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Unit", "../objects/AbstractSimObject", "./assertConsistentUnits"], function (exports_1, context_1) {
+System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction", "../checks/mustBeNonNullObject", "../checks/mustBeNumber", "../math/Unit", "../objects/AbstractSimObject", "./assertConsistentUnits", "./mustBeDimensionlessOrCorrectUnits"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -2300,15 +2386,8 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Unit_1, AbstractSimObject_1, assertConsistentUnits_1, RigidBody;
+    var mustBeFunction_1, mustBeNonNullObject_1, mustBeNumber_1, Unit_1, AbstractSimObject_1, assertConsistentUnits_1, mustBeDimensionlessOrCorrectUnits_1, RigidBody;
     var __moduleName = context_1 && context_1.id;
-    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
-        if (!Unit_1.Unit.isOne(metric.uom(value)) && !Unit_1.Unit.isCompatible(metric.uom(value), unit)) {
-            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
-        } else {
-            return value;
-        }
-    }
     return {
         setters: [function (mustBeFunction_1_1) {
             mustBeFunction_1 = mustBeFunction_1_1;
@@ -2322,6 +2401,8 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
             AbstractSimObject_1 = AbstractSimObject_1_1;
         }, function (assertConsistentUnits_1_1) {
             assertConsistentUnits_1 = assertConsistentUnits_1_1;
+        }, function (mustBeDimensionlessOrCorrectUnits_1_1) {
+            mustBeDimensionlessOrCorrectUnits_1 = mustBeDimensionlessOrCorrectUnits_1_1;
         }],
         execute: function () {
             RigidBody = function (_super) {
@@ -2367,7 +2448,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.mass_;
                     },
                     set: function (M) {
-                        mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.Unit.KILOGRAM, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('M', M, Unit_1.Unit.KILOGRAM, this.metric);
                         this.metric.unlock(this.mass_, this.massLock_);
                         this.metric.copy(M, this.mass_);
                         this.massLock_ = this.metric.lock(this.mass_);
@@ -2381,7 +2462,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.charge_;
                     },
                     set: function (Q) {
-                        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.Unit.COULOMB, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('Q', Q, Unit_1.Unit.COULOMB, this.metric);
                         this.metric.unlock(this.charge_, this.chargeLock_);
                         this.metric.copy(Q, this.charge_);
                         this.chargeLock_ = this.metric.lock(this.charge_);
@@ -2428,7 +2509,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.position_;
                     },
                     set: function (position) {
-                        mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('position', position, Unit_1.Unit.METER, this.metric);
                         this.metric.copy(position, this.position_);
                     },
                     enumerable: false,
@@ -2439,7 +2520,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.attitude_;
                     },
                     set: function (attitude) {
-                        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit_1.Unit.ONE, this.metric);
                         this.metric.copy(attitude, this.attitude_);
                     },
                     enumerable: false,
@@ -2450,7 +2531,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.linearMomentum_;
                     },
                     set: function (momentum) {
-                        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit_1.Unit.KILOGRAM_METER_PER_SECOND, this.metric);
                         this.metric.copy(momentum, this.linearMomentum_);
                     },
                     enumerable: false,
@@ -2461,7 +2542,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.angularMomentum_;
                     },
                     set: function (angularMomentum) {
-                        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit_1.Unit.JOULE_SECOND, this.metric);
                         this.metric.copy(angularMomentum, this.angularMomentum_);
                     },
                     enumerable: false,
@@ -2472,7 +2553,7 @@ System.register("davinci-newton/core/RigidBody.js", ["../checks/mustBeFunction",
                         return this.angularVelocity_;
                     },
                     set: function (angularVelocity) {
-                        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit_1.Unit.INV_SECOND, this.metric);
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit_1.Unit.INV_SECOND, this.metric);
                         this.metric.copy(angularVelocity, this.angularVelocity_);
                     },
                     enumerable: false,
@@ -2952,7 +3033,27 @@ System.register("davinci-newton/core/Force.js", ["../model/CoordType", "../objec
         }
     };
 });
-System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../objects/AbstractSimObject", "./assertConsistentUnits", "./Force"], function (exports_1, context_1) {
+System.register("davinci-newton/core/mustBeDimensionlessOrCorrectUnits.js", ["../math/Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var Unit_1;
+    var __moduleName = context_1 && context_1.id;
+    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
+        if (!Unit_1.Unit.isOne(metric.uom(value)) && !Unit_1.Unit.isCompatible(metric.uom(value), unit)) {
+            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
+        } else {
+            return value;
+        }
+    }
+    exports_1("mustBeDimensionlessOrCorrectUnits", mustBeDimensionlessOrCorrectUnits);
+    return {
+        setters: [function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/core/Spring.js", ["../math/Unit", "../model/CoordType", "../objects/AbstractSimObject", "./assertConsistentUnits", "./Force", "./mustBeDimensionlessOrCorrectUnits"], function (exports_1, context_1) {
     "use strict";
 
     var __extends = this && this.__extends || function () {
@@ -2972,10 +3073,12 @@ System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../obje
             d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
         };
     }();
-    var CoordType_1, AbstractSimObject_1, assertConsistentUnits_1, Force_1, Spring;
+    var Unit_1, CoordType_1, AbstractSimObject_1, assertConsistentUnits_1, Force_1, mustBeDimensionlessOrCorrectUnits_1, Spring;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [function (CoordType_1_1) {
+        setters: [function (Unit_1_1) {
+            Unit_1 = Unit_1_1;
+        }, function (CoordType_1_1) {
             CoordType_1 = CoordType_1_1;
         }, function (AbstractSimObject_1_1) {
             AbstractSimObject_1 = AbstractSimObject_1_1;
@@ -2983,6 +3086,8 @@ System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../obje
             assertConsistentUnits_1 = assertConsistentUnits_1_1;
         }, function (Force_1_1) {
             Force_1 = Force_1_1;
+        }, function (mustBeDimensionlessOrCorrectUnits_1_1) {
+            mustBeDimensionlessOrCorrectUnits_1 = mustBeDimensionlessOrCorrectUnits_1_1;
         }],
         execute: function () {
             Spring = function (_super) {
@@ -2994,10 +3099,10 @@ System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../obje
                     _this.forces = [];
                     _this.metric = body1_.metric;
                     var metric = _this.metric;
-                    _this.restLength = metric.scalar(1);
-                    metric.lock(_this.restLength);
-                    _this.stiffness = metric.scalar(1);
-                    metric.lock(_this.stiffness);
+                    _this.$restLength = metric.scalar(1);
+                    _this.$restLengthLock = metric.lock(_this.$restLength);
+                    _this.$stiffness = metric.scalar(1);
+                    _this.$stiffnessLock = metric.lock(_this.$stiffness);
                     _this.attach1_ = metric.zero();
                     _this.attach1Lock = metric.lock(_this.attach1_);
                     _this.attach2_ = metric.zero();
@@ -3017,6 +3122,32 @@ System.register("davinci-newton/core/Spring.js", ["../model/CoordType", "../obje
                     _this.forces = [_this.F1, _this.F2];
                     return _this;
                 }
+                Object.defineProperty(Spring.prototype, "restLength", {
+                    get: function () {
+                        return this.$restLength;
+                    },
+                    set: function (restLength) {
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('restLength', restLength, Unit_1.Unit.METER, this.metric);
+                        this.metric.unlock(this.$restLength, this.$restLengthLock);
+                        this.metric.copy(restLength, this.$restLength);
+                        this.$restLengthLock = this.metric.lock(this.$restLength);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
+                Object.defineProperty(Spring.prototype, "stiffness", {
+                    get: function () {
+                        return this.$stiffness;
+                    },
+                    set: function (stiffness) {
+                        mustBeDimensionlessOrCorrectUnits_1.mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit_1.Unit.STIFFNESS, this.metric);
+                        this.metric.unlock(this.$stiffness, this.$stiffnessLock);
+                        this.metric.copy(stiffness, this.$stiffness);
+                        this.$stiffnessLock = this.metric.lock(this.$stiffness);
+                    },
+                    enumerable: false,
+                    configurable: true
+                });
                 Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
                     if (this.attach1_ == null || this.body1_ == null) {
                         throw new Error();
@@ -13047,10 +13178,10 @@ System.register("davinci-newton/view/SimView.js", ["../util/AbstractSubject", ".
         }
     };
 });
-System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Force2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine2D/Spring2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
+System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newton/core/ConstantForceLaw", "./davinci-newton/core/CoulombLaw", "./davinci-newton/core/Force", "./davinci-newton/core/GravitationLaw", "./davinci-newton/core/Particle", "./davinci-newton/core/RigidBody", "./davinci-newton/core/Spring", "./davinci-newton/core/State", "./davinci-newton/core/VarsList", "./davinci-newton/engine2D/Block2", "./davinci-newton/engine2D/ConstantForceLaw2", "./davinci-newton/engine2D/Disc2", "./davinci-newton/engine2D/Dynamics2", "./davinci-newton/engine2D/Euclidean2", "./davinci-newton/engine2D/Force2", "./davinci-newton/engine2D/Physics2", "./davinci-newton/engine2D/Spring2", "./davinci-newton/engine3D/Block3", "./davinci-newton/engine3D/ConstantForceLaw3", "./davinci-newton/engine3D/Cylinder3", "./davinci-newton/engine3D/Dynamics3", "./davinci-newton/engine3D/Euclidean3", "./davinci-newton/engine3D/Force3", "./davinci-newton/engine3D/Physics3", "./davinci-newton/engine3D/Sphere3", "./davinci-newton/engine3D/Spring3", "./davinci-newton/graph/AxisChoice", "./davinci-newton/graph/DisplayGraph", "./davinci-newton/graph/EnergyTimeGraph", "./davinci-newton/graph/Graph", "./davinci-newton/graph/GraphLine", "./davinci-newton/math/Dimensions", "./davinci-newton/math/Geometric2", "./davinci-newton/math/Geometric3", "./davinci-newton/math/Matrix3", "./davinci-newton/math/QQ", "./davinci-newton/math/Unit", "./davinci-newton/math/Vec3", "./davinci-newton/model/CoordType", "./davinci-newton/solvers/AdaptiveStepSolver", "./davinci-newton/solvers/ConstantEnergySolver", "./davinci-newton/solvers/EulerMethod", "./davinci-newton/solvers/ModifiedEuler", "./davinci-newton/solvers/RungeKutta", "./davinci-newton/strategy/DefaultAdvanceStrategy", "./davinci-newton/util/CircularList", "./davinci-newton/view/AlignH", "./davinci-newton/view/AlignV", "./davinci-newton/view/DrawingMode", "./davinci-newton/view/LabCanvas", "./davinci-newton/view/SimView"], function (exports_1, context_1) {
     "use strict";
 
-    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Force2_1, Physics2_1, Spring2_1, Block3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
+    var config_1, ConstantForceLaw_1, CoulombLaw_1, Force_1, GravitationLaw_1, Particle_1, RigidBody_1, Spring_1, State_1, VarsList_1, Block2_1, ConstantForceLaw2_1, Disc2_1, Dynamics2_1, Euclidean2_1, Force2_1, Physics2_1, Spring2_1, Block3_1, ConstantForceLaw3_1, Cylinder3_1, Dynamics3_1, Euclidean3_1, Force3_1, Physics3_1, Sphere3_1, Spring3_1, AxisChoice_1, DisplayGraph_1, EnergyTimeGraph_1, Graph_1, GraphLine_1, Dimensions_1, Geometric2_1, Geometric3_1, Matrix3_1, QQ_1, Unit_1, Vec3_1, CoordType_1, AdaptiveStepSolver_1, ConstantEnergySolver_1, EulerMethod_1, ModifiedEuler_1, RungeKutta_1, DefaultAdvanceStrategy_1, CircularList_1, AlignH_1, AlignV_1, DrawingMode_1, LabCanvas_1, SimView_1, newton;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [function (config_1_1) {
@@ -13075,6 +13206,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             VarsList_1 = VarsList_1_1;
         }, function (Block2_1_1) {
             Block2_1 = Block2_1_1;
+        }, function (ConstantForceLaw2_1_1) {
+            ConstantForceLaw2_1 = ConstantForceLaw2_1_1;
         }, function (Disc2_1_1) {
             Disc2_1 = Disc2_1_1;
         }, function (Dynamics2_1_1) {
@@ -13089,6 +13222,8 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
             Spring2_1 = Spring2_1_1;
         }, function (Block3_1_1) {
             Block3_1 = Block3_1_1;
+        }, function (ConstantForceLaw3_1_1) {
+            ConstantForceLaw3_1 = ConstantForceLaw3_1_1;
         }, function (Cylinder3_1_1) {
             Cylinder3_1 = Cylinder3_1_1;
         }, function (Dynamics3_1_1) {
@@ -13188,6 +13323,12 @@ System.register("davinci-newton.js", ["./davinci-newton/config", "./davinci-newt
                 },
                 get ConstantForceLaw() {
                     return ConstantForceLaw_1.ConstantForceLaw;
+                },
+                get ConstantForceLaw2() {
+                    return ConstantForceLaw2_1.ConstantForceLaw2;
+                },
+                get ConstantForceLaw3() {
+                    return ConstantForceLaw3_1.ConstantForceLaw3;
                 },
                 get LOCAL() {
                     return CoordType_1.LOCAL;
