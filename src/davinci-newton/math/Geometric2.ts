@@ -996,12 +996,14 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * <code>this ⟼ a * b</code>
      * </p>
      * Sets this Geometric3 to the geometric product a * b of the vector arguments.
-     *
-     * @param a
-     * @param b
      */
     versor(a: Vector, b: Vector): this {
-        throw new Error(notImplemented('versor').message);
+        this.a = a.x * b.x + a.y * b.y;
+        this.x = 0;
+        this.y = 0;
+        this.b = a.x * b.y - a.y * b.x;
+        this.uom = Unit.mul(a.uom, b.uom);
+        return this;
     }
 
     /**

@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.11';
+            this.VERSION = '1.0.12';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5320,7 +5320,12 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/notImple
             return this;
         };
         Geometric2.prototype.versor = function (a, b) {
-            throw new Error(notImplemented_1.notImplemented('versor').message);
+            this.a = a.x * b.x + a.y * b.y;
+            this.x = 0;
+            this.y = 0;
+            this.b = a.x * b.y - a.y * b.x;
+            this.uom = Unit_1.Unit.mul(a.uom, b.uom);
+            return this;
         };
         Geometric2.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED;
