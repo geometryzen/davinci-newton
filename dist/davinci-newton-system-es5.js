@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.12';
+                    this.VERSION = '1.0.13';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -1056,43 +1056,43 @@ System.register("davinci-newton/core/ConstantForceLaw.js", ["../model/CoordType"
         execute: function () {
             ConstantForceLaw = function (_super) {
                 __extends(ConstantForceLaw, _super);
-                function ConstantForceLaw(body_, vector, vectorCoordType) {
+                function ConstantForceLaw($body, vector, vectorCoordType) {
                     if (vectorCoordType === void 0) {
                         vectorCoordType = CoordType_1.WORLD;
                     }
                     var _this = _super.call(this) || this;
-                    _this.body_ = body_;
-                    _this.forces = [];
-                    var metric = _this.body_.metric;
-                    _this.force_ = new Force_1.Force(_this.body_, metric);
-                    _this.force_.locationCoordType = CoordType_1.LOCAL;
-                    metric.copyVector(vector, _this.force_.vector);
-                    _this.force_.vectorCoordType = vectorCoordType;
-                    _this.forces = [_this.force_];
-                    _this.potentialEnergy_ = metric.zero();
-                    _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+                    _this.$body = $body;
+                    _this.$forces = [];
+                    var metric = _this.$body.metric;
+                    _this.$force = new Force_1.Force(_this.$body, metric);
+                    _this.$force.locationCoordType = CoordType_1.LOCAL;
+                    metric.copyVector(vector, _this.$force.vector);
+                    _this.$force.vectorCoordType = vectorCoordType;
+                    _this.$forces = [_this.$force];
+                    _this.$potentialEnergy = metric.zero();
+                    _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
                     return _this;
                 }
                 Object.defineProperty(ConstantForceLaw.prototype, "location", {
                     get: function () {
-                        return this.force_.location;
+                        return this.$force.location;
                     },
                     set: function (location) {
-                        var metric = this.body_.metric;
-                        metric.copyVector(location, this.force_.location);
+                        var metric = this.$body.metric;
+                        metric.copyVector(location, this.$force.location);
                     },
                     enumerable: false,
                     configurable: true
                 });
                 ConstantForceLaw.prototype.updateForces = function () {
-                    return this.forces;
+                    return this.$forces;
                 };
                 ConstantForceLaw.prototype.disconnect = function () {};
                 ConstantForceLaw.prototype.potentialEnergy = function () {
-                    var metric = this.body_.metric;
-                    metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-                    this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-                    return this.potentialEnergy_;
+                    var metric = this.$body.metric;
+                    metric.unlock(this.$potentialEnergy, this.$potentialEnergyLock);
+                    this.$potentialEnergyLock = metric.lock(this.$potentialEnergy);
+                    return this.$potentialEnergy;
                 };
                 return ConstantForceLaw;
             }(AbstractSimObject_1.AbstractSimObject);

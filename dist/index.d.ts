@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.12
+// Type definitions for davinci-newton 1.0.13
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2576,7 +2576,7 @@ declare namespace NEWTON {
         /**
          * The attachment point to the body in body coordinates.
          */
-        location: VectorE3;
+        location: T;
         /**
          * 
          */

@@ -11,42 +11,42 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     /**
      * The attachment point to the body in body coordinates.
      */
-    private readonly force_: Force<T>;
-    private readonly forces: Force<T>[] = [];
-    private readonly potentialEnergy_: T;
-    private potentialEnergyLock_: number;
+    private readonly $force: Force<T>;
+    private readonly $forces: Force<T>[] = [];
+    private readonly $potentialEnergy: T;
+    private $potentialEnergyLock: number;
 
     /**
      * 
      */
-    constructor(private body_: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
+    constructor(private $body: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
         super();
-        const metric = this.body_.metric;
-        this.force_ = new Force(this.body_, metric);
+        const metric = this.$body.metric;
+        this.$force = new Force(this.$body, metric);
 
-        this.force_.locationCoordType = LOCAL;
-        metric.copyVector(vector, this.force_.vector);
-        this.force_.vectorCoordType = vectorCoordType;
+        this.$force.locationCoordType = LOCAL;
+        metric.copyVector(vector, this.$force.vector);
+        this.$force.vectorCoordType = vectorCoordType;
 
-        this.forces = [this.force_];
+        this.$forces = [this.$force];
 
-        this.potentialEnergy_ = metric.zero();
-        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+        this.$potentialEnergy = metric.zero();
+        this.$potentialEnergyLock = metric.lock(this.$potentialEnergy);
     }
 
     get location(): T {
-        return this.force_.location;
+        return this.$force.location;
     }
     set location(location: T) {
-        const metric = this.body_.metric;
-        metric.copyVector(location, this.force_.location);
+        const metric = this.$body.metric;
+        metric.copyVector(location, this.$force.location);
     }
 
     /**
      * 
      */
     updateForces(): Force<T>[] {
-        return this.forces;
+        return this.$forces;
     }
 
     /**
@@ -61,10 +61,11 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
      */
     potentialEnergy(): T {
         // TODO: Why do we do this initialization to zero then return a locked object?
-        const metric = this.body_.metric;
-        metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+        const metric = this.$body.metric;
+        metric.unlock(this.$potentialEnergy, this.$potentialEnergyLock);
+        // metric.se
         // this.potentialEnergy_.a = 0;
-        this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-        return this.potentialEnergy_;
+        this.$potentialEnergyLock = metric.lock(this.$potentialEnergy);
+        return this.$potentialEnergy;
     }
 }
