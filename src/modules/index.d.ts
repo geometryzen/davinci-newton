@@ -684,7 +684,7 @@ declare namespace NEWTON {
          * this ⟼ log(this)
          * 
          */
-        log(): Geometric3;
+        log(): Geometric2;
 
         /**
          * Computes the <em>square root</em> of the <em>squared norm</em>.
@@ -893,7 +893,7 @@ declare namespace NEWTON {
         /**
          * 
          */
-        unlock(token: number): boolean;
+        unlock(token: number): void;
 
         /**
          * 

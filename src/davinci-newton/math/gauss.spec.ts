@@ -1,4 +1,4 @@
-import gauss from './gauss';
+import { gauss } from './gauss';
 
 describe("gauss", function () {
 

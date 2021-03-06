@@ -4187,6 +4187,7 @@ define('davinci-newton/i18n/readOnly',["require", "exports", "../checks/mustBeSt
 define('davinci-newton/math/gauss',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.gauss = void 0;
     var abs = Math.abs;
     function makeColumnVector(n, v) {
         var a = [];
@@ -4250,7 +4251,7 @@ define('davinci-newton/math/gauss',["require", "exports"], function (require, ex
         }
         return solve(A, N);
     }
-    exports.default = gauss;
+    exports.gauss = gauss;
 });
 
 define('davinci-newton/math/isZeroBivectorE2',["require", "exports"], function (require, exports) {
@@ -4493,6 +4494,213 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
         };
         Geometric2.fromScalar = function (alpha) {
             return new Geometric2(scalar(alpha.a), alpha.uom);
+        };
+        Geometric2.prototype.adj = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.isScalar = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.quad = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.scale = function (α) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.slerp = function (target, α) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.stress = function (σ) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__div__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rdiv__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__vbar__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rvbar__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__wedge__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rwedge__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__lshift__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rlshift__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rshift__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rrshift__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__bang__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__eq__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__ne__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__ge__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__gt__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__le__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__lt__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__tilde__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__add__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__radd__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__sub__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rsub__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__pos__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__neg__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__mul__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.__rmul__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.add2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.addPseudo = function (β, uom) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.addScalar = function (α, uom) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.angle = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.approx = function (n) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.conj = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.copySpinor = function (spinor) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.div = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.div2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.divByNumber = function (α) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.divByVector = function (vector) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.dual = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.equals = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.exp = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.ext2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.grade = function (grade) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.isOne = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.I = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.lco = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.lco2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.lerp = function (target, α) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.lerp2 = function (a, b, α) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.log = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.mul2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.norm = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.one = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rco = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rco2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.reflect = function (n) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rotorFromDirections = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rotorFromFrameToFrame = function (es, fs) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rotorFromGeneratorAngle = function (B, θ) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.rotorFromVectorToVector = function (a, b, B) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.sqrt = function () {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.squaredNorm = function (mutate) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.sub2 = function (a, b) {
+            throw new Error("Method not implemented.");
+        };
+        Geometric2.prototype.versor = function (a, b) {
+            throw new Error("Method not implemented.");
         };
         Geometric2.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED;
@@ -4775,7 +4983,7 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
                     [β, -y, x, α]
                 ];
                 var b = [1, 0, 0, 0];
-                var X = gauss_1.default(A, b);
+                var X = gauss_1.gauss(A, b);
                 this.a = X[0];
                 this.x = X[1];
                 this.y = X[2];
@@ -7139,7 +7347,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
                         [β, yz, zx, xy, z, x, y, α]
                     ];
                     var b = [1, 0, 0, 0, 0, 0, 0, 0];
-                    var X = gauss_1.default(A, b);
+                    var X = gauss_1.gauss(A, b);
                     var a0 = this.a;
                     var a1 = this.x;
                     var a2 = this.y;
@@ -7320,7 +7528,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
                     [β, yz, zx, xy, z, x, y, α]
                 ];
                 var b = [1, 0, 0, 0, 0, 0, 0, 0];
-                var X = gauss_1.default(A, b);
+                var X = gauss_1.gauss(A, b);
                 this.a = X[0];
                 this.x = X[1];
                 this.y = X[2];

@@ -1,8 +1,10 @@
 import { readOnly } from "../i18n/readOnly";
 import { BivectorE2 } from "./BivectorE2";
 import { GradeMasked } from "./CartesianG3";
-import gauss from "./gauss";
+import { gauss } from "./gauss";
 import { GeometricE2 } from "./GeometricE2";
+import { GeometricNumber } from './GeometricNumber';
+import { GeometricOperators } from './GeometricOperators';
 import { isZeroGeometricE2 } from "./isZeroGeometricE2";
 import { isZeroVectorE2 } from "./isZeroVectorE2";
 import { Scalar } from "./Scalar";
@@ -10,6 +12,7 @@ import { SpinorE2 } from "./SpinorE2";
 import { stringFromCoordinates } from "./stringFromCoordinates";
 import { Unit } from "./Unit";
 import { VectorE2 } from "./VectorE2";
+
 // Symbolic constants for the coordinate indices into the data array.
 const COORD_SCALAR = 0;
 const COORD_X = 1;
@@ -80,7 +83,7 @@ function lock(m: Geometric2): Geometric2 {
  */
 const UNLOCKED = -1 * Math.random();
 
-export class Geometric2 implements GradeMasked, GeometricE2 {
+export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geometric2, Geometric2, SpinorE2, VectorE2, Geometric2, number, Unit>, GeometricOperators<Geometric2, Unit> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -258,6 +261,213 @@ export class Geometric2 implements GradeMasked, GeometricE2 {
         this.coords_ = coords;
         this.uom_ = uom;
         this.modified_ = false;
+    }
+    adj(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    isScalar(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    quad(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    scale(α: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    slerp(target: Geometric2, α: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    stress(σ: VectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __div__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rdiv__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __vbar__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rvbar__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __wedge__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rwedge__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __lshift__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rlshift__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rshift__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rrshift__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __bang__(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __eq__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __ne__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __ge__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __gt__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __le__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __lt__(rhs: Geometric2): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __tilde__(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __add__(other: Geometric2 | Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __radd__(other: Geometric2 | Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __sub__(other: Geometric2 | Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rsub__(other: Geometric2 | Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __pos__(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __neg__(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __mul__(rhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    __rmul__(lhs: any): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    add2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    addPseudo(β: number, uom?: Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    addScalar(α: number, uom?: Unit): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    angle(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    approx(n: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    conj(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    copySpinor(spinor: SpinorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    div(m: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    div2(a: SpinorE2, b: SpinorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    divByNumber(α: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    divByVector(vector: VectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    dual(m?: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    equals(other: any): boolean {
+        throw new Error("Method not implemented.");
+    }
+    exp(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    ext2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    grade(grade: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    isOne(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    I(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    lco(m: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    lco2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    lerp(target: GeometricE2, α: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    lerp2(a: GeometricE2, b: GeometricE2, α: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    log(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    mul2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    norm(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    one(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rco(m: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rco2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    reflect(n: VectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rotorFromFrameToFrame(es: VectorE2[], fs: VectorE2[]): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rotorFromGeneratorAngle(B: BivectorE2, θ: number): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    sqrt(): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    squaredNorm(mutate?: boolean): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    sub2(a: GeometricE2, b: GeometricE2): Geometric2 {
+        throw new Error("Method not implemented.");
+    }
+    versor(a: VectorE2, b: VectorE2): Geometric2 {
+        throw new Error("Method not implemented.");
     }
 
     /**
