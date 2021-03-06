@@ -1,12 +1,18 @@
+import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
+import { approx } from "./approx";
+import { arraysEQ } from "./arraysEQ";
 import { BivectorE2 } from "./BivectorE2";
-import { GradeMasked } from "./CartesianG3";
 import { gauss } from "./gauss";
 import { GeometricE2 } from "./GeometricE2";
 import { GeometricNumber } from './GeometricNumber';
 import { GeometricOperators } from './GeometricOperators';
+import { GradeMasked } from "./GradeMasked";
+import { isVectorE2 } from "./isVectorE2";
 import { isZeroGeometricE2 } from "./isZeroGeometricE2";
 import { isZeroVectorE2 } from "./isZeroVectorE2";
+import { maskG2 } from './maskG2';
+import { QQ } from "./QQ";
 import { Scalar } from "./Scalar";
 import { SpinorE2 } from "./SpinorE2";
 import { stringFromCoordinates } from "./stringFromCoordinates";
@@ -14,17 +20,16 @@ import { Unit } from "./Unit";
 import { VectorE2 } from "./VectorE2";
 
 // Symbolic constants for the coordinate indices into the data array.
-const COORD_SCALAR = 0;
+const COORD_A = 0;
 const COORD_X = 1;
 const COORD_Y = 2;
-const COORD_PSEUDO = 3;
+const COORD_B = 3;
 
-// FIXME: Change to Canonical ordering.
 const BASIS_LABELS = ["1", "e1", "e2", "e12"];
-BASIS_LABELS[COORD_SCALAR] = '1';
+BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 BASIS_LABELS[COORD_Y] = 'e2';
-BASIS_LABELS[COORD_PSEUDO] = 'e12';
+BASIS_LABELS[COORD_B] = 'e12';
 
 const zero = function zero(): number[] {
     return [0, 0, 0, 0];
@@ -32,7 +37,7 @@ const zero = function zero(): number[] {
 
 const scalar = function scalar(a: number): number[] {
     const coords = zero();
-    coords[COORD_SCALAR] = a;
+    coords[COORD_A] = a;
     return coords;
 };
 
@@ -43,16 +48,22 @@ const vector = function vector(x: number, y: number): number[] {
     return coords;
 };
 
+const bivector = function bivector(b: number): number[] {
+    const coords = zero();
+    coords[COORD_B] = b;
+    return coords;
+};
+
 const pseudo = function pseudo(b: number): number[] {
     const coords = zero();
-    coords[COORD_PSEUDO] = b;
+    coords[COORD_B] = b;
     return coords;
 };
 
 const spinor = function spinor(a: number, b: number): number[] {
     const coords = zero();
-    coords[COORD_SCALAR] = a;
-    coords[COORD_PSEUDO] = b;
+    coords[COORD_A] = a;
+    coords[COORD_B] = b;
     return coords;
 };
 /**
@@ -60,10 +71,10 @@ const spinor = function spinor(a: number, b: number): number[] {
  */
 const coordinates = function coordinates(m: GeometricE2): number[] {
     const coords = zero();
-    coords[COORD_SCALAR] = m.a;
+    coords[COORD_A] = m.a;
     coords[COORD_X] = m.x;
     coords[COORD_Y] = m.y;
-    coords[COORD_PSEUDO] = m.b;
+    coords[COORD_B] = m.b;
     return coords;
 };
 
@@ -131,11 +142,20 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return new Geometric2(coordinates(mv), mv.uom);
     }
 
-    /**
-     * @param alpha
-     */
+    static fromBivector(B: BivectorE2): Geometric2 {
+        return new Geometric2(bivector(B.xy), B.uom);
+    }
+
     static fromScalar(alpha: Scalar): Geometric2 {
         return new Geometric2(scalar(alpha.a), alpha.uom);
+    }
+
+    static fromSpinor(R: SpinorE2): Geometric2 {
+        return new Geometric2(spinor(R.a, R.xy), R.uom);
+    }
+
+    static fromVector(v: VectorE2): Geometric2 {
+        return new Geometric2(vector(v.x, v.y), v.uom);
     }
 
     /**
@@ -263,211 +283,723 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         this.modified_ = false;
     }
     adj(): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('adj').message);
     }
     isScalar(): boolean {
-        throw new Error("Method not implemented.");
+        return this.x === 0 && this.y === 0 && this.b === 0;
     }
     quad(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit.mul(this.uom, this.uom));
     }
     scale(α: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
     }
     slerp(target: Geometric2, α: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('slerp').message);
     }
     stress(σ: VectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().stress(σ));
+        }
+        else {
+            this.x *= σ.x;
+            this.y *= σ.y;
+            this.uom = Unit.mul(σ.uom, this.uom);
+            // TODO: Action on other components TBD.
+            return this;
+        }
     }
-    __div__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __div__(rhs: number | Geometric2): Geometric2 {
+        const duckR = maskG2(rhs);
+        if (duckR) {
+            return lock(this.clone().div(duckR));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rdiv__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rdiv__(lhs: number | Geometric2): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).div(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs, void 0).div(this));
+        }
+        else {
+            return void 0;
+        }
     }
-    __vbar__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __vbar__(rhs: number | Geometric2): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(Geometric2.copy(this).scp(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            return lock(Geometric2.copy(this).scp(Geometric2.scalar(rhs)));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rvbar__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rvbar__(lhs: number | Geometric2): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).scp(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs).scp(this));
+        }
+        else {
+            return void 0;
+        }
     }
-    __wedge__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __wedge__(rhs: number | Geometric2): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(Geometric2.copy(this).ext(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            // The outer product with a scalar is scalar multiplication.
+            return lock(Geometric2.copy(this).mulByNumber(rhs));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rwedge__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rwedge__(lhs: number | Geometric2): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).ext(this));
+        }
+        else if (typeof lhs === 'number') {
+            // The outer product with a scalar is scalar multiplication, and commutes.
+            return lock(Geometric2.copy(this).mulByNumber(lhs));
+        }
+        else {
+            return void 0;
+        }
     }
-    __lshift__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __lshift__(rhs: number | Geometric2): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(Geometric2.copy(this).lco(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            return lock(Geometric2.copy(this).lco(Geometric2.scalar(rhs)));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rlshift__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rlshift__(lhs: number | Geometric2): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).lco(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs).lco(this));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rshift__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rshift__(rhs: number | Geometric2): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(Geometric2.copy(this).rco(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            return lock(Geometric2.copy(this).rco(Geometric2.scalar(rhs)));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rrshift__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rrshift__(lhs: number | Geometric2): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).rco(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs).rco(this));
+        }
+        else {
+            return void 0;
+        }
     }
     __bang__(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return lock(Geometric2.copy(this).inv());
     }
     __eq__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__eq_').message);
     }
     __ne__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__ne_').message);
     }
     __ge__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__ge_').message);
     }
     __gt__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__gt_').message);
     }
     __le__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__le_').message);
     }
     __lt__(rhs: Geometric2): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('__lt_').message);
     }
     __tilde__(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return lock(Geometric2.copy(this).rev());
     }
-    __add__(other: Geometric2 | Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+    __add__(rhs: Geometric2 | Unit): Geometric2 {
+        const duckR = maskG2(rhs);
+        if (duckR) {
+            return lock(this.clone().add(duckR));
+        }
+        else if (isVectorE2(rhs)) {
+            return lock(this.clone().addVector(rhs));
+        }
+        else {
+            return void 0;
+        }
     }
-    __radd__(other: Geometric2 | Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+    __radd__(lhs: Geometric2 | Unit): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).add(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs).add(this));
+        }
+        else if (isVectorE2(lhs)) {
+            return lock(Geometric2.fromVector(lhs).add(this));
+        }
+        else {
+            return void 0;
+        }
     }
-    __sub__(other: Geometric2 | Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+    __sub__(rhs: Geometric2 | Unit): Geometric2 {
+        const duckR = maskG2(rhs);
+        if (duckR) {
+            return lock(this.clone().sub(duckR));
+        }
+        else {
+            return void 0;
+        }
     }
-    __rsub__(other: Geometric2 | Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+    __rsub__(lhs: Geometric2 | Unit): Geometric2 {
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).sub(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.scalar(lhs).sub(this));
+        }
+        else {
+            return void 0;
+        }
     }
     __pos__(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return lock(Geometric2.copy(this));
     }
     __neg__(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return lock(Geometric2.copy(this).neg());
     }
     __mul__(rhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+        const duckR = maskG2(rhs);
+        if (duckR) {
+            return lock(this.clone().mul(duckR));
+        }
+        else {
+            return void 0;
+        }
     }
     __rmul__(lhs: any): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Geometric2) {
+            return lock(Geometric2.copy(lhs).mul(this));
+        }
+        else if (typeof lhs === 'number') {
+            return lock(Geometric2.copy(this).mulByNumber(lhs));
+        }
+        else {
+            return void 0;
+        }
     }
     add2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (isZeroGeometricE2(a)) {
+            this.uom = b.uom;
+        }
+        else if (isZeroGeometricE2(b)) {
+            this.uom = a.uom;
+        }
+        else {
+            this.uom = Unit.compatible(a.uom, b.uom);
+        }
+        this.a = a.a + b.a;
+        this.x = a.x + b.x;
+        this.y = a.y + b.y;
+        this.b = a.b + b.b;
+        return this;
     }
     addPseudo(β: number, uom?: Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addPseudo(β, uom));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = uom;
+            }
+            else if (β === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, uom);
+            }
+            this.b += β;
+            return this;
+        }
     }
     addScalar(α: number, uom?: Unit): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addScalar(α, uom));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = uom;
+            }
+            else if (α === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, uom);
+            }
+            this.a += α;
+            return this;
+        }
     }
     angle(): Geometric2 {
-        throw new Error("Method not implemented.");
+        return this.log().grade(2);
     }
     approx(n: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().approx(n));
+        }
+        else {
+            approx(this.coords_, n);
+            return this;
+        }
     }
     conj(): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().conj());
+        }
+        else {
+            this.x = -this.x;
+            this.y = -this.y;
+            this.b = -this.b;
+            return this;
+        }
     }
     copySpinor(spinor: SpinorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        const a = spinor.a;
+        const b = spinor.xy;
+        this.setCoordinate(COORD_A, a, 'a');
+        this.setCoordinate(COORD_X, 0, 'x');
+        this.setCoordinate(COORD_Y, 0, 'y');
+        this.setCoordinate(COORD_B, b, 'b');
+        this.uom = spinor.uom;
+        return this;
     }
-    div(m: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * @param m The multivector dividend.
+     * @returns this / m;
+     */
+    div(rhs: GeometricE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().div(rhs));
+        }
+        else {
+            return this.mul(Geometric2.copy(rhs).inv());
+        }
     }
+    /**
+     * <p>
+     * <code>this ⟼ a / b</code>
+     * </p>
+     *
+     * @param a The numerator.
+     * @param b The denominator.
+     */
     div2(a: SpinorE2, b: SpinorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('div2').message);
     }
     divByNumber(α: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().divByNumber(α));
+        }
+        else {
+            this.a /= α;
+            this.x /= α;
+            this.y /= α;
+            this.b /= α;
+            return this;
+        }
     }
-    divByVector(vector: VectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    divByVector(v: VectorE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().divByVector(v));
+        }
+        else {
+            const x = v.x;
+            const y = v.y;
+            const uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
+            const squaredNorm = x * x + y * y;
+            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+        }
     }
+    /**
+     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
+     *
+     * @returns dual(m) or dual(this) if m is undefined.
+     */
     dual(m?: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('dual').message);
     }
-    equals(other: any): boolean {
-        throw new Error("Method not implemented.");
+    equals(other: unknown): boolean {
+        if (other instanceof Geometric2) {
+            // TODO: Check units of measure.
+            return arraysEQ(this.coords_, other.coords_);
+        }
+        else {
+            return false;
+        }
     }
     exp(): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().exp());
+        }
+        else {
+            Unit.assertDimensionless(this.uom);
+            // It's always the case that the scalar commutes with every other
+            // grade of the multivector, so we can pull it out the front.
+            const expW = Math.exp(this.a);
+
+            // In Geometric3 we have the special case that the pseudoscalar also commutes.
+            // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
+            // let cosβ = cos(this.b)
+            // let sinβ = sin(this.b)
+
+            // We are left with the vector and bivector components.
+            // For a bivector (usual case), let B = I * φ, where φ is a vector.
+            // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
+            const xy = this.xy;
+            // φ is actually the absolute value of one half the rotation angle.
+            // The orientation of the rotation gets carried in the bivector components.
+            const φ = Math.sqrt(xy * xy);
+            const s = φ !== 0 ? Math.sin(φ) / φ : 1;
+            const cosφ = Math.cos(φ);
+
+            // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
+            // The mixture of vector and bivector parts is more complex!
+            this.a = cosφ;
+            this.xy = xy * s;
+            return this.mulByNumber(expW);
+        }
     }
-    ext2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * <p>
+     * <code>this ⟼ lhs ^ rhs</code>
+     * </p>
+     */
+    ext2(lhs: GeometricE2, rhs: GeometricE2): this {
+        const a0 = lhs.a;
+        const a1 = lhs.x;
+        const a2 = lhs.y;
+        const a3 = lhs.b;
+        const b0 = rhs.a;
+        const b1 = rhs.x;
+        const b2 = rhs.y;
+        const b3 = rhs.b;
+        this.a = a0 * b0;
+        this.x = a0 * b1 + a1 * b0;
+        this.y = a0 * b2 + a2 * b0;
+        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+        this.uom = Unit.mul(this.uom, rhs.uom);
+        return this;
     }
-    grade(grade: number): Geometric2 {
-        throw new Error("Method not implemented.");
+    grade(n: number): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().grade(n));
+        }
+        else {
+            // There is no change to the unit of measure.
+            switch (n) {
+                case 0: {
+                    this.x = 0;
+                    this.y = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 1: {
+                    this.a = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 2: {
+                    this.a = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    break;
+                }
+                default: {
+                    this.a = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.b = 0;
+                }
+            }
+            return this;
+        }
     }
     isOne(): boolean {
-        throw new Error("Method not implemented.");
+        if (Unit.isOne(this.uom)) {
+            return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
+        }
+        else {
+            return false;
+        }
+    }
+    isSpinor(): boolean {
+        return this.x === 0 && this.y === 0;
     }
     I(): Geometric2 {
-        throw new Error("Method not implemented.");
+        this.a = 0;
+        this.x = 0;
+        this.y = 0;
+        this.b = 1;
+        this.uom = void 0;
+        return this;
     }
-    lco(m: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    lco(rhs: GeometricE2): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().lco(rhs));
+        }
+        else {
+            return this.lco2(this, rhs);
+        }
     }
-    lco2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * <p>
+     * <code>this ⟼ lhs << rhs</code>
+     * </p>
+     *
+     * @param a
+     * @param b
+     */
+    lco2(lhs: GeometricE2, rhs: GeometricE2): this {
+        const a0 = lhs.a;
+        const a1 = lhs.x;
+        const a2 = lhs.y;
+        const a3 = lhs.b;
+        const b0 = rhs.a;
+        const b1 = rhs.x;
+        const b2 = rhs.y;
+        const b3 = rhs.b;
+        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+        this.x = a0 * b1 - a2 * b3;
+        this.y = a0 * b2 + a1 * b3;
+        this.b = a0 * b3;
+        this.uom = Unit.mul(this.uom, rhs.uom);
+        return this;
     }
     lerp(target: GeometricE2, α: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().lerp(target, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = target.uom;
+            }
+            else if (isZeroGeometricE2(target)) {
+                // Fall through.
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, target.uom);
+            }
+            this.a += (target.a - this.a) * α;
+            this.x += (target.x - this.x) * α;
+            this.y += (target.y - this.y) * α;
+            this.b += (target.b - this.b) * α;
+            return this;
+        }
     }
     lerp2(a: GeometricE2, b: GeometricE2, α: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        this.copy(a).lerp(b, α);
+        return this;
     }
     log(): Geometric2 {
-        throw new Error("Method not implemented.");
-    }
-    mul2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().log());
+        }
+        else {
+            Unit.assertDimensionless(this.uom);
+            if (this.isSpinor()) {
+                const α = this.a;
+                const β = this.b;
+                this.a = Math.log(Math.sqrt(α * α + β * β));
+                this.b = Math.atan2(β, α);
+                return this;
+            } else {
+                throw new Error(notImplemented(`log(${this.toString()})`).message);
+            }
+        }
     }
     norm(): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().norm());
+        }
+        else {
+            this.a = this.magnitudeSansUnits();
+            this.x = 0;
+            this.y = 0;
+            this.b = 0;
+            // There is no change to the unit of measure.
+            return this;
+        }
     }
     one(): Geometric2 {
-        throw new Error("Method not implemented.");
+        this.a = 1;
+        this.x = 0;
+        this.y = 0;
+        this.b = 0;
+        this.uom = void 0;
+        return this;
     }
     rco(m: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rco(m));
+        }
+        else {
+            return this.rco2(this, m);
+        }
     }
-    rco2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * <p>
+     * <code>this ⟼ lhs >> rhs</code>
+     * </p>
+     */
+    rco2(lhs: GeometricE2, rhs: GeometricE2): this {
+        const a0 = lhs.a;
+        const a1 = lhs.x;
+        const a2 = lhs.y;
+        const a3 = lhs.b;
+        const b0 = rhs.a;
+        const b1 = rhs.x;
+        const b2 = rhs.y;
+        const b3 = rhs.b;
+        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+        this.x = - a1 * b0 - a3 * b2;
+        this.y = - a2 * b0 + a3 * b1;
+        this.b = a3 * b0;
+        this.uom = Unit.mul(this.uom, rhs.uom);
+        return this;
     }
-    reflect(n: VectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * Sets this multivector to its reflection in the plane orthogonal to vector n.
+     *
+     * Mathematically,
+     *
+     * this ⟼ - n * this * n
+     *
+     * Geometrically,
+     *
+     * Reflects this multivector in the plane orthogonal to the unit vector, n.
+     *
+     * If n is not a unit vector then the result is scaled by n squared.
+     *
+     * @param n The unit vector that defines the reflection plane.
+     */
+    reflect(n: VectorE2): this {
+        throw new Error(notImplemented('reflect').message);
     }
+    /**
+     * <p>
+     * Computes a rotor, R, from two unit vectors, where
+     * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+     * </p>
+     * 
+     * The result is independent of the magnitudes of a and b.
+     *
+     * @param a The starting vector
+     * @param b The ending vector
+     * @returns The rotor representing a rotation from a to b.
+     */
     rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('rotorFromDiections').message);
     }
     rotorFromFrameToFrame(es: VectorE2[], fs: VectorE2[]): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('rotorFromFrameToFrame').message);
     }
+    /**
+     * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
+     *
+     * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
+     *
+     * @param B The (unit) bivector generating the rotation.
+     * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R
+     */
     rotorFromGeneratorAngle(B: BivectorE2, θ: number): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('rotorFromGeneratorAngle').message);
     }
+    /**
+     * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+     *
+     * The result is independent of the magnitudes of a and b. 
+     */
     rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        throw new Error(notImplemented('rotorFromVectorToVector').message);
     }
     sqrt(): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().sqrt());
+        }
+        else {
+            this.a = Math.sqrt(this.a);
+            this.x = 0;
+            this.y = 0;
+            this.b = 0;
+            this.uom = Unit.sqrt(this.uom);
+            return this;
+        }
     }
     squaredNorm(mutate?: boolean): Geometric2 {
-        throw new Error("Method not implemented.");
+        return this.quaditude(mutate);
     }
     sub2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        throw new Error("Method not implemented.");
+        if (isZeroGeometricE2(a)) {
+            this.a = -b.a;
+            this.x = -b.x;
+            this.y = -b.y;
+            this.b = -b.b;
+            this.uom = b.uom;
+        }
+        else if (isZeroGeometricE2(b)) {
+            this.a = a.a;
+            this.x = a.x;
+            this.y = a.y;
+            this.b = a.b;
+            this.uom = a.uom;
+        }
+        else {
+            this.a = a.a - b.a;
+            this.x = a.x - b.x;
+            this.y = a.y - b.y;
+            this.b = a.b - b.b;
+            this.uom = Unit.compatible(a.uom, b.uom);
+        }
+        return this;
     }
-    versor(a: VectorE2, b: VectorE2): Geometric2 {
-        throw new Error("Method not implemented.");
+    /**
+     * <p>
+     * <code>this ⟼ a * b</code>
+     * </p>
+     * Sets this Geometric3 to the geometric product a * b of the vector arguments.
+     *
+     * @param a
+     * @param b
+     */
+    versor(a: VectorE2, b: VectorE2): this {
+        throw new Error(notImplemented('versor').message);
     }
 
     /**
@@ -532,26 +1064,26 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * The scalar part of this multivector.
      */
     get a(): number {
-        return this.coords_[COORD_SCALAR];
+        return this.coords_[COORD_A];
     }
     set a(a: number) {
-        this.setCoordinate(COORD_SCALAR, a, 'a');
+        this.setCoordinate(COORD_A, a, 'a');
     }
 
     /**
      * The pseudoscalar part of this multivector.
      */
     get b(): number {
-        return this.coords_[COORD_PSEUDO];
+        return this.coords_[COORD_B];
     }
     set b(b: number) {
-        this.setCoordinate(COORD_PSEUDO, b, 'b');
+        this.setCoordinate(COORD_B, b, 'b');
     }
     get xy(): number {
-        return this.coords_[COORD_PSEUDO];
+        return this.coords_[COORD_B];
     }
     set xy(xy: number) {
-        this.setCoordinate(COORD_PSEUDO, xy, 'xy');
+        this.setCoordinate(COORD_B, xy, 'xy');
     }
 
     /**
@@ -565,10 +1097,10 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      */
     get grades(): number {
         const coords = this.coords_;
-        const α = coords[COORD_SCALAR];
+        const α = coords[COORD_A];
         const x = coords[COORD_X];
         const y = coords[COORD_Y];
-        const β = coords[COORD_PSEUDO];
+        const β = coords[COORD_B];
         let mask = 0x0;
         if (α !== 0) {
             mask += 0x1;
@@ -711,10 +1243,10 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param B The bivector to be copied.
      */
     copyBivector(B: BivectorE2): this {
-        this.setCoordinate(COORD_SCALAR, 0, 'a');
+        this.setCoordinate(COORD_A, 0, 'a');
         this.setCoordinate(COORD_X, 0, 'x');
         this.setCoordinate(COORD_Y, 0, 'y');
-        this.setCoordinate(COORD_PSEUDO, B.xy, 'b');
+        this.setCoordinate(COORD_B, B.xy, 'b');
         this.uom = B.uom;
         return this;
     }
@@ -727,10 +1259,10 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param uom The unit of measure.
      */
     copyScalar(α: number, uom: Unit): this {
-        this.setCoordinate(COORD_SCALAR, α, 'a');
+        this.setCoordinate(COORD_A, α, 'a');
         this.setCoordinate(COORD_X, 0, 'x');
         this.setCoordinate(COORD_Y, 0, 'y');
-        this.setCoordinate(COORD_PSEUDO, 0, 'b');
+        this.setCoordinate(COORD_B, 0, 'b');
         this.uom = uom;
         return this;
     }
@@ -742,10 +1274,10 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param vector The vector to be copied.
      */
     copyVector(vector: VectorE2): this {
-        this.setCoordinate(COORD_SCALAR, 0, 'a');
+        this.setCoordinate(COORD_A, 0, 'a');
         this.setCoordinate(COORD_X, vector.x, 'x');
         this.setCoordinate(COORD_Y, vector.y, 'y');
-        this.setCoordinate(COORD_PSEUDO, 0, 'b');
+        this.setCoordinate(COORD_B, 0, 'b');
         this.uom = vector.uom;
         return this;
     }
@@ -919,22 +1451,33 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             return lock(this.clone().mul(rhs));
         }
         else {
-            const lhs = this;
-            const a0 = lhs.a;
-            const a1 = lhs.x;
-            const a2 = lhs.y;
-            const a3 = lhs.b;
-            const b0 = rhs.a;
-            const b1 = rhs.x;
-            const b2 = rhs.y;
-            const b3 = rhs.b;
-            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-            this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
-            this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
-            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
-            this.uom = Unit.mul(this.uom, rhs.uom);
-            return this;
+            return this.mul2(this, rhs);
         }
+    }
+
+    /**
+     * <p>
+     * <code>this ⟼ a * b</code>
+     * </p>
+     *
+     * @param a
+     * @param b
+     */
+    mul2(lhs: GeometricE2, rhs: GeometricE2): this {
+        const a0 = lhs.a;
+        const a1 = lhs.x;
+        const a2 = lhs.y;
+        const a3 = lhs.b;
+        const b0 = rhs.a;
+        const b1 = rhs.x;
+        const b2 = rhs.y;
+        const b3 = rhs.b;
+        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+        this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
+        this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
+        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+        this.uom = Unit.mul(this.uom, rhs.uom);
+        return this;
     }
 
     public mulByBivector(B: BivectorE2): Geometric2 {
@@ -1299,8 +1842,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         this.x = 0;
         this.y = 0;
         this.b = 0;
-        // The unit of measure does not matter if all the coordinates are zero.
+        this.uom = void 0;
         return this;
     }
-
 }

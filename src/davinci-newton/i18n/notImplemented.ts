@@ -1,7 +1,7 @@
 import LocalizableMessage from '../i18n/LocalizableMessage';
 import mustBeString from '../checks/mustBeString';
 
-export default function (name: string): LocalizableMessage {
+export function notImplemented(name: string): LocalizableMessage {
     mustBeString('name', name);
     const message: LocalizableMessage = {
         get message(): string {

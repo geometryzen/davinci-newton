@@ -1,13 +1,13 @@
 import isDefined from '../checks/isDefined';
 import { readOnly } from '../i18n/readOnly';
-import approx from './approx';
-import arraysEQ from './arraysEQ';
+import { approx } from './approx';
+import { arraysEQ } from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
-import { GradeMasked } from './CartesianG3';
 import dotVector from './dotVectorE3';
 import extG3 from './extG3';
 import { gauss } from './gauss';
 import { GeometricE3 } from './GeometricE3';
+import { GradeMasked } from './GradeMasked';
 import isScalarG3 from './isScalarG3';
 import isVectorE3 from './isVectorE3';
 import isVectorG3 from './isVectorG3';

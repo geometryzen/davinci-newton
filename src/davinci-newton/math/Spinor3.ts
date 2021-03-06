@@ -1,6 +1,6 @@
 import mustBeNumber from '../checks/mustBeNumber';
 import { readOnly } from '../i18n/readOnly';
-import { GradeMasked } from './CartesianG3';
+import { GradeMasked } from './GradeMasked';
 import randomRange from './randomRange';
 import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';

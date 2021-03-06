@@ -4168,6 +4168,22 @@ define('davinci-newton/checks/mustBeString',["require", "exports", "../checks/mu
     exports.default = default_1;
 });
 
+define('davinci-newton/i18n/notImplemented',["require", "exports", "../checks/mustBeString"], function (require, exports, mustBeString_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.notImplemented = void 0;
+    function notImplemented(name) {
+        mustBeString_1.default('name', name);
+        var message = {
+            get message() {
+                return "'" + name + "' method is not yet implemented.";
+            }
+        };
+        return message;
+    }
+    exports.notImplemented = notImplemented;
+});
+
 define('davinci-newton/i18n/readOnly',["require", "exports", "../checks/mustBeString"], function (require, exports, mustBeString_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -4182,6 +4198,77 @@ define('davinci-newton/i18n/readOnly',["require", "exports", "../checks/mustBeSt
         return message;
     }
     exports.readOnly = readOnly;
+});
+
+define('davinci-newton/math/approx',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.approx = void 0;
+    function approx(coords, n) {
+        var max = 0;
+        var iLen = coords.length;
+        for (var i = 0; i < iLen; i++) {
+            max = Math.max(max, Math.abs(coords[i]));
+        }
+        var threshold = max * Math.pow(10, -n);
+        for (var i = 0; i < iLen; i++) {
+            if (Math.abs(coords[i]) < threshold) {
+                coords[i] = 0;
+            }
+        }
+    }
+    exports.approx = approx;
+});
+
+define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+    exports.default = isDefined;
+});
+
+define('davinci-newton/math/arraysEQ',["require", "exports", "../checks/isDefined", "../checks/isNull", "../checks/isUndefined"], function (require, exports, isDefined_1, isNull_1, isUndefined_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.arraysEQ = void 0;
+    function arraysEQ(a, b) {
+        if (isDefined_1.default(a)) {
+            if (isDefined_1.default(b)) {
+                if (!isNull_1.default(a)) {
+                    if (!isNull_1.default(b)) {
+                        var aLen = a.length;
+                        var bLen = b.length;
+                        if (aLen === bLen) {
+                            for (var i = 0; i < aLen; i++) {
+                                if (a[i] !== b[i]) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return isNull_1.default(b);
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return isUndefined_1.default(b);
+        }
+    }
+    exports.arraysEQ = arraysEQ;
 });
 
 define('davinci-newton/math/gauss',["require", "exports"], function (require, exports) {
@@ -4254,6 +4341,21 @@ define('davinci-newton/math/gauss',["require", "exports"], function (require, ex
     exports.gauss = gauss;
 });
 
+define('davinci-newton/math/isVectorE2',["require", "exports", "../checks/isNull", "../checks/isNumber", "../checks/isObject"], function (require, exports, isNull_1, isNumber_1, isObject_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isVectorE2 = void 0;
+    function isVectorE2(v) {
+        if (isObject_1.default(v) && !isNull_1.default(v)) {
+            return isNumber_1.default(v.x) && isNumber_1.default(v.y);
+        }
+        else {
+            return false;
+        }
+    }
+    exports.isVectorE2 = isVectorE2;
+});
+
 define('davinci-newton/math/isZeroBivectorE2',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -4284,13 +4386,53 @@ define('davinci-newton/math/isZeroGeometricE2',["require", "exports", "./isZeroB
     exports.isZeroGeometricE2 = isZeroGeometricE2;
 });
 
-define('davinci-newton/checks/isDefined',["require", "exports"], function (require, exports) {
+define('davinci-newton/math/maskG2',["require", "exports", "../checks/isNumber", "../checks/isObject", "./Unit"], function (require, exports, isNumber_1, isObject_1, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
+    exports.maskG2 = void 0;
+    var ONE = void 0;
+    var scratch = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE };
+    function maskG2(arg) {
+        var duck = arg;
+        if (isObject_1.default(arg) && 'grades' in arg) {
+            var g = arg;
+            if (duck.grades & 0x1) {
+                scratch.a = g.a;
+            }
+            else {
+                scratch.a = 0;
+            }
+            if (duck.grades & 0x2) {
+                scratch.x = g.x;
+                scratch.y = g.y;
+            }
+            else {
+                scratch.x = 0;
+                scratch.y = 0;
+            }
+            if (duck.grades & 0x4) {
+                scratch.xy = g.xy;
+            }
+            else {
+                scratch.xy = 0;
+            }
+            scratch.uom = Unit_1.Unit.mustBeUnit('g.uom', g.uom);
+            return scratch;
+        }
+        else if (isNumber_1.default(arg)) {
+            scratch.a = arg;
+            scratch.x = 0;
+            scratch.y = 0;
+            scratch.xy = 0;
+            scratch.b = 0;
+            scratch.uom = ONE;
+            return scratch;
+        }
+        else {
+            return void 0;
+        }
     }
-    exports.default = isDefined;
+    exports.maskG2 = maskG2;
 });
 
 define('davinci-newton/checks/mustBeArray',["require", "exports", "../checks/mustSatisfy", "../checks/isArray"], function (require, exports, mustSatisfy_1, isArray_1) {
@@ -4415,25 +4557,25 @@ define('davinci-newton/math/stringFromCoordinates',["require", "exports", "../ch
     exports.stringFromCoordinates = stringFromCoordinates;
 });
 
-define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly", "./gauss", "./isZeroGeometricE2", "./isZeroVectorE2", "./stringFromCoordinates", "./Unit"], function (require, exports, readOnly_1, gauss_1, isZeroGeometricE2_1, isZeroVectorE2_1, stringFromCoordinates_1, Unit_1) {
+define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/notImplemented", "../i18n/readOnly", "./approx", "./arraysEQ", "./gauss", "./isVectorE2", "./isZeroGeometricE2", "./isZeroVectorE2", "./maskG2", "./QQ", "./stringFromCoordinates", "./Unit"], function (require, exports, notImplemented_1, readOnly_1, approx_1, arraysEQ_1, gauss_1, isVectorE2_1, isZeroGeometricE2_1, isZeroVectorE2_1, maskG2_1, QQ_1, stringFromCoordinates_1, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Geometric2 = void 0;
-    var COORD_SCALAR = 0;
+    var COORD_A = 0;
     var COORD_X = 1;
     var COORD_Y = 2;
-    var COORD_PSEUDO = 3;
+    var COORD_B = 3;
     var BASIS_LABELS = ["1", "e1", "e2", "e12"];
-    BASIS_LABELS[COORD_SCALAR] = '1';
+    BASIS_LABELS[COORD_A] = '1';
     BASIS_LABELS[COORD_X] = 'e1';
     BASIS_LABELS[COORD_Y] = 'e2';
-    BASIS_LABELS[COORD_PSEUDO] = 'e12';
+    BASIS_LABELS[COORD_B] = 'e12';
     var zero = function zero() {
         return [0, 0, 0, 0];
     };
     var scalar = function scalar(a) {
         var coords = zero();
-        coords[COORD_SCALAR] = a;
+        coords[COORD_A] = a;
         return coords;
     };
     var vector = function vector(x, y) {
@@ -4442,23 +4584,28 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
         coords[COORD_Y] = y;
         return coords;
     };
+    var bivector = function bivector(b) {
+        var coords = zero();
+        coords[COORD_B] = b;
+        return coords;
+    };
     var pseudo = function pseudo(b) {
         var coords = zero();
-        coords[COORD_PSEUDO] = b;
+        coords[COORD_B] = b;
         return coords;
     };
     var spinor = function spinor(a, b) {
         var coords = zero();
-        coords[COORD_SCALAR] = a;
-        coords[COORD_PSEUDO] = b;
+        coords[COORD_A] = a;
+        coords[COORD_B] = b;
         return coords;
     };
     var coordinates = function coordinates(m) {
         var coords = zero();
-        coords[COORD_SCALAR] = m.a;
+        coords[COORD_A] = m.a;
         coords[COORD_X] = m.x;
         coords[COORD_Y] = m.y;
-        coords[COORD_PSEUDO] = m.b;
+        coords[COORD_B] = m.b;
         return coords;
     };
     function lock(m) {
@@ -4492,215 +4639,630 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
         Geometric2.copy = function (mv) {
             return new Geometric2(coordinates(mv), mv.uom);
         };
+        Geometric2.fromBivector = function (B) {
+            return new Geometric2(bivector(B.xy), B.uom);
+        };
         Geometric2.fromScalar = function (alpha) {
             return new Geometric2(scalar(alpha.a), alpha.uom);
         };
+        Geometric2.fromSpinor = function (R) {
+            return new Geometric2(spinor(R.a, R.xy), R.uom);
+        };
+        Geometric2.fromVector = function (v) {
+            return new Geometric2(vector(v.x, v.y), v.uom);
+        };
         Geometric2.prototype.adj = function () {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('adj').message);
         };
         Geometric2.prototype.isScalar = function () {
-            throw new Error("Method not implemented.");
+            return this.x === 0 && this.y === 0 && this.b === 0;
         };
         Geometric2.prototype.quad = function () {
-            throw new Error("Method not implemented.");
+            return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit_1.Unit.mul(this.uom, this.uom));
         };
         Geometric2.prototype.scale = function (α) {
-            throw new Error("Method not implemented.");
+            return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
         };
         Geometric2.prototype.slerp = function (target, α) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('slerp').message);
         };
         Geometric2.prototype.stress = function (σ) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().stress(σ));
+            }
+            else {
+                this.x *= σ.x;
+                this.y *= σ.y;
+                this.uom = Unit_1.Unit.mul(σ.uom, this.uom);
+                return this;
+            }
         };
         Geometric2.prototype.__div__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            var duckR = maskG2_1.maskG2(rhs);
+            if (duckR) {
+                return lock(this.clone().div(duckR));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rdiv__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).div(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs, void 0).div(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__vbar__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (rhs instanceof Geometric2) {
+                return lock(Geometric2.copy(this).scp(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock(Geometric2.copy(this).scp(Geometric2.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rvbar__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).scp(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs).scp(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__wedge__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (rhs instanceof Geometric2) {
+                return lock(Geometric2.copy(this).ext(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock(Geometric2.copy(this).mulByNumber(rhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rwedge__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).ext(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.copy(this).mulByNumber(lhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__lshift__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (rhs instanceof Geometric2) {
+                return lock(Geometric2.copy(this).lco(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock(Geometric2.copy(this).lco(Geometric2.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rlshift__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).lco(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs).lco(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rshift__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (rhs instanceof Geometric2) {
+                return lock(Geometric2.copy(this).rco(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock(Geometric2.copy(this).rco(Geometric2.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rrshift__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).rco(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs).rco(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__bang__ = function () {
-            throw new Error("Method not implemented.");
+            return lock(Geometric2.copy(this).inv());
         };
         Geometric2.prototype.__eq__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__eq_').message);
         };
         Geometric2.prototype.__ne__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__ne_').message);
         };
         Geometric2.prototype.__ge__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__ge_').message);
         };
         Geometric2.prototype.__gt__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__gt_').message);
         };
         Geometric2.prototype.__le__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__le_').message);
         };
         Geometric2.prototype.__lt__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('__lt_').message);
         };
         Geometric2.prototype.__tilde__ = function () {
-            throw new Error("Method not implemented.");
+            return lock(Geometric2.copy(this).rev());
         };
-        Geometric2.prototype.__add__ = function (other) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.__add__ = function (rhs) {
+            var duckR = maskG2_1.maskG2(rhs);
+            if (duckR) {
+                return lock(this.clone().add(duckR));
+            }
+            else if (isVectorE2_1.isVectorE2(rhs)) {
+                return lock(this.clone().addVector(rhs));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric2.prototype.__radd__ = function (other) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.__radd__ = function (lhs) {
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).add(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs).add(this));
+            }
+            else if (isVectorE2_1.isVectorE2(lhs)) {
+                return lock(Geometric2.fromVector(lhs).add(this));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric2.prototype.__sub__ = function (other) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.__sub__ = function (rhs) {
+            var duckR = maskG2_1.maskG2(rhs);
+            if (duckR) {
+                return lock(this.clone().sub(duckR));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric2.prototype.__rsub__ = function (other) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.__rsub__ = function (lhs) {
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).sub(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.scalar(lhs).sub(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__pos__ = function () {
-            throw new Error("Method not implemented.");
+            return lock(Geometric2.copy(this));
         };
         Geometric2.prototype.__neg__ = function () {
-            throw new Error("Method not implemented.");
+            return lock(Geometric2.copy(this).neg());
         };
         Geometric2.prototype.__mul__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            var duckR = maskG2_1.maskG2(rhs);
+            if (duckR) {
+                return lock(this.clone().mul(duckR));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.__rmul__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            if (lhs instanceof Geometric2) {
+                return lock(Geometric2.copy(lhs).mul(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock(Geometric2.copy(this).mulByNumber(lhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric2.prototype.add2 = function (a, b) {
-            throw new Error("Method not implemented.");
+            if (isZeroGeometricE2_1.isZeroGeometricE2(a)) {
+                this.uom = b.uom;
+            }
+            else if (isZeroGeometricE2_1.isZeroGeometricE2(b)) {
+                this.uom = a.uom;
+            }
+            else {
+                this.uom = Unit_1.Unit.compatible(a.uom, b.uom);
+            }
+            this.a = a.a + b.a;
+            this.x = a.x + b.x;
+            this.y = a.y + b.y;
+            this.b = a.b + b.b;
+            return this;
         };
         Geometric2.prototype.addPseudo = function (β, uom) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().addPseudo(β, uom));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = uom;
+                }
+                else if (β === 0) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit_1.Unit.compatible(this.uom, uom);
+                }
+                this.b += β;
+                return this;
+            }
         };
         Geometric2.prototype.addScalar = function (α, uom) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().addScalar(α, uom));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = uom;
+                }
+                else if (α === 0) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit_1.Unit.compatible(this.uom, uom);
+                }
+                this.a += α;
+                return this;
+            }
         };
         Geometric2.prototype.angle = function () {
-            throw new Error("Method not implemented.");
+            return this.log().grade(2);
         };
         Geometric2.prototype.approx = function (n) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().approx(n));
+            }
+            else {
+                approx_1.approx(this.coords_, n);
+                return this;
+            }
         };
         Geometric2.prototype.conj = function () {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().conj());
+            }
+            else {
+                this.x = -this.x;
+                this.y = -this.y;
+                this.b = -this.b;
+                return this;
+            }
         };
         Geometric2.prototype.copySpinor = function (spinor) {
-            throw new Error("Method not implemented.");
+            var a = spinor.a;
+            var b = spinor.xy;
+            this.setCoordinate(COORD_A, a, 'a');
+            this.setCoordinate(COORD_X, 0, 'x');
+            this.setCoordinate(COORD_Y, 0, 'y');
+            this.setCoordinate(COORD_B, b, 'b');
+            this.uom = spinor.uom;
+            return this;
         };
-        Geometric2.prototype.div = function (m) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.div = function (rhs) {
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().div(rhs));
+            }
+            else {
+                return this.mul(Geometric2.copy(rhs).inv());
+            }
         };
         Geometric2.prototype.div2 = function (a, b) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('div2').message);
         };
         Geometric2.prototype.divByNumber = function (α) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().divByNumber(α));
+            }
+            else {
+                this.a /= α;
+                this.x /= α;
+                this.y /= α;
+                this.b /= α;
+                return this;
+            }
         };
-        Geometric2.prototype.divByVector = function (vector) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.divByVector = function (v) {
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().divByVector(v));
+            }
+            else {
+                var x = v.x;
+                var y = v.y;
+                var uom2 = Unit_1.Unit.pow(v.uom, QQ_1.QQ.valueOf(2, 1));
+                var squaredNorm = x * x + y * y;
+                return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+            }
         };
         Geometric2.prototype.dual = function (m) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('dual').message);
         };
         Geometric2.prototype.equals = function (other) {
-            throw new Error("Method not implemented.");
+            if (other instanceof Geometric2) {
+                return arraysEQ_1.arraysEQ(this.coords_, other.coords_);
+            }
+            else {
+                return false;
+            }
         };
         Geometric2.prototype.exp = function () {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().exp());
+            }
+            else {
+                Unit_1.Unit.assertDimensionless(this.uom);
+                var expW = Math.exp(this.a);
+                var xy = this.xy;
+                var φ = Math.sqrt(xy * xy);
+                var s = φ !== 0 ? Math.sin(φ) / φ : 1;
+                var cosφ = Math.cos(φ);
+                this.a = cosφ;
+                this.xy = xy * s;
+                return this.mulByNumber(expW);
+            }
         };
-        Geometric2.prototype.ext2 = function (a, b) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.ext2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var a2 = lhs.y;
+            var a3 = lhs.b;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            var b2 = rhs.y;
+            var b3 = rhs.b;
+            this.a = a0 * b0;
+            this.x = a0 * b1 + a1 * b0;
+            this.y = a0 * b2 + a2 * b0;
+            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
+            return this;
         };
-        Geometric2.prototype.grade = function (grade) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.grade = function (n) {
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().grade(n));
+            }
+            else {
+                switch (n) {
+                    case 0: {
+                        this.x = 0;
+                        this.y = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 1: {
+                        this.a = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 2: {
+                        this.a = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        break;
+                    }
+                    default: {
+                        this.a = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        this.b = 0;
+                    }
+                }
+                return this;
+            }
         };
         Geometric2.prototype.isOne = function () {
-            throw new Error("Method not implemented.");
+            if (Unit_1.Unit.isOne(this.uom)) {
+                return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
+            }
+            else {
+                return false;
+            }
+        };
+        Geometric2.prototype.isSpinor = function () {
+            return this.x === 0 && this.y === 0;
         };
         Geometric2.prototype.I = function () {
-            throw new Error("Method not implemented.");
+            this.a = 0;
+            this.x = 0;
+            this.y = 0;
+            this.b = 1;
+            this.uom = void 0;
+            return this;
         };
-        Geometric2.prototype.lco = function (m) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.lco = function (rhs) {
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().lco(rhs));
+            }
+            else {
+                return this.lco2(this, rhs);
+            }
         };
-        Geometric2.prototype.lco2 = function (a, b) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.lco2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var a2 = lhs.y;
+            var a3 = lhs.b;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            var b2 = rhs.y;
+            var b3 = rhs.b;
+            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+            this.x = a0 * b1 - a2 * b3;
+            this.y = a0 * b2 + a1 * b3;
+            this.b = a0 * b3;
+            this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
+            return this;
         };
         Geometric2.prototype.lerp = function (target, α) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().lerp(target, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = target.uom;
+                }
+                else if (isZeroGeometricE2_1.isZeroGeometricE2(target)) {
+                }
+                else {
+                    this.uom = Unit_1.Unit.compatible(this.uom, target.uom);
+                }
+                this.a += (target.a - this.a) * α;
+                this.x += (target.x - this.x) * α;
+                this.y += (target.y - this.y) * α;
+                this.b += (target.b - this.b) * α;
+                return this;
+            }
         };
         Geometric2.prototype.lerp2 = function (a, b, α) {
-            throw new Error("Method not implemented.");
+            this.copy(a).lerp(b, α);
+            return this;
         };
         Geometric2.prototype.log = function () {
-            throw new Error("Method not implemented.");
-        };
-        Geometric2.prototype.mul2 = function (a, b) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().log());
+            }
+            else {
+                Unit_1.Unit.assertDimensionless(this.uom);
+                if (this.isSpinor()) {
+                    var α = this.a;
+                    var β = this.b;
+                    this.a = Math.log(Math.sqrt(α * α + β * β));
+                    this.b = Math.atan2(β, α);
+                    return this;
+                }
+                else {
+                    throw new Error(notImplemented_1.notImplemented("log(" + this.toString() + ")").message);
+                }
+            }
         };
         Geometric2.prototype.norm = function () {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().norm());
+            }
+            else {
+                this.a = this.magnitudeSansUnits();
+                this.x = 0;
+                this.y = 0;
+                this.b = 0;
+                return this;
+            }
         };
         Geometric2.prototype.one = function () {
-            throw new Error("Method not implemented.");
+            this.a = 1;
+            this.x = 0;
+            this.y = 0;
+            this.b = 0;
+            this.uom = void 0;
+            return this;
         };
         Geometric2.prototype.rco = function (m) {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().rco(m));
+            }
+            else {
+                return this.rco2(this, m);
+            }
         };
-        Geometric2.prototype.rco2 = function (a, b) {
-            throw new Error("Method not implemented.");
+        Geometric2.prototype.rco2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var a2 = lhs.y;
+            var a3 = lhs.b;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            var b2 = rhs.y;
+            var b3 = rhs.b;
+            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+            this.x = -a1 * b0 - a3 * b2;
+            this.y = -a2 * b0 + a3 * b1;
+            this.b = a3 * b0;
+            this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
+            return this;
         };
         Geometric2.prototype.reflect = function (n) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('reflect').message);
         };
         Geometric2.prototype.rotorFromDirections = function (a, b) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('rotorFromDiections').message);
         };
         Geometric2.prototype.rotorFromFrameToFrame = function (es, fs) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('rotorFromFrameToFrame').message);
         };
         Geometric2.prototype.rotorFromGeneratorAngle = function (B, θ) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('rotorFromGeneratorAngle').message);
         };
         Geometric2.prototype.rotorFromVectorToVector = function (a, b, B) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('rotorFromVectorToVector').message);
         };
         Geometric2.prototype.sqrt = function () {
-            throw new Error("Method not implemented.");
+            if (this.lock_ !== UNLOCKED) {
+                return lock(this.clone().sqrt());
+            }
+            else {
+                this.a = Math.sqrt(this.a);
+                this.x = 0;
+                this.y = 0;
+                this.b = 0;
+                this.uom = Unit_1.Unit.sqrt(this.uom);
+                return this;
+            }
         };
         Geometric2.prototype.squaredNorm = function (mutate) {
-            throw new Error("Method not implemented.");
+            return this.quaditude(mutate);
         };
         Geometric2.prototype.sub2 = function (a, b) {
-            throw new Error("Method not implemented.");
+            if (isZeroGeometricE2_1.isZeroGeometricE2(a)) {
+                this.a = -b.a;
+                this.x = -b.x;
+                this.y = -b.y;
+                this.b = -b.b;
+                this.uom = b.uom;
+            }
+            else if (isZeroGeometricE2_1.isZeroGeometricE2(b)) {
+                this.a = a.a;
+                this.x = a.x;
+                this.y = a.y;
+                this.b = a.b;
+                this.uom = a.uom;
+            }
+            else {
+                this.a = a.a - b.a;
+                this.x = a.x - b.x;
+                this.y = a.y - b.y;
+                this.b = a.b - b.b;
+                this.uom = Unit_1.Unit.compatible(a.uom, b.uom);
+            }
+            return this;
         };
         Geometric2.prototype.versor = function (a, b) {
-            throw new Error("Method not implemented.");
+            throw new Error(notImplemented_1.notImplemented('versor').message);
         };
         Geometric2.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED;
@@ -4740,30 +5302,30 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
         };
         Object.defineProperty(Geometric2.prototype, "a", {
             get: function () {
-                return this.coords_[COORD_SCALAR];
+                return this.coords_[COORD_A];
             },
             set: function (a) {
-                this.setCoordinate(COORD_SCALAR, a, 'a');
+                this.setCoordinate(COORD_A, a, 'a');
             },
             enumerable: false,
             configurable: true
         });
         Object.defineProperty(Geometric2.prototype, "b", {
             get: function () {
-                return this.coords_[COORD_PSEUDO];
+                return this.coords_[COORD_B];
             },
             set: function (b) {
-                this.setCoordinate(COORD_PSEUDO, b, 'b');
+                this.setCoordinate(COORD_B, b, 'b');
             },
             enumerable: false,
             configurable: true
         });
         Object.defineProperty(Geometric2.prototype, "xy", {
             get: function () {
-                return this.coords_[COORD_PSEUDO];
+                return this.coords_[COORD_B];
             },
             set: function (xy) {
-                this.setCoordinate(COORD_PSEUDO, xy, 'xy');
+                this.setCoordinate(COORD_B, xy, 'xy');
             },
             enumerable: false,
             configurable: true
@@ -4771,10 +5333,10 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
         Object.defineProperty(Geometric2.prototype, "grades", {
             get: function () {
                 var coords = this.coords_;
-                var α = coords[COORD_SCALAR];
+                var α = coords[COORD_A];
                 var x = coords[COORD_X];
                 var y = coords[COORD_Y];
-                var β = coords[COORD_PSEUDO];
+                var β = coords[COORD_B];
                 var mask = 0x0;
                 if (α !== 0) {
                     mask += 0x1;
@@ -4884,26 +5446,26 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
             return this;
         };
         Geometric2.prototype.copyBivector = function (B) {
-            this.setCoordinate(COORD_SCALAR, 0, 'a');
+            this.setCoordinate(COORD_A, 0, 'a');
             this.setCoordinate(COORD_X, 0, 'x');
             this.setCoordinate(COORD_Y, 0, 'y');
-            this.setCoordinate(COORD_PSEUDO, B.xy, 'b');
+            this.setCoordinate(COORD_B, B.xy, 'b');
             this.uom = B.uom;
             return this;
         };
         Geometric2.prototype.copyScalar = function (α, uom) {
-            this.setCoordinate(COORD_SCALAR, α, 'a');
+            this.setCoordinate(COORD_A, α, 'a');
             this.setCoordinate(COORD_X, 0, 'x');
             this.setCoordinate(COORD_Y, 0, 'y');
-            this.setCoordinate(COORD_PSEUDO, 0, 'b');
+            this.setCoordinate(COORD_B, 0, 'b');
             this.uom = uom;
             return this;
         };
         Geometric2.prototype.copyVector = function (vector) {
-            this.setCoordinate(COORD_SCALAR, 0, 'a');
+            this.setCoordinate(COORD_A, 0, 'a');
             this.setCoordinate(COORD_X, vector.x, 'x');
             this.setCoordinate(COORD_Y, vector.y, 'y');
-            this.setCoordinate(COORD_PSEUDO, 0, 'b');
+            this.setCoordinate(COORD_B, 0, 'b');
             this.uom = vector.uom;
             return this;
         };
@@ -5025,22 +5587,24 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
                 return lock(this.clone().mul(rhs));
             }
             else {
-                var lhs = this;
-                var a0 = lhs.a;
-                var a1 = lhs.x;
-                var a2 = lhs.y;
-                var a3 = lhs.b;
-                var b0 = rhs.a;
-                var b1 = rhs.x;
-                var b2 = rhs.y;
-                var b3 = rhs.b;
-                this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-                this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
-                this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
-                this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
-                this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
-                return this;
+                return this.mul2(this, rhs);
             }
+        };
+        Geometric2.prototype.mul2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var a2 = lhs.y;
+            var a3 = lhs.b;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            var b2 = rhs.y;
+            var b3 = rhs.b;
+            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+            this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
+            this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
+            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            this.uom = Unit_1.Unit.mul(this.uom, rhs.uom);
+            return this;
         };
         Geometric2.prototype.mulByBivector = function (B) {
             if (this.lock_ !== UNLOCKED) {
@@ -5294,6 +5858,7 @@ define('davinci-newton/math/Geometric2',["require", "exports", "../i18n/readOnly
             this.x = 0;
             this.y = 0;
             this.b = 0;
+            this.uom = void 0;
             return this;
         };
         Geometric2.zero = lock(new Geometric2(zero(), void 0));
@@ -5911,66 +6476,6 @@ define('davinci-newton/engine2D/Spring2',["require", "exports", "../core/Spring"
         return Spring2;
     }(Spring_1.Spring));
     exports.Spring2 = Spring2;
-});
-
-define('davinci-newton/math/approx',["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function approx(coords, n) {
-        var max = 0;
-        var iLen = coords.length;
-        for (var i = 0; i < iLen; i++) {
-            max = Math.max(max, Math.abs(coords[i]));
-        }
-        var threshold = max * Math.pow(10, -n);
-        for (var i = 0; i < iLen; i++) {
-            if (Math.abs(coords[i]) < threshold) {
-                coords[i] = 0;
-            }
-        }
-    }
-    exports.default = approx;
-});
-
-define('davinci-newton/math/arraysEQ',["require", "exports", "../checks/isDefined", "../checks/isNull", "../checks/isUndefined"], function (require, exports, isDefined_1, isNull_1, isUndefined_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function default_1(a, b) {
-        if (isDefined_1.default(a)) {
-            if (isDefined_1.default(b)) {
-                if (!isNull_1.default(a)) {
-                    if (!isNull_1.default(b)) {
-                        var aLen = a.length;
-                        var bLen = b.length;
-                        if (aLen === bLen) {
-                            for (var i = 0; i < aLen; i++) {
-                                if (a[i] !== b[i]) {
-                                    return false;
-                                }
-                            }
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                    else {
-                        return false;
-                    }
-                }
-                else {
-                    return isNull_1.default(b);
-                }
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return isUndefined_1.default(b);
-        }
-    }
-    exports.default = default_1;
 });
 
 define('davinci-newton/math/dotVectorE3',["require", "exports"], function (require, exports) {
@@ -7182,7 +7687,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
                 return lock(this.clone().approx(n));
             }
             else {
-                approx_1.default(this.coords_, n);
+                approx_1.approx(this.coords_, n);
                 return this;
             }
         };
@@ -7478,7 +7983,7 @@ define('davinci-newton/math/Geometric3',["require", "exports", "../checks/isDefi
         };
         Geometric3.prototype.equals = function (other) {
             if (other instanceof Geometric3) {
-                return arraysEQ_1.default(this.coords_, other.coords_);
+                return arraysEQ_1.arraysEQ(this.coords_, other.coords_);
             }
             else {
                 return false;

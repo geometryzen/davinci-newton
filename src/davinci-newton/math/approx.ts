@@ -1,4 +1,4 @@
-export default function approx(coords: number[], n: number): void {
+export function approx(coords: number[], n: number): void {
     let max = 0;
     const iLen = coords.length;
     for (let i = 0; i < iLen; i++) {
