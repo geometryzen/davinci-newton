@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.10';
+                    this.VERSION = '1.0.11';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -4909,10 +4909,86 @@ System.register("davinci-newton/math/maskG2.js", ["../checks/isNumber", "../chec
         }
     };
 });
-System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", "../i18n/readOnly", "./approx", "./arraysEQ", "./gauss", "./isVectorE2", "./isZeroGeometricE2", "./isZeroVectorE2", "./maskG2", "./QQ", "./stringFromCoordinates", "./Unit"], function (exports_1, context_1) {
+System.register("davinci-newton/math/dotVectorE2.js", [], function (exports_1, context_1) {
     "use strict";
 
-    var notImplemented_1, readOnly_1, approx_1, arraysEQ_1, gauss_1, isVectorE2_1, isZeroGeometricE2_1, isZeroVectorE2_1, maskG2_1, QQ_1, stringFromCoordinates_1, Unit_1, COORD_A, COORD_X, COORD_Y, COORD_B, BASIS_LABELS, zero, scalar, vector, bivector, pseudo, spinor, coordinates, UNLOCKED, Geometric2;
+    var __moduleName = context_1 && context_1.id;
+    function dotVectorE2(a, b) {
+        return a.x * b.x + a.y * b.y;
+    }
+    exports_1("dotVectorE2", dotVectorE2);
+    return {
+        setters: [],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/quadVectorE2.js", ["./dotVectorE2", "../checks/isDefined", "../checks/isNumber"], function (exports_1, context_1) {
+    "use strict";
+
+    var dotVectorE2_1, isDefined_1, isNumber_1;
+    var __moduleName = context_1 && context_1.id;
+    function quadVectorE2(vector) {
+        if (isDefined_1.default(vector)) {
+            var x = vector.x;
+            var y = vector.y;
+            if (isNumber_1.default(x) && isNumber_1.default(y)) {
+                return dotVectorE2_1.dotVectorE2(vector, vector);
+            } else {
+                return void 0;
+            }
+        } else {
+            return void 0;
+        }
+    }
+    exports_1("quadVectorE2", quadVectorE2);
+    return {
+        setters: [function (dotVectorE2_1_1) {
+            dotVectorE2_1 = dotVectorE2_1_1;
+        }, function (isDefined_1_1) {
+            isDefined_1 = isDefined_1_1;
+        }, function (isNumber_1_1) {
+            isNumber_1 = isNumber_1_1;
+        }],
+        execute: function () {}
+    };
+});
+System.register("davinci-newton/math/rotorFromDirectionsE2.js", ["./dotVectorE2", "./quadVectorE2"], function (exports_1, context_1) {
+    "use strict";
+
+    var dotVectorE2_1, quadVectorE2_1, sqrt;
+    var __moduleName = context_1 && context_1.id;
+    function rotorFromDirectionsE2(a, b, m) {
+        var quadA = quadVectorE2_1.quadVectorE2(a);
+        var absA = sqrt(quadA);
+        var quadB = quadVectorE2_1.quadVectorE2(b);
+        var absB = sqrt(quadB);
+        var BA = absB * absA;
+        var dotBA = dotVectorE2_1.dotVectorE2(b, a);
+        var denom = sqrt(2 * (quadB * quadA + BA * dotBA));
+        if (denom !== 0) {
+            m = m.versor(b, a);
+            m = m.addScalar(BA);
+            m = m.divByScalar(denom);
+        } else {
+            return void 0;
+        }
+    }
+    exports_1("rotorFromDirectionsE2", rotorFromDirectionsE2);
+    return {
+        setters: [function (dotVectorE2_1_1) {
+            dotVectorE2_1 = dotVectorE2_1_1;
+        }, function (quadVectorE2_1_1) {
+            quadVectorE2_1 = quadVectorE2_1_1;
+        }],
+        execute: function () {
+            sqrt = Math.sqrt;
+        }
+    };
+});
+System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", "../i18n/readOnly", "./approx", "./arraysEQ", "./gauss", "./isVectorE2", "./isZeroGeometricE2", "./isZeroVectorE2", "./maskG2", "./QQ", "./rotorFromDirectionsE2", "./stringFromCoordinates", "./Unit"], function (exports_1, context_1) {
+    "use strict";
+
+    var notImplemented_1, readOnly_1, approx_1, arraysEQ_1, gauss_1, isVectorE2_1, isZeroGeometricE2_1, isZeroVectorE2_1, maskG2_1, QQ_1, rotorFromDirectionsE2_1, stringFromCoordinates_1, Unit_1, COORD_A, COORD_X, COORD_Y, COORD_B, BASIS_LABELS, zero, scalar, vector, bivector, pseudo, spinor, coordinates, UNLOCKED, Geometric2;
     var __moduleName = context_1 && context_1.id;
     function lock(m) {
         m.lock();
@@ -4939,6 +5015,8 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
             maskG2_1 = maskG2_1_1;
         }, function (QQ_1_1) {
             QQ_1 = QQ_1_1;
+        }, function (rotorFromDirectionsE2_1_1) {
+            rotorFromDirectionsE2_1 = rotorFromDirectionsE2_1_1;
         }, function (stringFromCoordinates_1_1) {
             stringFromCoordinates_1 = stringFromCoordinates_1_1;
         }, function (Unit_1_1) {
@@ -5539,7 +5617,8 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     throw new Error(notImplemented_1.notImplemented('reflect').message);
                 };
                 Geometric2.prototype.rotorFromDirections = function (a, b) {
-                    throw new Error(notImplemented_1.notImplemented('rotorFromDiections').message);
+                    rotorFromDirectionsE2_1.rotorFromDirectionsE2(a, b, this);
+                    return this;
                 };
                 Geometric2.prototype.rotorFromFrameToFrame = function (es, fs) {
                     throw new Error(notImplemented_1.notImplemented('rotorFromFrameToFrame').message);
@@ -5765,10 +5844,11 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     return this;
                 };
                 Geometric2.prototype.copyBivector = function (B) {
+                    var b = B.xy;
                     this.setCoordinate(COORD_A, 0, 'a');
                     this.setCoordinate(COORD_X, 0, 'x');
                     this.setCoordinate(COORD_Y, 0, 'y');
-                    this.setCoordinate(COORD_B, B.xy, 'b');
+                    this.setCoordinate(COORD_B, b, 'b');
                     this.uom = B.uom;
                     return this;
                 };
@@ -5781,9 +5861,11 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     return this;
                 };
                 Geometric2.prototype.copyVector = function (vector) {
+                    var x = vector.x;
+                    var y = vector.y;
                     this.setCoordinate(COORD_A, 0, 'a');
-                    this.setCoordinate(COORD_X, vector.x, 'x');
-                    this.setCoordinate(COORD_Y, vector.y, 'y');
+                    this.setCoordinate(COORD_X, x, 'x');
+                    this.setCoordinate(COORD_Y, y, 'y');
                     this.setCoordinate(COORD_B, 0, 'b');
                     this.uom = vector.uom;
                     return this;

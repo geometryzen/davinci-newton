@@ -2,22 +2,23 @@ import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
 import { approx } from "./approx";
 import { arraysEQ } from "./arraysEQ";
-import { BivectorE2 } from "./BivectorE2";
+import { BivectorE2 as Bivector } from "./BivectorE2";
 import { gauss } from "./gauss";
-import { GeometricE2 } from "./GeometricE2";
+import { GeometricE2 as Geometric } from "./GeometricE2";
 import { GeometricNumber } from './GeometricNumber';
 import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from "./GradeMasked";
-import { isVectorE2 } from "./isVectorE2";
-import { isZeroGeometricE2 } from "./isZeroGeometricE2";
-import { isZeroVectorE2 } from "./isZeroVectorE2";
-import { maskG2 } from './maskG2';
+import { isVectorE2 as isVector } from "./isVectorE2";
+import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
+import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
+import { maskG2 as mask } from './maskG2';
 import { QQ } from "./QQ";
+import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirectionsE2';
 import { Scalar } from "./Scalar";
-import { SpinorE2 } from "./SpinorE2";
+import { SpinorE2 as Spinor } from "./SpinorE2";
 import { stringFromCoordinates } from "./stringFromCoordinates";
 import { Unit } from "./Unit";
-import { VectorE2 } from "./VectorE2";
+import { VectorE2 as Vector } from "./VectorE2";
 
 // Symbolic constants for the coordinate indices into the data array.
 const COORD_A = 0;
@@ -69,7 +70,7 @@ const spinor = function spinor(a: number, b: number): number[] {
 /**
  * Coordinates corresponding to basis labels.
  */
-const coordinates = function coordinates(m: GeometricE2): number[] {
+const coordinates = function coordinates(m: Geometric): number[] {
     const coords = zero();
     coords[COORD_A] = m.a;
     coords[COORD_X] = m.x;
@@ -94,7 +95,7 @@ function lock(m: Geometric2): Geometric2 {
  */
 const UNLOCKED = -1 * Math.random();
 
-export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geometric2, Geometric2, SpinorE2, VectorE2, Geometric2, number, Unit>, GeometricOperators<Geometric2, Unit> {
+export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, Geometric2, number, Unit>, GeometricOperators<Geometric2, Unit> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -138,11 +139,11 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return new Geometric2(vector(x, y), uom);
     }
 
-    static copy(mv: GeometricE2): Geometric2 {
+    static copy(mv: Geometric): Geometric2 {
         return new Geometric2(coordinates(mv), mv.uom);
     }
 
-    static fromBivector(B: BivectorE2): Geometric2 {
+    static fromBivector(B: Bivector): Geometric2 {
         return new Geometric2(bivector(B.xy), B.uom);
     }
 
@@ -150,11 +151,11 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return new Geometric2(scalar(alpha.a), alpha.uom);
     }
 
-    static fromSpinor(R: SpinorE2): Geometric2 {
+    static fromSpinor(R: Spinor): Geometric2 {
         return new Geometric2(spinor(R.a, R.xy), R.uom);
     }
 
-    static fromVector(v: VectorE2): Geometric2 {
+    static fromVector(v: Vector): Geometric2 {
         return new Geometric2(vector(v.x, v.y), v.uom);
     }
 
@@ -297,7 +298,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
     slerp(target: Geometric2, α: number): Geometric2 {
         throw new Error(notImplemented('slerp').message);
     }
-    stress(σ: VectorE2): Geometric2 {
+    stress(σ: Vector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().stress(σ));
         }
@@ -310,7 +311,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         }
     }
     __div__(rhs: number | Geometric2): Geometric2 {
-        const duckR = maskG2(rhs);
+        const duckR = mask(rhs);
         if (duckR) {
             return lock(this.clone().div(duckR));
         }
@@ -444,11 +445,11 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return lock(Geometric2.copy(this).rev());
     }
     __add__(rhs: Geometric2 | Unit): Geometric2 {
-        const duckR = maskG2(rhs);
+        const duckR = mask(rhs);
         if (duckR) {
             return lock(this.clone().add(duckR));
         }
-        else if (isVectorE2(rhs)) {
+        else if (isVector(rhs)) {
             return lock(this.clone().addVector(rhs));
         }
         else {
@@ -462,7 +463,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         else if (typeof lhs === 'number') {
             return lock(Geometric2.scalar(lhs).add(this));
         }
-        else if (isVectorE2(lhs)) {
+        else if (isVector(lhs)) {
             return lock(Geometric2.fromVector(lhs).add(this));
         }
         else {
@@ -470,7 +471,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         }
     }
     __sub__(rhs: Geometric2 | Unit): Geometric2 {
-        const duckR = maskG2(rhs);
+        const duckR = mask(rhs);
         if (duckR) {
             return lock(this.clone().sub(duckR));
         }
@@ -496,7 +497,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return lock(Geometric2.copy(this).neg());
     }
     __mul__(rhs: any): Geometric2 {
-        const duckR = maskG2(rhs);
+        const duckR = mask(rhs);
         if (duckR) {
             return lock(this.clone().mul(duckR));
         }
@@ -515,11 +516,11 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             return void 0;
         }
     }
-    add2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        if (isZeroGeometricE2(a)) {
+    add2(a: Geometric, b: Geometric): Geometric2 {
+        if (isZeroGeometric(a)) {
             this.uom = b.uom;
         }
-        else if (isZeroGeometricE2(b)) {
+        else if (isZeroGeometric(b)) {
             this.uom = a.uom;
         }
         else {
@@ -590,7 +591,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             return this;
         }
     }
-    copySpinor(spinor: SpinorE2): Geometric2 {
+    copySpinor(spinor: Spinor): Geometric2 {
         const a = spinor.a;
         const b = spinor.xy;
         this.setCoordinate(COORD_A, a, 'a');
@@ -604,7 +605,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param m The multivector dividend.
      * @returns this / m;
      */
-    div(rhs: GeometricE2): Geometric2 {
+    div(rhs: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().div(rhs));
         }
@@ -620,7 +621,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param a The numerator.
      * @param b The denominator.
      */
-    div2(a: SpinorE2, b: SpinorE2): Geometric2 {
+    div2(a: Spinor, b: Spinor): Geometric2 {
         throw new Error(notImplemented('div2').message);
     }
     divByNumber(α: number): Geometric2 {
@@ -635,7 +636,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             return this;
         }
     }
-    divByVector(v: VectorE2): Geometric2 {
+    divByVector(v: Vector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().divByVector(v));
         }
@@ -652,7 +653,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * @returns dual(m) or dual(this) if m is undefined.
      */
-    dual(m?: GeometricE2): Geometric2 {
+    dual(m?: Geometric): Geometric2 {
         throw new Error(notImplemented('dual').message);
     }
     equals(other: unknown): boolean {
@@ -701,7 +702,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * <code>this ⟼ lhs ^ rhs</code>
      * </p>
      */
-    ext2(lhs: GeometricE2, rhs: GeometricE2): this {
+    ext2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
         const a2 = lhs.y;
@@ -770,7 +771,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         this.uom = void 0;
         return this;
     }
-    lco(rhs: GeometricE2): Geometric2 {
+    lco(rhs: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().lco(rhs));
         }
@@ -786,7 +787,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param a
      * @param b
      */
-    lco2(lhs: GeometricE2, rhs: GeometricE2): this {
+    lco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
         const a2 = lhs.y;
@@ -802,7 +803,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
-    lerp(target: GeometricE2, α: number): Geometric2 {
+    lerp(target: Geometric, α: number): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().lerp(target, α));
         }
@@ -810,7 +811,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             if (this.isZero()) {
                 this.uom = target.uom;
             }
-            else if (isZeroGeometricE2(target)) {
+            else if (isZeroGeometric(target)) {
                 // Fall through.
             }
             else {
@@ -823,7 +824,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             return this;
         }
     }
-    lerp2(a: GeometricE2, b: GeometricE2, α: number): Geometric2 {
+    lerp2(a: Geometric, b: Geometric, α: number): Geometric2 {
         this.copy(a).lerp(b, α);
         return this;
     }
@@ -865,7 +866,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         this.uom = void 0;
         return this;
     }
-    rco(m: GeometricE2): Geometric2 {
+    rco(m: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().rco(m));
         }
@@ -878,7 +879,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * <code>this ⟼ lhs >> rhs</code>
      * </p>
      */
-    rco2(lhs: GeometricE2, rhs: GeometricE2): this {
+    rco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
         const a2 = lhs.y;
@@ -909,7 +910,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * @param n The unit vector that defines the reflection plane.
      */
-    reflect(n: VectorE2): this {
+    reflect(n: Vector): this {
         throw new Error(notImplemented('reflect').message);
     }
     /**
@@ -924,10 +925,11 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param b The ending vector
      * @returns The rotor representing a rotation from a to b.
      */
-    rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2 {
-        throw new Error(notImplemented('rotorFromDiections').message);
+    rotorFromDirections(a: Vector, b: Vector): this {
+        rotorFromDirections(a, b, this);
+        return this;
     }
-    rotorFromFrameToFrame(es: VectorE2[], fs: VectorE2[]): Geometric2 {
+    rotorFromFrameToFrame(es: Vector[], fs: Vector[]): Geometric2 {
         throw new Error(notImplemented('rotorFromFrameToFrame').message);
     }
     /**
@@ -938,7 +940,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R
      */
-    rotorFromGeneratorAngle(B: BivectorE2, θ: number): Geometric2 {
+    rotorFromGeneratorAngle(B: Bivector, θ: number): Geometric2 {
         throw new Error(notImplemented('rotorFromGeneratorAngle').message);
     }
     /**
@@ -946,7 +948,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * The result is independent of the magnitudes of a and b. 
      */
-    rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2 {
+    rotorFromVectorToVector(a: Vector, b: Vector, B: Bivector): Geometric2 {
         throw new Error(notImplemented('rotorFromVectorToVector').message);
     }
     sqrt(): Geometric2 {
@@ -965,15 +967,15 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
     squaredNorm(mutate?: boolean): Geometric2 {
         return this.quaditude(mutate);
     }
-    sub2(a: GeometricE2, b: GeometricE2): Geometric2 {
-        if (isZeroGeometricE2(a)) {
+    sub2(a: Geometric, b: Geometric): Geometric2 {
+        if (isZeroGeometric(a)) {
             this.a = -b.a;
             this.x = -b.x;
             this.y = -b.y;
             this.b = -b.b;
             this.uom = b.uom;
         }
-        else if (isZeroGeometricE2(b)) {
+        else if (isZeroGeometric(b)) {
             this.a = a.a;
             this.x = a.x;
             this.y = a.y;
@@ -998,7 +1000,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param a
      * @param b
      */
-    versor(a: VectorE2, b: VectorE2): this {
+    versor(a: Vector, b: Vector): this {
         throw new Error(notImplemented('versor').message);
     }
 
@@ -1158,7 +1160,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param α An optional scale factor that multiplies the multivector argument.
      * @returns this + M * α
      */
-    add(M: GeometricE2, α = 1): Geometric2 {
+    add(M: Geometric, α = 1): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().add(M, α));
         }
@@ -1171,7 +1173,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
                 this.uom = M.uom;
                 return this;
             }
-            else if (isZeroGeometricE2(M)) {
+            else if (isZeroGeometric(M)) {
                 // α has no effect because M is zero.
                 return this;
             }
@@ -1191,7 +1193,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param α An optional scale factor that multiplies the vector argument.
      * @returns this + v * α
      */
-    addVector(v: VectorE2, α = 1): Geometric2 {
+    addVector(v: Vector, α = 1): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().addVector(v, α));
         }
@@ -1199,7 +1201,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             if (this.isZero()) {
                 this.uom = v.uom;
             }
-            else if (isZeroVectorE2(v)) {
+            else if (isZeroVector(v)) {
                 // α has no effect because v is zero.
                 return this;
             }
@@ -1226,7 +1228,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * @param M The multivector to be copied.
      */
-    copy(M: GeometricE2): this {
+    copy(M: Geometric): this {
         this.a = M.a;
         this.x = M.x;
         this.y = M.y;
@@ -1242,11 +1244,12 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * @param B The bivector to be copied.
      */
-    copyBivector(B: BivectorE2): this {
+    copyBivector(B: Bivector): this {
+        const b = B.xy;
         this.setCoordinate(COORD_A, 0, 'a');
         this.setCoordinate(COORD_X, 0, 'x');
         this.setCoordinate(COORD_Y, 0, 'y');
-        this.setCoordinate(COORD_B, B.xy, 'b');
+        this.setCoordinate(COORD_B, b, 'b');
         this.uom = B.uom;
         return this;
     }
@@ -1273,10 +1276,12 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      *
      * @param vector The vector to be copied.
      */
-    copyVector(vector: VectorE2): this {
+    copyVector(vector: Vector): this {
+        const x = vector.x;
+        const y = vector.y;
         this.setCoordinate(COORD_A, 0, 'a');
-        this.setCoordinate(COORD_X, vector.x, 'x');
-        this.setCoordinate(COORD_Y, vector.y, 'y');
+        this.setCoordinate(COORD_X, x, 'x');
+        this.setCoordinate(COORD_Y, y, 'y');
         this.setCoordinate(COORD_B, 0, 'b');
         this.uom = vector.uom;
         return this;
@@ -1339,7 +1344,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param m
      * @returns this ^ m
      */
-    ext(m: GeometricE2): Geometric2 {
+    ext(m: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().ext(m));
         }
@@ -1446,7 +1451,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param rhs
      * @returns this * m
      */
-    mul(rhs: GeometricE2): Geometric2 {
+    mul(rhs: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mul(rhs));
         }
@@ -1463,7 +1468,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param a
      * @param b
      */
-    mul2(lhs: GeometricE2, rhs: GeometricE2): this {
+    mul2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
         const a2 = lhs.y;
@@ -1480,7 +1485,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return this;
     }
 
-    public mulByBivector(B: BivectorE2): Geometric2 {
+    public mulByBivector(B: Bivector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByBivector(B));
         }
@@ -1540,7 +1545,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         }
     }
 
-    public mulByVector(v: VectorE2): Geometric2 {
+    public mulByVector(v: Vector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByVector(v));
         }
@@ -1634,7 +1639,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param spinor the spinor that rotates this multivector.
      * @returns R * this * reverse(R)
      */
-    rotate(spinor: SpinorE2): Geometric2 {
+    rotate(spinor: Spinor): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().rotate(spinor));
         }
@@ -1664,7 +1669,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param m
      * @returns this | m
      */
-    scp(m: GeometricE2): Geometric2 {
+    scp(m: Geometric): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().scp(m));
         }
@@ -1681,7 +1686,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param a
      * @param b
      */
-    scp2(a: GeometricE2, b: GeometricE2): this {
+    scp2(a: Geometric, b: Geometric): this {
         const a0 = a.a;
         const a1 = a.x;
         const a2 = a.y;
@@ -1715,7 +1720,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param α
      * @returns this - M * α
      */
-    sub(M: GeometricE2, α = 1): Geometric2 {
+    sub(M: Geometric, α = 1): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().sub(M, α));
         }
@@ -1723,7 +1728,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             if (this.isZero()) {
                 this.uom = M.uom;
             }
-            else if (isZeroGeometricE2(M)) {
+            else if (isZeroGeometric(M)) {
                 return this;
             }
             else {
@@ -1758,7 +1763,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
      * @param α The multiplier for the amount of the vector to subtract.
      * @returns this - v * α
      */
-    subVector(v: VectorE2, α = 1): Geometric2 {
+    subVector(v: Vector, α = 1): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().subVector(v, α));
         }
@@ -1766,7 +1771,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
             if (this.isZero()) {
                 this.uom = v.uom;
             }
-            else if (isZeroVectorE2(v)) {
+            else if (isZeroVector(v)) {
                 return this;
             }
             else {
@@ -1820,7 +1825,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
-    write(mv: GeometricE2): void {
+    write(mv: Geometric): void {
         mv.a = this.a;
         mv.x = this.x;
         mv.y = this.y;
@@ -1828,7 +1833,7 @@ export class Geometric2 implements GradeMasked, GeometricE2, GeometricNumber<Geo
         mv.uom = this.uom;
     }
 
-    writeVector(vector: VectorE2): void {
+    writeVector(vector: Vector): void {
         vector.x = this.x;
         vector.y = this.y;
         vector.uom = this.uom;
