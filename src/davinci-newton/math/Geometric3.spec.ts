@@ -58,7 +58,7 @@ function reflectSpec(M: Geometric3, n: VectorE3) {
  * The decimal place up to which the numbers should agree.
  * Make this as large as possible while avoiding rounding errors.
  */
-const PRECISION = 14;
+const PRECISION = 13;
 
 describe("Geometric3", function () {
 

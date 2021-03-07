@@ -316,12 +316,18 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     __div__(rhs: number | Geometric2): Geometric2 {
-        const duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().div(duckR));
-        }
-        else {
-            return void 0;
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().div(rhs));
+        } else if (typeof rhs === 'number') {
+            return lock(this.clone().divByNumber(rhs));
+        } else {
+            const duckR = mask(rhs);
+            if (duckR) {
+                return lock(this.clone().div(duckR));
+            }
+            else {
+                return void 0;
+            }
         }
     }
     __rdiv__(lhs: number | Geometric2): Geometric2 {
@@ -631,7 +637,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
         else {
             if (isScalar(rhs)) {
-                // console.log(`rhs ${this.toString()} is a scalar`);
                 return this.divByScalar(rhs.a, rhs.uom);
             } else {
                 return this.mul(Geometric2.copy(rhs).inv());

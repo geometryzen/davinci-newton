@@ -8,6 +8,9 @@ const ONE: Unit = void 0; // Unit.ONE;
 
 const scratch: GeometricE2 = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE };
 
+/**
+ * "Promotes" the argument to a GeometricE2.
+ */
 export function maskG2(arg: any): GeometricE2 {
     const duck = <GradeMasked>arg;
     if (isObject(arg) && 'grades' in arg) {

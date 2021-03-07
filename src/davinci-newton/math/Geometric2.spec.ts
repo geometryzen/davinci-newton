@@ -606,5 +606,19 @@ describe("Geometric2", function () {
             expect(result.a).toBe(one.a);
             expect(result.__eq__(one)).toBe(true);
         });
+        it("scalar/number", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const y = Math.random();
+            const b = Math.random();
+            const lhs = new Geometric2([a, x, y, b], Unit.KELVIN);
+            const rhs = 0.5;
+            const result = lhs.__div__(rhs);
+            expect(result.a).toBe(2 * a);
+            expect(result.x).toBe(2 * x);
+            expect(result.y).toBe(2 * y);
+            expect(result.b).toBe(2 * b);
+            expect(result.uom).toBe(Unit.KELVIN);
+        });
     });
 });

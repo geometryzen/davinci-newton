@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.14';
+                    this.VERSION = '1.0.15';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -5140,11 +5140,17 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     }
                 };
                 Geometric2.prototype.__div__ = function (rhs) {
-                    var duckR = maskG2_1.maskG2(rhs);
-                    if (duckR) {
-                        return lock(this.clone().div(duckR));
+                    if (rhs instanceof Geometric2) {
+                        return lock(this.clone().div(rhs));
+                    } else if (typeof rhs === 'number') {
+                        return lock(this.clone().divByNumber(rhs));
                     } else {
-                        return void 0;
+                        var duckR = maskG2_1.maskG2(rhs);
+                        if (duckR) {
+                            return lock(this.clone().div(duckR));
+                        } else {
+                            return void 0;
+                        }
                     }
                 };
                 Geometric2.prototype.__rdiv__ = function (lhs) {
