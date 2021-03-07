@@ -67,6 +67,7 @@ const spinor = function spinor(a: number, b: number): number[] {
     coords[COORD_B] = b;
     return coords;
 };
+
 /**
  * Coordinates corresponding to basis labels.
  */
@@ -78,6 +79,10 @@ const coordinates = function coordinates(m: Geometric): number[] {
     coords[COORD_B] = m.b;
     return coords;
 };
+
+function isScalar(m: Geometric): boolean {
+    return m.x === 0 && m.y === 0 && m.b === 0;
+}
 
 /**
  * Sets the lock on the multivector argument and returns the same argument.
@@ -287,7 +292,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         throw new Error(notImplemented('adj').message);
     }
     isScalar(): boolean {
-        return this.x === 0 && this.y === 0 && this.b === 0;
+        return isScalar(this);
     }
     quad(): Geometric2 {
         return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit.mul(this.uom, this.uom));
@@ -423,8 +428,23 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     __bang__(): Geometric2 {
         return lock(Geometric2.copy(this).inv());
     }
-    __eq__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__eq_').message);
+    __eq__(rhs: number | Geometric2): boolean {
+        if (rhs instanceof Geometric2) {
+            const a0 = this.a;
+            const a1 = this.x;
+            const a2 = this.y;
+            const a3 = this.b;
+            const b0 = rhs.a;
+            const b1 = rhs.x;
+            const b2 = rhs.y;
+            const b3 = rhs.b;
+            // TODO: Should be equals on Unit, but this is close.
+            return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit.isCompatible(this.uom, rhs.uom);
+        } else if (typeof rhs === 'number') {
+            return false;
+        } else {
+            return false;
+        }
     }
     __ne__(rhs: Geometric2): boolean {
         throw new Error(notImplemented('__ne_').message);
@@ -610,7 +630,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return lock(this.clone().div(rhs));
         }
         else {
-            return this.mul(Geometric2.copy(rhs).inv());
+            if (isScalar(rhs)) {
+                // console.log(`rhs ${this.toString()} is a scalar`);
+                return this.divByScalar(rhs.a, rhs.uom);
+            } else {
+                return this.mul(Geometric2.copy(rhs).inv());
+            }
         }
     }
     /**

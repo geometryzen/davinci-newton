@@ -313,6 +313,9 @@ export class Unit {
     }
   }
 
+  /**
+   * @returns true if this and rhs have the same dimensions.
+   */
   private isCompatible(rhs: Unit): boolean {
     if (rhs instanceof Unit) {
       return this.dimensions.equals(rhs.dimensions);

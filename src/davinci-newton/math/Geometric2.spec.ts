@@ -1,6 +1,8 @@
 import { Geometric2 } from "./Geometric2";
 import { Unit } from "./Unit";
 
+const one = Geometric2.one;
+
 describe("Geometric2", function () {
     describe("constructor", function () {
         it("empty", function () {
@@ -596,6 +598,13 @@ describe("Geometric2", function () {
         it("second", function () {
             const M = Geometric2.second;
             expect(M.toString()).toBe("1 s");
+        });
+    });
+    describe("div", function () {
+        it("scalar/scalar", function () {
+            const result = one.__div__(one);
+            expect(result.a).toBe(one.a);
+            expect(result.__eq__(one)).toBe(true);
         });
     });
 });

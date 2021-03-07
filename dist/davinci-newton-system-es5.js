@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.13';
+                    this.VERSION = '1.0.14';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -4990,6 +4990,9 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
 
     var notImplemented_1, readOnly_1, approx_1, arraysEQ_1, gauss_1, isVectorE2_1, isZeroGeometricE2_1, isZeroVectorE2_1, maskG2_1, QQ_1, rotorFromDirectionsE2_1, stringFromCoordinates_1, Unit_1, COORD_A, COORD_X, COORD_Y, COORD_B, BASIS_LABELS, zero, scalar, vector, bivector, pseudo, spinor, coordinates, UNLOCKED, Geometric2;
     var __moduleName = context_1 && context_1.id;
+    function isScalar(m) {
+        return m.x === 0 && m.y === 0 && m.b === 0;
+    }
     function lock(m) {
         m.lock();
         return m;
@@ -5115,7 +5118,7 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     throw new Error(notImplemented_1.notImplemented('adj').message);
                 };
                 Geometric2.prototype.isScalar = function () {
-                    return this.x === 0 && this.y === 0 && this.b === 0;
+                    return isScalar(this);
                 };
                 Geometric2.prototype.quad = function () {
                     return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit_1.Unit.mul(this.uom, this.uom));
@@ -5229,7 +5232,21 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     return lock(Geometric2.copy(this).inv());
                 };
                 Geometric2.prototype.__eq__ = function (rhs) {
-                    throw new Error(notImplemented_1.notImplemented('__eq_').message);
+                    if (rhs instanceof Geometric2) {
+                        var a0 = this.a;
+                        var a1 = this.x;
+                        var a2 = this.y;
+                        var a3 = this.b;
+                        var b0 = rhs.a;
+                        var b1 = rhs.x;
+                        var b2 = rhs.y;
+                        var b3 = rhs.b;
+                        return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit_1.Unit.isCompatible(this.uom, rhs.uom);
+                    } else if (typeof rhs === 'number') {
+                        return false;
+                    } else {
+                        return false;
+                    }
                 };
                 Geometric2.prototype.__ne__ = function (rhs) {
                     throw new Error(notImplemented_1.notImplemented('__ne_').message);
@@ -5389,7 +5406,11 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     if (this.lock_ !== UNLOCKED) {
                         return lock(this.clone().div(rhs));
                     } else {
-                        return this.mul(Geometric2.copy(rhs).inv());
+                        if (isScalar(rhs)) {
+                            return this.divByScalar(rhs.a, rhs.uom);
+                        } else {
+                            return this.mul(Geometric2.copy(rhs).inv());
+                        }
                     }
                 };
                 Geometric2.prototype.div2 = function (a, b) {
