@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.18';
+            this.VERSION = '1.0.19';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -631,7 +631,7 @@ define('davinci-newton/core/ConstantForceLaw',["require", "exports", "../model/C
             var metric = _this.$body.metric;
             _this.$force = new Force_1.Force(_this.$body, metric);
             _this.$force.locationCoordType = CoordType_1.LOCAL;
-            metric.copyVector(vector, _this.$force.vector);
+            _this.vector = vector;
             _this.$force.vectorCoordType = vectorCoordType;
             _this.$forces = [_this.$force];
             _this.$potentialEnergy = metric.zero();
@@ -645,6 +645,17 @@ define('davinci-newton/core/ConstantForceLaw',["require", "exports", "../model/C
             set: function (location) {
                 var metric = this.$body.metric;
                 metric.copyVector(location, this.$force.location);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ConstantForceLaw.prototype, "vector", {
+            get: function () {
+                return this.$force.vector;
+            },
+            set: function (vector) {
+                var metric = this.$body.metric;
+                metric.copyVector(vector, this.$force.vector);
             },
             enumerable: false,
             configurable: true

@@ -25,9 +25,8 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
         this.$force = new Force(this.$body, metric);
 
         this.$force.locationCoordType = LOCAL;
-        metric.copyVector(vector, this.$force.vector);
+        this.vector = vector;
         this.$force.vectorCoordType = vectorCoordType;
-
         this.$forces = [this.$force];
 
         this.$potentialEnergy = metric.zero();
@@ -40,6 +39,14 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     set location(location: T) {
         const metric = this.$body.metric;
         metric.copyVector(location, this.$force.location);
+    }
+
+    get vector(): T {
+        return this.$force.vector;
+    }
+    set vector(vector: T) {
+        const metric = this.$body.metric;
+        metric.copyVector(vector, this.$force.vector);
     }
 
     /**
