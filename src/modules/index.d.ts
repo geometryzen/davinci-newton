@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.19
+// Type definitions for davinci-newton 1.0.20
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2585,6 +2585,10 @@ declare namespace NEWTON {
          * The attachment point to the body in body coordinates.
          */
         location: T;
+        /**
+         * The vector representation of the constant force.
+         */
+        vector: T;
         /**
          * 
          */
