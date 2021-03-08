@@ -18,6 +18,25 @@ function assertArgRational(name: string, arg: QQ): QQ {
     }
 }
 
+export type ExecutionMode = 'dimensionless' | 'lax' | 'strict' | 'units';
+
+let executionMode: ExecutionMode = 'strict';
+
+export function setExecutionMode(mode: ExecutionMode): void {
+    switch (mode) {
+        case 'dimensionless':
+        case 'lax':
+        case 'strict':
+        case 'units': {
+            executionMode = mode;
+            break;
+        }
+        default: {
+            throw new Error(`mode must be 'dimensionless' or 'units' or 'strict' or 'lax'.`);
+        }
+    }
+}
+
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
@@ -198,9 +217,6 @@ export class Dimensions {
 
     /**
      * Returns the dimensions if they are all equal, otherwise throws an <code>Error</code>
-     *
-     * @param rhs
-     * @returns
      */
     compatible(rhs: Dimensions): Dimensions {
         if (typeof this.summary_ === 'number' && this.summary_ === rhs.summary_) {
@@ -215,15 +231,63 @@ export class Dimensions {
                     throw new Error();
                 }
                 else {
-                    throw new Error("Dimensions must be equal (dimensionless, " + rhs + ")");
+                    const msg = `Dimensions must be equal (dimensionless, ${rhs})`;
+                    switch (executionMode) {
+                        case 'dimensionless': {
+                            console.warn(msg);
+                            return this;
+                        }
+                        case 'units': {
+                            console.warn(msg);
+                            return rhs;
+                        }
+                        case 'lax': {
+                            return rhs;
+                        }
+                        default: {
+                            throw new Error(msg);
+                        }
+                    }
                 }
             }
             else {
                 if (rhs.isOne()) {
-                    throw new Error("Dimensions must be equal (" + this + ", dimensionless)");
+                    const msg = `Dimensions must be equal (${this}, dimensionless)`;
+                    switch (executionMode) {
+                        case 'dimensionless': {
+                            console.warn(msg);
+                            return rhs;
+                        }
+                        case 'units': {
+                            console.warn(msg);
+                            return this;
+                        }
+                        case 'lax': {
+                            return this;
+                        }
+                        default: {
+                            throw new Error(msg);
+                        }
+                    }
                 }
                 else {
-                    throw new Error("Dimensions must be equal (" + this + ", " + rhs + ")");
+                    const msg = `Dimensions must be equal (${this}, ${rhs})`;
+                    switch (executionMode) {
+                        case 'dimensionless': {
+                            console.warn(msg);
+                            return this;
+                        }
+                        case 'units': {
+                            console.warn(msg);
+                            return this;
+                        }
+                        case 'lax': {
+                            return this;
+                        }
+                        default: {
+                            throw new Error(msg);
+                        }
+                    }
                 }
             }
         }

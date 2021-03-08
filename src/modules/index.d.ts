@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.15
+// Type definitions for davinci-newton 1.0.16
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -6,6 +6,8 @@
 // These declarations are appropriate when using the library through the global
 // variable, 'NEWTON'.
 //
+
+import { setExecutionMode } from "../davinci-newton/math/Dimensions";
 
 export = NEWTON;
 export as namespace NEWTON;
@@ -88,6 +90,17 @@ declare namespace NEWTON {
          */
         static valueOf(numer: number, denom: number): QQ
     }
+
+    /**
+     * Determines the behavior when incompatibilities are detected in units of measure.
+     * 'lax':           no warnings.
+     * 'dimensionless': warnings to the console, returns a dimensionless quantity.
+     * 'units':         warnings to the console, and returns a quantity with units if possible.
+     * 'strict':        throws an Error.
+     * The default value is 'strict'.
+     * @param mode The desired execution mode.
+     */
+    function setExecutionMode(mode: 'dimensionless' | 'lax' | 'strict' | 'units'): void;
 
     /**
      * The dimensions of a physical quantity.

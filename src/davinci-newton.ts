@@ -32,7 +32,7 @@ import { DisplayGraph } from './davinci-newton/graph/DisplayGraph';
 import { EnergyTimeGraph } from './davinci-newton/graph/EnergyTimeGraph';
 import { Graph } from './davinci-newton/graph/Graph';
 import { GraphLine } from './davinci-newton/graph/GraphLine';
-import { Dimensions } from './davinci-newton/math/Dimensions';
+import { Dimensions, setExecutionMode } from './davinci-newton/math/Dimensions';
 import { Geometric2 } from './davinci-newton/math/Geometric2';
 import { Geometric3 } from './davinci-newton/math/Geometric3';
 import { Matrix3 } from './davinci-newton/math/Matrix3';
@@ -270,8 +270,12 @@ const newton = {
      */
     get Spring3() { return Spring3; },
     /**
-     * 
+     *
      */
+    get setExecutionMode() { return setExecutionMode; },
+    /**
+    * 
+    */
     get Unit() { return Unit; },
     /**
      * 
