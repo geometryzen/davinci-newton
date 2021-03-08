@@ -2,6 +2,8 @@ import { Geometric2 } from "./Geometric2";
 import { Unit } from "./Unit";
 
 const one = Geometric2.one;
+const e1 = Geometric2.e1;
+const e2 = Geometric2.e2;
 
 describe("Geometric2", function () {
     describe("constructor", function () {
@@ -619,6 +621,62 @@ describe("Geometric2", function () {
             expect(result.y).toBe(2 * y);
             expect(result.b).toBe(2 * b);
             expect(result.uom).toBe(Unit.KELVIN);
+        });
+    });
+    describe("rotorFromVectorToVector", function () {
+        it("(e1, e2)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromVectorToVector(e1, e2);
+            expect(m.a).toBe(0.7071067811865475);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(-0.7071067811865475);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("(e1, e1)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromVectorToVector(e1, e1);
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(0);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("(e2, e2)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromVectorToVector(e2, e2);
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(0);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("on locked should not mutate and should return the rotor.", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const y = Math.random();
+            const b = Math.random();
+            const m = new Geometric2([a, x, y, b], Unit.KELVIN);
+            m.lock();
+            const R = m.rotorFromVectorToVector(e1, e2);
+            expect(m.a).toBe(a);
+            expect(m.x).toBe(x);
+            expect(m.y).toBe(y);
+            expect(m.b).toBe(b);
+            expect(m.uom).toBe(Unit.KELVIN);
+            expect(R.a).toBe(0.7071067811865475);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-0.7071067811865475);
+            expect(R.uom).toBe(Unit.ONE);
+        });
+        it("static", function () {
+            const R = Geometric2.rotorFromVectorToVector(e1, e2);
+            expect(R.a).toBe(0.7071067811865475);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-0.7071067811865475);
+            expect(R.uom).toBe(Unit.ONE);
         });
     });
 });

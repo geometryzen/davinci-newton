@@ -164,6 +164,10 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return new Geometric2(vector(v.x, v.y), v.uom);
     }
 
+    static rotorFromVectorToVector(a: Vector, b: Vector): Geometric2 {
+        return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
+    }
+
     /**
      * Constructs a Geometric2 representing the number zero.
      * The identity element for addition, <b>0</b>.
@@ -978,8 +982,37 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      *
      * The result is independent of the magnitudes of a and b. 
      */
-    rotorFromVectorToVector(a: Vector, b: Vector, B: Bivector): Geometric2 {
-        throw new Error(notImplemented('rotorFromVectorToVector').message);
+    rotorFromVectorToVector(a: Vector, b: Vector): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rotorFromVectorToVector(a, b));
+        }
+        else {
+            const ax = a.x;
+            const ay = a.y;
+            const bx = b.x;
+            const by = b.y;
+            /**
+             * s = |b||a|
+             */
+            const s = Math.sqrt(bx * bx + by * by) * Math.sqrt(ax * ax + ay * ay);
+            /**
+             * p = b.a or b << a
+             */
+            const p = bx * ax + by * ay;
+            /**
+             * q = b ^ a
+             */
+            const q = bx * ay - by * ax;
+            const denom = Math.sqrt(2 * s * (s + p));
+
+            this.a = (s + p) / denom;
+            this.x = 0;
+            this.y = 0;
+            this.b = q / denom;
+            this.uom = void 0;
+
+            return this;
+        }
     }
     sqrt(): Geometric2 {
         if (this.lock_ !== UNLOCKED) {

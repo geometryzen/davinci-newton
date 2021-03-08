@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.17
+// Type definitions for davinci-newton 1.0.18
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -824,7 +824,7 @@ declare namespace NEWTON {
          * 
          * The result is independent of the magnitudes of a and b.
          */
-        rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2;
+        rotorFromVectorToVector(a: VectorE2, b: VectorE2): Geometric2;
 
         /**
          * 
@@ -1083,9 +1083,8 @@ declare namespace NEWTON {
          * Computes the rotor that rotates vector a to vector b.
          * a The from vector.
          * b The to vector.
-         * B The plane of rotation when the rotation plane is ambiguous.
          */
-        static rotorFromVectorToVector(a: VectorE2, b: VectorE2, B: BivectorE2): Geometric2;
+        static rotorFromVectorToVector(a: VectorE2, b: VectorE2): Geometric2;
 
         /**
          * Constructs a new scalar from a number and a unit of measure.

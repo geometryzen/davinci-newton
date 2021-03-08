@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.17';
+                    this.VERSION = '1.0.18';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -5114,6 +5114,9 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                 Geometric2.fromVector = function (v) {
                     return new Geometric2(vector(v.x, v.y), v.uom);
                 };
+                Geometric2.rotorFromVectorToVector = function (a, b) {
+                    return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
+                };
                 Geometric2.prototype.adj = function () {
                     throw new Error(notImplemented_1.notImplemented('adj').message);
                 };
@@ -5653,8 +5656,25 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                 Geometric2.prototype.rotorFromGeneratorAngle = function (B, θ) {
                     throw new Error(notImplemented_1.notImplemented('rotorFromGeneratorAngle').message);
                 };
-                Geometric2.prototype.rotorFromVectorToVector = function (a, b, B) {
-                    throw new Error(notImplemented_1.notImplemented('rotorFromVectorToVector').message);
+                Geometric2.prototype.rotorFromVectorToVector = function (a, b) {
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().rotorFromVectorToVector(a, b));
+                    } else {
+                        var ax = a.x;
+                        var ay = a.y;
+                        var bx = b.x;
+                        var by = b.y;
+                        var s = Math.sqrt(bx * bx + by * by) * Math.sqrt(ax * ax + ay * ay);
+                        var p = bx * ax + by * ay;
+                        var q = bx * ay - by * ax;
+                        var denom = Math.sqrt(2 * s * (s + p));
+                        this.a = (s + p) / denom;
+                        this.x = 0;
+                        this.y = 0;
+                        this.b = q / denom;
+                        this.uom = void 0;
+                        return this;
+                    }
                 };
                 Geometric2.prototype.sqrt = function () {
                     if (this.lock_ !== UNLOCKED) {
