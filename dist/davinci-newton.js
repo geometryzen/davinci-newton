@@ -446,7 +446,7 @@ define('davinci-newton/config',["require", "exports"], function (require, export
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.16';
+            this.VERSION = '1.0.17';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -1883,7 +1883,7 @@ define('davinci-newton/math/detectDimensions',["require", "exports", "./Dimensio
 define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "./detectDimensions", "./DimensionsSummary"], function (require, exports, QQ_1, detectDimensions_1, DimensionsSummary_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Dimensions = exports.setExecutionMode = void 0;
+    exports.Dimensions = exports.getDimensionsChecking = exports.setDimensionsChecking = void 0;
     var R0 = QQ_1.QQ.valueOf(0, 1);
     var R1 = QQ_1.QQ.valueOf(1, 1);
     var R2 = QQ_1.QQ.valueOf(2, 1);
@@ -1898,22 +1898,24 @@ define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "./
             throw new Error("Argument " + name + " => " + arg + " must be a QQ");
         }
     }
-    var executionMode = 'strict';
-    function setExecutionMode(mode) {
+    var dimsChecking = 'strict';
+    function setDimensionsChecking(mode) {
         switch (mode) {
-            case 'dimensionless':
-            case 'lax':
             case 'strict':
-            case 'units': {
-                executionMode = mode;
+            case 'none': {
+                dimsChecking = mode;
                 break;
             }
             default: {
-                throw new Error("mode must be 'dimensionless' or 'units' or 'strict' or 'lax'.");
+                throw new Error("mode must be 'none' or 'strict'.");
             }
         }
     }
-    exports.setExecutionMode = setExecutionMode;
+    exports.setDimensionsChecking = setDimensionsChecking;
+    function getDimensionsChecking() {
+        return dimsChecking;
+    }
+    exports.getDimensionsChecking = getDimensionsChecking;
     var Dimensions = (function () {
         function Dimensions(M, L, T, Q, temperature, amount, intensity, summary) {
             this.M = assertArgRational('M', M);
@@ -1946,16 +1948,8 @@ define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "./
                     }
                     else {
                         var msg = "Dimensions must be equal (dimensionless, " + rhs + ")";
-                        switch (executionMode) {
-                            case 'dimensionless': {
-                                console.warn(msg);
-                                return this;
-                            }
-                            case 'units': {
-                                console.warn(msg);
-                                return rhs;
-                            }
-                            case 'lax': {
+                        switch (dimsChecking) {
+                            case 'none': {
                                 return rhs;
                             }
                             default: {
@@ -1967,16 +1961,8 @@ define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "./
                 else {
                     if (rhs.isOne()) {
                         var msg = "Dimensions must be equal (" + this + ", dimensionless)";
-                        switch (executionMode) {
-                            case 'dimensionless': {
-                                console.warn(msg);
-                                return rhs;
-                            }
-                            case 'units': {
-                                console.warn(msg);
-                                return this;
-                            }
-                            case 'lax': {
+                        switch (dimsChecking) {
+                            case 'none': {
                                 return this;
                             }
                             default: {
@@ -1986,16 +1972,8 @@ define('davinci-newton/math/Dimensions',["require", "exports", "../math/QQ", "./
                     }
                     else {
                         var msg = "Dimensions must be equal (" + this + ", " + rhs + ")";
-                        switch (executionMode) {
-                            case 'dimensionless': {
-                                console.warn(msg);
-                                return this;
-                            }
-                            case 'units': {
-                                console.warn(msg);
-                                return this;
-                            }
-                            case 'lax': {
+                        switch (dimsChecking) {
+                            case 'none': {
                                 return this;
                             }
                             default: {
@@ -13397,7 +13375,7 @@ define('davinci-newton',["require", "exports", "./davinci-newton/config", "./dav
         get Spring() { return Spring_1.Spring; },
         get Spring2() { return Spring2_1.Spring2; },
         get Spring3() { return Spring3_1.Spring3; },
-        get setExecutionMode() { return Dimensions_1.setExecutionMode; },
+        get setDimensionsChecking() { return Dimensions_1.setDimensionsChecking; },
         get Unit() { return Unit_1.Unit; },
         get VarsList() { return VarsList_1.VarsList; },
         get Vec3() { return Vec3_1.Vec3; }

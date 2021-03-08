@@ -18,23 +18,25 @@ function assertArgRational(name: string, arg: QQ): QQ {
     }
 }
 
-export type ExecutionMode = 'dimensionless' | 'lax' | 'strict' | 'units';
+export type DimensionsChecking = 'none' | 'strict';
 
-let executionMode: ExecutionMode = 'strict';
+let dimsChecking: DimensionsChecking = 'strict';
 
-export function setExecutionMode(mode: ExecutionMode): void {
+export function setDimensionsChecking(mode: DimensionsChecking): void {
     switch (mode) {
-        case 'dimensionless':
-        case 'lax':
         case 'strict':
-        case 'units': {
-            executionMode = mode;
+        case 'none': {
+            dimsChecking = mode;
             break;
         }
         default: {
-            throw new Error(`mode must be 'dimensionless' or 'units' or 'strict' or 'lax'.`);
+            throw new Error(`mode must be 'none' or 'strict'.`);
         }
     }
+}
+
+export function getDimensionsChecking(): DimensionsChecking {
+    return dimsChecking;
 }
 
 /**
@@ -232,16 +234,8 @@ export class Dimensions {
                 }
                 else {
                     const msg = `Dimensions must be equal (dimensionless, ${rhs})`;
-                    switch (executionMode) {
-                        case 'dimensionless': {
-                            console.warn(msg);
-                            return this;
-                        }
-                        case 'units': {
-                            console.warn(msg);
-                            return rhs;
-                        }
-                        case 'lax': {
+                    switch (dimsChecking) {
+                        case 'none': {
                             return rhs;
                         }
                         default: {
@@ -253,16 +247,8 @@ export class Dimensions {
             else {
                 if (rhs.isOne()) {
                     const msg = `Dimensions must be equal (${this}, dimensionless)`;
-                    switch (executionMode) {
-                        case 'dimensionless': {
-                            console.warn(msg);
-                            return rhs;
-                        }
-                        case 'units': {
-                            console.warn(msg);
-                            return this;
-                        }
-                        case 'lax': {
+                    switch (dimsChecking) {
+                        case 'none': {
                             return this;
                         }
                         default: {
@@ -272,16 +258,8 @@ export class Dimensions {
                 }
                 else {
                     const msg = `Dimensions must be equal (${this}, ${rhs})`;
-                    switch (executionMode) {
-                        case 'dimensionless': {
-                            console.warn(msg);
-                            return this;
-                        }
-                        case 'units': {
-                            console.warn(msg);
-                            return this;
-                        }
-                        case 'lax': {
+                    switch (dimsChecking) {
+                        case 'none': {
                             return this;
                         }
                         default: {
