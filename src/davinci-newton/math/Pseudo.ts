@@ -8,5 +8,5 @@ export interface Pseudo {
   /**
    * The unit of measure.
    */
-  uom: Unit;
+  uom?: Unit;
 }

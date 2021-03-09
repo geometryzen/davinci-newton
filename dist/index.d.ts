@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.20
+// Type definitions for davinci-newton 1.0.21
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -366,37 +366,42 @@ declare namespace NEWTON {
 
     interface Scalar {
         a: number;
-        uom: Unit;
+        uom?: Unit;
     }
 
     interface Pseudo {
         b: number;
-        uom: Unit;
+        uom?: Unit;
+    }
+
+    interface VectorE1 {
+        x: number;
+        uom?: Unit;
     }
 
     interface VectorE2 {
         x: number;
         y: number;
-        uom: Unit;
+        uom?: Unit;
     }
 
     interface VectorE3 {
         x: number;
         y: number;
         z: number;
-        uom: Unit;
+        uom?: Unit;
     }
 
     interface BivectorE2 {
         xy: number;
-        uom: Unit;
+        uom?: Unit;
     }
 
     interface BivectorE3 {
         yz: number;
         zx: number;
         xy: number;
-        uom: Unit;
+        uom?: Unit;
     }
 
     interface SpinorE2 extends Scalar, BivectorE2 {
@@ -451,7 +456,7 @@ declare namespace NEWTON {
         /**
          * The optional unit of measure.
          */
-        uom: Unit;
+        uom?: Unit;
 
         /**
          * Do not call this constructor. Use the static construction methods instead.
@@ -820,9 +825,15 @@ declare namespace NEWTON {
         rotorFromGeneratorAngle(B: BivectorE2, θ: number): Geometric2;
 
         /**
-         * R = (|b||a| + b a) / sqrt(2 |b||a|(|b||a| + b << a))
+         * Computes the rotor that rotates and scales vector a to vector b.
+         *
+         * R = sqrt(|b|/|a|) * (|b||a| + b a) / sqrt(2 |b||a|(|b||a| + b << a))
          * 
-         * The result is independent of the magnitudes of a and b.
+         * The result is depends on the magnitudes of a and b.
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns A rotor which is mutable/immutable iff this is mutable/immutable.
          */
         rotorFromVectorToVector(a: VectorE2, b: VectorE2): Geometric2;
 
@@ -1080,9 +1091,13 @@ declare namespace NEWTON {
         static rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2;
 
         /**
-         * Computes the rotor that rotates vector a to vector b.
-         * a The from vector.
-         * b The to vector.
+         * Computes the rotor that rotates and scales vector a to vector b.
+         *
+         * R = sqrt(|b|/|a|) * (|b||a| + b a) / sqrt(2 |b||a|(|b||a| + b << a))
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns A rotor which is mutable (unlocked).
          */
         static rotorFromVectorToVector(a: VectorE2, b: VectorE2): Geometric2;
 
@@ -1150,7 +1165,7 @@ declare namespace NEWTON {
         /**
          * The optional unit of measure.
          */
-        uom: Unit;
+        uom?: Unit;
 
         /**
          * Do not call this constructor. Use the static construction methods instead.
@@ -1825,7 +1840,7 @@ declare namespace NEWTON {
 
     interface MatrixLike {
         dimensions: number;
-        uom: Unit;
+        uom?: Unit;
         getElement(row: number, column: number): number;
     }
 
@@ -1834,7 +1849,7 @@ declare namespace NEWTON {
      */
     class Matrix3 implements MatrixLike {
         dimensions: number;
-        uom: Unit;
+        uom?: Unit;
         elements: Float32Array;
         modified: boolean;
         /**

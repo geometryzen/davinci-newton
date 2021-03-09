@@ -623,6 +623,70 @@ describe("Geometric2", function () {
             expect(result.uom).toBe(Unit.KELVIN);
         });
     });
+    describe("rotorFromDirections", function () {
+        it("(e1, e2)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromDirections(e1, e2);
+            expect(m.a).toBe(0.7071067811865475);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(-0.7071067811865475);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("(e1, e1)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromDirections(e1, e1);
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(0);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("(e2, e2)", function () {
+            const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
+            m.rotorFromDirections(e2, e2);
+            expect(m.a).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.b).toBe(0);
+            expect(m.uom).toBe(Unit.ONE);
+        });
+        it("on locked should not mutate and should return the rotor.", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const y = Math.random();
+            const b = Math.random();
+            const m = new Geometric2([a, x, y, b], Unit.KELVIN);
+            m.lock();
+            const R = m.rotorFromDirections(e1, e2);
+            expect(m.a).toBe(a);
+            expect(m.x).toBe(x);
+            expect(m.y).toBe(y);
+            expect(m.b).toBe(b);
+            expect(m.uom).toBe(Unit.KELVIN);
+            expect(R.a).toBe(0.7071067811865475);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-0.7071067811865475);
+            expect(R.uom).toBe(Unit.ONE);
+        });
+        it("static", function () {
+            const R = Geometric2.rotorFromDirections(e1, e2);
+            expect(R.a).toBe(0.7071067811865475);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-0.7071067811865475);
+            expect(R.uom).toBe(Unit.ONE);
+        });
+        it("result should be independent of |b| and |a|.", function () {
+            const R = Geometric2.rotorFromDirections(e1.mulByNumber(0.5), e2.mulByNumber(2));
+            expect(R.a).toBe(0.7071067811865475);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-0.7071067811865475);
+            expect(R.uom).toBe(Unit.ONE);
+        });
+    });
     describe("rotorFromVectorToVector", function () {
         it("(e1, e2)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -677,6 +741,17 @@ describe("Geometric2", function () {
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
             expect(R.uom).toBe(Unit.ONE);
+        });
+        it("scaling", function () {
+            const R = Geometric2.rotorFromVectorToVector(e1.mulByNumber(0.5), e2.mulByNumber(2));
+            expect(R.a).toBe(1.414213562373095);
+            expect(R.x).toBe(0);
+            expect(R.y).toBe(0);
+            expect(R.b).toBe(-1.414213562373095);
+            expect(R.uom).toBe(Unit.ONE);
+            const rotated = e1.rotate(R);
+            expect(rotated.x).toBe(0);
+            expect(rotated.y).toBe(3.999999999999999);
         });
     });
 });

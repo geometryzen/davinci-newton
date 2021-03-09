@@ -7,7 +7,7 @@ import { VectorE2 as Vector } from './VectorE2';
 const sqrt = Math.sqrt;
 
 interface Output extends Spinor {
-    versor(a: Vector, b: Vector): Output;
+    versor(a: Readonly<Vector>, b: Readonly<Vector>): Output;
     addScalar(α: number, uom?: Unit): Output;
     divByScalar(α: number, uom?: Unit): Output;
 }
@@ -16,8 +16,13 @@ interface Output extends Spinor {
  * Sets this multivector to a rotor representing a rotation from a to b.
  * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
  * Returns undefined (void 0) if the vectors are anti-parallel.
+ * 
+ * @param a The 'from' vector. 
+ * @param b The 'to' vector.
+ * @param m The output multivector.
+ * @returns 
  */
-export function rotorFromDirectionsE2(a: Vector, b: Vector, m: Output): void {
+export function rotorFromDirectionsE2(a: Readonly<Vector>, b: Readonly<Vector>, m: Output): void {
     const quadA = quad(a);
     const absA = sqrt(quadA);
     const quadB = quad(b);

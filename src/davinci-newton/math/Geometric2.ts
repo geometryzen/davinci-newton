@@ -164,6 +164,10 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return new Geometric2(vector(v.x, v.y), v.uom);
     }
 
+    static rotorFromDirections(a: Vector, b: Vector): Geometric2 {
+        return new Geometric2([0, 0, 0, 0]).rotorFromDirections(a, b);
+    }
+
     static rotorFromVectorToVector(a: Vector, b: Vector): Geometric2 {
         return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
     }
@@ -959,9 +963,14 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @param b The ending vector
      * @returns The rotor representing a rotation from a to b.
      */
-    rotorFromDirections(a: Vector, b: Vector): this {
-        rotorFromDirections(a, b, this);
-        return this;
+    rotorFromDirections(a: Vector, b: Vector): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().rotorFromDirections(a, b));
+        }
+        else {
+            rotorFromDirections(a, b, this);
+            return this;
+        }
     }
     rotorFromFrameToFrame(es: Vector[], fs: Vector[]): Geometric2 {
         throw new Error(notImplemented('rotorFromFrameToFrame').message);
@@ -978,9 +987,9 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         throw new Error(notImplemented('rotorFromGeneratorAngle').message);
     }
     /**
-     * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+     * R = sqrt(|b|/|a|) * (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
      *
-     * The result is independent of the magnitudes of a and b. 
+     * The result is depends  on the magnitudes of a and b. 
      */
     rotorFromVectorToVector(a: Vector, b: Vector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
@@ -991,10 +1000,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             const ay = a.y;
             const bx = b.x;
             const by = b.y;
+            const mb = Math.sqrt(bx * bx + by * by);
+            const ma = Math.sqrt(ax * ax + ay * ay);
             /**
              * s = |b||a|
              */
-            const s = Math.sqrt(bx * bx + by * by) * Math.sqrt(ax * ax + ay * ay);
+            const s = mb * ma;
             /**
              * p = b.a or b << a
              */
@@ -1003,13 +1014,14 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
              * q = b ^ a
              */
             const q = bx * ay - by * ax;
-            const denom = Math.sqrt(2 * s * (s + p));
+            const d = Math.sqrt(2 * s * (s + p));
+            const f = Math.sqrt(mb) / (Math.sqrt(ma) * d);
 
-            this.a = (s + p) / denom;
+            this.a = f * (s + p);
             this.x = 0;
             this.y = 0;
-            this.b = q / denom;
-            this.uom = void 0;
+            this.b = f * q;
+            this.uom = Unit.sqrt(Unit.div(b.uom, a.uom));
 
             return this;
         }

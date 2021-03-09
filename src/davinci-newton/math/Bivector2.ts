@@ -23,14 +23,6 @@ export class Bivector2 implements BivectorE2 {
     constructor(xy: number, uom?: Unit) {
         this.xy = mustBeNumber('xy', xy);
         this.uom = Unit.mustBeUnit('uom', uom);
-        /*
-        if (this.isZero()) {
-            this.uom = uom;
-        }
-        else {
-            this.uom = mustBeUnit('uom', uom);
-        }
-        */
     }
 
     /**

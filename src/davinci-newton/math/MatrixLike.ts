@@ -8,6 +8,6 @@ export interface MatrixLike {
     /**
      * The unit of measure (shared by each element of the matrix).
      */
-    uom: Unit;
+    uom?: Unit;
     getElement(row: number, column: number): number;
 }

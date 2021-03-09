@@ -1,5 +1,8 @@
-import { VectorE2 } from './VectorE2';
+import { Unit } from './Unit';
 
-export interface VectorE3 extends VectorE2 {
+export interface VectorE3 {
+    x: number;
+    y: number;
     z: number;
+    uom?: Unit;
 }

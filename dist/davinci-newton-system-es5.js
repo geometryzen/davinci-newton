@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.20';
+                    this.VERSION = '1.0.21';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -5125,6 +5125,9 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                 Geometric2.fromVector = function (v) {
                     return new Geometric2(vector(v.x, v.y), v.uom);
                 };
+                Geometric2.rotorFromDirections = function (a, b) {
+                    return new Geometric2([0, 0, 0, 0]).rotorFromDirections(a, b);
+                };
                 Geometric2.rotorFromVectorToVector = function (a, b) {
                     return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
                 };
@@ -5658,8 +5661,12 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     throw new Error(notImplemented_1.notImplemented('reflect').message);
                 };
                 Geometric2.prototype.rotorFromDirections = function (a, b) {
-                    rotorFromDirectionsE2_1.rotorFromDirectionsE2(a, b, this);
-                    return this;
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().rotorFromDirections(a, b));
+                    } else {
+                        rotorFromDirectionsE2_1.rotorFromDirectionsE2(a, b, this);
+                        return this;
+                    }
                 };
                 Geometric2.prototype.rotorFromFrameToFrame = function (es, fs) {
                     throw new Error(notImplemented_1.notImplemented('rotorFromFrameToFrame').message);
@@ -5675,15 +5682,18 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                         var ay = a.y;
                         var bx = b.x;
                         var by = b.y;
-                        var s = Math.sqrt(bx * bx + by * by) * Math.sqrt(ax * ax + ay * ay);
+                        var mb = Math.sqrt(bx * bx + by * by);
+                        var ma = Math.sqrt(ax * ax + ay * ay);
+                        var s = mb * ma;
                         var p = bx * ax + by * ay;
                         var q = bx * ay - by * ax;
-                        var denom = Math.sqrt(2 * s * (s + p));
-                        this.a = (s + p) / denom;
+                        var d = Math.sqrt(2 * s * (s + p));
+                        var f = Math.sqrt(mb) / (Math.sqrt(ma) * d);
+                        this.a = f * (s + p);
                         this.x = 0;
                         this.y = 0;
-                        this.b = q / denom;
-                        this.uom = void 0;
+                        this.b = f * q;
+                        this.uom = Unit_1.Unit.sqrt(Unit_1.Unit.div(b.uom, a.uom));
                         return this;
                     }
                 };

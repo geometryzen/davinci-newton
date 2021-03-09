@@ -5,5 +5,5 @@ export interface BivectorE2 {
     /**
      * The unit of measure.
      */
-    uom: Unit;
+    uom?: Unit;
 }
