@@ -1,38 +1,32 @@
 {
     "compilerOptions": {
-        "module": "system",
-        "target": "ES5",
-        "outDir": "test/system",
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noLib": false,
-        "removeComments": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "moduleResolution": "classic",
-        "sourceMap": false,
-        "strictNullChecks": false,
+        "target": "es5",
+        "rootDir": "src",
+        "moduleResolution": "node",
+        "declaration": false,
+        "importHelpers": true,
         "inlineSourceMap": false,
-        "inlineSources": false
+        "listFiles": false,
+        "traceResolution": false,
+        "pretty": true,
+        "strictNullChecks": false,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": [
+            "es2015",
+            "dom"
+        ]
     },
-    "files": [
-        "src/davinci-newton/core/engine.spec.ts",
-        "src/davinci-newton/core/RigidBody.spec.ts",
-        "src/davinci-newton/core/Spring.spec.ts",
-        "src/davinci-newton/engine2D/Block2.spec.ts",
-        "src/davinci-newton/engine3D/Block3.spec.ts",
-        "src/davinci-newton/engine3D/Physics3.spec.ts",
-        "src/davinci-newton/core/CoulombLaw.spec.ts",
-        "src/davinci-newton/core/GravitationLaw.spec.ts",
-        "src/davinci-newton/core/State.spec.ts",
-        "src/davinci-newton/engine3D/Sphere3.spec.ts",
-        "src/davinci-newton/math/detectDimensions.spec.ts",
-        "src/davinci-newton/math/Dimensions.spec.ts",
-        "src/davinci-newton/math/gauss.spec.ts",
-        "src/davinci-newton/math/Geometric2.spec.ts",
-        "src/davinci-newton/math/Geometric3.spec.ts",
-        "src/davinci-newton/math/QQ.spec.ts",
-        "src/davinci-newton/math/Unit.spec.ts",
-        "src/davinci-newton/math/Vector3.spec.ts",
-        "typings/jasmine/jasmine.d.ts"
-    ]
+    "include": [
+        "src/**/*.ts"
+    ],
+    "compileOnSave": false
 }
