@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.23
+// Type definitions for davinci-newton 1.0.24
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -575,7 +575,7 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ this / (α * uom)
      * 
      */
-    divByScalar(α: number, uom: Unit): Geometric2;
+    divByScalar(α: number, uom: Unit | undefined): Geometric2;
 
     /**
      * 
@@ -722,7 +722,7 @@ export class Geometric2 implements GeometricE2 {
     /**
      * this ⟼ this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit): Geometric2;
+    mulByScalar(α: number, uom: Unit | undefined): Geometric2;
 
     /**
      * 
@@ -1314,7 +1314,7 @@ export class Geometric3 implements GeometricE3 {
      * this ⟼ this / (α * uom)
      * 
      */
-    divByScalar(α: number, uom: Unit): Geometric3;
+    divByScalar(α: number, uom: Unit | undefined): Geometric3;
 
     /**
      * 
@@ -1461,7 +1461,7 @@ export class Geometric3 implements GeometricE3 {
     /**
      * this ⟼ this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit): Geometric3;
+    mulByScalar(α: number, uom: Unit | undefined): Geometric3;
 
     /**
      * 
@@ -1915,7 +1915,7 @@ export interface Metric<T> {
 
     direction(mv: T, mutate: boolean): T;
 
-    divByScalar(lhs: T, a: number, uom: Unit): T;
+    divByScalar(lhs: T, a: number, uom: Unit | undefined): T;
 
     ext(lhs: T, rhs: T): T;
 
@@ -1923,11 +1923,11 @@ export interface Metric<T> {
 
     lock(mv: T): number;
 
-    magnitude(mv: T, mutate: boolean): T;
+    magnitude(mv: T, mutate?: boolean): T;
 
     mulByNumber(lhs: T, alpha: number): T;
 
-    mulByScalar(lhs: T, a: number, uom: Unit): T;
+    mulByScalar(lhs: T, a: number, uom: Unit | undefined): T;
 
     mulByVector(lhs: T, rhs: T): T;
 
@@ -1978,13 +1978,13 @@ export class Euclidean2 implements Metric<Geometric2> {
     copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
     copyVector(source: Geometric2, target: Geometric2): Geometric2;
     direction(mv: Geometric2, mutate: boolean): Geometric2;
-    divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
+    divByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
     ext(lhs: Geometric2, rhs: Geometric2): Geometric2;
     isZero(mv: Geometric2): boolean;
     lock(mv: Geometric2): number;
-    magnitude(mv: Geometric2, mutate: boolean): Geometric2;
+    magnitude(mv: Geometric2, mutate?: boolean): Geometric2;
     mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
-    mulByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
+    mulByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
     mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
     neg(mv: Geometric2): Geometric2;
     quaditude(mv: Geometric2, mutate: boolean): Geometric2;
@@ -2013,13 +2013,13 @@ export class Euclidean3 implements Metric<Geometric3> {
     copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
     copyVector(source: Geometric3, target: Geometric3): Geometric3;
     direction(mv: Geometric3, mutate: boolean): Geometric3;
-    divByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
+    divByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
     ext(lhs: Geometric3, rhs: Geometric3): Geometric3;
     isZero(mv: Geometric3): boolean;
     lock(mv: Geometric3): number;
-    magnitude(mv: Geometric3, mutate: boolean): Geometric3;
+    magnitude(mv: Geometric3, mutate?: boolean): Geometric3;
     mulByNumber(lhs: Geometric3, alpha: number): Geometric3;
-    mulByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
+    mulByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
     mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
     neg(mv: Geometric3): Geometric3;
     quaditude(mv: Geometric3, mutate: boolean): Geometric3;

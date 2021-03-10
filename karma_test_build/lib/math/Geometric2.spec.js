@@ -34,6 +34,12 @@ describe("Geometric2", function () {
             expect(M.uom).toBe(Unit_1.Unit.KILOGRAM);
             expect(M.isLocked()).toBe(false);
         });
+        it("should throw Error when coords.length is not 4.", function () {
+            expect(function () {
+                var M = new Geometric2_1.Geometric2([]);
+                M.toString();
+            }).toThrowError("coords.length must be 4");
+        });
     });
     describe("static", function () {
         it("scalar", function () {
@@ -98,6 +104,26 @@ describe("Geometric2", function () {
             expect(M.uom).toBe(Unit_1.Unit.AMPERE);
             expect(M.isLocked()).toBe(false);
         });
+        it("fromBivector", function () {
+            var a = Math.random();
+            var x = Math.random();
+            var y = Math.random();
+            var b = Math.random();
+            var M = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.AMPERE);
+            var K = Geometric2_1.Geometric2.fromBivector(M);
+            expect(K.a).toBe(0);
+            expect(K.x).toBe(0);
+            expect(K.y).toBe(0);
+            expect(K.b).toBe(b);
+            expect(K.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(K.isLocked()).toBe(false);
+            expect(M.a).toBe(a);
+            expect(M.x).toBe(x);
+            expect(M.y).toBe(y);
+            expect(M.b).toBe(b);
+            expect(M.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(M.isLocked()).toBe(false);
+        });
         it("fromScalar", function () {
             var a = Math.random();
             var x = Math.random();
@@ -108,6 +134,46 @@ describe("Geometric2", function () {
             expect(K.a).toBe(a);
             expect(K.x).toBe(0);
             expect(K.y).toBe(0);
+            expect(K.b).toBe(0);
+            expect(K.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(K.isLocked()).toBe(false);
+            expect(M.a).toBe(a);
+            expect(M.x).toBe(x);
+            expect(M.y).toBe(y);
+            expect(M.b).toBe(b);
+            expect(M.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(M.isLocked()).toBe(false);
+        });
+        it("fromSpinor", function () {
+            var a = Math.random();
+            var x = Math.random();
+            var y = Math.random();
+            var b = Math.random();
+            var M = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.AMPERE);
+            var K = Geometric2_1.Geometric2.fromSpinor(M);
+            expect(K.a).toBe(a);
+            expect(K.x).toBe(0);
+            expect(K.y).toBe(0);
+            expect(K.b).toBe(b);
+            expect(K.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(K.isLocked()).toBe(false);
+            expect(M.a).toBe(a);
+            expect(M.x).toBe(x);
+            expect(M.y).toBe(y);
+            expect(M.b).toBe(b);
+            expect(M.uom).toBe(Unit_1.Unit.AMPERE);
+            expect(M.isLocked()).toBe(false);
+        });
+        it("fromVector", function () {
+            var a = Math.random();
+            var x = Math.random();
+            var y = Math.random();
+            var b = Math.random();
+            var M = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.AMPERE);
+            var K = Geometric2_1.Geometric2.fromVector(M);
+            expect(K.a).toBe(0);
+            expect(K.x).toBe(x);
+            expect(K.y).toBe(y);
             expect(K.b).toBe(0);
             expect(K.uom).toBe(Unit_1.Unit.AMPERE);
             expect(K.isLocked()).toBe(false);
@@ -435,6 +501,27 @@ describe("Geometric2", function () {
             expect(rhs.b).toBe(8);
         });
     });
+    describe("div", function () {
+        it("scalar/scalar", function () {
+            var result = one.__div__(one);
+            expect(result.a).toBe(one.a);
+            expect(result.__eq__(one)).toBe(true);
+        });
+        it("scalar/number", function () {
+            var a = Math.random();
+            var x = Math.random();
+            var y = Math.random();
+            var b = Math.random();
+            var lhs = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.KELVIN);
+            var rhs = 0.5;
+            var result = lhs.__div__(rhs);
+            expect(result.a).toBe(2 * a);
+            expect(result.x).toBe(2 * x);
+            expect(result.y).toBe(2 * y);
+            expect(result.b).toBe(2 * b);
+            expect(result.uom).toBe(Unit_1.Unit.KELVIN);
+        });
+    });
     describe("direction", function () {
         it("locked=false, mutate=false", function () {
             var M = Geometric2_1.Geometric2.vector(5, 0);
@@ -519,6 +606,32 @@ describe("Geometric2", function () {
             expect(inverse.uom).toBe(Unit_1.Unit.ONE.div(Unit_1.Unit.METER));
         });
     });
+    describe("isScalar", function () {
+        it("should only be true if all other components are zero.", function () {
+            var a = 0;
+            var x = Math.random();
+            var y = Math.random();
+            var b = Math.random();
+            var M = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.KILOGRAM);
+            expect(M.isScalar()).toBe(false);
+            M.x = 0;
+            M.y = 0;
+            M.b = 0;
+            expect(M.isScalar()).toBe(true);
+            M.x = x;
+            M.y = 0;
+            M.b = 0;
+            expect(M.isScalar()).toBe(false);
+            M.x = 0;
+            M.y = y;
+            M.b = 0;
+            expect(M.isScalar()).toBe(false);
+            M.x = 0;
+            M.y = 0;
+            M.b = b;
+            expect(M.isScalar()).toBe(false);
+        });
+    });
     describe("magnitude", function () {
         it("zero is scalar(0)", function () {
             var M = Geometric2_1.Geometric2.zero;
@@ -560,6 +673,80 @@ describe("Geometric2", function () {
             expect(mag.y).toBe(0);
             expect(mag.b).toBe(0);
         });
+        it("should mutate if mutate is undefined and the multivector is Mutable.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            var norm = Math.sqrt(1 + 4 + 9 + 16);
+            var mag = M.magnitude();
+            expect(mag.a).toBe(norm);
+            expect(mag.x).toBe(0);
+            expect(mag.y).toBe(0);
+            expect(mag.b).toBe(0);
+            expect(M.a).toBe(norm);
+            expect(M.x).toBe(0);
+            expect(M.y).toBe(0);
+            expect(M.b).toBe(0);
+        });
+        it("should mutate if mutate is true and the multivector is Mutable.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            var norm = Math.sqrt(1 + 4 + 9 + 16);
+            var mag = M.magnitude(true);
+            expect(mag.a).toBe(norm);
+            expect(mag.x).toBe(0);
+            expect(mag.y).toBe(0);
+            expect(mag.b).toBe(0);
+            expect(M.a).toBe(norm);
+            expect(M.x).toBe(0);
+            expect(M.y).toBe(0);
+            expect(M.b).toBe(0);
+        });
+        it("should preserve if mutate is false and the multivector is Mutable.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            var norm = Math.sqrt(1 + 4 + 9 + 16);
+            var mag = M.magnitude(false);
+            expect(mag.a).toBe(norm);
+            expect(mag.x).toBe(0);
+            expect(mag.y).toBe(0);
+            expect(mag.b).toBe(0);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(4);
+        });
+        it("should preserve if mutate is undefined and the multivector is Locked.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            M.lock();
+            var norm = Math.sqrt(1 + 4 + 9 + 16);
+            var mag = M.magnitude();
+            expect(mag.a).toBe(norm);
+            expect(mag.x).toBe(0);
+            expect(mag.y).toBe(0);
+            expect(mag.b).toBe(0);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(4);
+        });
+        it("should preserve if mutate is false and the multivector is Locked.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            M.lock();
+            var norm = Math.sqrt(1 + 4 + 9 + 16);
+            var mag = M.magnitude(false);
+            expect(mag.a).toBe(norm);
+            expect(mag.x).toBe(0);
+            expect(mag.y).toBe(0);
+            expect(mag.b).toBe(0);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(4);
+        });
+        it("should throw an Error if mutate is true and the multivector is Locked.", function () {
+            var M = new Geometric2_1.Geometric2([1, 2, 3, 4]);
+            M.lock();
+            expect(function () {
+                M.magnitude(true);
+            }).toThrowError("mutate is true, but isMutable() is false.");
+        });
     });
     describe("toString", function () {
         it("zero is scalar(0)", function () {
@@ -600,27 +787,6 @@ describe("Geometric2", function () {
         it("second", function () {
             var M = Geometric2_1.Geometric2.second;
             expect(M.toString()).toBe("1 s");
-        });
-    });
-    describe("div", function () {
-        it("scalar/scalar", function () {
-            var result = one.__div__(one);
-            expect(result.a).toBe(one.a);
-            expect(result.__eq__(one)).toBe(true);
-        });
-        it("scalar/number", function () {
-            var a = Math.random();
-            var x = Math.random();
-            var y = Math.random();
-            var b = Math.random();
-            var lhs = new Geometric2_1.Geometric2([a, x, y, b], Unit_1.Unit.KELVIN);
-            var rhs = 0.5;
-            var result = lhs.__div__(rhs);
-            expect(result.a).toBe(2 * a);
-            expect(result.x).toBe(2 * x);
-            expect(result.y).toBe(2 * y);
-            expect(result.b).toBe(2 * b);
-            expect(result.uom).toBe(Unit_1.Unit.KELVIN);
         });
     });
     describe("rotorFromDirections", function () {

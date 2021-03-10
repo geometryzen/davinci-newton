@@ -10,9 +10,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-05';
+            this.LAST_MODIFIED = '2021-03-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.23';
+            this.VERSION = '1.0.24';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -6066,6 +6066,9 @@
         Geometric2.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED$1;
         };
+        Geometric2.prototype.isMutable = function () {
+            return this.lock_ === UNLOCKED$1;
+        };
         /**
          * Locks this multivector (preventing any further mutation),
          * and returns a token that may be used to unlock it.
@@ -6472,26 +6475,31 @@
          * </p>
          */
         Geometric2.prototype.magnitude = function (mutate) {
-            if (this.lock_ !== UNLOCKED$1) {
-                if (!mutate) {
-                    return lock$1(this.clone().magnitude(true));
+            if (typeof mutate === 'boolean') {
+                if (this.isLocked()) {
+                    if (!mutate) {
+                        return lock$1(this.clone().magnitude(true));
+                    }
+                    else {
+                        throw new Error("mutate is " + mutate + ", but isMutable() is " + this.isMutable() + ".");
+                    }
                 }
                 else {
-                    throw new Error("Unable to mutate this locked Geometric3.");
+                    if (mutate) {
+                        this.a = Math.sqrt(this.squaredNormSansUnits());
+                        this.x = 0;
+                        this.y = 0;
+                        this.b = 0;
+                        // The unit of measure is unchanged.
+                        return this;
+                    }
+                    else {
+                        return lock$1(this.clone().magnitude(true));
+                    }
                 }
             }
             else {
-                if (mutate) {
-                    this.a = Math.sqrt(this.squaredNormSansUnits());
-                    this.x = 0;
-                    this.y = 0;
-                    this.b = 0;
-                    // The unit of measure is unchanged.
-                    return this;
-                }
-                else {
-                    return lock$1(this.clone().magnitude(true));
-                }
+                return this.magnitude(this.isMutable());
             }
         };
         /**
@@ -7362,6 +7370,7 @@
             body.X.x = vars[idx + OFFSET_POSITION_X$1];
             body.X.y = vars[idx + OFFSET_POSITION_Y$1];
             body.X.b = 0;
+            // body.X.uom
             body.R.a = vars[idx + OFFSET_ATTITUDE_A$1];
             body.R.x = 0;
             body.R.y = 0;
@@ -7375,10 +7384,12 @@
             body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X$1];
             body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
             body.P.b = 0;
+            // body.P.uom
             body.L.a = 0;
             body.L.x = 0;
             body.L.y = 0;
             body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY$1];
+            // body.L.uom
             body.updateAngularVelocity();
         };
         Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {

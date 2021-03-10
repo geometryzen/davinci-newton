@@ -1119,6 +1119,10 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this.lock_ !== UNLOCKED;
     }
 
+    public isMutable(): boolean {
+        return this.lock_ === UNLOCKED;
+    }
+
     /**
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
@@ -1521,27 +1525,30 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate: boolean): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().magnitude(true));
+    magnitude(mutate?: boolean): Geometric2 {
+        if (typeof mutate === 'boolean') {
+            if (this.isLocked()) {
+                if (!mutate) {
+                    return lock(this.clone().magnitude(true));
+                }
+                else {
+                    throw new Error(`mutate is ${mutate}, but isMutable() is ${this.isMutable()}.`);
+                }
+            } else {
+                if (mutate) {
+                    this.a = Math.sqrt(this.squaredNormSansUnits());
+                    this.x = 0;
+                    this.y = 0;
+                    this.b = 0;
+                    // The unit of measure is unchanged.
+                    return this;
+                }
+                else {
+                    return lock(this.clone().magnitude(true));
+                }
             }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
-        }
-        else {
-            if (mutate) {
-                this.a = Math.sqrt(this.squaredNormSansUnits());
-                this.x = 0;
-                this.y = 0;
-                this.b = 0;
-                // The unit of measure is unchanged.
-                return this;
-            }
-            else {
-                return lock(this.clone().magnitude(true));
-            }
+        } else {
+            return this.magnitude(this.isMutable());
         }
     }
 

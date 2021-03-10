@@ -982,6 +982,9 @@ var Geometric2 = /** @class */ (function () {
     Geometric2.prototype.isLocked = function () {
         return this.lock_ !== UNLOCKED;
     };
+    Geometric2.prototype.isMutable = function () {
+        return this.lock_ === UNLOCKED;
+    };
     /**
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
@@ -1388,26 +1391,31 @@ var Geometric2 = /** @class */ (function () {
      * </p>
      */
     Geometric2.prototype.magnitude = function (mutate) {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().magnitude(true));
+        if (typeof mutate === 'boolean') {
+            if (this.isLocked()) {
+                if (!mutate) {
+                    return lock(this.clone().magnitude(true));
+                }
+                else {
+                    throw new Error("mutate is " + mutate + ", but isMutable() is " + this.isMutable() + ".");
+                }
             }
             else {
-                throw new Error("Unable to mutate this locked Geometric3.");
+                if (mutate) {
+                    this.a = Math.sqrt(this.squaredNormSansUnits());
+                    this.x = 0;
+                    this.y = 0;
+                    this.b = 0;
+                    // The unit of measure is unchanged.
+                    return this;
+                }
+                else {
+                    return lock(this.clone().magnitude(true));
+                }
             }
         }
         else {
-            if (mutate) {
-                this.a = Math.sqrt(this.squaredNormSansUnits());
-                this.x = 0;
-                this.y = 0;
-                this.b = 0;
-                // The unit of measure is unchanged.
-                return this;
-            }
-            else {
-                return lock(this.clone().magnitude(true));
-            }
+            return this.magnitude(this.isMutable());
         }
     };
     /**

@@ -300,6 +300,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * If the multivector is in the locked state then it is immutable.
      */
     isLocked(): boolean;
+    isMutable(): boolean;
     /**
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
@@ -436,7 +437,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate: boolean): Geometric2;
+    magnitude(mutate?: boolean): Geometric2;
     /**
      * Intentionally undocumented.
      */

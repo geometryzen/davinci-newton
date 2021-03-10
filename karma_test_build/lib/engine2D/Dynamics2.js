@@ -121,6 +121,7 @@ var Dynamics2 = /** @class */ (function () {
         body.X.x = vars[idx + exports.OFFSET_POSITION_X];
         body.X.y = vars[idx + exports.OFFSET_POSITION_Y];
         body.X.b = 0;
+        // body.X.uom
         body.R.a = vars[idx + exports.OFFSET_ATTITUDE_A];
         body.R.x = 0;
         body.R.y = 0;
@@ -134,10 +135,12 @@ var Dynamics2 = /** @class */ (function () {
         body.P.x = vars[idx + exports.OFFSET_LINEAR_MOMENTUM_X];
         body.P.y = vars[idx + exports.OFFSET_LINEAR_MOMENTUM_Y];
         body.P.b = 0;
+        // body.P.uom
         body.L.a = 0;
         body.L.x = 0;
         body.L.y = 0;
         body.L.b = vars[idx + exports.OFFSET_ANGULAR_MOMENTUM_XY];
+        // body.L.uom
         body.updateAngularVelocity();
     };
     Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
