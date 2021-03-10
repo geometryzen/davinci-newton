@@ -7,7 +7,7 @@ import { Unit } from './Unit';
 export declare class Matrix3 extends AbstractMatrix<Matrix3> {
     /**
      * @param elements
-     * @uom The optional unit of measure.
+     * @param uom The optional unit of measure.
      */
     constructor(elements: Float32Array, uom?: Unit);
     /**

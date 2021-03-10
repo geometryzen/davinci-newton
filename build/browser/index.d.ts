@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.24
+// Type definitions for davinci-newton 1.0.25
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -1863,21 +1863,34 @@ export class Geometric3 implements GeometricE3 {
 }
 
 export interface MatrixLike {
-    dimensions: number;
+    readonly dimensions: number;
     uom?: Unit;
     getElement(row: number, column: number): number;
+}
+
+export class Matrix1 implements MatrixLike {
+    static one(): Matrix1;
+    static zero(): Matrix1;
+    readonly dimensions: number;
+    uom?: Unit;
+    /**
+     * Constructs a mutable 1x1 matrix.
+     */
+    constructor(elements: Float32Array, uom: Unit);
+    getElement(row: number, column: number): number;
+    setElement(row: number, column: number, value: number): void;
 }
 
 /**
  * A mutable 3x3 matrix.
  */
 export class Matrix3 implements MatrixLike {
-    dimensions: number;
+    readonly dimensions: number;
     uom?: Unit;
     elements: Float32Array;
     modified: boolean;
     /**
-     * Constructs a mutable 3x3 identity matrix.
+     * Constructs a mutable 3x3 matrix.
      */
     constructor(elements: Float32Array, uom: Unit);
     copy(source: MatrixLike): this;

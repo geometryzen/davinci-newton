@@ -9,7 +9,7 @@ var Matrix3 = /** @class */ (function (_super) {
     __extends(Matrix3, _super);
     /**
      * @param elements
-     * @uom The optional unit of measure.
+     * @param uom The optional unit of measure.
      */
     function Matrix3(elements /* = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])*/, uom) {
         return _super.call(this, elements, 3, uom) || this;

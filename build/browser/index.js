@@ -12,7 +12,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.24';
+            this.VERSION = '1.0.25';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -7451,6 +7451,156 @@
         return Physics2;
     }(State));
 
+    function beDefined() {
+        return "not be 'undefined'";
+    }
+    function mustBeDefined(name, value, contextBuilder) {
+        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
+        return value;
+    }
+
+    function isInteger(x) {
+        // % coerces its operand to numbers so a typeof test is required.
+        // Not ethat ECMAScript 6 provides Number.isInteger().
+        return isNumber(x) && x % 1 === 0;
+    }
+
+    function beAnInteger() {
+        return "be an integer";
+    }
+    function mustBeInteger(name, value, contextBuilder) {
+        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
+        return value;
+    }
+
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
+        }
+    }
+    /**
+     * Base class for matrices with the expectation that they will be used with WebGL.
+     * The underlying data storage is a <code>Float32Array</code>.
+     */
+    var AbstractMatrix = /** @class */ (function () {
+        /**
+         * @param elements
+         * @param dimensions
+         */
+        function AbstractMatrix(elements, dimensions, uom) {
+            this._elements = mustBeDefined('elements', elements);
+            this._dimensions = mustBeInteger('dimensions', dimensions);
+            this._length = dimensions * dimensions;
+            checkElementsLength(elements, this._length);
+            this.modified = false;
+            this.uom = Unit.mustBeUnit('uom', uom);
+        }
+        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
+            get: function () {
+                return this._dimensions;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(AbstractMatrix.prototype, "elements", {
+            get: function () {
+                return this._elements;
+            },
+            set: function (elements) {
+                checkElementsLength(elements, this._length);
+                this._elements = elements;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        AbstractMatrix.prototype.copy = function (source) {
+            var N = this.dimensions;
+            for (var i = 0; i < N; i++) {
+                for (var j = 0; j < N; j++) {
+                    var value = source.getElement(i, j);
+                    this.setElement(i, j, value);
+                }
+            }
+            this.uom = source.uom;
+            return this;
+        };
+        /**
+         * Returns the element at the specified (zero-based) row and column.
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         */
+        AbstractMatrix.prototype.getElement = function (row, column) {
+            return this.elements[row + column * this._dimensions];
+        };
+        /**
+         * Determines whether this matrix is the identity matrix.
+         */
+        AbstractMatrix.prototype.isOne = function () {
+            for (var i = 0; i < this._dimensions; i++) {
+                for (var j = 0; j < this._dimensions; j++) {
+                    var value = this.getElement(i, j);
+                    if (i === j) {
+                        if (value !== 1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (value !== 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        };
+        /**
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         * @param value The value of the element.
+         */
+        AbstractMatrix.prototype.setElement = function (row, column, value) {
+            this.elements[row + column * this._dimensions] = value;
+        };
+        return AbstractMatrix;
+    }());
+
+    var Matrix1 = /** @class */ (function (_super) {
+        __extends(Matrix1, _super);
+        /**
+         *
+         * @param elements
+         * @param uom The optional unit of measure.
+         */
+        function Matrix1(elements, uom) {
+            return _super.call(this, elements, 1, uom) || this;
+        }
+        Matrix1.one = function () {
+            return new Matrix1(new Float32Array([1]));
+        };
+        Matrix1.zero = function () {
+            return new Matrix1(new Float32Array([0]));
+        };
+        return Matrix1;
+    }(AbstractMatrix));
+
+    var PolygonRigidBody2 = /** @class */ (function (_super) {
+        __extends(PolygonRigidBody2, _super);
+        function PolygonRigidBody2(points) {
+            var _this = _super.call(this, new Euclidean2()) || this;
+            _this.points = points;
+            return _this;
+        }
+        PolygonRigidBody2.prototype.updateInertiaTensor = function () {
+            var r = Geometric2.scalar(1);
+            var s = 0.5 * this.M.a * r.a * r.a;
+            var I = Matrix1.zero();
+            I.setElement(0, 0, s);
+            // TODO: Units
+            this.I = I;
+        };
+        return PolygonRigidBody2;
+    }(RigidBody));
+
     /**
      *
      */
@@ -10698,119 +10848,6 @@
         return Geometric3;
     }());
 
-    function beDefined() {
-        return "not be 'undefined'";
-    }
-    function mustBeDefined(name, value, contextBuilder) {
-        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
-        return value;
-    }
-
-    function isInteger(x) {
-        // % coerces its operand to numbers so a typeof test is required.
-        // Not ethat ECMAScript 6 provides Number.isInteger().
-        return isNumber(x) && x % 1 === 0;
-    }
-
-    function beAnInteger() {
-        return "be an integer";
-    }
-    function mustBeInteger(name, value, contextBuilder) {
-        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
-        return value;
-    }
-
-    function checkElementsLength(elements, length) {
-        if (elements.length !== length) {
-            throw new Error("elements must have length " + length);
-        }
-    }
-    /**
-     * Base class for matrices with the expectation that they will be used with WebGL.
-     * The underlying data storage is a <code>Float32Array</code>.
-     */
-    var AbstractMatrix = /** @class */ (function () {
-        /**
-         * @param elements
-         * @param dimensions
-         */
-        function AbstractMatrix(elements, dimensions, uom) {
-            this._elements = mustBeDefined('elements', elements);
-            this._dimensions = mustBeInteger('dimensions', dimensions);
-            this._length = dimensions * dimensions;
-            checkElementsLength(elements, this._length);
-            this.modified = false;
-            this.uom = Unit.mustBeUnit('uom', uom);
-        }
-        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
-            get: function () {
-                return this._dimensions;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(AbstractMatrix.prototype, "elements", {
-            get: function () {
-                return this._elements;
-            },
-            set: function (elements) {
-                checkElementsLength(elements, this._length);
-                this._elements = elements;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        AbstractMatrix.prototype.copy = function (source) {
-            var N = this.dimensions;
-            for (var i = 0; i < N; i++) {
-                for (var j = 0; j < N; j++) {
-                    var value = source.getElement(i, j);
-                    this.setElement(i, j, value);
-                }
-            }
-            this.uom = source.uom;
-            return this;
-        };
-        /**
-         * Returns the element at the specified (zero-based) row and column.
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         */
-        AbstractMatrix.prototype.getElement = function (row, column) {
-            return this.elements[row + column * this._dimensions];
-        };
-        /**
-         * Determines whether this matrix is the identity matrix.
-         */
-        AbstractMatrix.prototype.isOne = function () {
-            for (var i = 0; i < this._dimensions; i++) {
-                for (var j = 0; j < this._dimensions; j++) {
-                    var value = this.getElement(i, j);
-                    if (i === j) {
-                        if (value !== 1) {
-                            return false;
-                        }
-                    }
-                    else {
-                        if (value !== 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        };
-        /**
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         * @param value The value of the element.
-         */
-        AbstractMatrix.prototype.setElement = function (row, column, value) {
-            this.elements[row + column * this._dimensions] = value;
-        };
-        return AbstractMatrix;
-    }());
-
     /**
      * Computes the determinant of a 3x3 (square) matrix where the elements are assumed to be in column-major order.
      */
@@ -10879,7 +10916,7 @@
         __extends(Matrix3, _super);
         /**
          * @param elements
-         * @uom The optional unit of measure.
+         * @param uom The optional unit of measure.
          */
         function Matrix3(elements /* = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])*/, uom) {
             return _super.call(this, elements, 3, uom) || this;
@@ -16621,11 +16658,13 @@
     exports.GravitationLaw = GravitationLaw;
     exports.LOCAL = LOCAL;
     exports.LabCanvas = LabCanvas;
+    exports.Matrix1 = Matrix1;
     exports.Matrix3 = Matrix3;
     exports.ModifiedEuler = ModifiedEuler;
     exports.Particle = Particle;
     exports.Physics2 = Physics2;
     exports.Physics3 = Physics3;
+    exports.PolygonRigidBody2 = PolygonRigidBody2;
     exports.QQ = QQ;
     exports.RigidBody = RigidBody;
     exports.RungeKutta = RungeKutta;
