@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.21
+// Type definitions for davinci-newton 1.0.22
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -778,10 +778,26 @@ declare namespace NEWTON {
         rco2(a: GeometricE2, b: GeometricE2): Geometric2;
 
         /**
+         * If `this` is mutable, then sets `this` multivector to its reflection in the plane orthogonal to vector n. The result is mutable.
+         * If `this` is immutable (locked), a copy of `this` is made, which is then reflected. The result is immutable (locked).
          * 
-         * this ⟼ - n * this * n
-         * 
-         * n
+         * i.e. The result is mutable (unlocked) iff `this` is mutable (unlocked). 
+         *
+         * Mathematically,
+         *
+         * this  ⟼ - n * this * n
+         *
+         * Geometrically,
+         *
+         * Reflects this multivector in the plane orthogonal to the unit vector, n.
+         * This implementation does assume that n is a vector, but does not assume that it is normalized to unity.
+         *
+         * If n is not a unit vector then the result is scaled by n squared.
+         * The scalar component gets an extra minus sign. The pseudoscalar component does not change sign.
+         * The units of measure are carried through but in most cases n SHOULD be dimensionless.
+         *
+         * @param n The unit vector that defines the reflection plane.
+         * @returns The reflected multivector of `this`.
          */
         reflect(n: VectorE2): Geometric2;
 
@@ -801,14 +817,16 @@ declare namespace NEWTON {
         rotate(R: SpinorE2): Geometric2;
 
         /**
-         * Sets this multivector to a rotor representing a rotation from a to b.
-         * this = ⟼ R, where
+         * If `this` is mutable (unlocked), then sets `this` multivector to a rotor representing a rotation from a to b.
+         * `this` = ⟼ R, where
          * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
-         *
-         * a The <em>from</em> vector.
-         * b The <em>to</em> vector.
+         * If `this` is immutable (locked), throws an Error.
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns `this`.
          */
-        rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2;
+        rotorFromDirections(a: VectorE2, b: VectorE2): this;
 
         /**
          * 
@@ -1085,8 +1103,14 @@ declare namespace NEWTON {
 
         /**
          * Computes the rotor that rotates vector a to vector b.
-         * a The from vector.
-         * b The to vector.
+         * 
+         * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+         * 
+         * The result is independent of the magnitudes of a and b.
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns The mutable (unlocked) rotor, R.
          */
         static rotorFromDirections(a: VectorE2, b: VectorE2): Geometric2;
 
@@ -1524,14 +1548,16 @@ declare namespace NEWTON {
         rotorFromAxisAngle(n: VectorE3, θ: number): Geometric3;
 
         /**
-         * Sets this multivector to a rotor representing a rotation from a to b.
-         * this = ⟼ R, where
+         * If `this` is mutable (unlocked), then sets `this` multivector to a rotor representing a rotation from a to b.
+         * `this` = ⟼ R, where
          * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
-         *
-         * a The <em>from</em> vector.
-         * b The <em>to</em> vector.
+         * If `this` is immutable (locked), then throws an Error.
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns `this`.
          */
-        rotorFromDirections(a: VectorE3, b: VectorE3): Geometric3;
+        rotorFromDirections(a: VectorE3, b: VectorE3): this;
 
         /**
          * 
@@ -1808,8 +1834,14 @@ declare namespace NEWTON {
 
         /**
          * Computes the rotor that rotates vector a to vector b.
-         * a The from vector.
-         * b The to vector.
+         * 
+         * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
+         * 
+         * The result is independent of the magnitudes of a and b.
+         * 
+         * @param a The 'from' vector.
+         * @param b The 'to' vector.
+         * @returns The mutable (unlocked) rotor, R.
          */
         static rotorFromDirections(a: VectorE3, b: VectorE3): Geometric3;
 

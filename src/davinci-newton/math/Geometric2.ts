@@ -933,8 +933,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
+
     /**
-     * Sets this multivector to its reflection in the plane orthogonal to vector n.
+     * If `this` is mutable, then sets `this` multivector to its reflection in the plane orthogonal to vector n. The result is mutable.
+     * If `this` is immutable (locked), a copy of `this` is made, which is then reflected. The result is immutable (locked).
+     * 
+     * i.e. The result is mutable (unlocked) iff `this` is mutable (unlocked). 
      *
      * Mathematically,
      *
@@ -943,13 +947,44 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Geometrically,
      *
      * Reflects this multivector in the plane orthogonal to the unit vector, n.
+     * This implementation does assume that n is a vector, but does not assume that it is normalized to unity.
      *
      * If n is not a unit vector then the result is scaled by n squared.
+     * The scalar component gets an extra minus sign. The pseudoscalar component does not change sign.
+     * The units of measure are carried through but in most cases n SHOULD be dimensionless.
      *
      * @param n The unit vector that defines the reflection plane.
      */
-    reflect(n: Vector): this {
-        throw new Error(notImplemented('reflect').message);
+    reflect(n: Readonly<Vector>): Geometric2 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().reflect(n));
+        }
+        else {
+            const nx = n.x;
+            const ny = n.y;
+            const nu = n.uom;
+            const a = this.a;
+            const x = this.x;
+            const y = this.y;
+            const b = this.b;
+            const u = this.uom;
+
+            const nx2 = nx * nx;
+            const ny2 = ny * ny;
+            const μ = nx2 - ny2;
+            const λ = -2 * nx * ny;
+            const β = nx2 + ny2;
+
+            // The scalar component picks up a minus sign and the factor |n||n|.
+            this.a = -β * a;
+            this.x = λ * y - μ * x;
+            this.y = λ * x + μ * y;
+            // The pseudoscalar component does not change sign but still picks up the |n||n| factor.
+            this.b = β * b;
+            // In most cases, n SHOULD be dimensionless.
+            this.uom = Unit.mul(nu, Unit.mul(u, nu));
+            return this;
+        }
     }
     /**
      * <p>

@@ -11,7 +11,7 @@ System.register('davinci-newton/config.js', [], function (exports_1, context_1) 
                     this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
                     this.LAST_MODIFIED = '2021-03-05';
                     this.NAMESPACE = 'NEWTON';
-                    this.VERSION = '1.0.21';
+                    this.VERSION = '1.0.22';
                 }
                 Newton.prototype.log = function (message) {
                     var optionalParams = [];
@@ -5658,7 +5658,29 @@ System.register("davinci-newton/math/Geometric2.js", ["../i18n/notImplemented", 
                     return this;
                 };
                 Geometric2.prototype.reflect = function (n) {
-                    throw new Error(notImplemented_1.notImplemented('reflect').message);
+                    if (this.lock_ !== UNLOCKED) {
+                        return lock(this.clone().reflect(n));
+                    } else {
+                        var nx = n.x;
+                        var ny = n.y;
+                        var nu = n.uom;
+                        var a = this.a;
+                        var x = this.x;
+                        var y = this.y;
+                        var b = this.b;
+                        var u = this.uom;
+                        var nx2 = nx * nx;
+                        var ny2 = ny * ny;
+                        var μ = nx2 - ny2;
+                        var λ = -2 * nx * ny;
+                        var β = nx2 + ny2;
+                        this.a = -β * a;
+                        this.x = λ * y - μ * x;
+                        this.y = λ * x + μ * y;
+                        this.b = β * b;
+                        this.uom = Unit_1.Unit.mul(nu, Unit_1.Unit.mul(u, nu));
+                        return this;
+                    }
                 };
                 Geometric2.prototype.rotorFromDirections = function (a, b) {
                     if (this.lock_ !== UNLOCKED) {

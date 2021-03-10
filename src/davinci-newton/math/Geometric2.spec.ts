@@ -754,4 +754,55 @@ describe("Geometric2", function () {
             expect(rotated.y).toBe(3.999999999999999);
         });
     });
+    describe("reflect", function () {
+        it("e1 in the plane perpendicular to e1 should be -e1", function () {
+            const reflected = e1.reflect(e1);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(-1);
+            expect(reflected.y).toBe(0);
+            expect(reflected.b).toBe(0);
+        });
+        it("e2 in the plane perpendicular to e2 should be -e2", function () {
+            const reflected = e2.reflect(e2);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(0);
+            expect(reflected.y).toBe(-1);
+            expect(reflected.b).toBe(0);
+        });
+        it("v in the plane perpendicular to e1 should reverse x component only", function () {
+            const x = Math.random();
+            const y = Math.random();
+            const v = Geometric2.vector(x, y);
+            v.lock();
+            const reflected = v.reflect(e1);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(-x);
+            expect(reflected.y).toBe(y);
+            expect(reflected.b).toBe(0);
+        });
+        it("v in the plane perpendicular to e2 should reverse y component only", function () {
+            const x = Math.random();
+            const y = Math.random();
+            const v = Geometric2.vector(x, y);
+            v.lock();
+            const reflected = v.reflect(e2);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(x);
+            expect(reflected.y).toBe(-y);
+            expect(reflected.b).toBe(0);
+        });
+        it("M in the plane perpendicular to e1 should change sign of scalar part.", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const y = Math.random();
+            const b = Math.random();
+            const v = new Geometric2([a, x, y, b]);
+            v.lock();
+            const reflected = v.reflect(e1);
+            expect(reflected.a).toBe(-a);
+            expect(reflected.x).toBe(-x);
+            expect(reflected.y).toBe(y);
+            expect(reflected.b).toBe(b);
+        });
+    });
 });
