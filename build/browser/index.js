@@ -12,7 +12,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.26';
+            this.VERSION = '1.0.27';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4873,52 +4873,6 @@
         return isZeroVectorE2(m) && isZeroBivectorE2(m) && m.a === 0 && m.b === 0;
     }
 
-    var ONE$1 = void 0; // Unit.ONE;
-    var scratch$1 = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE$1 };
-    /**
-     * "Promotes" the argument to a GeometricE2.
-     */
-    function maskG2(arg) {
-        var duck = arg;
-        if (isObject(arg) && 'grades' in arg) {
-            var g = arg;
-            if (duck.grades & 0x1) {
-                scratch$1.a = g.a;
-            }
-            else {
-                scratch$1.a = 0;
-            }
-            if (duck.grades & 0x2) {
-                scratch$1.x = g.x;
-                scratch$1.y = g.y;
-            }
-            else {
-                scratch$1.x = 0;
-                scratch$1.y = 0;
-            }
-            if (duck.grades & 0x4) {
-                scratch$1.xy = g.xy;
-            }
-            else {
-                scratch$1.xy = 0;
-            }
-            scratch$1.uom = Unit.mustBeUnit('g.uom', g.uom);
-            return scratch$1;
-        }
-        else if (isNumber(arg)) {
-            scratch$1.a = arg;
-            scratch$1.x = 0;
-            scratch$1.y = 0;
-            scratch$1.xy = 0;
-            scratch$1.b = 0;
-            scratch$1.uom = ONE$1;
-            return scratch$1;
-        }
-        else {
-            return void 0;
-        }
-    }
-
     /**
      * Computes the dot product of the Cartesian components in a Euclidean metric
      */
@@ -5263,14 +5217,11 @@
             else if (typeof rhs === 'number') {
                 return lock$1(this.clone().divByNumber(rhs));
             }
+            else if (rhs instanceof Unit) {
+                return lock$1(this.clone().divByScalar(1, rhs));
+            }
             else {
-                var duckR = maskG2(rhs);
-                if (duckR) {
-                    return lock$1(this.clone().div(duckR));
-                }
-                else {
-                    return void 0;
-                }
+                return void 0;
             }
         };
         Geometric2.prototype.__rdiv__ = function (lhs) {
@@ -5475,9 +5426,14 @@
             return lock$1(Geometric2.copy(this).neg());
         };
         Geometric2.prototype.__mul__ = function (rhs) {
-            var duckR = maskG2(rhs);
-            if (duckR) {
-                return lock$1(this.clone().mul(duckR));
+            if (rhs instanceof Geometric2) {
+                return lock$1(this.clone().mul(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$1(this.clone().mulByNumber(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$1(this.clone().mulByScalar(1, rhs));
             }
             else {
                 return void 0;
@@ -5488,6 +5444,7 @@
                 return lock$1(Geometric2.copy(lhs).mul(this));
             }
             else if (typeof lhs === 'number') {
+                // The ordering of operands is not important for scalar multiplication.
                 return lock$1(Geometric2.copy(this).mulByNumber(lhs));
             }
             else {

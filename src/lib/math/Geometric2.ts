@@ -10,7 +10,7 @@ import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from "./GradeMasked";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
-import { maskG2 as mask } from './maskG2';
+// import { maskG2 as mask } from './maskG2';
 import { QQ } from "./QQ";
 import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirectionsE2';
 import { Scalar } from "./Scalar";
@@ -316,19 +316,18 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    __div__(rhs: number | Geometric2): Geometric2 {
+    __div__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().div(rhs));
-        } else if (typeof rhs === 'number') {
+        }
+        else if (typeof rhs === 'number') {
             return lock(this.clone().divByNumber(rhs));
-        } else {
-            const duckR = mask(rhs);
-            if (duckR) {
-                return lock(this.clone().div(duckR));
-            }
-            else {
-                return void 0;
-            }
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().divByScalar(1, rhs));
+        }
+        else {
+            return void 0;
         }
     }
     __rdiv__(lhs: number | Geometric2): Geometric2 {
@@ -531,10 +530,14 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     __neg__(): Geometric2 {
         return lock(Geometric2.copy(this).neg());
     }
-    __mul__(rhs: any): Geometric2 {
-        const duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().mul(duckR));
+    __mul__(rhs: Geometric2 | number | Unit): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().mul(rhs));
+        } else if (typeof rhs === 'number') {
+            return lock(this.clone().mulByNumber(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().mulByScalar(1, rhs));
         }
         else {
             return void 0;
@@ -545,6 +548,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return lock(Geometric2.copy(lhs).mul(this));
         }
         else if (typeof lhs === 'number') {
+            // The ordering of operands is not important for scalar multiplication.
             return lock(Geometric2.copy(this).mulByNumber(lhs));
         }
         else {

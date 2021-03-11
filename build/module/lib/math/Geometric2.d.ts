@@ -144,7 +144,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     scale(α: number): Geometric2;
     slerp(target: Geometric2, α: number): Geometric2;
     stress(σ: Vector): Geometric2;
-    __div__(rhs: number | Geometric2): Geometric2;
+    __div__(rhs: Geometric2 | number | Unit): Geometric2;
     __rdiv__(lhs: number | Geometric2): Geometric2;
     __vbar__(rhs: number | Geometric2): Geometric2;
     __rvbar__(lhs: number | Geometric2): Geometric2;
@@ -168,7 +168,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     __rsub__(lhs: Geometric2 | Unit): Geometric2;
     __pos__(): Geometric2;
     __neg__(): Geometric2;
-    __mul__(rhs: any): Geometric2;
+    __mul__(rhs: Geometric2 | number | Unit): Geometric2;
     __rmul__(lhs: any): Geometric2;
     add2(a: Geometric, b: Geometric): Geometric2;
     addPseudo(β: number, uom?: Unit): Geometric2;

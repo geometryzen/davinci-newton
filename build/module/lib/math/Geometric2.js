@@ -5,7 +5,7 @@ import { arraysEQ } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
-import { maskG2 as mask } from './maskG2';
+// import { maskG2 as mask } from './maskG2';
 import { QQ } from "./QQ";
 import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirectionsE2';
 import { stringFromCoordinates } from "./stringFromCoordinates";
@@ -187,14 +187,11 @@ var Geometric2 = /** @class */ (function () {
         else if (typeof rhs === 'number') {
             return lock(this.clone().divByNumber(rhs));
         }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().divByScalar(1, rhs));
+        }
         else {
-            var duckR = mask(rhs);
-            if (duckR) {
-                return lock(this.clone().div(duckR));
-            }
-            else {
-                return void 0;
-            }
+            return void 0;
         }
     };
     Geometric2.prototype.__rdiv__ = function (lhs) {
@@ -399,9 +396,14 @@ var Geometric2 = /** @class */ (function () {
         return lock(Geometric2.copy(this).neg());
     };
     Geometric2.prototype.__mul__ = function (rhs) {
-        var duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().mul(duckR));
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().mul(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            return lock(this.clone().mulByNumber(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().mulByScalar(1, rhs));
         }
         else {
             return void 0;
@@ -412,6 +414,7 @@ var Geometric2 = /** @class */ (function () {
             return lock(Geometric2.copy(lhs).mul(this));
         }
         else if (typeof lhs === 'number') {
+            // The ordering of operands is not important for scalar multiplication.
             return lock(Geometric2.copy(this).mulByNumber(lhs));
         }
         else {
