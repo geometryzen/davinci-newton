@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.25
+// Type definitions for davinci-newton 1.0.26
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -475,9 +475,13 @@ export class Geometric2 implements GeometricE2 {
     addPseudo(β: number, uom?: Unit): Geometric2;
 
     /**
-     * Adds the scalar coordinate to this multivector.
+     * Adds a scalar to this multivector.
+     * 
+     * @param a The scalar component value.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of a that should be added.
      */
-    addScalar(α: number, uom?: Unit): Geometric2;
+    addScalar(a: number, uom?: Unit, α?: number): Geometric2;
 
     /**
      * Adds v * α to this multivector where v is a vector and α is an optional scalar.
@@ -891,6 +895,15 @@ export class Geometric2 implements GeometricE2 {
      * b
      */
     sub2(a: GeometricE2, b: GeometricE2): Geometric2;
+
+    /**
+     * Subtracts a scalar from this multivector.
+     * 
+     * @param a The scalar component value.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of a that should be subtracted.
+     */
+    subScalar(a: number, uom?: Unit, α?: number): Geometric2;
 
     /**
      * Subtracts v * α from this multivector where v is a vector and α is an optional scalar.

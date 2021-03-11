@@ -8,7 +8,7 @@ const sqrt = Math.sqrt;
 
 interface Output extends Spinor {
     versor(a: Readonly<Vector>, b: Readonly<Vector>): Output;
-    addScalar(α: number, uom?: Unit): Output;
+    addScalar(a: number, uom?: Unit, α?: number): Output;
     divByScalar(α: number, uom?: Unit): Output;
 }
 
@@ -32,7 +32,7 @@ export function rotorFromDirectionsE2(a: Readonly<Vector>, b: Readonly<Vector>, 
     const denom = sqrt(2 * (quadB * quadA + BA * dotBA));
     if (denom !== 0) {
         m = m.versor(b, a);
-        m = m.addScalar(BA);
+        m = m.addScalar(BA, void 0, 1);
         m = m.divByScalar(denom);
     }
     else {

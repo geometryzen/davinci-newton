@@ -93,11 +93,10 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     sub(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         // TODO: Could generalize to subtracting a fraction...
-        return lhs.sub(rhs);
+        return lhs.sub(rhs, 1);
     }
     subScalar(lhs: Geometric2, rhs: Geometric2): Geometric2 {
-        // TODO: Could generalize to subtracting a fraction...
-        return lhs.subScalar(rhs);
+        return lhs.subScalar(rhs.a, rhs.uom, 1);
     }
     subVector(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         // TODO: Could generalize to subtracting a fraction...

@@ -12,7 +12,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.25';
+            this.VERSION = '1.0.26';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4853,20 +4853,6 @@
     }
 
     /**
-     * Determines whether the argument supports the VectorE3 interface.
-     * The argument must be a non-null object and must support the x, y, and z numeric properties.
-     * @deprecated Do not use this because it could accept types that have scalar and bivector components.
-     */
-    function isVectorE2(v) {
-        if (isObject(v) && !isNull(v)) {
-            return isNumber(v.x) && isNumber(v.y);
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
      * Returns true if all coordinates of the bivector are exactly zero.
      */
     function isZeroBivectorE2(m) {
@@ -4977,7 +4963,7 @@
         var denom = sqrt$1(2 * (quadB * quadA + BA * dotBA));
         if (denom !== 0) {
             m = m.versor(b, a);
-            m = m.addScalar(BA);
+            m = m.addScalar(BA, void 0, 1);
             m = m.divByScalar(denom);
         }
         else {
@@ -5430,12 +5416,14 @@
             return lock$1(Geometric2.copy(this).rev());
         };
         Geometric2.prototype.__add__ = function (rhs) {
-            var duckR = maskG2(rhs);
-            if (duckR) {
-                return lock$1(this.clone().add(duckR));
+            if (rhs instanceof Geometric2) {
+                return lock$1(this.clone().add(rhs));
             }
-            else if (isVectorE2(rhs)) {
-                return lock$1(this.clone().addVector(rhs));
+            else if (typeof rhs === 'number') {
+                return lock$1(this.clone().addScalar(rhs, void 0, 1));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$1(this.clone().addScalar(1, rhs, 1));
             }
             else {
                 return void 0;
@@ -5448,17 +5436,22 @@
             else if (typeof lhs === 'number') {
                 return lock$1(Geometric2.scalar(lhs).add(this));
             }
-            else if (isVectorE2(lhs)) {
-                return lock$1(Geometric2.fromVector(lhs).add(this));
+            else if (lhs instanceof Unit) {
+                return lock$1(Geometric2.scalar(1, lhs).add(this));
             }
             else {
                 return void 0;
             }
         };
         Geometric2.prototype.__sub__ = function (rhs) {
-            var duckR = maskG2(rhs);
-            if (duckR) {
-                return lock$1(this.clone().sub(duckR));
+            if (rhs instanceof Geometric2) {
+                return lock$1(this.clone().sub(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$1(this.clone().subScalar(rhs, void 0, 1));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$1(this.clone().subScalar(1, rhs, 1));
             }
             else {
                 return void 0;
@@ -5535,9 +5528,9 @@
                 return this;
             }
         };
-        Geometric2.prototype.addScalar = function (α, uom) {
+        Geometric2.prototype.addScalar = function (a, uom, α) {
             if (this.lock_ !== UNLOCKED$1) {
-                return lock$1(this.clone().addScalar(α, uom));
+                return lock$1(this.clone().addScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
@@ -5549,7 +5542,7 @@
                 else {
                     this.uom = Unit.compatible(this.uom, uom);
                 }
-                this.a += α;
+                this.a += a * α;
                 return this;
             }
         };
@@ -6778,19 +6771,19 @@
                 return this;
             }
         };
-        Geometric2.prototype.subScalar = function (M, α) {
+        Geometric2.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
             if (this.lock_ !== UNLOCKED$1) {
-                return lock$1(this.clone().subScalar(M, α));
+                return lock$1(this.clone().subScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
-                    this.uom = M.uom;
+                    this.uom = uom;
                 }
                 else {
-                    this.uom = Unit.compatible(this.uom, M.uom);
+                    this.uom = Unit.compatible(this.uom, uom);
                 }
-                this.a -= M.a * α;
+                this.a -= a * α;
                 return this;
             }
         };
@@ -7072,11 +7065,10 @@
         };
         Euclidean2.prototype.sub = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
-            return lhs.sub(rhs);
+            return lhs.sub(rhs, 1);
         };
         Euclidean2.prototype.subScalar = function (lhs, rhs) {
-            // TODO: Could generalize to subtracting a fraction...
-            return lhs.subScalar(rhs);
+            return lhs.subScalar(rhs.a, rhs.uom, 1);
         };
         Euclidean2.prototype.subVector = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...

@@ -21,7 +21,7 @@ export function rotorFromDirectionsE2(a, b, m) {
     var denom = sqrt(2 * (quadB * quadA + BA * dotBA));
     if (denom !== 0) {
         m = m.versor(b, a);
-        m = m.addScalar(BA);
+        m = m.addScalar(BA, void 0, 1);
         m = m.divByScalar(denom);
     }
     else {

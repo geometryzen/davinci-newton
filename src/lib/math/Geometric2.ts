@@ -8,7 +8,6 @@ import { GeometricE2 as Geometric } from "./GeometricE2";
 import { GeometricNumber } from './GeometricNumber';
 import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from "./GradeMasked";
-import { isVectorE2 as isVector } from "./isVectorE2";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
 import { maskG2 as mask } from './maskG2';
@@ -472,36 +471,44 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     __tilde__(): Geometric2 {
         return lock(Geometric2.copy(this).rev());
     }
-    __add__(rhs: Geometric2 | Unit): Geometric2 {
-        const duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().add(duckR));
+    __add__(rhs: Geometric2 | number | Unit): Geometric2 {
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().add(rhs));
         }
-        else if (isVector(rhs)) {
-            return lock(this.clone().addVector(rhs));
+        else if (typeof rhs === 'number') {
+            return lock(this.clone().addScalar(rhs, void 0, 1));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().addScalar(1, rhs, 1));
         }
         else {
             return void 0;
         }
     }
-    __radd__(lhs: Geometric2 | Unit): Geometric2 {
+    __radd__(lhs: Geometric2 | number | Unit): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).add(this));
         }
         else if (typeof lhs === 'number') {
             return lock(Geometric2.scalar(lhs).add(this));
         }
-        else if (isVector(lhs)) {
-            return lock(Geometric2.fromVector(lhs).add(this));
+        else if (lhs instanceof Unit) {
+            return lock(Geometric2.scalar(1, lhs).add(this));
         }
         else {
             return void 0;
         }
     }
     __sub__(rhs: Geometric2 | Unit): Geometric2 {
-        const duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().sub(duckR));
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().sub(rhs));
+        }
+        else if (typeof rhs === 'number') {
+
+            return lock(this.clone().subScalar(rhs, void 0, 1));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().subScalar(1, rhs, 1));
         }
         else {
             return void 0;
@@ -578,9 +585,9 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    addScalar(α: number, uom?: Unit): Geometric2 {
+    addScalar(a: number, uom: Unit, α: number): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().addScalar(α, uom));
+            return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
@@ -592,7 +599,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             else {
                 this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a += α;
+            this.a += a * α;
             return this;
         }
     }
@@ -1854,18 +1861,18 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
 
-    subScalar(M: Scalar, α = 1): Geometric2 {
+    subScalar(a: number, uom?: Unit, α = 1): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().subScalar(M, α));
+            return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
-                this.uom = M.uom;
+                this.uom = uom;
             }
             else {
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a -= M.a * α;
+            this.a -= a * α;
             return this;
         }
     }

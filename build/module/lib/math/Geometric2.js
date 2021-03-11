@@ -3,7 +3,6 @@ import { readOnly } from "../i18n/readOnly";
 import { approx } from "./approx";
 import { arraysEQ } from "./arraysEQ";
 import { gauss } from "./gauss";
-import { isVectorE2 as isVector } from "./isVectorE2";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
 import { maskG2 as mask } from './maskG2';
@@ -341,12 +340,14 @@ var Geometric2 = /** @class */ (function () {
         return lock(Geometric2.copy(this).rev());
     };
     Geometric2.prototype.__add__ = function (rhs) {
-        var duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().add(duckR));
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().add(rhs));
         }
-        else if (isVector(rhs)) {
-            return lock(this.clone().addVector(rhs));
+        else if (typeof rhs === 'number') {
+            return lock(this.clone().addScalar(rhs, void 0, 1));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().addScalar(1, rhs, 1));
         }
         else {
             return void 0;
@@ -359,17 +360,22 @@ var Geometric2 = /** @class */ (function () {
         else if (typeof lhs === 'number') {
             return lock(Geometric2.scalar(lhs).add(this));
         }
-        else if (isVector(lhs)) {
-            return lock(Geometric2.fromVector(lhs).add(this));
+        else if (lhs instanceof Unit) {
+            return lock(Geometric2.scalar(1, lhs).add(this));
         }
         else {
             return void 0;
         }
     };
     Geometric2.prototype.__sub__ = function (rhs) {
-        var duckR = mask(rhs);
-        if (duckR) {
-            return lock(this.clone().sub(duckR));
+        if (rhs instanceof Geometric2) {
+            return lock(this.clone().sub(rhs));
+        }
+        else if (typeof rhs === 'number') {
+            return lock(this.clone().subScalar(rhs, void 0, 1));
+        }
+        else if (rhs instanceof Unit) {
+            return lock(this.clone().subScalar(1, rhs, 1));
         }
         else {
             return void 0;
@@ -446,9 +452,9 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
     };
-    Geometric2.prototype.addScalar = function (α, uom) {
+    Geometric2.prototype.addScalar = function (a, uom, α) {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().addScalar(α, uom));
+            return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
@@ -460,7 +466,7 @@ var Geometric2 = /** @class */ (function () {
             else {
                 this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a += α;
+            this.a += a * α;
             return this;
         }
     };
@@ -1691,19 +1697,19 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
     };
-    Geometric2.prototype.subScalar = function (M, α) {
+    Geometric2.prototype.subScalar = function (a, uom, α) {
         if (α === void 0) { α = 1; }
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().subScalar(M, α));
+            return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
-                this.uom = M.uom;
+                this.uom = uom;
             }
             else {
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a -= M.a * α;
+            this.a -= a * α;
             return this;
         }
     };

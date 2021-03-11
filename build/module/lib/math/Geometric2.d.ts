@@ -162,8 +162,8 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     __le__(rhs: Geometric2): boolean;
     __lt__(rhs: Geometric2): boolean;
     __tilde__(): Geometric2;
-    __add__(rhs: Geometric2 | Unit): Geometric2;
-    __radd__(lhs: Geometric2 | Unit): Geometric2;
+    __add__(rhs: Geometric2 | number | Unit): Geometric2;
+    __radd__(lhs: Geometric2 | number | Unit): Geometric2;
     __sub__(rhs: Geometric2 | Unit): Geometric2;
     __rsub__(lhs: Geometric2 | Unit): Geometric2;
     __pos__(): Geometric2;
@@ -172,7 +172,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     __rmul__(lhs: any): Geometric2;
     add2(a: Geometric, b: Geometric): Geometric2;
     addPseudo(β: number, uom?: Unit): Geometric2;
-    addScalar(α: number, uom?: Unit): Geometric2;
+    addScalar(a: number, uom: Unit, α: number): Geometric2;
     angle(): Geometric2;
     approx(n: number): Geometric2;
     conj(): Geometric2;
@@ -514,7 +514,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @returns this - M * α
      */
     sub(M: Geometric, α?: number): Geometric2;
-    subScalar(M: Scalar, α?: number): Geometric2;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric2;
     /**
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.

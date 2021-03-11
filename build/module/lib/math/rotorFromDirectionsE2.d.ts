@@ -3,7 +3,7 @@ import { Unit } from './Unit';
 import { VectorE2 as Vector } from './VectorE2';
 interface Output extends Spinor {
     versor(a: Readonly<Vector>, b: Readonly<Vector>): Output;
-    addScalar(α: number, uom?: Unit): Output;
+    addScalar(a: number, uom?: Unit, α?: number): Output;
     divByScalar(α: number, uom?: Unit): Output;
 }
 /**

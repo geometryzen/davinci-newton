@@ -91,11 +91,10 @@ var Euclidean2 = /** @class */ (function () {
     };
     Euclidean2.prototype.sub = function (lhs, rhs) {
         // TODO: Could generalize to subtracting a fraction...
-        return lhs.sub(rhs);
+        return lhs.sub(rhs, 1);
     };
     Euclidean2.prototype.subScalar = function (lhs, rhs) {
-        // TODO: Could generalize to subtracting a fraction...
-        return lhs.subScalar(rhs);
+        return lhs.subScalar(rhs.a, rhs.uom, 1);
     };
     Euclidean2.prototype.subVector = function (lhs, rhs) {
         // TODO: Could generalize to subtracting a fraction...

@@ -971,4 +971,42 @@ describe("Geometric2", function () {
             expect(reflected.b).toBe(b);
         });
     });
+    describe("__add__", function () {
+        it("+ scalar", function () {
+            const lhs = new Geometric2([0, 0, 0, 0]);
+            const rhs = new Geometric2([1, 0, 0, 0]);
+            const sum = lhs.__add__(rhs);
+            expect(sum.a).toBe(1);
+            expect(sum.x).toBe(0);
+            expect(sum.y).toBe(0);
+            expect(sum.b).toBe(0);
+        });
+        it("+ e1", function () {
+            const lhs = new Geometric2([0, 0, 0, 0]);
+            const rhs = new Geometric2([0, 1, 0, 0]);
+            const sum = lhs.__add__(rhs);
+            expect(sum.a).toBe(0);
+            expect(sum.x).toBe(1);
+            expect(sum.y).toBe(0);
+            expect(sum.b).toBe(0);
+        });
+        it("+ e2", function () {
+            const lhs = new Geometric2([0, 0, 0, 0]);
+            const rhs = new Geometric2([0, 0, 1, 0]);
+            const sum = lhs.__add__(rhs);
+            expect(sum.a).toBe(0);
+            expect(sum.x).toBe(0);
+            expect(sum.y).toBe(1);
+            expect(sum.b).toBe(0);
+        });
+        it("+ I", function () {
+            const lhs = new Geometric2([0, 0, 0, 0]);
+            const rhs = new Geometric2([0, 0, 0, 1]);
+            const sum = lhs.__add__(rhs);
+            expect(sum.a).toBe(0);
+            expect(sum.x).toBe(0);
+            expect(sum.y).toBe(0);
+            expect(sum.b).toBe(1);
+        });
+    });
 });

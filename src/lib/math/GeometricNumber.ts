@@ -15,7 +15,7 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
     /**
      * Addition of a scalar.
      */
-    addScalar(a: number, α: UNIT): M;
+    addScalar(a: number, uom?: UNIT, α?: number): M;
 
     /**
      * conjugate multiplied by norm (similar to inv)
@@ -118,6 +118,8 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
      * squared norm, scp(x, rev(x))
      */
     squaredNorm(): MAGNITUDE;
+
+    subScalar(a: number, uom?: UNIT, α?: number): M;
 
     /**
      * Scalar Product
