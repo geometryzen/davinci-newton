@@ -12,7 +12,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.27';
+            this.VERSION = '1.0.28';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -6336,6 +6336,23 @@
                 }
             }
         };
+        Geometric2.prototype.divByPseudo = function (β, uom) {
+            if (this.isMutable()) {
+                var a = this.a;
+                var x = this.x;
+                var y = this.y;
+                var b = this.b;
+                this.a = b / β;
+                this.x = y / β;
+                this.y = -x / β;
+                this.b = -a / β;
+                this.uom = Unit.div(this.uom, uom);
+                return this;
+            }
+            else {
+                return lock$1(this.clone().divByPseudo(β, uom));
+            }
+        };
         /**
          * <p>
          * <code>this ⟼ this / (α * uom)</code>
@@ -6931,6 +6948,138 @@
         return Mat1;
     }());
 
+    function beDefined() {
+        return "not be 'undefined'";
+    }
+    function mustBeDefined(name, value, contextBuilder) {
+        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
+        return value;
+    }
+
+    function isInteger(x) {
+        // % coerces its operand to numbers so a typeof test is required.
+        // Not ethat ECMAScript 6 provides Number.isInteger().
+        return isNumber(x) && x % 1 === 0;
+    }
+
+    function beAnInteger() {
+        return "be an integer";
+    }
+    function mustBeInteger(name, value, contextBuilder) {
+        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
+        return value;
+    }
+
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
+        }
+    }
+    /**
+     * Base class for matrices with the expectation that they will be used with WebGL.
+     * The underlying data storage is a <code>Float32Array</code>.
+     */
+    var AbstractMatrix = /** @class */ (function () {
+        /**
+         * @param elements
+         * @param dimensions
+         */
+        function AbstractMatrix(elements, dimensions, uom) {
+            this._elements = mustBeDefined('elements', elements);
+            this._dimensions = mustBeInteger('dimensions', dimensions);
+            this._length = dimensions * dimensions;
+            checkElementsLength(elements, this._length);
+            this.modified = false;
+            this.uom = Unit.mustBeUnit('uom', uom);
+        }
+        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
+            get: function () {
+                return this._dimensions;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(AbstractMatrix.prototype, "elements", {
+            get: function () {
+                return this._elements;
+            },
+            set: function (elements) {
+                checkElementsLength(elements, this._length);
+                this._elements = elements;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        AbstractMatrix.prototype.copy = function (source) {
+            var N = this.dimensions;
+            for (var i = 0; i < N; i++) {
+                for (var j = 0; j < N; j++) {
+                    var value = source.getElement(i, j);
+                    this.setElement(i, j, value);
+                }
+            }
+            this.uom = source.uom;
+            return this;
+        };
+        /**
+         * Returns the element at the specified (zero-based) row and column.
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         */
+        AbstractMatrix.prototype.getElement = function (row, column) {
+            return this.elements[row + column * this._dimensions];
+        };
+        /**
+         * Determines whether this matrix is the identity matrix.
+         */
+        AbstractMatrix.prototype.isOne = function () {
+            for (var i = 0; i < this._dimensions; i++) {
+                for (var j = 0; j < this._dimensions; j++) {
+                    var value = this.getElement(i, j);
+                    if (i === j) {
+                        if (value !== 1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (value !== 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        };
+        /**
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         * @param value The value of the element.
+         */
+        AbstractMatrix.prototype.setElement = function (row, column, value) {
+            this.elements[row + column * this._dimensions] = value;
+        };
+        return AbstractMatrix;
+    }());
+
+    var Matrix1 = /** @class */ (function (_super) {
+        __extends(Matrix1, _super);
+        /**
+         *
+         * @param elements
+         * @param uom The optional unit of measure.
+         */
+        function Matrix1(elements, uom) {
+            return _super.call(this, elements, 1, uom) || this;
+        }
+        Matrix1.one = function () {
+            return new Matrix1(new Float32Array([1]));
+        };
+        Matrix1.zero = function () {
+            return new Matrix1(new Float32Array([0]));
+        };
+        return Matrix1;
+    }(AbstractMatrix));
+
     var Euclidean2 = /** @class */ (function () {
         function Euclidean2() {
         }
@@ -6978,8 +7127,7 @@
             if (m.dimensions !== 1) {
                 throw new Error("matrix dimensions must be 1.");
             }
-            var value = m.getElement(0, 0);
-            return new Mat1(1 / value);
+            return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
         };
         Euclidean2.prototype.isZero = function (mv) {
             return mv.isZero();
@@ -7400,155 +7548,87 @@
         return Physics2;
     }(State));
 
-    function beDefined() {
-        return "not be 'undefined'";
-    }
-    function mustBeDefined(name, value, contextBuilder) {
-        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
-        return value;
-    }
-
-    function isInteger(x) {
-        // % coerces its operand to numbers so a typeof test is required.
-        // Not ethat ECMAScript 6 provides Number.isInteger().
-        return isNumber(x) && x % 1 === 0;
-    }
-
-    function beAnInteger() {
-        return "be an integer";
-    }
-    function mustBeInteger(name, value, contextBuilder) {
-        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
-        return value;
-    }
-
-    function checkElementsLength(elements, length) {
-        if (elements.length !== length) {
-            throw new Error("elements must have length " + length);
-        }
-    }
-    /**
-     * Base class for matrices with the expectation that they will be used with WebGL.
-     * The underlying data storage is a <code>Float32Array</code>.
-     */
-    var AbstractMatrix = /** @class */ (function () {
-        /**
-         * @param elements
-         * @param dimensions
-         */
-        function AbstractMatrix(elements, dimensions, uom) {
-            this._elements = mustBeDefined('elements', elements);
-            this._dimensions = mustBeInteger('dimensions', dimensions);
-            this._length = dimensions * dimensions;
-            checkElementsLength(elements, this._length);
-            this.modified = false;
-            this.uom = Unit.mustBeUnit('uom', uom);
-        }
-        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
-            get: function () {
-                return this._dimensions;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(AbstractMatrix.prototype, "elements", {
-            get: function () {
-                return this._elements;
-            },
-            set: function (elements) {
-                checkElementsLength(elements, this._length);
-                this._elements = elements;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        AbstractMatrix.prototype.copy = function (source) {
-            var N = this.dimensions;
-            for (var i = 0; i < N; i++) {
-                for (var j = 0; j < N; j++) {
-                    var value = source.getElement(i, j);
-                    this.setElement(i, j, value);
-                }
-            }
-            this.uom = source.uom;
-            return this;
-        };
-        /**
-         * Returns the element at the specified (zero-based) row and column.
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         */
-        AbstractMatrix.prototype.getElement = function (row, column) {
-            return this.elements[row + column * this._dimensions];
-        };
-        /**
-         * Determines whether this matrix is the identity matrix.
-         */
-        AbstractMatrix.prototype.isOne = function () {
-            for (var i = 0; i < this._dimensions; i++) {
-                for (var j = 0; j < this._dimensions; j++) {
-                    var value = this.getElement(i, j);
-                    if (i === j) {
-                        if (value !== 1) {
-                            return false;
-                        }
-                    }
-                    else {
-                        if (value !== 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        };
-        /**
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         * @param value The value of the element.
-         */
-        AbstractMatrix.prototype.setElement = function (row, column, value) {
-            this.elements[row + column * this._dimensions] = value;
-        };
-        return AbstractMatrix;
-    }());
-
-    var Matrix1 = /** @class */ (function (_super) {
-        __extends(Matrix1, _super);
-        /**
-         *
-         * @param elements
-         * @param uom The optional unit of measure.
-         */
-        function Matrix1(elements, uom) {
-            return _super.call(this, elements, 1, uom) || this;
-        }
-        Matrix1.one = function () {
-            return new Matrix1(new Float32Array([1]));
-        };
-        Matrix1.zero = function () {
-            return new Matrix1(new Float32Array([0]));
-        };
-        return Matrix1;
-    }(AbstractMatrix));
-
+    var fromVector = Geometric2.fromVector;
     var PolygonRigidBody2 = /** @class */ (function (_super) {
         __extends(PolygonRigidBody2, _super);
         function PolygonRigidBody2(points) {
             var _this = _super.call(this, new Euclidean2()) || this;
-            _this.points = points;
+            /**
+             * The position of the polygon point relative to the center of mass.
+             *
+             * r = x - X, where x is the world position, X is the center of mass.
+             */
+            _this.rs = [];
+            mustBeAtLeastThreePoints(points);
+            var X = centerOfMass(points);
+            for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
+                var point = points_1[_i];
+                var r = fromVector(point).sub(X);
+                r.lock();
+                _this.rs.push(r);
+            }
+            _this.X = X;
+            _this.updateInertiaTensor();
             return _this;
         }
+        /**
+         * The inertia tensor matrix must be updated any time the geometry changes.
+         * The geometry is defined by the total mass, M, and the positions of the vertices.
+         */
         PolygonRigidBody2.prototype.updateInertiaTensor = function () {
-            var r = Geometric2.scalar(1);
-            var s = 0.5 * this.M.a * r.a * r.a;
-            var I = Matrix1.zero();
-            I.setElement(0, 0, s);
-            // TODO: Units
-            this.I = I;
+            var matrix = Matrix1.one();
+            var rs = this.rs;
+            var N = rs.length;
+            var numer = new Geometric2();
+            var denom = new Geometric2();
+            for (var i = 0; i < N; i++) {
+                var ith = rs[i];
+                var nxt = rs[(i + 1) % N];
+                var A = nxt.ext(ith);
+                var s = ith.scp(ith).add(ith.scp(nxt)).add(nxt.scp(nxt));
+                numer.add(A.mul(s));
+                denom.add(A);
+            }
+            var I = this.M.mul(numer).divByNumber(6).divByPseudo(denom.b, denom.uom);
+            matrix.setElement(0, 0, I.a);
+            matrix.uom = I.uom;
+            this.I = matrix;
         };
         return PolygonRigidBody2;
     }(RigidBody));
+    function polygonArea(xs) {
+        var N = xs.length;
+        var A = new Geometric2();
+        var ΔA = new Geometric2();
+        for (var i = 0; i < N; i++) {
+            ΔA.copy(xs[i]).ext(xs[(i + 1) % N]).mulByNumber(0.5);
+            A.add(ΔA);
+        }
+        return A;
+    }
+    function centerOfMass(xs) {
+        var N = xs.length;
+        var X = new Geometric2();
+        for (var i = 0; i < N; i++) {
+            var a = xs[i];
+            var b = xs[(i + 1) % N];
+            var w = fromVector(a).ext(b);
+            var v = fromVector(a).add(b);
+            var vw = fromVector(v).mul(w);
+            X.add(vw);
+        }
+        var A = polygonArea(xs);
+        X.divByPseudo(A.b, A.uom);
+        X.divByNumber(6);
+        return X;
+    }
+    function mustBeAtLeastThreePoints(xs) {
+        var N = xs.length;
+        if (N > 3) ;
+        else {
+            throw new Error("must be at least 3 points.");
+        }
+    }
 
     /**
      *

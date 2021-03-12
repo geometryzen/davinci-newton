@@ -3,6 +3,7 @@ import { Geometric2 } from "../math/Geometric2";
 import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
+import { Matrix1 } from "../math/Matrix1";
 
 export class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number {
@@ -49,8 +50,7 @@ export class Euclidean2 implements Metric<Geometric2> {
         if (m.dimensions !== 1) {
             throw new Error("matrix dimensions must be 1.");
         }
-        const value = m.getElement(0, 0);
-        return new Mat1(1 / value);
+        return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
     }
     isZero(mv: Geometric2): boolean {
         return mv.isZero();

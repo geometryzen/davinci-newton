@@ -1308,6 +1308,23 @@ var Geometric2 = /** @class */ (function () {
             }
         }
     };
+    Geometric2.prototype.divByPseudo = function (β, uom) {
+        if (this.isMutable()) {
+            var a = this.a;
+            var x = this.x;
+            var y = this.y;
+            var b = this.b;
+            this.a = b / β;
+            this.x = y / β;
+            this.y = -x / β;
+            this.b = -a / β;
+            this.uom = Unit.div(this.uom, uom);
+            return this;
+        }
+        else {
+            return lock(this.clone().divByPseudo(β, uom));
+        }
+    };
     /**
      * <p>
      * <code>this ⟼ this / (α * uom)</code>

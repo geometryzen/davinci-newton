@@ -1,5 +1,7 @@
 import { Geometric2 } from "../math/Geometric2";
+import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
+import { Matrix1 } from "../math/Matrix1";
 var Euclidean2 = /** @class */ (function () {
     function Euclidean2() {
     }
@@ -47,8 +49,7 @@ var Euclidean2 = /** @class */ (function () {
         if (m.dimensions !== 1) {
             throw new Error("matrix dimensions must be 1.");
         }
-        var value = m.getElement(0, 0);
-        return new Mat1(1 / value);
+        return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
     };
     Euclidean2.prototype.isZero = function (mv) {
         return mv.isZero();

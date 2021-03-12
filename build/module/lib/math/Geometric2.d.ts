@@ -408,6 +408,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @returns this / magnitude(this)
      */
     direction(mutate: boolean): Geometric2;
+    divByPseudo(β: number, uom?: Unit): Geometric2;
     /**
      * <p>
      * <code>this ⟼ this / (α * uom)</code>

@@ -1438,6 +1438,23 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
 
+    divByPseudo(β: number, uom?: Unit): Geometric2 {
+        if (this.isMutable()) {
+            const a = this.a;
+            const x = this.x;
+            const y = this.y;
+            const b = this.b;
+            this.a = b / β;
+            this.x = y / β;
+            this.y = -x / β;
+            this.b = -a / β;
+            this.uom = Unit.div(this.uom, uom);
+            return this;
+        } else {
+            return lock(this.clone().divByPseudo(β, uom));
+        }
+    }
+
     /**
      * <p>
      * <code>this ⟼ this / (α * uom)</code>

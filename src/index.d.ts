@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.27
+// Type definitions for davinci-newton 1.0.28
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2271,6 +2271,24 @@ export class Cylinder3 extends RigidBody<Geometric3> {
 export class Disc2 extends RigidBody<Geometric2> {
     radius: Geometric2;
     constructor(radius?: GeometricE2);
+}
+
+/**
+ * Plane polygon with vertices points[0], points[1], ..., points[N-1] and mass M uniformly distributed
+ * on its interior.
+ */
+export class PolygonRigidBody2 extends RigidBody<Geometric2> {
+    /**
+     * The vertex positions relative to the polygon center of mass.
+     */
+    readonly rs: Geometric2[];
+    /**
+     * Constructs the polygon rigid body by computing the center of mass, updating X,
+     * computing the vertex positions relative to the center of mass, and then updating
+     * the inertia tensor.
+     * @param points The points of the polygon relative to the origin.
+     */
+    constructor(points: Geometric2[]);
 }
 
 /**
