@@ -5,6 +5,9 @@ import { Matrix3 } from "../math/Matrix3";
 import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 
+/**
+ * @hidden
+ */
 export class Euclidean3 implements Metric<Geometric3> {
     a(mv: Geometric3): number {
         return mv.a;

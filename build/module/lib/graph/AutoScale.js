@@ -13,18 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { __extends } from "tslib";
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import contains from '../util/contains';
-import GenericEvent from '../util/GenericEvent';
-import ParameterNumber from '../util/ParameterNumber';
+import { GenericEvent } from '../util/GenericEvent';
+import { ParameterNumber } from '../util/ParameterNumber';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
-import veryDifferent from '../util/veryDifferent';
-import DoubleRect from '../view/DoubleRect';
+import { veryDifferent } from '../util/veryDifferent';
+import { DoubleRect } from '../view/DoubleRect';
 import { SimView } from '../view/SimView';
 import { AxisChoice } from './AxisChoice';
 import { GraphLine } from './GraphLine';
 /**
+ * @hidden
  * Watches the VarsList of one or more GraphLines to calculate the range
  * rectangle that encloses the points on the graphs, and sets accordingly the simRect of a
  * SimView. The range rectangle is the smallest rectangle that contains all the points, but
@@ -509,4 +510,4 @@ var AutoScale = /** @class */ (function (_super) {
     AutoScale.ENABLED = 'ENABLED';
     return AutoScale;
 }(AbstractSubject));
-export default AutoScale;
+export { AutoScale };

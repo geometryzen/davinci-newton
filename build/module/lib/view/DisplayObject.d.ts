@@ -1,6 +1,6 @@
-import CoordMap from './CoordMap';
+import { CoordMap } from './CoordMap';
 /**
- *
+ * @hidden
  */
 export interface DisplayObject {
     /**
@@ -21,4 +21,3 @@ export interface DisplayObject {
      */
     setZIndex(zIndex?: number): void;
 }
-export default DisplayObject;

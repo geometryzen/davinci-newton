@@ -1,5 +1,5 @@
-import mustBeNumber from '../checks/mustBeNumber';
-import veryDifferent from '../util/veryDifferent';
+import { mustBeNumber } from '../checks/mustBeNumber';
+import { veryDifferent } from '../util/veryDifferent';
 import { BivectorE3 } from './BivectorE3';
 import Scalar3 from './Scalar3';
 import { SpinorE3 } from './SpinorE3';
@@ -8,6 +8,7 @@ import { VectorE3 } from './VectorE3';
 
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
+ * @hidden
  */
 export class Vec3 implements VectorE3 {
 

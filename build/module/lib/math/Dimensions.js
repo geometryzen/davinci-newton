@@ -1,12 +1,36 @@
 import { QQ } from '../math/QQ';
 import detectDimensions from './detectDimensions';
-import DimensionsSummary from './DimensionsSummary';
+import { DimensionsSummary } from './DimensionsSummary';
+/**
+ * @hidden
+ */
 var R0 = QQ.valueOf(0, 1);
+/**
+ * @hidden
+ */
 var R1 = QQ.valueOf(1, 1);
+/**
+ * @hidden
+ */
 var R2 = QQ.valueOf(2, 1);
+/**
+ * @hidden
+ */
 var R3 = QQ.valueOf(3, 1);
+/**
+ * @hidden
+ */
 var M1 = QQ.valueOf(-1, 1);
+/**
+ * @hidden
+ */
 var M2 = QQ.valueOf(-2, 1);
+/**
+ * @hidden
+ * @param name
+ * @param arg
+ * @returns
+ */
 function assertArgRational(name, arg) {
     if (arg instanceof QQ) {
         return arg;
@@ -15,7 +39,13 @@ function assertArgRational(name, arg) {
         throw new Error("Argument " + name + " => " + arg + " must be a QQ");
     }
 }
+/**
+ * @hidden
+ */
 var dimsChecking = 'strict';
+/**
+ * @param mode
+ */
 export function setDimensionsChecking(mode) {
     switch (mode) {
         case 'strict':
@@ -28,12 +58,16 @@ export function setDimensionsChecking(mode) {
         }
     }
 }
+/**
+ * @hidden
+ */
 export function getDimensionsChecking() {
     return dimsChecking;
 }
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
+ * @hidden
  */
 var Dimensions = /** @class */ (function () {
     /**

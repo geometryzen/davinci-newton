@@ -16,6 +16,7 @@
 import Point from './Point';
 
 /**
+ * @hidden
  * Specifies an immutable 2D affine transform.
  * 
  * The affine transform of a point `(x, y)` is given by:
@@ -42,7 +43,7 @@ import Point from './Point';
  *  [  0    1   dy  ]
  *  [  0    0    1  ]
  */
-export default class AffineTransform {
+export class AffineTransform {
     /**
      * The identity AffineTransform, which leaves a point unchanged when it is applied.
      */

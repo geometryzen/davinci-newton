@@ -1,5 +1,8 @@
-import HistoryList from './HistoryList';
-import HistoryIterator from './HistoryIterator';
+import { HistoryIterator } from './HistoryIterator';
+import { HistoryList } from './HistoryList';
+/**
+ * @hidden
+ */
 export declare class CircularList<T> implements HistoryList<T> {
     /**
      * capacity of the list, maximum size

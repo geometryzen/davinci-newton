@@ -5,13 +5,34 @@ import { VarsList } from "./VarsList";
 //
 // Indices which MUST be common to all implementations.
 //
+/**
+ * @hidden
+ */
 export const INDEX_TIME = 0;
+/**
+ * @hidden
+ */
 export const INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+/**
+ * @hidden
+ */
 export const INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+/**
+ * @hidden
+ */
 export const INDEX_POTENTIAL_ENERGY = 3;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_ENERGY = 4;
+/**
+ * @hidden
+ */
 export const INDEX_RESERVED_LAST = 4;
 
+/**
+ * @hidden
+ */
 export interface Dynamics<T> {
     /**
      * The rate of change of position is the velocity.

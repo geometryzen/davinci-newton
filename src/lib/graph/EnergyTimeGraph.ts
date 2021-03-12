@@ -6,7 +6,8 @@ import { Graph } from './Graph';
 import { GraphLine } from './GraphLine';
 
 /**
- * 
+ * @hidden
+ * This is currently exposed to support the existing 3D example.
  */
 export class EnergyTimeGraph extends Graph {
 

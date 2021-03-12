@@ -5,7 +5,7 @@ import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 
 /**
- * 
+ * @hidden
  */
 export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     /**

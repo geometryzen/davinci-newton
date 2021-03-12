@@ -2,6 +2,13 @@ import get from '../math/compG3Get';
 import set from '../math/compG3Set';
 import mulE3 from '../math/mulE3';
 import { Unit } from '../math/Unit';
+/**
+ * @hidden
+ * @param a
+ * @param b
+ * @param out
+ * @returns
+ */
 export default function scpG3(a, b, out) {
     var a0 = get(a, 0);
     var a1 = get(a, 1);

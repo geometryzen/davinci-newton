@@ -14,6 +14,9 @@
 // limitations under the License.
 import toName from './toName';
 import validName from './validName';
+/**
+ * @hidden
+ */
 var ParameterString = /** @class */ (function () {
     // private setter_: (value: string) => any;
     // private isComputed_: boolean;
@@ -62,4 +65,3 @@ var ParameterString = /** @class */ (function () {
     return ParameterString;
 }());
 export { ParameterString };
-export default ParameterString;

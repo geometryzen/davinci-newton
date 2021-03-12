@@ -13,10 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import isFunction from '../checks/isFunction';
-import veryDifferent from '../util/veryDifferent';
+import { veryDifferent } from '../util/veryDifferent';
 /**
  * An immutable rectangle corresponding to screen coordinates where the
  * vertical coordinates increase downwards.
+ * @hidden
  */
 var ScreenRect = /** @class */ (function () {
     /**
@@ -177,4 +178,4 @@ var ScreenRect = /** @class */ (function () {
     ScreenRect.EMPTY_RECT = new ScreenRect(0, 0, 0, 0);
     return ScreenRect;
 }());
-export default ScreenRect;
+export { ScreenRect };

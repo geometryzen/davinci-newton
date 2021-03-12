@@ -16,7 +16,7 @@
 import { DrawingMode } from '../view/DrawingMode';
 
 /**
- * 
+ * @hidden
  */
 export class GraphStyle {
     /**

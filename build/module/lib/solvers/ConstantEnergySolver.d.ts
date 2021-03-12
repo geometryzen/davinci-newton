@@ -7,7 +7,7 @@ import { Unit } from '../math/Unit';
  * ensure that the energy change be less than a tolerance amount.
  */
 export declare class ConstantEnergySolver<T> implements DiffEqSolver {
-    private simulation_;
+    private readonly simulation;
     private energySystem_;
     private solverMethod_;
     private savedState;

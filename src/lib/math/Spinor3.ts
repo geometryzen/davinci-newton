@@ -1,4 +1,4 @@
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { readOnly } from '../i18n/readOnly';
 import { GradeMasked } from './GradeMasked';
 import randomRange from './randomRange';
@@ -7,6 +7,7 @@ import { Unit } from './Unit';
 
 /**
  * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.
+ * @hidden
  */
 export class Spinor3 implements SpinorE3, GradeMasked {
 

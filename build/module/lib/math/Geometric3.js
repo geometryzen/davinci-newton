@@ -18,35 +18,71 @@ import randomRange from './randomRange';
 import rcoG3 from './rcoG3';
 import rotorFromDirections from './rotorFromDirectionsE3';
 import scpG3 from './scpG3';
-import squaredNormG3 from './squaredNormG3';
+import { squaredNormG3 } from './squaredNormG3';
 import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
 // Symbolic constants for the coordinate indices into the data array.
+/**
+ * @hidden
+ */
 var COORD_SCALAR = 0;
+/**
+ * @hidden
+ */
 var COORD_X = 1;
+/**
+ * @hidden
+ */
 var COORD_Y = 2;
+/**
+ * @hidden
+ */
 var COORD_Z = 3;
+/**
+ * @hidden
+ */
 var COORD_XY = 4;
+/**
+ * @hidden
+ */
 var COORD_YZ = 5;
+/**
+ * @hidden
+ */
 var COORD_ZX = 6;
+/**
+ * @hidden
+ */
 var COORD_PSEUDO = 7;
 // FIXME: Change to Canonical ordering.
+/**
+ * @hidden
+ */
 var BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
 BASIS_LABELS[COORD_SCALAR] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 BASIS_LABELS[COORD_Y] = 'e2';
 BASIS_LABELS[COORD_Z] = 'e3';
+/**
+ * @hidden
+ */
 var zero = function zero() {
     return [0, 0, 0, 0, 0, 0, 0, 0];
 };
+/**
+ * @hidden
+ */
 var scalar = function scalar(a) {
     var coords = zero();
     coords[COORD_SCALAR] = a;
     return coords;
 };
+/**
+ * @hidden
+ */
 var vector = function vector(x, y, z) {
     var coords = zero();
     coords[COORD_X] = x;
@@ -54,6 +90,9 @@ var vector = function vector(x, y, z) {
     coords[COORD_Z] = z;
     return coords;
 };
+/**
+ * @hidden
+ */
 var bivector = function bivector(yz, zx, xy) {
     var coords = zero();
     coords[COORD_YZ] = yz;
@@ -61,6 +100,9 @@ var bivector = function bivector(yz, zx, xy) {
     coords[COORD_XY] = xy;
     return coords;
 };
+/**
+ * @hidden
+ */
 var spinor = function spinor(a, yz, zx, xy) {
     var coords = zero();
     coords[COORD_SCALAR] = a;
@@ -69,6 +111,9 @@ var spinor = function spinor(a, yz, zx, xy) {
     coords[COORD_XY] = xy;
     return coords;
 };
+/**
+ * @hidden
+ */
 var multivector = function multivector(a, x, y, z, yz, zx, xy, b) {
     var coords = zero();
     coords[COORD_SCALAR] = a;
@@ -81,6 +126,9 @@ var multivector = function multivector(a, x, y, z, yz, zx, xy, b) {
     coords[COORD_PSEUDO] = b;
     return coords;
 };
+/**
+ * @hidden
+ */
 var pseudo = function pseudo(b) {
     var coords = zero();
     coords[COORD_PSEUDO] = b;
@@ -88,6 +136,7 @@ var pseudo = function pseudo(b) {
 };
 /**
  * Coordinates corresponding to basis labels.
+ * @hidden
  */
 var coordinates = function coordinates(m) {
     var coords = zero();
@@ -105,6 +154,7 @@ var coordinates = function coordinates(m) {
  * Computes the cosine of the angle between two vectors.
  * cos(a, b) = (a | b) / |a||b|
  * This is dimensionless, so we are justified in simply returning a number.
+ * @hidden
  */
 function cosVectorVector(a, b) {
     function scp(a, b) {
@@ -119,6 +169,7 @@ function cosVectorVector(a, b) {
  * Sets the lock on the multivector argument and returns the same argument.
  * This is a convenience function for the dunder (double underscore) methods.
  * All dunder methods should return locked values.
+ * @hidden
  */
 function lock(m) {
     m.lock();
@@ -126,11 +177,13 @@ function lock(m) {
 }
 /**
  * Scratch variable for holding cosines.
+ * @hidden
  */
 var cosines = [];
 /**
  * Sentinel value to indicate that the Geometric3 is not locked.
  * UNLOCKED is in the range -1 to 0.
+ * @hidden
  */
 var UNLOCKED = -1 * Math.random();
 /**

@@ -1,4 +1,4 @@
-import AbstractMatrix from "./AbstractMatrix";
+import { AbstractMatrix } from "./AbstractMatrix";
 import { Unit } from "./Unit";
 export declare class Matrix1 extends AbstractMatrix<Matrix1> {
     static one(): Matrix1;

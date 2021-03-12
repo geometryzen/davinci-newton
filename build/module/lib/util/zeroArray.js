@@ -1,6 +1,9 @@
-export default function zeroArray(xs) {
-    var length = xs.length;
-    for (var i = 0; i < length; i++) {
+/**
+ * @hidden
+ */
+export function zeroArray(xs) {
+    var N = xs.length;
+    for (var i = 0; i < N; i++) {
         xs[i] = 0;
     }
 }

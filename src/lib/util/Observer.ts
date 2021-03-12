@@ -13,10 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import SubjectEvent from './SubjectEvent';
+import { SubjectEvent } from './SubjectEvent';
 
+/**
+ * @hidden
+ */
 export interface Observer {
     observe(event: SubjectEvent): void;
 }
-
-export default Observer;

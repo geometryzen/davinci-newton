@@ -13,11 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Parameter from './Parameter';
-import Subject from './Subject';
+import { Parameter } from './Parameter';
+import { Subject } from './Subject';
 import toName from './toName';
 import validName from './validName';
 
+/**
+ * @hidden
+ */
 export class ParameterNumber implements Parameter {
     /**
      * the Subject which provides notification of changes in this Parameter
@@ -96,5 +99,3 @@ export class ParameterNumber implements Parameter {
         return this;
     }
 }
-
-export default ParameterNumber;

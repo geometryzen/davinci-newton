@@ -1,9 +1,9 @@
 import { Unit } from '../math/Unit';
 import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
-import CoordMap from '../view/CoordMap';
-import DisplayObject from '../view/DisplayObject';
-import DoubleRect from '../view/DoubleRect';
+import { CoordMap } from '../view/CoordMap';
+import { DisplayObject } from '../view/DisplayObject';
+import { DoubleRect } from '../view/DoubleRect';
 /**
  * Draws linear horizontal and vertical axes within a given simulation coordinates
  * rectangle. The simulation rectangle determines where the axes are drawn, and the
@@ -20,8 +20,9 @@ import DoubleRect from '../view/DoubleRect';
  * To keep the DisplayAxes in sync with a LabView, when
  * doing for example pan/zoom of the LabView, you can arrange for {@link #setSimRect} to
  * be called by an Observer.
+ * @hidden
  */
-export default class DisplayAxes implements DisplayObject {
+export declare class DisplayAxes implements DisplayObject {
     /**
      * bounds rectangle of area to draw
      */

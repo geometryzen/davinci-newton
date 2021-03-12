@@ -1,3 +1,8 @@
+/**
+ * @hidden
+ * @param xs
+ * @returns
+ */
 export default function clone(xs) {
     var length = xs.length;
     var rv = new Array(length);

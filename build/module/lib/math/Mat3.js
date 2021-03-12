@@ -1,7 +1,7 @@
 import { Matrix3 } from './Matrix3';
 import { Unit } from './Unit';
 /**
- *
+ * @hidden
  */
 var Mat3 = /** @class */ (function () {
     /**

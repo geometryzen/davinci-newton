@@ -1,5 +1,8 @@
-import Parameter from './Parameter';
-import Subject from './Subject';
+import { Parameter } from './Parameter';
+import { Subject } from './Subject';
+/**
+ * @hidden
+ */
 export declare class ParameterString implements Parameter {
     private subject_;
     private name_;
@@ -17,4 +20,3 @@ export declare class ParameterString implements Parameter {
     nameEquals(name: string): boolean;
     setComputed(value: boolean): void;
 }
-export default ParameterString;

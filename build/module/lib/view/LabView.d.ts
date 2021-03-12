@@ -1,8 +1,11 @@
-import CoordMap from './CoordMap';
-import DisplayList from './DisplayList';
-import DoubleRect from './DoubleRect';
-import ScreenRect from './ScreenRect';
-import Memorizable from '../util/Memorizable';
+import { Memorizable } from '../util/Memorizable';
+import { CoordMap } from './CoordMap';
+import { DisplayList } from './DisplayList';
+import { DoubleRect } from './DoubleRect';
+import { ScreenRect } from './ScreenRect';
+/**
+ * @hidden
+ */
 export interface LabView extends Memorizable {
     /**
      * Called when this LabView becomes the focus view of the LabCanvas.
@@ -54,4 +57,3 @@ export interface LabView extends Memorizable {
      */
     setSimRect(simRect: DoubleRect): void;
 }
-export default LabView;

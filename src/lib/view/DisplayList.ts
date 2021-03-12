@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
-import CoordMap from './CoordMap';
-import DisplayObject from './DisplayObject';
-import GenericEvent from '../util/GenericEvent';
-import insertAt from '../util/insertAt';
 import isObject from '../checks/isObject';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { GenericEvent } from '../util/GenericEvent';
+import insertAt from '../util/insertAt';
+import { CoordMap } from './CoordMap';
+import { DisplayObject } from './DisplayObject';
 
 /**
  * Displays a set of DisplayObject(s)}, which show the state of the simulation.
@@ -28,6 +28,7 @@ import isObject from '../checks/isObject';
  * ------
  * DisplayObjects with a lower `zIndex` appear underneath those with higher `zIndex`.
  * The DisplayList is sorted by `zIndex`.
+ * @hidden
  */
 export class DisplayList extends AbstractSubject {
 
@@ -126,5 +127,3 @@ export class DisplayList extends AbstractSubject {
     }
 
 }
-
-export default DisplayList;

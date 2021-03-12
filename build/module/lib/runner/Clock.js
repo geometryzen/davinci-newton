@@ -13,9 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { __extends } from "tslib";
-import AbstractSubject from '../util/AbstractSubject';
-import GenericEvent from '../util/GenericEvent';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { GenericEvent } from '../util/GenericEvent';
 import getSystemTime from '../util/getSystemTime';
+/**
+ * @hidden
+ */
 var Clock = /** @class */ (function (_super) {
     __extends(Clock, _super);
     /**
@@ -151,4 +154,3 @@ var Clock = /** @class */ (function (_super) {
     return Clock;
 }(AbstractSubject));
 export { Clock };
-export default Clock;

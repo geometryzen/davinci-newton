@@ -1,4 +1,7 @@
-import SubjectEvent from './SubjectEvent';
+import { SubjectEvent } from './SubjectEvent';
+/**
+ * @hidden
+ */
 export interface Parameter extends SubjectEvent {
     /**
      * Sets whether the value is being automatically computed.
@@ -6,4 +9,3 @@ export interface Parameter extends SubjectEvent {
      */
     setComputed(computed: boolean): void;
 }
-export default Parameter;

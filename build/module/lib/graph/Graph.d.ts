@@ -1,8 +1,8 @@
-import AbstractSubject from '../util/AbstractSubject';
-import AutoScale from './AutoScale';
-import DisplayAxes from './DisplayAxes';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { AutoScale } from './AutoScale';
+import { DisplayAxes } from './DisplayAxes';
 import { GraphLine } from './GraphLine';
-import GraphVarsList from './GraphVarsList';
+import { GraphVarsList } from './GraphVarsList';
 /**
  * Creates a single graph showing several independent GraphLines, and with a horizontal
  * time axis. Because there is a single SimView and DisplayGraph, all the GraphLines are
@@ -11,6 +11,7 @@ import GraphVarsList from './GraphVarsList';
  * visible. Creates several controls to modify the graph.
  *
  * This class is a user interface control. It may manipulate the DOM, adding controls.
+ * @hidden
  */
 export declare class Graph extends AbstractSubject {
     private varsList;

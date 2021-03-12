@@ -12,8 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import { veryDifferent } from '../util/veryDifferent';
 import Point from './Point';
-import veryDifferent from '../util/veryDifferent';
 /**
  * A rectangle whose boundaries are stored with double floating
  * point precision. This is an immutable class: once an instance is created it cannot be
@@ -22,6 +22,7 @@ import veryDifferent from '../util/veryDifferent';
  * Note that for DoubleRect we regard the vertical coordinate as **increasing upwards**, so
  * the top coordinate is greater than the bottom coordinate. This is in contrast to HTML5
  * canvas where vertical coordinates increase downwards.
+ * @hidden
  */
 var DoubleRect = /** @class */ (function () {
     function DoubleRect(left, bottom, right, top) {
@@ -313,4 +314,4 @@ var DoubleRect = /** @class */ (function () {
     DoubleRect.EMPTY_RECT = new DoubleRect(0, 0, 0, 0);
     return DoubleRect;
 }());
-export default DoubleRect;
+export { DoubleRect };

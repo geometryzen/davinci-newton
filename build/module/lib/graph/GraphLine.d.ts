@@ -1,12 +1,15 @@
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import { CircularList } from '../util/CircularList';
-import Memorizable from '../util/Memorizable';
-import Observer from '../util/Observer';
-import SubjectEvent from '../util/SubjectEvent';
+import { Memorizable } from '../util/Memorizable';
+import { Observer } from '../util/Observer';
+import { SubjectEvent } from '../util/SubjectEvent';
 import { DrawingMode } from '../view/DrawingMode';
-import GraphPoint from './GraphPoint';
+import { GraphPoint } from './GraphPoint';
 import { GraphStyle } from './GraphStyle';
-import GraphVarsList from './GraphVarsList';
+import { GraphVarsList } from './GraphVarsList';
+/**
+ * @hidden
+ */
 export declare class GraphLine extends AbstractSubject implements Memorizable, Observer {
     static readonly PARAM_NAME_X_VARIABLE = "X variable";
     static readonly PARAM_NAME_Y_VARIABLE = "Y variable";

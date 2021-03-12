@@ -13,10 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { DiffEqSolver } from '../core/DiffEqSolver';
-import { Simulation } from '../core/Simulation';
+import { DiffEqSolverSystem } from '../core/DiffEqSolverSystem';
 import { Unit } from '../math/Unit';
-import zeroArray from '../util/zeroArray';
+import { zeroArray } from '../util/zeroArray';
 
 /**
  * <p>
@@ -25,7 +26,6 @@ import zeroArray from '../util/zeroArray';
  * </p>
  */
 export class RungeKutta implements DiffEqSolver {
-    private readonly sim_: Simulation;
     private inp_: number[] = [];
     private k1_: number[] = [];
     private k2_: number[] = [];
@@ -34,17 +34,17 @@ export class RungeKutta implements DiffEqSolver {
 
     /**
      * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-     * @param simulation The model that provides the system state and computes rates of change.
+     * @param system The model that provides the system state and computes rates of change.
      */
-    constructor(simulation: Simulation) {
-        this.sim_ = simulation;
+    constructor(private readonly system: DiffEqSolverSystem) {
+        mustBeNonNullObject('system', system);
     }
 
     /**
      * 
      */
     step(stepSize: number, uomStep?: Unit): void {
-        const vars = this.sim_.getState();
+        const vars = this.system.getState();
         const N = vars.length;
         if (this.inp_.length < N) {
             this.inp_ = new Array(N);
@@ -64,32 +64,32 @@ export class RungeKutta implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uomStep);
+        this.system.evaluate(inp, k1, 0, uomStep);
 
         // evaluate at time t + stepSize / 2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k1[i] * stepSize / 2;
         }
         zeroArray(k2);
-        this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
+        this.system.evaluate(inp, k2, stepSize / 2, uomStep);
 
         // evaluate at time t + stepSize / 2
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k2[i] * stepSize / 2;
         }
         zeroArray(k3);
-        this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
+        this.system.evaluate(inp, k3, stepSize / 2, uomStep);
 
         // evaluate at time t + stepSize
         for (let i = 0; i < N; i++) {
             inp[i] = vars[i] + k3[i] * stepSize;
         }
         zeroArray(k4);
-        this.sim_.evaluate(inp, k4, stepSize, uomStep);
+        this.system.evaluate(inp, k4, stepSize, uomStep);
 
         for (let i = 0; i < N; i++) {
             vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
         }
-        this.sim_.setState(vars);
+        this.system.setState(vars);
     }
 }

@@ -1,6 +1,6 @@
 import mustBeFunction from '../checks/mustBeFunction';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { MatrixLike } from '../math/MatrixLike';
 import { Unit } from '../math/Unit';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
@@ -12,7 +12,7 @@ import { Metric } from './Metric';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 
 /**
- * 
+ * @hidden
  */
 export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Massive<T>, Charged<T> {
     /**
@@ -101,6 +101,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      */
     constructor(public readonly metric: Metric<T>) {
         super();
+        mustBeNonNullObject('metric', metric);
         this.mass_ = metric.scalar(1);
         this.massLock_ = metric.lock(this.mass_);
         this.charge_ = metric.zero();

@@ -1,7 +1,7 @@
 import { VarsList } from '../core/VarsList';
-import Variable from './Variable';
+import { Variable } from './Variable';
 /**
- *
+ * @hidden
  */
 export declare class ConcreteVariable implements Variable {
     private varsList_;

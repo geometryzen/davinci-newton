@@ -2,6 +2,9 @@ import isDefined from '../checks/isDefined';
 import mustBeArray from '../checks/mustBeArray';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 function isLabelOne(label: (string | string[])): boolean {
     if (typeof label === 'string') {
         return label === "1";
@@ -20,6 +23,9 @@ function isLabelOne(label: (string | string[])): boolean {
     }
 }
 
+/**
+ * @hidden
+ */
 function appendLabel(coord: number, label: (string | string[]), sb: string[]): void {
     if (typeof label === 'string') {
         sb.push(label);
@@ -41,6 +47,9 @@ function appendLabel(coord: number, label: (string | string[]), sb: string[]): v
     }
 }
 
+/**
+ * @hidden
+ */
 function appendCoord(coord: number, numberToString: (x: number) => string, label: (string | string[]), sb: string[]): void {
     if (coord !== 0) {
         if (coord >= 0) {
@@ -97,6 +106,9 @@ function appendCoord(coord: number, numberToString: (x: number) => string, label
     }
 }
 
+/**
+ * @hidden
+ */
 export function stringFromCoordinates(coordinates: number[], numberToString: (x: number) => string, labels: (string | string[])[], uom: Unit): string {
     const sb: string[] = [];
     for (let i = 0, iLength = coordinates.length; i < iLength; i++) {

@@ -1,1 +1,4 @@
-export default function mustBeObject<T>(name: string, value: T, contextBuilder?: () => string): T;
+/**
+ * @hidden
+ */
+export declare function mustBeNonNullObject<T>(name: string, value: T, contextBuilder?: () => string): T;

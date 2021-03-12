@@ -2,6 +2,7 @@ import { LinearOperators } from './LinearOperators';
 import { RingOperators } from './RingOperators';
 /**
  * Special methods for operators on elements of geometric spaces.
+ * @hidden
  */
 export interface GeometricOperators<T, UNIT> extends LinearOperators<T, UNIT>, RingOperators<T, UNIT> {
     __div__(rhs: any): T;

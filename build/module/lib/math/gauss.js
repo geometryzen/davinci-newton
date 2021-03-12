@@ -1,4 +1,13 @@
+/**
+ * @hidden
+ */
 var abs = Math.abs;
+/**
+ * @hidden
+ * @param n
+ * @param v
+ * @returns
+ */
 function makeColumnVector(n, v) {
     var a = [];
     for (var i = 0; i < n; i++) {
@@ -6,6 +15,9 @@ function makeColumnVector(n, v) {
     }
     return a;
 }
+/**
+ * @hidden
+ */
 function rowWithMaximumInColumn(A, column, N) {
     var biggest = abs(A[column][column]);
     var maxRow = column;
@@ -17,6 +29,9 @@ function rowWithMaximumInColumn(A, column, N) {
     }
     return maxRow;
 }
+/**
+ * @hidden
+ */
 function swapRows(A, i, j, N) {
     var colLength = N + 1;
     for (var column = i; column < colLength; column++) {
@@ -25,6 +40,12 @@ function swapRows(A, i, j, N) {
         A[i][column] = temp;
     }
 }
+/**
+ * @hidden
+ * @param A
+ * @param i
+ * @param N
+ */
 function makeZeroBelow(A, i, N) {
     for (var row = i + 1; row < N; row++) {
         var c = -A[row][i] / A[i][i];
@@ -38,6 +59,12 @@ function makeZeroBelow(A, i, N) {
         }
     }
 }
+/**
+ * @hidden
+ * @param A
+ * @param N
+ * @returns
+ */
 function solve(A, N) {
     var x = makeColumnVector(N, 0);
     for (var i = N - 1; i > -1; i--) {
@@ -51,6 +78,7 @@ function solve(A, N) {
 /**
  * Gaussian elimination
  * Ax = b
+ * @hidden
  */
 export function gauss(A, b) {
     var N = A.length;

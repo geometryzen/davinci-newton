@@ -1,5 +1,6 @@
 import { GeometricE3 } from '../math/GeometricE3';
 /**
+ * @hidden
  * @param index
  * 0: scalar
  * 1: x

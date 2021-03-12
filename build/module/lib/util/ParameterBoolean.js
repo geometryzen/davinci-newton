@@ -14,6 +14,9 @@
 // limitations under the License.
 import toName from './toName';
 import validName from './validName';
+/**
+ * @hidden
+ */
 var ParameterBoolean = /** @class */ (function () {
     // private getter_: () => boolean;
     // private setter_: (value: boolean) => any;
@@ -48,4 +51,3 @@ var ParameterBoolean = /** @class */ (function () {
     return ParameterBoolean;
 }());
 export { ParameterBoolean };
-export default ParameterBoolean;

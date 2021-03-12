@@ -12,6 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+/**
+ * @hidden
+ */
 var GraphPoint = /** @class */ (function () {
     function GraphPoint(x, y, seqX, seqY) {
         this.x = x;
@@ -29,4 +32,4 @@ var GraphPoint = /** @class */ (function () {
     };
     return GraphPoint;
 }());
-export default GraphPoint;
+export { GraphPoint };

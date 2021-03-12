@@ -1,7 +1,7 @@
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 /**
- *
+ * @hidden
  */
 export declare class GenericEvent implements SubjectEvent {
     private subject_;
@@ -26,4 +26,3 @@ export declare class GenericEvent implements SubjectEvent {
      */
     nameEquals(name: string): boolean;
 }
-export default GenericEvent;

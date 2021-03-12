@@ -4,6 +4,6 @@
  * Usage:
  *
  * expectOptions(['foo', 'bar'], Object.keys(options));
- *
+ * @hidden
  */
 export default function expectOptions(expects: string[], actuals: string[]): void;

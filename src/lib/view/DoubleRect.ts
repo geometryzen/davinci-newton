@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { veryDifferent } from '../util/veryDifferent';
 import Point from './Point';
-import veryDifferent from '../util/veryDifferent';
 
 /**
  * A rectangle whose boundaries are stored with double floating
@@ -24,8 +24,9 @@ import veryDifferent from '../util/veryDifferent';
  * Note that for DoubleRect we regard the vertical coordinate as **increasing upwards**, so
  * the top coordinate is greater than the bottom coordinate. This is in contrast to HTML5
  * canvas where vertical coordinates increase downwards.
+ * @hidden
  */
-export default class DoubleRect {
+export class DoubleRect {
     private left_: number;
     private right_: number;
     private bottom_: number;

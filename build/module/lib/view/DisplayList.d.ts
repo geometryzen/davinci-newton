@@ -1,6 +1,6 @@
-import AbstractSubject from '../util/AbstractSubject';
-import CoordMap from './CoordMap';
-import DisplayObject from './DisplayObject';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { CoordMap } from './CoordMap';
+import { DisplayObject } from './DisplayObject';
 /**
  * Displays a set of DisplayObject(s)}, which show the state of the simulation.
  * A DisplayObject typically represents a SimObject, but not always.
@@ -9,6 +9,7 @@ import DisplayObject from './DisplayObject';
  * ------
  * DisplayObjects with a lower `zIndex` appear underneath those with higher `zIndex`.
  * The DisplayList is sorted by `zIndex`.
+ * @hidden
  */
 export declare class DisplayList extends AbstractSubject {
     /**
@@ -50,4 +51,3 @@ export declare class DisplayList extends AbstractSubject {
     prepend(dispObj: DisplayObject): void;
     private sort;
 }
-export default DisplayList;

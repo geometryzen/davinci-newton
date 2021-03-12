@@ -4,6 +4,7 @@ import isObject from '../checks/isObject';
 /**
  * Determines whether the argument supports the BivectorE3 interface.
  * The argument must be a non-null object and must support the yz, zx, and xy numeric properties.
+ * @hidden
  */
 export default function isBivectorE3(v) {
     if (isObject(v) && !isNull(v)) {

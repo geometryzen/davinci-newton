@@ -1,5 +1,5 @@
 import { __extends } from "tslib";
-import AbstractMatrix from './AbstractMatrix';
+import { AbstractMatrix } from './AbstractMatrix';
 import inv3x3 from './inv3x3';
 import mul3x3 from './mul3x3';
 /**

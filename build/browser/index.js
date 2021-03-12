@@ -4,6 +4,9 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.NEWTON = {}));
 }(this, (function (exports) { 'use strict';
 
+    /**
+     * @hidden
+     */
     var Newton = /** @class */ (function () {
         /**
          *
@@ -12,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.30';
+            this.VERSION = '1.0.31';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -49,7 +52,7 @@
         return Newton;
     }());
     /**
-     *
+     * @hidden
      */
     var config = new Newton();
 
@@ -100,10 +103,12 @@
     // limitations under the License.
     /**
      * The coordinate frame that is fixed in relation to the rigid body.
+     * @hidden
      */
     var LOCAL = 0;
     /**
      * The coordinate frame used as the basis for position and attitude of all bodies.
+     * @hidden
      */
     var WORLD = 1;
 
@@ -122,7 +127,7 @@
     // See the License for the specific language governing permissions and
     // limitations under the License.
     /**
-     *
+     * @hidden
      */
     var AbstractSimObject = /** @class */ (function () {
         /**
@@ -152,7 +157,7 @@
     }());
 
     /**
-     *
+     * @hidden
      */
     var Force = /** @class */ (function (_super) {
         __extends(Force, _super);
@@ -246,7 +251,7 @@
     }(AbstractSimObject));
 
     /**
-     *
+     * @hidden
      */
     var ConstantForceLaw = /** @class */ (function (_super) {
         __extends(ConstantForceLaw, _super);
@@ -413,7 +418,7 @@
     }(AbstractSimObject));
 
     /**
-     *
+     * @hidden
      */
     var GravitationLaw = /** @class */ (function (_super) {
         __extends(GravitationLaw, _super);
@@ -508,6 +513,9 @@
         return GravitationLaw;
     }(AbstractSimObject));
 
+    /**
+     * @hidden
+     */
     function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
         if (!condition) {
             var message = messageBuilder ? messageBuilder() : "satisfy some condition";
@@ -516,46 +524,79 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     function isFunction(x) {
         return (typeof x === 'function');
     }
 
+    /**
+     * @hidden
+     */
     function beFunction() {
         return "be a function";
     }
+    /**
+     * @hidden
+     */
     function mustBeFunction(name, value, contextBuilder) {
         mustSatisfy(name, isFunction(value), beFunction, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     */
     function isNull (x) {
         return x === null;
     }
 
+    /**
+     * @hidden
+     */
     function isObject(x) {
         return (typeof x === 'object');
     }
 
+    /**
+     * @hidden
+     */
     function beObject() {
         return "be a non-null `object`";
     }
-    function mustBeObject(name, value, contextBuilder) {
+    /**
+     * @hidden
+     */
+    function mustBeNonNullObject(name, value, contextBuilder) {
         mustSatisfy(name, isObject(value) && !isNull(value), beObject, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     */
     function isNumber(x) {
         return (typeof x === 'number');
     }
 
+    /**
+     * @hidden
+     */
     function beANumber() {
         return "be a `number`";
     }
-    function mustBeNumber (name, value, contextBuilder) {
+    /**
+     * @hidden
+     */
+    function mustBeNumber(name, value, contextBuilder) {
         mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     */
     function isUndefined(arg) {
         return (typeof arg === 'undefined');
     }
@@ -568,6 +609,7 @@
      * The numerator and denominator are reduced to their lowest form.
      *
      * Construct new instances using the static <code>valueOf</code> method.
+     * @hidden
      */
     var QQ = /** @class */ (function () {
         /**
@@ -955,6 +997,7 @@
 
     /**
      * A summary of all the exponents in physical dimensions.
+     * @hidden
      */
     var DimensionsSummary;
     (function (DimensionsSummary) {
@@ -1017,10 +1060,9 @@
          */
         DimensionsSummary[DimensionsSummary["VOLUME"] = 27] = "VOLUME";
     })(DimensionsSummary || (DimensionsSummary = {}));
-    var DimensionsSummary$1 = DimensionsSummary;
 
     /**
-     *
+     * @hidden
      */
     function detectDimensions(M, L, T, Q, temperature, amount, intensity) {
         if (M.numer === -1) {
@@ -1037,7 +1079,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.INV_MOMENT_OF_INERTIA;
+                                                                return DimensionsSummary.INV_MOMENT_OF_INERTIA;
                                                             }
                                                         }
                                                     }
@@ -1062,7 +1104,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ELECTRIC_PERMITTIVITY_TIMES_AREA;
+                                                                return DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA;
                                                             }
                                                         }
                                                     }
@@ -1087,7 +1129,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.INV_MASS;
+                                                                return DimensionsSummary.INV_MASS;
                                                             }
                                                         }
                                                     }
@@ -1116,7 +1158,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.INV_LENGTH;
+                                                                return DimensionsSummary.INV_LENGTH;
                                                             }
                                                         }
                                                     }
@@ -1141,7 +1183,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.INV_TIME;
+                                                                return DimensionsSummary.INV_TIME;
                                                             }
                                                         }
                                                     }
@@ -1158,7 +1200,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ELECTRIC_CURRENT;
+                                                                return DimensionsSummary.ELECTRIC_CURRENT;
                                                             }
                                                         }
                                                     }
@@ -1179,12 +1221,12 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ONE;
+                                                                return DimensionsSummary.ONE;
                                                             }
                                                         }
                                                         else if (intensity.numer === 1) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.LUMINOUS_INTENSITY;
+                                                                return DimensionsSummary.LUMINOUS_INTENSITY;
                                                             }
                                                         }
                                                     }
@@ -1193,7 +1235,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.AMOUNT_OF_SUBSTANCE;
+                                                                return DimensionsSummary.AMOUNT_OF_SUBSTANCE;
                                                             }
                                                         }
                                                     }
@@ -1206,7 +1248,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.THERMODYNAMIC_TEMPERATURE;
+                                                                return DimensionsSummary.THERMODYNAMIC_TEMPERATURE;
                                                             }
                                                         }
                                                     }
@@ -1223,7 +1265,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ELECTRIC_CHARGE;
+                                                                return DimensionsSummary.ELECTRIC_CHARGE;
                                                             }
                                                         }
                                                     }
@@ -1244,7 +1286,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.TIME;
+                                                                return DimensionsSummary.TIME;
                                                             }
                                                         }
                                                     }
@@ -1265,7 +1307,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.TIME_SQUARED;
+                                                                return DimensionsSummary.TIME_SQUARED;
                                                             }
                                                         }
                                                     }
@@ -1290,7 +1332,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.VELOCITY;
+                                                                return DimensionsSummary.VELOCITY;
                                                             }
                                                         }
                                                     }
@@ -1311,7 +1353,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.LENGTH;
+                                                                return DimensionsSummary.LENGTH;
                                                             }
                                                         }
                                                     }
@@ -1336,7 +1378,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.VELOCITY_SQUARED;
+                                                                return DimensionsSummary.VELOCITY_SQUARED;
                                                             }
                                                         }
                                                     }
@@ -1357,7 +1399,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.RATE_OF_CHANGE_OF_AREA;
+                                                                return DimensionsSummary.RATE_OF_CHANGE_OF_AREA;
                                                             }
                                                         }
                                                     }
@@ -1378,7 +1420,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.AREA;
+                                                                return DimensionsSummary.AREA;
                                                             }
                                                         }
                                                     }
@@ -1403,7 +1445,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.VOLUME;
+                                                                return DimensionsSummary.VOLUME;
                                                             }
                                                         }
                                                     }
@@ -1432,7 +1474,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.STIFFNESS;
+                                                                return DimensionsSummary.STIFFNESS;
                                                             }
                                                         }
                                                     }
@@ -1453,7 +1495,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.MASS;
+                                                                return DimensionsSummary.MASS;
                                                             }
                                                         }
                                                     }
@@ -1478,7 +1520,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ELECTRIC_FIELD;
+                                                                return DimensionsSummary.ELECTRIC_FIELD;
                                                             }
                                                         }
                                                     }
@@ -1495,7 +1537,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.FORCE;
+                                                                return DimensionsSummary.FORCE;
                                                             }
                                                         }
                                                     }
@@ -1516,7 +1558,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.MOMENTUM;
+                                                                return DimensionsSummary.MOMENTUM;
                                                             }
                                                         }
                                                     }
@@ -1541,7 +1583,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ENERGY_OR_TORQUE;
+                                                                return DimensionsSummary.ENERGY_OR_TORQUE;
                                                             }
                                                         }
                                                     }
@@ -1562,7 +1604,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.ANGULAR_MOMENTUM;
+                                                                return DimensionsSummary.ANGULAR_MOMENTUM;
                                                             }
                                                         }
                                                     }
@@ -1583,7 +1625,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.MOMENT_OF_INERTIA;
+                                                                return DimensionsSummary.MOMENT_OF_INERTIA;
                                                             }
                                                         }
                                                     }
@@ -1612,7 +1654,7 @@
                                                     if (amount.denom === 1) {
                                                         if (intensity.numer === 0) {
                                                             if (intensity.denom === 1) {
-                                                                return DimensionsSummary$1.MOMENTUM_SQUARED;
+                                                                return DimensionsSummary.MOMENTUM_SQUARED;
                                                             }
                                                         }
                                                     }
@@ -1630,12 +1672,36 @@
         return void 0;
     }
 
+    /**
+     * @hidden
+     */
     var R0 = QQ.valueOf(0, 1);
+    /**
+     * @hidden
+     */
     var R1 = QQ.valueOf(1, 1);
+    /**
+     * @hidden
+     */
     var R2 = QQ.valueOf(2, 1);
+    /**
+     * @hidden
+     */
     var R3 = QQ.valueOf(3, 1);
+    /**
+     * @hidden
+     */
     var M1 = QQ.valueOf(-1, 1);
+    /**
+     * @hidden
+     */
     var M2 = QQ.valueOf(-2, 1);
+    /**
+     * @hidden
+     * @param name
+     * @param arg
+     * @returns
+     */
     function assertArgRational(name, arg) {
         if (arg instanceof QQ) {
             return arg;
@@ -1644,7 +1710,13 @@
             throw new Error("Argument " + name + " => " + arg + " must be a QQ");
         }
     }
+    /**
+     * @hidden
+     */
     var dimsChecking = 'strict';
+    /**
+     * @param mode
+     */
     function setDimensionsChecking(mode) {
         switch (mode) {
             case 'strict':
@@ -1660,6 +1732,7 @@
     /**
      * Keeps track of the dimensions of a physical quantity using seven rational exponents.
      * Each of the exponents corresponds to a dimension in the S.I. system of units.
+     * @hidden
      */
     var Dimensions = /** @class */ (function () {
         /**
@@ -1959,33 +2032,33 @@
             // This function is optimized to minimize the need for object creation.
             var summary = detectDimensions(M, L, T, Q, temperature, amount, intensity);
             switch (summary) {
-                case DimensionsSummary$1.AMOUNT_OF_SUBSTANCE: return Dimensions.AMOUNT_OF_SUBSTANCE;
-                case DimensionsSummary$1.ANGULAR_MOMENTUM: return Dimensions.ANGULAR_MOMENTUM;
-                case DimensionsSummary$1.AREA: return Dimensions.AREA;
-                case DimensionsSummary$1.ELECTRIC_CHARGE: return Dimensions.ELECTRIC_CHARGE;
-                case DimensionsSummary$1.ELECTRIC_CURRENT: return Dimensions.ELECTRIC_CURRENT;
-                case DimensionsSummary$1.ELECTRIC_FIELD: return Dimensions.ELECTRIC_FIELD;
-                case DimensionsSummary$1.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA;
-                case DimensionsSummary$1.ENERGY_OR_TORQUE: return Dimensions.ENERGY_OR_TORQUE;
-                case DimensionsSummary$1.FORCE: return Dimensions.FORCE;
-                case DimensionsSummary$1.LUMINOUS_INTENSITY: return Dimensions.LUMINOUS_INTENSITY;
-                case DimensionsSummary$1.INV_LENGTH: return Dimensions.INV_LENGTH;
-                case DimensionsSummary$1.INV_MASS: return Dimensions.INV_MASS;
-                case DimensionsSummary$1.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
-                case DimensionsSummary$1.INV_TIME: return Dimensions.INV_TIME;
-                case DimensionsSummary$1.LENGTH: return Dimensions.LENGTH;
-                case DimensionsSummary$1.MASS: return Dimensions.MASS;
-                case DimensionsSummary$1.MOMENT_OF_INERTIA: return Dimensions.MOMENT_OF_INERTIA;
-                case DimensionsSummary$1.MOMENTUM: return Dimensions.MOMENTUM;
-                case DimensionsSummary$1.MOMENTUM_SQUARED: return Dimensions.MOMENTUM_SQUARED;
-                case DimensionsSummary$1.ONE: return Dimensions.ONE;
-                case DimensionsSummary$1.RATE_OF_CHANGE_OF_AREA: return Dimensions.RATE_OF_CHANGE_OF_AREA;
-                case DimensionsSummary$1.STIFFNESS: return Dimensions.STIFFNESS;
-                case DimensionsSummary$1.THERMODYNAMIC_TEMPERATURE: return Dimensions.THERMODYNAMIC_TEMPERATURE;
-                case DimensionsSummary$1.TIME: return Dimensions.TIME;
-                case DimensionsSummary$1.TIME_SQUARED: return Dimensions.TIME_SQUARED;
-                case DimensionsSummary$1.VELOCITY: return Dimensions.VELOCITY;
-                case DimensionsSummary$1.VELOCITY_SQUARED: return Dimensions.VELOCITY_SQUARED;
+                case DimensionsSummary.AMOUNT_OF_SUBSTANCE: return Dimensions.AMOUNT_OF_SUBSTANCE;
+                case DimensionsSummary.ANGULAR_MOMENTUM: return Dimensions.ANGULAR_MOMENTUM;
+                case DimensionsSummary.AREA: return Dimensions.AREA;
+                case DimensionsSummary.ELECTRIC_CHARGE: return Dimensions.ELECTRIC_CHARGE;
+                case DimensionsSummary.ELECTRIC_CURRENT: return Dimensions.ELECTRIC_CURRENT;
+                case DimensionsSummary.ELECTRIC_FIELD: return Dimensions.ELECTRIC_FIELD;
+                case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA;
+                case DimensionsSummary.ENERGY_OR_TORQUE: return Dimensions.ENERGY_OR_TORQUE;
+                case DimensionsSummary.FORCE: return Dimensions.FORCE;
+                case DimensionsSummary.LUMINOUS_INTENSITY: return Dimensions.LUMINOUS_INTENSITY;
+                case DimensionsSummary.INV_LENGTH: return Dimensions.INV_LENGTH;
+                case DimensionsSummary.INV_MASS: return Dimensions.INV_MASS;
+                case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Dimensions.INV_MOMENT_OF_INERTIA;
+                case DimensionsSummary.INV_TIME: return Dimensions.INV_TIME;
+                case DimensionsSummary.LENGTH: return Dimensions.LENGTH;
+                case DimensionsSummary.MASS: return Dimensions.MASS;
+                case DimensionsSummary.MOMENT_OF_INERTIA: return Dimensions.MOMENT_OF_INERTIA;
+                case DimensionsSummary.MOMENTUM: return Dimensions.MOMENTUM;
+                case DimensionsSummary.MOMENTUM_SQUARED: return Dimensions.MOMENTUM_SQUARED;
+                case DimensionsSummary.ONE: return Dimensions.ONE;
+                case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Dimensions.RATE_OF_CHANGE_OF_AREA;
+                case DimensionsSummary.STIFFNESS: return Dimensions.STIFFNESS;
+                case DimensionsSummary.THERMODYNAMIC_TEMPERATURE: return Dimensions.THERMODYNAMIC_TEMPERATURE;
+                case DimensionsSummary.TIME: return Dimensions.TIME;
+                case DimensionsSummary.TIME_SQUARED: return Dimensions.TIME_SQUARED;
+                case DimensionsSummary.VELOCITY: return Dimensions.VELOCITY;
+                case DimensionsSummary.VELOCITY_SQUARED: return Dimensions.VELOCITY_SQUARED;
                 default: {
                     // console.warn(`Dimensions.valueOf(${M},${L},${T},${Q},${temperature},${amount},${intensity}) is not cached.`);
                     return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
@@ -1995,122 +2068,126 @@
         /**
          * All exponents are zero, a dimensionless quantity.
          */
-        Dimensions.ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, DimensionsSummary$1.ONE);
+        Dimensions.ONE = new Dimensions(R0, R0, R0, R0, R0, R0, R0, DimensionsSummary.ONE);
         /**
          * M<sup>1</sup>
          */
-        Dimensions.MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, DimensionsSummary$1.MASS);
+        Dimensions.MASS = new Dimensions(R1, R0, R0, R0, R0, R0, R0, DimensionsSummary.MASS);
         /**
          * L<sup>1</sup>
          */
-        Dimensions.LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, DimensionsSummary$1.LENGTH);
+        Dimensions.LENGTH = new Dimensions(R0, R1, R0, R0, R0, R0, R0, DimensionsSummary.LENGTH);
         /**
          * L<sup>2</sup>
          */
-        Dimensions.AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary$1.AREA);
+        Dimensions.AREA = new Dimensions(R0, R2, R0, R0, R0, R0, R0, DimensionsSummary.AREA);
         /**
          * L<sup>3</sup>
          */
-        Dimensions.VOLUME = new Dimensions(R0, R3, R0, R0, R0, R0, R0, DimensionsSummary$1.VOLUME);
+        Dimensions.VOLUME = new Dimensions(R0, R3, R0, R0, R0, R0, R0, DimensionsSummary.VOLUME);
         /**
          * Inverse Length.
          */
-        Dimensions.INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary$1.INV_LENGTH);
+        Dimensions.INV_LENGTH = new Dimensions(R0, M1, R0, R0, R0, R0, R0, DimensionsSummary.INV_LENGTH);
         /**
          * T<sup>1</sup>
          */
-        Dimensions.TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, DimensionsSummary$1.TIME);
+        Dimensions.TIME = new Dimensions(R0, R0, R1, R0, R0, R0, R0, DimensionsSummary.TIME);
         /**
          * Q<sup>1</sup>
          */
-        Dimensions.ELECTRIC_CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary$1.ELECTRIC_CHARGE);
+        Dimensions.ELECTRIC_CHARGE = new Dimensions(R0, R0, R0, R1, R0, R0, R0, DimensionsSummary.ELECTRIC_CHARGE);
         /**
          * Q<sup>1</sup>T<sup>-1<sup>
          */
-        Dimensions.ELECTRIC_CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary$1.ELECTRIC_CURRENT);
+        Dimensions.ELECTRIC_CURRENT = new Dimensions(R0, R0, M1, R1, R0, R0, R0, DimensionsSummary.ELECTRIC_CURRENT);
         /**
          *
          */
-        Dimensions.THERMODYNAMIC_TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary$1.THERMODYNAMIC_TEMPERATURE);
+        Dimensions.THERMODYNAMIC_TEMPERATURE = new Dimensions(R0, R0, R0, R0, R1, R0, R0, DimensionsSummary.THERMODYNAMIC_TEMPERATURE);
         /**
          *
          */
-        Dimensions.AMOUNT_OF_SUBSTANCE = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary$1.AMOUNT_OF_SUBSTANCE);
+        Dimensions.AMOUNT_OF_SUBSTANCE = new Dimensions(R0, R0, R0, R0, R0, R1, R0, DimensionsSummary.AMOUNT_OF_SUBSTANCE);
         /**
          *
          */
-        Dimensions.LUMINOUS_INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary$1.LUMINOUS_INTENSITY);
+        Dimensions.LUMINOUS_INTENSITY = new Dimensions(R0, R0, R0, R0, R0, R0, R1, DimensionsSummary.LUMINOUS_INTENSITY);
         /**
          * Angular Momentum.
          */
-        Dimensions.ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, DimensionsSummary$1.ANGULAR_MOMENTUM);
+        Dimensions.ANGULAR_MOMENTUM = new Dimensions(R1, R2, M1, R0, R0, R0, R0, DimensionsSummary.ANGULAR_MOMENTUM);
         /**
          * Rate of change of Area.
          */
-        Dimensions.RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary$1.RATE_OF_CHANGE_OF_AREA);
+        Dimensions.RATE_OF_CHANGE_OF_AREA = new Dimensions(R0, R2, M1, R0, R0, R0, R0, DimensionsSummary.RATE_OF_CHANGE_OF_AREA);
         /**
          * Electric Field.
          */
-        Dimensions.ELECTRIC_FIELD = new Dimensions(R1, R1, M2, M1, R0, R0, R0, DimensionsSummary$1.ELECTRIC_FIELD);
+        Dimensions.ELECTRIC_FIELD = new Dimensions(R1, R1, M2, M1, R0, R0, R0, DimensionsSummary.ELECTRIC_FIELD);
         /**
          * Electric Permittivity times Area.
          */
-        Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA = new Dimensions(M1, M1, R2, R2, R0, R0, R0, DimensionsSummary$1.ELECTRIC_PERMITTIVITY_TIMES_AREA);
+        Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA = new Dimensions(M1, M1, R2, R2, R0, R0, R0, DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA);
         /**
          * Energy or Torque.
          */
-        Dimensions.ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary$1.ENERGY_OR_TORQUE);
+        Dimensions.ENERGY_OR_TORQUE = new Dimensions(R1, R2, M2, R0, R0, R0, R0, DimensionsSummary.ENERGY_OR_TORQUE);
         /**
          * Force.
          */
-        Dimensions.FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, DimensionsSummary$1.FORCE);
+        Dimensions.FORCE = new Dimensions(R1, R1, M2, R0, R0, R0, R0, DimensionsSummary.FORCE);
         /**
          * Inverse Mass.
          */
-        Dimensions.INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, DimensionsSummary$1.INV_MASS);
+        Dimensions.INV_MASS = new Dimensions(M1, R0, R0, R0, R0, R0, R0, DimensionsSummary.INV_MASS);
         /**
          * Inverse Moment of Inertia.
          */
-        Dimensions.INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, DimensionsSummary$1.INV_MOMENT_OF_INERTIA);
+        Dimensions.INV_MOMENT_OF_INERTIA = new Dimensions(M1, M2, R0, R0, R0, R0, R0, DimensionsSummary.INV_MOMENT_OF_INERTIA);
         /**
          * Inverse Time.
          */
-        Dimensions.INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, DimensionsSummary$1.INV_TIME);
+        Dimensions.INV_TIME = new Dimensions(R0, R0, M1, R0, R0, R0, R0, DimensionsSummary.INV_TIME);
         /**
          * Moment of Inertia.
          */
-        Dimensions.MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, DimensionsSummary$1.MOMENT_OF_INERTIA);
+        Dimensions.MOMENT_OF_INERTIA = new Dimensions(R1, R2, R0, R0, R0, R0, R0, DimensionsSummary.MOMENT_OF_INERTIA);
         /**
          * Momentum.
          */
-        Dimensions.MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, DimensionsSummary$1.MOMENTUM);
+        Dimensions.MOMENTUM = new Dimensions(R1, R1, M1, R0, R0, R0, R0, DimensionsSummary.MOMENTUM);
         /**
          * Momentum squared.
          */
-        Dimensions.MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, DimensionsSummary$1.MOMENTUM_SQUARED);
+        Dimensions.MOMENTUM_SQUARED = new Dimensions(R2, R2, M2, R0, R0, R0, R0, DimensionsSummary.MOMENTUM_SQUARED);
         /**
          * Stiffness.
          */
-        Dimensions.STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary$1.STIFFNESS);
+        Dimensions.STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary.STIFFNESS);
         /**
          * Time squared.
          */
-        Dimensions.TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary$1.TIME_SQUARED);
+        Dimensions.TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary.TIME_SQUARED);
         /**
          * Velocity
          */
-        Dimensions.VELOCITY = new Dimensions(R0, R1, M1, R0, R0, R0, R0, DimensionsSummary$1.VELOCITY);
+        Dimensions.VELOCITY = new Dimensions(R0, R1, M1, R0, R0, R0, R0, DimensionsSummary.VELOCITY);
         /**
          * Velocity squared
          */
-        Dimensions.VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary$1.VELOCITY_SQUARED);
+        Dimensions.VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary.VELOCITY_SQUARED);
         return Dimensions;
     }());
 
     // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
+    /**
+     * @hidden
+     */
     var SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
     /**
      * The numerator, denominator values for each dimension (M, L, T, Q, temperature, amount, intensity).
+     * @hidden
      */
     var patterns = [
         [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],
@@ -2158,6 +2235,7 @@
      * Symbol
      * Expression in terms of other SI units
      * Expression in terms of SI base units.
+     * @hidden
      */
     var decodes = [
         ["F/m or C**2/N·m**2"],
@@ -2197,6 +2275,15 @@
         ["Wb"],
         ["N·m**2/C**2"]
     ];
+    /**
+     * @hidden
+     * @param multiplier
+     * @param formatted
+     * @param dimensions
+     * @param labels
+     * @param compact
+     * @returns
+     */
     var dumbString = function (multiplier, formatted, dimensions, labels, compact) {
         var stringify = function (rational, label) {
             if (rational.numer === 0) {
@@ -2226,6 +2313,15 @@
         }).join(" ");
         return "" + scaleString + operatorStr + unitsString;
     };
+    /**
+     * @hidden
+     * @param multiplier
+     * @param formatted
+     * @param dimensions
+     * @param labels
+     * @param compact
+     * @returns
+     */
     var unitString = function (multiplier, formatted, dimensions, labels, compact) {
         var M = dimensions.M;
         var L = dimensions.L;
@@ -2258,18 +2354,48 @@
         }
         return dumbString(multiplier, formatted, dimensions, labels, compact);
     };
+    /**
+     * @hidden
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
     function add(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
     }
+    /**
+     * @hidden
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
     function sub(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier - rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
     }
+    /**
+     * @hidden
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
     function mul(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier * rhs.multiplier, lhs.dimensions.mul(rhs.dimensions), lhs.labels);
     }
+    /**
+     * @hidden
+     * @param α
+     * @param unit
+     * @returns
+     */
     function scale(α, unit) {
         return Unit.valueOf(α * unit.multiplier, unit.dimensions, unit.labels);
     }
+    /**
+     * @hidden
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
     function div(lhs, rhs) {
         return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
     }
@@ -2644,34 +2770,34 @@
             // The summary on the dimensions is used to improve lookup time.
             if (multiplier === 1) {
                 switch (dimensions.summary) {
-                    case DimensionsSummary$1.AMOUNT_OF_SUBSTANCE: return Unit.MOLE;
-                    case DimensionsSummary$1.ANGULAR_MOMENTUM: return Unit.JOULE_SECOND;
-                    case DimensionsSummary$1.AREA: return Unit.METER_SQUARED;
-                    case DimensionsSummary$1.ELECTRIC_CHARGE: return Unit.COULOMB;
-                    case DimensionsSummary$1.ELECTRIC_CURRENT: return Unit.AMPERE;
-                    case DimensionsSummary$1.ELECTRIC_FIELD: return Unit.ELECTRIC_FIELD;
-                    case DimensionsSummary$1.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
-                    case DimensionsSummary$1.ENERGY_OR_TORQUE: return Unit.JOULE;
-                    case DimensionsSummary$1.FORCE: return Unit.NEWTON;
-                    case DimensionsSummary$1.LUMINOUS_INTENSITY: return Unit.CANDELA;
-                    case DimensionsSummary$1.INV_LENGTH: return Unit.INV_METER;
-                    case DimensionsSummary$1.INV_MASS: return Unit.INV_KILOGRAM;
-                    case DimensionsSummary$1.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
-                    case DimensionsSummary$1.INV_TIME: return Unit.INV_SECOND;
-                    case DimensionsSummary$1.LENGTH: return Unit.METER;
-                    case DimensionsSummary$1.MASS: return Unit.KILOGRAM;
-                    case DimensionsSummary$1.MOMENT_OF_INERTIA: return Unit.KILOGRAM_METER_SQUARED;
-                    case DimensionsSummary$1.MOMENTUM: return Unit.KILOGRAM_METER_PER_SECOND;
-                    case DimensionsSummary$1.MOMENTUM_SQUARED: return Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED;
-                    case DimensionsSummary$1.ONE: return Unit.ONE;
-                    case DimensionsSummary$1.RATE_OF_CHANGE_OF_AREA: return Unit.METER_SQUARED_PER_SECOND;
-                    case DimensionsSummary$1.STIFFNESS: return Unit.STIFFNESS;
-                    case DimensionsSummary$1.THERMODYNAMIC_TEMPERATURE: return Unit.KELVIN;
-                    case DimensionsSummary$1.TIME: return Unit.SECOND;
-                    case DimensionsSummary$1.TIME_SQUARED: return Unit.SECOND_SQUARED;
-                    case DimensionsSummary$1.VELOCITY: return Unit.METER_PER_SECOND;
-                    case DimensionsSummary$1.VELOCITY_SQUARED: return Unit.METER_SQUARED_PER_SECOND_SQUARED;
-                    case DimensionsSummary$1.VOLUME: return Unit.METER_CUBED;
+                    case DimensionsSummary.AMOUNT_OF_SUBSTANCE: return Unit.MOLE;
+                    case DimensionsSummary.ANGULAR_MOMENTUM: return Unit.JOULE_SECOND;
+                    case DimensionsSummary.AREA: return Unit.METER_SQUARED;
+                    case DimensionsSummary.ELECTRIC_CHARGE: return Unit.COULOMB;
+                    case DimensionsSummary.ELECTRIC_CURRENT: return Unit.AMPERE;
+                    case DimensionsSummary.ELECTRIC_FIELD: return Unit.ELECTRIC_FIELD;
+                    case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
+                    case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
+                    case DimensionsSummary.FORCE: return Unit.NEWTON;
+                    case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
+                    case DimensionsSummary.INV_LENGTH: return Unit.INV_METER;
+                    case DimensionsSummary.INV_MASS: return Unit.INV_KILOGRAM;
+                    case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
+                    case DimensionsSummary.INV_TIME: return Unit.INV_SECOND;
+                    case DimensionsSummary.LENGTH: return Unit.METER;
+                    case DimensionsSummary.MASS: return Unit.KILOGRAM;
+                    case DimensionsSummary.MOMENT_OF_INERTIA: return Unit.KILOGRAM_METER_SQUARED;
+                    case DimensionsSummary.MOMENTUM: return Unit.KILOGRAM_METER_PER_SECOND;
+                    case DimensionsSummary.MOMENTUM_SQUARED: return Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED;
+                    case DimensionsSummary.ONE: return Unit.ONE;
+                    case DimensionsSummary.RATE_OF_CHANGE_OF_AREA: return Unit.METER_SQUARED_PER_SECOND;
+                    case DimensionsSummary.STIFFNESS: return Unit.STIFFNESS;
+                    case DimensionsSummary.THERMODYNAMIC_TEMPERATURE: return Unit.KELVIN;
+                    case DimensionsSummary.TIME: return Unit.SECOND;
+                    case DimensionsSummary.TIME_SQUARED: return Unit.SECOND_SQUARED;
+                    case DimensionsSummary.VELOCITY: return Unit.METER_PER_SECOND;
+                    case DimensionsSummary.VELOCITY_SQUARED: return Unit.METER_SQUARED_PER_SECOND_SQUARED;
+                    case DimensionsSummary.VOLUME: return Unit.METER_CUBED;
                 }
             }
             // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
@@ -2771,6 +2897,7 @@
     /**
      * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
      * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
+     * @hidden
      */
     function assertConsistentUnits(aName, A, bName, B, metric) {
         if (!metric.isZero(A) && !metric.isZero(B)) {
@@ -2787,6 +2914,14 @@
         }
     }
 
+    /**
+     * @hidden
+     * @param name
+     * @param value
+     * @param unit
+     * @param metric
+     * @returns
+     */
     function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
         if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
             throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
@@ -2797,7 +2932,7 @@
     }
 
     /**
-     *
+     * @hidden
      */
     var RigidBody = /** @class */ (function (_super) {
         __extends(RigidBody, _super);
@@ -2811,6 +2946,7 @@
              * the index into the variables array for this rigid body, or -1 if not in vars array.
              */
             _this.varsIndex_ = -1;
+            mustBeNonNullObject('metric', metric);
             _this.mass_ = metric.scalar(1);
             _this.massLock_ = metric.lock(_this.mass_);
             _this.charge_ = metric.zero();
@@ -2932,7 +3068,7 @@
                 return this.inertiaTensorInverse_;
             },
             set: function (source) {
-                mustBeObject('Iinv', source);
+                mustBeNonNullObject('Iinv', source);
                 mustBeNumber('dimensions', source.dimensions);
                 mustBeFunction('getElement', source.getElement);
                 this.inertiaTensorInverse_ = this.metric.copyMatrix(source);
@@ -3087,6 +3223,7 @@
 
     /**
      * An object with no internal structure.
+     * @hidden
      */
     var Particle = /** @class */ (function (_super) {
         __extends(Particle, _super);
@@ -3116,191 +3253,54 @@
     }(RigidBody));
 
     /**
-     *
+     * @hidden
      */
-    var Spring = /** @class */ (function (_super) {
-        __extends(Spring, _super);
-        /**
-         *
-         */
-        function Spring(body1_, body2_) {
-            var _this = _super.call(this) || this;
-            _this.body1_ = body1_;
-            _this.body2_ = body2_;
-            /**
-             *
-             */
-            _this.forces = [];
-            _this.metric = body1_.metric;
-            var metric = _this.metric;
-            _this.$restLength = metric.scalar(1);
-            _this.$restLengthLock = metric.lock(_this.$restLength);
-            _this.$stiffness = metric.scalar(1);
-            _this.$stiffnessLock = metric.lock(_this.$stiffness);
-            _this.attach1_ = metric.zero();
-            _this.attach1Lock = metric.lock(_this.attach1_);
-            _this.attach2_ = metric.zero();
-            _this.attach2Lock = metric.lock(_this.attach2_);
-            _this.end1_ = metric.zero();
-            _this.end1Lock_ = metric.lock(_this.end1_);
-            _this.end2_ = metric.zero();
-            _this.end2Lock_ = metric.lock(_this.end2_);
-            _this.F1 = new Force(_this.body1_, metric);
-            _this.F1.locationCoordType = WORLD;
-            _this.F1.vectorCoordType = WORLD;
-            _this.F2 = new Force(_this.body2_, metric);
-            _this.F2.locationCoordType = WORLD;
-            _this.F2.vectorCoordType = WORLD;
-            _this.potentialEnergy_ = metric.zero();
-            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-            _this.forces = [_this.F1, _this.F2];
-            return _this;
-        }
-        Object.defineProperty(Spring.prototype, "restLength", {
-            get: function () {
-                return this.$restLength;
-            },
-            set: function (restLength) {
-                mustBeDimensionlessOrCorrectUnits('restLength', restLength, Unit.METER, this.metric);
-                this.metric.unlock(this.$restLength, this.$restLengthLock);
-                this.metric.copy(restLength, this.$restLength);
-                this.$restLengthLock = this.metric.lock(this.$restLength);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spring.prototype, "stiffness", {
-            get: function () {
-                return this.$stiffness;
-            },
-            set: function (stiffness) {
-                mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
-                this.metric.unlock(this.$stiffness, this.$stiffnessLock);
-                this.metric.copy(stiffness, this.$stiffness);
-                this.$stiffnessLock = this.metric.lock(this.$stiffness);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
-            if (this.attach1_ == null || this.body1_ == null) {
-                throw new Error();
-            }
-            this.body1_.localPointToWorldPoint(this.attach1_, x);
-        };
-        Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
-            if (this.attach2_ == null || this.body2_ == null) {
-                throw new Error();
-            }
-            this.body2_.localPointToWorldPoint(this.attach2_, x);
-        };
-        Object.defineProperty(Spring.prototype, "attach1", {
-            get: function () {
-                return this.attach1_;
-            },
-            set: function (attach1) {
-                this.metric.unlock(this.attach1_, this.attach1Lock);
-                this.metric.copyVector(attach1, this.attach1_);
-                this.attach1Lock = this.metric.lock(this.attach1_);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spring.prototype, "attach2", {
-            get: function () {
-                return this.attach2_;
-            },
-            set: function (attach2) {
-                this.metric.unlock(this.attach2_, this.attach2Lock);
-                this.metric.copyVector(attach2, this.attach2_);
-                this.attach2Lock = this.metric.lock(this.attach2_);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spring.prototype, "end1", {
-            get: function () {
-                this.metric.unlock(this.end1_, this.end1Lock_);
-                this.computeBody1AttachPointInWorldCoords(this.end1_);
-                this.end1Lock_ = this.metric.lock(this.end1_);
-                return this.end1_;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spring.prototype, "end2", {
-            get: function () {
-                this.metric.unlock(this.end2_, this.end2Lock_);
-                this.computeBody2AttachPointInWorldCoords(this.end2_);
-                this.end2Lock_ = this.metric.lock(this.end2_);
-                return this.end2_;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         *
-         */
-        Spring.prototype.updateForces = function () {
-            this.computeBody1AttachPointInWorldCoords(this.F1.location);
-            this.computeBody2AttachPointInWorldCoords(this.F2.location);
-            var metric = this.metric;
-            // Temporarily use the F2 vector property to compute the direction (unit vector).
-            metric.copyVector(this.F2.location, this.F2.vector);
-            metric.subVector(this.F2.vector, this.F1.location);
-            metric.direction(this.F2.vector, true);
-            // this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
-            // Use the the F1 vector property as working storage.
-            // 1. Compute the extension.
-            metric.copyVector(this.F1.location, this.F1.vector); // vector contains F1.location
-            metric.subVector(this.F1.vector, this.F2.location); // vector contains (F1.location - F2.location)
-            metric.magnitude(this.F1.vector, true); // vector contains |F1.location - F2.location|
-            metric.subScalar(this.F1.vector, this.restLength); // vector contains (|F1.loc - F2.loc| - restLength)
-            // 2. Multiply by the stiffness.
-            metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
-            // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
-            metric.mulByVector(this.F1.vector, this.F2.vector);
-            // 4. The F2 vector property is the reaction to the F1 vector action.
-            this.metric.copyVector(this.F1.vector, this.F2.vector);
-            this.metric.neg(this.F2.vector);
-            return this.forces;
-        };
-        /**
-         *
-         */
-        Spring.prototype.disconnect = function () {
-            // Does nothing
-        };
-        /**
-         *
-         */
-        Spring.prototype.potentialEnergy = function () {
-            this.computeBody1AttachPointInWorldCoords(this.F1.location);
-            this.computeBody2AttachPointInWorldCoords(this.F2.location);
-            var metric = this.metric;
-            this.metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-            this.potentialEnergyLock_ = -1;
-            // spring potential energy = 0.5 * stiffness * (stretch * stretch)
-            // 1. Compute the magnitude of the distance between the endpoints.
-            assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
-            metric.copyVector(this.F2.location, this.potentialEnergy_);
-            metric.subVector(this.potentialEnergy_, this.F1.location);
-            metric.magnitude(this.potentialEnergy_, true);
-            // 2. Compute the stretch.
-            assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
-            metric.sub(this.potentialEnergy_, this.restLength);
-            // 3. Square it.
-            metric.quaditude(this.potentialEnergy_, true);
-            // 4. Multiply by the stiffness.
-            metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
-            // 5. Multiply by the 0.5 factor.
-            metric.mulByNumber(this.potentialEnergy_, 0.5);
-            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-            return this.potentialEnergy_;
-        };
-        return Spring;
-    }(AbstractSimObject));
+    function isBoolean(x) {
+        return (typeof x === 'boolean');
+    }
 
+    /**
+     * @hidden
+     */
+    function beBoolean() {
+        return "be `boolean`";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeBoolean(name, value, contextBuilder) {
+        mustSatisfy(name, isBoolean(value), beBoolean, contextBuilder);
+        return value;
+    }
+
+    // Copyright 2017 David Holmes.  All Rights Reserved.
+    // Copyright 2016 Erik Neumann.  All Rights Reserved.
+    //
+    // Licensed under the Apache License, Version 2.0 (the 'License');
+    // you may not use this file except in compliance with the License.
+    // You may obtain a copy of the License at
+    //
+    //     http://www.apache.org/licenses/LICENSE-2.0
+    //
+    // Unless required by applicable law or agreed to in writing, software
+    // distributed under the License is distributed on an 'AS IS' BASIS,
+    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    // See the License for the specific language governing permissions and
+    // limitations under the License.
+    /**
+     * Converts the text to the corresponding name identifier by changing to uppercase
+     * and replacing spaces and dashes with underscores.
+     * @hidden
+     */
+    function toName(text) {
+        return text.toUpperCase().replace(/[ -]/g, '_');
+    }
+
+    /**
+     * @hidden
+     * @param xs
+     * @returns
+     */
     function clone(xs) {
         var length = xs.length;
         var rv = new Array(length);
@@ -3310,6 +3310,12 @@
         return rv;
     }
 
+    /**
+     * @hidden
+     * @param xs
+     * @param x
+     * @returns
+     */
     function contains(xs, x) {
         var N = xs.length;
         for (var i = 0; i < N; i++) {
@@ -3324,6 +3330,7 @@
      * Search an array for the first element that satisfies a given condition and
      * return its index. Returns the index of the first array element that passes the test,
      * or -1 if no element is found.
+     * @hidden
      */
     function findIndex(xs, test) {
         var N = xs.length;
@@ -3340,6 +3347,7 @@
      * Search an array for the first element that satisfies a given condition and
      * return that element. Returns the first array element that passes the test,
      * or null if no element is found.
+     * @hidden
      */
     function find(xs, test) {
         var i = findIndex(xs, test);
@@ -3361,30 +3369,9 @@
     // See the License for the specific language governing permissions and
     // limitations under the License.
     /**
-     * Converts the text to the corresponding name identifier by changing to uppercase
-     * and replacing spaces and dashes with underscores.
-     */
-    function toName(text) {
-        return text.toUpperCase().replace(/[ -]/g, '_');
-    }
-
-    // Copyright 2017 David Holmes.  All Rights Reserved.
-    // Copyright 2016 Erik Neumann.  All Rights Reserved.
-    //
-    // Licensed under the Apache License, Version 2.0 (the 'License');
-    // you may not use this file except in compliance with the License.
-    // You may obtain a copy of the License at
-    //
-    //     http://www.apache.org/licenses/LICENSE-2.0
-    //
-    // Unless required by applicable law or agreed to in writing, software
-    // distributed under the License is distributed on an 'AS IS' BASIS,
-    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    // See the License for the specific language governing permissions and
-    // limitations under the License.
-    /**
      * Ensures the given text consists of only uppercase letters, numbers and underscore
      * and first character is a letter or underscore.
+     * @hidden
      */
     function validName(text) {
         if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
@@ -3394,6 +3381,9 @@
     }
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var ParameterBoolean = /** @class */ (function () {
         // private getter_: () => boolean;
         // private setter_: (value: boolean) => any;
@@ -3429,6 +3419,9 @@
     }());
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var ParameterNumber = /** @class */ (function () {
         // private choices_: string[];
         // private values_: number[];
@@ -3492,6 +3485,9 @@
     }());
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var ParameterString = /** @class */ (function () {
         // private setter_: (value: string) => any;
         // private isComputed_: boolean;
@@ -3541,6 +3537,7 @@
     }());
 
     /**
+     * @hidden
      * Removes from an array the element at the specified index.
      * @param xs Array or array like object from which to remove value.
      * @param index The index to remove.
@@ -3554,6 +3551,7 @@
     }
 
     /**
+     * @hidden
      * Removes the first occurrence of a particular value from an array.
      * @param xs Array from which to remove value.
      * @param x Object to remove.
@@ -3570,7 +3568,7 @@
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
     /**
-     *
+     * @hidden
      */
     var AbstractSubject = /** @class */ (function () {
         function AbstractSubject() {
@@ -3685,7 +3683,7 @@
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
     /**
-     *
+     * @hidden
      */
     var GenericEvent = /** @class */ (function () {
         /**
@@ -3721,7 +3719,7 @@
     }());
 
     /**
-     *
+     * @hidden
      */
     var SimList = /** @class */ (function (_super) {
         __extends(SimList, _super);
@@ -3742,7 +3740,7 @@
         SimList.prototype.add = function (simObject) {
             for (var i = 0; i < arguments.length; i++) {
                 var element = arguments[i];
-                mustBeObject('element', element);
+                mustBeNonNullObject('element', element);
                 if (!contains(this.elements_, element)) {
                     this.elements_.push(element);
                     this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
@@ -3788,13 +3786,16 @@
         return SimList;
     }(AbstractSubject));
 
+    /**
+     * @hidden
+     */
     function isString(s) {
         return (typeof s === 'string');
     }
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
-     *
+     * @hidden
      */
     var ConcreteVariable = /** @class */ (function () {
         /**
@@ -3888,6 +3889,9 @@
         return ConcreteVariable;
     }());
 
+    /**
+     * @hidden
+     */
     function isArray(x) {
         return Object.prototype.toString.call(x) === '[object Array]';
     }
@@ -3896,6 +3900,7 @@
      * Returns a new array which is an expanded copy of the given array.
      * Adds `quantity` new entries at `position` location in the array.
      * Negative quantity will delete array entries.
+     * @hidden
      */
     function extendArray(array, quantity, value) {
         if (quantity === 0) {
@@ -3923,6 +3928,7 @@
     }
 
     /**
+     * @hidden
      * A set of Variables.
      * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
      *
@@ -4377,54 +4383,56 @@
     }(AbstractSubject));
 
     /**
-     * <p>
-     * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+     * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
      * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
-     * </p>
+     * @hidden
      */
-    var State = /** @class */ (function (_super) {
-        __extends(State, _super);
+    var Physics = /** @class */ (function (_super) {
+        __extends(Physics, _super);
         /**
          * Constructs a Physics engine for 3D simulations.
          */
-        function State(metric, dynamics) {
+        function Physics(metric, dynamics) {
             var _this = _super.call(this) || this;
             _this.metric = metric;
             _this.dynamics = dynamics;
             /**
              *
              */
-            _this.simList_ = new SimList();
+            _this.$simList = new SimList();
             /**
              * The RigidBody(s) in this simulation.
              */
-            _this.bodies_ = [];
+            _this.$bodies = [];
             /**
              *
              */
-            _this.forceLaws_ = [];
+            _this.$forceLaws = [];
             /**
              *
              */
-            _this.showForces_ = false;
-            _this.varsList_ = new VarsList(dynamics.getVarNames());
-            _this.potentialOffset_ = metric.zero();
-            _this.force_ = metric.zero();
-            _this.torque_ = metric.zero();
-            _this.totalEnergy_ = metric.zero();
-            _this.totalEnergyLock_ = metric.lock(_this.totalEnergy_);
-            _this.numVariablesPerBody = dynamics.numVariablesPerBody();
+            _this.$showForces = false;
+            mustBeNonNullObject('metric', metric);
+            mustBeNonNullObject('dynamics', dynamics);
+            _this.$varsList = new VarsList(dynamics.getVarNames());
+            _this.$potentialOffset = metric.zero();
+            _this.$force = metric.zero();
+            _this.$torque = metric.zero();
+            _this.$totalEnergy = metric.zero();
+            _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
+            _this.$numVariablesPerBody = dynamics.numVariablesPerBody();
             return _this;
         }
-        Object.defineProperty(State.prototype, "showForces", {
+        Object.defineProperty(Physics.prototype, "showForces", {
             /**
              * Determines whether calculated forces will be added to the simulation list.
              */
             get: function () {
-                return this.showForces_;
+                return this.$showForces;
             },
             set: function (showForces) {
-                this.showForces_ = showForces;
+                mustBeBoolean('showForces', showForces);
+                this.$showForces = showForces;
             },
             enumerable: false,
             configurable: true
@@ -4432,18 +4440,19 @@
         /**
          *
          */
-        State.prototype.addBody = function (body) {
-            if (!contains(this.bodies_, body)) {
+        Physics.prototype.addBody = function (body) {
+            mustBeNonNullObject('body', body);
+            if (!contains(this.$bodies, body)) {
                 var dynamics = this.dynamics;
                 // create variables in vars array for this body
                 var names = [];
-                for (var k = 0; k < this.numVariablesPerBody; k++) {
+                for (var k = 0; k < this.$numVariablesPerBody; k++) {
                     names.push(dynamics.getOffsetName(k));
                 }
-                body.varsIndex = this.varsList_.addVariables(names);
+                body.varsIndex = this.$varsList.addVariables(names);
                 // add body to end of list of bodies
-                this.bodies_.push(body);
-                this.simList_.add(body);
+                this.$bodies.push(body);
+                this.$simList.add(body);
             }
             this.updateFromBody(body);
             this.discontinuosChangeToEnergy();
@@ -4451,44 +4460,47 @@
         /**
          *
          */
-        State.prototype.removeBody = function (body) {
-            if (contains(this.bodies_, body)) {
-                this.varsList_.deleteVariables(body.varsIndex, this.numVariablesPerBody);
-                remove(this.bodies_, body);
+        Physics.prototype.removeBody = function (body) {
+            mustBeNonNullObject('body', body);
+            if (contains(this.$bodies, body)) {
+                this.$varsList.deleteVariables(body.varsIndex, this.$numVariablesPerBody);
+                remove(this.$bodies, body);
                 body.varsIndex = -1;
             }
-            this.simList_.remove(body);
+            this.$simList.remove(body);
             this.discontinuosChangeToEnergy();
         };
         /**
          *
          */
-        State.prototype.addForceLaw = function (forceLaw) {
-            if (!contains(this.forceLaws_, forceLaw)) {
-                this.forceLaws_.push(forceLaw);
+        Physics.prototype.addForceLaw = function (forceLaw) {
+            mustBeNonNullObject('forceLaw', forceLaw);
+            if (!contains(this.$forceLaws, forceLaw)) {
+                this.$forceLaws.push(forceLaw);
             }
             this.discontinuosChangeToEnergy();
         };
         /**
          *
          */
-        State.prototype.removeForceLaw = function (forceLaw) {
+        Physics.prototype.removeForceLaw = function (forceLaw) {
+            mustBeNonNullObject('forceLaw', forceLaw);
             forceLaw.disconnect();
             this.discontinuosChangeToEnergy();
-            remove(this.forceLaws_, forceLaw);
+            remove(this.$forceLaws, forceLaw);
         };
-        State.prototype.discontinuosChangeToEnergy = function () {
+        Physics.prototype.discontinuosChangeToEnergy = function () {
             var _a;
             var dynamics = this.dynamics;
-            (_a = this.varsList_).incrSequence.apply(_a, dynamics.discontinuousEnergyVariables());
+            (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVariables());
         };
         /**
          * Transfer state vector back to the rigid bodies.
          * Also takes care of updating auxiliary variables, which are also mutable.
          */
-        State.prototype.updateBodies = function (vars) {
+        Physics.prototype.updateBodiesFromStateVariables = function (vars) {
             var dynamics = this.dynamics;
-            var bodies = this.bodies_;
+            var bodies = this.$bodies;
             var N = bodies.length;
             for (var i = 0; i < N; i++) {
                 var body = bodies[i];
@@ -4496,7 +4508,9 @@
                 if (idx < 0) {
                     return;
                 }
-                // Update state variables.
+                // Delegate the updating of the body from the state variables because
+                // we do not know how to access the properties of the bodies in the
+                // various dimensions.
                 dynamics.updateBody(vars, idx, body);
             }
         };
@@ -4505,19 +4519,19 @@
          * The physics engine removes objects that were temporarily added to the simulation
          * list but have expired.
          */
-        State.prototype.prolog = function () {
+        Physics.prototype.prolog = function () {
             this.simList.removeTemporary(this.varsList.getTime());
         };
         /**
          * Gets the state vector, Y(t).
          */
-        State.prototype.getState = function () {
-            return this.varsList_.getValues();
+        Physics.prototype.getState = function () {
+            return this.$varsList.getValues();
         };
         /**
          * Sets the state vector, Y(t).
          */
-        State.prototype.setState = function (state) {
+        Physics.prototype.setState = function (state) {
             this.varsList.setValues(state, true);
         };
         /**
@@ -4525,12 +4539,12 @@
          * This will move the objects and forces will be recalculated.
          * If anything it could be passed to forceLaw.updateForces.
          */
-        State.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
+        Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
             var metric = this.metric;
             var dynamics = this.dynamics;
             // Move objects so that rigid body objects know their current state.
-            this.updateBodies(state);
-            var bodies = this.bodies_;
+            this.updateBodiesFromStateVariables(state);
+            var bodies = this.$bodies;
             var Nb = bodies.length;
             for (var bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
                 var body = bodies[bodyIndex];
@@ -4540,7 +4554,7 @@
                 }
                 var mass = metric.a(body.M);
                 if (mass === Number.POSITIVE_INFINITY) {
-                    for (var k = 0; k < this.numVariablesPerBody; k++) {
+                    for (var k = 0; k < this.$numVariablesPerBody; k++) {
                         rateOfChange[idx + k] = 0; // infinite mass objects don't move
                     }
                 }
@@ -4551,7 +4565,7 @@
                     dynamics.zeroAngularMomentum(rateOfChange, idx);
                 }
             }
-            var forceLaws = this.forceLaws_;
+            var forceLaws = this.$forceLaws;
             var Nlaws = forceLaws.length;
             for (var lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
                 var forceLaw = forceLaws[lawIndex];
@@ -4562,17 +4576,16 @@
                     this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
                 }
             }
-            rateOfChange[this.varsList_.timeIndex()] = 1; // time variable
-            return null;
+            rateOfChange[this.$varsList.timeIndex()] = 1;
         };
         /**
          * Applying forces gives rise to linear and angular momentum.
          * @param rateOfChange The (output) rate of change of the state variables.
          * @param forceApp The force application which results in a rate of change of linear and angular momentum
          */
-        State.prototype.applyForce = function (rateOfChange, forceApp, Δt, uomTime) {
+        Physics.prototype.applyForce = function (rateOfChange, forceApp, Δt, uomTime) {
             var body = forceApp.getBody();
-            if (!(contains(this.bodies_, body))) {
+            if (!(contains(this.$bodies, body))) {
                 return;
             }
             var idx = body.varsIndex;
@@ -4583,8 +4596,8 @@
             var dynamics = this.dynamics;
             // The rate of change of momentum is force.
             // dP/dt = F
-            forceApp.computeForce(this.force_);
-            var F = this.force_;
+            forceApp.computeForce(this.$force);
+            var F = this.$force;
             // Bootstrap the linear momentum unit of measure.
             if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
                 metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
@@ -4592,30 +4605,30 @@
             dynamics.addForce(rateOfChange, idx, F);
             // The rate of change of angular momentum (bivector) is given by
             // dL/dt = r ^ F = Γ
-            forceApp.computeTorque(this.torque_);
-            var T = this.torque_;
+            forceApp.computeTorque(this.$torque);
+            var T = this.$torque;
             // Bootstrap the angular momentum unit of measure.
             if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
                 metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
             }
             dynamics.addTorque(rateOfChange, idx, T);
-            if (this.showForces_) {
-                forceApp.expireTime = this.varsList_.getTime();
-                this.simList_.add(forceApp);
+            if (this.$showForces) {
+                forceApp.expireTime = this.$varsList.getTime();
+                this.$simList.add(forceApp);
             }
         };
-        Object.defineProperty(State.prototype, "time", {
+        Object.defineProperty(Physics.prototype, "time", {
             /**
              *
              */
             get: function () {
-                return this.varsList_.getTime();
+                return this.$varsList.getTime();
             },
             enumerable: false,
             configurable: true
         });
-        State.prototype.updateFromBodies = function () {
-            var bodies = this.bodies_;
+        Physics.prototype.updateFromBodies = function () {
+            var bodies = this.$bodies;
             var N = bodies.length;
             for (var i = 0; i < N; i++) {
                 this.updateFromBody(bodies[i]);
@@ -4625,49 +4638,49 @@
         /**
          *
          */
-        State.prototype.updateFromBody = function (body) {
+        Physics.prototype.updateFromBody = function (body) {
             var idx = body.varsIndex;
             if (idx > -1) {
-                this.dynamics.updateVarsFromBody(body, idx, this.varsList_);
+                this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
             }
         };
         /**
          * Handler for actions to be performed after the evaluate calls and setState.
          * Computes the system energy, linear momentum and angular momentum.
          */
-        State.prototype.epilog = function () {
-            var varsList = this.varsList_;
+        Physics.prototype.epilog = function () {
+            var varsList = this.$varsList;
             var vars = varsList.getValues();
-            this.updateBodies(vars);
+            this.updateBodiesFromStateVariables(vars);
             var dynamics = this.dynamics;
-            dynamics.epilog(this.bodies_, this.forceLaws_, this.potentialOffset_, varsList);
+            dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
         };
-        Object.defineProperty(State.prototype, "bodies", {
+        Object.defineProperty(Physics.prototype, "bodies", {
             /**
              * Provides a reference to the bodies in the simulation.
              */
             get: function () {
-                return this.bodies_;
+                return this.$bodies;
             },
             enumerable: false,
             configurable: true
         });
-        Object.defineProperty(State.prototype, "simList", {
+        Object.defineProperty(Physics.prototype, "simList", {
             /**
              *
              */
             get: function () {
-                return this.simList_;
+                return this.$simList;
             },
             enumerable: false,
             configurable: true
         });
-        Object.defineProperty(State.prototype, "varsList", {
+        Object.defineProperty(Physics.prototype, "varsList", {
             /**
              *
              */
             get: function () {
-                return this.varsList_;
+                return this.$varsList;
             },
             enumerable: false,
             configurable: true
@@ -4676,40 +4689,237 @@
          * Computes the sum of the translational and rotational kinetic energy of all bodies,
          * and the potential energy due to body interactions for the force laws.
          */
-        State.prototype.totalEnergy = function () {
+        Physics.prototype.totalEnergy = function () {
             var metric = this.metric;
-            metric.unlock(this.totalEnergy_, this.totalEnergyLock_);
+            metric.unlock(this.$totalEnergy, this.$totalEnergyLock);
             // TODO: Could be more efficient...
-            metric.write(metric.zero(), this.totalEnergy_);
-            metric.add(this.totalEnergy_, this.potentialOffset_);
-            var bs = this.bodies_;
+            metric.write(metric.zero(), this.$totalEnergy);
+            metric.add(this.$totalEnergy, this.$potentialOffset);
+            var bs = this.$bodies;
             var Nb = bs.length;
             for (var i = 0; i < Nb; i++) {
                 var body = bs[i];
                 if (isFinite(metric.a(body.M))) {
-                    metric.add(this.totalEnergy_, body.rotationalEnergy());
-                    metric.add(this.totalEnergy_, body.translationalEnergy());
+                    metric.add(this.$totalEnergy, body.rotationalEnergy());
+                    metric.add(this.$totalEnergy, body.translationalEnergy());
                 }
             }
-            var fs = this.forceLaws_;
+            var fs = this.$forceLaws;
             var Nf = fs.length;
             for (var i = 0; i < Nf; i++) {
-                metric.add(this.totalEnergy_, fs[i].potentialEnergy());
+                metric.add(this.$totalEnergy, fs[i].potentialEnergy());
             }
-            this.totalEnergyLock_ = metric.lock(this.totalEnergy_);
-            return this.totalEnergy_;
+            this.$totalEnergyLock = metric.lock(this.$totalEnergy);
+            return this.$totalEnergy;
         };
-        return State;
+        return Physics;
     }(AbstractSubject));
 
+    /**
+     * @hidden
+     */
+    var Spring = /** @class */ (function (_super) {
+        __extends(Spring, _super);
+        /**
+         *
+         */
+        function Spring(body1_, body2_) {
+            var _this = _super.call(this) || this;
+            _this.body1_ = body1_;
+            _this.body2_ = body2_;
+            /**
+             *
+             */
+            _this.forces = [];
+            _this.metric = body1_.metric;
+            var metric = _this.metric;
+            _this.$restLength = metric.scalar(1);
+            _this.$restLengthLock = metric.lock(_this.$restLength);
+            _this.$stiffness = metric.scalar(1);
+            _this.$stiffnessLock = metric.lock(_this.$stiffness);
+            _this.attach1_ = metric.zero();
+            _this.attach1Lock = metric.lock(_this.attach1_);
+            _this.attach2_ = metric.zero();
+            _this.attach2Lock = metric.lock(_this.attach2_);
+            _this.end1_ = metric.zero();
+            _this.end1Lock_ = metric.lock(_this.end1_);
+            _this.end2_ = metric.zero();
+            _this.end2Lock_ = metric.lock(_this.end2_);
+            _this.F1 = new Force(_this.body1_, metric);
+            _this.F1.locationCoordType = WORLD;
+            _this.F1.vectorCoordType = WORLD;
+            _this.F2 = new Force(_this.body2_, metric);
+            _this.F2.locationCoordType = WORLD;
+            _this.F2.vectorCoordType = WORLD;
+            _this.potentialEnergy_ = metric.zero();
+            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+            _this.forces = [_this.F1, _this.F2];
+            return _this;
+        }
+        Object.defineProperty(Spring.prototype, "restLength", {
+            get: function () {
+                return this.$restLength;
+            },
+            set: function (restLength) {
+                mustBeDimensionlessOrCorrectUnits('restLength', restLength, Unit.METER, this.metric);
+                this.metric.unlock(this.$restLength, this.$restLengthLock);
+                this.metric.copy(restLength, this.$restLength);
+                this.$restLengthLock = this.metric.lock(this.$restLength);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spring.prototype, "stiffness", {
+            get: function () {
+                return this.$stiffness;
+            },
+            set: function (stiffness) {
+                mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
+                this.metric.unlock(this.$stiffness, this.$stiffnessLock);
+                this.metric.copy(stiffness, this.$stiffness);
+                this.$stiffnessLock = this.metric.lock(this.$stiffness);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
+            if (this.attach1_ == null || this.body1_ == null) {
+                throw new Error();
+            }
+            this.body1_.localPointToWorldPoint(this.attach1_, x);
+        };
+        Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
+            if (this.attach2_ == null || this.body2_ == null) {
+                throw new Error();
+            }
+            this.body2_.localPointToWorldPoint(this.attach2_, x);
+        };
+        Object.defineProperty(Spring.prototype, "attach1", {
+            get: function () {
+                return this.attach1_;
+            },
+            set: function (attach1) {
+                this.metric.unlock(this.attach1_, this.attach1Lock);
+                this.metric.copyVector(attach1, this.attach1_);
+                this.attach1Lock = this.metric.lock(this.attach1_);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spring.prototype, "attach2", {
+            get: function () {
+                return this.attach2_;
+            },
+            set: function (attach2) {
+                this.metric.unlock(this.attach2_, this.attach2Lock);
+                this.metric.copyVector(attach2, this.attach2_);
+                this.attach2Lock = this.metric.lock(this.attach2_);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spring.prototype, "end1", {
+            get: function () {
+                this.metric.unlock(this.end1_, this.end1Lock_);
+                this.computeBody1AttachPointInWorldCoords(this.end1_);
+                this.end1Lock_ = this.metric.lock(this.end1_);
+                return this.end1_;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spring.prototype, "end2", {
+            get: function () {
+                this.metric.unlock(this.end2_, this.end2Lock_);
+                this.computeBody2AttachPointInWorldCoords(this.end2_);
+                this.end2Lock_ = this.metric.lock(this.end2_);
+                return this.end2_;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         *
+         */
+        Spring.prototype.updateForces = function () {
+            this.computeBody1AttachPointInWorldCoords(this.F1.location);
+            this.computeBody2AttachPointInWorldCoords(this.F2.location);
+            var metric = this.metric;
+            // Temporarily use the F2 vector property to compute the direction (unit vector).
+            metric.copyVector(this.F2.location, this.F2.vector);
+            metric.subVector(this.F2.vector, this.F1.location);
+            metric.direction(this.F2.vector, true);
+            // this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
+            // Use the the F1 vector property as working storage.
+            // 1. Compute the extension.
+            metric.copyVector(this.F1.location, this.F1.vector); // vector contains F1.location
+            metric.subVector(this.F1.vector, this.F2.location); // vector contains (F1.location - F2.location)
+            metric.magnitude(this.F1.vector, true); // vector contains |F1.location - F2.location|
+            metric.subScalar(this.F1.vector, this.restLength); // vector contains (|F1.loc - F2.loc| - restLength)
+            // 2. Multiply by the stiffness.
+            metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
+            // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
+            metric.mulByVector(this.F1.vector, this.F2.vector);
+            // 4. The F2 vector property is the reaction to the F1 vector action.
+            this.metric.copyVector(this.F1.vector, this.F2.vector);
+            this.metric.neg(this.F2.vector);
+            return this.forces;
+        };
+        /**
+         *
+         */
+        Spring.prototype.disconnect = function () {
+            // Does nothing
+        };
+        /**
+         *
+         */
+        Spring.prototype.potentialEnergy = function () {
+            this.computeBody1AttachPointInWorldCoords(this.F1.location);
+            this.computeBody2AttachPointInWorldCoords(this.F2.location);
+            var metric = this.metric;
+            this.metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+            this.potentialEnergyLock_ = -1;
+            // spring potential energy = 0.5 * stiffness * (stretch * stretch)
+            // 1. Compute the magnitude of the distance between the endpoints.
+            assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
+            metric.copyVector(this.F2.location, this.potentialEnergy_);
+            metric.subVector(this.potentialEnergy_, this.F1.location);
+            metric.magnitude(this.potentialEnergy_, true);
+            // 2. Compute the stretch.
+            assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
+            metric.sub(this.potentialEnergy_, this.restLength);
+            // 3. Square it.
+            metric.quaditude(this.potentialEnergy_, true);
+            // 4. Multiply by the stiffness.
+            metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
+            // 5. Multiply by the 0.5 factor.
+            metric.mulByNumber(this.potentialEnergy_, 0.5);
+            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+            return this.potentialEnergy_;
+        };
+        return Spring;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
     function beAString() {
         return "be a string";
     }
+    /**
+     * @hidden
+     */
     function mustBeString (name, value, contextBuilder) {
         mustSatisfy(name, isString(value), beAString, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     * @param name
+     * @returns
+     */
     function notImplemented(name) {
         mustBeString('name', name);
         var message = {
@@ -4720,6 +4930,11 @@
         return message;
     }
 
+    /**
+     * @hidden
+     * @param name
+     * @returns
+     */
     function readOnly(name) {
         mustBeString('name', name);
         var message = {
@@ -4730,6 +4945,11 @@
         return message;
     }
 
+    /**
+     * @hidden
+     * @param coords
+     * @param n
+     */
     function approx(coords, n) {
         var max = 0;
         var iLen = coords.length;
@@ -4744,10 +4964,19 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     function isDefined(arg) {
         return (typeof arg !== 'undefined');
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @returns
+     */
     function arraysEQ(a, b) {
         if (isDefined(a)) {
             if (isDefined(b)) {
@@ -4784,7 +5013,16 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     var abs = Math.abs;
+    /**
+     * @hidden
+     * @param n
+     * @param v
+     * @returns
+     */
     function makeColumnVector(n, v) {
         var a = [];
         for (var i = 0; i < n; i++) {
@@ -4792,6 +5030,9 @@
         }
         return a;
     }
+    /**
+     * @hidden
+     */
     function rowWithMaximumInColumn(A, column, N) {
         var biggest = abs(A[column][column]);
         var maxRow = column;
@@ -4803,6 +5044,9 @@
         }
         return maxRow;
     }
+    /**
+     * @hidden
+     */
     function swapRows(A, i, j, N) {
         var colLength = N + 1;
         for (var column = i; column < colLength; column++) {
@@ -4811,6 +5055,12 @@
             A[i][column] = temp;
         }
     }
+    /**
+     * @hidden
+     * @param A
+     * @param i
+     * @param N
+     */
     function makeZeroBelow(A, i, N) {
         for (var row = i + 1; row < N; row++) {
             var c = -A[row][i] / A[i][i];
@@ -4824,6 +5074,12 @@
             }
         }
     }
+    /**
+     * @hidden
+     * @param A
+     * @param N
+     * @returns
+     */
     function solve(A, N) {
         var x = makeColumnVector(N, 0);
         for (var i = N - 1; i > -1; i--) {
@@ -4837,6 +5093,7 @@
     /**
      * Gaussian elimination
      * Ax = b
+     * @hidden
      */
     function gauss(A, b) {
         var N = A.length;
@@ -4854,6 +5111,7 @@
 
     /**
      * Returns true if all coordinates of the bivector are exactly zero.
+     * @hidden
      */
     function isZeroBivectorE2(m) {
         return m.xy === 0;
@@ -4861,6 +5119,7 @@
 
     /**
      * Returns true if all coordinates of the vector are exactly zero.
+     * @hidden
      */
     function isZeroVectorE2(v) {
         return v.x === 0 && v.y === 0;
@@ -4868,18 +5127,25 @@
 
     /**
      * Returns true if all coordinates of the vector are exactly zero.
+     * @hidden
      */
     function isZeroGeometricE2(m) {
         return isZeroVectorE2(m) && isZeroBivectorE2(m) && m.a === 0 && m.b === 0;
     }
 
     /**
-     * Computes the dot product of the Cartesian components in a Euclidean metric
+     * Computes the dot product of the Cartesian components in a Euclidean metric.
+     * @hidden
      */
     function dotVectorE2(a, b) {
         return a.x * b.x + a.y * b.y;
     }
 
+    /**
+     * @hidden
+     * @param vector
+     * @returns
+     */
     function quadVectorE2(vector) {
         if (isDefined(vector)) {
             var x = vector.x;
@@ -4896,8 +5162,12 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     var sqrt$1 = Math.sqrt;
     /**
+     * @hidden
      * Sets this multivector to a rotor representing a rotation from a to b.
      * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
      * Returns undefined (void 0) if the vectors are anti-parallel.
@@ -4929,14 +5199,23 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     function beAnArray() {
         return "be an array";
     }
+    /**
+     * @hidden
+     */
     function mustBeArray (name, value, contextBuilder) {
         mustSatisfy(name, isArray(value), beAnArray, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     */
     function isLabelOne(label) {
         if (typeof label === 'string') {
             return label === "1";
@@ -4954,6 +5233,9 @@
             }
         }
     }
+    /**
+     * @hidden
+     */
     function appendLabel(coord, label, sb) {
         if (typeof label === 'string') {
             sb.push(label);
@@ -4972,6 +5254,9 @@
             }
         }
     }
+    /**
+     * @hidden
+     */
     function appendCoord(coord, numberToString, label, sb) {
         if (coord !== 0) {
             if (coord >= 0) {
@@ -5020,6 +5305,9 @@
             }
         }
     }
+    /**
+     * @hidden
+     */
     function stringFromCoordinates(coordinates, numberToString, labels, uom) {
         var sb = [];
         for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
@@ -5041,39 +5329,72 @@
     }
 
     // Symbolic constants for the coordinate indices into the data array.
+    /**
+     * @hidden
+     */
     var COORD_A = 0;
+    /**
+     * @hidden
+     */
     var COORD_X$3 = 1;
+    /**
+     * @hidden
+     */
     var COORD_Y$3 = 2;
+    /**
+     * @hidden
+     */
     var COORD_B = 3;
+    /**
+     * @hidden
+     */
     var BASIS_LABELS$1 = ["1", "e1", "e2", "e12"];
     BASIS_LABELS$1[COORD_A] = '1';
     BASIS_LABELS$1[COORD_X$3] = 'e1';
     BASIS_LABELS$1[COORD_Y$3] = 'e2';
     BASIS_LABELS$1[COORD_B] = 'e12';
+    /**
+     * @hidden
+     */
     var zero$1 = function zero() {
         return [0, 0, 0, 0];
     };
+    /**
+     * @hidden
+     */
     var scalar$1 = function scalar(a) {
         var coords = zero$1();
         coords[COORD_A] = a;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var vector$1 = function vector(x, y) {
         var coords = zero$1();
         coords[COORD_X$3] = x;
         coords[COORD_Y$3] = y;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var bivector$1 = function bivector(b) {
         var coords = zero$1();
         coords[COORD_B] = b;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var pseudo$1 = function pseudo(b) {
         var coords = zero$1();
         coords[COORD_B] = b;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var spinor$1 = function spinor(a, b) {
         var coords = zero$1();
         coords[COORD_A] = a;
@@ -5082,6 +5403,7 @@
     };
     /**
      * Coordinates corresponding to basis labels.
+     * @hidden
      */
     var coordinates$1 = function coordinates(m) {
         var coords = zero$1();
@@ -5091,6 +5413,9 @@
         coords[COORD_B] = m.b;
         return coords;
     };
+    /**
+     * @hidden
+     */
     function isScalar(m) {
         return m.x === 0 && m.y === 0 && m.b === 0;
     }
@@ -5098,6 +5423,7 @@
      * Sets the lock on the multivector argument and returns the same argument.
      * This is a convenience function for the dunder (double underscore) methods.
      * All dunder methods should return locked values.
+     * @hidden
      */
     function lock$1(m) {
         m.lock();
@@ -5106,6 +5432,7 @@
     /**
      * Sentinel value to indicate that the Geometric2 is not locked.
      * UNLOCKED is in the range -1 to 0.
+     * @hidden
      */
     var UNLOCKED$1 = -1 * Math.random();
     var Geometric2 = /** @class */ (function () {
@@ -6926,6 +7253,9 @@
         return Geometric2;
     }());
 
+    /**
+     * @hidden
+     */
     var Mat1 = /** @class */ (function () {
         function Mat1(value) {
             this.value = value;
@@ -6948,28 +7278,48 @@
         return Mat1;
     }());
 
+    /**
+     * @hidden
+     */
     function beDefined() {
         return "not be 'undefined'";
     }
+    /**
+     * @hidden
+     */
     function mustBeDefined(name, value, contextBuilder) {
         mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     */
     function isInteger(x) {
         // % coerces its operand to numbers so a typeof test is required.
         // Not ethat ECMAScript 6 provides Number.isInteger().
         return isNumber(x) && x % 1 === 0;
     }
 
+    /**
+     * @hidden
+     */
     function beAnInteger() {
         return "be an integer";
     }
+    /**
+     * @hidden
+     */
     function mustBeInteger(name, value, contextBuilder) {
         mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
         return value;
     }
 
+    /**
+     * @hidden
+     * @param elements
+     * @param length
+     */
     function checkElementsLength(elements, length) {
         if (elements.length !== length) {
             throw new Error("elements must have length " + length);
@@ -6978,6 +7328,7 @@
     /**
      * Base class for matrices with the expectation that they will be used with WebGL.
      * The underlying data storage is a <code>Float32Array</code>.
+     * @hidden
      */
     var AbstractMatrix = /** @class */ (function () {
         /**
@@ -7080,6 +7431,9 @@
         return Matrix1;
     }(AbstractMatrix));
 
+    /**
+     * @hidden
+     */
     var Euclidean2 = /** @class */ (function () {
         function Euclidean2() {
         }
@@ -7344,23 +7698,74 @@
     //
     // Indices which MUST be common to all implementations.
     //
+    /**
+     * @hidden
+     */
     var INDEX_TIME = 0;
+    /**
+     * @hidden
+     */
     var INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+    /**
+     * @hidden
+     */
     var INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+    /**
+     * @hidden
+     */
     var INDEX_POTENTIAL_ENERGY = 3;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_ENERGY = 4;
+    /**
+     * @hidden
+     */
     var INDEX_RESERVED_LAST = 4;
 
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_LINEAR_MOMENTUM_X$1 = INDEX_RESERVED_LAST + 1;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_LINEAR_MOMENTUM_Y$1 = INDEX_RESERVED_LAST + 2;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_ANGULAR_MOMENTUM_XY$1 = INDEX_RESERVED_LAST + 3;
+    /**
+     * @hidden
+     */
     var OFFSET_POSITION_X$1 = 0;
+    /**
+     * @hidden
+     */
     var OFFSET_POSITION_Y$1 = 1;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_A$1 = 2;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_XY$1 = 3;
+    /**
+     * @hidden
+     */
     var OFFSET_LINEAR_MOMENTUM_X$1 = 4;
+    /**
+     * @hidden
+     */
     var OFFSET_LINEAR_MOMENTUM_Y$1 = 5;
+    /**
+     * @hidden
+     */
     var OFFSET_ANGULAR_MOMENTUM_XY$1 = 6;
+    /**
+     * @hidden
+     */
     var varNames$1 = [
         VarsList.TIME,
         "translational kinetic energy",
@@ -7371,6 +7776,9 @@
         "total linear momentum - y",
         "total angular momentum - xy"
     ];
+    /**
+     * @hidden
+     */
     var DISCONTINUOUS_ENERGY_VARIABLES$1 = [
         INDEX_TRANSLATIONAL_KINETIC_ENERGY,
         INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -7380,6 +7788,9 @@
         INDEX_TOTAL_LINEAR_MOMENTUM_Y$1,
         INDEX_TOTAL_ANGULAR_MOMENTUM_XY$1
     ];
+    /**
+     * @hidden
+     */
     var Dynamics2 = /** @class */ (function () {
         function Dynamics2() {
         }
@@ -7539,6 +7950,14 @@
         return GravitationForceLaw2;
     }(GravitationLaw));
 
+    var Particle2 = /** @class */ (function (_super) {
+        __extends(Particle2, _super);
+        function Particle2(mass, charge) {
+            return _super.call(this, mass, charge, new Euclidean2()) || this;
+        }
+        return Particle2;
+    }(Particle));
+
     /**
      *
      */
@@ -7548,8 +7967,11 @@
             return _super.call(this, new Euclidean2(), new Dynamics2()) || this;
         }
         return Physics2;
-    }(State));
+    }(Physics));
 
+    /**
+     * @hidden
+     */
     var L = new Geometric2();
     var RigidBody2 = /** @class */ (function (_super) {
         __extends(RigidBody2, _super);
@@ -7570,6 +7992,9 @@
         return RigidBody2;
     }(RigidBody));
 
+    /**
+     * @hidden
+     */
     var fromVector = Geometric2.fromVector;
     var PolygonRigidBody2 = /** @class */ (function (_super) {
         __extends(PolygonRigidBody2, _super);
@@ -7618,6 +8043,11 @@
         };
         return PolygonRigidBody2;
     }(RigidBody2));
+    /**
+     * @hidden
+     * @param xs
+     * @returns
+     */
     function polygonArea(xs) {
         var N = xs.length;
         var A = new Geometric2();
@@ -7628,6 +8058,11 @@
         }
         return A;
     }
+    /**
+     * @hidden
+     * @param xs
+     * @returns
+     */
     function centerOfMass(xs) {
         var N = xs.length;
         var X = new Geometric2();
@@ -7644,6 +8079,10 @@
         X.divByNumber(6);
         return X;
     }
+    /**
+     * @hidden
+     * @param xs
+     */
     function mustBeAtLeastThreePoints(xs) {
         var N = xs.length;
         if (N > 3) ;
@@ -7663,6 +8102,12 @@
         return Spring2;
     }(Spring));
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @returns
+     */
     function dotVectorE3(a, b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
@@ -7670,15 +8115,40 @@
     // Symbolic constants for the coordinate indices into the data array.
     // These are chosen to match those used by G3.
     // TODO: The goal should be to protect the user from changes in ordering.
+    /**
+     * @hidden
+     */
     var COORD_W$1 = 0;
+    /**
+     * @hidden
+     */
     var COORD_X$2 = 1;
+    /**
+     * @hidden
+     */
     var COORD_Y$2 = 2;
+    /**
+     * @hidden
+     */
     var COORD_Z$2 = 3;
+    /**
+     * @hidden
+     */
     var COORD_XY$2 = 4;
+    /**
+     * @hidden
+     */
     var COORD_YZ$2 = 5;
+    /**
+     * @hidden
+     */
     var COORD_ZX$2 = 6;
+    /**
+     * @hidden
+     */
     var COORD_XYZ$1 = 7;
     /**
+     * @hidden
      * @param index
      * 0: scalar
      * 1: x
@@ -7721,14 +8191,41 @@
         }
     }
 
+    /**
+     * @hidden
+     */
     var COORD_W = 0;
+    /**
+     * @hidden
+     */
     var COORD_X$1 = 1;
+    /**
+     * @hidden
+     */
     var COORD_Y$1 = 2;
+    /**
+     * @hidden
+     */
     var COORD_Z$1 = 3;
+    /**
+     * @hidden
+     */
     var COORD_XY$1 = 4;
+    /**
+     * @hidden
+     */
     var COORD_YZ$1 = 5;
+    /**
+     * @hidden
+     */
     var COORD_ZX$1 = 6;
+    /**
+     * @hidden
+     */
     var COORD_XYZ = 7;
+    /**
+     * @hidden
+     */
     function compG3Set(m, index, value) {
         switch (index) {
             case COORD_W: {
@@ -7768,6 +8265,27 @@
         }
     }
 
+    /**
+     * @hidden
+     * @param a0
+     * @param a1
+     * @param a2
+     * @param a3
+     * @param a4
+     * @param a5
+     * @param a6
+     * @param a7
+     * @param b0
+     * @param b1
+     * @param b2
+     * @param b3
+     * @param b4
+     * @param b5
+     * @param b6
+     * @param b7
+     * @param index
+     * @returns
+     */
     function extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
         a0 = +a0;
         a1 = +a1;
@@ -7835,6 +8353,13 @@
         return +x;
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @param out
+     * @returns
+     */
     function extG3(a, b, out) {
         out.uom = Unit.mul(a.uom, b.uom);
         var a0 = compG3Get(a, 0);
@@ -7859,6 +8384,11 @@
         return out;
     }
 
+    /**
+     * @hidden
+     * @param m
+     * @returns
+     */
     function isScalarG3(m) {
         return m.x === 0 && m.y === 0 && m.z === 0 && m.xy === 0 && m.yz === 0 && m.zx === 0 && m.b === 0;
     }
@@ -7866,6 +8396,7 @@
     /**
      * Determines whether the argument supports the VectorE3 interface.
      * The argument must be a non-null object and must support the x, y, and z numeric properties.
+     * @hidden
      */
     function isVectorE3(v) {
         if (isObject(v) && !isNull(v)) {
@@ -7876,12 +8407,18 @@
         }
     }
 
+    /**
+     * @hidden
+     * @param m
+     * @returns
+     */
     function isVectorG3(m) {
         return m.a === 0 && m.xy === 0 && m.yz === 0 && m.zx === 0 && m.b === 0;
     }
 
     /**
      * Returns true if all coordinates of the bivector are exactly zero.
+     * @hidden
      */
     function isZeroBivectorE3(m) {
         return m.yz === 0 && m.zx === 0 && m.xy === 0;
@@ -7889,6 +8426,7 @@
 
     /**
      * Returns true if all coordinates of the vector are exactly zero.
+     * @hidden
      */
     function isZeroVectorE3(v) {
         return v.x === 0 && v.y === 0 && v.z === 0;
@@ -7896,11 +8434,33 @@
 
     /**
      * Returns true if all coordinates of the vector are exactly zero.
+     * @hidden
      */
     function isZeroGeometricE3(m) {
         return isZeroVectorE3(m) && isZeroBivectorE3(m) && m.a === 0 && m.b === 0;
     }
 
+    /**
+     * @hidden
+     * @param a0
+     * @param a1
+     * @param a2
+     * @param a3
+     * @param a4
+     * @param a5
+     * @param a6
+     * @param a7
+     * @param b0
+     * @param b1
+     * @param b2
+     * @param b3
+     * @param b4
+     * @param b5
+     * @param b6
+     * @param b7
+     * @param index
+     * @returns
+     */
     function lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
         a0 = +a0;
         a1 = +a1;
@@ -7968,6 +8528,13 @@
         return +x;
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @param out
+     * @returns
+     */
     function lcoG3(a, b, out) {
         out.uom = Unit.mul(a.uom, b.uom);
         var a0 = compG3Get(a, 0);
@@ -7992,8 +8559,17 @@
         return out;
     }
 
+    /**
+     * @hidden
+     */
     var ONE = void 0; // Unit.ONE;
+    /**
+     * @hidden
+     */
     var scratch = { a: 0, x: 0, y: 0, z: 0, yz: 0, zx: 0, xy: 0, b: 0, uom: ONE };
+    /**
+     * @hidden
+     */
     function maskG3(arg) {
         var duck = arg;
         if (isObject(arg) && 'grades' in arg) {
@@ -8053,6 +8629,7 @@
     /**
      * Multiplication of Geometric3.
      * This was originally written for asm.
+     * @hidden
      */
     function mulE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
         switch (index) {
@@ -8093,6 +8670,27 @@
         return (b - a) * Math.random() + a;
     }
 
+    /**
+     * @hidden
+     * @param a0
+     * @param a1
+     * @param a2
+     * @param a3
+     * @param a4
+     * @param a5
+     * @param a6
+     * @param a7
+     * @param b0
+     * @param b1
+     * @param b2
+     * @param b3
+     * @param b4
+     * @param b5
+     * @param b6
+     * @param b7
+     * @param index
+     * @returns
+     */
     function rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
         a0 = +a0;
         a1 = +a1;
@@ -8160,6 +8758,13 @@
         return +x;
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @param out
+     * @returns
+     */
     function rcoG3(a, b, out) {
         out.uom = Unit.mul(a.uom, b.uom);
         var a0 = compG3Get(a, 0);
@@ -8184,6 +8789,11 @@
         return out;
     }
 
+    /**
+     * @hidden
+     * @param vector
+     * @returns
+     */
     function quadVectorE3(vector) {
         var x = vector.x;
         var y = vector.y;
@@ -8193,6 +8803,7 @@
 
     /**
      * Computes the z component of the cross-product of Cartesian vector components.
+     * @hidden
      */
     function wedgeXY$1(ax, ay, az, bx, by, bz) {
         return ax * by - ay * bx;
@@ -8200,6 +8811,7 @@
 
     /**
      * Computes the x component of the cross-product of Cartesian vector components.
+     * @hidden
      */
     function wedgeYZ$1(ax, ay, az, bx, by, bz) {
         return ay * bz - az * by;
@@ -8207,15 +8819,26 @@
 
     /**
      * Computes the y component of the cross-product of Cartesian vector components.
+     * @hidden
      */
     function wedgeZX$1(ax, ay, az, bx, by, bz) {
         return az * bx - ax * bz;
     }
 
+    /**
+     * @hidden
+     */
     var sqrt = Math.sqrt;
+    /**
+     * @hidden
+     */
     var cosPIdiv4 = Math.cos(Math.PI / 4);
+    /**
+     * @hidden
+     */
     var sinPIdiv4 = Math.sin(Math.PI / 4);
     /**
+     * @hidden
      * Sets the output spinor to a rotor representing a rotation from a to b.
      * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
      * If the vectors are anti-parallel, making the plane of rotation ambiguous,
@@ -8404,6 +9027,13 @@
         }
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @param out
+     * @returns
+     */
     function scpG3(a, b, out) {
         var a0 = compG3Get(a, 0);
         var a1 = compG3Get(a, 1);
@@ -8433,6 +9063,9 @@
         return out;
     }
 
+    /**
+     * @hidden
+     */
     function squaredNormG3(m) {
         var a = m.a;
         var x = m.x;
@@ -8446,28 +9079,64 @@
     }
 
     // Symbolic constants for the coordinate indices into the data array.
+    /**
+     * @hidden
+     */
     var COORD_SCALAR = 0;
+    /**
+     * @hidden
+     */
     var COORD_X = 1;
+    /**
+     * @hidden
+     */
     var COORD_Y = 2;
+    /**
+     * @hidden
+     */
     var COORD_Z = 3;
+    /**
+     * @hidden
+     */
     var COORD_XY = 4;
+    /**
+     * @hidden
+     */
     var COORD_YZ = 5;
+    /**
+     * @hidden
+     */
     var COORD_ZX = 6;
+    /**
+     * @hidden
+     */
     var COORD_PSEUDO = 7;
     // FIXME: Change to Canonical ordering.
+    /**
+     * @hidden
+     */
     var BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
     BASIS_LABELS[COORD_SCALAR] = '1';
     BASIS_LABELS[COORD_X] = 'e1';
     BASIS_LABELS[COORD_Y] = 'e2';
     BASIS_LABELS[COORD_Z] = 'e3';
+    /**
+     * @hidden
+     */
     var zero = function zero() {
         return [0, 0, 0, 0, 0, 0, 0, 0];
     };
+    /**
+     * @hidden
+     */
     var scalar = function scalar(a) {
         var coords = zero();
         coords[COORD_SCALAR] = a;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var vector = function vector(x, y, z) {
         var coords = zero();
         coords[COORD_X] = x;
@@ -8475,6 +9144,9 @@
         coords[COORD_Z] = z;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var bivector = function bivector(yz, zx, xy) {
         var coords = zero();
         coords[COORD_YZ] = yz;
@@ -8482,6 +9154,9 @@
         coords[COORD_XY] = xy;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var spinor = function spinor(a, yz, zx, xy) {
         var coords = zero();
         coords[COORD_SCALAR] = a;
@@ -8490,6 +9165,9 @@
         coords[COORD_XY] = xy;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var multivector = function multivector(a, x, y, z, yz, zx, xy, b) {
         var coords = zero();
         coords[COORD_SCALAR] = a;
@@ -8502,6 +9180,9 @@
         coords[COORD_PSEUDO] = b;
         return coords;
     };
+    /**
+     * @hidden
+     */
     var pseudo = function pseudo(b) {
         var coords = zero();
         coords[COORD_PSEUDO] = b;
@@ -8509,6 +9190,7 @@
     };
     /**
      * Coordinates corresponding to basis labels.
+     * @hidden
      */
     var coordinates = function coordinates(m) {
         var coords = zero();
@@ -8526,6 +9208,7 @@
      * Computes the cosine of the angle between two vectors.
      * cos(a, b) = (a | b) / |a||b|
      * This is dimensionless, so we are justified in simply returning a number.
+     * @hidden
      */
     function cosVectorVector(a, b) {
         function scp(a, b) {
@@ -8540,6 +9223,7 @@
      * Sets the lock on the multivector argument and returns the same argument.
      * This is a convenience function for the dunder (double underscore) methods.
      * All dunder methods should return locked values.
+     * @hidden
      */
     function lock(m) {
         m.lock();
@@ -8547,11 +9231,13 @@
     }
     /**
      * Scratch variable for holding cosines.
+     * @hidden
      */
     var cosines = [];
     /**
      * Sentinel value to indicate that the Geometric3 is not locked.
      * UNLOCKED is in the range -1 to 0.
+     * @hidden
      */
     var UNLOCKED = -1 * Math.random();
     /**
@@ -10901,6 +11587,7 @@
 
     /**
      * Computes the determinant of a 3x3 (square) matrix where the elements are assumed to be in column-major order.
+     * @hidden
      */
     function det3x3(m) {
         var m00 = m[0x0], m01 = m[0x3], m02 = m[0x6];
@@ -10911,6 +11598,7 @@
 
     /**
      * Computes the inverse of a 3x3 (square) matrix where the elements are assumed to be in column-major order.
+     * @hidden
      */
     function inv3x3(m, te) {
         var det = det3x3(m);
@@ -10941,6 +11629,13 @@
         te[0x8] = o33 * α;
     }
 
+    /**
+     * @hidden
+     * @param a
+     * @param b
+     * @param c
+     * @returns
+     */
     function mul3x3(a, b, c) {
         var a11 = a[0x0], a12 = a[0x3], a13 = a[0x6];
         var a21 = a[0x1], a22 = a[0x4], a23 = a[0x7];
@@ -11110,7 +11805,7 @@
     }(AbstractMatrix));
 
     /**
-     *
+     * @hidden
      */
     var Mat3 = /** @class */ (function () {
         /**
@@ -11166,6 +11861,9 @@
         return Mat3;
     }());
 
+    /**
+     * @hidden
+     */
     var Euclidean3 = /** @class */ (function () {
         function Euclidean3() {
         }
@@ -11465,25 +12163,85 @@
         return a.x * b.y - a.y * b.x;
     }
 
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_LINEAR_MOMENTUM_Z = INDEX_RESERVED_LAST + 3;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = INDEX_RESERVED_LAST + 4;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = INDEX_RESERVED_LAST + 5;
+    /**
+     * @hidden
+     */
     var INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 6;
+    /**
+     * @hidden
+     */
     var OFFSET_POSITION_X = 0;
+    /**
+     * @hidden
+     */
     var OFFSET_POSITION_Y = 1;
+    /**
+     * @hidden
+     */
     var OFFSET_POSITION_Z = 2;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_A = 3;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_YZ = 4;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_ZX = 5;
+    /**
+     * @hidden
+     */
     var OFFSET_ATTITUDE_XY = 6;
+    /**
+     * @hidden
+     */
     var OFFSET_LINEAR_MOMENTUM_X = 7;
+    /**
+     * @hidden
+     */
     var OFFSET_LINEAR_MOMENTUM_Y = 8;
+    /**
+     * @hidden
+     */
     var OFFSET_LINEAR_MOMENTUM_Z = 9;
+    /**
+     * @hidden
+     */
     var OFFSET_ANGULAR_MOMENTUM_YZ = 10;
+    /**
+     * @hidden
+     */
     var OFFSET_ANGULAR_MOMENTUM_ZX = 11;
+    /**
+     * @hidden
+     */
     var OFFSET_ANGULAR_MOMENTUM_XY = 12;
+    /**
+     * @hidden
+     */
     var varNames = [
         VarsList.TIME,
         "translational kinetic energy",
@@ -11497,6 +12255,9 @@
         "total angular momentum - zx",
         "total angular momentum - xy"
     ];
+    /**
+     * @hidden
+     */
     var DISCONTINUOUS_ENERGY_VARIABLES = [
         INDEX_TRANSLATIONAL_KINETIC_ENERGY,
         INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -11509,6 +12270,9 @@
         INDEX_TOTAL_ANGULAR_MOMENTUM_ZX,
         INDEX_TOTAL_ANGULAR_MOMENTUM_XY
     ];
+    /**
+     * @hidden
+     */
     var Dynamics3 = /** @class */ (function () {
         function Dynamics3() {
         }
@@ -11690,6 +12454,14 @@
         return GravitationForceLaw3;
     }(GravitationLaw));
 
+    var Particle3 = /** @class */ (function (_super) {
+        __extends(Particle3, _super);
+        function Particle3(mass, charge) {
+            return _super.call(this, mass, charge, new Euclidean3()) || this;
+        }
+        return Particle3;
+    }(Particle));
+
     /**
      *
      */
@@ -11699,7 +12471,7 @@
             return _super.call(this, new Euclidean3(), new Dynamics3()) || this;
         }
         return Physics3;
-    }(State));
+    }(Physics));
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
@@ -11769,6 +12541,9 @@
         return Spring3;
     }(Spring));
 
+    /**
+     * @hidden
+     */
     exports.AxisChoice = void 0;
     (function (AxisChoice) {
         AxisChoice[AxisChoice["HORIZONTAL"] = 1] = "HORIZONTAL";
@@ -11778,6 +12553,7 @@
 
     /**
      * Returns an array consisting of the given `value` repeated `N` times.
+     * @hidden
      */
     function repeat(value, N) {
         var xs = [];
@@ -11801,6 +12577,9 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     */
     exports.DrawingMode = void 0;
     (function (DrawingMode) {
         DrawingMode[DrawingMode["DOTS"] = 0] = "DOTS";
@@ -11821,6 +12600,14 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     * @param arg1
+     * @param arg2
+     * @param epsilon
+     * @param magnitude
+     * @returns
+     */
     function veryDifferent(arg1, arg2, epsilon, magnitude) {
         if (epsilon === void 0) { epsilon = 1E-14; }
         if (magnitude === void 0) { magnitude = 1; }
@@ -11839,6 +12626,7 @@
     /**
      * An immutable rectangle corresponding to screen coordinates where the
      * vertical coordinates increase downwards.
+     * @hidden
      */
     var ScreenRect = /** @class */ (function () {
         /**
@@ -12014,6 +12802,9 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     */
     var UtilityCore = /** @class */ (function () {
         function UtilityCore() {
         }
@@ -12028,7 +12819,13 @@
     }());
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var MAX_INDEX_ERROR = 'exceeded max int';
+    /**
+     * @hidden
+     */
     var CircularList = /** @class */ (function () {
         /**
          * last value written to memory list
@@ -12160,6 +12957,9 @@
         };
         return CircularList;
     }());
+    /**
+     * @hidden
+     */
     var CircularListIterator = /** @class */ (function () {
         /**
          * @param cList the CircularList to iterate over
@@ -12247,6 +13047,9 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     */
     var GraphPoint = /** @class */ (function () {
         function GraphPoint(x, y, seqX, seqY) {
             this.x = x;
@@ -12280,7 +13083,7 @@
     // See the License for the specific language governing permissions and
     // limitations under the License.
     /**
-     *
+     * @hidden
      */
     var GraphStyle = /** @class */ (function () {
         /**
@@ -12301,6 +13104,9 @@
     // const GRAPH_POINTS = 'graph points';
     // const CLEAR_GRAPH = 'clear graph';
     // const NONE = '-none-';
+    /**
+     * @hidden
+     */
     var GraphLine = /** @class */ (function (_super) {
         __extends(GraphLine, _super);
         /**
@@ -12622,7 +13428,7 @@
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
-     *
+     * @hidden
      */
     var DisplayGraph = /** @class */ (function () {
         /**
@@ -12925,6 +13731,9 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     */
     exports.AlignH = void 0;
     (function (AlignH) {
         AlignH[AlignH["LEFT"] = 0] = "LEFT";
@@ -12947,6 +13756,9 @@
     // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     // See the License for the specific language governing permissions and
     // limitations under the License.
+    /**
+     * @hidden
+     */
     exports.AlignV = void 0;
     (function (AlignV) {
         AlignV[AlignV["TOP"] = 0] = "TOP";
@@ -12971,6 +13783,7 @@
     // limitations under the License.
     /**
      * Observes a Subject; when the Subject broadcasts a SubjectEvent then this executes a specified function.
+     * @hidden
      */
     var GenericObserver = /** @class */ (function () {
         /**
@@ -12996,6 +13809,7 @@
 
     /**
      * Immutable point coordinates in two dimensions.
+     * @hidden
      */
     var Point = /** @class */ (function () {
         function Point(x_, y_) {
@@ -13028,6 +13842,7 @@
      * Note that for DoubleRect we regard the vertical coordinate as **increasing upwards**, so
      * the top coordinate is greater than the bottom coordinate. This is in contrast to HTML5
      * canvas where vertical coordinates increase downwards.
+     * @hidden
      */
     var DoubleRect = /** @class */ (function () {
         function DoubleRect(left, bottom, right, top) {
@@ -13320,16 +14135,32 @@
         return DoubleRect;
     }());
 
+    /**
+     * @hidden
+     */
     function isEmpty(xs) {
         return xs.length === 0;
     }
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var WIDTH = 'width';
+    /**
+     * @hidden
+     */
     var HEIGHT = 'height';
+    /**
+     * @hidden
+     */
     var ALPHA = 'alpha';
+    /**
+     * @hidden
+     */
     var BACKGROUND = 'background';
     /**
+     * @hidden
      * Manages an HTML canvas and contains a list of LabView(s)
      * which are drawn into the canvas. The LabViews are drawn overlapping so that the last
      * LabView appears on top of the others.
@@ -13474,7 +14305,7 @@
          * @param view the LabView to add
          */
         LabCanvas.prototype.addView = function (view) {
-            mustBeObject('view', view);
+            mustBeNonNullObject('view', view);
             if (this.getWidth() > 0 && this.getHeight() > 0) {
                 var screenRect = new ScreenRect(0, 0, this.getWidth(), this.getHeight());
                 view.setScreenRect(screenRect);
@@ -13629,7 +14460,7 @@
          * @param view the LabView to remove
          */
         LabCanvas.prototype.removeView = function (view) {
-            mustBeObject('view', view);
+            mustBeNonNullObject('view', view);
             remove(this.labViews_, view);
             this.removeMemo(view);
             if (this.focusView_ === view) {
@@ -13769,6 +14600,7 @@
      * @param value the number to test
      * @return the value that passed the test
      * @throws if the argument is not a finite number
+     * @hidden
      */
     function mustBeFinite(value) {
         if (typeof value !== 'number' || !isFinite(value)) {
@@ -13779,6 +14611,7 @@
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
     /**
+     * @hidden
      * Specifies an immutable 2D affine transform.
      *
      * The affine transform of a point `(x, y)` is given by:
@@ -14009,8 +14842,12 @@
     }());
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var MIN_SIZE = 1E-15;
     /**
+     * @hidden
      * Provides the mapping between screen (canvas) coordinates and simulation coordinates;
      * this is an immutable object.
      *
@@ -14446,6 +15283,13 @@
         return CoordMap;
     }());
 
+    /**
+     * @hidden
+     * @param xs
+     * @param start
+     * @param opt_end
+     * @returns
+     */
     function slice(xs, start, opt_end) {
         // passing 1 arg to slice is not the same as passing 2 where the second is
         // null or undefined (in that case the second argument is treated as 0).
@@ -14458,10 +15302,19 @@
             return Array.prototype.slice.call(xs, start, opt_end);
         }
     }
+    /**
+     * @hidden
+     * @param xs
+     * @param index
+     * @param howMany
+     * @param var_args
+     * @returns
+     */
     function splice(xs, index, howMany, var_args) {
         return Array.prototype.splice.apply(xs, slice(arguments, 1));
     }
     /**
+     * @hidden
      * Inserts an object at the given index of the array.
      * @param xs The array to modify.
      * @param x The object to insert.
@@ -14482,6 +15335,7 @@
      * ------
      * DisplayObjects with a lower `zIndex` appear underneath those with higher `zIndex`.
      * The DisplayList is sorted by `zIndex`.
+     * @hidden
      */
     var DisplayList = /** @class */ (function (_super) {
         __extends(DisplayList, _super);
@@ -14577,6 +15431,9 @@
     }(AbstractSubject));
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     */
     var SimView = /** @class */ (function (_super) {
         __extends(SimView, _super);
         /**
@@ -14954,6 +15811,7 @@
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
+     * @hidden
      * Watches the VarsList of one or more GraphLines to calculate the range
      * rectangle that encloses the points on the graphs, and sets accordingly the simRect of a
      * SimView. The range rectangle is the smallest rectangle that contains all the points, but
@@ -15440,6 +16298,12 @@
     }(AbstractSubject));
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * @hidden
+     * @param label
+     * @param scale
+     * @returns
+     */
     function makeLabelScale(label, scale) {
         if (Unit.isOne(scale)) {
             return label;
@@ -15464,6 +16328,7 @@
      * To keep the DisplayAxes in sync with a LabView, when
      * doing for example pan/zoom of the LabView, you can arrange for {@link #setSimRect} to
      * be called by an Observer.
+     * @hidden
      */
     var DisplayAxes = /** @class */ (function () {
         /**
@@ -15874,6 +16739,7 @@
      * visible. Creates several controls to modify the graph.
      *
      * This class is a user interface control. It may manipulate the DOM, adding controls.
+     * @hidden
      */
     var Graph = /** @class */ (function (_super) {
         __extends(Graph, _super);
@@ -15955,7 +16821,8 @@
     }(AbstractSubject));
 
     /**
-     *
+     * @hidden
+     * This is currently exposed to support the existing 3D example.
      */
     var EnergyTimeGraph = /** @class */ (function (_super) {
         __extends(EnergyTimeGraph, _super);
@@ -15983,6 +16850,9 @@
         return EnergyTimeGraph;
     }(Graph));
 
+    /**
+     * @hidden
+     */
     var Scalar3 = /** @class */ (function () {
         function Scalar3(a, uom) {
             this.a_ = a;
@@ -16010,6 +16880,7 @@
 
     /**
      * An immutable vector in 3D space; after creation it cannot be altered.
+     * @hidden
      */
     var Vec3 = /** @class */ (function () {
         /**
@@ -16396,6 +17267,7 @@
          * ensure that the energy change be less than a tolerance amount.
          */
         function ConstantEnergySolver(simulation, energySystem, solverMethod) {
+            this.simulation = simulation;
             this.stepUpperBound = 1;
             /**
              * The smallest time step that will executed.
@@ -16406,15 +17278,14 @@
              *
              */
             this.tolerance_ = 1E-6;
-            this.simulation_ = simulation;
             this.energySystem_ = energySystem;
             this.solverMethod_ = solverMethod;
             // this.totSteps_ = 0;
         }
         ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
             // save the vars in case we need to back up and start again
-            this.savedState = this.simulation_.getState();
-            var startTime = this.simulation_.time;
+            this.savedState = this.simulation.getState();
+            var startTime = this.simulation.time;
             /**
              * The adapted step size.
              */
@@ -16423,7 +17294,7 @@
              * number of diffEqSolver steps taken during this step
              */
             // let steps = 0;
-            this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
+            this.simulation.epilog(); // to ensure getEnergyInfo gives correct value
             var metric = this.energySystem_.metric;
             var startEnergy = metric.a(this.energySystem_.totalEnergy());
             // let lastEnergyDiff = Number.POSITIVE_INFINITY;
@@ -16439,8 +17310,8 @@
                 var t = startTime; // t = current time
                 if (!firstTime) {
                     // restore state and solve again with smaller step size
-                    this.simulation_.setState(this.savedState);
-                    this.simulation_.epilog();
+                    this.simulation.setState(this.savedState);
+                    this.simulation.epilog();
                     // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                     // const e = this.energySystem_.totalEnergy();
                     // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -16459,7 +17330,7 @@
                     }
                     // steps++;
                     this.solverMethod_.step(h, uomTime);
-                    this.simulation_.epilog();
+                    this.simulation.epilog();
                     t += h;
                 }
                 var finishEnergy = metric.a(this.energySystem_.totalEnergy());
@@ -16494,28 +17365,33 @@
         return ConstantEnergySolver;
     }());
 
+    /**
+     * @hidden
+     */
     function zeroArray(xs) {
-        var length = xs.length;
-        for (var i = 0; i < length; i++) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
             xs[i] = 0;
         }
     }
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
-     *
+     * The Euler algorithm uses the rate of change values at the
+     * beginning of the step in order to perform the integration.
      */
     var EulerMethod = /** @class */ (function () {
         /**
          *
          */
-        function EulerMethod(sim_) {
-            this.sim_ = sim_;
+        function EulerMethod(system) {
+            this.system = system;
             this.inp_ = [];
             this.k1_ = [];
+            mustBeNonNullObject('system', system);
         }
         EulerMethod.prototype.step = function (stepSize, uomStep) {
-            var vars = this.sim_.getState();
+            var vars = this.system.getState();
             var N = vars.length;
             if (this.inp_.length !== N) {
                 this.inp_ = new Array(N);
@@ -16528,31 +17404,34 @@
                 inp[i] = vars[i];
             }
             zeroArray(k1);
-            this.sim_.evaluate(inp, k1, 0, uomStep);
+            this.system.evaluate(inp, k1, 0, uomStep);
             for (var i = 0; i < N; i++) {
                 vars[i] += k1[i] * stepSize;
             }
-            this.sim_.setState(vars);
+            this.system.setState(vars);
         };
         return EulerMethod;
     }());
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
-     *
+     * The modified Euler algorithm uses the rate of change values at both
+     * the beginning of the step and at the end, taking an average in order
+     * to perform the integration.
      */
     var ModifiedEuler = /** @class */ (function () {
         /**
          *
          */
-        function ModifiedEuler(sim_) {
-            this.sim_ = sim_;
+        function ModifiedEuler(system) {
+            this.system = system;
             this.inp_ = [];
             this.k1_ = [];
             this.k2_ = [];
+            mustBeNonNullObject('system', system);
         }
         ModifiedEuler.prototype.step = function (stepSize, uomStep) {
-            var vars = this.sim_.getState();
+            var vars = this.system.getState();
             var N = vars.length;
             if (this.inp_.length !== N) {
                 this.inp_ = new Array(N);
@@ -16567,17 +17446,17 @@
                 inp[i] = vars[i];
             }
             zeroArray(k1);
-            this.sim_.evaluate(inp, k1, 0, uomStep);
+            this.system.evaluate(inp, k1, 0, uomStep);
             // evaluate at time t+stepSize
             for (var i = 0; i < N; i++) {
                 inp[i] = vars[i] + k1[i] * stepSize;
             }
             zeroArray(k2);
-            this.sim_.evaluate(inp, k2, stepSize, uomStep);
+            this.system.evaluate(inp, k2, stepSize, uomStep);
             for (var i = 0; i < N; i++) {
                 vars[i] += (k1[i] + k2[i]) * stepSize / 2;
             }
-            this.sim_.setState(vars);
+            this.system.setState(vars);
         };
         return ModifiedEuler;
     }());
@@ -16592,21 +17471,22 @@
     var RungeKutta = /** @class */ (function () {
         /**
          * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-         * @param simulation The model that provides the system state and computes rates of change.
+         * @param system The model that provides the system state and computes rates of change.
          */
-        function RungeKutta(simulation) {
+        function RungeKutta(system) {
+            this.system = system;
             this.inp_ = [];
             this.k1_ = [];
             this.k2_ = [];
             this.k3_ = [];
             this.k4_ = [];
-            this.sim_ = simulation;
+            mustBeNonNullObject('system', system);
         }
         /**
          *
          */
         RungeKutta.prototype.step = function (stepSize, uomStep) {
-            var vars = this.sim_.getState();
+            var vars = this.system.getState();
             var N = vars.length;
             if (this.inp_.length < N) {
                 this.inp_ = new Array(N);
@@ -16625,34 +17505,33 @@
                 inp[i] = vars[i];
             }
             zeroArray(k1);
-            this.sim_.evaluate(inp, k1, 0, uomStep);
+            this.system.evaluate(inp, k1, 0, uomStep);
             // evaluate at time t + stepSize / 2
             for (var i = 0; i < N; i++) {
                 inp[i] = vars[i] + k1[i] * stepSize / 2;
             }
             zeroArray(k2);
-            this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
+            this.system.evaluate(inp, k2, stepSize / 2, uomStep);
             // evaluate at time t + stepSize / 2
             for (var i = 0; i < N; i++) {
                 inp[i] = vars[i] + k2[i] * stepSize / 2;
             }
             zeroArray(k3);
-            this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
+            this.system.evaluate(inp, k3, stepSize / 2, uomStep);
             // evaluate at time t + stepSize
             for (var i = 0; i < N; i++) {
                 inp[i] = vars[i] + k3[i] * stepSize;
             }
             zeroArray(k4);
-            this.sim_.evaluate(inp, k4, stepSize, uomStep);
+            this.system.evaluate(inp, k4, stepSize, uomStep);
             for (var i = 0; i < N; i++) {
                 vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
             }
-            this.sim_.setState(vars);
+            this.system.setState(vars);
         };
         return RungeKutta;
     }());
 
-    // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
      *
      */
@@ -16661,8 +17540,10 @@
          *
          */
         function DefaultAdvanceStrategy(simulation, solver) {
-            this.simulation_ = mustBeObject('simulation', simulation);
-            this.solver_ = mustBeObject('solver', solver);
+            this.simulation = simulation;
+            this.solver = solver;
+            mustBeNonNullObject('simulation', simulation);
+            mustBeNonNullObject('solver', solver);
         }
         /**
          * 1.
@@ -16670,9 +17551,10 @@
          * 3. Compute system variables such as energies, linear momentum, and angular momentum.
          */
         DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
-            this.simulation_.prolog();
-            this.solver_.step(stepSize, uomStep);
-            this.simulation_.epilog();
+            mustBeNumber("stepSize", stepSize);
+            this.simulation.prolog();
+            this.solver.step(stepSize, uomStep);
+            this.simulation.epilog();
         };
         return DefaultAdvanceStrategy;
     }());
@@ -16713,6 +17595,9 @@
     exports.Matrix3 = Matrix3;
     exports.ModifiedEuler = ModifiedEuler;
     exports.Particle = Particle;
+    exports.Particle2 = Particle2;
+    exports.Particle3 = Particle3;
+    exports.Physics = Physics;
     exports.Physics2 = Physics2;
     exports.Physics3 = Physics3;
     exports.PolygonRigidBody2 = PolygonRigidBody2;
@@ -16725,7 +17610,6 @@
     exports.Spring = Spring;
     exports.Spring2 = Spring2;
     exports.Spring3 = Spring3;
-    exports.State = State;
     exports.Unit = Unit;
     exports.VarsList = VarsList;
     exports.Vec3 = Vec3;

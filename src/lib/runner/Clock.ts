@@ -13,11 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
-import ClockTask from './ClockTask';
-import GenericEvent from '../util/GenericEvent';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { GenericEvent } from '../util/GenericEvent';
 import getSystemTime from '../util/getSystemTime';
+import { ClockTask } from './ClockTask';
 
+/**
+ * @hidden
+ */
 export class Clock extends AbstractSubject {
     /**
      * When 'zero clock time' occurs, in system time, in seconds.
@@ -156,5 +159,3 @@ export class Clock extends AbstractSubject {
         return clockTime / this.timeRate_ + this.clockStart_sys_secs_;
     }
 }
-
-export default Clock;

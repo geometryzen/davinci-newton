@@ -8,7 +8,7 @@
  * For geometric quantities with units, you may use the quantity itself because it can represent a scalar.
  */
 /**
- *
+ * @hidden
  */
 export interface LinearNumber<I, M, S, V, MAGNITUDE, SCALAR, UNIT> {
     add(rhs: I, α?: number): M;

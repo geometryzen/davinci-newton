@@ -2,6 +2,7 @@ import {AbelianOperators} from './AbelianOperators';
 /**
  * A ring is an abelian group with a second binary operation that is associative,
  * is distributive over the abelian group operation and has an identity element.
+ * @hidden
  */
 export interface RingOperators<T, UNIT> extends AbelianOperators<T, UNIT> {
 

@@ -1,9 +1,10 @@
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { readOnly } from '../i18n/readOnly';
 import randomRange from './randomRange';
 import { Unit } from './Unit';
 /**
  * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.
+ * @hidden
  */
 var Spinor3 = /** @class */ (function () {
     /**

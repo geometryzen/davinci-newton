@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export interface TrigMethods<T> {
     cos(): T;
     cosh(): T;

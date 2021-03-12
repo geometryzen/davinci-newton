@@ -19,6 +19,7 @@
  * time step.
  * See MemoList for how to add a Memorizable
  * object to the list of those that will be called.
+ * @hidden
  */
 export interface Memorizable {
     /**
@@ -27,5 +28,3 @@ export interface Memorizable {
     memorize(): void;
 
 }
-
-export default Memorizable;

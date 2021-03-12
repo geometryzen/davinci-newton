@@ -1,5 +1,5 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
-import { Simulation } from '../core/Simulation';
+import { DiffEqSolverSystem } from '../core/DiffEqSolverSystem';
 import { Unit } from '../math/Unit';
 /**
  * <p>
@@ -8,7 +8,7 @@ import { Unit } from '../math/Unit';
  * </p>
  */
 export declare class RungeKutta implements DiffEqSolver {
-    private readonly sim_;
+    private readonly system;
     private inp_;
     private k1_;
     private k2_;
@@ -16,9 +16,9 @@ export declare class RungeKutta implements DiffEqSolver {
     private k4_;
     /**
      * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-     * @param simulation The model that provides the system state and computes rates of change.
+     * @param system The model that provides the system state and computes rates of change.
      */
-    constructor(simulation: Simulation);
+    constructor(system: DiffEqSolverSystem);
     /**
      *
      */

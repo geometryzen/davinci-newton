@@ -1,5 +1,6 @@
 /**
  * Immutable point coordinates in two dimensions.
+ * @hidden
  */
 export default class Point {
     private x_;

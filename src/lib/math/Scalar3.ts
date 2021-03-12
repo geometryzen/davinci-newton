@@ -1,6 +1,9 @@
 import { Scalar } from './Scalar';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 export class Scalar3 implements Scalar {
     private readonly a_: number;
     private readonly uom_: Unit;

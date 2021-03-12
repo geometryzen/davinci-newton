@@ -6,14 +6,8 @@ import { AdvanceStrategy } from '../runner/AdvanceStrategy';
  *
  */
 export declare class DefaultAdvanceStrategy implements AdvanceStrategy {
-    /**
-     *
-     */
-    private simulation_;
-    /**
-     *
-     */
-    private solver_;
+    private readonly simulation;
+    private readonly solver;
     /**
      *
      */

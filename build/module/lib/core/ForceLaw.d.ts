@@ -1,7 +1,7 @@
 import { SimObject } from './SimObject';
 import { Force } from './Force';
 /**
- *
+ * @hidden
  */
 export interface ForceLaw<T> extends SimObject {
     /**

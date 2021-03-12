@@ -1,13 +1,37 @@
 import { Dimensions } from './Dimensions';
 import { QQ } from './QQ';
 
+/**
+ * @hidden
+ */
 const R0 = QQ.valueOf(0, 1);
+/**
+ * @hidden
+ */
 const R1 = QQ.valueOf(1, 1);
+/**
+ * @hidden
+ */
 const R2 = R1.add(R1);
+/**
+ * @hidden
+ */
 const R3 = R2.add(R1);
+/**
+ * @hidden
+ */
 const R4 = R3.add(R1);
+/**
+ * @hidden
+ */
 const R5 = R4.add(R1);
+/**
+ * @hidden
+ */
 const R6 = R5.add(R1);
+/**
+ * @hidden
+ */
 const R7 = R6.add(R1);
 
 describe("Dimensions", function () {

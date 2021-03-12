@@ -2,12 +2,30 @@ import { Dimensions } from "../math/Dimensions";
 import { Geometric2 } from "../math/Geometric2";
 import { PolygonRigidBody2 } from "./PolygonRigidBody2";
 
+/**
+ * @hidden
+ */
 const zero = Geometric2.zero;
+/**
+ * @hidden
+ */
 const e1 = Geometric2.e1;
+/**
+ * @hidden
+ */
 const e2 = Geometric2.e2;
+/**
+ * @hidden
+ */
 const kilogram = Geometric2.kilogram;
+/**
+ * @hidden
+ */
 const meter = Geometric2.meter;
 
+/**
+ * @hidden
+ */
 const unitSquare: Geometric2[] = [zero, e1, e1.add(e2), e2];
 
 describe("PolygonRigidBody2", function () {

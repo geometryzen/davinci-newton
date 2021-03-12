@@ -14,25 +14,28 @@
 // limitations under the License.
 
 import isObject from '../checks/isObject';
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import { CircularList } from '../util/CircularList';
-import GenericEvent from '../util/GenericEvent';
-import Memorizable from '../util/Memorizable';
-import Observer from '../util/Observer';
-import ParameterNumber from '../util/ParameterNumber';
-import ParameterString from '../util/ParameterString';
-import SubjectEvent from '../util/SubjectEvent';
-import veryDifferent from '../util/veryDifferent';
+import { GenericEvent } from '../util/GenericEvent';
+import { Memorizable } from '../util/Memorizable';
+import { Observer } from '../util/Observer';
+import { ParameterNumber } from '../util/ParameterNumber';
+import { ParameterString } from '../util/ParameterString';
+import { SubjectEvent } from '../util/SubjectEvent';
+import { veryDifferent } from '../util/veryDifferent';
 import { DrawingMode } from '../view/DrawingMode';
-import GraphPoint from './GraphPoint';
+import { GraphPoint } from './GraphPoint';
 import { GraphStyle } from './GraphStyle';
-import GraphVarsList from './GraphVarsList';
+import { GraphVarsList } from './GraphVarsList';
 
 // const GRAPH_DRAW_MODE = 'graph draw mode';
 // const GRAPH_POINTS = 'graph points';
 // const CLEAR_GRAPH = 'clear graph';
 // const NONE = '-none-';
 
+/**
+ * @hidden
+ */
 export class GraphLine extends AbstractSubject implements Memorizable, Observer {
     public static readonly PARAM_NAME_X_VARIABLE = 'X variable';
     public static readonly PARAM_NAME_Y_VARIABLE = 'Y variable';

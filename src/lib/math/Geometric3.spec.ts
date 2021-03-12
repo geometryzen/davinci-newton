@@ -5,22 +5,73 @@ import { Unit } from './Unit';
 import { Vector3 } from './Vector3';
 import { VectorE3 } from './VectorE3';
 
+/**
+ * @hidden
+ */
 const one = Geometric3.one;
+/**
+ * @hidden
+ */
 const e1 = Geometric3.e1;
+/**
+ * @hidden
+ */
 const e2 = Geometric3.e2;
+/**
+ * @hidden
+ */
 const e3 = Geometric3.e3;
+/**
+ * @hidden
+ */
 const e23 = e2.mul(e3);
+/**
+ * @hidden
+ */
 const e31 = e3.mul(e1);
+/**
+ * @hidden
+ */
 const e12 = e1.mul(e2);
+/**
+ * @hidden
+ */
 const I = Geometric3.I;
+/**
+ * @hidden
+ */
 const meter = Geometric3.meter;
+/**
+ * @hidden
+ */
 const kilogram = Geometric3.kilogram;
+/**
+ * @hidden
+ */
 const second = Geometric3.second;
+/**
+ * @hidden
+ */
 const ampere = Geometric3.ampere;
+/**
+ * @hidden
+ */
 const kelvin = Geometric3.kelvin;
+/**
+ * @hidden
+ */
 const mole = Geometric3.mole;
+/**
+ * @hidden
+ */
 const candela = Geometric3.candela;
 
+/**
+ * @hidden
+ * @param M 
+ * @param n 
+ * @returns 
+ */
 function reflectSpec(M: Geometric3, n: VectorE3) {
     const spec = function () {
         /**
@@ -57,6 +108,7 @@ function reflectSpec(M: Geometric3, n: VectorE3) {
 /**
  * The decimal place up to which the numbers should agree.
  * Make this as large as possible while avoiding rounding errors.
+ * @hidden
  */
 const PRECISION = 13;
 

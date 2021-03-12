@@ -1,10 +1,11 @@
-import AffineTransform from './AffineTransform';
+import { AffineTransform } from './AffineTransform';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';
-import DoubleRect from './DoubleRect';
+import { DoubleRect } from './DoubleRect';
 import Point from './Point';
-import ScreenRect from './ScreenRect';
+import { ScreenRect } from './ScreenRect';
 /**
+ * @hidden
  * Provides the mapping between screen (canvas) coordinates and simulation coordinates;
  * this is an immutable object.
  *
@@ -50,7 +51,7 @@ import ScreenRect from './ScreenRect';
  * @param pixel_per_unit_x  canvas pixels per simulation space unit along x axis
  * @param pixel_per_unit_y  canvas pixels per simulation space unit along y axis
  */
-export default class CoordMap {
+export declare class CoordMap {
     private screen_left_;
     private screen_bottom_;
     private sim_left_;

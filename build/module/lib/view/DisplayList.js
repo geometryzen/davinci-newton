@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { __extends } from "tslib";
-import AbstractSubject from '../util/AbstractSubject';
-import GenericEvent from '../util/GenericEvent';
-import insertAt from '../util/insertAt';
 import isObject from '../checks/isObject';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { GenericEvent } from '../util/GenericEvent';
+import insertAt from '../util/insertAt';
 /**
  * Displays a set of DisplayObject(s)}, which show the state of the simulation.
  * A DisplayObject typically represents a SimObject, but not always.
@@ -25,6 +25,7 @@ import isObject from '../checks/isObject';
  * ------
  * DisplayObjects with a lower `zIndex` appear underneath those with higher `zIndex`.
  * The DisplayList is sorted by `zIndex`.
+ * @hidden
  */
 var DisplayList = /** @class */ (function (_super) {
     __extends(DisplayList, _super);
@@ -119,4 +120,3 @@ var DisplayList = /** @class */ (function (_super) {
     return DisplayList;
 }(AbstractSubject));
 export { DisplayList };
-export default DisplayList;

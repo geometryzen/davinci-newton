@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @hidden
+ */
 export interface HistoryIterator<T> {
     getIndex(): number;
     getValue(): T;
@@ -21,5 +24,3 @@ export interface HistoryIterator<T> {
     nextValue(): T;
     previousValue(): T;
 }
-
-export default HistoryIterator;

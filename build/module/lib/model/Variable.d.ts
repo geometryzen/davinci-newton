@@ -1,6 +1,7 @@
-import Parameter from '../util/Parameter';
+import { Parameter } from '../util/Parameter';
 /**
  * Represents a variable with a numeric value; usually stored in a VarsList.
+ * @hidden
  */
 export interface Variable extends Parameter {
     /**
@@ -46,4 +47,3 @@ export interface Variable extends Parameter {
      */
     setValueSmooth(value: number): void;
 }
-export default Variable;

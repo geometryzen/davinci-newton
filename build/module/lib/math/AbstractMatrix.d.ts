@@ -3,8 +3,9 @@ import { Unit } from './Unit';
 /**
  * Base class for matrices with the expectation that they will be used with WebGL.
  * The underlying data storage is a <code>Float32Array</code>.
+ * @hidden
  */
-export default class AbstractMatrix<T extends {
+export declare class AbstractMatrix<T extends {
     elements: Float32Array;
 }> implements MatrixLike {
     private _elements;

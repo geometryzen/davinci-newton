@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @hidden
+ */
 export interface MemoList {
     memorize(): void;
 }
-
-export default MemoList;

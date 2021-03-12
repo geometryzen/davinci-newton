@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export default function compG3Set(m: {
     a: number;
     x: number;

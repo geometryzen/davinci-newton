@@ -13,7 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export default class UtilityCore {
+/**
+ * @hidden
+ */
+export class UtilityCore {
     /**
      * Maximum representable integer.
      * Need to avoid having an index ever reach this value because we can then

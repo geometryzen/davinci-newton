@@ -5,6 +5,7 @@ import isObject from '../checks/isObject';
  * Determines whether the argument supports the VectorE3 interface.
  * The argument must be a non-null object and must support the x, y, and z numeric properties.
  * @deprecated Do not use this because it could accept types that have scalar and bivector components.
+ * @hidden
  */
 export function isVectorE2(v) {
     if (isObject(v) && !isNull(v)) {

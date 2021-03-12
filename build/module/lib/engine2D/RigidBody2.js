@@ -1,6 +1,9 @@
 import { __extends } from "tslib";
 import { RigidBody } from "../core/RigidBody";
 import { Geometric2 } from "../math/Geometric2";
+/**
+ * @hidden
+ */
 var L = new Geometric2();
 var RigidBody2 = /** @class */ (function (_super) {
     __extends(RigidBody2, _super);

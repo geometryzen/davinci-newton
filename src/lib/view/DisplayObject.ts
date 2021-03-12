@@ -13,9 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import CoordMap from './CoordMap';
+import { CoordMap } from './CoordMap';
+
 /**
- * 
+ * @hidden 
  */
 export interface DisplayObject {
     /**
@@ -38,5 +39,3 @@ export interface DisplayObject {
      */
     setZIndex(zIndex?: number): void;
 }
-
-export default DisplayObject;

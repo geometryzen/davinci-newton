@@ -2,6 +2,13 @@ import get from './compG3Get';
 import set from './compG3Set';
 import lcoE3 from './lcoE3';
 import { Unit } from './Unit';
+/**
+ * @hidden
+ * @param a
+ * @param b
+ * @param out
+ * @returns
+ */
 export default function lcoG3(a, b, out) {
     out.uom = Unit.mul(a.uom, b.uom);
     var a0 = get(a, 0);

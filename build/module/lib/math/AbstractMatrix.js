@@ -1,6 +1,11 @@
 import mustBeDefined from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import { Unit } from './Unit';
+/**
+ * @hidden
+ * @param elements
+ * @param length
+ */
 function checkElementsLength(elements, length) {
     if (elements.length !== length) {
         throw new Error("elements must have length " + length);
@@ -9,6 +14,7 @@ function checkElementsLength(elements, length) {
 /**
  * Base class for matrices with the expectation that they will be used with WebGL.
  * The underlying data storage is a <code>Float32Array</code>.
+ * @hidden
  */
 var AbstractMatrix = /** @class */ (function () {
     /**
@@ -91,4 +97,4 @@ var AbstractMatrix = /** @class */ (function () {
     };
     return AbstractMatrix;
 }());
-export default AbstractMatrix;
+export { AbstractMatrix };

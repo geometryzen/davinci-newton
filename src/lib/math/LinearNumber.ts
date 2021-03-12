@@ -9,7 +9,7 @@
  */
 
 /**
- *
+ * @hidden
  */
 export interface LinearNumber<I, M, S, V, MAGNITUDE, SCALAR, UNIT> {
   add(rhs: I, α?: number): M;

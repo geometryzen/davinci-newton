@@ -5,7 +5,7 @@ import { ForceBody } from './ForceBody';
 import { Massive } from './Massive';
 import { Metric } from './Metric';
 /**
- *
+ * @hidden
  */
 export declare class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Massive<T>, Charged<T> {
     readonly metric: Metric<T>;

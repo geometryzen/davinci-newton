@@ -1,3 +1,24 @@
+/**
+ * @hidden
+ * @param a0
+ * @param a1
+ * @param a2
+ * @param a3
+ * @param a4
+ * @param a5
+ * @param a6
+ * @param a7
+ * @param b0
+ * @param b1
+ * @param b2
+ * @param b3
+ * @param b4
+ * @param b5
+ * @param b6
+ * @param b7
+ * @param index
+ * @returns
+ */
 export default function rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, index) {
     a0 = +a0;
     a1 = +a1;

@@ -1,4 +1,5 @@
 /**
+ * @hidden
  * Inserts an object at the given index of the array.
  * @param xs The array to modify.
  * @param x The object to insert.

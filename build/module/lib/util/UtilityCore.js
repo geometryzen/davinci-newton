@@ -12,6 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+/**
+ * @hidden
+ */
 var UtilityCore = /** @class */ (function () {
     function UtilityCore() {
     }
@@ -24,4 +27,4 @@ var UtilityCore = /** @class */ (function () {
     UtilityCore.MAX_INTEGER = Math.pow(2, 53);
     return UtilityCore;
 }());
-export default UtilityCore;
+export { UtilityCore };

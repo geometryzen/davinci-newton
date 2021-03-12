@@ -1,6 +1,6 @@
-import DimensionsSummary from './DimensionsSummary';
+import { DimensionsSummary } from './DimensionsSummary';
 /**
- *
+ * @hidden
  */
 export default function detectDimensions(M, L, T, Q, temperature, amount, intensity) {
     if (M.numer === -1) {

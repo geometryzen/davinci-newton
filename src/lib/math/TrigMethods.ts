@@ -1,4 +1,7 @@
 // TODO asin, acos, atan,tanh, asinh, acosh
+/**
+ * @hidden
+ */
 export interface TrigMethods<T> {
     cos(): T;
     cosh(): T;
@@ -8,4 +11,3 @@ export interface TrigMethods<T> {
     sinh(): T;
     tan(): T;
 }
-

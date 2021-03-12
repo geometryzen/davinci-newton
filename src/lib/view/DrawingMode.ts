@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @hidden
+ */
 export enum DrawingMode {
     DOTS = 0,
     LINES = 1

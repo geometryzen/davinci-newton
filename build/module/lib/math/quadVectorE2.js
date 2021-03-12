@@ -1,6 +1,11 @@
 import { dotVectorE2 as dot } from './dotVectorE2';
 import isDefined from '../checks/isDefined';
 import isNumber from '../checks/isNumber';
+/**
+ * @hidden
+ * @param vector
+ * @returns
+ */
 export function quadVectorE2(vector) {
     if (isDefined(vector)) {
         var x = vector.x;

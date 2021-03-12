@@ -4,12 +4,19 @@ import { GradeMasked } from './GradeMasked';
 import { GeometricE2 } from './GeometricE2';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 const ONE: Unit = void 0; // Unit.ONE;
 
+/**
+ * @hidden
+ */
 const scratch: GeometricE2 = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE };
 
 /**
  * "Promotes" the argument to a GeometricE2.
+ * @hidden
  */
 export function maskG2(arg: any): GeometricE2 {
     const duck = <GradeMasked>arg;

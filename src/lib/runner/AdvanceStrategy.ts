@@ -15,6 +15,9 @@
 
 import { Unit } from '../math/Unit';
 
+/**
+ * @hidden
+ */
 export interface AdvanceStrategy {
     /**
      * 

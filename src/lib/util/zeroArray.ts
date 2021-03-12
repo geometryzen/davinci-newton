@@ -1,6 +1,9 @@
-export default function zeroArray(xs: number[]): void {
-    const length = xs.length;
-    for (let i = 0; i < length; i++) {
+/**
+ * @hidden
+ */
+export function zeroArray(xs: number[]): void {
+    const N = xs.length;
+    for (let i = 0; i < N; i++) {
         xs[i] = 0;
     }
 }

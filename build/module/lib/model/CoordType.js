@@ -14,9 +14,11 @@
 // limitations under the License.
 /**
  * The coordinate frame that is fixed in relation to the rigid body.
+ * @hidden
  */
 export var LOCAL = 0;
 /**
  * The coordinate frame used as the basis for position and attitude of all bodies.
+ * @hidden
  */
 export var WORLD = 1;

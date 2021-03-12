@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.30
+// Type definitions for davinci-newton 1.0.31
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -293,6 +293,9 @@ export class Unit {
     static sqrt(uom: Unit): Unit;
 }
 
+/**
+ *
+ */
 export interface SimObject {
     /**
      * 
@@ -309,9 +312,41 @@ export class SimList {
 }
 
 /**
- * 
+ * Defines the methods that must be supported by a simulation system in order to be
+ * integrated by a differential equation solver.
  */
-export interface Simulation {
+export interface DiffEqSolverSystem {
+    /**
+     * Gets the state vector, Y(t).
+     * This is the first method that is called by the solver.
+     */
+    getState(): number[];
+
+    /**
+     * Computes the derivatives of the state variables based upon the specified state.
+     * This is the second method that is called by the solver.
+     */
+    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
+
+    /**
+     * Sets the state vector, Y(t).
+     * This is the third method that is called by the solver.
+     */
+    setState(state: number[]): void;
+}
+
+/**
+ * Defines a standard interface for integrators (differential equation solvers) so that
+ * they may be used in an interoperable way with various strategies for advancing the simulation.
+ */
+export interface DiffEqSolver {
+    step(stepSize: number, uomStep: Unit): void;
+}
+
+/**
+ *
+ */
+export interface Simulation extends DiffEqSolverSystem {
     /**
      * 
      */
@@ -323,27 +358,15 @@ export interface Simulation {
     prolog(): void;
 
     /**
-     * Gets the state vector, Y(t).
-     */
-    getState(): number[];
-
-    /**
-     * Computes the derivatives of the state variables based upon the specified state.
-     */
-    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
-
-    /**
-     * Sets the state vector, Y(t).
-     */
-    setState(state: number[]): void;
-
-    /**
      * Handler for actions to be performed after the evaluate calls and setState.
      * Computes the system energy, linear momentum and angular momentum.
      */
     epilog(): void;
 }
 
+/**
+ *
+ */
 export class VarsList {
     constructor(varNames: string[]);
     addVariables(names: string[]): number;
@@ -1875,6 +1898,9 @@ export class Geometric3 implements GeometricE3 {
     static wedge(a: Geometric3, b: Geometric3): Geometric3;
 }
 
+/**
+ *
+ */
 export interface MatrixLike {
     readonly dimensions: number;
     uom?: Unit;
@@ -1922,6 +1948,9 @@ export class Matrix3 implements MatrixLike {
     static zero(): Matrix3;
 }
 
+/**
+ *
+ */
 export interface Metric<T> {
     a(mv: T): number;
 
@@ -2302,12 +2331,27 @@ export class PolygonRigidBody2 extends RigidBody2 {
  * An object with no internal structure.
  */
 export class Particle<T> extends RigidBody<T> {
-
     /**
      * M is the mass of the particle. Defaults to 1.
      * Q is the electric charge of the particle. Defaults to 0.
      */
     constructor(mass: T, charge: T, metric: Metric<T>);
+}
+
+export class Particle2 extends Particle<Geometric2> {
+    /**
+     * M is the mass of the particle. Defaults to 1.
+     * Q is the electric charge of the particle. Defaults to 0.
+     */
+    constructor(mass: Geometric2, charge: Geometric2);
+}
+
+export class Particle3 extends Particle<Geometric3> {
+    /**
+     * M is the mass of the particle. Defaults to 1.
+     * Q is the electric charge of the particle. Defaults to 0.
+     */
+    constructor(mass: Geometric3, charge: Geometric3);
 }
 
 /**
@@ -2373,10 +2417,10 @@ export interface ForceLaw<T> extends SimObject {
 }
 
 /**
- * The State engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+ * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  */
-export class State<T> implements Simulation, EnergySystem<T> {
+export class Physics<T> implements Simulation, EnergySystem<T> {
     /**
      * 
      */
@@ -2468,7 +2512,7 @@ export class State<T> implements Simulation, EnergySystem<T> {
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * It uses Geometric2 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
  */
-export class Physics2 extends State<Geometric2> implements EnergySystem<Geometric2> {
+export class Physics2 extends Physics<Geometric2> implements EnergySystem<Geometric2> {
     constructor();
 }
 
@@ -2477,27 +2521,26 @@ export class Physics2 extends State<Geometric2> implements EnergySystem<Geometri
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * It uses Geometric3 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
  */
-export class Physics3 extends State<Geometric3> implements EnergySystem<Geometric3> {
+export class Physics3 extends Physics<Geometric3> implements EnergySystem<Geometric3> {
     constructor();
 }
 
-export interface DiffEqSolver {
-    step(stepSize: number, uomStep: Unit): void;
-}
-
 /**
- * 
+ * The Euler algorithm uses the rate of change values at the
+ * beginning of the step in order to perform the integration.
  */
 export class EulerMethod implements DiffEqSolver {
-    constructor(simulation: Simulation);
+    constructor(system: DiffEqSolverSystem);
     step(stepSize: number, uomStep: Unit): void;
 }
 
 /**
- * 
+ * The modified Euler algorithm uses the rate of change values at both
+ * the beginning of the step and at the end, taking an average in order
+ * to perform the integration.
  */
 export class ModifiedEuler implements DiffEqSolver {
-    constructor(simulation: Simulation);
+    constructor(system: DiffEqSolverSystem);
     step(stepSize: number, uomStep: Unit): void;
 }
 
@@ -2509,7 +2552,7 @@ export class RungeKutta implements DiffEqSolver {
     /**
      * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
      */
-    constructor(simulation: Simulation);
+    constructor(system: DiffEqSolverSystem);
     /**
      * 
      */
@@ -2548,7 +2591,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
     /**
      * 
      */
-    constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver);
+    constructor(simulation: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver);
     /**
      * 
      */

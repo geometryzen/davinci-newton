@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 import toName from './toName';
 import validName from './validName';
 
 /**
- * 
+ * @hidden
  */
 export class GenericEvent implements SubjectEvent {
     /**
@@ -55,5 +55,3 @@ export class GenericEvent implements SubjectEvent {
     }
 
 }
-
-export default GenericEvent;

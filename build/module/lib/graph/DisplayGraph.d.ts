@@ -1,9 +1,9 @@
-import CoordMap from '../view/CoordMap';
-import DisplayObject from '../view/DisplayObject';
-import ScreenRect from '../view/ScreenRect';
+import { CoordMap } from '../view/CoordMap';
+import { DisplayObject } from '../view/DisplayObject';
+import { ScreenRect } from '../view/ScreenRect';
 import { GraphLine } from './GraphLine';
 /**
- *
+ * @hidden
  */
 export declare class DisplayGraph implements DisplayObject {
     /**

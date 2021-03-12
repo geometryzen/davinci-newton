@@ -2,6 +2,9 @@ import { Geometric2 } from "../math/Geometric2";
 import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
+/**
+ * @hidden
+ */
 var Euclidean2 = /** @class */ (function () {
     function Euclidean2() {
     }

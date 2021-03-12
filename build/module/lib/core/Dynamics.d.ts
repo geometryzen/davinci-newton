@@ -1,12 +1,33 @@
 import { ForceBody } from "./ForceBody";
 import { ForceLaw } from "./ForceLaw";
 import { VarsList } from "./VarsList";
+/**
+ * @hidden
+ */
 export declare const INDEX_TIME = 0;
+/**
+ * @hidden
+ */
 export declare const INDEX_TRANSLATIONAL_KINETIC_ENERGY = 1;
+/**
+ * @hidden
+ */
 export declare const INDEX_ROTATIONAL_KINETIC_ENERGY = 2;
+/**
+ * @hidden
+ */
 export declare const INDEX_POTENTIAL_ENERGY = 3;
+/**
+ * @hidden
+ */
 export declare const INDEX_TOTAL_ENERGY = 4;
+/**
+ * @hidden
+ */
 export declare const INDEX_RESERVED_LAST = 4;
+/**
+ * @hidden
+ */
 export interface Dynamics<T> {
     /**
      * The rate of change of position is the velocity.

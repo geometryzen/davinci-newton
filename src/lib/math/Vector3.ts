@@ -1,5 +1,5 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { readOnly } from '../i18n/readOnly';
 import { BivectorE3 } from './BivectorE3';
 import { GradeMasked } from './GradeMasked';
@@ -13,7 +13,7 @@ import { Unit } from './Unit';
 import { VectorE3 } from './VectorE3';
 
 /**
- * 
+ * @hidden
  */
 export class Vector3 implements VectorE3, GradeMasked {
     public x: number;

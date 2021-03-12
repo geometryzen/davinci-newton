@@ -3,6 +3,7 @@ import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 /**
  * A mutable representation of a spinor with cartesian coordinates in 3 dimensions.
+ * @hidden
  */
 export declare class Spinor3 implements SpinorE3, GradeMasked {
     /**

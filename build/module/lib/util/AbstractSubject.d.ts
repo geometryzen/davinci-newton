@@ -1,12 +1,12 @@
-import Observer from './Observer';
-import Parameter from './Parameter';
-import ParameterBoolean from './ParameterBoolean';
-import ParameterNumber from './ParameterNumber';
-import ParameterString from './ParameterString';
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
+import { Observer } from './Observer';
+import { Parameter } from './Parameter';
+import { ParameterBoolean } from './ParameterBoolean';
+import { ParameterNumber } from './ParameterNumber';
+import { ParameterString } from './ParameterString';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 /**
- *
+ * @hidden
  */
 export declare class AbstractSubject implements Subject {
     /**
@@ -54,4 +54,3 @@ export declare class AbstractSubject implements Subject {
      */
     getObservers(): Observer[];
 }
-export default AbstractSubject;

@@ -1,5 +1,5 @@
 import { __extends } from "tslib";
-import { State } from "../core/State";
+import { Physics } from "../core/Physics";
 import { Dynamics2 } from "./Dynamics2";
 import { Euclidean2 } from "./Euclidean2";
 /**
@@ -11,5 +11,5 @@ var Physics2 = /** @class */ (function (_super) {
         return _super.call(this, new Euclidean2(), new Dynamics2()) || this;
     }
     return Physics2;
-}(State));
+}(Physics));
 export { Physics2 };

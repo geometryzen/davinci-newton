@@ -1,3 +1,8 @@
+/**
+ * @hidden
+ * @param coords
+ * @param n
+ */
 export function approx(coords, n) {
     var max = 0;
     var iLen = coords.length;

@@ -4,7 +4,7 @@ import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 /**
- *
+ * @hidden
  */
 export declare class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     private $body;

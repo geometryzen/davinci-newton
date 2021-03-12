@@ -1,5 +1,7 @@
-import SubjectEvent from './SubjectEvent';
+import { SubjectEvent } from './SubjectEvent';
+/**
+ * @hidden
+ */
 export interface Observer {
     observe(event: SubjectEvent): void;
 }
-export default Observer;

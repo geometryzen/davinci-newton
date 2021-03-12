@@ -1,4 +1,6 @@
-interface LocalizableMessage {
+/**
+ * @hidden
+ */
+export interface LocalizableMessage {
     message: string;
 }
-export default LocalizableMessage;

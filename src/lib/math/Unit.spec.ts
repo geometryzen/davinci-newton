@@ -2,32 +2,107 @@ import { Dimensions } from './Dimensions';
 import { QQ } from './QQ';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 const Neg1 = QQ.valueOf(-1, 1);
+/**
+ * @hidden
+ */
 const Rat0 = QQ.valueOf(0, 1);
+/**
+ * @hidden
+ */
 const Rat1 = QQ.valueOf(1, 1);
+/**
+ * @hidden
+ */
 const Rat2 = QQ.valueOf(2, 1);
+/**
+ * @hidden
+ */
 const Rat3 = QQ.valueOf(3, 1);
 
+/**
+ * @hidden
+ */
 const KILOGRAM = Unit.KILOGRAM;
+/**
+ * @hidden
+ */
 const METER = Unit.METER;
+/**
+ * @hidden
+ */
 const SECOND = Unit.SECOND;
+/**
+ * @hidden
+ */
 const AMPERE = Unit.AMPERE;
+/**
+ * @hidden
+ */
 const COULOMB = Unit.COULOMB;
+/**
+ * @hidden
+ */
 const KELVIN = Unit.KELVIN;
+/**
+ * @hidden
+ */
 const MOLE = Unit.MOLE;
+/**
+ * @hidden
+ */
 const CANDELA = Unit.CANDELA;
 
+/**
+ * @hidden
+ */
 const NEWTON = KILOGRAM.mul(METER).div(SECOND).div(SECOND);
+/**
+ * @hidden
+ */
 const JOULE = NEWTON.mul(METER);
+/**
+ * @hidden
+ */
 const HERTZ = Unit.inv(SECOND);
+/**
+ * @hidden
+ */
 const WATT = JOULE.div(SECOND);
+/**
+ * @hidden
+ */
 const VOLT = JOULE.div(COULOMB);
+/**
+ * @hidden
+ */
 const WEBER = VOLT.mul(SECOND);
+/**
+ * @hidden
+ */
 const TESLA = WEBER.div(METER).div(METER);
+/**
+ * @hidden
+ */
 const OHM = VOLT.div(AMPERE);
+/**
+ * @hidden
+ */
 const SIEMEN = AMPERE.div(VOLT);
+/**
+ * @hidden
+ */
 const FARAD = COULOMB.div(VOLT);
+/**
+ * @hidden
+ */
 const HENRY = KILOGRAM.mul(METER).mul(METER).div(COULOMB).div(COULOMB);
+/**
+ * @hidden
+ */
 const PASCAL = NEWTON.div(METER).div(METER);
 
 describe("Unit", function () {

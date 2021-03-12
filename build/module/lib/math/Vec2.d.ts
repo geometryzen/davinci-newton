@@ -5,6 +5,7 @@ import { Unit } from './Unit';
 import { VectorE2 } from './VectorE2';
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
+ * @hidden
  */
 export declare class Vec2 implements VectorE2 {
     /**

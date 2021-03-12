@@ -14,7 +14,7 @@
 // limitations under the License.
 
 /**
- * 
+ * @hidden
  */
 export class ClockTask {
 
@@ -57,5 +57,3 @@ export class ClockTask {
         this.timeoutID_ = window.setTimeout(this.callBack_, delay_ms);
     }
 }
-
-export default ClockTask;

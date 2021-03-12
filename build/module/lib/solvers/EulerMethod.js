@@ -12,21 +12,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import zeroArray from '../util/zeroArray';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { zeroArray } from '../util/zeroArray';
 /**
- *
+ * The Euler algorithm uses the rate of change values at the
+ * beginning of the step in order to perform the integration.
  */
 var EulerMethod = /** @class */ (function () {
     /**
      *
      */
-    function EulerMethod(sim_) {
-        this.sim_ = sim_;
+    function EulerMethod(system) {
+        this.system = system;
         this.inp_ = [];
         this.k1_ = [];
+        mustBeNonNullObject('system', system);
     }
     EulerMethod.prototype.step = function (stepSize, uomStep) {
-        var vars = this.sim_.getState();
+        var vars = this.system.getState();
         var N = vars.length;
         if (this.inp_.length !== N) {
             this.inp_ = new Array(N);
@@ -39,11 +42,11 @@ var EulerMethod = /** @class */ (function () {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uomStep);
+        this.system.evaluate(inp, k1, 0, uomStep);
         for (var i = 0; i < N; i++) {
             vars[i] += k1[i] * stepSize;
         }
-        this.sim_.setState(vars);
+        this.system.setState(vars);
     };
     return EulerMethod;
 }());

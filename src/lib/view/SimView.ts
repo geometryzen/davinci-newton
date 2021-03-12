@@ -13,23 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
 import contains from '../util/contains';
-import GenericEvent from '../util/GenericEvent';
-import Memorizable from '../util/Memorizable';
-import ParameterBoolean from '../util/ParameterBoolean';
-import ParameterNumber from '../util/ParameterNumber';
+import { GenericEvent } from '../util/GenericEvent';
+import { Memorizable } from '../util/Memorizable';
+import { ParameterBoolean } from '../util/ParameterBoolean';
+import { ParameterNumber } from '../util/ParameterNumber';
 import remove from '../util/remove';
-import veryDifferent from '../util/veryDifferent';
+import { veryDifferent } from '../util/veryDifferent';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';
-import CoordMap from './CoordMap';
-import DisplayList from './DisplayList';
-import DoubleRect from './DoubleRect';
-import LabView from './LabView';
-import ScreenRect from './ScreenRect';
+import { CoordMap } from './CoordMap';
+import { DisplayList } from './DisplayList';
+import { DoubleRect } from './DoubleRect';
+import { LabView } from './LabView';
+import { ScreenRect } from './ScreenRect';
 
+/**
+ * @hidden
+ */
 export class SimView extends AbstractSubject implements LabView {
     public static readonly PARAM_NAME_WIDTH = 'width';
     public static readonly PARAM_NAME_HEIGHT = 'height';

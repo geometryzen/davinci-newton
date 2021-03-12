@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export default function isVariableName(name) {
     if (typeof name === 'string') {
         if (name.length > 0) {

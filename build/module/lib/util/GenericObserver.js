@@ -14,6 +14,7 @@
 // limitations under the License.
 /**
  * Observes a Subject; when the Subject broadcasts a SubjectEvent then this executes a specified function.
+ * @hidden
  */
 var GenericObserver = /** @class */ (function () {
     /**
@@ -37,4 +38,3 @@ var GenericObserver = /** @class */ (function () {
     return GenericObserver;
 }());
 export { GenericObserver };
-export default GenericObserver;

@@ -1,25 +1,85 @@
 import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { VarsList } from '../core/VarsList';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_LINEAR_MOMENTUM_Z = INDEX_RESERVED_LAST + 3;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = INDEX_RESERVED_LAST + 4;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = INDEX_RESERVED_LAST + 5;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 6;
+/**
+ * @hidden
+ */
 export var OFFSET_POSITION_X = 0;
+/**
+ * @hidden
+ */
 export var OFFSET_POSITION_Y = 1;
+/**
+ * @hidden
+ */
 export var OFFSET_POSITION_Z = 2;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_A = 3;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_YZ = 4;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_ZX = 5;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_XY = 6;
+/**
+ * @hidden
+ */
 export var OFFSET_LINEAR_MOMENTUM_X = 7;
+/**
+ * @hidden
+ */
 export var OFFSET_LINEAR_MOMENTUM_Y = 8;
+/**
+ * @hidden
+ */
 export var OFFSET_LINEAR_MOMENTUM_Z = 9;
+/**
+ * @hidden
+ */
 export var OFFSET_ANGULAR_MOMENTUM_YZ = 10;
+/**
+ * @hidden
+ */
 export var OFFSET_ANGULAR_MOMENTUM_ZX = 11;
+/**
+ * @hidden
+ */
 export var OFFSET_ANGULAR_MOMENTUM_XY = 12;
+/**
+ * @hidden
+ */
 var varNames = [
     VarsList.TIME,
     "translational kinetic energy",
@@ -33,6 +93,9 @@ var varNames = [
     "total angular momentum - zx",
     "total angular momentum - xy"
 ];
+/**
+ * @hidden
+ */
 var DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TRANSLATIONAL_KINETIC_ENERGY,
     INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -45,6 +108,9 @@ var DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TOTAL_ANGULAR_MOMENTUM_ZX,
     INDEX_TOTAL_ANGULAR_MOMENTUM_XY
 ];
+/**
+ * @hidden
+ */
 var Dynamics3 = /** @class */ (function () {
     function Dynamics3() {
     }

@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 class Newton {
     /**
      * The GitHub URL of the repository.
@@ -23,7 +26,7 @@ class Newton {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
         this.LAST_MODIFIED = '2021-03-12';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.30';
+        this.VERSION = '1.0.31';
     }
 
     log(message?: any, ...optionalParams: any[]): void {
@@ -48,6 +51,6 @@ class Newton {
 }
 
 /**
- *
+ * @hidden
  */
 export const config = new Newton();

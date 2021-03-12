@@ -1,5 +1,5 @@
 import { __extends } from "tslib";
-import AbstractMatrix from "./AbstractMatrix";
+import { AbstractMatrix } from "./AbstractMatrix";
 var Matrix1 = /** @class */ (function (_super) {
     __extends(Matrix1, _super);
     /**

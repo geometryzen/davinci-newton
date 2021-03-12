@@ -2,6 +2,7 @@ import { __extends } from "tslib";
 import { RigidBody } from './RigidBody';
 /**
  * An object with no internal structure.
+ * @hidden
  */
 var Particle = /** @class */ (function (_super) {
     __extends(Particle, _super);

@@ -1,12 +1,12 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import isBivectorE3 from './isBivectorE3';
 import { isVectorE2 } from './isVectorE2';
 import { mustBeBivectorE2 } from './mustBeBivectorE2';
 import { mustBeVectorE2 } from './mustBeVectorE2';
 import { Unit } from './Unit';
 /**
- *
+ * @hidden
  */
 var Bivector2 = /** @class */ (function () {
     /**

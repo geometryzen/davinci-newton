@@ -1,7 +1,11 @@
 import { dotVectorE2 as dot } from './dotVectorE2';
 import { quadVectorE2 as quad } from './quadVectorE2';
+/**
+ * @hidden
+ */
 var sqrt = Math.sqrt;
 /**
+ * @hidden
  * Sets this multivector to a rotor representing a rotation from a to b.
  * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
  * Returns undefined (void 0) if the vectors are anti-parallel.

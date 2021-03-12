@@ -1,8 +1,9 @@
-import Observer from './Observer';
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
+import { Observer } from './Observer';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 /**
  * Observes a Subject; when the Subject broadcasts a SubjectEvent then this executes a specified function.
+ * @hidden
  */
 export declare class GenericObserver implements Observer {
     private subject_;
@@ -18,4 +19,3 @@ export declare class GenericObserver implements Observer {
     disconnect(): void;
     observe(event: SubjectEvent): void;
 }
-export default GenericObserver;

@@ -1,6 +1,9 @@
 import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 export class Mat1 implements MatrixLike {
     private value: number;
     constructor(value: number) {

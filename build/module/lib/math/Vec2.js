@@ -1,9 +1,10 @@
-import mustBeNumber from '../checks/mustBeNumber';
-import veryDifferent from '../util/veryDifferent';
+import { mustBeNumber } from '../checks/mustBeNumber';
+import { veryDifferent } from '../util/veryDifferent';
 import Scalar3 from './Scalar3';
 import { Unit } from './Unit';
 /**
  * An immutable vector in 3D space; after creation it cannot be altered.
+ * @hidden
  */
 var Vec2 = /** @class */ (function () {
     /**

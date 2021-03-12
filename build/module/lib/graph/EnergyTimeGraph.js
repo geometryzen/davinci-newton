@@ -4,7 +4,8 @@ import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
 import { Graph } from './Graph';
 /**
- *
+ * @hidden
+ * This is currently exposed to support the existing 3D example.
  */
 var EnergyTimeGraph = /** @class */ (function (_super) {
     __extends(EnergyTimeGraph, _super);

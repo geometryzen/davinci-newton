@@ -15,7 +15,7 @@
 import toName from './toName';
 import validName from './validName';
 /**
- *
+ * @hidden
  */
 var GenericEvent = /** @class */ (function () {
     /**
@@ -50,4 +50,3 @@ var GenericEvent = /** @class */ (function () {
     return GenericEvent;
 }());
 export { GenericEvent };
-export default GenericEvent;

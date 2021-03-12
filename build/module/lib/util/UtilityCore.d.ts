@@ -1,4 +1,7 @@
-export default class UtilityCore {
+/**
+ * @hidden
+ */
+export declare class UtilityCore {
     /**
      * Maximum representable integer.
      * Need to avoid having an index ever reach this value because we can then

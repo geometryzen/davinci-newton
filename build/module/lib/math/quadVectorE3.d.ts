@@ -1,3 +1,8 @@
+/**
+ * @hidden
+ * @param vector
+ * @returns
+ */
 export default function quadVectorE3(vector: {
     x: number;
     y: number;

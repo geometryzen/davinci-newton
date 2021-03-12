@@ -1,5 +1,7 @@
 import { LinearNumber } from './LinearNumber';
+
 /**
+ * @hidden
  * This interface is provided to ensure consistency.
  * It is not part of the documented API.
  * Notice that the effect on the target depends upon whether the target class in mutable.
@@ -9,7 +11,6 @@ import { LinearNumber } from './LinearNumber';
  * V: The lightweight interface form of the vector.
  * MAGNITUDE: The type for methods that compute magnitudes.
  */
-
 export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends LinearNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> {
 
     /**

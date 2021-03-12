@@ -13,13 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { DiffEqSolver } from '../core/DiffEqSolver';
-import { Simulation } from '../core/Simulation';
+import { DiffEqSolverSystem } from '../core/DiffEqSolverSystem';
 import { Unit } from '../math/Unit';
-import zeroArray from '../util/zeroArray';
+import { zeroArray } from '../util/zeroArray';
 
 /**
- * 
+ * The Euler algorithm uses the rate of change values at the
+ * beginning of the step in order to perform the integration.
  */
 export class EulerMethod implements DiffEqSolver {
     private inp_: number[] = [];
@@ -27,11 +29,11 @@ export class EulerMethod implements DiffEqSolver {
     /**
      * 
      */
-    constructor(private sim_: Simulation) {
-
+    constructor(private readonly system: DiffEqSolverSystem) {
+        mustBeNonNullObject('system', system);
     }
     step(stepSize: number, uomStep?: Unit): void {
-        const vars = this.sim_.getState();
+        const vars = this.system.getState();
         const N = vars.length;
         if (this.inp_.length !== N) {
             this.inp_ = new Array(N);
@@ -44,10 +46,10 @@ export class EulerMethod implements DiffEqSolver {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uomStep);
+        this.system.evaluate(inp, k1, 0, uomStep);
         for (let i = 0; i < N; i++) {
             vars[i] += k1[i] * stepSize;
         }
-        this.sim_.setState(vars);
+        this.system.setState(vars);
     }
 }

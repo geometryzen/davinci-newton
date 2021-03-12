@@ -1,6 +1,6 @@
-import Observer from '../util/Observer';
+import { Observer } from '../util/Observer';
 /**
- *
+ * @hidden
  */
 export interface GraphVarsList {
     /**
@@ -38,4 +38,3 @@ export interface GraphVarsList {
      */
     timeIndex(): number;
 }
-export default GraphVarsList;

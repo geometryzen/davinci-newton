@@ -1,5 +1,5 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import isBivectorE3 from './isBivectorE3';
 import isVectorE3 from './isVectorE3';
 import mustBeBivectorE3 from './mustBeBivectorE3';
@@ -7,7 +7,7 @@ import mustBeVectorE3 from './mustBeVectorE3';
 import { Unit } from './Unit';
 import { wedgeXY, wedgeYZ, wedgeZX } from './wedge3';
 /**
- *
+ * @hidden
  */
 var Bivector3 = /** @class */ (function () {
     /**

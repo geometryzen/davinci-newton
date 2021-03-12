@@ -3,7 +3,7 @@ import { SpinorE3 as Spinor } from './SpinorE3';
 import { Unit } from './Unit';
 import { VectorE3 as Vector } from './VectorE3';
 /**
- *
+ * @hidden
  */
 interface MutableSpinor extends Spinor {
     /**
@@ -18,6 +18,7 @@ interface MutableSpinor extends Spinor {
     zero(): MutableSpinor;
 }
 /**
+ * @hidden
  * Sets the output spinor to a rotor representing a rotation from a to b.
  * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
  * If the vectors are anti-parallel, making the plane of rotation ambiguous,

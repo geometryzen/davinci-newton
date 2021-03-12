@@ -4,6 +4,13 @@ import extE3 from './extE3';
 import { GeometricE3 } from './GeometricE3';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ * @param a 
+ * @param b 
+ * @param out 
+ * @returns 
+ */
 export default function extG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {
 
     out.uom = Unit.mul(a.uom, b.uom);

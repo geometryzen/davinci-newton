@@ -1,12 +1,30 @@
 import detectDims from './detectDimensions';
-import DimensionsSummary from './DimensionsSummary';
+import { DimensionsSummary } from './DimensionsSummary';
 import { QQ } from './QQ';
 
+/**
+ * @hidden
+ */
 const R0 = QQ.valueOf(0, 1);
+/**
+ * @hidden
+ */
 const R1 = QQ.valueOf(1, 1);
+/**
+ * @hidden
+ */
 const R2 = R1.add(R1);
+/**
+ * @hidden
+ */
 const R3 = R2.add(R1);
+/**
+ * @hidden
+ */
 const M1 = QQ.valueOf(-1, 1);
+/**
+ * @hidden
+ */
 const M2 = QQ.valueOf(-2, 1);
 
 describe("detectDims", function () {

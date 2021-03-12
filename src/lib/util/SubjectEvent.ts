@@ -13,8 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Subject from './Subject';
+import { Subject } from './Subject';
 
+/**
+ * @hidden
+ */
 export interface SubjectEvent {
     /**
      * 
@@ -29,5 +32,3 @@ export interface SubjectEvent {
      */
     nameEquals(name: string): boolean;
 }
-
-export default SubjectEvent;

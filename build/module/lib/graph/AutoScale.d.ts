@@ -1,12 +1,13 @@
-import AbstractSubject from '../util/AbstractSubject';
-import Memorizable from '../util/Memorizable';
-import Observer from '../util/Observer';
-import SubjectEvent from '../util/SubjectEvent';
-import DoubleRect from '../view/DoubleRect';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { Memorizable } from '../util/Memorizable';
+import { Observer } from '../util/Observer';
+import { SubjectEvent } from '../util/SubjectEvent';
+import { DoubleRect } from '../view/DoubleRect';
 import { SimView } from '../view/SimView';
 import { AxisChoice } from './AxisChoice';
 import { GraphLine } from './GraphLine';
 /**
+ * @hidden
  * Watches the VarsList of one or more GraphLines to calculate the range
  * rectangle that encloses the points on the graphs, and sets accordingly the simRect of a
  * SimView. The range rectangle is the smallest rectangle that contains all the points, but
@@ -45,7 +46,7 @@ import { GraphLine } from './GraphLine';
  * + ParameterNumber named `AutoScale.AXIS`
  * see `axisChoice`.
  */
-export default class AutoScale extends AbstractSubject implements Memorizable, Observer {
+export declare class AutoScale extends AbstractSubject implements Memorizable, Observer {
     /**
      * Event broadcasted when axis is changed.
      */

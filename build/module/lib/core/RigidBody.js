@@ -1,13 +1,13 @@
 import { __extends } from "tslib";
 import mustBeFunction from '../checks/mustBeFunction';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { Unit } from '../math/Unit';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 /**
- *
+ * @hidden
  */
 var RigidBody = /** @class */ (function (_super) {
     __extends(RigidBody, _super);
@@ -21,6 +21,7 @@ var RigidBody = /** @class */ (function (_super) {
          * the index into the variables array for this rigid body, or -1 if not in vars array.
          */
         _this.varsIndex_ = -1;
+        mustBeNonNullObject('metric', metric);
         _this.mass_ = metric.scalar(1);
         _this.massLock_ = metric.lock(_this.mass_);
         _this.charge_ = metric.zero();

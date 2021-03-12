@@ -23,7 +23,7 @@ import rotorFromDirections from './rotorFromDirectionsE3';
 import { Scalar } from './Scalar';
 import scpG3 from './scpG3';
 import { SpinorE3 } from './SpinorE3';
-import squaredNormG3 from './squaredNormG3';
+import { squaredNormG3 } from './squaredNormG3';
 import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
 import { VectorE3 } from './VectorE3';
@@ -32,32 +32,68 @@ import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
 
 // Symbolic constants for the coordinate indices into the data array.
+/**
+ * @hidden
+ */
 const COORD_SCALAR = 0;
+/**
+ * @hidden
+ */
 const COORD_X = 1;
+/**
+ * @hidden
+ */
 const COORD_Y = 2;
+/**
+ * @hidden
+ */
 const COORD_Z = 3;
+/**
+ * @hidden
+ */
 const COORD_XY = 4;
+/**
+ * @hidden
+ */
 const COORD_YZ = 5;
+/**
+ * @hidden
+ */
 const COORD_ZX = 6;
+/**
+ * @hidden
+ */
 const COORD_PSEUDO = 7;
 
 // FIXME: Change to Canonical ordering.
+/**
+ * @hidden
+ */
 const BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
 BASIS_LABELS[COORD_SCALAR] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 BASIS_LABELS[COORD_Y] = 'e2';
 BASIS_LABELS[COORD_Z] = 'e3';
 
+/**
+ * @hidden
+ */
 const zero = function zero(): number[] {
     return [0, 0, 0, 0, 0, 0, 0, 0];
 };
 
+/**
+ * @hidden
+ */
 const scalar = function scalar(a: number): number[] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const vector = function vector(x: number, y: number, z: number): number[] {
     const coords = zero();
     coords[COORD_X] = x;
@@ -66,6 +102,9 @@ const vector = function vector(x: number, y: number, z: number): number[] {
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const bivector = function bivector(yz: number, zx: number, xy: number): number[] {
     const coords = zero();
     coords[COORD_YZ] = yz;
@@ -74,6 +113,9 @@ const bivector = function bivector(yz: number, zx: number, xy: number): number[]
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const spinor = function spinor(a: number, yz: number, zx: number, xy: number): number[] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
@@ -83,6 +125,9 @@ const spinor = function spinor(a: number, yz: number, zx: number, xy: number): n
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const multivector = function multivector(a: number, x: number, y: number, z: number, yz: number, zx: number, xy: number, b: number): number[] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
@@ -96,6 +141,9 @@ const multivector = function multivector(a: number, x: number, y: number, z: num
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const pseudo = function pseudo(b: number): number[] {
     const coords = zero();
     coords[COORD_PSEUDO] = b;
@@ -104,6 +152,7 @@ const pseudo = function pseudo(b: number): number[] {
 
 /**
  * Coordinates corresponding to basis labels.
+ * @hidden
  */
 const coordinates = function coordinates(m: GeometricE3): number[] {
     const coords = zero();
@@ -122,6 +171,7 @@ const coordinates = function coordinates(m: GeometricE3): number[] {
  * Computes the cosine of the angle between two vectors.
  * cos(a, b) = (a | b) / |a||b|
  * This is dimensionless, so we are justified in simply returning a number.
+ * @hidden
  */
 function cosVectorVector(a: VectorE3, b: VectorE3): number {
     function scp(a: VectorE3, b: VectorE3): number {
@@ -137,6 +187,7 @@ function cosVectorVector(a: VectorE3, b: VectorE3): number {
  * Sets the lock on the multivector argument and returns the same argument.
  * This is a convenience function for the dunder (double underscore) methods.
  * All dunder methods should return locked values.
+ * @hidden
  */
 function lock(m: Geometric3): Geometric3 {
     m.lock();
@@ -145,12 +196,14 @@ function lock(m: Geometric3): Geometric3 {
 
 /**
  * Scratch variable for holding cosines.
+ * @hidden
  */
 const cosines: number[] = [];
 
 /**
  * Sentinel value to indicate that the Geometric3 is not locked.
  * UNLOCKED is in the range -1 to 0.
+ * @hidden
  */
 const UNLOCKED = -1 * Math.random();
 

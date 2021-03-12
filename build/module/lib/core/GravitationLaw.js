@@ -3,7 +3,7 @@ import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force } from './Force';
 /**
- *
+ * @hidden
  */
 var GravitationLaw = /** @class */ (function (_super) {
     __extends(GravitationLaw, _super);

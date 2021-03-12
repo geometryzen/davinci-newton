@@ -1,6 +1,9 @@
 import { GeometricE3 } from '../math/GeometricE3';
 
-export default function squaredNormG3(m: GeometricE3) {
+/**
+ * @hidden 
+ */
+export function squaredNormG3(m: GeometricE3) {
     const a = m.a;
     const x = m.x;
     const y = m.y;

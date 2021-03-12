@@ -14,24 +14,37 @@
 // limitations under the License.
 
 import isNumber from '../checks/isNumber';
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
-import AbstractSubject from '../util/AbstractSubject';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
 import contains from '../util/contains';
-import GenericEvent from '../util/GenericEvent';
+import { GenericEvent } from '../util/GenericEvent';
 import isEmpty from '../util/isEmpty';
-import Memorizable from '../util/Memorizable';
+import { Memorizable } from '../util/Memorizable';
 import remove from '../util/remove';
-import veryDifferent from '../util/veryDifferent';
-import LabView from './LabView';
-import ScreenRect from './ScreenRect';
+import { veryDifferent } from '../util/veryDifferent';
+import { LabView } from './LabView';
+import { ScreenRect } from './ScreenRect';
 
+/**
+ * @hidden
+ */
 const WIDTH = 'width';
+/**
+ * @hidden
+ */
 const HEIGHT = 'height';
+/**
+ * @hidden
+ */
 const ALPHA = 'alpha';
+/**
+ * @hidden
+ */
 const BACKGROUND = 'background';
 
 /**
+ * @hidden
  * Manages an HTML canvas and contains a list of LabView(s)
  * which are drawn into the canvas. The LabViews are drawn overlapping so that the last
  * LabView appears on top of the others.

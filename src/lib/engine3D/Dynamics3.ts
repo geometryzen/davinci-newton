@@ -5,26 +5,86 @@ import { VarsList } from '../core/VarsList';
 import { Geometric3 } from "../math/Geometric3";
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_LINEAR_MOMENTUM_Z = INDEX_RESERVED_LAST + 3;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_ANGULAR_MOMENTUM_YZ = INDEX_RESERVED_LAST + 4;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_ANGULAR_MOMENTUM_ZX = INDEX_RESERVED_LAST + 5;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 6;
+/**
+ * @hidden
+ */
 export const OFFSET_POSITION_X = 0;
+/**
+ * @hidden
+ */
 export const OFFSET_POSITION_Y = 1;
+/**
+ * @hidden
+ */
 export const OFFSET_POSITION_Z = 2;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_A = 3;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_YZ = 4;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_ZX = 5;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_XY = 6;
+/**
+ * @hidden
+ */
 export const OFFSET_LINEAR_MOMENTUM_X = 7;
+/**
+ * @hidden
+ */
 export const OFFSET_LINEAR_MOMENTUM_Y = 8;
+/**
+ * @hidden
+ */
 export const OFFSET_LINEAR_MOMENTUM_Z = 9;
+/**
+ * @hidden
+ */
 export const OFFSET_ANGULAR_MOMENTUM_YZ = 10;
+/**
+ * @hidden
+ */
 export const OFFSET_ANGULAR_MOMENTUM_ZX = 11;
+/**
+ * @hidden
+ */
 export const OFFSET_ANGULAR_MOMENTUM_XY = 12;
 
+/**
+ * @hidden
+ */
 const varNames = [
     VarsList.TIME,
     "translational kinetic energy",
@@ -39,6 +99,9 @@ const varNames = [
     "total angular momentum - xy"
 ];
 
+/**
+ * @hidden
+ */
 const DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TRANSLATIONAL_KINETIC_ENERGY,
     INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -52,7 +115,9 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TOTAL_ANGULAR_MOMENTUM_XY
 ];
 
-
+/**
+ * @hidden
+ */
 export class Dynamics3 implements Dynamics<Geometric3> {
     numVariablesPerBody(): number {
         return 13;

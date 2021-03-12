@@ -1,4 +1,7 @@
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
+/**
+ * @hidden
+ */
 export declare class Clock extends AbstractSubject {
     /**
      * When 'zero clock time' occurs, in system time, in seconds.
@@ -75,4 +78,3 @@ export declare class Clock extends AbstractSubject {
      */
     clockToSystem(clockTime: number): number;
 }
-export default Clock;

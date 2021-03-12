@@ -1,4 +1,9 @@
 import mustBeString from '../checks/mustBeString';
+/**
+ * @hidden
+ * @param name
+ * @returns
+ */
 export default function (name) {
     mustBeString('name', name);
     var message = {

@@ -1,12 +1,12 @@
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
-import AbstractSubject from '../util/AbstractSubject';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import contains from '../util/contains';
-import GenericEvent from '../util/GenericEvent';
+import { GenericEvent } from '../util/GenericEvent';
 import remove from '../util/remove';
 import { SimObject } from './SimObject';
 
 /**
- * 
+ * @hidden
  */
 export class SimList extends AbstractSubject {
 
@@ -77,5 +77,3 @@ export class SimList extends AbstractSubject {
         }
     }
 }
-
-export default SimList;

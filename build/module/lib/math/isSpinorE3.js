@@ -4,6 +4,7 @@ import isObject from '../checks/isObject';
 /**
  * Determines whether the argument supports the SpinorE3 interface.
  * The argument must be a non-null object and must support the a, xy, yz, and zx numeric properties.
+ * @hidden
  */
 export default function isSpinorE3(v) {
     if (isObject(v) && !isNull(v)) {

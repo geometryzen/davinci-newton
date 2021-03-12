@@ -4,7 +4,7 @@ import { SpinorE2 } from './SpinorE2';
 import { Unit } from './Unit';
 import { VectorE2 } from './VectorE2';
 /**
- *
+ * @hidden
  */
 export declare class Bivector2 implements BivectorE2 {
     xy: number;

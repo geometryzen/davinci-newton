@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export default function mustSatisfy(name: string, condition: boolean, messageBuilder: () => string, contextBuilder?: () => string) {
     if (!condition) {
         const message = messageBuilder ? messageBuilder() : "satisfy some condition";

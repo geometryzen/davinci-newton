@@ -1,10 +1,14 @@
 import isUndefined from '../checks/isUndefined';
 import { Dimensions } from '../math/Dimensions';
-import DimensionsSummary from '../math/DimensionsSummary';
+import { DimensionsSummary } from '../math/DimensionsSummary';
 // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
+/**
+ * @hidden
+ */
 var SYMBOLS_SI = ['kg', 'm', 's', 'C', 'K', 'mol', 'cd'];
 /**
  * The numerator, denominator values for each dimension (M, L, T, Q, temperature, amount, intensity).
+ * @hidden
  */
 var patterns = [
     [-1, 1, -3, 1, 2, 1, 2, 1, 0, 1, 0, 1, 0, 1],
@@ -52,6 +56,7 @@ var patterns = [
  * Symbol
  * Expression in terms of other SI units
  * Expression in terms of SI base units.
+ * @hidden
  */
 var decodes = [
     ["F/m or C**2/N·m**2"],
@@ -91,6 +96,15 @@ var decodes = [
     ["Wb"],
     ["N·m**2/C**2"]
 ];
+/**
+ * @hidden
+ * @param multiplier
+ * @param formatted
+ * @param dimensions
+ * @param labels
+ * @param compact
+ * @returns
+ */
 var dumbString = function (multiplier, formatted, dimensions, labels, compact) {
     var stringify = function (rational, label) {
         if (rational.numer === 0) {
@@ -120,6 +134,15 @@ var dumbString = function (multiplier, formatted, dimensions, labels, compact) {
     }).join(" ");
     return "" + scaleString + operatorStr + unitsString;
 };
+/**
+ * @hidden
+ * @param multiplier
+ * @param formatted
+ * @param dimensions
+ * @param labels
+ * @param compact
+ * @returns
+ */
 var unitString = function (multiplier, formatted, dimensions, labels, compact) {
     var M = dimensions.M;
     var L = dimensions.L;
@@ -152,18 +175,48 @@ var unitString = function (multiplier, formatted, dimensions, labels, compact) {
     }
     return dumbString(multiplier, formatted, dimensions, labels, compact);
 };
+/**
+ * @hidden
+ * @param lhs
+ * @param rhs
+ * @returns
+ */
 function add(lhs, rhs) {
     return Unit.valueOf(lhs.multiplier + rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
 }
+/**
+ * @hidden
+ * @param lhs
+ * @param rhs
+ * @returns
+ */
 function sub(lhs, rhs) {
     return Unit.valueOf(lhs.multiplier - rhs.multiplier, lhs.dimensions.compatible(rhs.dimensions), lhs.labels);
 }
+/**
+ * @hidden
+ * @param lhs
+ * @param rhs
+ * @returns
+ */
 function mul(lhs, rhs) {
     return Unit.valueOf(lhs.multiplier * rhs.multiplier, lhs.dimensions.mul(rhs.dimensions), lhs.labels);
 }
+/**
+ * @hidden
+ * @param α
+ * @param unit
+ * @returns
+ */
 function scale(α, unit) {
     return Unit.valueOf(α * unit.multiplier, unit.dimensions, unit.labels);
 }
+/**
+ * @hidden
+ * @param lhs
+ * @param rhs
+ * @returns
+ */
 function div(lhs, rhs) {
     return Unit.valueOf(lhs.multiplier / rhs.multiplier, lhs.dimensions.div(rhs.dimensions), lhs.labels);
 }

@@ -1,8 +1,17 @@
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
 import { Unit } from './Unit';
+/**
+ * @hidden
+ */
 var ONE = void 0; // Unit.ONE;
+/**
+ * @hidden
+ */
 var scratch = { a: 0, x: 0, y: 0, z: 0, yz: 0, zx: 0, xy: 0, b: 0, uom: ONE };
+/**
+ * @hidden
+ */
 export function maskG3(arg) {
     var duck = arg;
     if (isObject(arg) && 'grades' in arg) {

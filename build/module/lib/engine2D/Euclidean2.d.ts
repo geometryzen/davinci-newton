@@ -2,6 +2,9 @@ import { Metric } from "../core/Metric";
 import { Geometric2 } from "../math/Geometric2";
 import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
+/**
+ * @hidden
+ */
 export declare class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number;
     add(lhs: Geometric2, rhs: Geometric2): Geometric2;

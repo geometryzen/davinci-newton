@@ -5,7 +5,7 @@ import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 import { VectorE3 } from './VectorE3';
 /**
- *
+ * @hidden
  */
 export declare class Vector3 implements VectorE3, GradeMasked {
     x: number;

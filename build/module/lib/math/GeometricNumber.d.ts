@@ -1,5 +1,6 @@
 import { LinearNumber } from './LinearNumber';
 /**
+ * @hidden
  * This interface is provided to ensure consistency.
  * It is not part of the documented API.
  * Notice that the effect on the target depends upon whether the target class in mutable.

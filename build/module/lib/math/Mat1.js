@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 var Mat1 = /** @class */ (function () {
     function Mat1(value) {
         this.value = value;

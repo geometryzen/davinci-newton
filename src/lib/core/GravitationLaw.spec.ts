@@ -3,11 +3,29 @@ import { Unit } from '../math/Unit';
 import { GravitationLaw } from './GravitationLaw';
 import { Sphere3 } from '../engine3D/Sphere3';
 
+/**
+ * @hidden
+ */
 const KILOGRAM = Unit.KILOGRAM;
+/**
+ * @hidden
+ */
 const METER = Unit.METER;
+/**
+ * @hidden
+ */
 const SECOND = Unit.SECOND;
+/**
+ * @hidden
+ */
 const MOTION = KILOGRAM.mul(METER).div(SECOND);
+/**
+ * @hidden
+ */
 const NEWTON = MOTION.div(SECOND);
+/**
+ * @hidden
+ */
 const G = Geometric3.scalar(6.7E-11, NEWTON.mul(METER).mul(METER).div(KILOGRAM).div(KILOGRAM));
 
 describe("GravitationLaw", function () {

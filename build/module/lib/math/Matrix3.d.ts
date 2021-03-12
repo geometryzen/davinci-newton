@@ -1,4 +1,4 @@
-import AbstractMatrix from './AbstractMatrix';
+import { AbstractMatrix } from './AbstractMatrix';
 import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 /**

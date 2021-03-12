@@ -3,7 +3,7 @@ import { Massive } from './Massive';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
 /**
- *
+ * @hidden
  */
 export declare class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     private body1_;

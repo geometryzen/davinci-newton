@@ -4,10 +4,19 @@ import { GradeMasked } from './GradeMasked';
 import { GeometricE3 } from './GeometricE3';
 import { Unit } from './Unit';
 
+/**
+ * @hidden
+ */
 const ONE: Unit = void 0; // Unit.ONE;
 
+/**
+ * @hidden
+ */
 const scratch: GeometricE3 = { a: 0, x: 0, y: 0, z: 0, yz: 0, zx: 0, xy: 0, b: 0, uom: ONE };
 
+/**
+ * @hidden 
+ */
 export function maskG3(arg: any): GeometricE3 {
     const duck = <GradeMasked>arg;
     if (isObject(arg) && 'grades' in arg) {

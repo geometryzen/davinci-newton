@@ -1,7 +1,7 @@
 import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 /**
- *
+ * @hidden
  */
 export declare class Mat3 implements MatrixLike {
     /**

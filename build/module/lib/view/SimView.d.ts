@@ -1,12 +1,15 @@
-import AbstractSubject from '../util/AbstractSubject';
-import Memorizable from '../util/Memorizable';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { Memorizable } from '../util/Memorizable';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';
-import CoordMap from './CoordMap';
-import DisplayList from './DisplayList';
-import DoubleRect from './DoubleRect';
-import LabView from './LabView';
-import ScreenRect from './ScreenRect';
+import { CoordMap } from './CoordMap';
+import { DisplayList } from './DisplayList';
+import { DoubleRect } from './DoubleRect';
+import { LabView } from './LabView';
+import { ScreenRect } from './ScreenRect';
+/**
+ * @hidden
+ */
 export declare class SimView extends AbstractSubject implements LabView {
     static readonly PARAM_NAME_WIDTH = "width";
     static readonly PARAM_NAME_HEIGHT = "height";

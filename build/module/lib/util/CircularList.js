@@ -12,8 +12,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import UtilityCore from './UtilityCore';
+import { UtilityCore } from './UtilityCore';
+/**
+ * @hidden
+ */
 var MAX_INDEX_ERROR = 'exceeded max int';
+/**
+ * @hidden
+ */
 var CircularList = /** @class */ (function () {
     /**
      * last value written to memory list
@@ -146,6 +152,9 @@ var CircularList = /** @class */ (function () {
     return CircularList;
 }());
 export { CircularList };
+/**
+ * @hidden
+ */
 var CircularListIterator = /** @class */ (function () {
     /**
      * @param cList the CircularList to iterate over

@@ -5,6 +5,9 @@ import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
 
+/**
+ * @hidden
+ */
 export class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number {
         return mv.a;

@@ -2,6 +2,13 @@ import get from './compG3Get';
 import set from './compG3Set';
 import extE3 from './extE3';
 import { Unit } from './Unit';
+/**
+ * @hidden
+ * @param a
+ * @param b
+ * @param out
+ * @returns
+ */
 export default function extG3(a, b, out) {
     out.uom = Unit.mul(a.uom, b.uom);
     var a0 = get(a, 0);

@@ -3,6 +3,7 @@
  * @param value the number to test
  * @return the value that passed the test
  * @throws if the argument is not a finite number
+ * @hidden
  */
 export default function mustBeFinite(value) {
     if (typeof value !== 'number' || !isFinite(value)) {

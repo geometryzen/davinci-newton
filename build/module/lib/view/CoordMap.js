@@ -13,14 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import mustBeFinite from '../checks/mustBeFinite';
-import AffineTransform from './AffineTransform';
+import { AffineTransform } from './AffineTransform';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';
-import DoubleRect from './DoubleRect';
+import { DoubleRect } from './DoubleRect';
 import Point from './Point';
-import ScreenRect from './ScreenRect';
+import { ScreenRect } from './ScreenRect';
+/**
+ * @hidden
+ */
 var MIN_SIZE = 1E-15;
 /**
+ * @hidden
  * Provides the mapping between screen (canvas) coordinates and simulation coordinates;
  * this is an immutable object.
  *
@@ -455,4 +459,4 @@ var CoordMap = /** @class */ (function () {
     };
     return CoordMap;
 }());
-export default CoordMap;
+export { CoordMap };

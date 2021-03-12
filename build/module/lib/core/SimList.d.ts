@@ -1,7 +1,7 @@
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import { SimObject } from './SimObject';
 /**
- *
+ * @hidden
  */
 export declare class SimList extends AbstractSubject {
     /**
@@ -39,4 +39,3 @@ export declare class SimList extends AbstractSubject {
      */
     removeTemporary(time: number): void;
 }
-export default SimList;

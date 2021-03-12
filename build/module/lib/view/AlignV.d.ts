@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export declare enum AlignV {
     TOP = 0,
     MIDDLE = 1,

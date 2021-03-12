@@ -3,6 +3,7 @@ import { RigidBody } from './RigidBody';
 
 /**
  * An object with no internal structure.
+ * @hidden
  */
 export class Particle<T> extends RigidBody<T> {
 

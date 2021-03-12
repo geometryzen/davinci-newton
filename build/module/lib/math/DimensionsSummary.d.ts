@@ -1,5 +1,6 @@
 /**
  * A summary of all the exponents in physical dimensions.
+ * @hidden
  */
 export declare enum DimensionsSummary {
     /**
@@ -61,4 +62,3 @@ export declare enum DimensionsSummary {
      */
     VOLUME = 27
 }
-export default DimensionsSummary;

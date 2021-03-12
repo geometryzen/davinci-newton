@@ -17,10 +17,10 @@ import contains from '../util/contains';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import { DrawingMode } from '../view/DrawingMode';
-import ScreenRect from '../view/ScreenRect';
+import { ScreenRect } from '../view/ScreenRect';
 import { GraphLine } from './GraphLine';
 /**
- *
+ * @hidden
  */
 var DisplayGraph = /** @class */ (function () {
     /**

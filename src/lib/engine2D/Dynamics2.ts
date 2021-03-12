@@ -4,17 +4,50 @@ import { Geometric2 } from "../math/Geometric2";
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+/**
+ * @hidden
+ */
 export const INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 3;
+/**
+ * @hidden
+ */
 export const OFFSET_POSITION_X = 0;
+/**
+ * @hidden
+ */
 export const OFFSET_POSITION_Y = 1;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_A = 2;
+/**
+ * @hidden
+ */
 export const OFFSET_ATTITUDE_XY = 3;
+/**
+ * @hidden
+ */
 export const OFFSET_LINEAR_MOMENTUM_X = 4;
+/**
+ * @hidden
+ */
 export const OFFSET_LINEAR_MOMENTUM_Y = 5;
+/**
+ * @hidden
+ */
 export const OFFSET_ANGULAR_MOMENTUM_XY = 6;
 
+/**
+ * @hidden
+ */
 const varNames = [
     VarsList.TIME,
     "translational kinetic energy",
@@ -26,6 +59,9 @@ const varNames = [
     "total angular momentum - xy"
 ];
 
+/**
+ * @hidden
+ */
 const DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TRANSLATIONAL_KINETIC_ENERGY,
     INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -36,6 +72,9 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TOTAL_ANGULAR_MOMENTUM_XY
 ];
 
+/**
+ * @hidden
+ */
 export class Dynamics2 implements Dynamics<Geometric2> {
     numVariablesPerBody(): number {
         // Each body is described by 7 kinematic components.

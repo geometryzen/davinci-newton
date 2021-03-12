@@ -1,9 +1,12 @@
-import Observer from './Observer';
-import Parameter from './Parameter';
-import ParameterBoolean from './ParameterBoolean';
-import ParameterNumber from './ParameterNumber';
-import ParameterString from './ParameterString';
-import SubjectEvent from './SubjectEvent';
+import { Observer } from './Observer';
+import { Parameter } from './Parameter';
+import { ParameterBoolean } from './ParameterBoolean';
+import { ParameterNumber } from './ParameterNumber';
+import { ParameterString } from './ParameterString';
+import { SubjectEvent } from './SubjectEvent';
+/**
+ * @hidden
+ */
 export interface Subject {
     /**
      * Adds the given Observer to the Subject's list of Observers, so that the
@@ -71,4 +74,3 @@ export interface Subject {
      */
     removeObserver(observer: Observer): void;
 }
-export default Subject;

@@ -3,6 +3,9 @@ import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
 import { Euclidean2 } from "./Euclidean2";
 import { RigidBody2 } from "./RigidBody2";
+/**
+ * @hidden
+ */
 var fromVector = Geometric2.fromVector;
 var PolygonRigidBody2 = /** @class */ (function (_super) {
     __extends(PolygonRigidBody2, _super);
@@ -52,6 +55,11 @@ var PolygonRigidBody2 = /** @class */ (function (_super) {
     return PolygonRigidBody2;
 }(RigidBody2));
 export { PolygonRigidBody2 };
+/**
+ * @hidden
+ * @param xs
+ * @returns
+ */
 function polygonArea(xs) {
     var N = xs.length;
     var A = new Geometric2();
@@ -62,6 +70,11 @@ function polygonArea(xs) {
     }
     return A;
 }
+/**
+ * @hidden
+ * @param xs
+ * @returns
+ */
 function centerOfMass(xs) {
     var N = xs.length;
     var X = new Geometric2();
@@ -78,6 +91,10 @@ function centerOfMass(xs) {
     X.divByNumber(6);
     return X;
 }
+/**
+ * @hidden
+ * @param xs
+ */
 function mustBeAtLeastThreePoints(xs) {
     var N = xs.length;
     if (N > 3) {

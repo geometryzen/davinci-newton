@@ -1,10 +1,20 @@
 import { QQ } from '../math/QQ';
+/**
+ * The type of the argument os the `setDimensionsChecking` function.
+ */
 export declare type DimensionsChecking = 'none' | 'strict';
+/**
+ * @param mode
+ */
 export declare function setDimensionsChecking(mode: DimensionsChecking): void;
+/**
+ * @hidden
+ */
 export declare function getDimensionsChecking(): DimensionsChecking;
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
+ * @hidden
  */
 export declare class Dimensions {
     /**

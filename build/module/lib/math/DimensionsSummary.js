@@ -1,5 +1,6 @@
 /**
  * A summary of all the exponents in physical dimensions.
+ * @hidden
  */
 export var DimensionsSummary;
 (function (DimensionsSummary) {
@@ -62,4 +63,3 @@ export var DimensionsSummary;
      */
     DimensionsSummary[DimensionsSummary["VOLUME"] = 27] = "VOLUME";
 })(DimensionsSummary || (DimensionsSummary = {}));
-export default DimensionsSummary;

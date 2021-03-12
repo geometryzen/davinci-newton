@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export enum AxisChoice {
     HORIZONTAL = 1,
     VERTICAL = 2,

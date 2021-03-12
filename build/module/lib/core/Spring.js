@@ -6,7 +6,7 @@ import { assertConsistentUnits } from './assertConsistentUnits';
 import { Force } from './Force';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 /**
- *
+ * @hidden
  */
 var Spring = /** @class */ (function (_super) {
     __extends(Spring, _super);

@@ -1,11 +1,11 @@
 import { __extends } from "tslib";
-import mustBeNonNullObject from '../checks/mustBeNonNullObject';
-import AbstractSubject from '../util/AbstractSubject';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import contains from '../util/contains';
-import GenericEvent from '../util/GenericEvent';
+import { GenericEvent } from '../util/GenericEvent';
 import remove from '../util/remove';
 /**
- *
+ * @hidden
  */
 var SimList = /** @class */ (function (_super) {
     __extends(SimList, _super);
@@ -72,4 +72,3 @@ var SimList = /** @class */ (function (_super) {
     return SimList;
 }(AbstractSubject));
 export { SimList };
-export default SimList;

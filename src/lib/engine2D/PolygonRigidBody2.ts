@@ -3,6 +3,9 @@ import { Matrix1 } from "../math/Matrix1";
 import { Euclidean2 } from "./Euclidean2";
 import { RigidBody2 } from "./RigidBody2";
 
+/**
+ * @hidden
+ */
 const fromVector = Geometric2.fromVector;
 
 export class PolygonRigidBody2 extends RigidBody2 {
@@ -50,6 +53,11 @@ export class PolygonRigidBody2 extends RigidBody2 {
     }
 }
 
+/**
+ * @hidden
+ * @param xs 
+ * @returns 
+ */
 function polygonArea(xs: Geometric2[]) {
     const N = xs.length;
     const A = new Geometric2();
@@ -61,6 +69,11 @@ function polygonArea(xs: Geometric2[]) {
     return A;
 }
 
+/**
+ * @hidden
+ * @param xs 
+ * @returns 
+ */
 function centerOfMass(xs: Geometric2[]) {
     const N = xs.length;
     const X = new Geometric2();
@@ -78,6 +91,10 @@ function centerOfMass(xs: Geometric2[]) {
     return X;
 }
 
+/**
+ * @hidden
+ * @param xs 
+ */
 function mustBeAtLeastThreePoints(xs: Geometric2[]): void {
     const N = xs.length;
     if (N > 3) {

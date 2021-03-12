@@ -2,7 +2,7 @@ import { __extends } from "tslib";
 import { LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 /**
- *
+ * @hidden
  */
 var Force = /** @class */ (function (_super) {
     __extends(Force, _super);

@@ -13,12 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Observer from './Observer';
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
+import { Observer } from './Observer';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 
 /**
  * Observes a Subject; when the Subject broadcasts a SubjectEvent then this executes a specified function.
+ * @hidden
  */
 export class GenericObserver implements Observer {
     private subject_: Subject;
@@ -45,5 +46,3 @@ export class GenericObserver implements Observer {
     }
 
 }
-
-export default GenericObserver;

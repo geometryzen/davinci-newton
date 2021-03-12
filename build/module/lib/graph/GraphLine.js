@@ -14,19 +14,22 @@
 // limitations under the License.
 import { __extends } from "tslib";
 import isObject from '../checks/isObject';
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import { CircularList } from '../util/CircularList';
-import GenericEvent from '../util/GenericEvent';
-import ParameterNumber from '../util/ParameterNumber';
-import ParameterString from '../util/ParameterString';
-import veryDifferent from '../util/veryDifferent';
+import { GenericEvent } from '../util/GenericEvent';
+import { ParameterNumber } from '../util/ParameterNumber';
+import { ParameterString } from '../util/ParameterString';
+import { veryDifferent } from '../util/veryDifferent';
 import { DrawingMode } from '../view/DrawingMode';
-import GraphPoint from './GraphPoint';
+import { GraphPoint } from './GraphPoint';
 import { GraphStyle } from './GraphStyle';
 // const GRAPH_DRAW_MODE = 'graph draw mode';
 // const GRAPH_POINTS = 'graph points';
 // const CLEAR_GRAPH = 'clear graph';
 // const NONE = '-none-';
+/**
+ * @hidden
+ */
 var GraphLine = /** @class */ (function (_super) {
     __extends(GraphLine, _super);
     /**

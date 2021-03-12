@@ -1,4 +1,7 @@
-export default class GraphPoint {
+/**
+ * @hidden
+ */
+export declare class GraphPoint {
     x: number;
     y: number;
     seqX: number;

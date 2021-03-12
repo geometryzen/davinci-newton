@@ -1,14 +1,38 @@
 import { QQ } from '../math/QQ';
 import detectDimensions from './detectDimensions';
-import DimensionsSummary from './DimensionsSummary';
+import { DimensionsSummary } from './DimensionsSummary';
 
+/**
+ * @hidden
+ */
 const R0 = QQ.valueOf(0, 1);
+/**
+ * @hidden
+ */
 const R1 = QQ.valueOf(1, 1);
+/**
+ * @hidden
+ */
 const R2 = QQ.valueOf(2, 1);
+/**
+ * @hidden
+ */
 const R3 = QQ.valueOf(3, 1);
+/**
+ * @hidden
+ */
 const M1 = QQ.valueOf(-1, 1);
+/**
+ * @hidden
+ */
 const M2 = QQ.valueOf(-2, 1);
 
+/**
+ * @hidden
+ * @param name 
+ * @param arg 
+ * @returns 
+ */
 function assertArgRational(name: string, arg: QQ): QQ {
     if (arg instanceof QQ) {
         return arg;
@@ -18,10 +42,19 @@ function assertArgRational(name: string, arg: QQ): QQ {
     }
 }
 
+/**
+ * The type of the argument os the `setDimensionsChecking` function.
+ */
 export type DimensionsChecking = 'none' | 'strict';
 
+/**
+ * @hidden
+ */
 let dimsChecking: DimensionsChecking = 'strict';
 
+/**
+ * @param mode 
+ */
 export function setDimensionsChecking(mode: DimensionsChecking): void {
     switch (mode) {
         case 'strict':
@@ -35,6 +68,9 @@ export function setDimensionsChecking(mode: DimensionsChecking): void {
     }
 }
 
+/**
+ * @hidden 
+ */
 export function getDimensionsChecking(): DimensionsChecking {
     return dimsChecking;
 }
@@ -42,6 +78,7 @@ export function getDimensionsChecking(): DimensionsChecking {
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
+ * @hidden
  */
 export class Dimensions {
 

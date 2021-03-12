@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import toName from '../util/toName';
 import clone from './clone';
 import contains from './contains';
 import find from './find';
-import Observer from './Observer';
-import Parameter from './Parameter';
-import ParameterBoolean from './ParameterBoolean';
-import ParameterNumber from './ParameterNumber';
-import ParameterString from './ParameterString';
+import { Observer } from './Observer';
+import { Parameter } from './Parameter';
+import { ParameterBoolean } from './ParameterBoolean';
+import { ParameterNumber } from './ParameterNumber';
+import { ParameterString } from './ParameterString';
 import remove from './remove';
-import Subject from './Subject';
-import SubjectEvent from './SubjectEvent';
-import toName from '../util/toName';
+import { Subject } from './Subject';
+import { SubjectEvent } from './SubjectEvent';
 
 /**
- * 
+ * @hidden 
  */
 export class AbstractSubject implements Subject {
 
@@ -152,5 +152,3 @@ export class AbstractSubject implements Subject {
     }
 
 }
-
-export default AbstractSubject;

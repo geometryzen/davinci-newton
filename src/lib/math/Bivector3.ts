@@ -1,5 +1,5 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { BivectorE3 } from './BivectorE3';
 import isBivectorE3 from './isBivectorE3';
 import isVectorE3 from './isVectorE3';
@@ -12,7 +12,7 @@ import { VectorE3 } from './VectorE3';
 import { wedgeXY, wedgeYZ, wedgeZX } from './wedge3';
 
 /**
- * 
+ * @hidden
  */
 export class Bivector3 implements BivectorE3 {
     public yz: number;

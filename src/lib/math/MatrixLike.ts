@@ -1,7 +1,7 @@
 import { Unit } from './Unit';
 
 /**
- * 
+ * @hidden
  */
 export interface MatrixLike {
     readonly dimensions: number;

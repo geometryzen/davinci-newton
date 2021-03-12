@@ -16,9 +16,21 @@ import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { Sphere3 } from './Sphere3';
 
+/**
+ * @hidden
+ */
 const KILOGRAM = Unit.KILOGRAM;
+/**
+ * @hidden
+ */
 const METER = Unit.METER;
+/**
+ * @hidden
+ */
 const SECOND = Unit.SECOND;
+/**
+ * @hidden
+ */
 const MOTION = KILOGRAM.mul(METER).div(SECOND);
 
 describe("Sphere3", function () {

@@ -1,5 +1,5 @@
 /**
- *
+ * @hidden
  */
 export default class VarsHistory {
     /**

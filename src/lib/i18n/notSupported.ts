@@ -1,6 +1,11 @@
-import LocalizableMessage from '../i18n/LocalizableMessage';
 import mustBeString from '../checks/mustBeString';
+import { LocalizableMessage } from '../i18n/LocalizableMessage';
 
+/**
+ * @hidden
+ * @param name 
+ * @returns 
+ */
 export default function (name: string): LocalizableMessage {
     mustBeString('name', name);
     const message: LocalizableMessage = {

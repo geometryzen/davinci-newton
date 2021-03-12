@@ -16,10 +16,10 @@
 import { VarsList } from '../core/VarsList';
 import toName from '../util/toName';
 import validName from '../util/validName';
-import Variable from './Variable';
+import { Variable } from './Variable';
 
 /**
- * 
+ * @hidden
  */
 export class ConcreteVariable implements Variable {
 

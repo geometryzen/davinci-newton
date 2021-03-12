@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export declare enum AlignH {
     LEFT = 0,
     MIDDLE = 1,

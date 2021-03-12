@@ -13,13 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Observer from './Observer';
-import Parameter from './Parameter';
-import ParameterBoolean from './ParameterBoolean';
-import ParameterNumber from './ParameterNumber';
-import ParameterString from './ParameterString';
-import SubjectEvent from './SubjectEvent';
+import { Observer } from './Observer';
+import { Parameter } from './Parameter';
+import { ParameterBoolean } from './ParameterBoolean';
+import { ParameterNumber } from './ParameterNumber';
+import { ParameterString } from './ParameterString';
+import { SubjectEvent } from './SubjectEvent';
 
+/**
+ * @hidden
+ */
 export interface Subject {
 
     /**
@@ -97,5 +100,3 @@ export interface Subject {
      */
     removeObserver(observer: Observer): void;
 }
-
-export default Subject;

@@ -13,12 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import HistoryList from './HistoryList';
-import HistoryIterator from './HistoryIterator';
-import UtilityCore from './UtilityCore';
+import { HistoryIterator } from './HistoryIterator';
+import { HistoryList } from './HistoryList';
+import { UtilityCore } from './UtilityCore';
 
+/**
+ * @hidden
+ */
 const MAX_INDEX_ERROR = 'exceeded max int';
 
+/**
+ * @hidden
+ */
 export class CircularList<T> implements HistoryList<T> {
     /**
      * capacity of the list, maximum size
@@ -168,7 +174,9 @@ export class CircularList<T> implements HistoryList<T> {
     }
 }
 
-
+/**
+ * @hidden
+ */
 class CircularListIterator<T> implements HistoryIterator<T> {
 
     /**

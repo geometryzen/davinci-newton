@@ -12,7 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import zeroArray from '../util/zeroArray';
+import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { zeroArray } from '../util/zeroArray';
 /**
  * <p>
  * A differential equation solver that achieves O(h<sup>3</sup>) Local Truncation Error (LTE),
@@ -22,21 +23,22 @@ import zeroArray from '../util/zeroArray';
 var RungeKutta = /** @class */ (function () {
     /**
      * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-     * @param simulation The model that provides the system state and computes rates of change.
+     * @param system The model that provides the system state and computes rates of change.
      */
-    function RungeKutta(simulation) {
+    function RungeKutta(system) {
+        this.system = system;
         this.inp_ = [];
         this.k1_ = [];
         this.k2_ = [];
         this.k3_ = [];
         this.k4_ = [];
-        this.sim_ = simulation;
+        mustBeNonNullObject('system', system);
     }
     /**
      *
      */
     RungeKutta.prototype.step = function (stepSize, uomStep) {
-        var vars = this.sim_.getState();
+        var vars = this.system.getState();
         var N = vars.length;
         if (this.inp_.length < N) {
             this.inp_ = new Array(N);
@@ -55,29 +57,29 @@ var RungeKutta = /** @class */ (function () {
             inp[i] = vars[i];
         }
         zeroArray(k1);
-        this.sim_.evaluate(inp, k1, 0, uomStep);
+        this.system.evaluate(inp, k1, 0, uomStep);
         // evaluate at time t + stepSize / 2
         for (var i = 0; i < N; i++) {
             inp[i] = vars[i] + k1[i] * stepSize / 2;
         }
         zeroArray(k2);
-        this.sim_.evaluate(inp, k2, stepSize / 2, uomStep);
+        this.system.evaluate(inp, k2, stepSize / 2, uomStep);
         // evaluate at time t + stepSize / 2
         for (var i = 0; i < N; i++) {
             inp[i] = vars[i] + k2[i] * stepSize / 2;
         }
         zeroArray(k3);
-        this.sim_.evaluate(inp, k3, stepSize / 2, uomStep);
+        this.system.evaluate(inp, k3, stepSize / 2, uomStep);
         // evaluate at time t + stepSize
         for (var i = 0; i < N; i++) {
             inp[i] = vars[i] + k3[i] * stepSize;
         }
         zeroArray(k4);
-        this.sim_.evaluate(inp, k4, stepSize, uomStep);
+        this.system.evaluate(inp, k4, stepSize, uomStep);
         for (var i = 0; i < N; i++) {
             vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
         }
-        this.sim_.setState(vars);
+        this.system.setState(vars);
     };
     return RungeKutta;
 }());

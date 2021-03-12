@@ -14,17 +14,20 @@
 // limitations under the License.
 
 import mustBeFinite from '../checks/mustBeFinite';
-import AffineTransform from './AffineTransform';
+import { AffineTransform } from './AffineTransform';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';
-import DoubleRect from './DoubleRect';
+import { DoubleRect } from './DoubleRect';
 import Point from './Point';
-import ScreenRect from './ScreenRect';
-
-const MIN_SIZE = 1E-15;
-
+import { ScreenRect } from './ScreenRect';
 
 /**
+ * @hidden
+ */
+const MIN_SIZE = 1E-15;
+
+/**
+ * @hidden
  * Provides the mapping between screen (canvas) coordinates and simulation coordinates;
  * this is an immutable object.
  * 
@@ -70,7 +73,7 @@ const MIN_SIZE = 1E-15;
  * @param pixel_per_unit_x  canvas pixels per simulation space unit along x axis
  * @param pixel_per_unit_y  canvas pixels per simulation space unit along y axis
  */
-export default class CoordMap {
+export class CoordMap {
     private screen_left_: number;
     private screen_bottom_: number;
     private sim_left_: number;

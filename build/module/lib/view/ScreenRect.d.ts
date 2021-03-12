@@ -1,8 +1,9 @@
 /**
  * An immutable rectangle corresponding to screen coordinates where the
  * vertical coordinates increase downwards.
+ * @hidden
  */
-export default class ScreenRect {
+export declare class ScreenRect {
     private left_;
     private top_;
     private width_;

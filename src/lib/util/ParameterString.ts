@@ -13,11 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Parameter from './Parameter';
-import Subject from './Subject';
+import { Parameter } from './Parameter';
+import { Subject } from './Subject';
 import toName from './toName';
 import validName from './validName';
 
+/**
+ * @hidden
+ */
 export class ParameterString implements Parameter {
     private subject_: Subject;
     private name_: string;
@@ -68,5 +71,3 @@ export class ParameterString implements Parameter {
         // this.isComputed_ = value;
     }
 }
-
-export default ParameterString;

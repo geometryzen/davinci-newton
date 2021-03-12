@@ -1,5 +1,6 @@
 /**
  * Immutable point coordinates in two dimensions.
+ * @hidden
  */
 var Point = /** @class */ (function () {
     function Point(x_, y_) {

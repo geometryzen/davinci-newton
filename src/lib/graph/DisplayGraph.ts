@@ -17,14 +17,14 @@ import isDefined from '../checks/isDefined';
 import contains from '../util/contains';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
-import CoordMap from '../view/CoordMap';
-import DisplayObject from '../view/DisplayObject';
+import { CoordMap } from '../view/CoordMap';
+import { DisplayObject } from '../view/DisplayObject';
 import { DrawingMode } from '../view/DrawingMode';
-import ScreenRect from '../view/ScreenRect';
+import { ScreenRect } from '../view/ScreenRect';
 import { GraphLine } from './GraphLine';
 
 /**
- * 
+ * @hidden
  */
 export class DisplayGraph implements DisplayObject {
 

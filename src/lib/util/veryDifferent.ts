@@ -13,7 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export default function veryDifferent(arg1: number, arg2: number, epsilon = 1E-14, magnitude = 1): boolean {
+/**
+ * @hidden
+ * @param arg1 
+ * @param arg2 
+ * @param epsilon 
+ * @param magnitude 
+ * @returns 
+ */
+export function veryDifferent(arg1: number, arg2: number, epsilon = 1E-14, magnitude = 1): boolean {
     if (epsilon <= 0) {
         throw new Error(`epsilon (${epsilon}) must be positive.`);
     }

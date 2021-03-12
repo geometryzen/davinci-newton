@@ -1,5 +1,5 @@
 /**
- *
+ * @hidden
  */
 export declare class ClockTask {
     private time_;
@@ -26,4 +26,3 @@ export declare class ClockTask {
      */
     schedule(delay: number): void;
 }
-export default ClockTask;

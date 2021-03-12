@@ -4,7 +4,7 @@ import { ForceBody } from './ForceBody';
 import { Metric } from './Metric';
 
 /**
- * 
+ * @hidden
  */
 export class Force<T> extends AbstractSimObject {
     /**

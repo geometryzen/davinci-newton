@@ -6,7 +6,7 @@ import { ForceLaw } from './ForceLaw';
 import { Metric } from './Metric';
 
 /**
- * 
+ * @hidden
  */
 export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     /**

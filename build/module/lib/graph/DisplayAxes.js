@@ -16,7 +16,13 @@ import isDefined from '../checks/isDefined';
 import { Unit } from '../math/Unit';
 import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
-import DoubleRect from '../view/DoubleRect';
+import { DoubleRect } from '../view/DoubleRect';
+/**
+ * @hidden
+ * @param label
+ * @param scale
+ * @returns
+ */
 function makeLabelScale(label, scale) {
     if (Unit.isOne(scale)) {
         return label;
@@ -41,6 +47,7 @@ function makeLabelScale(label, scale) {
  * To keep the DisplayAxes in sync with a LabView, when
  * doing for example pan/zoom of the LabView, you can arrange for {@link #setSimRect} to
  * be called by an Observer.
+ * @hidden
  */
 var DisplayAxes = /** @class */ (function () {
     /**
@@ -441,4 +448,4 @@ var DisplayAxes = /** @class */ (function () {
     };
     return DisplayAxes;
 }());
-export default DisplayAxes;
+export { DisplayAxes };

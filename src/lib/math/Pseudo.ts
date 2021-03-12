@@ -1,5 +1,8 @@
 import { Unit } from "./Unit";
 
+/**
+ * @hidden
+ */
 export interface Pseudo {
   /**
    * The pseudoscalar coordinate as a number.I

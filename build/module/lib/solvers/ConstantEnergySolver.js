@@ -8,6 +8,7 @@ var ConstantEnergySolver = /** @class */ (function () {
      * ensure that the energy change be less than a tolerance amount.
      */
     function ConstantEnergySolver(simulation, energySystem, solverMethod) {
+        this.simulation = simulation;
         this.stepUpperBound = 1;
         /**
          * The smallest time step that will executed.
@@ -18,15 +19,14 @@ var ConstantEnergySolver = /** @class */ (function () {
          *
          */
         this.tolerance_ = 1E-6;
-        this.simulation_ = simulation;
         this.energySystem_ = energySystem;
         this.solverMethod_ = solverMethod;
         // this.totSteps_ = 0;
     }
     ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
         // save the vars in case we need to back up and start again
-        this.savedState = this.simulation_.getState();
-        var startTime = this.simulation_.time;
+        this.savedState = this.simulation.getState();
+        var startTime = this.simulation.time;
         /**
          * The adapted step size.
          */
@@ -35,7 +35,7 @@ var ConstantEnergySolver = /** @class */ (function () {
          * number of diffEqSolver steps taken during this step
          */
         // let steps = 0;
-        this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
+        this.simulation.epilog(); // to ensure getEnergyInfo gives correct value
         var metric = this.energySystem_.metric;
         var startEnergy = metric.a(this.energySystem_.totalEnergy());
         // let lastEnergyDiff = Number.POSITIVE_INFINITY;
@@ -51,8 +51,8 @@ var ConstantEnergySolver = /** @class */ (function () {
             var t = startTime; // t = current time
             if (!firstTime) {
                 // restore state and solve again with smaller step size
-                this.simulation_.setState(this.savedState);
-                this.simulation_.epilog();
+                this.simulation.setState(this.savedState);
+                this.simulation.epilog();
                 // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();
                 // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -71,7 +71,7 @@ var ConstantEnergySolver = /** @class */ (function () {
                 }
                 // steps++;
                 this.solverMethod_.step(h, uomTime);
-                this.simulation_.epilog();
+                this.simulation.epilog();
                 t += h;
             }
             var finishEnergy = metric.a(this.energySystem_.totalEnergy());

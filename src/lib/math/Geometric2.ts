@@ -20,27 +20,51 @@ import { Unit } from "./Unit";
 import { VectorE2 as Vector } from "./VectorE2";
 
 // Symbolic constants for the coordinate indices into the data array.
+/**
+ * @hidden
+ */
 const COORD_A = 0;
+/**
+ * @hidden
+ */
 const COORD_X = 1;
+/**
+ * @hidden
+ */
 const COORD_Y = 2;
+/**
+ * @hidden
+ */
 const COORD_B = 3;
 
+/**
+ * @hidden
+ */
 const BASIS_LABELS = ["1", "e1", "e2", "e12"];
 BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 BASIS_LABELS[COORD_Y] = 'e2';
 BASIS_LABELS[COORD_B] = 'e12';
 
+/**
+ * @hidden
+ */
 const zero = function zero(): number[] {
     return [0, 0, 0, 0];
 };
 
+/**
+ * @hidden
+ */
 const scalar = function scalar(a: number): number[] {
     const coords = zero();
     coords[COORD_A] = a;
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const vector = function vector(x: number, y: number): number[] {
     const coords = zero();
     coords[COORD_X] = x;
@@ -48,18 +72,27 @@ const vector = function vector(x: number, y: number): number[] {
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const bivector = function bivector(b: number): number[] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const pseudo = function pseudo(b: number): number[] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
 };
 
+/**
+ * @hidden
+ */
 const spinor = function spinor(a: number, b: number): number[] {
     const coords = zero();
     coords[COORD_A] = a;
@@ -69,6 +102,7 @@ const spinor = function spinor(a: number, b: number): number[] {
 
 /**
  * Coordinates corresponding to basis labels.
+ * @hidden
  */
 const coordinates = function coordinates(m: Geometric): number[] {
     const coords = zero();
@@ -79,6 +113,9 @@ const coordinates = function coordinates(m: Geometric): number[] {
     return coords;
 };
 
+/**
+ * @hidden
+ */
 function isScalar(m: Geometric): boolean {
     return m.x === 0 && m.y === 0 && m.b === 0;
 }
@@ -87,6 +124,7 @@ function isScalar(m: Geometric): boolean {
  * Sets the lock on the multivector argument and returns the same argument.
  * This is a convenience function for the dunder (double underscore) methods.
  * All dunder methods should return locked values.
+ * @hidden
  */
 function lock(m: Geometric2): Geometric2 {
     m.lock();
@@ -96,6 +134,7 @@ function lock(m: Geometric2): Geometric2 {
 /**
  * Sentinel value to indicate that the Geometric2 is not locked.
  * UNLOCKED is in the range -1 to 0.
+ * @hidden
  */
 const UNLOCKED = -1 * Math.random();
 

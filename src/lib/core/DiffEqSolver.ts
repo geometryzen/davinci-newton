@@ -9,7 +9,8 @@ import { Unit } from '../math/Unit';
  * </p>
  * <p>
  * Different solvers may manage the Local Truncation Error (LTE) in different ways.
- * </p>  
+ * </p>
+ * @hidden
  */
 export interface DiffEqSolver {
     step(stepSize: number, uomStep: Unit): void;

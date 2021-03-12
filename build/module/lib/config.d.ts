@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 declare class Newton {
     /**
      * The GitHub URL of the repository.
@@ -25,7 +28,7 @@ declare class Newton {
     error(message?: any, ...optionalParams: any[]): void;
 }
 /**
- *
+ * @hidden
  */
 export declare const config: Newton;
 export {};

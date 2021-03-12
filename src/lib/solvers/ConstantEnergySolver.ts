@@ -8,7 +8,6 @@ import { Unit } from '../math/Unit';
  * ensure that the energy change be less than a tolerance amount.
  */
 export class ConstantEnergySolver<T> implements DiffEqSolver {
-    private simulation_: Simulation;
     private energySystem_: EnergySystem<T>;
     private solverMethod_: DiffEqSolver;
     // private totSteps_: number;
@@ -27,16 +26,15 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
      * Constructs an adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
      */
-    constructor(simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver) {
-        this.simulation_ = simulation;
+    constructor(private readonly simulation: Simulation, energySystem: EnergySystem<T>, solverMethod: DiffEqSolver) {
         this.energySystem_ = energySystem;
         this.solverMethod_ = solverMethod;
         // this.totSteps_ = 0;
     }
     step(Δt: number, uomTime?: Unit): void {
         // save the vars in case we need to back up and start again
-        this.savedState = this.simulation_.getState();
-        const startTime = this.simulation_.time;
+        this.savedState = this.simulation.getState();
+        const startTime = this.simulation.time;
         /**
          * The adapted step size.
          */
@@ -45,7 +43,7 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
          * number of diffEqSolver steps taken during this step
          */
         // let steps = 0;
-        this.simulation_.epilog(); // to ensure getEnergyInfo gives correct value
+        this.simulation.epilog(); // to ensure getEnergyInfo gives correct value
         const metric = this.energySystem_.metric;
         const startEnergy: number = metric.a(this.energySystem_.totalEnergy());
         // let lastEnergyDiff = Number.POSITIVE_INFINITY;
@@ -61,8 +59,8 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
             let t = startTime;  // t = current time
             if (!firstTime) {
                 // restore state and solve again with smaller step size
-                this.simulation_.setState(this.savedState);
-                this.simulation_.epilog();
+                this.simulation.setState(this.savedState);
+                this.simulation.epilog();
                 // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();
                 // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -81,7 +79,7 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
                 }
                 // steps++;
                 this.solverMethod_.step(h, uomTime);
-                this.simulation_.epilog();
+                this.simulation.epilog();
                 t += h;
             }
             const finishEnergy: number = metric.a(this.energySystem_.totalEnergy());

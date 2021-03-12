@@ -1,6 +1,6 @@
 import { DrawingMode } from '../view/DrawingMode';
 /**
- *
+ * @hidden
  */
 export declare class GraphStyle {
     index_: number;

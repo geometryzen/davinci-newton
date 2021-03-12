@@ -7,8 +7,9 @@ import Point from './Point';
  * Note that for DoubleRect we regard the vertical coordinate as **increasing upwards**, so
  * the top coordinate is greater than the bottom coordinate. This is in contrast to HTML5
  * canvas where vertical coordinates increase downwards.
+ * @hidden
  */
-export default class DoubleRect {
+export declare class DoubleRect {
     private left_;
     private right_;
     private bottom_;

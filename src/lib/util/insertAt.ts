@@ -1,3 +1,10 @@
+/**
+ * @hidden
+ * @param xs 
+ * @param start 
+ * @param opt_end 
+ * @returns 
+ */
 function slice<T>(xs: any, start: number, opt_end?: number) {
     // passing 1 arg to slice is not the same as passing 2 where the second is
     // null or undefined (in that case the second argument is treated as 0).
@@ -11,11 +18,20 @@ function slice<T>(xs: any, start: number, opt_end?: number) {
     }
 }
 
+/**
+ * @hidden
+ * @param xs 
+ * @param index 
+ * @param howMany 
+ * @param var_args 
+ * @returns 
+ */
 function splice<T>(xs: T[], index: number, howMany: number, var_args: any) {
     return Array.prototype.splice.apply(xs, slice(arguments, 1));
 }
 
 /**
+ * @hidden
  * Inserts an object at the given index of the array.
  * @param xs The array to modify.
  * @param x The object to insert.

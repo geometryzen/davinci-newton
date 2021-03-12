@@ -14,6 +14,7 @@
 // limitations under the License.
 import Point from './Point';
 /**
+ * @hidden
  * Specifies an immutable 2D affine transform.
  *
  * The affine transform of a point `(x, y)` is given by:
@@ -242,4 +243,4 @@ var AffineTransform = /** @class */ (function () {
     AffineTransform.IDENTITY = new AffineTransform(1, 0, 0, 1, 0, 0);
     return AffineTransform;
 }());
-export default AffineTransform;
+export { AffineTransform };

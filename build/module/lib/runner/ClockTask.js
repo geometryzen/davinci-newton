@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 /**
- *
+ * @hidden
  */
 var ClockTask = /** @class */ (function () {
     /**
@@ -55,4 +55,3 @@ var ClockTask = /** @class */ (function () {
     return ClockTask;
 }());
 export { ClockTask };
-export default ClockTask;

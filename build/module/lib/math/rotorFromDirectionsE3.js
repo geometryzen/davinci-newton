@@ -3,10 +3,20 @@ import quad from './quadVectorE3';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
+/**
+ * @hidden
+ */
 var sqrt = Math.sqrt;
+/**
+ * @hidden
+ */
 var cosPIdiv4 = Math.cos(Math.PI / 4);
+/**
+ * @hidden
+ */
 var sinPIdiv4 = Math.sin(Math.PI / 4);
 /**
+ * @hidden
  * Sets the output spinor to a rotor representing a rotation from a to b.
  * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
  * If the vectors are anti-parallel, making the plane of rotation ambiguous,

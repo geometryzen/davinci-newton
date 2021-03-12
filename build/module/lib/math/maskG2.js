@@ -1,10 +1,17 @@
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
 import { Unit } from './Unit';
+/**
+ * @hidden
+ */
 var ONE = void 0; // Unit.ONE;
+/**
+ * @hidden
+ */
 var scratch = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE };
 /**
  * "Promotes" the argument to a GeometricE2.
+ * @hidden
  */
 export function maskG2(arg) {
     var duck = arg;

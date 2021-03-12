@@ -1,7 +1,8 @@
-import GraphVarsList from '../graph/GraphVarsList';
-import Variable from '../model/Variable';
-import AbstractSubject from '../util/AbstractSubject';
+import { GraphVarsList } from '../graph/GraphVarsList';
+import { Variable } from '../model/Variable';
+import { AbstractSubject } from '../util/AbstractSubject';
 /**
+ * @hidden
  * A set of Variables.
  * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
  *

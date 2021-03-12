@@ -1,5 +1,5 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { readOnly } from '../i18n/readOnly';
 import isSpinorE3 from './isSpinorE3';
 import isVectorE3 from './isVectorE3';
@@ -7,7 +7,7 @@ import mustBeVectorE3 from './mustBeVectorE3';
 import randomRange from './randomRange';
 import { Unit } from './Unit';
 /**
- *
+ * @hidden
  */
 var Vector3 = /** @class */ (function () {
     /**

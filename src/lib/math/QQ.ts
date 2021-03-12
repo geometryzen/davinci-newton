@@ -6,6 +6,7 @@
  * The numerator and denominator are reduced to their lowest form.
  *
  * Construct new instances using the static <code>valueOf</code> method.
+ * @hidden
  */
 export class QQ {
   /**

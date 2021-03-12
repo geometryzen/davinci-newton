@@ -14,13 +14,14 @@
 // limitations under the License.
 
 import isFunction from '../checks/isFunction';
-import veryDifferent from '../util/veryDifferent';
+import { veryDifferent } from '../util/veryDifferent';
 
 /**
  * An immutable rectangle corresponding to screen coordinates where the
  * vertical coordinates increase downwards.
+ * @hidden
  */
-export default class ScreenRect {
+export class ScreenRect {
     private left_: number;
     private top_: number;
     private width_: number;

@@ -2,15 +2,16 @@ import { __extends } from "tslib";
 import isNumber from '../checks/isNumber';
 import isString from '../checks/isString';
 import { ConcreteVariable } from '../model/ConcreteVariable';
-import AbstractSubject from '../util/AbstractSubject';
+import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
 import extendArray from '../util/extendArray';
 import find from '../util/find';
 import findIndex from '../util/findIndex';
-import GenericEvent from '../util/GenericEvent';
+import { GenericEvent } from '../util/GenericEvent';
 import toName from '../util/toName';
 import validName from '../util/validName';
 /**
+ * @hidden
  * A set of Variables.
  * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
  *

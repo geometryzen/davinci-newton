@@ -8,12 +8,21 @@ import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
 
+/**
+ * @hidden
+ */
 const sqrt = Math.sqrt;
+/**
+ * @hidden
+ */
 const cosPIdiv4 = Math.cos(Math.PI / 4);
+/**
+ * @hidden
+ */
 const sinPIdiv4 = Math.sin(Math.PI / 4);
 
 /**
- * 
+ * @hidden
  */
 interface MutableSpinor extends Spinor {
     /**
@@ -29,6 +38,7 @@ interface MutableSpinor extends Spinor {
 }
 
 /**
+ * @hidden
  * Sets the output spinor to a rotor representing a rotation from a to b.
  * R = (|b||a| + b * a) / sqrt(2 * |b||a|(|b||a| + b << a))
  * If the vectors are anti-parallel, making the plane of rotation ambiguous,

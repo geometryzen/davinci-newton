@@ -1,3 +1,11 @@
+/**
+ * @hidden
+ * @param x
+ * @param y
+ * @param z
+ * @param spinor
+ * @returns
+ */
 export function rotateX(x, y, z, spinor) {
     var a = spinor.xy;
     var b = spinor.yz;
@@ -9,6 +17,14 @@ export function rotateX(x, y, z, spinor) {
     var iw = b * x + c * y + a * z;
     return ix * w + iw * b + iy * a - iz * c;
 }
+/**
+ * @hidden
+ * @param x
+ * @param y
+ * @param z
+ * @param spinor
+ * @returns
+ */
 export function rotateY(x, y, z, spinor) {
     var a = spinor.xy;
     var b = spinor.yz;
@@ -20,6 +36,14 @@ export function rotateY(x, y, z, spinor) {
     var iw = b * x + c * y + a * z;
     return iy * w + iw * c + iz * b - ix * a;
 }
+/**
+ * @hidden
+ * @param x
+ * @param y
+ * @param z
+ * @param spinor
+ * @returns
+ */
 export function rotateZ(x, y, z, spinor) {
     var a = spinor.xy;
     var b = spinor.yz;

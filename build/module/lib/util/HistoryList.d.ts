@@ -1,4 +1,4 @@
-import HistoryIterator from './HistoryIterator';
+import { HistoryIterator } from './HistoryIterator';
 /**
  * An ordered list of values that can be added to but not altered; older
  * values might be forgotten. Each value has a unique unchanging index in the HistoryList,
@@ -10,6 +10,7 @@ import HistoryIterator from './HistoryIterator';
  * Designed to represent a CircularList where new values are
  * written over old values. Therefore the starting index can change when writing a new
  * value to the list, because the new value might overwrite an old value.
+ * @hidden
  */
 export interface HistoryList<T> {
     /**
@@ -68,4 +69,3 @@ export interface HistoryList<T> {
      */
     store(value: T): number;
 }
-export default HistoryList;

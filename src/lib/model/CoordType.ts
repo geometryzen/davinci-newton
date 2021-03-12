@@ -13,12 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @hidden
+ */
 export type CoordType = 0 | 1;
+
 /**
  * The coordinate frame that is fixed in relation to the rigid body.
+ * @hidden
  */
 export const LOCAL = 0;
+
 /**
  * The coordinate frame used as the basis for position and attitude of all bodies.
+ * @hidden
  */
 export const WORLD = 1;

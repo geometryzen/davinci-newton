@@ -11,39 +11,72 @@ import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirecti
 import { stringFromCoordinates } from "./stringFromCoordinates";
 import { Unit } from "./Unit";
 // Symbolic constants for the coordinate indices into the data array.
+/**
+ * @hidden
+ */
 var COORD_A = 0;
+/**
+ * @hidden
+ */
 var COORD_X = 1;
+/**
+ * @hidden
+ */
 var COORD_Y = 2;
+/**
+ * @hidden
+ */
 var COORD_B = 3;
+/**
+ * @hidden
+ */
 var BASIS_LABELS = ["1", "e1", "e2", "e12"];
 BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 BASIS_LABELS[COORD_Y] = 'e2';
 BASIS_LABELS[COORD_B] = 'e12';
+/**
+ * @hidden
+ */
 var zero = function zero() {
     return [0, 0, 0, 0];
 };
+/**
+ * @hidden
+ */
 var scalar = function scalar(a) {
     var coords = zero();
     coords[COORD_A] = a;
     return coords;
 };
+/**
+ * @hidden
+ */
 var vector = function vector(x, y) {
     var coords = zero();
     coords[COORD_X] = x;
     coords[COORD_Y] = y;
     return coords;
 };
+/**
+ * @hidden
+ */
 var bivector = function bivector(b) {
     var coords = zero();
     coords[COORD_B] = b;
     return coords;
 };
+/**
+ * @hidden
+ */
 var pseudo = function pseudo(b) {
     var coords = zero();
     coords[COORD_B] = b;
     return coords;
 };
+/**
+ * @hidden
+ */
 var spinor = function spinor(a, b) {
     var coords = zero();
     coords[COORD_A] = a;
@@ -52,6 +85,7 @@ var spinor = function spinor(a, b) {
 };
 /**
  * Coordinates corresponding to basis labels.
+ * @hidden
  */
 var coordinates = function coordinates(m) {
     var coords = zero();
@@ -61,6 +95,9 @@ var coordinates = function coordinates(m) {
     coords[COORD_B] = m.b;
     return coords;
 };
+/**
+ * @hidden
+ */
 function isScalar(m) {
     return m.x === 0 && m.y === 0 && m.b === 0;
 }
@@ -68,6 +105,7 @@ function isScalar(m) {
  * Sets the lock on the multivector argument and returns the same argument.
  * This is a convenience function for the dunder (double underscore) methods.
  * All dunder methods should return locked values.
+ * @hidden
  */
 function lock(m) {
     m.lock();
@@ -76,6 +114,7 @@ function lock(m) {
 /**
  * Sentinel value to indicate that the Geometric2 is not locked.
  * UNLOCKED is in the range -1 to 0.
+ * @hidden
  */
 var UNLOCKED = -1 * Math.random();
 var Geometric2 = /** @class */ (function () {

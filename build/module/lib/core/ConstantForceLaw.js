@@ -3,7 +3,7 @@ import { LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force } from './Force';
 /**
- *
+ * @hidden
  */
 var ConstantForceLaw = /** @class */ (function (_super) {
     __extends(ConstantForceLaw, _super);

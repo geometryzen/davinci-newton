@@ -1,5 +1,8 @@
 import { SimObject } from './SimObject';
 import { Metric } from './Metric';
+/**
+ * @hidden
+ */
 export interface ForceBody<T> extends SimObject {
     /**
      * The metric must be known in order to compute the energies and angular velocity.

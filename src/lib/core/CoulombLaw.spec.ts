@@ -4,12 +4,33 @@ import { LOCAL, WORLD } from '../model/CoordType';
 import { CoulombLaw } from './CoulombLaw';
 import { Sphere3 } from '../engine3D/Sphere3';
 
+/**
+ * @hidden
+ */
 const COULOMB = Unit.COULOMB;
+/**
+ * @hidden
+ */
 const KILOGRAM = Unit.KILOGRAM;
+/**
+ * @hidden
+ */
 const METER = Unit.METER;
+/**
+ * @hidden
+ */
 const SECOND = Unit.SECOND;
+/**
+ * @hidden
+ */
 const MOTION = KILOGRAM.mul(METER).div(SECOND);
+/**
+ * @hidden
+ */
 const NEWTON = MOTION.div(SECOND);
+/**
+ * @hidden
+ */
 const k = Geometric3.scalar(9.0E9, NEWTON.mul(METER).mul(METER).div(COULOMB).div(COULOMB));
 
 describe("CoulombLaw", function () {

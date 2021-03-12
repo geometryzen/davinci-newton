@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import HistoryIterator from './HistoryIterator';
+import { HistoryIterator } from './HistoryIterator';
 
 /**
  * An ordered list of values that can be added to but not altered; older
@@ -26,6 +26,7 @@ import HistoryIterator from './HistoryIterator';
  * Designed to represent a CircularList where new values are
  * written over old values. Therefore the starting index can change when writing a new
  * value to the list, because the new value might overwrite an old value.
+ * @hidden
  */
 export interface HistoryList<T> {
     /**
@@ -92,5 +93,3 @@ export interface HistoryList<T> {
     store(value: T): number;
 
 }
-
-export default HistoryList;

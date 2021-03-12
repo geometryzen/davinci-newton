@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export var AxisChoice;
 (function (AxisChoice) {
     AxisChoice[AxisChoice["HORIZONTAL"] = 1] = "HORIZONTAL";

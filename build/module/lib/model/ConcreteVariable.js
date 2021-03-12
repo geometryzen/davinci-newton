@@ -15,7 +15,7 @@
 import toName from '../util/toName';
 import validName from '../util/validName';
 /**
- *
+ * @hidden
  */
 var ConcreteVariable = /** @class */ (function () {
     /**

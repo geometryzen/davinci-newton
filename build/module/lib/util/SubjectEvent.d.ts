@@ -1,4 +1,7 @@
-import Subject from './Subject';
+import { Subject } from './Subject';
+/**
+ * @hidden
+ */
 export interface SubjectEvent {
     /**
      *
@@ -13,4 +16,3 @@ export interface SubjectEvent {
      */
     nameEquals(name: string): boolean;
 }
-export default SubjectEvent;

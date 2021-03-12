@@ -1,8 +1,9 @@
-import AbstractSubject from '../util/AbstractSubject';
-import Memorizable from '../util/Memorizable';
-import LabView from './LabView';
-import ScreenRect from './ScreenRect';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { Memorizable } from '../util/Memorizable';
+import { LabView } from './LabView';
+import { ScreenRect } from './ScreenRect';
 /**
+ * @hidden
  * Manages an HTML canvas and contains a list of LabView(s)
  * which are drawn into the canvas. The LabViews are drawn overlapping so that the last
  * LabView appears on top of the others.

@@ -12,7 +12,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export default function veryDifferent(arg1, arg2, epsilon, magnitude) {
+/**
+ * @hidden
+ * @param arg1
+ * @param arg2
+ * @param epsilon
+ * @param magnitude
+ * @returns
+ */
+export function veryDifferent(arg1, arg2, epsilon, magnitude) {
     if (epsilon === void 0) { epsilon = 1E-14; }
     if (magnitude === void 0) { magnitude = 1; }
     if (epsilon <= 0) {

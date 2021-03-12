@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 export interface HistoryIterator<T> {
     getIndex(): number;
     getValue(): T;
@@ -6,4 +9,3 @@ export interface HistoryIterator<T> {
     nextValue(): T;
     previousValue(): T;
 }
-export default HistoryIterator;

@@ -1,5 +1,5 @@
 import isNumber from '../checks/isNumber';
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { BivectorE2 } from './BivectorE2';
 import isBivectorE3 from './isBivectorE3';
 import { isVectorE2 } from './isVectorE2';
@@ -11,7 +11,7 @@ import { Unit } from './Unit';
 import { VectorE2 } from './VectorE2';
 
 /**
- * 
+ * @hidden
  */
 export class Bivector2 implements BivectorE2 {
     public xy: number;

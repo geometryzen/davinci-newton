@@ -4,6 +4,13 @@ import { GeometricE3 } from '../math/GeometricE3';
 import mulE3 from '../math/mulE3';
 import { Unit } from '../math/Unit';
 
+/**
+ * @hidden
+ * @param a 
+ * @param b 
+ * @param out 
+ * @returns 
+ */
 export default function scpG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {
 
     const a0 = get(a, 0);

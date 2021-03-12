@@ -14,6 +14,9 @@
 // limitations under the License.
 import toName from './toName';
 import validName from './validName';
+/**
+ * @hidden
+ */
 var ParameterNumber = /** @class */ (function () {
     // private choices_: string[];
     // private values_: number[];
@@ -76,4 +79,3 @@ var ParameterNumber = /** @class */ (function () {
     return ParameterNumber;
 }());
 export { ParameterNumber };
-export default ParameterNumber;

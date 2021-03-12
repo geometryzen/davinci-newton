@@ -13,17 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { __extends } from "tslib";
-import mustBeNumber from '../checks/mustBeNumber';
+import { mustBeNumber } from '../checks/mustBeNumber';
 import mustBeString from '../checks/mustBeString';
-import AbstractSubject from '../util/AbstractSubject';
-import GenericObserver from '../util/GenericObserver';
+import { AbstractSubject } from '../util/AbstractSubject';
+import { GenericObserver } from '../util/GenericObserver';
 import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
-import DoubleRect from '../view/DoubleRect';
+import { DoubleRect } from '../view/DoubleRect';
 import { LabCanvas } from '../view/LabCanvas';
 import { SimView } from '../view/SimView';
-import AutoScale from './AutoScale';
-import DisplayAxes from './DisplayAxes';
+import { AutoScale } from './AutoScale';
+import { DisplayAxes } from './DisplayAxes';
 import { DisplayGraph } from './DisplayGraph';
 import { GraphLine } from './GraphLine';
 /**
@@ -34,6 +34,7 @@ import { GraphLine } from './GraphLine';
  * visible. Creates several controls to modify the graph.
  *
  * This class is a user interface control. It may manipulate the DOM, adding controls.
+ * @hidden
  */
 var Graph = /** @class */ (function (_super) {
     __extends(Graph, _super);

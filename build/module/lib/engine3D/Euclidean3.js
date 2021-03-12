@@ -1,6 +1,9 @@
 import { Geometric3 } from "../math/Geometric3";
 import { Mat3 } from "../math/Mat3";
 import { Matrix3 } from "../math/Matrix3";
+/**
+ * @hidden
+ */
 var Euclidean3 = /** @class */ (function () {
     function Euclidean3() {
     }

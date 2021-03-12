@@ -1,5 +1,8 @@
-import Parameter from './Parameter';
-import Subject from './Subject';
+import { Parameter } from './Parameter';
+import { Subject } from './Subject';
+/**
+ * @hidden
+ */
 export declare class ParameterNumber implements Parameter {
     /**
      * the Subject which provides notification of changes in this Parameter
@@ -34,4 +37,3 @@ export declare class ParameterNumber implements Parameter {
      */
     setSignifDigits(signifDigits: number): this;
 }
-export default ParameterNumber;

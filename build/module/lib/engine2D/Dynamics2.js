@@ -1,15 +1,48 @@
 import { INDEX_POTENTIAL_ENERGY, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY, INDEX_RESERVED_LAST } from '../core/Dynamics';
 import { VarsList } from "../core/VarsList";
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_LINEAR_MOMENTUM_X = INDEX_RESERVED_LAST + 1;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_LINEAR_MOMENTUM_Y = INDEX_RESERVED_LAST + 2;
+/**
+ * @hidden
+ */
 export var INDEX_TOTAL_ANGULAR_MOMENTUM_XY = INDEX_RESERVED_LAST + 3;
+/**
+ * @hidden
+ */
 export var OFFSET_POSITION_X = 0;
+/**
+ * @hidden
+ */
 export var OFFSET_POSITION_Y = 1;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_A = 2;
+/**
+ * @hidden
+ */
 export var OFFSET_ATTITUDE_XY = 3;
+/**
+ * @hidden
+ */
 export var OFFSET_LINEAR_MOMENTUM_X = 4;
+/**
+ * @hidden
+ */
 export var OFFSET_LINEAR_MOMENTUM_Y = 5;
+/**
+ * @hidden
+ */
 export var OFFSET_ANGULAR_MOMENTUM_XY = 6;
+/**
+ * @hidden
+ */
 var varNames = [
     VarsList.TIME,
     "translational kinetic energy",
@@ -20,6 +53,9 @@ var varNames = [
     "total linear momentum - y",
     "total angular momentum - xy"
 ];
+/**
+ * @hidden
+ */
 var DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TRANSLATIONAL_KINETIC_ENERGY,
     INDEX_ROTATIONAL_KINETIC_ENERGY,
@@ -29,6 +65,9 @@ var DISCONTINUOUS_ENERGY_VARIABLES = [
     INDEX_TOTAL_LINEAR_MOMENTUM_Y,
     INDEX_TOTAL_ANGULAR_MOMENTUM_XY
 ];
+/**
+ * @hidden
+ */
 var Dynamics2 = /** @class */ (function () {
     function Dynamics2() {
     }

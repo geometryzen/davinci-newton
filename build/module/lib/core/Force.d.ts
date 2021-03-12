@@ -3,7 +3,7 @@ import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { ForceBody } from './ForceBody';
 import { Metric } from './Metric';
 /**
- *
+ * @hidden
  */
 export declare class Force<T> extends AbstractSimObject {
     private body_;

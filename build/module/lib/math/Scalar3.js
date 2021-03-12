@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 var Scalar3 = /** @class */ (function () {
     function Scalar3(a, uom) {
         this.a_ = a;
