@@ -10,9 +10,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-11';
+            this.LAST_MODIFIED = '2021-03-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.29';
+            this.VERSION = '1.0.30';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -16718,6 +16718,7 @@
     exports.PolygonRigidBody2 = PolygonRigidBody2;
     exports.QQ = QQ;
     exports.RigidBody = RigidBody;
+    exports.RigidBody2 = RigidBody2;
     exports.RungeKutta = RungeKutta;
     exports.SimView = SimView;
     exports.Sphere3 = Sphere3;

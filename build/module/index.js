@@ -17,6 +17,7 @@ export { Force2 } from './lib/engine2D/Force2';
 export { GravitationForceLaw2 } from './lib/engine2D/GravitationForceLaw2';
 export { Physics2 } from './lib/engine2D/Physics2';
 export { PolygonRigidBody2 } from './lib/engine2D/PolygonRigidBody2';
+export { RigidBody2 } from './lib/engine2D/RigidBody2';
 export { Spring2 } from './lib/engine2D/Spring2';
 export { Block3 } from './lib/engine3D/Block3';
 export { ConstantForceLaw3 } from './lib/engine3D/ConstantForceLaw3';
