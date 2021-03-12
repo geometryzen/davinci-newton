@@ -1,6 +1,6 @@
-import { RigidBody } from "../core/RigidBody";
 import { Geometric2 } from "../math/Geometric2";
-export declare class PolygonRigidBody2 extends RigidBody<Geometric2> {
+import { RigidBody2 } from "./RigidBody2";
+export declare class PolygonRigidBody2 extends RigidBody2 {
     /**
      * The position of the polygon point relative to the center of mass.
      *

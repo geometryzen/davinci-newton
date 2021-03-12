@@ -67,6 +67,8 @@ var Block2 = /** @class */ (function (_super) {
      * Ω = 12 * L * (1/M) * 1 / (h^2+w^2)
      */
     Block2.prototype.updateAngularVelocity = function () {
+        // TODO: If we have already computer the inertia tensor, why do we compute it again?
+        // RigidBody2 provides an optimized implementation.
         var w = this.width_;
         var h = this.height_;
         var ww = w.a * w.a;

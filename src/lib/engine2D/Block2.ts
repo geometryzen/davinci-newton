@@ -74,6 +74,8 @@ export class Block2 extends RigidBody<Geometric2> {
      * Ω = 12 * L * (1/M) * 1 / (h^2+w^2)
      */
     public updateAngularVelocity(): void {
+        // TODO: If we have already computer the inertia tensor, why do we compute it again?
+        // RigidBody2 provides an optimized implementation.
         const w = this.width_;
         const h = this.height_;
         const ww = w.a * w.a;

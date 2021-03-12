@@ -1,11 +1,11 @@
-import { RigidBody } from "../core/RigidBody";
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
 import { Euclidean2 } from "./Euclidean2";
+import { RigidBody2 } from "./RigidBody2";
 
 const fromVector = Geometric2.fromVector;
 
-export class PolygonRigidBody2 extends RigidBody<Geometric2> {
+export class PolygonRigidBody2 extends RigidBody2 {
     /**
      * The position of the polygon point relative to the center of mass.
      * 
@@ -24,6 +24,7 @@ export class PolygonRigidBody2 extends RigidBody<Geometric2> {
         this.X = X;
         this.updateInertiaTensor();
     }
+
     /**
      * The inertia tensor matrix must be updated any time the geometry changes.
      * The geometry is defined by the total mass, M, and the positions of the vertices. 

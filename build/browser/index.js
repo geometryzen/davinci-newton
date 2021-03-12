@@ -10,9 +10,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-10';
+            this.LAST_MODIFIED = '2021-03-11';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.28';
+            this.VERSION = '1.0.29';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -7251,6 +7251,8 @@
          * Ω = 12 * L * (1/M) * 1 / (h^2+w^2)
          */
         Block2.prototype.updateAngularVelocity = function () {
+            // TODO: If we have already computer the inertia tensor, why do we compute it again?
+            // RigidBody2 provides an optimized implementation.
             var w = this.width_;
             var h = this.height_;
             var ww = w.a * w.a;
@@ -7548,6 +7550,26 @@
         return Physics2;
     }(State));
 
+    var L = new Geometric2();
+    var RigidBody2 = /** @class */ (function (_super) {
+        __extends(RigidBody2, _super);
+        function RigidBody2() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        /**
+         *
+         */
+        RigidBody2.prototype.updateAngularVelocity = function () {
+            // If the angular momentum is mutable then we don't want to accidentally change it.
+            // If the angular momentum is immutable then we will need a scratch variable to avoid creating temporary objects. 
+            L.copyBivector(this.L);
+            // We know that (in 2D) the moment of inertia is a scalar.
+            // The angular velocity property performs copy on assignment.
+            this.Ω = L.divByScalar(this.I.getElement(0, 0), this.I.uom);
+        };
+        return RigidBody2;
+    }(RigidBody));
+
     var fromVector = Geometric2.fromVector;
     var PolygonRigidBody2 = /** @class */ (function (_super) {
         __extends(PolygonRigidBody2, _super);
@@ -7595,7 +7617,7 @@
             this.I = matrix;
         };
         return PolygonRigidBody2;
-    }(RigidBody));
+    }(RigidBody2));
     function polygonArea(xs) {
         var N = xs.length;
         var A = new Geometric2();

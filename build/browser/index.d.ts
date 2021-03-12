@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.28
+// Type definitions for davinci-newton 1.0.29
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2228,6 +2228,13 @@ export class RigidBody<T> implements ForceBody<T>, SimObject {
     translationalEnergy(): T;
 }
 
+export class RigidBody2 extends RigidBody<Geometric2> {
+    /**
+     *
+     */
+    updateAngularVelocity(): void;
+}
+
 /**
  * A rectangular block of uniform surface density.
  */
@@ -2277,7 +2284,7 @@ export class Disc2 extends RigidBody<Geometric2> {
  * Plane polygon with vertices points[0], points[1], ..., points[N-1] and mass M uniformly distributed
  * on its interior.
  */
-export class PolygonRigidBody2 extends RigidBody<Geometric2> {
+export class PolygonRigidBody2 extends RigidBody2 {
     /**
      * The vertex positions relative to the polygon center of mass.
      */
