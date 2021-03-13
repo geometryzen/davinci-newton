@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.33
+// Type definitions for davinci-newton 1.0.34
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -750,6 +750,14 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ this * (α * uom)
      */
     mulByScalar(α: number, uom: Unit | undefined): Geometric2;
+
+    /**
+     * Computes this * v.
+     * `this` is mutated iff `this` is mutable.
+     * @param v The vector operand.
+     * @returns this * v 
+     */
+    mulByVector(v: VectorE2): Geometric2;
 
     /**
      * 
@@ -1917,6 +1925,8 @@ export class Matrix1 implements MatrixLike {
     uom?: Unit;
     /**
      * Constructs a mutable 1x1 matrix.
+     * @param elements 
+     * @param uom 
      */
     constructor(elements: Float32Array, uom?: Unit);
     getElement(row: number, column: number): number;
@@ -1935,6 +1945,8 @@ export class Matrix3 implements MatrixLike {
     modified: boolean;
     /**
      * Constructs a mutable 3x3 matrix.
+     * @param elements 
+     * @param uom 
      */
     constructor(elements: Float32Array, uom?: Unit);
     copy(source: MatrixLike): this;

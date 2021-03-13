@@ -56,6 +56,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Mass (scalar). Default is one (1).
          * If dimensioned units are used, they must be compatible with the unit of mass.
+         * M is immutable but the property may be reassigned.
          */
         get: function () {
             return this.$mass.get();
@@ -72,6 +73,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Charge (scalar). Default is zero (0).
          * If dimensioned units are used, they must be compatible with the unit of electric charge.
+         * Q is immutable but the property may be reassigned.
          */
         get: function () {
             return this.$charge.get();
@@ -146,6 +148,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Position (vector).
          * If dimensioned units are used, they must be compatible with the unit of length.
+         * X is mutable with copy-on-set.
          */
         get: function () {
             return this.$X;
@@ -161,6 +164,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Attitude (spinor).
          * Effects a rotation from local coordinates to world coordinates.
+         * R is mutable with copy-on-set.
          */
         get: function () {
             return this.$R;
@@ -176,6 +180,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Linear momentum (vector).
          * If dimensioned units are used, they must be compatible with the unit of momentum.
+         * P is mutable with copy-on-set.
          */
         get: function () {
             return this.$P;
@@ -191,6 +196,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Angular momentum (bivector) in world coordinates.
          * If dimensioned units are used, they must be compatible with the unit of angular momentum.
+         * L is mutable with copy-on-set.
          */
         get: function () {
             return this.$L;
@@ -206,6 +212,7 @@ var RigidBody = /** @class */ (function (_super) {
         /**
          * Angular velocity (bivector).
          * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+         * Ω is mutable with copy-on-set.
          */
         get: function () {
             // A getter is required in order to support the setter existence.
@@ -213,7 +220,6 @@ var RigidBody = /** @class */ (function (_super) {
         },
         set: function (angularVelocity) {
             mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-            // A setter is used so that assignments do not cause the member variable to become immutable.
             this.metric.copy(angularVelocity, this.$Ω);
         },
         enumerable: false,

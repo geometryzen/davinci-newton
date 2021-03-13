@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.32
+// Type definitions for davinci-newton 1.0.34
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -750,6 +750,14 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ this * (α * uom)
      */
     mulByScalar(α: number, uom: Unit | undefined): Geometric2;
+
+    /**
+     * Computes this * v.
+     * `this` is mutated iff `this` is mutable.
+     * @param v The vector operand.
+     * @returns this * v 
+     */
+    mulByVector(v: VectorE2): Geometric2;
 
     /**
      * 
@@ -1907,6 +1915,9 @@ export interface MatrixLike {
     getElement(row: number, column: number): number;
 }
 
+/**
+ * A mutable 1x1 matrix with an optional unit of measure.
+ */
 export class Matrix1 implements MatrixLike {
     static one(): Matrix1;
     static zero(): Matrix1;
@@ -1914,24 +1925,30 @@ export class Matrix1 implements MatrixLike {
     uom?: Unit;
     /**
      * Constructs a mutable 1x1 matrix.
+     * @param elements 
+     * @param uom 
      */
-    constructor(elements: Float32Array, uom: Unit);
+    constructor(elements: Float32Array, uom?: Unit);
     getElement(row: number, column: number): number;
     setElement(row: number, column: number, value: number): void;
 }
 
 /**
- * A mutable 3x3 matrix.
+ * A mutable 3x3 matrix with an optional unit of measure.
  */
 export class Matrix3 implements MatrixLike {
+    static one(): Matrix3;
+    static zero(): Matrix3;
     readonly dimensions: number;
     uom?: Unit;
     elements: Float32Array;
     modified: boolean;
     /**
      * Constructs a mutable 3x3 matrix.
+     * @param elements 
+     * @param uom 
      */
-    constructor(elements: Float32Array, uom: Unit);
+    constructor(elements: Float32Array, uom?: Unit);
     copy(source: MatrixLike): this;
     getElement(row: number, column: number): number;
     inv(): this;
@@ -1944,8 +1961,6 @@ export class Matrix3 implements MatrixLike {
     setElement(row: number, column: number, value: number): void;
     toString(radix?: number): string;
     transpose(): this;
-    static one(): Matrix3;
-    static zero(): Matrix3;
 }
 
 /**
@@ -2187,10 +2202,12 @@ export class RigidBody<T> implements ForceBody<T>, SimObject {
     centerOfMassLocal: T;
     /**
      * Mass (scalar).
+     * M is immutable but the property may be reassigned.
      */
     M: T;
     /**
      * Electric Charge (scalar).
+     * Q is immutable but the property may be reasigned.
      */
     Q: T;
     /**
@@ -2203,22 +2220,27 @@ export class RigidBody<T> implements ForceBody<T>, SimObject {
     Iinv: MatrixLike;
     /**
      * Position (vector).
+     * X is mutable with copy-on-set.
      */
     X: T;
     /**
-     * Attitude (spinor)
+     * Attitude (spinor).
+     * R is mutable with copy-on-set.
      */
     R: T;
     /**
      * Linear momentum (vector).
+     * P is mutable with copy-on-set.
      */
     P: T;
     /**
      * Angular momentum (bivector).
+     * L is mutable with copy-on-set.
      */
     L: T;
     /**
      * Angular velocity (bivector).
+     * Ω is mutable with copy-on-set.
      */
     Ω: T;
     /**

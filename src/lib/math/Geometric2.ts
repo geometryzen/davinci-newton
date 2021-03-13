@@ -215,62 +215,62 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * The identity element for addition, <b>0</b>.
      * The returned multivector is locked.
      */
-    public static readonly zero = lock(new Geometric2(zero(), void 0));
+    static readonly zero = lock(new Geometric2(zero(), void 0));
 
     /**
      * Constructs a Geometric2 representing the number one.
      * The identity element for multiplication, <b>1</b>.
      * The returned multivector is locked.
      */
-    public static readonly one = lock(new Geometric2(scalar(1), void 0));
+    static readonly one = lock(new Geometric2(scalar(1), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>x</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e1 = lock(new Geometric2(vector(1, 0), void 0));
+    static readonly e1 = lock(new Geometric2(vector(1, 0), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>y</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly e2 = lock(new Geometric2(vector(0, 1), void 0));
+    static readonly e2 = lock(new Geometric2(vector(0, 1), void 0));
 
     /**
      * Constructs a basis vector corresponding to the <code>β</code> coordinate.
      * The returned multivector is locked.
      */
-    public static readonly I = lock(new Geometric2(pseudo(1), void 0));
+    static readonly I = lock(new Geometric2(pseudo(1), void 0));
 
     /**
      * SI base unit of length.
      * The meter is the length of the path travelled by light in vacuum during a time interval of 1 / 299 792 458 of a second.
      */
-    public static readonly meter = lock(new Geometric2(scalar(1), Unit.METER));
+    static readonly meter = lock(new Geometric2(scalar(1), Unit.METER));
 
     /**
      * SI base unit of mass.
      * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
      */
-    public static readonly kilogram = lock(new Geometric2(scalar(1), Unit.KILOGRAM));
+    static readonly kilogram = lock(new Geometric2(scalar(1), Unit.KILOGRAM));
 
     /**
      * SI base unit of time.
      * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
      */
-    public static readonly second = lock(new Geometric2(scalar(1), Unit.SECOND));
+    static readonly second = lock(new Geometric2(scalar(1), Unit.SECOND));
 
     /**
      * SI base unit of electric current.
      * The ampere is that constant current which, if maintained in two straight parallel conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum, would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
      */
-    public static readonly ampere = lock(new Geometric2(scalar(1), Unit.AMPERE));
+    static readonly ampere = lock(new Geometric2(scalar(1), Unit.AMPERE));
 
     /**
      * SI base unit of thermodynamic temperature.
      * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature of the triple point of water.
      */
-    public static readonly kelvin = lock(new Geometric2(scalar(1), Unit.KELVIN));
+    static readonly kelvin = lock(new Geometric2(scalar(1), Unit.KELVIN));
 
     /**
      * SI base unit of amount of substance.
@@ -278,28 +278,28 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * 
      * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
      */
-    public static readonly mole = lock(new Geometric2(scalar(1), Unit.MOLE));
+    static readonly mole = lock(new Geometric2(scalar(1), Unit.MOLE));
 
     /**
      * SI base unit of luminous intensity.
      * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
      */
-    public static readonly candela = lock(new Geometric2(scalar(1), Unit.CANDELA));
+    static readonly candela = lock(new Geometric2(scalar(1), Unit.CANDELA));
 
     /**
      * SI derived unit of electric charge, quantity of electricity.
      */
-    public static readonly coulomb = lock(new Geometric2(scalar(1), Unit.COULOMB));
+    static readonly coulomb = lock(new Geometric2(scalar(1), Unit.COULOMB));
 
     /**
      * SI derived unit of force.
      */
-    public static readonly newton = lock(new Geometric2(scalar(1), Unit.NEWTON));
+    static readonly newton = lock(new Geometric2(scalar(1), Unit.NEWTON));
 
     /**
      * SI derived unit of energy, work, quantity of heat.
      */
-    public static readonly joule = lock(new Geometric2(scalar(1), Unit.JOULE));
+    static readonly joule = lock(new Geometric2(scalar(1), Unit.JOULE));
 
     /**
      * 
@@ -1165,11 +1165,11 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * If the multivector is in the unlocked state then it is mutable.
      * If the multivector is in the locked state then it is immutable.
      */
-    public isLocked(): boolean {
+    isLocked(): boolean {
         return this.lock_ !== UNLOCKED;
     }
 
-    public isMutable(): boolean {
+    isMutable(): boolean {
         return this.lock_ === UNLOCKED;
     }
 
@@ -1177,7 +1177,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
      */
-    public lock(): number {
+    lock(): number {
         if (this.lock_ !== UNLOCKED) {
             throw new Error("already locked");
         }
@@ -1191,7 +1191,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Unlocks this multivector (allowing mutation),
      * using a token that was obtained from a preceding lock method call.
      */
-    public unlock(token: number): void {
+    unlock(token: number): void {
         if (this.lock_ === UNLOCKED) {
             throw new Error("not locked");
         }
@@ -1664,7 +1664,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
 
-    public mulByBivector(B: Bivector): Geometric2 {
+    mulByBivector(B: Bivector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByBivector(B));
         }
@@ -1724,7 +1724,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
 
-    public mulByVector(v: Vector): Geometric2 {
+    mulByVector(v: Vector): Geometric2 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByVector(v));
         }

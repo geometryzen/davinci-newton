@@ -87,12 +87,14 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     /**
      * Mass (scalar). Default is one (1).
      * If dimensioned units are used, they must be compatible with the unit of mass.
+     * M is immutable but the property may be reassigned.
      */
     get M(): T;
     set M(M: T);
     /**
      * Charge (scalar). Default is zero (0).
      * If dimensioned units are used, they must be compatible with the unit of electric charge.
+     * Q is immutable but the property may be reassigned.
      */
     get Q(): T;
     set Q(Q: T);
@@ -121,30 +123,35 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     /**
      * Position (vector).
      * If dimensioned units are used, they must be compatible with the unit of length.
+     * X is mutable with copy-on-set.
      */
     get X(): T;
     set X(position: T);
     /**
      * Attitude (spinor).
      * Effects a rotation from local coordinates to world coordinates.
+     * R is mutable with copy-on-set.
      */
     get R(): T;
     set R(attitude: T);
     /**
      * Linear momentum (vector).
      * If dimensioned units are used, they must be compatible with the unit of momentum.
+     * P is mutable with copy-on-set.
      */
     get P(): T;
     set P(momentum: T);
     /**
      * Angular momentum (bivector) in world coordinates.
      * If dimensioned units are used, they must be compatible with the unit of angular momentum.
+     * L is mutable with copy-on-set.
      */
     get L(): T;
     set L(angularMomentum: T);
     /**
      * Angular velocity (bivector).
      * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+     * Ω is mutable with copy-on-set.
      */
     get Ω(): T;
     set Ω(angularVelocity: T);

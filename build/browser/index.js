@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.32';
+            this.VERSION = '1.0.34';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -3012,6 +3012,7 @@
             /**
              * Mass (scalar). Default is one (1).
              * If dimensioned units are used, they must be compatible with the unit of mass.
+             * M is immutable but the property may be reassigned.
              */
             get: function () {
                 return this.$mass.get();
@@ -3028,6 +3029,7 @@
             /**
              * Charge (scalar). Default is zero (0).
              * If dimensioned units are used, they must be compatible with the unit of electric charge.
+             * Q is immutable but the property may be reassigned.
              */
             get: function () {
                 return this.$charge.get();
@@ -3102,6 +3104,7 @@
             /**
              * Position (vector).
              * If dimensioned units are used, they must be compatible with the unit of length.
+             * X is mutable with copy-on-set.
              */
             get: function () {
                 return this.$X;
@@ -3117,6 +3120,7 @@
             /**
              * Attitude (spinor).
              * Effects a rotation from local coordinates to world coordinates.
+             * R is mutable with copy-on-set.
              */
             get: function () {
                 return this.$R;
@@ -3132,6 +3136,7 @@
             /**
              * Linear momentum (vector).
              * If dimensioned units are used, they must be compatible with the unit of momentum.
+             * P is mutable with copy-on-set.
              */
             get: function () {
                 return this.$P;
@@ -3147,6 +3152,7 @@
             /**
              * Angular momentum (bivector) in world coordinates.
              * If dimensioned units are used, they must be compatible with the unit of angular momentum.
+             * L is mutable with copy-on-set.
              */
             get: function () {
                 return this.$L;
@@ -3162,6 +3168,7 @@
             /**
              * Angular velocity (bivector).
              * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+             * Ω is mutable with copy-on-set.
              */
             get: function () {
                 // A getter is required in order to support the setter existence.
@@ -3169,7 +3176,6 @@
             },
             set: function (angularVelocity) {
                 mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-                // A setter is used so that assignments do not cause the member variable to become immutable.
                 this.metric.copy(angularVelocity, this.$Ω);
             },
             enumerable: false,
