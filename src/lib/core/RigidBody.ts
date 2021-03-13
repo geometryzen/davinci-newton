@@ -126,6 +126,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Mass (scalar). Default is one (1).
      * If dimensioned units are used, they must be compatible with the unit of mass.
+     * M is immutable but the property may be reassigned.
      */
     get M(): T {
         return this.$mass.get();
@@ -139,6 +140,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Charge (scalar). Default is zero (0).
      * If dimensioned units are used, they must be compatible with the unit of electric charge.
+     * Q is immutable but the property may be reassigned.
      */
     get Q(): T {
         return this.$charge.get();
@@ -206,6 +208,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Position (vector).
      * If dimensioned units are used, they must be compatible with the unit of length.
+     * X is mutable with copy-on-set.
      */
     get X(): T {
         return this.$X;
@@ -218,6 +221,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Attitude (spinor).
      * Effects a rotation from local coordinates to world coordinates.
+     * R is mutable with copy-on-set.
      */
     get R(): T {
         return this.$R;
@@ -230,6 +234,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Linear momentum (vector).
      * If dimensioned units are used, they must be compatible with the unit of momentum.
+     * P is mutable with copy-on-set.
      */
     get P(): T {
         return this.$P;
@@ -242,6 +247,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Angular momentum (bivector) in world coordinates.
      * If dimensioned units are used, they must be compatible with the unit of angular momentum.
+     * L is mutable with copy-on-set.
      */
     get L(): T {
         return this.$L;
@@ -254,6 +260,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Angular velocity (bivector).
      * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+     * Ω is mutable with copy-on-set.
      */
     get Ω(): T {
         // A getter is required in order to support the setter existence.
@@ -261,7 +268,6 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     }
     set Ω(angularVelocity: T) {
         mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-        // A setter is used so that assignments do not cause the member variable to become immutable.
         this.metric.copy(angularVelocity, this.$Ω);
     }
 
