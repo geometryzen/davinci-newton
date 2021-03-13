@@ -2750,9 +2750,6 @@ img {
 			<a href="classes/engine3.html" class="tsd-kind-icon">Engine3</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/eulermethod.html" class="tsd-kind-icon">Euler<wbr>Method</a>
-		</li>
-		<li class=" tsd-kind-class">
 			<a href="classes/force2.html" class="tsd-kind-icon">Force2</a>
 		</li>
 		<li class=" tsd-kind-class">
@@ -2777,9 +2774,6 @@ img {
 			<a href="classes/matrix3.html" class="tsd-kind-icon">Matrix3</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/modifiedeuler.html" class="tsd-kind-icon">Modified<wbr>Euler</a>
-		</li>
-		<li class=" tsd-kind-class">
 			<a href="classes/particle2.html" class="tsd-kind-icon">Particle2</a>
 		</li>
 		<li class=" tsd-kind-class">
@@ -2802,9 +2796,6 @@ img {
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="classes/rod2.html" class="tsd-kind-icon">Rod2</a>
-		</li>
-		<li class=" tsd-kind-class">
-			<a href="classes/rungekutta.html" class="tsd-kind-icon">Runge<wbr>Kutta</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="classes/sphere3.html" class="tsd-kind-icon">Sphere3</a>
@@ -2840,16 +2831,18 @@ img {
 				<h1>Getting Started</h1>
 			</a>
 			<p>The following code illustrates the basic flow. For a working example see <a href="https://www.stemcstudio.com">STEMCstudio</a>.</p>
+			<a href="#constructing-the-core-simulation-using-the-physics2-engine" id="constructing-the-core-simulation-using-the-physics2-engine" style="color: inherit; text-decoration: none;">
+				<h2>Constructing the core simulation using the <code>Physics2</code> engine.</h2>
+			</a>
+			<pre><code class="language-typescript"></code></pre>
 			<a href="#constructing-the-core-simulation-using-the-physics3-engine" id="constructing-the-core-simulation-using-the-physics3-engine" style="color: inherit; text-decoration: none;">
 				<h2>Constructing the core simulation using the <code>Physics3</code> engine.</h2>
 			</a>
+			<p>This example incorporates units of measure.</p>
 			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {
-    Geometric3,
-    Physics3,
-    RungeKutta,
-    ConstantEnergySolver,
-    DefaultAdavanceStrategy,
     Block3,
+    Engine3,
+    Geometric3,
     Spring3
 } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;davinci-newton&#x27;</span>
 
@@ -2866,12 +2859,7 @@ img {
 <span class="hljs-comment">//</span>
 <span class="hljs-comment">// Initialization</span>
 <span class="hljs-comment">//</span>
-<span class="hljs-keyword">const</span> sim = <span class="hljs-keyword">new</span> Physics3()
-<span class="hljs-keyword">const</span> rk4 = <span class="hljs-keyword">new</span> RungeKutta(sim)
-<span class="hljs-keyword">const</span> ads = <span class="hljs-keyword">new</span> ConstantEnergySolver(sim, sim, rk4)
-ads.tolerance = <span class="hljs-number">1E-5</span>
-ads.stepLowerBound = <span class="hljs-number">1E-7</span>
-<span class="hljs-keyword">const</span> strategy = <span class="hljs-keyword">new</span> DefaultAdvanceStrategy(sim, ads)
+<span class="hljs-keyword">const</span> sim = <span class="hljs-keyword">new</span> Engine3()
 <span class="hljs-keyword">const</span> Δt = <span class="hljs-number">0.01</span> * s
 
 <span class="hljs-comment">//</span>
@@ -2902,7 +2890,7 @@ sim.addForceLaw(spring)
 spring.attach1 = (block1.width * e1 + <span class="hljs-number">0</span> * block1.height * e2 + block1.depth * e3) / <span class="hljs-number">2</span>
 
 <span class="hljs-comment">// Inside animation &quot;loop&quot;</span>
-strategy.advance(Δt.a, Δt.uom)</code></pre>
+sim.advance(Δt.a, Δt.uom)</code></pre>
 		</div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
@@ -2920,7 +2908,6 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 							<li class="tsd-kind-class"><a href="classes/disc2.html" class="tsd-kind-icon">Disc2</a></li>
 							<li class="tsd-kind-class"><a href="classes/engine2.html" class="tsd-kind-icon">Engine2</a></li>
 							<li class="tsd-kind-class"><a href="classes/engine3.html" class="tsd-kind-icon">Engine3</a></li>
-							<li class="tsd-kind-class"><a href="classes/eulermethod.html" class="tsd-kind-icon">Euler<wbr>Method</a></li>
 							<li class="tsd-kind-class"><a href="classes/force2.html" class="tsd-kind-icon">Force2</a></li>
 							<li class="tsd-kind-class"><a href="classes/force3.html" class="tsd-kind-icon">Force3</a></li>
 							<li class="tsd-kind-class"><a href="classes/geometric2.html" class="tsd-kind-icon">Geometric2</a></li>
@@ -2929,7 +2916,6 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 							<li class="tsd-kind-class"><a href="classes/gravitationforcelaw3.html" class="tsd-kind-icon">Gravitation<wbr>Force<wbr>Law3</a></li>
 							<li class="tsd-kind-class"><a href="classes/matrix1.html" class="tsd-kind-icon">Matrix1</a></li>
 							<li class="tsd-kind-class"><a href="classes/matrix3.html" class="tsd-kind-icon">Matrix3</a></li>
-							<li class="tsd-kind-class"><a href="classes/modifiedeuler.html" class="tsd-kind-icon">Modified<wbr>Euler</a></li>
 							<li class="tsd-kind-class"><a href="classes/particle2.html" class="tsd-kind-icon">Particle2</a></li>
 							<li class="tsd-kind-class"><a href="classes/particle3.html" class="tsd-kind-icon">Particle3</a></li>
 							<li class="tsd-kind-class"><a href="classes/physics2.html" class="tsd-kind-icon">Physics2</a></li>
@@ -2938,7 +2924,6 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 							<li class="tsd-kind-class"><a href="classes/rigidbody2.html" class="tsd-kind-icon">Rigid<wbr>Body2</a></li>
 							<li class="tsd-kind-class"><a href="classes/rigidbody3.html" class="tsd-kind-icon">Rigid<wbr>Body3</a></li>
 							<li class="tsd-kind-class"><a href="classes/rod2.html" class="tsd-kind-icon">Rod2</a></li>
-							<li class="tsd-kind-class"><a href="classes/rungekutta.html" class="tsd-kind-icon">Runge<wbr>Kutta</a></li>
 							<li class="tsd-kind-class"><a href="classes/sphere3.html" class="tsd-kind-icon">Sphere3</a></li>
 							<li class="tsd-kind-class"><a href="classes/spring2.html" class="tsd-kind-icon">Spring2</a></li>
 							<li class="tsd-kind-class"><a href="classes/spring3.html" class="tsd-kind-icon">Spring3</a></li>
@@ -2974,7 +2959,7 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 				<div class="tsd-signature tsd-kind-icon">Dimensions<wbr>Checking<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"strict"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/cf8e5df/src/lib/math/Dimensions.ts#L48">lib/math/Dimensions.ts:48</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0567934/src/lib/math/Dimensions.ts#L48">lib/math/Dimensions.ts:48</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2996,7 +2981,7 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/cf8e5df/src/lib/math/Dimensions.ts#L58">lib/math/Dimensions.ts:58</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0567934/src/lib/math/Dimensions.ts#L58">lib/math/Dimensions.ts:58</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3032,6 +3017,9 @@ strategy.advance(Δt.a, Δt.uom)</code></pre>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
 						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
