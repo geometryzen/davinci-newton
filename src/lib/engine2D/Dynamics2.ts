@@ -76,7 +76,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class Dynamics2 implements Dynamics<Geometric2> {
-    numVariablesPerBody(): number {
+    numVarsPerBody(): number {
         // Each body is described by 7 kinematic components.
         // 2 position
         // 2 attitude (though normalized should be only 1)
@@ -99,7 +99,7 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         }
         throw new Error(`getVarName(${offset})`);
     }
-    discontinuousEnergyVariables(): number[] {
+    discontinuousEnergyVars(): number[] {
         return DISCONTINUOUS_ENERGY_VARIABLES;
     }
     epilog(bodies: ForceBody<Geometric2>[], forceLaws: ForceLaw<Geometric2>[], potentialOffset: Geometric2, varsList: VarsList): void {
@@ -157,14 +157,14 @@ export class Dynamics2 implements Dynamics<Geometric2> {
 
         vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
     }
-    addForce(rateOfChange: number[], idx: number, force: Geometric2): void {
+    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: Geometric2): void {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
     }
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric2): void {
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric2): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
     }
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric2>): void {
+    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<Geometric2>): void {
         body.X.a = 0;
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
@@ -196,13 +196,13 @@ export class Dynamics2 implements Dynamics<Geometric2> {
 
         body.updateAngularVelocity();
     }
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>) {
+    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>) {
         const P = body.P;
         const mass = body.M.a;
         rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
     }
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void {
+    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void {
         // Let Ω(t) be the (bivector) angular velocity.
         // Let R(t) be the (spinor) attitude of the rigid body. 
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -214,12 +214,12 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
         rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
     }
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void {
+    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void {
         // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
     }
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void {
+    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
     }
 }

@@ -1,3 +1,4 @@
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
 import { approx } from "./approx";
@@ -179,6 +180,9 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     static vector(x: number, y: number, uom?: Unit): Geometric2 {
+        const contextBuilder = () => "Geometric2.vector(x: number, y: number, uom?: Unit): Geometric2";
+        mustBeNumber('x', x, contextBuilder);
+        mustBeNumber('y', y, contextBuilder);
         return new Geometric2(vector(x, y), uom);
     }
 

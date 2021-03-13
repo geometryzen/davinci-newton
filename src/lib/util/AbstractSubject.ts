@@ -15,7 +15,7 @@
 
 import toName from '../util/toName';
 import clone from './clone';
-import contains from './contains';
+import { contains } from './contains';
 import find from './find';
 import { Observer } from './Observer';
 import { Parameter } from './Parameter';
@@ -45,12 +45,20 @@ export class AbstractSubject implements Subject {
      */
     private paramList_: Parameter[] = [];
 
+    /**
+     * @hidden
+     * @param observer 
+     */
     addObserver(observer: Observer): void {
         if (!contains(this.observers_, observer)) {
             this.observers_.push(observer);
         }
     }
 
+    /**
+     * @hidden
+     * @param observer
+     */
     removeObserver(observer: Observer) {
         remove(this.observers_, observer);
     }
@@ -58,6 +66,7 @@ export class AbstractSubject implements Subject {
     /**
      * Adds the Parameter to the list of this Subject's available Parameters.
      * @param parameter the Parameter to add
+     * @hidden
      */
     addParameter(parameter: Parameter): void {
         const name = parameter.name;
@@ -80,6 +89,12 @@ export class AbstractSubject implements Subject {
         });
     }
 
+    /**
+     * 
+     * @param name 
+     * @returns
+     * @hidden
+     */
     getParameter(name: string): Parameter {
         const p = this.getParam(name);
         if (p != null) {
@@ -88,6 +103,12 @@ export class AbstractSubject implements Subject {
         throw new Error('Parameter not found ' + name);
     }
 
+    /**
+     * 
+     * @param name 
+     * @returns
+     * @hidden
+     */
     getParameterBoolean(name: string): ParameterBoolean {
         const p = this.getParam(name);
         if (p instanceof ParameterBoolean) {
@@ -96,6 +117,12 @@ export class AbstractSubject implements Subject {
         throw new Error('ParameterBoolean not found ' + name);
     }
 
+    /**
+     * 
+     * @param name 
+     * @returns 
+     * @hidden
+     */
     getParameterNumber(name: string): ParameterNumber {
         const p = this.getParam(name);
         if (p instanceof ParameterNumber) {
@@ -104,6 +131,12 @@ export class AbstractSubject implements Subject {
         throw new Error('ParameterNumber not found ' + name);
     }
 
+    /**
+     * 
+     * @param name 
+     * @returns
+     * @hidden
+     */
     getParameterString(name: string): ParameterString {
         const p = this.getParam(name);
         if (p instanceof ParameterString) {
@@ -112,12 +145,19 @@ export class AbstractSubject implements Subject {
         throw new Error('ParameterString not found ' + name);
     }
 
+    /**
+     * 
+     * @returns
+     * @hidden
+     */
     getParameters(): Parameter[] {
         return clone(this.paramList_);
     }
 
     /**
      * 
+     * @param event
+     * @hidden
      */
     broadcast(event: SubjectEvent): void {
         if (this.doBroadcast_) {
@@ -128,6 +168,11 @@ export class AbstractSubject implements Subject {
         }
     }
 
+    /**
+     * 
+     * @param name
+     * @hidden
+     */
     broadcastParameter(name: string): void {
         const p = this.getParam(name);
         if (p === null) {
@@ -139,16 +184,16 @@ export class AbstractSubject implements Subject {
     /**
      * Returns whether this Subject is broadcasting events.
      * @return {boolean} whether this Subject is broadcasting events
+     * @hidden
      */
     protected getBroadcast(): boolean {
         return this.doBroadcast_;
     }
 
     /**
-     * 
+     * @hidden
      */
     getObservers() {
         return clone(this.observers_);
     }
-
 }

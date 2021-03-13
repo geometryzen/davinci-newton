@@ -1,7 +1,7 @@
 import { __extends } from "tslib";
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { AbstractSubject } from '../util/AbstractSubject';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import remove from '../util/remove';
 /**

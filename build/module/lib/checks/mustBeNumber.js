@@ -8,6 +8,10 @@ function beANumber() {
 }
 /**
  * @hidden
+ * @param name
+ * @param value
+ * @param contextBuilder
+ * @returns
  */
 export function mustBeNumber(name, value, contextBuilder) {
     mustSatisfy(name, isNumber(value), beANumber, contextBuilder);

@@ -119,7 +119,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class Dynamics3 implements Dynamics<Geometric3> {
-    numVariablesPerBody(): number {
+    numVarsPerBody(): number {
         return 13;
     }
     getVarNames(): string[] {
@@ -143,7 +143,7 @@ export class Dynamics3 implements Dynamics<Geometric3> {
         }
         throw new Error(`getVarName(${offset})`);
     }
-    discontinuousEnergyVariables(): number[] {
+    discontinuousEnergyVars(): number[] {
         return DISCONTINUOUS_ENERGY_VARIABLES;
     }
     epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void {
@@ -218,17 +218,17 @@ export class Dynamics3 implements Dynamics<Geometric3> {
         vars.setValue(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
         vars.setValue(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
     }
-    addForce(rateOfChange: number[], idx: number, force: Geometric3): void {
+    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: Geometric3): void {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
     }
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric3): void {
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric3): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
     }
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric3>): void {
+    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<Geometric3>): void {
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
         body.X.z = vars[idx + OFFSET_POSITION_Z];
@@ -256,7 +256,7 @@ export class Dynamics3 implements Dynamics<Geometric3> {
 
         body.updateAngularVelocity();
     }
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>) {
+    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>) {
         // The rate of change of position is the velocity.
         // dX/dt = V = P / M
         const P = body.P;
@@ -265,7 +265,7 @@ export class Dynamics3 implements Dynamics<Geometric3> {
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
         rateOfChange[idx + OFFSET_POSITION_Z] = P.z / mass;
     }
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void {
+    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void {
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
         // requiring the geometric product of Ω and R.
         // Ω and R are auxiliary and primary variables that have already been computed.
@@ -276,13 +276,13 @@ export class Dynamics3 implements Dynamics<Geometric3> {
         rateOfChange[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
         rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
     }
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void {
+    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void {
         // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
     }
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void {
+    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;

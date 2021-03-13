@@ -14,7 +14,7 @@
 // limitations under the License.
 import toName from '../util/toName';
 import clone from './clone';
-import contains from './contains';
+import { contains } from './contains';
 import find from './find';
 import { ParameterBoolean } from './ParameterBoolean';
 import { ParameterNumber } from './ParameterNumber';
@@ -38,17 +38,26 @@ var AbstractSubject = /** @class */ (function () {
          */
         this.paramList_ = [];
     }
+    /**
+     * @hidden
+     * @param observer
+     */
     AbstractSubject.prototype.addObserver = function (observer) {
         if (!contains(this.observers_, observer)) {
             this.observers_.push(observer);
         }
     };
+    /**
+     * @hidden
+     * @param observer
+     */
     AbstractSubject.prototype.removeObserver = function (observer) {
         remove(this.observers_, observer);
     };
     /**
      * Adds the Parameter to the list of this Subject's available Parameters.
      * @param parameter the Parameter to add
+     * @hidden
      */
     AbstractSubject.prototype.addParameter = function (parameter) {
         var name = parameter.name;
@@ -69,6 +78,12 @@ var AbstractSubject = /** @class */ (function () {
             return p.name === name;
         });
     };
+    /**
+     *
+     * @param name
+     * @returns
+     * @hidden
+     */
     AbstractSubject.prototype.getParameter = function (name) {
         var p = this.getParam(name);
         if (p != null) {
@@ -76,6 +91,12 @@ var AbstractSubject = /** @class */ (function () {
         }
         throw new Error('Parameter not found ' + name);
     };
+    /**
+     *
+     * @param name
+     * @returns
+     * @hidden
+     */
     AbstractSubject.prototype.getParameterBoolean = function (name) {
         var p = this.getParam(name);
         if (p instanceof ParameterBoolean) {
@@ -83,6 +104,12 @@ var AbstractSubject = /** @class */ (function () {
         }
         throw new Error('ParameterBoolean not found ' + name);
     };
+    /**
+     *
+     * @param name
+     * @returns
+     * @hidden
+     */
     AbstractSubject.prototype.getParameterNumber = function (name) {
         var p = this.getParam(name);
         if (p instanceof ParameterNumber) {
@@ -90,6 +117,12 @@ var AbstractSubject = /** @class */ (function () {
         }
         throw new Error('ParameterNumber not found ' + name);
     };
+    /**
+     *
+     * @param name
+     * @returns
+     * @hidden
+     */
     AbstractSubject.prototype.getParameterString = function (name) {
         var p = this.getParam(name);
         if (p instanceof ParameterString) {
@@ -97,11 +130,18 @@ var AbstractSubject = /** @class */ (function () {
         }
         throw new Error('ParameterString not found ' + name);
     };
+    /**
+     *
+     * @returns
+     * @hidden
+     */
     AbstractSubject.prototype.getParameters = function () {
         return clone(this.paramList_);
     };
     /**
      *
+     * @param event
+     * @hidden
      */
     AbstractSubject.prototype.broadcast = function (event) {
         if (this.doBroadcast_) {
@@ -111,6 +151,11 @@ var AbstractSubject = /** @class */ (function () {
             }
         }
     };
+    /**
+     *
+     * @param name
+     * @hidden
+     */
     AbstractSubject.prototype.broadcastParameter = function (name) {
         var p = this.getParam(name);
         if (p === null) {
@@ -121,12 +166,13 @@ var AbstractSubject = /** @class */ (function () {
     /**
      * Returns whether this Subject is broadcasting events.
      * @return {boolean} whether this Subject is broadcasting events
+     * @hidden
      */
     AbstractSubject.prototype.getBroadcast = function () {
         return this.doBroadcast_;
     };
     /**
-     *
+     * @hidden
      */
     AbstractSubject.prototype.getObservers = function () {
         return clone(this.observers_);

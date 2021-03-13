@@ -3,7 +3,7 @@ import { mustBeBoolean } from '../checks/mustBeBoolean';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import remove from '../util/remove';
 import { SimList } from './SimList';
 import { VarsList } from './VarsList';
@@ -45,7 +45,7 @@ var Physics = /** @class */ (function (_super) {
         _this.$torque = metric.zero();
         _this.$totalEnergy = metric.zero();
         _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
-        _this.$numVariablesPerBody = dynamics.numVariablesPerBody();
+        _this.$numVariablesPerBody = dynamics.numVarsPerBody();
         return _this;
     }
     Object.defineProperty(Physics.prototype, "showForces", {
@@ -79,7 +79,7 @@ var Physics = /** @class */ (function (_super) {
             this.$bodies.push(body);
             this.$simList.add(body);
         }
-        this.updateFromBody(body);
+        this.updateVarsFromBody(body);
         this.discontinuosChangeToEnergy();
     };
     /**
@@ -117,7 +117,7 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.discontinuosChangeToEnergy = function () {
         var _a;
         var dynamics = this.dynamics;
-        (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVariables());
+        (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVars());
     };
     /**
      * Transfer state vector back to the rigid bodies.
@@ -136,25 +136,28 @@ var Physics = /** @class */ (function (_super) {
             // Delegate the updating of the body from the state variables because
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
-            dynamics.updateBody(vars, idx, body);
+            dynamics.updateBodyFromVars(vars, idx, body);
         }
     };
     /**
      * Handler for actions to be performed before the evaluate calls.
      * The physics engine removes objects that were temporarily added to the simulation
      * list but have expired.
+     * @hidden
      */
     Physics.prototype.prolog = function () {
         this.simList.removeTemporary(this.varsList.getTime());
     };
     /**
      * Gets the state vector, Y(t).
+     * @hidden
      */
     Physics.prototype.getState = function () {
         return this.$varsList.getValues();
     };
     /**
      * Sets the state vector, Y(t).
+     * @hidden
      */
     Physics.prototype.setState = function (state) {
         this.varsList.setValues(state, true);
@@ -163,6 +166,7 @@ var Physics = /** @class */ (function (_super) {
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
+     * @hidden
      */
     Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
         var metric = this.metric;
@@ -184,10 +188,10 @@ var Physics = /** @class */ (function (_super) {
                 }
             }
             else {
-                dynamics.setPositionRateOfChange(rateOfChange, idx, body);
-                dynamics.setAttitudeRateOfChange(rateOfChange, idx, body);
-                dynamics.zeroLinearMomentum(rateOfChange, idx);
-                dynamics.zeroAngularMomentum(rateOfChange, idx);
+                dynamics.setPositionRateOfChangeVars(rateOfChange, idx, body);
+                dynamics.setAttitudeRateOfChangeVars(rateOfChange, idx, body);
+                dynamics.zeroLinearMomentumVars(rateOfChange, idx);
+                dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
         var forceLaws = this.$forceLaws;
@@ -227,7 +231,7 @@ var Physics = /** @class */ (function (_super) {
         if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
             metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
         }
-        dynamics.addForce(rateOfChange, idx, F);
+        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
         forceApp.computeTorque(this.$torque);
@@ -236,7 +240,7 @@ var Physics = /** @class */ (function (_super) {
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
             metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
         }
-        dynamics.addTorque(rateOfChange, idx, T);
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
         if (this.$showForces) {
             forceApp.expireTime = this.$varsList.getTime();
             this.$simList.add(forceApp);
@@ -252,18 +256,21 @@ var Physics = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    /**
+     *
+     */
     Physics.prototype.updateFromBodies = function () {
         var bodies = this.$bodies;
         var N = bodies.length;
         for (var i = 0; i < N; i++) {
-            this.updateFromBody(bodies[i]);
+            this.updateVarsFromBody(bodies[i]);
         }
         this.discontinuosChangeToEnergy();
     };
     /**
      *
      */
-    Physics.prototype.updateFromBody = function (body) {
+    Physics.prototype.updateVarsFromBody = function (body) {
         var idx = body.varsIndex;
         if (idx > -1) {
             this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
@@ -272,6 +279,7 @@ var Physics = /** @class */ (function (_super) {
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
      * Computes the system energy, linear momentum and angular momentum.
+     * @hidden
      */
     Physics.prototype.epilog = function () {
         var varsList = this.$varsList;
@@ -292,7 +300,7 @@ var Physics = /** @class */ (function (_super) {
     });
     Object.defineProperty(Physics.prototype, "simList", {
         /**
-         *
+         * @hidden
          */
         get: function () {
             return this.$simList;
@@ -302,7 +310,7 @@ var Physics = /** @class */ (function (_super) {
     });
     Object.defineProperty(Physics.prototype, "varsList", {
         /**
-         *
+         * @hidden
          */
         get: function () {
             return this.$varsList;

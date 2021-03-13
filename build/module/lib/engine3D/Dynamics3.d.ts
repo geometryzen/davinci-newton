@@ -83,17 +83,17 @@ export declare const OFFSET_ANGULAR_MOMENTUM_XY = 12;
  * @hidden
  */
 export declare class Dynamics3 implements Dynamics<Geometric3> {
-    numVariablesPerBody(): number;
+    numVarsPerBody(): number;
     getVarNames(): string[];
     getOffsetName(offset: number): string;
-    discontinuousEnergyVariables(): number[];
+    discontinuousEnergyVars(): number[];
     epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void;
     updateVarsFromBody(body: ForceBody<Geometric3>, idx: number, vars: VarsList): void;
-    addForce(rateOfChange: number[], idx: number, force: Geometric3): void;
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric3): void;
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric3>): void;
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: Geometric3): void;
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric3): void;
+    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<Geometric3>): void;
+    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
+    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
+    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void;
+    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void;
 }

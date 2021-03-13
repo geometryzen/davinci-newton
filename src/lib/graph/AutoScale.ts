@@ -14,7 +14,7 @@
 // limitations under the License.
 
 import { AbstractSubject } from '../util/AbstractSubject';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import { Memorizable } from '../util/Memorizable';
 import { Observer } from '../util/Observer';

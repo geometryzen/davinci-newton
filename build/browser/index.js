@@ -588,6 +588,10 @@
     }
     /**
      * @hidden
+     * @param name
+     * @param value
+     * @param contextBuilder
+     * @returns
      */
     function mustBeNumber(name, value, contextBuilder) {
         mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
@@ -3611,17 +3615,26 @@
              */
             this.paramList_ = [];
         }
+        /**
+         * @hidden
+         * @param observer
+         */
         AbstractSubject.prototype.addObserver = function (observer) {
             if (!contains(this.observers_, observer)) {
                 this.observers_.push(observer);
             }
         };
+        /**
+         * @hidden
+         * @param observer
+         */
         AbstractSubject.prototype.removeObserver = function (observer) {
             remove(this.observers_, observer);
         };
         /**
          * Adds the Parameter to the list of this Subject's available Parameters.
          * @param parameter the Parameter to add
+         * @hidden
          */
         AbstractSubject.prototype.addParameter = function (parameter) {
             var name = parameter.name;
@@ -3642,6 +3655,12 @@
                 return p.name === name;
             });
         };
+        /**
+         *
+         * @param name
+         * @returns
+         * @hidden
+         */
         AbstractSubject.prototype.getParameter = function (name) {
             var p = this.getParam(name);
             if (p != null) {
@@ -3649,6 +3668,12 @@
             }
             throw new Error('Parameter not found ' + name);
         };
+        /**
+         *
+         * @param name
+         * @returns
+         * @hidden
+         */
         AbstractSubject.prototype.getParameterBoolean = function (name) {
             var p = this.getParam(name);
             if (p instanceof ParameterBoolean) {
@@ -3656,6 +3681,12 @@
             }
             throw new Error('ParameterBoolean not found ' + name);
         };
+        /**
+         *
+         * @param name
+         * @returns
+         * @hidden
+         */
         AbstractSubject.prototype.getParameterNumber = function (name) {
             var p = this.getParam(name);
             if (p instanceof ParameterNumber) {
@@ -3663,6 +3694,12 @@
             }
             throw new Error('ParameterNumber not found ' + name);
         };
+        /**
+         *
+         * @param name
+         * @returns
+         * @hidden
+         */
         AbstractSubject.prototype.getParameterString = function (name) {
             var p = this.getParam(name);
             if (p instanceof ParameterString) {
@@ -3670,11 +3707,18 @@
             }
             throw new Error('ParameterString not found ' + name);
         };
+        /**
+         *
+         * @returns
+         * @hidden
+         */
         AbstractSubject.prototype.getParameters = function () {
             return clone(this.paramList_);
         };
         /**
          *
+         * @param event
+         * @hidden
          */
         AbstractSubject.prototype.broadcast = function (event) {
             if (this.doBroadcast_) {
@@ -3684,6 +3728,11 @@
                 }
             }
         };
+        /**
+         *
+         * @param name
+         * @hidden
+         */
         AbstractSubject.prototype.broadcastParameter = function (name) {
             var p = this.getParam(name);
             if (p === null) {
@@ -3694,12 +3743,13 @@
         /**
          * Returns whether this Subject is broadcasting events.
          * @return {boolean} whether this Subject is broadcasting events
+         * @hidden
          */
         AbstractSubject.prototype.getBroadcast = function () {
             return this.doBroadcast_;
         };
         /**
-         *
+         * @hidden
          */
         AbstractSubject.prototype.getObservers = function () {
             return clone(this.observers_);
@@ -4446,7 +4496,7 @@
             _this.$torque = metric.zero();
             _this.$totalEnergy = metric.zero();
             _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
-            _this.$numVariablesPerBody = dynamics.numVariablesPerBody();
+            _this.$numVariablesPerBody = dynamics.numVarsPerBody();
             return _this;
         }
         Object.defineProperty(Physics.prototype, "showForces", {
@@ -4480,7 +4530,7 @@
                 this.$bodies.push(body);
                 this.$simList.add(body);
             }
-            this.updateFromBody(body);
+            this.updateVarsFromBody(body);
             this.discontinuosChangeToEnergy();
         };
         /**
@@ -4518,7 +4568,7 @@
         Physics.prototype.discontinuosChangeToEnergy = function () {
             var _a;
             var dynamics = this.dynamics;
-            (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVariables());
+            (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVars());
         };
         /**
          * Transfer state vector back to the rigid bodies.
@@ -4537,25 +4587,28 @@
                 // Delegate the updating of the body from the state variables because
                 // we do not know how to access the properties of the bodies in the
                 // various dimensions.
-                dynamics.updateBody(vars, idx, body);
+                dynamics.updateBodyFromVars(vars, idx, body);
             }
         };
         /**
          * Handler for actions to be performed before the evaluate calls.
          * The physics engine removes objects that were temporarily added to the simulation
          * list but have expired.
+         * @hidden
          */
         Physics.prototype.prolog = function () {
             this.simList.removeTemporary(this.varsList.getTime());
         };
         /**
          * Gets the state vector, Y(t).
+         * @hidden
          */
         Physics.prototype.getState = function () {
             return this.$varsList.getValues();
         };
         /**
          * Sets the state vector, Y(t).
+         * @hidden
          */
         Physics.prototype.setState = function (state) {
             this.varsList.setValues(state, true);
@@ -4564,6 +4617,7 @@
          * The time value is not being used because the DiffEqSolver has updated the vars.
          * This will move the objects and forces will be recalculated.
          * If anything it could be passed to forceLaw.updateForces.
+         * @hidden
          */
         Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
             var metric = this.metric;
@@ -4585,10 +4639,10 @@
                     }
                 }
                 else {
-                    dynamics.setPositionRateOfChange(rateOfChange, idx, body);
-                    dynamics.setAttitudeRateOfChange(rateOfChange, idx, body);
-                    dynamics.zeroLinearMomentum(rateOfChange, idx);
-                    dynamics.zeroAngularMomentum(rateOfChange, idx);
+                    dynamics.setPositionRateOfChangeVars(rateOfChange, idx, body);
+                    dynamics.setAttitudeRateOfChangeVars(rateOfChange, idx, body);
+                    dynamics.zeroLinearMomentumVars(rateOfChange, idx);
+                    dynamics.zeroAngularMomentumVars(rateOfChange, idx);
                 }
             }
             var forceLaws = this.$forceLaws;
@@ -4628,7 +4682,7 @@
             if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
                 metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
             }
-            dynamics.addForce(rateOfChange, idx, F);
+            dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
             // The rate of change of angular momentum (bivector) is given by
             // dL/dt = r ^ F = Γ
             forceApp.computeTorque(this.$torque);
@@ -4637,7 +4691,7 @@
             if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
                 metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
             }
-            dynamics.addTorque(rateOfChange, idx, T);
+            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
             if (this.$showForces) {
                 forceApp.expireTime = this.$varsList.getTime();
                 this.$simList.add(forceApp);
@@ -4653,18 +4707,21 @@
             enumerable: false,
             configurable: true
         });
+        /**
+         *
+         */
         Physics.prototype.updateFromBodies = function () {
             var bodies = this.$bodies;
             var N = bodies.length;
             for (var i = 0; i < N; i++) {
-                this.updateFromBody(bodies[i]);
+                this.updateVarsFromBody(bodies[i]);
             }
             this.discontinuosChangeToEnergy();
         };
         /**
          *
          */
-        Physics.prototype.updateFromBody = function (body) {
+        Physics.prototype.updateVarsFromBody = function (body) {
             var idx = body.varsIndex;
             if (idx > -1) {
                 this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
@@ -4673,6 +4730,7 @@
         /**
          * Handler for actions to be performed after the evaluate calls and setState.
          * Computes the system energy, linear momentum and angular momentum.
+         * @hidden
          */
         Physics.prototype.epilog = function () {
             var varsList = this.$varsList;
@@ -4693,7 +4751,7 @@
         });
         Object.defineProperty(Physics.prototype, "simList", {
             /**
-             *
+             * @hidden
              */
             get: function () {
                 return this.$simList;
@@ -4703,7 +4761,7 @@
         });
         Object.defineProperty(Physics.prototype, "varsList", {
             /**
-             *
+             * @hidden
              */
             get: function () {
                 return this.$varsList;
@@ -5513,6 +5571,9 @@
          * @param uom The optional unit of measure. Equivalent to 1 if omitted.
          */
         Geometric2.vector = function (x, y, uom) {
+            var contextBuilder = function () { return "Geometric2.vector(x: number, y: number, uom?: Unit): Geometric2"; };
+            mustBeNumber('x', x, contextBuilder);
+            mustBeNumber('y', y, contextBuilder);
             return new Geometric2(vector$1(x, y), uom);
         };
         Geometric2.copy = function (mv) {
@@ -7846,7 +7907,7 @@
     var Dynamics2 = /** @class */ (function () {
         function Dynamics2() {
         }
-        Dynamics2.prototype.numVariablesPerBody = function () {
+        Dynamics2.prototype.numVarsPerBody = function () {
             // Each body is described by 7 kinematic components.
             // 2 position
             // 2 attitude (though normalized should be only 1)
@@ -7869,7 +7930,7 @@
             }
             throw new Error("getVarName(" + offset + ")");
         };
-        Dynamics2.prototype.discontinuousEnergyVariables = function () {
+        Dynamics2.prototype.discontinuousEnergyVars = function () {
             return DISCONTINUOUS_ENERGY_VARIABLES$1;
         };
         Dynamics2.prototype.epilog = function (bodies, forceLaws, potentialOffset, varsList) {
@@ -7920,14 +7981,14 @@
             vars.setValue(OFFSET_LINEAR_MOMENTUM_Y$1 + idx, body.P.y);
             vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY$1 + idx, body.L.b);
         };
-        Dynamics2.prototype.addForce = function (rateOfChange, idx, force) {
+        Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] += force.x;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] += force.y;
         };
-        Dynamics2.prototype.addTorque = function (rateOfChange, idx, torque) {
+        Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] += torque.b;
         };
-        Dynamics2.prototype.updateBody = function (vars, idx, body) {
+        Dynamics2.prototype.updateBodyFromVars = function (vars, idx, body) {
             body.X.a = 0;
             body.X.x = vars[idx + OFFSET_POSITION_X$1];
             body.X.y = vars[idx + OFFSET_POSITION_Y$1];
@@ -7954,13 +8015,13 @@
             // body.L.uom
             body.updateAngularVelocity();
         };
-        Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
+        Dynamics2.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
             var P = body.P;
             var mass = body.M.a;
             rateOfChange[idx + OFFSET_POSITION_X$1] = P.x / mass;
             rateOfChange[idx + OFFSET_POSITION_Y$1] = P.y / mass;
         };
-        Dynamics2.prototype.setAttitudeRateOfChange = function (rateOfChange, idx, body) {
+        Dynamics2.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
             // Let Ω(t) be the (bivector) angular velocity.
             // Let R(t) be the (spinor) attitude of the rigid body. 
             // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -7972,12 +8033,12 @@
             rateOfChange[idx + OFFSET_ATTITUDE_A$1] = +0.5 * (Ω.xy * R.xy);
             rateOfChange[idx + OFFSET_ATTITUDE_XY$1] = -0.5 * (Ω.xy * R.a);
         };
-        Dynamics2.prototype.zeroLinearMomentum = function (rateOfChange, idx) {
+        Dynamics2.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
             // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] = 0;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = 0;
         };
-        Dynamics2.prototype.zeroAngularMomentum = function (rateOfChange, idx) {
+        Dynamics2.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = 0;
         };
         return Dynamics2;
@@ -12305,7 +12366,7 @@
     var Dynamics3 = /** @class */ (function () {
         function Dynamics3() {
         }
-        Dynamics3.prototype.numVariablesPerBody = function () {
+        Dynamics3.prototype.numVarsPerBody = function () {
             return 13;
         };
         Dynamics3.prototype.getVarNames = function () {
@@ -12329,7 +12390,7 @@
             }
             throw new Error("getVarName(" + offset + ")");
         };
-        Dynamics3.prototype.discontinuousEnergyVariables = function () {
+        Dynamics3.prototype.discontinuousEnergyVars = function () {
             return DISCONTINUOUS_ENERGY_VARIABLES;
         };
         Dynamics3.prototype.epilog = function (bodies, forceLaws, potentialOffset, varsList) {
@@ -12397,17 +12458,17 @@
             vars.setValue(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
             vars.setValue(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
         };
-        Dynamics3.prototype.addForce = function (rateOfChange, idx, force) {
+        Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
         };
-        Dynamics3.prototype.addTorque = function (rateOfChange, idx, torque) {
+        Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
         };
-        Dynamics3.prototype.updateBody = function (vars, idx, body) {
+        Dynamics3.prototype.updateBodyFromVars = function (vars, idx, body) {
             body.X.x = vars[idx + OFFSET_POSITION_X];
             body.X.y = vars[idx + OFFSET_POSITION_Y];
             body.X.z = vars[idx + OFFSET_POSITION_Z];
@@ -12430,7 +12491,7 @@
             body.L.zx = vars[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
             body.updateAngularVelocity();
         };
-        Dynamics3.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
+        Dynamics3.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
             // The rate of change of position is the velocity.
             // dX/dt = V = P / M
             var P = body.P;
@@ -12439,7 +12500,7 @@
             rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
             rateOfChange[idx + OFFSET_POSITION_Z] = P.z / mass;
         };
-        Dynamics3.prototype.setAttitudeRateOfChange = function (rateOfChange, idx, body) {
+        Dynamics3.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
             // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
             // requiring the geometric product of Ω and R.
             // Ω and R are auxiliary and primary variables that have already been computed.
@@ -12450,13 +12511,13 @@
             rateOfChange[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
             rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
         };
-        Dynamics3.prototype.zeroLinearMomentum = function (rateOfChange, idx) {
+        Dynamics3.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
             // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
         };
-        Dynamics3.prototype.zeroAngularMomentum = function (rateOfChange, idx) {
+        Dynamics3.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;

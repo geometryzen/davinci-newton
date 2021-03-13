@@ -15,7 +15,7 @@
 import { __extends } from "tslib";
 import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import { ParameterBoolean } from '../util/ParameterBoolean';
 import { ParameterNumber } from '../util/ParameterNumber';

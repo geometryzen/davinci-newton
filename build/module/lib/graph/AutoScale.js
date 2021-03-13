@@ -14,7 +14,7 @@
 // limitations under the License.
 import { __extends } from "tslib";
 import { AbstractSubject } from '../util/AbstractSubject';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import { ParameterNumber } from '../util/ParameterNumber';
 import removeAt from '../util/removeAt';

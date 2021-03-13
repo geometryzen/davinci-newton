@@ -42,40 +42,82 @@ export interface Dynamics<T> {
      * @param idx 
      * @param body 
      */
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
     /**
+     * Let Ω(t) be the (bivector) angular velocity.
+     * Let R(t) be the (spinor) attitude of the rigid body. 
+     * The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
+     * requiring the geometric product of Ω and R.
+     * Ω and R are auxiliary and primary variables that have already been computed.
      * 
      * @param rateOfChange 
      * @param idx 
      * @param body 
      */
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
     /**
      * 
      * @param rateOfChange
      * @param idx 
      */
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void;
     /**
      * 
      * @param rateOfChange
      * @param idx 
      */
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void;
     /**
      * 
      * @param vars 
      * @param idx 
      * @param body 
      */
-    updateBody(vars: number[], idx: number, body: ForceBody<T>): void;
+    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<T>): void;
+    /**
+     * 
+     * @param body 
+     * @param idx 
+     * @param vars 
+     */
     updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
-
-    addForce(rateOfChange: number[], idx: number, force: T): void;
-    addTorque(rateOfChange: number[], idx: number, torque: T): void;
+    /**
+     * Adds the specified force to the rateOfChange variables for Linear Momentum.
+     * @param rateOfChange 
+     * @param idx 
+     * @param force 
+     */
+    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: T): void;
+    /**
+     * Adds the specified torque to the rateOfChange variables for AngularMomentum.
+     * @param rateOfChange 
+     * @param idx 
+     * @param torque 
+     */
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: T): void;
+    /**
+     * 
+     * @param bodies 
+     * @param forceLaws 
+     * @param potentialOffset 
+     * @param vars 
+     */
     epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
-    discontinuousEnergyVariables(): number[];
+    /**
+     * 
+     */
+    discontinuousEnergyVars(): number[];
+    /**
+     * 
+     * @param offset 
+     */
     getOffsetName(offset: number): string;
+    /**
+     * 
+     */
     getVarNames(): string[];
-    numVariablesPerBody(): number;
+    /**
+     * 
+     */
+    numVarsPerBody(): number;
 }

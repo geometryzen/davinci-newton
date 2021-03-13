@@ -4,4 +4,4 @@
  * @param x
  * @returns
  */
-export default function contains<T>(xs: T[], x: T): boolean;
+export declare function contains<T>(xs: T[], x: T): boolean;

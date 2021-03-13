@@ -17,7 +17,7 @@ import isNumber from '../checks/isNumber';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import isEmpty from '../util/isEmpty';
 import remove from '../util/remove';

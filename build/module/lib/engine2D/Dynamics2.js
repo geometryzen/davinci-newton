@@ -71,7 +71,7 @@ var DISCONTINUOUS_ENERGY_VARIABLES = [
 var Dynamics2 = /** @class */ (function () {
     function Dynamics2() {
     }
-    Dynamics2.prototype.numVariablesPerBody = function () {
+    Dynamics2.prototype.numVarsPerBody = function () {
         // Each body is described by 7 kinematic components.
         // 2 position
         // 2 attitude (though normalized should be only 1)
@@ -94,7 +94,7 @@ var Dynamics2 = /** @class */ (function () {
         }
         throw new Error("getVarName(" + offset + ")");
     };
-    Dynamics2.prototype.discontinuousEnergyVariables = function () {
+    Dynamics2.prototype.discontinuousEnergyVars = function () {
         return DISCONTINUOUS_ENERGY_VARIABLES;
     };
     Dynamics2.prototype.epilog = function (bodies, forceLaws, potentialOffset, varsList) {
@@ -145,14 +145,14 @@ var Dynamics2 = /** @class */ (function () {
         vars.setValue(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
         vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
     };
-    Dynamics2.prototype.addForce = function (rateOfChange, idx, force) {
+    Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
     };
-    Dynamics2.prototype.addTorque = function (rateOfChange, idx, torque) {
+    Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
     };
-    Dynamics2.prototype.updateBody = function (vars, idx, body) {
+    Dynamics2.prototype.updateBodyFromVars = function (vars, idx, body) {
         body.X.a = 0;
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
@@ -179,13 +179,13 @@ var Dynamics2 = /** @class */ (function () {
         // body.L.uom
         body.updateAngularVelocity();
     };
-    Dynamics2.prototype.setPositionRateOfChange = function (rateOfChange, idx, body) {
+    Dynamics2.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
         var P = body.P;
         var mass = body.M.a;
         rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
         rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
     };
-    Dynamics2.prototype.setAttitudeRateOfChange = function (rateOfChange, idx, body) {
+    Dynamics2.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
         // Let Ω(t) be the (bivector) angular velocity.
         // Let R(t) be the (spinor) attitude of the rigid body. 
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -197,12 +197,12 @@ var Dynamics2 = /** @class */ (function () {
         rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
         rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
     };
-    Dynamics2.prototype.zeroLinearMomentum = function (rateOfChange, idx) {
+    Dynamics2.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
         // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
     };
-    Dynamics2.prototype.zeroAngularMomentum = function (rateOfChange, idx) {
+    Dynamics2.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
     };
     return Dynamics2;

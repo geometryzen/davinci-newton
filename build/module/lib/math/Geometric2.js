@@ -1,3 +1,4 @@
+import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
 import { approx } from "./approx";
@@ -169,6 +170,9 @@ var Geometric2 = /** @class */ (function () {
      * @param uom The optional unit of measure. Equivalent to 1 if omitted.
      */
     Geometric2.vector = function (x, y, uom) {
+        var contextBuilder = function () { return "Geometric2.vector(x: number, y: number, uom?: Unit): Geometric2"; };
+        mustBeNumber('x', x, contextBuilder);
+        mustBeNumber('y', y, contextBuilder);
         return new Geometric2(vector(x, y), uom);
     };
     Geometric2.copy = function (mv) {

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import isDefined from '../checks/isDefined';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import { DrawingMode } from '../view/DrawingMode';

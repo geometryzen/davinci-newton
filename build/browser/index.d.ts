@@ -2534,6 +2534,27 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
     updateFromBodies(): void;
 }
 
+export interface EngineOptions {
+
+}
+
+export class Engine<T> {
+    constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
+    addBody(body: ForceBody<T>): void;
+    removeBody(body: ForceBody<T>): void;
+    addForceLaw(forceLaw: ForceLaw<T>): void;
+    removeForceLaw(forceLaw: ForceLaw<T>): void;
+    advance(Δt: number, uomTime?: Unit): void;
+}
+
+export class Engine2 extends Engine<Geometric2> {
+    constructor(options?: Partial<EngineOptions>);
+}
+
+export class Engine3 extends Engine<Geometric3> {
+    constructor(options?: Partial<EngineOptions>);
+}
+
 /**
  * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.

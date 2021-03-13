@@ -2,7 +2,7 @@ import { mustBeBoolean } from '../checks/mustBeBoolean';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import remove from '../util/remove';
 import { Dynamics } from './Dynamics';
 import { EnergySystem } from './EnergySystem';
@@ -76,7 +76,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         this.$torque = metric.zero();
         this.$totalEnergy = metric.zero();
         this.$totalEnergyLock = metric.lock(this.$totalEnergy);
-        this.$numVariablesPerBody = dynamics.numVariablesPerBody();
+        this.$numVariablesPerBody = dynamics.numVarsPerBody();
     }
 
     /**
@@ -107,7 +107,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             this.$bodies.push(body);
             this.$simList.add(body);
         }
-        this.updateFromBody(body);
+        this.updateVarsFromBody(body);
         this.discontinuosChangeToEnergy();
     }
 
@@ -148,7 +148,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
 
     private discontinuosChangeToEnergy(): void {
         const dynamics = this.dynamics;
-        this.$varsList.incrSequence(...dynamics.discontinuousEnergyVariables());
+        this.$varsList.incrSequence(...dynamics.discontinuousEnergyVars());
     }
 
     /**
@@ -168,7 +168,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             // Delegate the updating of the body from the state variables because
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
-            dynamics.updateBody(vars, idx, body);
+            dynamics.updateBodyFromVars(vars, idx, body);
         }
     }
 
@@ -176,13 +176,15 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Handler for actions to be performed before the evaluate calls.
      * The physics engine removes objects that were temporarily added to the simulation
      * list but have expired.
+     * @hidden
      */
     prolog(): void {
         this.simList.removeTemporary(this.varsList.getTime());
     }
 
     /**
-     * Gets the state vector, Y(t). 
+     * Gets the state vector, Y(t).
+     * @hidden
      */
     getState(): number[] {
         return this.$varsList.getValues();
@@ -190,6 +192,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
 
     /**
      * Sets the state vector, Y(t).
+     * @hidden
      */
     setState(state: number[]): void {
         this.varsList.setValues(state, true);
@@ -199,6 +202,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
+     * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
         const metric = this.metric;
@@ -220,10 +224,10 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
                 }
             }
             else {
-                dynamics.setPositionRateOfChange(rateOfChange, idx, body);
-                dynamics.setAttitudeRateOfChange(rateOfChange, idx, body);
-                dynamics.zeroLinearMomentum(rateOfChange, idx);
-                dynamics.zeroAngularMomentum(rateOfChange, idx);
+                dynamics.setPositionRateOfChangeVars(rateOfChange, idx, body);
+                dynamics.setAttitudeRateOfChangeVars(rateOfChange, idx, body);
+                dynamics.zeroLinearMomentumVars(rateOfChange, idx);
+                dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
         const forceLaws = this.$forceLaws;
@@ -266,7 +270,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
             metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
         }
-        dynamics.addForce(rateOfChange, idx, F);
+        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
@@ -276,7 +280,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
             metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
         }
-        dynamics.addTorque(rateOfChange, idx, T);
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
 
         if (this.$showForces) {
             forceApp.expireTime = this.$varsList.getTime();
@@ -291,11 +295,14 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         return this.$varsList.getTime();
     }
 
-    public updateFromBodies(): void {
+    /**
+     * 
+     */
+    updateFromBodies(): void {
         const bodies = this.$bodies;
         const N = bodies.length;
         for (let i = 0; i < N; i++) {
-            this.updateFromBody(bodies[i]);
+            this.updateVarsFromBody(bodies[i]);
         }
         this.discontinuosChangeToEnergy();
     }
@@ -303,7 +310,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     /**
      * 
      */
-    private updateFromBody(body: ForceBody<T>): void {
+    private updateVarsFromBody(body: ForceBody<T>): void {
         const idx = body.varsIndex;
         if (idx > -1) {
             this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
@@ -313,6 +320,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
      * Computes the system energy, linear momentum and angular momentum.
+     * @hidden
      */
     epilog(): void {
         const varsList = this.$varsList;
@@ -330,14 +338,14 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     }
 
     /**
-     * 
+     * @hidden
      */
     get simList(): SimList {
         return this.$simList;
     }
 
     /**
-     * 
+     * @hidden
      */
     get varsList(): VarsList {
         return this.$varsList;

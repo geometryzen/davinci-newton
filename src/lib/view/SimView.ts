@@ -15,7 +15,7 @@
 
 import { AbstractSubject } from '../util/AbstractSubject';
 import clone from '../util/clone';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import { Memorizable } from '../util/Memorizable';
 import { ParameterBoolean } from '../util/ParameterBoolean';

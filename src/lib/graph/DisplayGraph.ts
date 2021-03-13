@@ -14,7 +14,7 @@
 // limitations under the License.
 
 import isDefined from '../checks/isDefined';
-import contains from '../util/contains';
+import { contains } from '../util/contains';
 import removeAt from '../util/removeAt';
 import repeat from '../util/repeat';
 import { CoordMap } from '../view/CoordMap';

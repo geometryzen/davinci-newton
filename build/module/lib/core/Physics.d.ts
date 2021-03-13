@@ -89,20 +89,24 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * Handler for actions to be performed before the evaluate calls.
      * The physics engine removes objects that were temporarily added to the simulation
      * list but have expired.
+     * @hidden
      */
     prolog(): void;
     /**
      * Gets the state vector, Y(t).
+     * @hidden
      */
     getState(): number[];
     /**
      * Sets the state vector, Y(t).
+     * @hidden
      */
     setState(state: number[]): void;
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
      * If anything it could be passed to forceLaw.updateForces.
+     * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
     /**
@@ -115,14 +119,18 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      *
      */
     get time(): number;
+    /**
+     *
+     */
     updateFromBodies(): void;
     /**
      *
      */
-    private updateFromBody;
+    private updateVarsFromBody;
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
      * Computes the system energy, linear momentum and angular momentum.
+     * @hidden
      */
     epilog(): void;
     /**
@@ -130,11 +138,11 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      */
     get bodies(): ForceBody<T>[];
     /**
-     *
+     * @hidden
      */
     get simList(): SimList;
     /**
-     *
+     * @hidden
      */
     get varsList(): VarsList;
     /**

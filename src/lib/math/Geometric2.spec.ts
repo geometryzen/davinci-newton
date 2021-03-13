@@ -73,16 +73,28 @@ describe("Geometric2", function () {
             expect(M.uom).toBe(Unit.ONE);
             expect(M.isLocked()).toBe(false);
         });
-        it("vector", function () {
-            const x = Math.random();
-            const y = Math.random();
-            const M = Geometric2.vector(x, y, Unit.AMPERE);
-            expect(M.a).toBe(0);
-            expect(M.x).toBe(x);
-            expect(M.y).toBe(y);
-            expect(M.b).toBe(0);
-            expect(M.uom).toBe(Unit.AMPERE);
-            expect(M.isLocked()).toBe(false);
+        describe("vector", function () {
+            it("should work for x and y numbers", function () {
+                const x = Math.random();
+                const y = Math.random();
+                const M = Geometric2.vector(x, y, Unit.AMPERE);
+                expect(M.a).toBe(0);
+                expect(M.x).toBe(x);
+                expect(M.y).toBe(y);
+                expect(M.b).toBe(0);
+                expect(M.uom).toBe(Unit.AMPERE);
+                expect(M.isLocked()).toBe(false);
+            });
+            it("should throw Error for x undefined", function () {
+                expect(function () {
+                    Geometric2.vector(void 0, Math.random(), Unit.AMPERE);
+                }).toThrowError("x must be a `number` in Geometric2.vector(x: number, y: number, uom?: Unit): Geometric2.");
+            });
+            it("should throw Error for y undefined", function () {
+                expect(function () {
+                    Geometric2.vector(Math.random(), void 0, Unit.AMPERE);
+                }).toThrowError("y must be a `number` in Geometric2.vector(x: number, y: number, uom?: Unit): Geometric2.");
+            });
         });
         it("copy", function () {
             const a = Math.random();

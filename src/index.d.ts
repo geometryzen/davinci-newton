@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.34
+// Type definitions for davinci-newton 1.0.35
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2532,6 +2532,27 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * Update the state variables following a change to the simulation bodies.
      */
     updateFromBodies(): void;
+}
+
+export interface EngineOptions {
+
+}
+
+export class Engine<T> {
+    constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
+    addBody(body: ForceBody<T>): void;
+    removeBody(body: ForceBody<T>): void;
+    addForceLaw(forceLaw: ForceLaw<T>): void;
+    removeForceLaw(forceLaw: ForceLaw<T>): void;
+    advance(Δt: number, uomTime?: Unit): void;
+}
+
+export class Engine2 extends Engine<Geometric2> {
+    constructor(options?: Partial<EngineOptions>);
+}
+
+export class Engine3 extends Engine<Geometric3> {
+    constructor(options?: Partial<EngineOptions>);
 }
 
 /**
