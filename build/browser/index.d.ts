@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.37
+// Type definitions for davinci-newton 1.0.38
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
