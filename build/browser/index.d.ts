@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.36
+// Type definitions for davinci-newton 1.0.37
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2340,7 +2340,7 @@ export class Disc2 extends RigidBody2 {
  * Plane polygon with vertices points[0], points[1], ..., points[N-1] and mass M uniformly distributed
  * on its interior.
  */
-export class PolygonRigidBody2 extends RigidBody2 {
+export class Polygon2 extends RigidBody2 {
     /**
      * The vertex positions relative to the polygon center of mass.
      */
@@ -2352,6 +2352,24 @@ export class PolygonRigidBody2 extends RigidBody2 {
      * @param points The points of the polygon relative to the origin.
      */
     constructor(points: Geometric2[]);
+}
+
+/**
+ * A homogeneous rod in 2D.
+ * The rod has directed length 2 * a.
+ * The rod may be thought of as a continuous line of mass points with direction specified by the vector a.
+ */
+export class Rod2 extends RigidBody2 {
+    /**
+     * A vector from the center of mass to one end of the rod.
+     */
+    readonly a: Geometric2;
+    /**
+     * Constructs the rod of length 2 * |a|.
+     * 
+     * @param a a vector from the center of mass to one of the ends of the rod. 
+     */
+    constructor(a: Geometric2);
 }
 
 /**

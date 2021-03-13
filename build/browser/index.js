@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-13';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.36';
+            this.VERSION = '1.0.37';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -8273,9 +8273,9 @@
      * @hidden
      */
     var fromVector = Geometric2.fromVector;
-    var PolygonRigidBody2 = /** @class */ (function (_super) {
-        __extends(PolygonRigidBody2, _super);
-        function PolygonRigidBody2(points) {
+    var Polygon2 = /** @class */ (function (_super) {
+        __extends(Polygon2, _super);
+        function Polygon2(points) {
             var _this = _super.call(this) || this;
             /**
              * The position of the polygon point relative to the center of mass.
@@ -8299,7 +8299,7 @@
          * The inertia tensor matrix must be updated any time the geometry changes.
          * The geometry is defined by the total mass, M, and the positions of the vertices.
          */
-        PolygonRigidBody2.prototype.updateInertiaTensor = function () {
+        Polygon2.prototype.updateInertiaTensor = function () {
             var matrix = Matrix1.one();
             var rs = this.rs;
             var N = rs.length;
@@ -8318,7 +8318,7 @@
             matrix.uom = I.uom;
             this.I = matrix;
         };
-        return PolygonRigidBody2;
+        return Polygon2;
     }(RigidBody2));
     /**
      * @hidden
@@ -8367,6 +8367,26 @@
             throw new Error("must be at least 3 points.");
         }
     }
+
+    var Rod2 = /** @class */ (function (_super) {
+        __extends(Rod2, _super);
+        function Rod2(a) {
+            var _this = _super.call(this) || this;
+            var contextBuilder = function () { return "Rod2.constructor(a: Geometric2): Rod2"; };
+            mustBeNonNullObject('a', a, contextBuilder);
+            _this.a = a;
+            _this.updateInertiaTensor();
+            return _this;
+        }
+        Rod2.prototype.updateInertiaTensor = function () {
+            // L(Ω) = (m / 3) a ^ (a << Ω)
+            // In 2D, this simplifies to...
+            // L(Ω) = (m / 3) |a||a| Ω
+            var I = this.M.divByNumber(3).mulByVector(this.a).mulByVector(this.a);
+            this.I = new Matrix1(new Float32Array([I.a]), I.uom);
+        };
+        return Rod2;
+    }(RigidBody2));
 
     /**
      *
@@ -17798,11 +17818,12 @@
     exports.Physics = Physics;
     exports.Physics2 = Physics2;
     exports.Physics3 = Physics3;
-    exports.PolygonRigidBody2 = PolygonRigidBody2;
+    exports.Polygon2 = Polygon2;
     exports.QQ = QQ;
     exports.RigidBody = RigidBody;
     exports.RigidBody2 = RigidBody2;
     exports.RigidBody3 = RigidBody3;
+    exports.Rod2 = Rod2;
     exports.RungeKutta = RungeKutta;
     exports.SimView = SimView;
     exports.Sphere3 = Sphere3;

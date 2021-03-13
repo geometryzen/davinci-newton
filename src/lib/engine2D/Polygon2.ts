@@ -7,7 +7,7 @@ import { RigidBody2 } from "./RigidBody2";
  */
 const fromVector = Geometric2.fromVector;
 
-export class PolygonRigidBody2 extends RigidBody2 {
+export class Polygon2 extends RigidBody2 {
     /**
      * The position of the polygon point relative to the center of mass.
      * 

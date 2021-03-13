@@ -6,9 +6,9 @@ import { RigidBody2 } from "./RigidBody2";
  * @hidden
  */
 var fromVector = Geometric2.fromVector;
-var PolygonRigidBody2 = /** @class */ (function (_super) {
-    __extends(PolygonRigidBody2, _super);
-    function PolygonRigidBody2(points) {
+var Polygon2 = /** @class */ (function (_super) {
+    __extends(Polygon2, _super);
+    function Polygon2(points) {
         var _this = _super.call(this) || this;
         /**
          * The position of the polygon point relative to the center of mass.
@@ -32,7 +32,7 @@ var PolygonRigidBody2 = /** @class */ (function (_super) {
      * The inertia tensor matrix must be updated any time the geometry changes.
      * The geometry is defined by the total mass, M, and the positions of the vertices.
      */
-    PolygonRigidBody2.prototype.updateInertiaTensor = function () {
+    Polygon2.prototype.updateInertiaTensor = function () {
         var matrix = Matrix1.one();
         var rs = this.rs;
         var N = rs.length;
@@ -51,9 +51,9 @@ var PolygonRigidBody2 = /** @class */ (function (_super) {
         matrix.uom = I.uom;
         this.I = matrix;
     };
-    return PolygonRigidBody2;
+    return Polygon2;
 }(RigidBody2));
-export { PolygonRigidBody2 };
+export { Polygon2 };
 /**
  * @hidden
  * @param xs
