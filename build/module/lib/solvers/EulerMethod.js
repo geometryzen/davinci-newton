@@ -17,6 +17,7 @@ import { zeroArray } from '../util/zeroArray';
 /**
  * The Euler algorithm uses the rate of change values at the
  * beginning of the step in order to perform the integration.
+ * @hidden
  */
 var EulerMethod = /** @class */ (function () {
     /**

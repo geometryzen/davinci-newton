@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.38
+// Type definitions for davinci-newton 1.0.39
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2553,7 +2553,7 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
 }
 
 export interface EngineOptions {
-
+    method?: 'rk4';
 }
 
 export class Engine<T> {

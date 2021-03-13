@@ -7,6 +7,7 @@ import { Metric } from './Metric';
  *
  */
 export interface EngineOptions {
+    method?: 'rk4';
 }
 /**
  * An example of how to wire together the various components.

@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-13';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.38';
+            this.VERSION = '1.0.39';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -493,10 +493,9 @@
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
-     * <p>
-     * A differential equation solver that achieves O(h<sup>3</sup>) Local Truncation Error (LTE),
+     * A differential equation solver that achieves O(h cubed) Local Truncation Error (LTE),
      * where h is the step size.
-     * </p>
+     * @hidden
      */
     var RungeKutta = /** @class */ (function () {
         /**
@@ -17692,6 +17691,7 @@
     /**
      * The Euler algorithm uses the rate of change values at the
      * beginning of the step in order to perform the integration.
+     * @hidden
      */
     var EulerMethod = /** @class */ (function () {
         /**
@@ -17731,6 +17731,7 @@
      * The modified Euler algorithm uses the rate of change values at both
      * the beginning of the step and at the end, taking an average in order
      * to perform the integration.
+     * @hidden
      */
     var ModifiedEuler = /** @class */ (function () {
         /**

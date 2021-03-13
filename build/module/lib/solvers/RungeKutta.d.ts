@@ -2,10 +2,9 @@ import { DiffEqSolver } from '../core/DiffEqSolver';
 import { DiffEqSolverSystem } from '../core/DiffEqSolverSystem';
 import { Unit } from '../math/Unit';
 /**
- * <p>
- * A differential equation solver that achieves O(h<sup>3</sup>) Local Truncation Error (LTE),
+ * A differential equation solver that achieves O(h cubed) Local Truncation Error (LTE),
  * where h is the step size.
- * </p>
+ * @hidden
  */
 export declare class RungeKutta implements DiffEqSolver {
     private readonly system;

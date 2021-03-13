@@ -20,7 +20,7 @@ const contextBuilderAdvance = () => "Engine.advance(Δt: number, uomTime?: Unit)
  * 
  */
 export interface EngineOptions {
-
+    method?: 'rk4';
 }
 
 /**

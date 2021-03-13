@@ -22,6 +22,7 @@ import { zeroArray } from '../util/zeroArray';
 /**
  * The Euler algorithm uses the rate of change values at the
  * beginning of the step in order to perform the integration.
+ * @hidden
  */
 export class EulerMethod implements DiffEqSolver {
     private inp_: number[] = [];

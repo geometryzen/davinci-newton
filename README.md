@@ -5,16 +5,21 @@
 
 The following code illustrates the basic flow. For a working example see [STEMCstudio](https://www.stemcstudio.com).
 
+## Constructing the core simulation using the `Physics2` engine.
+
+```typescript
+
+```
+
 ## Constructing the core simulation using the `Physics3` engine.
+
+This example incorporates units of measure.
 
 ```typescript
 import {
-    Geometric3,
-    Physics3,
-    RungeKutta,
-    ConstantEnergySolver,
-    DefaultAdavanceStrategy,
     Block3,
+    Engine3,
+    Geometric3,
     Spring3
 } from 'davinci-newton'
 
@@ -31,12 +36,7 @@ const s = Geometric3.second
 //
 // Initialization
 //
-const sim = new Physics3()
-const rk4 = new RungeKutta(sim)
-const ads = new ConstantEnergySolver(sim, sim, rk4)
-ads.tolerance = 1E-5
-ads.stepLowerBound = 1E-7
-const strategy = new DefaultAdvanceStrategy(sim, ads)
+const sim = new Engine3()
 const Δt = 0.01 * s
 
 //
@@ -67,5 +67,5 @@ sim.addForceLaw(spring)
 spring.attach1 = (block1.width * e1 + 0 * block1.height * e2 + block1.depth * e3) / 2
 
 // Inside animation "loop"
-strategy.advance(Δt.a, Δt.uom)
+sim.advance(Δt.a, Δt.uom)
 ```
