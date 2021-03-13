@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.34
+// Type definitions for davinci-newton 1.0.36
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2545,6 +2545,7 @@ export class Engine<T> {
     addForceLaw(forceLaw: ForceLaw<T>): void;
     removeForceLaw(forceLaw: ForceLaw<T>): void;
     advance(Δt: number, uomTime?: Unit): void;
+    updateFromBodies(): void;
 }
 
 export class Engine2 extends Engine<Geometric2> {

@@ -25,9 +25,9 @@ describe("engine", function () {
             expect(block.X.y).toBe(0);
             expect(block.X.b).toBe(0);
 
-            engine.physics.addBody(block);
+            engine.addBody(block);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.a).toBe(0);
             expect(block.X.x).toBe(0);
@@ -41,13 +41,13 @@ describe("engine", function () {
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
 
-            engine.physics.addBody(block);
+            engine.addBody(block);
 
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
             expect(block.X.z).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
@@ -69,9 +69,9 @@ describe("engine", function () {
             expect(block.X.y).toBe(0);
             expect(block.X.b).toBe(0);
 
-            engine.physics.addBody(block);
+            engine.addBody(block);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.a).toBe(0);
             expect(block.X.x).toBe(1);
@@ -88,13 +88,13 @@ describe("engine", function () {
             block.P.y = 2;
             block.P.z = 3;
 
-            engine.physics.addBody(block);
+            engine.addBody(block);
 
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
             expect(block.X.z).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(1);
             expect(block.X.y).toBe(2);
@@ -118,30 +118,30 @@ describe("engine", function () {
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
 
-            engine.physics.addBody(block);
-            engine.physics.addForceLaw(F);
+            engine.addBody(block);
+            engine.addForceLaw(F);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(0.5);
             expect(block.X.y).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(2);
             expect(block.X.y).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(4.5);
             expect(block.X.y).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(8);
             expect(block.X.y).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(12.5);
             expect(block.X.y).toBe(0);
@@ -159,14 +159,14 @@ describe("engine", function () {
 
             const F = new ConstantForceLaw(block, Geometric3.vector(1, 0, 0, Unit.NEWTON));
 
-            engine.physics.addBody(block);
-            engine.physics.addForceLaw(F);
+            engine.addBody(block);
+            engine.addForceLaw(F);
 
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
             expect(block.X.z).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(0.5);
             expect(block.X.y).toBe(0);
@@ -199,16 +199,16 @@ describe("engine", function () {
             expect(block1.X.x).toBe(1);
             expect(block1.X.y).toBe(0);
 
-            engine.physics.addBody(block1);
-            engine.physics.addBody(block2);
-            engine.physics.addForceLaw(spring);
+            engine.addBody(block1);
+            engine.addBody(block2);
+            engine.addForceLaw(spring);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block1.X.x).toBe(1);
             expect(block1.X.y).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block1.X.x).toBe(1);
             expect(block1.X.y).toBe(0);
@@ -241,14 +241,14 @@ describe("engine", function () {
 
             const F = new ConstantForceLaw(block, Geometric3.vector(1, 0, 0, Unit.NEWTON));
 
-            engine.physics.addBody(block);
-            engine.physics.addForceLaw(F);
+            engine.addBody(block);
+            engine.addForceLaw(F);
 
             expect(block.X.x).toBe(0);
             expect(block.X.y).toBe(0);
             expect(block.X.z).toBe(0);
 
-            engine.strategy.advance(1, Unit.SECOND);
+            engine.advance(1, Unit.SECOND);
 
             expect(block.X.x).toBe(0.5);
             expect(block.X.y).toBe(0);

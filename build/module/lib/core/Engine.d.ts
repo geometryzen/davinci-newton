@@ -1,10 +1,8 @@
 import { Unit } from '../math/Unit';
-import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 import { Dynamics } from './Dynamics';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 import { Metric } from './Metric';
-import { Physics } from './Physics';
 /**
  *
  */
@@ -15,8 +13,8 @@ export interface EngineOptions {
  * @hidden
  */
 export declare class Engine<T> {
-    readonly physics: Physics<T>;
-    readonly strategy: AdvanceStrategy;
+    private readonly physics;
+    private readonly strategy;
     constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
     /**
      *
@@ -44,4 +42,8 @@ export declare class Engine<T> {
      * @param uomTime The optional unit of measure for the time interval.
      */
     advance(Δt: number, uomTime?: Unit): void;
+    /**
+     *
+     */
+    updateFromBodies(): void;
 }

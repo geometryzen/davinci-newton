@@ -62,6 +62,12 @@ var Engine = /** @class */ (function () {
         mustBeNumber('Δt', Δt, contextBuilderAdvance);
         this.strategy.advance(Δt, uomTime);
     };
+    /**
+     *
+     */
+    Engine.prototype.updateFromBodies = function () {
+        this.physics.updateFromBodies();
+    };
     return Engine;
 }());
 export { Engine };

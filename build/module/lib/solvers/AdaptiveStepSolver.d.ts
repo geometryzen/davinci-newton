@@ -3,6 +3,9 @@ import { Metric } from '../core/Metric';
 import { Simulation } from '../core/Simulation';
 import { Unit } from '../math/Unit';
 import { EnergySystem } from '../core/EnergySystem';
+/**
+ * @hidden
+ */
 export declare class AdaptiveStepSolver<T> implements DiffEqSolver {
     private readonly metric;
     private diffEq_;

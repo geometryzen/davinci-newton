@@ -1,3 +1,6 @@
+/**
+ * @hidden
+ */
 var AdaptiveStepSolver = /** @class */ (function () {
     function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
         this.metric = metric;

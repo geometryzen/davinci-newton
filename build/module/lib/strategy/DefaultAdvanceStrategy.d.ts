@@ -3,7 +3,7 @@ import { Simulation } from '../core/Simulation';
 import { Unit } from '../math/Unit';
 import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 /**
- *
+ * @hidden
  */
 export declare class DefaultAdvanceStrategy implements AdvanceStrategy {
     private readonly simulation;

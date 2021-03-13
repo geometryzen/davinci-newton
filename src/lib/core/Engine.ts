@@ -28,8 +28,8 @@ export interface EngineOptions {
  * @hidden
  */
 export class Engine<T> {
-    public readonly physics: Physics<T>;
-    public readonly strategy: AdvanceStrategy;
+    private readonly physics: Physics<T>;
+    private readonly strategy: AdvanceStrategy;
     constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>) {
         this.physics = new Physics(metric, dynamics);
         const rk4: DiffEqSolver = new RungeKutta(this.physics);
@@ -80,5 +80,11 @@ export class Engine<T> {
     advance(Δt: number, uomTime?: Unit): void {
         mustBeNumber('Δt', Δt, contextBuilderAdvance);
         this.strategy.advance(Δt, uomTime);
+    }
+    /**
+     * 
+     */
+    updateFromBodies(): void {
+        this.physics.updateFromBodies();
     }
 }

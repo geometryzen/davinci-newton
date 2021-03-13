@@ -1,7 +1,7 @@
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { mustBeNumber } from '../checks/mustBeNumber';
 /**
- *
+ * @hidden
  */
 var DefaultAdvanceStrategy = /** @class */ (function () {
     /**

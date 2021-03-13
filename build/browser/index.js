@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-12';
+            this.LAST_MODIFIED = '2021-03-13';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.34';
+            this.VERSION = '1.0.36';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -420,129 +420,12 @@
     /**
      * @hidden
      */
-    var GravitationLaw = /** @class */ (function (_super) {
-        __extends(GravitationLaw, _super);
-        /**
-         *
-         */
-        function GravitationLaw(body1_, body2_, G) {
-            var _this = _super.call(this) || this;
-            _this.body1_ = body1_;
-            _this.body2_ = body2_;
-            _this.forces = [];
-            _this.metric = body1_.metric;
-            var metric = _this.metric;
-            _this.F1 = new Force(_this.body1_, metric);
-            _this.F1.locationCoordType = WORLD;
-            _this.F1.vectorCoordType = WORLD;
-            _this.F2 = new Force(_this.body2_, metric);
-            _this.F2.locationCoordType = WORLD;
-            _this.F2.vectorCoordType = WORLD;
-            _this.G = G;
-            _this.forces = [_this.F1, _this.F2];
-            _this.potentialEnergy_ = metric.zero();
-            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-            return _this;
-        }
-        /**
-         * Computes the forces due to the gravitational interaction.
-         * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
-         */
-        GravitationLaw.prototype.updateForces = function () {
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            var metric = this.metric;
-            // The direction of the force is computed such that masses always attract each other.
-            metric.copyVector(this.body2_.X, numer);
-            metric.subVector(numer, this.body1_.X);
-            metric.copyVector(numer, denom);
-            metric.quaditude(denom, true);
-            metric.direction(numer, true);
-            metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
-            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-            metric.copyVector(numer, this.F1.vector);
-            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
-            metric.copyVector(this.F1.vector, this.F2.vector);
-            metric.neg(this.F2.vector);
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            return this.forces;
-        };
-        /**
-         *
-         */
-        GravitationLaw.prototype.disconnect = function () {
-            // Does nothing
-        };
-        /**
-         * Computes the potential energy of the gravitational interaction.
-         * U = -G m1 m2 / r, where
-         * r is the center-of-mass to center-of-mass separation of m1 and m2.
-         */
-        GravitationLaw.prototype.potentialEnergy = function () {
-            var metric = this.metric;
-            // Unlock the variable that we will use for the result.
-            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            // The numerator of the potential energy formula is -G * m1 * m2.
-            metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
-            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-            metric.neg(numer);
-            // The denominator is |r1 - r2|.
-            metric.copyVector(this.body1_.X, denom);
-            metric.subVector(denom, this.body2_.X);
-            metric.magnitude(denom, true);
-            // Combine the numerator and denominator.
-            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
-            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            // We're done. Lock down the result.
-            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-            return this.potentialEnergy_;
-        };
-        return GravitationLaw;
-    }(AbstractSimObject));
-
-    /**
-     * @hidden
-     */
     function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
         if (!condition) {
             var message = messageBuilder ? messageBuilder() : "satisfy some condition";
             var context = contextBuilder ? " in " + contextBuilder() : "";
             throw new Error(name + " must " + message + context + ".");
         }
-    }
-
-    /**
-     * @hidden
-     */
-    function isFunction(x) {
-        return (typeof x === 'function');
-    }
-
-    /**
-     * @hidden
-     */
-    function beFunction() {
-        return "be a function";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeFunction(name, value, contextBuilder) {
-        mustSatisfy(name, isFunction(value), beFunction, contextBuilder);
-        return value;
     }
 
     /**
@@ -595,6 +478,135 @@
      */
     function mustBeNumber(name, value, contextBuilder) {
         mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
+        return value;
+    }
+
+    /**
+     * @hidden
+     */
+    function zeroArray(xs) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
+            xs[i] = 0;
+        }
+    }
+
+    // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * <p>
+     * A differential equation solver that achieves O(h<sup>3</sup>) Local Truncation Error (LTE),
+     * where h is the step size.
+     * </p>
+     */
+    var RungeKutta = /** @class */ (function () {
+        /**
+         * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
+         * @param system The model that provides the system state and computes rates of change.
+         */
+        function RungeKutta(system) {
+            this.system = system;
+            this.inp_ = [];
+            this.k1_ = [];
+            this.k2_ = [];
+            this.k3_ = [];
+            this.k4_ = [];
+            mustBeNonNullObject('system', system);
+        }
+        /**
+         *
+         */
+        RungeKutta.prototype.step = function (stepSize, uomStep) {
+            var vars = this.system.getState();
+            var N = vars.length;
+            if (this.inp_.length < N) {
+                this.inp_ = new Array(N);
+                this.k1_ = new Array(N);
+                this.k2_ = new Array(N);
+                this.k3_ = new Array(N);
+                this.k4_ = new Array(N);
+            }
+            var inp = this.inp_;
+            var k1 = this.k1_;
+            var k2 = this.k2_;
+            var k3 = this.k3_;
+            var k4 = this.k4_;
+            // evaluate at time t
+            for (var i = 0; i < N; i++) {
+                inp[i] = vars[i];
+            }
+            zeroArray(k1);
+            this.system.evaluate(inp, k1, 0, uomStep);
+            // evaluate at time t + stepSize / 2
+            for (var i = 0; i < N; i++) {
+                inp[i] = vars[i] + k1[i] * stepSize / 2;
+            }
+            zeroArray(k2);
+            this.system.evaluate(inp, k2, stepSize / 2, uomStep);
+            // evaluate at time t + stepSize / 2
+            for (var i = 0; i < N; i++) {
+                inp[i] = vars[i] + k2[i] * stepSize / 2;
+            }
+            zeroArray(k3);
+            this.system.evaluate(inp, k3, stepSize / 2, uomStep);
+            // evaluate at time t + stepSize
+            for (var i = 0; i < N; i++) {
+                inp[i] = vars[i] + k3[i] * stepSize;
+            }
+            zeroArray(k4);
+            this.system.evaluate(inp, k4, stepSize, uomStep);
+            for (var i = 0; i < N; i++) {
+                vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
+            }
+            this.system.setState(vars);
+        };
+        return RungeKutta;
+    }());
+
+    /**
+     * @hidden
+     */
+    var DefaultAdvanceStrategy = /** @class */ (function () {
+        /**
+         *
+         */
+        function DefaultAdvanceStrategy(simulation, solver) {
+            this.simulation = simulation;
+            this.solver = solver;
+            mustBeNonNullObject('simulation', simulation);
+            mustBeNonNullObject('solver', solver);
+        }
+        /**
+         * 1.
+         * 2. The solver integrates the derivatives from the simulation.
+         * 3. Compute system variables such as energies, linear momentum, and angular momentum.
+         */
+        DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
+            mustBeNumber("stepSize", stepSize);
+            this.simulation.prolog();
+            this.solver.step(stepSize, uomStep);
+            this.simulation.epilog();
+        };
+        return DefaultAdvanceStrategy;
+    }());
+
+    /**
+     * @hidden
+     */
+    function isBoolean(x) {
+        return (typeof x === 'boolean');
+    }
+
+    /**
+     * @hidden
+     */
+    function beBoolean() {
+        return "be `boolean`";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeBoolean(name, value, contextBuilder) {
+        mustSatisfy(name, isBoolean(value), beBoolean, contextBuilder);
         return value;
     }
 
@@ -2898,411 +2910,6 @@
         return Unit;
     }());
 
-    /**
-     * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
-     * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
-     * @hidden
-     */
-    function assertConsistentUnits(aName, A, bName, B, metric) {
-        if (!metric.isZero(A) && !metric.isZero(B)) {
-            if (Unit.isOne(metric.uom(A))) {
-                if (!Unit.isOne(metric.uom(B))) {
-                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
-                }
-            }
-            else {
-                if (Unit.isOne(metric.uom(B))) {
-                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
-                }
-            }
-        }
-    }
-
-    /**
-     * @hidden
-     */
-    var LockableMeasure = /** @class */ (function () {
-        function LockableMeasure(metric, initialValue) {
-            this.metric = metric;
-            mustBeNonNullObject('metric', metric);
-            mustBeNonNullObject('initialValue', initialValue);
-            this.$value = initialValue;
-            this.lock();
-        }
-        LockableMeasure.prototype.get = function () {
-            return this.$value;
-        };
-        LockableMeasure.prototype.set = function (value) {
-            mustBeNonNullObject('value', value);
-            this.metric.copy(value, this.unlock());
-            this.lock();
-        };
-        LockableMeasure.prototype.lock = function () {
-            var value = this.$value;
-            this.$lock = this.metric.lock(value);
-            return value;
-        };
-        LockableMeasure.prototype.unlock = function () {
-            var value = this.$value;
-            this.metric.unlock(value, this.$lock);
-            return value;
-        };
-        return LockableMeasure;
-    }());
-
-    /**
-     * @hidden
-     * @param name
-     * @param value
-     * @param unit
-     * @param metric
-     * @returns
-     */
-    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
-        if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
-            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
-        }
-        else {
-            return value;
-        }
-    }
-
-    /**
-     * @hidden
-     */
-    var RigidBody = /** @class */ (function (_super) {
-        __extends(RigidBody, _super);
-        /**
-         * @param metric
-         */
-        function RigidBody(metric) {
-            var _this = _super.call(this) || this;
-            _this.metric = metric;
-            /**
-             * the index into the variables array for this rigid body, or -1 if not in vars array.
-             */
-            _this.varsIndex_ = -1;
-            mustBeNonNullObject('metric', metric);
-            _this.$mass = new LockableMeasure(metric, metric.scalar(1));
-            _this.$charge = new LockableMeasure(metric, metric.zero());
-            _this.$X = metric.zero();
-            _this.$R = metric.scalar(1);
-            _this.$P = metric.zero();
-            _this.$L = metric.zero();
-            _this.$Ω = metric.zero();
-            _this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
-            _this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
-            _this.$worldPoint = metric.zero();
-            _this.Ω_scratch = metric.zero();
-            _this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
-            _this.$inertiaTensorInverse = metric.identityMatrix();
-            return _this;
-        }
-        Object.defineProperty(RigidBody.prototype, "centerOfMassLocal", {
-            /**
-             * The center of mass position vector in local coordinates.
-             */
-            get: function () {
-                return this.$centerOfMassLocal.get();
-            },
-            set: function (centerOfMassLocal) {
-                mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
-                this.$centerOfMassLocal.set(centerOfMassLocal);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "M", {
-            /**
-             * Mass (scalar). Default is one (1).
-             * If dimensioned units are used, they must be compatible with the unit of mass.
-             * M is immutable but the property may be reassigned.
-             */
-            get: function () {
-                return this.$mass.get();
-            },
-            set: function (M) {
-                mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
-                this.$mass.set(M);
-                this.updateInertiaTensor();
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "Q", {
-            /**
-             * Charge (scalar). Default is zero (0).
-             * If dimensioned units are used, they must be compatible with the unit of electric charge.
-             * Q is immutable but the property may be reassigned.
-             */
-            get: function () {
-                return this.$charge.get();
-            },
-            set: function (Q) {
-                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
-                this.$charge.set(Q);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * Updates the angular velocity, Ω, bivector based upon the angular momentum.
-         * Derived classes may override to provide more efficient implementations based upon symmetry.
-         */
-        RigidBody.prototype.updateAngularVelocity = function () {
-            // In matrix notation,
-            // L = I Ω => Ω = Iinv L.
-            // Either the inertia tensor must be converted from local coordinates to world, or
-            // we convert L to local coordinates, apply the local inertial tensor and then rotate
-            // Ω back to world coordinates.
-            // Notice that in the following we avoid creating temporary variables by computing
-            // the reversion of the mutable body.R twice.
-            this.metric.copy(this.L, this.Ω); // Ω contains L
-            this.metric.rev(this.R);
-            this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R
-            this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R
-            this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R)
-            this.metric.copyBivector(this.Ω_scratch, this.Ω); // Ω contains Iinv (R L ~R)
-            this.metric.rev(this.R);
-            this.metric.rotate(this.Ω, this.R); // Ω contains R (Iinv (R L ~R)) ~R
-        };
-        /**
-         * Derived classes should override.
-         */
-        RigidBody.prototype.updateInertiaTensor = function () {
-            // Do nothing.
-        };
-        Object.defineProperty(RigidBody.prototype, "I", {
-            /**
-             * Inertia Tensor (in body coordinates) (3x3 matrix).
-             */
-            get: function () {
-                return this.metric.invertMatrix(this.$inertiaTensorInverse);
-            },
-            /**
-             * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
-             */
-            set: function (I) {
-                this.$inertiaTensorInverse = this.metric.invertMatrix(I);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "Iinv", {
-            /**
-             * Inertia Tensor (in body coordinates) inverse (3x3 matrix).
-             */
-            get: function () {
-                return this.$inertiaTensorInverse;
-            },
-            set: function (source) {
-                mustBeNonNullObject('Iinv', source);
-                mustBeNumber('dimensions', source.dimensions);
-                mustBeFunction('getElement', source.getElement);
-                this.$inertiaTensorInverse = this.metric.copyMatrix(source);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "X", {
-            /**
-             * Position (vector).
-             * If dimensioned units are used, they must be compatible with the unit of length.
-             * X is mutable with copy-on-set.
-             */
-            get: function () {
-                return this.$X;
-            },
-            set: function (position) {
-                mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-                this.metric.copy(position, this.$X);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "R", {
-            /**
-             * Attitude (spinor).
-             * Effects a rotation from local coordinates to world coordinates.
-             * R is mutable with copy-on-set.
-             */
-            get: function () {
-                return this.$R;
-            },
-            set: function (attitude) {
-                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-                this.metric.copy(attitude, this.$R);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "P", {
-            /**
-             * Linear momentum (vector).
-             * If dimensioned units are used, they must be compatible with the unit of momentum.
-             * P is mutable with copy-on-set.
-             */
-            get: function () {
-                return this.$P;
-            },
-            set: function (momentum) {
-                mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-                this.metric.copy(momentum, this.$P);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "L", {
-            /**
-             * Angular momentum (bivector) in world coordinates.
-             * If dimensioned units are used, they must be compatible with the unit of angular momentum.
-             * L is mutable with copy-on-set.
-             */
-            get: function () {
-                return this.$L;
-            },
-            set: function (angularMomentum) {
-                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-                this.metric.copy(angularMomentum, this.$L);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "\u03A9", {
-            /**
-             * Angular velocity (bivector).
-             * If dimensioned units are used, they must be compatible with the unit of angular velocity.
-             * Ω is mutable with copy-on-set.
-             */
-            get: function () {
-                // A getter is required in order to support the setter existence.
-                return this.$Ω;
-            },
-            set: function (angularVelocity) {
-                mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-                this.metric.copy(angularVelocity, this.$Ω);
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "expireTime", {
-            /**
-             *
-             */
-            get: function () {
-                return Number.POSITIVE_INFINITY;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(RigidBody.prototype, "varsIndex", {
-            /**
-             * @hidden
-             */
-            get: function () {
-                return this.varsIndex_;
-            },
-            set: function (index) {
-                this.varsIndex_ = index;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * In the following formula, notice the reversion on either Ω or L.
-         * Geometrically, this means we depend on the cosine of the angle between the bivectors, since
-         * A * ~B = |A||B|cos(...).
-         * (1/2) Ω * ~L(Ω) = (1/2) ~Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
-         */
-        RigidBody.prototype.rotationalEnergy = function () {
-            assertConsistentUnits('Ω', this.Ω, 'L', this.L, this.metric);
-            var E = this.$rotationalEnergy.unlock();
-            this.metric.copyBivector(this.Ω, E); // E contains Ω.
-            this.metric.rev(E); // E contains ~Ω.
-            this.metric.scp(E, this.L); // E contains ~Ω * L, where * means scalar product.
-            this.metric.mulByNumber(E, 0.5); // E contains (1/2) ~Ω * L
-            return this.$rotationalEnergy.lock();
-        };
-        /**
-         * (1/2) (P * P) / M
-         */
-        RigidBody.prototype.translationalEnergy = function () {
-            assertConsistentUnits('M', this.M, 'P', this.P, this.metric);
-            var E = this.$translationalEnergy.unlock();
-            this.metric.copyVector(this.P, E); // E contains P.
-            this.metric.mulByVector(E, this.P); // E contains P * P.
-            this.metric.divByScalar(E, this.metric.a(this.M), this.metric.uom(this.M)); // E contains P * P / M.
-            this.metric.mulByNumber(E, 0.5); // E contains (1/2) P * P / M.
-            return this.$translationalEnergy.lock();
-        };
-        /**
-         * Converts a point in local coordinates to the same point in world coordinates.
-         * x = R (localPoint - centerOfMassLocal) * ~R + X
-         */
-        RigidBody.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
-            // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
-            // However, it may not have all the features that we need for the intermediate operations.
-            this.metric.copyVector(localPoint, this.$worldPoint);
-            this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
-            this.metric.rotate(this.$worldPoint, this.R);
-            this.metric.addVector(this.$worldPoint, this.X);
-            this.metric.writeVector(this.$worldPoint, worldPoint);
-        };
-        return RigidBody;
-    }(AbstractSimObject));
-
-    /**
-     * An object with no internal structure.
-     * @hidden
-     */
-    var Particle = /** @class */ (function (_super) {
-        __extends(Particle, _super);
-        /**
-         * @param mass The mass of the particle.
-         * @param charge The electric charge of the particle.
-         */
-        function Particle(mass, charge, metric) {
-            var _this = _super.call(this, metric) || this;
-            _this.M = mass;
-            _this.Q = charge;
-            return _this;
-        }
-        /**
-         *
-         */
-        Particle.prototype.updateAngularVelocity = function () {
-            throw new Error();
-        };
-        /**
-         * The inertia tensor should always be zero.
-         */
-        Particle.prototype.updateInertiaTensor = function () {
-            // Do nothing yet.
-        };
-        return Particle;
-    }(RigidBody));
-
-    /**
-     * @hidden
-     */
-    function isBoolean(x) {
-        return (typeof x === 'boolean');
-    }
-
-    /**
-     * @hidden
-     */
-    function beBoolean() {
-        return "be `boolean`";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeBoolean(name, value, contextBuilder) {
-        mustSatisfy(name, isBoolean(value), beBoolean, contextBuilder);
-        return value;
-    }
-
     // Copyright 2017 David Holmes.  All Rights Reserved.
     // Copyright 2016 Erik Neumann.  All Rights Reserved.
     //
@@ -4798,6 +4405,575 @@
         };
         return Physics;
     }(AbstractSubject));
+
+    /**
+     * @hidden
+     */
+    var contextBuilderAdvance = function () { return "Engine.advance(Δt: number, uomTime?: Unit): void"; };
+    /**
+     * An example of how to wire together the various components.
+     * @hidden
+     */
+    var Engine = /** @class */ (function () {
+        function Engine(metric, dynamics, options) {
+            this.physics = new Physics(metric, dynamics);
+            var rk4 = new RungeKutta(this.physics);
+            this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
+        }
+        /**
+         *
+         * @param body
+         */
+        Engine.prototype.addBody = function (body) {
+            var contextBuilder = function () { return "Engine.addBody(body: ForceBody): void"; };
+            mustBeNonNullObject('body', body, contextBuilder);
+            this.physics.addBody(body);
+        };
+        /**
+         *
+         * @param body
+         */
+        Engine.prototype.removeBody = function (body) {
+            var contextBuilder = function () { return "Engine.removeBody(body: ForceBody): void"; };
+            mustBeNonNullObject('body', body, contextBuilder);
+            this.physics.removeBody(body);
+        };
+        /**
+         *
+         * @param forceLaw
+         */
+        Engine.prototype.addForceLaw = function (forceLaw) {
+            var contextBuilder = function () { return "Engine.addForceLaw(forceLaw: ForceLaw): void"; };
+            mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
+            this.physics.addForceLaw(forceLaw);
+        };
+        /**
+         *
+         * @param forceLaw
+         */
+        Engine.prototype.removeForceLaw = function (forceLaw) {
+            var contextBuilder = function () { return "Engine.removeForceLaw(forceLaw: ForceLaw): void"; };
+            mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
+            this.physics.removeForceLaw(forceLaw);
+        };
+        /**
+         * Advances the Physics model by the specified time interval, Δt * uomTime.
+         * @param Δt The time interval.
+         * @param uomTime The optional unit of measure for the time interval.
+         */
+        Engine.prototype.advance = function (Δt, uomTime) {
+            mustBeNumber('Δt', Δt, contextBuilderAdvance);
+            this.strategy.advance(Δt, uomTime);
+        };
+        /**
+         *
+         */
+        Engine.prototype.updateFromBodies = function () {
+            this.physics.updateFromBodies();
+        };
+        return Engine;
+    }());
+
+    /**
+     * @hidden
+     */
+    var GravitationLaw = /** @class */ (function (_super) {
+        __extends(GravitationLaw, _super);
+        /**
+         *
+         */
+        function GravitationLaw(body1_, body2_, G) {
+            var _this = _super.call(this) || this;
+            _this.body1_ = body1_;
+            _this.body2_ = body2_;
+            _this.forces = [];
+            _this.metric = body1_.metric;
+            var metric = _this.metric;
+            _this.F1 = new Force(_this.body1_, metric);
+            _this.F1.locationCoordType = WORLD;
+            _this.F1.vectorCoordType = WORLD;
+            _this.F2 = new Force(_this.body2_, metric);
+            _this.F2.locationCoordType = WORLD;
+            _this.F2.vectorCoordType = WORLD;
+            _this.G = G;
+            _this.forces = [_this.F1, _this.F2];
+            _this.potentialEnergy_ = metric.zero();
+            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+            return _this;
+        }
+        /**
+         * Computes the forces due to the gravitational interaction.
+         * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
+         */
+        GravitationLaw.prototype.updateForces = function () {
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            var metric = this.metric;
+            // The direction of the force is computed such that masses always attract each other.
+            metric.copyVector(this.body2_.X, numer);
+            metric.subVector(numer, this.body1_.X);
+            metric.copyVector(numer, denom);
+            metric.quaditude(denom, true);
+            metric.direction(numer, true);
+            metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
+            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
+            metric.copyVector(numer, this.F1.vector);
+            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
+            metric.copyVector(this.F1.vector, this.F2.vector);
+            metric.neg(this.F2.vector);
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1_.X, this.F1.location);
+            metric.copyVector(this.body2_.X, this.F2.location);
+            return this.forces;
+        };
+        /**
+         *
+         */
+        GravitationLaw.prototype.disconnect = function () {
+            // Does nothing
+        };
+        /**
+         * Computes the potential energy of the gravitational interaction.
+         * U = -G m1 m2 / r, where
+         * r is the center-of-mass to center-of-mass separation of m1 and m2.
+         */
+        GravitationLaw.prototype.potentialEnergy = function () {
+            var metric = this.metric;
+            // Unlock the variable that we will use for the result.
+            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            // The numerator of the potential energy formula is -G * m1 * m2.
+            metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
+            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
+            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
+            metric.neg(numer);
+            // The denominator is |r1 - r2|.
+            metric.copyVector(this.body1_.X, denom);
+            metric.subVector(denom, this.body2_.X);
+            metric.magnitude(denom, true);
+            // Combine the numerator and denominator.
+            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
+            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1_.X, this.F1.location);
+            metric.copyVector(this.body2_.X, this.F2.location);
+            // We're done. Lock down the result.
+            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+            return this.potentialEnergy_;
+        };
+        return GravitationLaw;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
+    function isFunction(x) {
+        return (typeof x === 'function');
+    }
+
+    /**
+     * @hidden
+     */
+    function beFunction() {
+        return "be a function";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeFunction(name, value, contextBuilder) {
+        mustSatisfy(name, isFunction(value), beFunction, contextBuilder);
+        return value;
+    }
+
+    /**
+     * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
+     * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
+     * @hidden
+     */
+    function assertConsistentUnits(aName, A, bName, B, metric) {
+        if (!metric.isZero(A) && !metric.isZero(B)) {
+            if (Unit.isOne(metric.uom(A))) {
+                if (!Unit.isOne(metric.uom(B))) {
+                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
+                }
+            }
+            else {
+                if (Unit.isOne(metric.uom(B))) {
+                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
+                }
+            }
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    var LockableMeasure = /** @class */ (function () {
+        function LockableMeasure(metric, initialValue) {
+            this.metric = metric;
+            mustBeNonNullObject('metric', metric);
+            mustBeNonNullObject('initialValue', initialValue);
+            this.$value = initialValue;
+            this.lock();
+        }
+        LockableMeasure.prototype.get = function () {
+            return this.$value;
+        };
+        LockableMeasure.prototype.set = function (value) {
+            mustBeNonNullObject('value', value);
+            this.metric.copy(value, this.unlock());
+            this.lock();
+        };
+        LockableMeasure.prototype.lock = function () {
+            var value = this.$value;
+            this.$lock = this.metric.lock(value);
+            return value;
+        };
+        LockableMeasure.prototype.unlock = function () {
+            var value = this.$value;
+            this.metric.unlock(value, this.$lock);
+            return value;
+        };
+        return LockableMeasure;
+    }());
+
+    /**
+     * @hidden
+     * @param name
+     * @param value
+     * @param unit
+     * @param metric
+     * @returns
+     */
+    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
+        if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
+            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
+        }
+        else {
+            return value;
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    var RigidBody = /** @class */ (function (_super) {
+        __extends(RigidBody, _super);
+        /**
+         * @param metric
+         */
+        function RigidBody(metric) {
+            var _this = _super.call(this) || this;
+            _this.metric = metric;
+            /**
+             * the index into the variables array for this rigid body, or -1 if not in vars array.
+             */
+            _this.varsIndex_ = -1;
+            mustBeNonNullObject('metric', metric);
+            _this.$mass = new LockableMeasure(metric, metric.scalar(1));
+            _this.$charge = new LockableMeasure(metric, metric.zero());
+            _this.$X = metric.zero();
+            _this.$R = metric.scalar(1);
+            _this.$P = metric.zero();
+            _this.$L = metric.zero();
+            _this.$Ω = metric.zero();
+            _this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
+            _this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
+            _this.$worldPoint = metric.zero();
+            _this.Ω_scratch = metric.zero();
+            _this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+            _this.$inertiaTensorInverse = metric.identityMatrix();
+            return _this;
+        }
+        Object.defineProperty(RigidBody.prototype, "centerOfMassLocal", {
+            /**
+             * The center of mass position vector in local coordinates.
+             */
+            get: function () {
+                return this.$centerOfMassLocal.get();
+            },
+            set: function (centerOfMassLocal) {
+                mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+                this.$centerOfMassLocal.set(centerOfMassLocal);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "M", {
+            /**
+             * Mass (scalar). Default is one (1).
+             * If dimensioned units are used, they must be compatible with the unit of mass.
+             * M is immutable but the property may be reassigned.
+             */
+            get: function () {
+                return this.$mass.get();
+            },
+            set: function (M) {
+                mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
+                this.$mass.set(M);
+                this.updateInertiaTensor();
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "Q", {
+            /**
+             * Charge (scalar). Default is zero (0).
+             * If dimensioned units are used, they must be compatible with the unit of electric charge.
+             * Q is immutable but the property may be reassigned.
+             */
+            get: function () {
+                return this.$charge.get();
+            },
+            set: function (Q) {
+                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
+                this.$charge.set(Q);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Updates the angular velocity, Ω, bivector based upon the angular momentum.
+         * Derived classes may override to provide more efficient implementations based upon symmetry.
+         */
+        RigidBody.prototype.updateAngularVelocity = function () {
+            // In matrix notation,
+            // L = I Ω => Ω = Iinv L.
+            // Either the inertia tensor must be converted from local coordinates to world, or
+            // we convert L to local coordinates, apply the local inertial tensor and then rotate
+            // Ω back to world coordinates.
+            // Notice that in the following we avoid creating temporary variables by computing
+            // the reversion of the mutable body.R twice.
+            this.metric.copy(this.L, this.Ω); // Ω contains L
+            this.metric.rev(this.R);
+            this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R
+            this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R
+            this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R)
+            this.metric.copyBivector(this.Ω_scratch, this.Ω); // Ω contains Iinv (R L ~R)
+            this.metric.rev(this.R);
+            this.metric.rotate(this.Ω, this.R); // Ω contains R (Iinv (R L ~R)) ~R
+        };
+        /**
+         * Derived classes should override.
+         */
+        RigidBody.prototype.updateInertiaTensor = function () {
+            // Do nothing.
+        };
+        Object.defineProperty(RigidBody.prototype, "I", {
+            /**
+             * Inertia Tensor (in body coordinates) (3x3 matrix).
+             */
+            get: function () {
+                return this.metric.invertMatrix(this.$inertiaTensorInverse);
+            },
+            /**
+             * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
+             */
+            set: function (I) {
+                this.$inertiaTensorInverse = this.metric.invertMatrix(I);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "Iinv", {
+            /**
+             * Inertia Tensor (in body coordinates) inverse (3x3 matrix).
+             */
+            get: function () {
+                return this.$inertiaTensorInverse;
+            },
+            set: function (source) {
+                mustBeNonNullObject('Iinv', source);
+                mustBeNumber('dimensions', source.dimensions);
+                mustBeFunction('getElement', source.getElement);
+                this.$inertiaTensorInverse = this.metric.copyMatrix(source);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "X", {
+            /**
+             * Position (vector).
+             * If dimensioned units are used, they must be compatible with the unit of length.
+             * X is mutable with copy-on-set.
+             */
+            get: function () {
+                return this.$X;
+            },
+            set: function (position) {
+                mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
+                this.metric.copy(position, this.$X);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "R", {
+            /**
+             * Attitude (spinor).
+             * Effects a rotation from local coordinates to world coordinates.
+             * R is mutable with copy-on-set.
+             */
+            get: function () {
+                return this.$R;
+            },
+            set: function (attitude) {
+                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
+                this.metric.copy(attitude, this.$R);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "P", {
+            /**
+             * Linear momentum (vector).
+             * If dimensioned units are used, they must be compatible with the unit of momentum.
+             * P is mutable with copy-on-set.
+             */
+            get: function () {
+                return this.$P;
+            },
+            set: function (momentum) {
+                mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
+                this.metric.copy(momentum, this.$P);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "L", {
+            /**
+             * Angular momentum (bivector) in world coordinates.
+             * If dimensioned units are used, they must be compatible with the unit of angular momentum.
+             * L is mutable with copy-on-set.
+             */
+            get: function () {
+                return this.$L;
+            },
+            set: function (angularMomentum) {
+                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
+                this.metric.copy(angularMomentum, this.$L);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "\u03A9", {
+            /**
+             * Angular velocity (bivector).
+             * If dimensioned units are used, they must be compatible with the unit of angular velocity.
+             * Ω is mutable with copy-on-set.
+             */
+            get: function () {
+                // A getter is required in order to support the setter existence.
+                return this.$Ω;
+            },
+            set: function (angularVelocity) {
+                mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
+                this.metric.copy(angularVelocity, this.$Ω);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "expireTime", {
+            /**
+             *
+             */
+            get: function () {
+                return Number.POSITIVE_INFINITY;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(RigidBody.prototype, "varsIndex", {
+            /**
+             * @hidden
+             */
+            get: function () {
+                return this.varsIndex_;
+            },
+            set: function (index) {
+                this.varsIndex_ = index;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * In the following formula, notice the reversion on either Ω or L.
+         * Geometrically, this means we depend on the cosine of the angle between the bivectors, since
+         * A * ~B = |A||B|cos(...).
+         * (1/2) Ω * ~L(Ω) = (1/2) ~Ω * L(Ω) = (1/2) ω * J(ω), where * means scalar product (equals dot product for vectors).
+         */
+        RigidBody.prototype.rotationalEnergy = function () {
+            assertConsistentUnits('Ω', this.Ω, 'L', this.L, this.metric);
+            var E = this.$rotationalEnergy.unlock();
+            this.metric.copyBivector(this.Ω, E); // E contains Ω.
+            this.metric.rev(E); // E contains ~Ω.
+            this.metric.scp(E, this.L); // E contains ~Ω * L, where * means scalar product.
+            this.metric.mulByNumber(E, 0.5); // E contains (1/2) ~Ω * L
+            return this.$rotationalEnergy.lock();
+        };
+        /**
+         * (1/2) (P * P) / M
+         */
+        RigidBody.prototype.translationalEnergy = function () {
+            assertConsistentUnits('M', this.M, 'P', this.P, this.metric);
+            var E = this.$translationalEnergy.unlock();
+            this.metric.copyVector(this.P, E); // E contains P.
+            this.metric.mulByVector(E, this.P); // E contains P * P.
+            this.metric.divByScalar(E, this.metric.a(this.M), this.metric.uom(this.M)); // E contains P * P / M.
+            this.metric.mulByNumber(E, 0.5); // E contains (1/2) P * P / M.
+            return this.$translationalEnergy.lock();
+        };
+        /**
+         * Converts a point in local coordinates to the same point in world coordinates.
+         * x = R (localPoint - centerOfMassLocal) * ~R + X
+         */
+        RigidBody.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
+            // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
+            // However, it may not have all the features that we need for the intermediate operations.
+            this.metric.copyVector(localPoint, this.$worldPoint);
+            this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
+            this.metric.rotate(this.$worldPoint, this.R);
+            this.metric.addVector(this.$worldPoint, this.X);
+            this.metric.writeVector(this.$worldPoint, worldPoint);
+        };
+        return RigidBody;
+    }(AbstractSimObject));
+
+    /**
+     * An object with no internal structure.
+     * @hidden
+     */
+    var Particle = /** @class */ (function (_super) {
+        __extends(Particle, _super);
+        /**
+         * @param mass The mass of the particle.
+         * @param charge The electric charge of the particle.
+         */
+        function Particle(mass, charge, metric) {
+            var _this = _super.call(this, metric) || this;
+            _this.M = mass;
+            _this.Q = charge;
+            return _this;
+        }
+        /**
+         *
+         */
+        Particle.prototype.updateAngularVelocity = function () {
+            throw new Error();
+        };
+        /**
+         * The inertia tensor should always be zero.
+         */
+        Particle.prototype.updateInertiaTensor = function () {
+            // Do nothing yet.
+        };
+        return Particle;
+    }(RigidBody));
 
     /**
      * @hidden
@@ -8043,6 +8219,17 @@
         };
         return Dynamics2;
     }());
+
+    /**
+     *
+     */
+    var Engine2 = /** @class */ (function (_super) {
+        __extends(Engine2, _super);
+        function Engine2(options) {
+            return _super.call(this, new Euclidean2(), new Dynamics2(), options) || this;
+        }
+        return Engine2;
+    }(Engine));
 
     /**
      *
@@ -12524,6 +12711,17 @@
         };
         return Dynamics3;
     }());
+
+    /**
+     *
+     */
+    var Engine3 = /** @class */ (function (_super) {
+        __extends(Engine3, _super);
+        function Engine3(options) {
+            return _super.call(this, new Euclidean3(), new Dynamics3(), options) || this;
+        }
+        return Engine3;
+    }(Engine));
 
     /**
      *
@@ -17226,6 +17424,9 @@
         return Vec3;
     }());
 
+    /**
+     * @hidden
+     */
     var AdaptiveStepSolver = /** @class */ (function () {
         function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
             this.metric = metric;
@@ -17361,6 +17562,7 @@
     /**
      * An adaptive step solver that adjusts the step size in order to
      * ensure that the energy change be less than a tolerance amount.
+     * @hidden
      */
     var ConstantEnergySolver = /** @class */ (function () {
         /**
@@ -17466,16 +17668,6 @@
         return ConstantEnergySolver;
     }());
 
-    /**
-     * @hidden
-     */
-    function zeroArray(xs) {
-        var N = xs.length;
-        for (var i = 0; i < N; i++) {
-            xs[i] = 0;
-        }
-    }
-
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
      * The Euler algorithm uses the rate of change values at the
@@ -17562,104 +17754,6 @@
         return ModifiedEuler;
     }());
 
-    // Copyright 2017-2021 David Holmes.  All Rights Reserved.
-    /**
-     * <p>
-     * A differential equation solver that achieves O(h<sup>3</sup>) Local Truncation Error (LTE),
-     * where h is the step size.
-     * </p>
-     */
-    var RungeKutta = /** @class */ (function () {
-        /**
-         * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-         * @param system The model that provides the system state and computes rates of change.
-         */
-        function RungeKutta(system) {
-            this.system = system;
-            this.inp_ = [];
-            this.k1_ = [];
-            this.k2_ = [];
-            this.k3_ = [];
-            this.k4_ = [];
-            mustBeNonNullObject('system', system);
-        }
-        /**
-         *
-         */
-        RungeKutta.prototype.step = function (stepSize, uomStep) {
-            var vars = this.system.getState();
-            var N = vars.length;
-            if (this.inp_.length < N) {
-                this.inp_ = new Array(N);
-                this.k1_ = new Array(N);
-                this.k2_ = new Array(N);
-                this.k3_ = new Array(N);
-                this.k4_ = new Array(N);
-            }
-            var inp = this.inp_;
-            var k1 = this.k1_;
-            var k2 = this.k2_;
-            var k3 = this.k3_;
-            var k4 = this.k4_;
-            // evaluate at time t
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i];
-            }
-            zeroArray(k1);
-            this.system.evaluate(inp, k1, 0, uomStep);
-            // evaluate at time t + stepSize / 2
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k1[i] * stepSize / 2;
-            }
-            zeroArray(k2);
-            this.system.evaluate(inp, k2, stepSize / 2, uomStep);
-            // evaluate at time t + stepSize / 2
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k2[i] * stepSize / 2;
-            }
-            zeroArray(k3);
-            this.system.evaluate(inp, k3, stepSize / 2, uomStep);
-            // evaluate at time t + stepSize
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k3[i] * stepSize;
-            }
-            zeroArray(k4);
-            this.system.evaluate(inp, k4, stepSize, uomStep);
-            for (var i = 0; i < N; i++) {
-                vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
-            }
-            this.system.setState(vars);
-        };
-        return RungeKutta;
-    }());
-
-    /**
-     *
-     */
-    var DefaultAdvanceStrategy = /** @class */ (function () {
-        /**
-         *
-         */
-        function DefaultAdvanceStrategy(simulation, solver) {
-            this.simulation = simulation;
-            this.solver = solver;
-            mustBeNonNullObject('simulation', simulation);
-            mustBeNonNullObject('solver', solver);
-        }
-        /**
-         * 1.
-         * 2. The solver integrates the derivatives from the simulation.
-         * 3. Compute system variables such as energies, linear momentum, and angular momentum.
-         */
-        DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
-            mustBeNumber("stepSize", stepSize);
-            this.simulation.prolog();
-            this.solver.step(stepSize, uomStep);
-            this.simulation.epilog();
-        };
-        return DefaultAdvanceStrategy;
-    }());
-
     exports.AdaptiveStepSolver = AdaptiveStepSolver;
     exports.Block2 = Block2;
     exports.Block3 = Block3;
@@ -17677,6 +17771,9 @@
     exports.Dynamics2 = Dynamics2;
     exports.Dynamics3 = Dynamics3;
     exports.EnergyTimeGraph = EnergyTimeGraph;
+    exports.Engine = Engine;
+    exports.Engine2 = Engine2;
+    exports.Engine3 = Engine3;
     exports.Euclidean2 = Euclidean2;
     exports.Euclidean3 = Euclidean3;
     exports.EulerMethod = EulerMethod;

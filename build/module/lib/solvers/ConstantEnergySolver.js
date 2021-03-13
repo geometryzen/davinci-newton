@@ -1,6 +1,7 @@
 /**
  * An adaptive step solver that adjusts the step size in order to
  * ensure that the energy change be less than a tolerance amount.
+ * @hidden
  */
 var ConstantEnergySolver = /** @class */ (function () {
     /**

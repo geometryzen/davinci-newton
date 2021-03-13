@@ -6,7 +6,7 @@ import { Unit } from '../math/Unit';
 import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 
 /**
- * 
+ * @hidden
  */
 export class DefaultAdvanceStrategy implements AdvanceStrategy {
     /**

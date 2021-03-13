@@ -4,6 +4,9 @@ import { Simulation } from '../core/Simulation';
 import { Unit } from '../math/Unit';
 import { EnergySystem } from '../core/EnergySystem';
 
+/**
+ * @hidden
+ */
 export class AdaptiveStepSolver<T> implements DiffEqSolver {
     private diffEq_: Simulation;
     private energySystem_: EnergySystem<T>;

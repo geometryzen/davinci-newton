@@ -7,9 +7,9 @@ var Newton = /** @class */ (function () {
      */
     function Newton() {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-        this.LAST_MODIFIED = '2021-03-12';
+        this.LAST_MODIFIED = '2021-03-13';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.34';
+        this.VERSION = '1.0.36';
     }
     Newton.prototype.log = function (message) {
         var optionalParams = [];
