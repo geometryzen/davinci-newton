@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
 import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
-import { Euclidean2 } from './Euclidean2';
+import { RigidBody2 } from './RigidBody2';
 
 /**
  * A rectangular block of constant surface density.
  */
-export class Block2 extends RigidBody<Geometric2> {
+export class Block2 extends RigidBody2 {
     /**
      * The dimension corresponding to the width.
      */
@@ -38,7 +37,7 @@ export class Block2 extends RigidBody<Geometric2> {
      * 
      */
     constructor(width = Geometric2.one, height = Geometric2.one) {
-        super(new Euclidean2());
+        super();
 
         this.width_ = Geometric2.copy(width);
         this.widthLock_ = this.width_.lock();

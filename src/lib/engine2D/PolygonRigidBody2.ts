@@ -1,6 +1,5 @@
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
-import { Euclidean2 } from "./Euclidean2";
 import { RigidBody2 } from "./RigidBody2";
 
 /**
@@ -16,7 +15,7 @@ export class PolygonRigidBody2 extends RigidBody2 {
      */
     public readonly rs: Geometric2[] = [];
     constructor(points: Geometric2[]) {
-        super(new Euclidean2());
+        super();
         mustBeAtLeastThreePoints(points);
         const X = centerOfMass(points);
         for (const point of points) {

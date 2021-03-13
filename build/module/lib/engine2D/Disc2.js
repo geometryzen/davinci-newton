@@ -1,9 +1,8 @@
 import { __extends } from "tslib";
-import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
 import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
-import { Euclidean2 } from './Euclidean2';
+import { RigidBody2 } from './RigidBody2';
 /**
  * A solid disk of uniform surface density.
  */
@@ -14,7 +13,7 @@ var Disc2 = /** @class */ (function (_super) {
      */
     function Disc2(radius) {
         if (radius === void 0) { radius = Geometric2.one; }
-        var _this = _super.call(this, new Euclidean2()) || this;
+        var _this = _super.call(this) || this;
         _this.radius_ = Geometric2.fromScalar(radius);
         _this.radiusLock_ = _this.radius_.lock();
         _this.updateInertiaTensor();
@@ -56,5 +55,5 @@ var Disc2 = /** @class */ (function (_super) {
         this.I = I;
     };
     return Disc2;
-}(RigidBody));
+}(RigidBody2));
 export { Disc2 };

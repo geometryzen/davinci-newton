@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.31';
+            this.VERSION = '1.0.32';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -2916,6 +2916,38 @@
 
     /**
      * @hidden
+     */
+    var LockableMeasure = /** @class */ (function () {
+        function LockableMeasure(metric, initialValue) {
+            this.metric = metric;
+            mustBeNonNullObject('metric', metric);
+            mustBeNonNullObject('initialValue', initialValue);
+            this.$value = initialValue;
+            this.lock();
+        }
+        LockableMeasure.prototype.get = function () {
+            return this.$value;
+        };
+        LockableMeasure.prototype.set = function (value) {
+            mustBeNonNullObject('value', value);
+            this.metric.copy(value, this.unlock());
+            this.lock();
+        };
+        LockableMeasure.prototype.lock = function () {
+            var value = this.$value;
+            this.$lock = this.metric.lock(value);
+            return value;
+        };
+        LockableMeasure.prototype.unlock = function () {
+            var value = this.$value;
+            this.metric.unlock(value, this.$lock);
+            return value;
+        };
+        return LockableMeasure;
+    }());
+
+    /**
+     * @hidden
      * @param name
      * @param value
      * @param unit
@@ -2937,7 +2969,7 @@
     var RigidBody = /** @class */ (function (_super) {
         __extends(RigidBody, _super);
         /**
-         *
+         * @param metric
          */
         function RigidBody(metric) {
             var _this = _super.call(this) || this;
@@ -2947,24 +2979,19 @@
              */
             _this.varsIndex_ = -1;
             mustBeNonNullObject('metric', metric);
-            _this.mass_ = metric.scalar(1);
-            _this.massLock_ = metric.lock(_this.mass_);
-            _this.charge_ = metric.zero();
-            _this.chargeLock_ = metric.lock(_this.charge_);
-            _this.position_ = metric.zero();
-            _this.attitude_ = metric.scalar(1);
-            _this.linearMomentum_ = metric.zero();
-            _this.angularMomentum_ = metric.zero();
-            _this.angularVelocity_ = metric.zero();
-            _this.rotationalEnergy_ = metric.zero();
-            _this.rotationalEnergyLock_ = metric.lock(_this.rotationalEnergy_);
-            _this.translationalEnergy_ = metric.zero();
-            _this.translationalEnergyLock_ = metric.lock(_this.translationalEnergy_);
-            _this.worldPoint_ = metric.zero();
+            _this.$mass = new LockableMeasure(metric, metric.scalar(1));
+            _this.$charge = new LockableMeasure(metric, metric.zero());
+            _this.$X = metric.zero();
+            _this.$R = metric.scalar(1);
+            _this.$P = metric.zero();
+            _this.$L = metric.zero();
+            _this.$Ω = metric.zero();
+            _this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
+            _this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
+            _this.$worldPoint = metric.zero();
             _this.Ω_scratch = metric.zero();
-            _this.centerOfMassLocal_ = metric.zero();
-            _this.centerOfMassLocalLock_ = metric.lock(_this.centerOfMassLocal_);
-            _this.inertiaTensorInverse_ = metric.identityMatrix();
+            _this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+            _this.$inertiaTensorInverse = metric.identityMatrix();
             return _this;
         }
         Object.defineProperty(RigidBody.prototype, "centerOfMassLocal", {
@@ -2972,12 +2999,11 @@
              * The center of mass position vector in local coordinates.
              */
             get: function () {
-                return this.centerOfMassLocal_;
+                return this.$centerOfMassLocal.get();
             },
             set: function (centerOfMassLocal) {
-                this.metric.unlock(this.centerOfMassLocal_, this.centerOfMassLocalLock_);
-                this.metric.copyVector(centerOfMassLocal, this.centerOfMassLocal_);
-                this.centerOfMassLocalLock_ = this.metric.lock(this.centerOfMassLocal_);
+                mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+                this.$centerOfMassLocal.set(centerOfMassLocal);
             },
             enumerable: false,
             configurable: true
@@ -2988,13 +3014,11 @@
              * If dimensioned units are used, they must be compatible with the unit of mass.
              */
             get: function () {
-                return this.mass_;
+                return this.$mass.get();
             },
             set: function (M) {
                 mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
-                this.metric.unlock(this.mass_, this.massLock_);
-                this.metric.copy(M, this.mass_);
-                this.massLock_ = this.metric.lock(this.mass_);
+                this.$mass.set(M);
                 this.updateInertiaTensor();
             },
             enumerable: false,
@@ -3006,13 +3030,11 @@
              * If dimensioned units are used, they must be compatible with the unit of electric charge.
              */
             get: function () {
-                return this.charge_;
+                return this.$charge.get();
             },
             set: function (Q) {
                 mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
-                this.metric.unlock(this.charge_, this.chargeLock_);
-                this.metric.copy(Q, this.charge_);
-                this.chargeLock_ = this.metric.lock(this.charge_);
+                this.$charge.set(Q);
             },
             enumerable: false,
             configurable: true
@@ -3049,13 +3071,13 @@
              * Inertia Tensor (in body coordinates) (3x3 matrix).
              */
             get: function () {
-                return this.metric.invertMatrix(this.inertiaTensorInverse_);
+                return this.metric.invertMatrix(this.$inertiaTensorInverse);
             },
             /**
              * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
              */
             set: function (I) {
-                this.inertiaTensorInverse_ = this.metric.invertMatrix(I);
+                this.$inertiaTensorInverse = this.metric.invertMatrix(I);
             },
             enumerable: false,
             configurable: true
@@ -3065,13 +3087,13 @@
              * Inertia Tensor (in body coordinates) inverse (3x3 matrix).
              */
             get: function () {
-                return this.inertiaTensorInverse_;
+                return this.$inertiaTensorInverse;
             },
             set: function (source) {
                 mustBeNonNullObject('Iinv', source);
                 mustBeNumber('dimensions', source.dimensions);
                 mustBeFunction('getElement', source.getElement);
-                this.inertiaTensorInverse_ = this.metric.copyMatrix(source);
+                this.$inertiaTensorInverse = this.metric.copyMatrix(source);
             },
             enumerable: false,
             configurable: true
@@ -3082,11 +3104,11 @@
              * If dimensioned units are used, they must be compatible with the unit of length.
              */
             get: function () {
-                return this.position_;
+                return this.$X;
             },
             set: function (position) {
                 mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-                this.metric.copy(position, this.position_);
+                this.metric.copy(position, this.$X);
             },
             enumerable: false,
             configurable: true
@@ -3097,11 +3119,11 @@
              * Effects a rotation from local coordinates to world coordinates.
              */
             get: function () {
-                return this.attitude_;
+                return this.$R;
             },
             set: function (attitude) {
                 mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-                this.metric.copy(attitude, this.attitude_);
+                this.metric.copy(attitude, this.$R);
             },
             enumerable: false,
             configurable: true
@@ -3112,11 +3134,11 @@
              * If dimensioned units are used, they must be compatible with the unit of momentum.
              */
             get: function () {
-                return this.linearMomentum_;
+                return this.$P;
             },
             set: function (momentum) {
                 mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-                this.metric.copy(momentum, this.linearMomentum_);
+                this.metric.copy(momentum, this.$P);
             },
             enumerable: false,
             configurable: true
@@ -3127,11 +3149,11 @@
              * If dimensioned units are used, they must be compatible with the unit of angular momentum.
              */
             get: function () {
-                return this.angularMomentum_;
+                return this.$L;
             },
             set: function (angularMomentum) {
                 mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-                this.metric.copy(angularMomentum, this.angularMomentum_);
+                this.metric.copy(angularMomentum, this.$L);
             },
             enumerable: false,
             configurable: true
@@ -3143,12 +3165,12 @@
              */
             get: function () {
                 // A getter is required in order to support the setter existence.
-                return this.angularVelocity_;
+                return this.$Ω;
             },
             set: function (angularVelocity) {
                 mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-                // A setter is used so that assignments do not cause the member vaiable to become immutable.
-                this.metric.copy(angularVelocity, this.angularVelocity_);
+                // A setter is used so that assignments do not cause the member variable to become immutable.
+                this.metric.copy(angularVelocity, this.$Ω);
             },
             enumerable: false,
             configurable: true
@@ -3165,7 +3187,7 @@
         });
         Object.defineProperty(RigidBody.prototype, "varsIndex", {
             /**
-             *
+             * @hidden
              */
             get: function () {
                 return this.varsIndex_;
@@ -3184,26 +3206,24 @@
          */
         RigidBody.prototype.rotationalEnergy = function () {
             assertConsistentUnits('Ω', this.Ω, 'L', this.L, this.metric);
-            this.metric.unlock(this.rotationalEnergy_, this.rotationalEnergyLock_);
-            this.metric.copyBivector(this.Ω, this.rotationalEnergy_); // rotationalEnergy contains Ω.
-            this.metric.rev(this.rotationalEnergy_); // rotationalEnergy contains ~Ω.
-            this.metric.scp(this.rotationalEnergy_, this.L); // rotationalEnergy contains ~Ω * L, where * means scalar product.
-            this.metric.mulByNumber(this.rotationalEnergy_, 0.5);
-            this.rotationalEnergyLock_ = this.metric.lock(this.rotationalEnergy_);
-            return this.rotationalEnergy_;
+            var E = this.$rotationalEnergy.unlock();
+            this.metric.copyBivector(this.Ω, E); // E contains Ω.
+            this.metric.rev(E); // E contains ~Ω.
+            this.metric.scp(E, this.L); // E contains ~Ω * L, where * means scalar product.
+            this.metric.mulByNumber(E, 0.5); // E contains (1/2) ~Ω * L
+            return this.$rotationalEnergy.lock();
         };
         /**
          * (1/2) (P * P) / M
          */
         RigidBody.prototype.translationalEnergy = function () {
             assertConsistentUnits('M', this.M, 'P', this.P, this.metric);
-            this.metric.unlock(this.translationalEnergy_, this.translationalEnergyLock_);
-            this.metric.copyVector(this.P, this.translationalEnergy_); // translationalEnergy contains P.
-            this.metric.mulByVector(this.translationalEnergy_, this.P); // translationalEnergy contains P * P.
-            this.metric.divByScalar(this.translationalEnergy_, this.metric.a(this.M), this.metric.uom(this.M)); // translationalEnergy contains P * P / M.
-            this.metric.mulByNumber(this.translationalEnergy_, 0.5);
-            this.translationalEnergyLock_ = this.metric.lock(this.translationalEnergy_);
-            return this.translationalEnergy_;
+            var E = this.$translationalEnergy.unlock();
+            this.metric.copyVector(this.P, E); // E contains P.
+            this.metric.mulByVector(E, this.P); // E contains P * P.
+            this.metric.divByScalar(E, this.metric.a(this.M), this.metric.uom(this.M)); // E contains P * P / M.
+            this.metric.mulByNumber(E, 0.5); // E contains (1/2) P * P / M.
+            return this.$translationalEnergy.lock();
         };
         /**
          * Converts a point in local coordinates to the same point in world coordinates.
@@ -3212,11 +3232,11 @@
         RigidBody.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
             // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
             // However, it may not have all the features that we need for the intermediate operations.
-            this.metric.copyVector(localPoint, this.worldPoint_);
-            this.metric.subVector(this.worldPoint_, this.centerOfMassLocal_);
-            this.metric.rotate(this.worldPoint_, this.attitude_);
-            this.metric.addVector(this.worldPoint_, this.position_);
-            this.metric.writeVector(this.worldPoint_, worldPoint);
+            this.metric.copyVector(localPoint, this.$worldPoint);
+            this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
+            this.metric.rotate(this.$worldPoint, this.R);
+            this.metric.addVector(this.$worldPoint, this.X);
+            this.metric.writeVector(this.$worldPoint, worldPoint);
         };
         return RigidBody;
     }(AbstractSimObject));
@@ -7554,6 +7574,32 @@
         return Euclidean2;
     }());
 
+    /**
+     * @hidden
+     */
+    var L = new Geometric2();
+    /**
+     *
+     */
+    var RigidBody2 = /** @class */ (function (_super) {
+        __extends(RigidBody2, _super);
+        function RigidBody2() {
+            return _super.call(this, new Euclidean2()) || this;
+        }
+        /**
+         *
+         */
+        RigidBody2.prototype.updateAngularVelocity = function () {
+            // If the angular momentum is mutable then we don't want to accidentally change it.
+            // If the angular momentum is immutable then we will need a scratch variable to avoid creating temporary objects. 
+            L.copyBivector(this.L);
+            // We know that (in 2D) the moment of inertia is a scalar.
+            // The angular velocity property performs copy on assignment.
+            this.Ω = L.divByScalar(this.I.getElement(0, 0), this.I.uom);
+        };
+        return RigidBody2;
+    }(RigidBody));
+
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
      * A rectangular block of constant surface density.
@@ -7566,7 +7612,7 @@
         function Block2(width, height) {
             if (width === void 0) { width = Geometric2.one; }
             if (height === void 0) { height = Geometric2.one; }
-            var _this = _super.call(this, new Euclidean2()) || this;
+            var _this = _super.call(this) || this;
             _this.width_ = Geometric2.copy(width);
             _this.widthLock_ = _this.width_.lock();
             _this.height_ = Geometric2.copy(height);
@@ -7630,7 +7676,7 @@
             this.I = I;
         };
         return Block2;
-    }(RigidBody));
+    }(RigidBody2));
 
     var ConstantForceLaw2 = /** @class */ (function (_super) {
         __extends(ConstantForceLaw2, _super);
@@ -7651,7 +7697,7 @@
          */
         function Disc2(radius) {
             if (radius === void 0) { radius = Geometric2.one; }
-            var _this = _super.call(this, new Euclidean2()) || this;
+            var _this = _super.call(this) || this;
             _this.radius_ = Geometric2.fromScalar(radius);
             _this.radiusLock_ = _this.radius_.lock();
             _this.updateInertiaTensor();
@@ -7693,7 +7739,7 @@
             this.I = I;
         };
         return Disc2;
-    }(RigidBody));
+    }(RigidBody2));
 
     //
     // Indices which MUST be common to all implementations.
@@ -7972,34 +8018,11 @@
     /**
      * @hidden
      */
-    var L = new Geometric2();
-    var RigidBody2 = /** @class */ (function (_super) {
-        __extends(RigidBody2, _super);
-        function RigidBody2() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        /**
-         *
-         */
-        RigidBody2.prototype.updateAngularVelocity = function () {
-            // If the angular momentum is mutable then we don't want to accidentally change it.
-            // If the angular momentum is immutable then we will need a scratch variable to avoid creating temporary objects. 
-            L.copyBivector(this.L);
-            // We know that (in 2D) the moment of inertia is a scalar.
-            // The angular velocity property performs copy on assignment.
-            this.Ω = L.divByScalar(this.I.getElement(0, 0), this.I.uom);
-        };
-        return RigidBody2;
-    }(RigidBody));
-
-    /**
-     * @hidden
-     */
     var fromVector = Geometric2.fromVector;
     var PolygonRigidBody2 = /** @class */ (function (_super) {
         __extends(PolygonRigidBody2, _super);
         function PolygonRigidBody2(points) {
-            var _this = _super.call(this, new Euclidean2()) || this;
+            var _this = _super.call(this) || this;
             /**
              * The position of the polygon point relative to the center of mass.
              *
@@ -12472,6 +12495,17 @@
         }
         return Physics3;
     }(Physics));
+
+    /**
+     *
+     */
+    var RigidBody3 = /** @class */ (function (_super) {
+        __extends(RigidBody3, _super);
+        function RigidBody3() {
+            return _super.call(this, new Euclidean3()) || this;
+        }
+        return RigidBody3;
+    }(RigidBody));
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
@@ -17604,6 +17638,7 @@
     exports.QQ = QQ;
     exports.RigidBody = RigidBody;
     exports.RigidBody2 = RigidBody2;
+    exports.RigidBody3 = RigidBody3;
     exports.RungeKutta = RungeKutta;
     exports.SimView = SimView;
     exports.Sphere3 = Sphere3;

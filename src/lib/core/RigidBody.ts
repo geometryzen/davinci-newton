@@ -7,6 +7,7 @@ import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { Charged } from './Charged';
 import { ForceBody } from './ForceBody';
+import { LockableMeasure } from './LockableMeasure';
 import { Massive } from './Massive';
 import { Metric } from './Metric';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
@@ -23,22 +24,20 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
 
     /**
      * Mass, M. Default is one (1).
-     * Changing the mass requires an update to the intertia tensor,
-     * so we want to control the mutability.
+     * Changing the mass requires an update to the inertia tensor,
+     * so we want to control the mutability. The mass is locked by default
      */
-    private readonly mass_: T;
-    private massLock_: number;
+    private readonly $mass: LockableMeasure<T>;
 
     /**
      * Charge, Q. Default is zero (0).
      */
-    private readonly charge_: T;
-    private chargeLock_: number;
+    private readonly $charge: LockableMeasure<T>;
 
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
-    private inertiaTensorInverse_: MatrixLike;
+    private $inertiaTensorInverse: MatrixLike;
 
     /**
      * the index into the variables array for this rigid body, or -1 if not in vars array.
@@ -48,19 +47,19 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * The position (vector).
      */
-    private readonly position_: T;
+    private readonly $X: T;
     /**
      * The attitude (spinor).
      */
-    private readonly attitude_: T;
+    private readonly $R: T;
     /**
      * The linear momentum (vector).
      */
-    private readonly linearMomentum_: T;
+    private readonly $P: T;
     /**
      * The angular momentum (bivector).
      */
-    private readonly angularMomentum_: T;
+    private readonly $L: T;
     /**
      * Scratch member variable used only during updateAngularVelocity.
      * The purpose is to avoid temporary object creation. 
@@ -70,68 +69,58 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * Angular velocity (bivector).
      * The angular velocity is initially created in the unlocked state.
      */
-    private angularVelocity_: T;
-    // private angularVelocityLock_ = this.angularVelocity_.lock();
+    private $Ω: T;
 
     /**
      * center of mass in local coordinates.
      */
-    protected centerOfMassLocal_: T;
-    protected centerOfMassLocalLock_: number;
+    protected $centerOfMassLocal: LockableMeasure<T>;
 
     /**
      * Scratch variable for rotational energy.
      */
-    private rotationalEnergy_: T;
-    private rotationalEnergyLock_: number;
+    private $rotationalEnergy: LockableMeasure<T>;
 
     /**
      * Scratch variable for translational energy.
      */
-    private translationalEnergy_: T;
-    private translationalEnergyLock_: number;
+    private $translationalEnergy: LockableMeasure<T>;
 
     /**
      * Scratch variable for calculation worldPoint.
      */
-    private readonly worldPoint_: T;
+    private readonly $worldPoint: T;
 
     /**
-     * 
+     * @param metric 
      */
     constructor(public readonly metric: Metric<T>) {
         super();
         mustBeNonNullObject('metric', metric);
-        this.mass_ = metric.scalar(1);
-        this.massLock_ = metric.lock(this.mass_);
-        this.charge_ = metric.zero();
-        this.chargeLock_ = metric.lock(this.charge_);
-        this.position_ = metric.zero();
-        this.attitude_ = metric.scalar(1);
-        this.linearMomentum_ = metric.zero();
-        this.angularMomentum_ = metric.zero();
-        this.angularVelocity_ = metric.zero();
-        this.rotationalEnergy_ = metric.zero();
-        this.rotationalEnergyLock_ = metric.lock(this.rotationalEnergy_);
-        this.translationalEnergy_ = metric.zero();
-        this.translationalEnergyLock_ = metric.lock(this.translationalEnergy_);
-        this.worldPoint_ = metric.zero();
+        this.$mass = new LockableMeasure(metric, metric.scalar(1));
+        this.$charge = new LockableMeasure(metric, metric.zero());
+        this.$X = metric.zero();
+        this.$R = metric.scalar(1);
+        this.$P = metric.zero();
+        this.$L = metric.zero();
+        this.$Ω = metric.zero();
+        this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
+        this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
+        this.$worldPoint = metric.zero();
         this.Ω_scratch = metric.zero();
-        this.centerOfMassLocal_ = metric.zero();
-        this.centerOfMassLocalLock_ = metric.lock(this.centerOfMassLocal_);
-        this.inertiaTensorInverse_ = metric.identityMatrix();
+        this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+        this.$inertiaTensorInverse = metric.identityMatrix();
     }
 
     /**
      * The center of mass position vector in local coordinates.
      */
     get centerOfMassLocal(): T {
-        return this.centerOfMassLocal_;
+        return this.$centerOfMassLocal.get();
     }
     set centerOfMassLocal(centerOfMassLocal: T) {
-        this.metric.unlock(this.centerOfMassLocal_, this.centerOfMassLocalLock_);
-        this.metric.copyVector(centerOfMassLocal, this.centerOfMassLocal_);
-        this.centerOfMassLocalLock_ = this.metric.lock(this.centerOfMassLocal_);
+        mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+        this.$centerOfMassLocal.set(centerOfMassLocal);
     }
 
     /**
@@ -139,13 +128,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * If dimensioned units are used, they must be compatible with the unit of mass.
      */
     get M(): T {
-        return this.mass_;
+        return this.$mass.get();
     }
     set M(M: T) {
         mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
-        this.metric.unlock(this.mass_, this.massLock_);
-        this.metric.copy(M, this.mass_);
-        this.massLock_ = this.metric.lock(this.mass_);
+        this.$mass.set(M);
         this.updateInertiaTensor();
     }
 
@@ -154,13 +141,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * If dimensioned units are used, they must be compatible with the unit of electric charge.
      */
     get Q(): T {
-        return this.charge_;
+        return this.$charge.get();
     }
     set Q(Q: T) {
         mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
-        this.metric.unlock(this.charge_, this.chargeLock_);
-        this.metric.copy(Q, this.charge_);
-        this.chargeLock_ = this.metric.lock(this.charge_);
+        this.$charge.set(Q);
     }
 
     /**
@@ -196,26 +181,26 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * Inertia Tensor (in body coordinates) (3x3 matrix).
      */
     get I(): MatrixLike {
-        return this.metric.invertMatrix(this.inertiaTensorInverse_);
+        return this.metric.invertMatrix(this.$inertiaTensorInverse);
     }
     /**
      * Sets the Inertia Tensor (in local coordinates) (3x3 matrix), and computes the inverse.
      */
     set I(I: MatrixLike) {
-        this.inertiaTensorInverse_ = this.metric.invertMatrix(I);
+        this.$inertiaTensorInverse = this.metric.invertMatrix(I);
     }
 
     /**
      * Inertia Tensor (in body coordinates) inverse (3x3 matrix).
      */
     get Iinv(): MatrixLike {
-        return this.inertiaTensorInverse_;
+        return this.$inertiaTensorInverse;
     }
     set Iinv(source: MatrixLike) {
         mustBeNonNullObject('Iinv', source);
         mustBeNumber('dimensions', source.dimensions);
         mustBeFunction('getElement', source.getElement);
-        this.inertiaTensorInverse_ = this.metric.copyMatrix(source);
+        this.$inertiaTensorInverse = this.metric.copyMatrix(source);
     }
 
     /**
@@ -223,11 +208,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * If dimensioned units are used, they must be compatible with the unit of length.
      */
     get X(): T {
-        return this.position_;
+        return this.$X;
     }
     set X(position: T) {
         mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-        this.metric.copy(position, this.position_);
+        this.metric.copy(position, this.$X);
     }
 
     /**
@@ -235,11 +220,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * Effects a rotation from local coordinates to world coordinates.
      */
     get R(): T {
-        return this.attitude_;
+        return this.$R;
     }
     set R(attitude: T) {
         mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-        this.metric.copy(attitude, this.attitude_);
+        this.metric.copy(attitude, this.$R);
     }
 
     /**
@@ -247,11 +232,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * If dimensioned units are used, they must be compatible with the unit of momentum.
      */
     get P(): T {
-        return this.linearMomentum_;
+        return this.$P;
     }
     set P(momentum: T) {
         mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-        this.metric.copy(momentum, this.linearMomentum_);
+        this.metric.copy(momentum, this.$P);
     }
 
     /**
@@ -259,11 +244,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      * If dimensioned units are used, they must be compatible with the unit of angular momentum.
      */
     get L(): T {
-        return this.angularMomentum_;
+        return this.$L;
     }
     set L(angularMomentum: T) {
         mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-        this.metric.copy(angularMomentum, this.angularMomentum_);
+        this.metric.copy(angularMomentum, this.$L);
     }
 
     /**
@@ -272,12 +257,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      */
     get Ω(): T {
         // A getter is required in order to support the setter existence.
-        return this.angularVelocity_;
+        return this.$Ω;
     }
     set Ω(angularVelocity: T) {
         mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-        // A setter is used so that assignments do not cause the member vaiable to become immutable.
-        this.metric.copy(angularVelocity, this.angularVelocity_);
+        // A setter is used so that assignments do not cause the member variable to become immutable.
+        this.metric.copy(angularVelocity, this.$Ω);
     }
 
     /**
@@ -288,7 +273,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     }
 
     /**
-     * 
+     * @hidden
      */
     get varsIndex(): number {
         return this.varsIndex_;
@@ -305,13 +290,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      */
     rotationalEnergy(): T {
         assertConsistentUnits('Ω', this.Ω, 'L', this.L, this.metric);
-        this.metric.unlock(this.rotationalEnergy_, this.rotationalEnergyLock_);
-        this.metric.copyBivector(this.Ω, this.rotationalEnergy_); // rotationalEnergy contains Ω.
-        this.metric.rev(this.rotationalEnergy_);                  // rotationalEnergy contains ~Ω.
-        this.metric.scp(this.rotationalEnergy_, this.L);          // rotationalEnergy contains ~Ω * L, where * means scalar product.
-        this.metric.mulByNumber(this.rotationalEnergy_, 0.5);
-        this.rotationalEnergyLock_ = this.metric.lock(this.rotationalEnergy_);
-        return this.rotationalEnergy_;
+        const E = this.$rotationalEnergy.unlock();
+        this.metric.copyBivector(this.Ω, E);    // E contains Ω.
+        this.metric.rev(E);                     // E contains ~Ω.
+        this.metric.scp(E, this.L);             // E contains ~Ω * L, where * means scalar product.
+        this.metric.mulByNumber(E, 0.5);        // E contains (1/2) ~Ω * L
+        return this.$rotationalEnergy.lock();
     }
 
     /**
@@ -319,13 +303,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
      */
     translationalEnergy(): T {
         assertConsistentUnits('M', this.M, 'P', this.P, this.metric);
-        this.metric.unlock(this.translationalEnergy_, this.translationalEnergyLock_);
-        this.metric.copyVector(this.P, this.translationalEnergy_);  // translationalEnergy contains P.
-        this.metric.mulByVector(this.translationalEnergy_, this.P); // translationalEnergy contains P * P.
-        this.metric.divByScalar(this.translationalEnergy_, this.metric.a(this.M), this.metric.uom(this.M)); // translationalEnergy contains P * P / M.
-        this.metric.mulByNumber(this.translationalEnergy_, 0.5);
-        this.translationalEnergyLock_ = this.metric.lock(this.translationalEnergy_);
-        return this.translationalEnergy_;
+        const E = this.$translationalEnergy.unlock();
+        this.metric.copyVector(this.P, E);                                          // E contains P.
+        this.metric.mulByVector(E, this.P);                                         // E contains P * P.
+        this.metric.divByScalar(E, this.metric.a(this.M), this.metric.uom(this.M)); // E contains P * P / M.
+        this.metric.mulByNumber(E, 0.5);                                            // E contains (1/2) P * P / M.
+        return this.$translationalEnergy.lock();
     }
 
     /**
@@ -335,11 +318,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     localPointToWorldPoint(localPoint: T, worldPoint: T): void {
         // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
         // However, it may not have all the features that we need for the intermediate operations.
-        this.metric.copyVector(localPoint, this.worldPoint_);
-        this.metric.subVector(this.worldPoint_, this.centerOfMassLocal_);
-        this.metric.rotate(this.worldPoint_, this.attitude_);
-        this.metric.addVector(this.worldPoint_, this.position_);
-        this.metric.writeVector(this.worldPoint_, worldPoint);
+        this.metric.copyVector(localPoint, this.$worldPoint);
+        this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
+        this.metric.rotate(this.$worldPoint, this.R);
+        this.metric.addVector(this.$worldPoint, this.X);
+        this.metric.writeVector(this.$worldPoint, worldPoint);
     }
 
     /**

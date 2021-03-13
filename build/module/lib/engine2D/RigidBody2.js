@@ -1,14 +1,18 @@
 import { __extends } from "tslib";
 import { RigidBody } from "../core/RigidBody";
 import { Geometric2 } from "../math/Geometric2";
+import { Euclidean2 } from "./Euclidean2";
 /**
  * @hidden
  */
 var L = new Geometric2();
+/**
+ *
+ */
 var RigidBody2 = /** @class */ (function (_super) {
     __extends(RigidBody2, _super);
     function RigidBody2() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, new Euclidean2()) || this;
     }
     /**
      *

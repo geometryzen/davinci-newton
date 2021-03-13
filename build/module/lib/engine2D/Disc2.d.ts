@@ -1,9 +1,9 @@
-import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
+import { RigidBody2 } from './RigidBody2';
 /**
  * A solid disk of uniform surface density.
  */
-export declare class Disc2 extends RigidBody<Geometric2> {
+export declare class Disc2 extends RigidBody2 {
     /**
      * The dimension corresponding to the width.
      */

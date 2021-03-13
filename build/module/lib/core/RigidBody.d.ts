@@ -2,6 +2,7 @@ import { MatrixLike } from '../math/MatrixLike';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Charged } from './Charged';
 import { ForceBody } from './ForceBody';
+import { LockableMeasure } from './LockableMeasure';
 import { Massive } from './Massive';
 import { Metric } from './Metric';
 /**
@@ -16,20 +17,18 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     uuid: string;
     /**
      * Mass, M. Default is one (1).
-     * Changing the mass requires an update to the intertia tensor,
-     * so we want to control the mutability.
+     * Changing the mass requires an update to the inertia tensor,
+     * so we want to control the mutability. The mass is locked by default
      */
-    private readonly mass_;
-    private massLock_;
+    private readonly $mass;
     /**
      * Charge, Q. Default is zero (0).
      */
-    private readonly charge_;
-    private chargeLock_;
+    private readonly $charge;
     /**
      * Inverse of the Inertia tensor in body coordinates.
      */
-    private inertiaTensorInverse_;
+    private $inertiaTensorInverse;
     /**
      * the index into the variables array for this rigid body, or -1 if not in vars array.
      */
@@ -37,19 +36,19 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     /**
      * The position (vector).
      */
-    private readonly position_;
+    private readonly $X;
     /**
      * The attitude (spinor).
      */
-    private readonly attitude_;
+    private readonly $R;
     /**
      * The linear momentum (vector).
      */
-    private readonly linearMomentum_;
+    private readonly $P;
     /**
      * The angular momentum (bivector).
      */
-    private readonly angularMomentum_;
+    private readonly $L;
     /**
      * Scratch member variable used only during updateAngularVelocity.
      * The purpose is to avoid temporary object creation.
@@ -59,28 +58,25 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
      * Angular velocity (bivector).
      * The angular velocity is initially created in the unlocked state.
      */
-    private angularVelocity_;
+    private $Ω;
     /**
      * center of mass in local coordinates.
      */
-    protected centerOfMassLocal_: T;
-    protected centerOfMassLocalLock_: number;
+    protected $centerOfMassLocal: LockableMeasure<T>;
     /**
      * Scratch variable for rotational energy.
      */
-    private rotationalEnergy_;
-    private rotationalEnergyLock_;
+    private $rotationalEnergy;
     /**
      * Scratch variable for translational energy.
      */
-    private translationalEnergy_;
-    private translationalEnergyLock_;
+    private $translationalEnergy;
     /**
      * Scratch variable for calculation worldPoint.
      */
-    private readonly worldPoint_;
+    private readonly $worldPoint;
     /**
-     *
+     * @param metric
      */
     constructor(metric: Metric<T>);
     /**
@@ -157,7 +153,7 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
      */
     get expireTime(): number;
     /**
-     *
+     * @hidden
      */
     get varsIndex(): number;
     set varsIndex(index: number);

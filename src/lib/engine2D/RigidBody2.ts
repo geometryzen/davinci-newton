@@ -1,12 +1,19 @@
 import { RigidBody } from "../core/RigidBody";
 import { Geometric2 } from "../math/Geometric2";
+import { Euclidean2 } from "./Euclidean2";
 
 /**
  * @hidden
  */
 const L = new Geometric2();
 
+/**
+ *
+ */
 export class RigidBody2 extends RigidBody<Geometric2> {
+    constructor() {
+        super(new Euclidean2());
+    }
     /**
      * 
      */

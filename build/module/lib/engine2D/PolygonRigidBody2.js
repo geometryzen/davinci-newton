@@ -1,7 +1,6 @@
 import { __extends } from "tslib";
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
-import { Euclidean2 } from "./Euclidean2";
 import { RigidBody2 } from "./RigidBody2";
 /**
  * @hidden
@@ -10,7 +9,7 @@ var fromVector = Geometric2.fromVector;
 var PolygonRigidBody2 = /** @class */ (function (_super) {
     __extends(PolygonRigidBody2, _super);
     function PolygonRigidBody2(points) {
-        var _this = _super.call(this, new Euclidean2()) || this;
+        var _this = _super.call(this) || this;
         /**
          * The position of the polygon point relative to the center of mass.
          *

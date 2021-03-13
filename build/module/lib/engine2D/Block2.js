@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { __extends } from "tslib";
-import { RigidBody } from '../core/RigidBody';
 import { Geometric2 } from '../math/Geometric2';
 import { Mat1 } from '../math/Mat1';
 import { Unit } from '../math/Unit';
-import { Euclidean2 } from './Euclidean2';
+import { RigidBody2 } from './RigidBody2';
 /**
  * A rectangular block of constant surface density.
  */
@@ -28,7 +27,7 @@ var Block2 = /** @class */ (function (_super) {
     function Block2(width, height) {
         if (width === void 0) { width = Geometric2.one; }
         if (height === void 0) { height = Geometric2.one; }
-        var _this = _super.call(this, new Euclidean2()) || this;
+        var _this = _super.call(this) || this;
         _this.width_ = Geometric2.copy(width);
         _this.widthLock_ = _this.width_.lock();
         _this.height_ = Geometric2.copy(height);
@@ -92,5 +91,5 @@ var Block2 = /** @class */ (function (_super) {
         this.I = I;
     };
     return Block2;
-}(RigidBody));
+}(RigidBody2));
 export { Block2 };

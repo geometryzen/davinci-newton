@@ -29,6 +29,7 @@ export { Force3 } from './lib/engine3D/Force3';
 export { GravitationForceLaw3 } from './lib/engine3D/GravitationForceLaw3';
 export { Particle3 } from './lib/engine3D/Particle3';
 export { Physics3 } from './lib/engine3D/Physics3';
+export { RigidBody3 } from './lib/engine3D/RigidBody3';
 export { Sphere3 } from './lib/engine3D/Sphere3';
 export { Spring3 } from './lib/engine3D/Spring3';
 export { AxisChoice } from './lib/graph/AxisChoice';
