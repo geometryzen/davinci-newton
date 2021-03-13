@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DefaultAdvanceStrategy | davinci-newton</title>
+	<title>Engine3 | davinci-newton</title>
 	<meta name="description" content="Documentation for davinci-newton">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2722,17 +2722,11 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class=" tsd-kind-class tsd-has-type-parameter">
-			<a href="adaptivestepsolver.html" class="tsd-kind-icon">Adaptive<wbr>Step<wbr>Solver</a>
-		</li>
 		<li class=" tsd-kind-class">
 			<a href="block2.html" class="tsd-kind-icon">Block2</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="block3.html" class="tsd-kind-icon">Block3</a>
-		</li>
-		<li class=" tsd-kind-class tsd-has-type-parameter">
-			<a href="constantenergysolver.html" class="tsd-kind-icon">Constant<wbr>Energy<wbr>Solver</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="constantforcelaw2.html" class="tsd-kind-icon">Constant<wbr>Force<wbr>Law2</a>
@@ -2746,19 +2740,37 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="cylinder3.html" class="tsd-kind-icon">Cylinder3</a>
 		</li>
-		<li class="current tsd-kind-class">
-			<a href="defaultadvancestrategy.html" class="tsd-kind-icon">Default<wbr>Advance<wbr>Strategy</a>
-			<ul>
-				<li class=" tsd-kind-constructor tsd-parent-kind-class">
-					<a href="defaultadvancestrategy.html#constructor" class="tsd-kind-icon">constructor</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="defaultadvancestrategy.html#advance" class="tsd-kind-icon">advance</a>
-				</li>
-			</ul>
-		</li>
 		<li class=" tsd-kind-class">
 			<a href="disc2.html" class="tsd-kind-icon">Disc2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="engine2.html" class="tsd-kind-icon">Engine2</a>
+		</li>
+		<li class="current tsd-kind-class">
+			<a href="engine3.html" class="tsd-kind-icon">Engine3</a>
+			<ul>
+				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<a href="engine3.html#constructor" class="tsd-kind-icon">constructor</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#advance" class="tsd-kind-icon">advance</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#updatefrombodies" class="tsd-kind-icon">update<wbr>From<wbr>Bodies</a>
+				</li>
+			</ul>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="eulermethod.html" class="tsd-kind-icon">Euler<wbr>Method</a>
@@ -2826,6 +2838,9 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="unit.html" class="tsd-kind-icon">Unit</a>
 		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/engineoptions.html" class="tsd-kind-icon">Engine<wbr>Options</a>
+		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#dimensionschecking" class="tsd-kind-icon">Dimensions<wbr>Checking</a>
 		</li>
@@ -2840,14 +2855,13 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="target">DefaultAdvanceStrategy</span>
+					<span class="tsd-signature-type">Engine</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span>
+					<ul class="tsd-hierarchy">
+						<li>
+							<span class="target">Engine3</span>
+						</li>
+					</ul>
 				</li>
-			</ul>
-		</section>
-		<section class="tsd-panel">
-			<h3>Implements</h3>
-			<ul class="tsd-hierarchy">
-				<li><span class="tsd-signature-type">AdvanceStrategy</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -2857,13 +2871,18 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Constructors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="defaultadvancestrategy.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="engine3.html#constructor" class="tsd-kind-icon">constructor</a></li>
 						</ul>
 					</section>
-					<section class="tsd-index-section ">
+					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="defaultadvancestrategy.html#advance" class="tsd-kind-icon">advance</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#advance" class="tsd-kind-icon">advance</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#updatefrombodies" class="tsd-kind-icon">update<wbr>From<wbr>Bodies</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2871,64 +2890,197 @@ img {
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Constructors</h2>
-			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
-				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Default<wbr>Advance<wbr>Strategy<span class="tsd-signature-symbol">(</span>simulation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Simulation</span>, solver<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DiffEqSolver</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="defaultadvancestrategy.html" class="tsd-signature-type">DefaultAdvanceStrategy</a></li>
+				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Engine3<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/engineoptions.html" class="tsd-signature-type">EngineOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="engine3.html" class="tsd-signature-type">Engine3</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
+							<p>Overrides Engine.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/8890688/src/lib/strategy/DefaultAdvanceStrategy.ts#L11">lib/strategy/DefaultAdvanceStrategy.ts:11</a></li>
+								<li>Defined in lib/engine3D/Engine3.ts:9</li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>simulation: <span class="tsd-signature-type">Simulation</span></h5>
-							</li>
-							<li>
-								<h5>solver: <span class="tsd-signature-type">DiffEqSolver</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/engineoptions.html" class="tsd-signature-type">EngineOptions</a></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="defaultadvancestrategy.html" class="tsd-signature-type">DefaultAdvanceStrategy</a></h4>
+						<h4 class="tsd-returns-title">Returns <a href="engine3.html" class="tsd-signature-type">Engine3</a></h4>
 					</li>
 				</ul>
 			</section>
 		</section>
-		<section class="tsd-panel-group tsd-member-group ">
+		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Methods</h2>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="advance" class="tsd-anchor"></a>
-				<h3>advance</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">advance<span class="tsd-signature-symbol">(</span>stepSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, uomStep<span class="tsd-signature-symbol">?: </span><a href="unit.html" class="tsd-signature-type">Unit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="addbody" class="tsd-anchor"></a>
+				<h3>add<wbr>Body</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
+							<p>Inherited from Engine.addBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/8890688/src/lib/strategy/DefaultAdvanceStrategy.ts#L25">lib/strategy/DefaultAdvanceStrategy.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L42">lib/core/Engine.ts:42</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="addforcelaw" class="tsd-anchor"></a>
+				<h3>add<wbr>Force<wbr>Law</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.addForceLaw</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L60">lib/core/Engine.ts:60</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>forceLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="advance" class="tsd-anchor"></a>
+				<h3>advance</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">advance<span class="tsd-signature-symbol">(</span>Δt<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, uomTime<span class="tsd-signature-symbol">?: </span><a href="unit.html" class="tsd-signature-type">Unit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.advance</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L80">lib/core/Engine.ts:80</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>1.
-									2. The solver integrates the derivatives from the simulation.
-								3. Compute system variables such as energies, linear momentum, and angular momentum.</p>
+								<p>Advances the Physics model by the specified time interval, Δt * uomTime.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>stepSize: <span class="tsd-signature-type">number</span></h5>
+								<h5>Δt: <span class="tsd-signature-type">number</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The time interval.</p>
+								</div>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> uomStep: <a href="unit.html" class="tsd-signature-type">Unit</a></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> uomTime: <a href="unit.html" class="tsd-signature-type">Unit</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The optional unit of measure for the time interval.</p>
+								</div>
 							</li>
 						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="removebody" class="tsd-anchor"></a>
+				<h3>remove<wbr>Body</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.removeBody</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L51">lib/core/Engine.ts:51</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="removeforcelaw" class="tsd-anchor"></a>
+				<h3>remove<wbr>Force<wbr>Law</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.removeForceLaw</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L69">lib/core/Engine.ts:69</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>forceLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="updatefrombodies" class="tsd-anchor"></a>
+				<h3>update<wbr>From<wbr>Bodies</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>From<wbr>Bodies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.updateFromBodies</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/0cf6131/src/lib/core/Engine.ts#L87">lib/core/Engine.ts:87</a></li>
+							</ul>
+						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
