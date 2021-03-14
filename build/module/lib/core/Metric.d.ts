@@ -1,5 +1,7 @@
 import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
+import { Force } from "./Force";
+import { ForceBody } from "./ForceBody";
 /**
  * @hidden
  */
@@ -13,6 +15,12 @@ export interface Metric<T> {
     copyMatrix(m: MatrixLike): MatrixLike;
     copyScalar(a: number, uom: Unit, target: T): T;
     copyVector(source: T, target: T): T;
+    /**
+     * Create a non-generic instance derived from Force; Force is to be considered an abstract base type.
+     * This will make it easier for clients; after instanceof Force2 or Force3, the properties of the
+     * force application (F, and x) will have non-generic types.
+     */
+    createForce(body: ForceBody<T>): Force<T>;
     direction(mv: T, mutate: boolean): T;
     divByScalar(lhs: T, a: number, uom: Unit): T;
     ext(lhs: T, rhs: T): T;

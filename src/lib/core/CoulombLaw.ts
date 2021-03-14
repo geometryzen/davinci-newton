@@ -33,11 +33,11 @@ export class CoulombLaw<T> extends AbstractSimObject implements ForceLaw<T> {
         super();
         this.metric = body1_.metric;
         const metric = this.metric;
-        this.F1 = new Force(this.body1_, metric);
+        this.F1 = metric.createForce(this.body1_);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
 
-        this.F2 = new Force(this.body2_, metric);
+        this.F2 = metric.createForce(this.body2_);
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 

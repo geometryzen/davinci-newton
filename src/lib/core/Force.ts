@@ -6,7 +6,7 @@ import { Metric } from './Metric';
 /**
  * @hidden
  */
-export class Force<T> extends AbstractSimObject {
+export abstract class Force<T> extends AbstractSimObject {
     /**
      * 
      */

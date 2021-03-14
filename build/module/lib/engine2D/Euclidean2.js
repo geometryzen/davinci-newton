@@ -2,6 +2,7 @@ import { Geometric2 } from "../math/Geometric2";
 import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
+import { Force2 } from "./Force2";
 /**
  * @hidden
  */
@@ -38,6 +39,9 @@ var Euclidean2 = /** @class */ (function () {
     };
     Euclidean2.prototype.copyScalar = function (a, uom, target) {
         return target.copyScalar(a, uom);
+    };
+    Euclidean2.prototype.createForce = function (body) {
+        return new Force2(body);
     };
     Euclidean2.prototype.direction = function (mv, mutate) {
         return mv.direction(mutate);

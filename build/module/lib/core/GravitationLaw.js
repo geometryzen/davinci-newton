@@ -1,7 +1,6 @@
 import { __extends } from "tslib";
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force } from './Force';
 /**
  * @hidden
  */
@@ -17,10 +16,10 @@ var GravitationLaw = /** @class */ (function (_super) {
         _this.forces = [];
         _this.metric = body1_.metric;
         var metric = _this.metric;
-        _this.F1 = new Force(_this.body1_, metric);
+        _this.F1 = metric.createForce(_this.body1_);
         _this.F1.locationCoordType = WORLD;
         _this.F1.vectorCoordType = WORLD;
-        _this.F2 = new Force(_this.body2_, metric);
+        _this.F2 = metric.createForce(_this.body2_);
         _this.F2.locationCoordType = WORLD;
         _this.F2.vectorCoordType = WORLD;
         _this.G = G;

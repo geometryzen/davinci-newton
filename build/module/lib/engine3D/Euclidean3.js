@@ -1,6 +1,7 @@
 import { Geometric3 } from "../math/Geometric3";
 import { Mat3 } from "../math/Mat3";
 import { Matrix3 } from "../math/Matrix3";
+import { Force3 } from "./Force3";
 /**
  * @hidden
  */
@@ -33,6 +34,9 @@ var Euclidean3 = /** @class */ (function () {
     };
     Euclidean3.prototype.copyScalar = function (a, uom, target) {
         return target.copyScalar(a, uom);
+    };
+    Euclidean3.prototype.createForce = function (body) {
+        return new Force3(body);
     };
     Euclidean3.prototype.direction = function (mv, mutate) {
         return mv.direction(mutate);

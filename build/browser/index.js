@@ -159,100 +159,6 @@
     /**
      * @hidden
      */
-    var Force = /** @class */ (function (_super) {
-        __extends(Force, _super);
-        /**
-         *
-         */
-        function Force(body_, metric) {
-            var _this = _super.call(this) || this;
-            _this.body_ = body_;
-            _this.metric = metric;
-            _this.location = metric.zero();
-            _this.vector = metric.zero();
-            _this.position_ = metric.zero();
-            _this.force_ = metric.zero();
-            return _this;
-        }
-        /**
-         *
-         */
-        Force.prototype.getBody = function () {
-            return this.body_;
-        };
-        /**
-         * Computes the force being applied (vector).
-         */
-        Force.prototype.computeForce = function (force) {
-            switch (this.vectorCoordType) {
-                case LOCAL: {
-                    this.metric.copyVector(this.vector, this.force_); // force_ contains this.vector.
-                    this.metric.rotate(this.force_, this.body_.R);
-                    this.metric.writeVector(this.force_, force);
-                    break;
-                }
-                case WORLD: {
-                    this.metric.copyVector(this.vector, this.force_);
-                    this.metric.writeVector(this.force_, force);
-                    break;
-                }
-            }
-        };
-        Object.defineProperty(Force.prototype, "F", {
-            get: function () {
-                this.computeForce(this.force_);
-                return this.force_;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Force.prototype, "x", {
-            get: function () {
-                this.computePosition(this.position_);
-                return this.position_;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * Computes the point of application of the force in world coordinates.
-         */
-        Force.prototype.computePosition = function (position) {
-            switch (this.locationCoordType) {
-                case LOCAL: {
-                    this.metric.copyVector(this.location, this.position_);
-                    // We could subtract the body center-of-mass in body coordinates here.
-                    // Instead we assume that it is always zero.
-                    this.metric.rotate(this.position_, this.body_.R);
-                    this.metric.addVector(this.position_, this.body_.X);
-                    this.metric.writeVector(this.position_, position);
-                    break;
-                }
-                case WORLD: {
-                    this.metric.copyVector(this.location, this.position_);
-                    this.metric.writeVector(this.position_, position);
-                    break;
-                }
-            }
-        };
-        /**
-         * Computes the torque, i.e. moment of the force about the center of mass (bivector).
-         * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
-         * Torque = r ^ F because r = x - X
-         */
-        Force.prototype.computeTorque = function (torque) {
-            this.computePosition(this.position_);
-            this.computeForce(this.force_);
-            this.metric.subVector(this.position_, this.body_.X); // position contains x - X
-            this.metric.ext(this.position_, this.force_); // 
-            this.metric.write(this.position_, torque);
-        };
-        return Force;
-    }(AbstractSimObject));
-
-    /**
-     * @hidden
-     */
     var ConstantForceLaw = /** @class */ (function (_super) {
         __extends(ConstantForceLaw, _super);
         /**
@@ -264,7 +170,7 @@
             _this.$body = $body;
             _this.$forces = [];
             var metric = _this.$body.metric;
-            _this.$force = new Force(_this.$body, metric);
+            _this.$force = metric.createForce(_this.$body);
             _this.$force.locationCoordType = LOCAL;
             _this.vector = vector;
             _this.$force.vectorCoordType = vectorCoordType;
@@ -337,10 +243,10 @@
             _this.forces = [];
             _this.metric = body1_.metric;
             var metric = _this.metric;
-            _this.F1 = new Force(_this.body1_, metric);
+            _this.F1 = metric.createForce(_this.body1_);
             _this.F1.locationCoordType = WORLD;
             _this.F1.vectorCoordType = WORLD;
-            _this.F2 = new Force(_this.body2_, metric);
+            _this.F2 = metric.createForce(_this.body2_);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.k = k;
@@ -4478,6 +4384,100 @@
     /**
      * @hidden
      */
+    var Force = /** @class */ (function (_super) {
+        __extends(Force, _super);
+        /**
+         *
+         */
+        function Force(body_, metric) {
+            var _this = _super.call(this) || this;
+            _this.body_ = body_;
+            _this.metric = metric;
+            _this.location = metric.zero();
+            _this.vector = metric.zero();
+            _this.position_ = metric.zero();
+            _this.force_ = metric.zero();
+            return _this;
+        }
+        /**
+         *
+         */
+        Force.prototype.getBody = function () {
+            return this.body_;
+        };
+        /**
+         * Computes the force being applied (vector).
+         */
+        Force.prototype.computeForce = function (force) {
+            switch (this.vectorCoordType) {
+                case LOCAL: {
+                    this.metric.copyVector(this.vector, this.force_); // force_ contains this.vector.
+                    this.metric.rotate(this.force_, this.body_.R);
+                    this.metric.writeVector(this.force_, force);
+                    break;
+                }
+                case WORLD: {
+                    this.metric.copyVector(this.vector, this.force_);
+                    this.metric.writeVector(this.force_, force);
+                    break;
+                }
+            }
+        };
+        Object.defineProperty(Force.prototype, "F", {
+            get: function () {
+                this.computeForce(this.force_);
+                return this.force_;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Force.prototype, "x", {
+            get: function () {
+                this.computePosition(this.position_);
+                return this.position_;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Computes the point of application of the force in world coordinates.
+         */
+        Force.prototype.computePosition = function (position) {
+            switch (this.locationCoordType) {
+                case LOCAL: {
+                    this.metric.copyVector(this.location, this.position_);
+                    // We could subtract the body center-of-mass in body coordinates here.
+                    // Instead we assume that it is always zero.
+                    this.metric.rotate(this.position_, this.body_.R);
+                    this.metric.addVector(this.position_, this.body_.X);
+                    this.metric.writeVector(this.position_, position);
+                    break;
+                }
+                case WORLD: {
+                    this.metric.copyVector(this.location, this.position_);
+                    this.metric.writeVector(this.position_, position);
+                    break;
+                }
+            }
+        };
+        /**
+         * Computes the torque, i.e. moment of the force about the center of mass (bivector).
+         * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
+         * Torque = r ^ F because r = x - X
+         */
+        Force.prototype.computeTorque = function (torque) {
+            this.computePosition(this.position_);
+            this.computeForce(this.force_);
+            this.metric.subVector(this.position_, this.body_.X); // position contains x - X
+            this.metric.ext(this.position_, this.force_); // 
+            this.metric.write(this.position_, torque);
+        };
+        return Force;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
     var GravitationLaw = /** @class */ (function (_super) {
         __extends(GravitationLaw, _super);
         /**
@@ -4490,10 +4490,10 @@
             _this.forces = [];
             _this.metric = body1_.metric;
             var metric = _this.metric;
-            _this.F1 = new Force(_this.body1_, metric);
+            _this.F1 = metric.createForce(_this.body1_);
             _this.F1.locationCoordType = WORLD;
             _this.F1.vectorCoordType = WORLD;
-            _this.F2 = new Force(_this.body2_, metric);
+            _this.F2 = metric.createForce(_this.body2_);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.G = G;
@@ -5003,10 +5003,10 @@
             _this.end1Lock_ = metric.lock(_this.end1_);
             _this.end2_ = metric.zero();
             _this.end2Lock_ = metric.lock(_this.end2_);
-            _this.F1 = new Force(_this.body1_, metric);
+            _this.F1 = metric.createForce(_this.body1_);
             _this.F1.locationCoordType = WORLD;
             _this.F1.vectorCoordType = WORLD;
-            _this.F2 = new Force(_this.body2_, metric);
+            _this.F2 = metric.createForce(_this.body2_);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.potentialEnergy_ = metric.zero();
@@ -7697,6 +7697,17 @@
     }(AbstractMatrix));
 
     /**
+     *
+     */
+    var Force2 = /** @class */ (function (_super) {
+        __extends(Force2, _super);
+        function Force2(body) {
+            return _super.call(this, body, body.metric) || this;
+        }
+        return Force2;
+    }(Force));
+
+    /**
      * @hidden
      */
     var Euclidean2 = /** @class */ (function () {
@@ -7732,6 +7743,9 @@
         };
         Euclidean2.prototype.copyScalar = function (a, uom, target) {
             return target.copyScalar(a, uom);
+        };
+        Euclidean2.prototype.createForce = function (body) {
+            return new Force2(body);
         };
         Euclidean2.prototype.direction = function (mv, mutate) {
             return mv.direction(mutate);
@@ -8232,17 +8246,6 @@
         }
         return Engine2;
     }(Engine));
-
-    /**
-     *
-     */
-    var Force2 = /** @class */ (function (_super) {
-        __extends(Force2, _super);
-        function Force2(body) {
-            return _super.call(this, body, body.metric) || this;
-        }
-        return Force2;
-    }(Force));
 
     var GravitationForceLaw2 = /** @class */ (function (_super) {
         __extends(GravitationForceLaw2, _super);
@@ -12161,6 +12164,17 @@
     }());
 
     /**
+     *
+     */
+    var Force3 = /** @class */ (function (_super) {
+        __extends(Force3, _super);
+        function Force3(body) {
+            return _super.call(this, body, body.metric) || this;
+        }
+        return Force3;
+    }(Force));
+
+    /**
      * @hidden
      */
     var Euclidean3 = /** @class */ (function () {
@@ -12192,6 +12206,9 @@
         };
         Euclidean3.prototype.copyScalar = function (a, uom, target) {
             return target.copyScalar(a, uom);
+        };
+        Euclidean3.prototype.createForce = function (body) {
+            return new Force3(body);
         };
         Euclidean3.prototype.direction = function (mv, mutate) {
             return mv.direction(mutate);
@@ -12744,17 +12761,6 @@
         }
         return Engine3;
     }(Engine));
-
-    /**
-     *
-     */
-    var Force3 = /** @class */ (function (_super) {
-        __extends(Force3, _super);
-        function Force3(body) {
-            return _super.call(this, body, body.metric) || this;
-        }
-        return Force3;
-    }(Force));
 
     var GravitationForceLaw3 = /** @class */ (function (_super) {
         __extends(GravitationForceLaw3, _super);

@@ -22,7 +22,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     constructor(private $body: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
         super();
         const metric = this.$body.metric;
-        this.$force = new Force(this.$body, metric);
+        this.$force = metric.createForce(this.$body);
 
         this.$force.locationCoordType = LOCAL;
         this.vector = vector;

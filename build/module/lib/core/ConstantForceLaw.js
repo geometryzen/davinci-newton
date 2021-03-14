@@ -1,7 +1,6 @@
 import { __extends } from "tslib";
 import { LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Force } from './Force';
 /**
  * @hidden
  */
@@ -16,7 +15,7 @@ var ConstantForceLaw = /** @class */ (function (_super) {
         _this.$body = $body;
         _this.$forces = [];
         var metric = _this.$body.metric;
-        _this.$force = new Force(_this.$body, metric);
+        _this.$force = metric.createForce(_this.$body);
         _this.$force.locationCoordType = LOCAL;
         _this.vector = vector;
         _this.$force.vectorCoordType = vectorCoordType;

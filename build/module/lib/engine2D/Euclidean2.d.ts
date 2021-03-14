@@ -2,6 +2,8 @@ import { Metric } from "../core/Metric";
 import { Geometric2 } from "../math/Geometric2";
 import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
+import { Force } from "../..";
+import { ForceBody } from "../core/ForceBody";
 /**
  * @hidden
  */
@@ -15,6 +17,7 @@ export declare class Euclidean2 implements Metric<Geometric2> {
     copyMatrix(m: MatrixLike): MatrixLike;
     copyVector(source: Geometric2, target: Geometric2): Geometric2;
     copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
+    createForce(body: ForceBody<Geometric2>): Force<Geometric2>;
     direction(mv: Geometric2, mutate: boolean): Geometric2;
     divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
     identityMatrix(): MatrixLike;

@@ -3,7 +3,6 @@ import { Unit } from '../math/Unit';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
-import { Force } from './Force';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 /**
  * @hidden
@@ -35,10 +34,10 @@ var Spring = /** @class */ (function (_super) {
         _this.end1Lock_ = metric.lock(_this.end1_);
         _this.end2_ = metric.zero();
         _this.end2Lock_ = metric.lock(_this.end2_);
-        _this.F1 = new Force(_this.body1_, metric);
+        _this.F1 = metric.createForce(_this.body1_);
         _this.F1.locationCoordType = WORLD;
         _this.F1.vectorCoordType = WORLD;
-        _this.F2 = new Force(_this.body2_, metric);
+        _this.F2 = metric.createForce(_this.body2_);
         _this.F2.locationCoordType = WORLD;
         _this.F2.vectorCoordType = WORLD;
         _this.potentialEnergy_ = metric.zero();

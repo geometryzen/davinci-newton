@@ -1,3 +1,5 @@
+import { Force } from "../..";
+import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
 import { Geometric3 } from "../math/Geometric3";
 import { MatrixLike } from "../math/MatrixLike";
@@ -15,6 +17,7 @@ export declare class Euclidean3 implements Metric<Geometric3> {
     copyMatrix(m: MatrixLike): MatrixLike;
     copyVector(source: Geometric3, target: Geometric3): Geometric3;
     copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
+    createForce(body: ForceBody<Geometric3>): Force<Geometric3>;
     direction(mv: Geometric3, mutate: boolean): Geometric3;
     divByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
     identityMatrix(): MatrixLike;

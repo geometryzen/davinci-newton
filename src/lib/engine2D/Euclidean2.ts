@@ -4,6 +4,9 @@ import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
+import { Force } from "../..";
+import { ForceBody } from "../core/ForceBody";
+import { Force2 } from "./Force2";
 
 /**
  * @hidden
@@ -39,6 +42,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2 {
         return target.copyScalar(a, uom);
+    }
+    createForce(body: ForceBody<Geometric2>): Force<Geometric2> {
+        return new Force2(body);
     }
     direction(mv: Geometric2, mutate: boolean): Geometric2 {
         return mv.direction(mutate);
