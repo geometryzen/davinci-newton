@@ -88,7 +88,7 @@ var ConcreteVariable = /** @class */ (function () {
     /**
      *
      */
-    ConcreteVariable.prototype.setValue = function (value) {
+    ConcreteVariable.prototype.setValueJump = function (value) {
         if (this.value_ !== value) {
             this.value_ = value;
             this.seq_++;
@@ -97,7 +97,7 @@ var ConcreteVariable = /** @class */ (function () {
             }
         }
     };
-    ConcreteVariable.prototype.setValueSmooth = function (value) {
+    ConcreteVariable.prototype.setValueContinuous = function (value) {
         this.value_ = value;
     };
     /**

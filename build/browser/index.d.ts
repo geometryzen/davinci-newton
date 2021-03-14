@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.39
+// Type definitions for davinci-newton 1.0.40
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2418,7 +2418,7 @@ export type CoordType = 0 | 1;
 /**
  * The application of a force to a particle in a rigid body.
  */
-export class Force<T> implements SimObject {
+export abstract class Force<T> implements SimObject {
     /**
      * 
      */

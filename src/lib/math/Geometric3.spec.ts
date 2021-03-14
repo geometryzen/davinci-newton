@@ -110,7 +110,7 @@ function reflectSpec(M: Geometric3, n: VectorE3) {
  * Make this as large as possible while avoiding rounding errors.
  * @hidden
  */
-const PRECISION = 13;
+const PRECISION = 12;
 
 describe("Geometric3", function () {
 

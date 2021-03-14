@@ -128,22 +128,22 @@ var Dynamics2 = /** @class */ (function () {
         for (var i = 0; i < Nf; i++) {
             pe += fs[i].potentialEnergy().a;
         }
-        varsList.setValue(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-        varsList.setValue(INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-        varsList.setValue(INDEX_POTENTIAL_ENERGY, pe, true);
-        varsList.setValue(INDEX_TOTAL_ENERGY, te + re + pe, true);
-        varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
-        varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
-        varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+        varsList.setValueContinuous(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te);
+        varsList.setValueContinuous(INDEX_ROTATIONAL_KINETIC_ENERGY, re);
+        varsList.setValueContinuous(INDEX_POTENTIAL_ENERGY, pe);
+        varsList.setValueContinuous(INDEX_TOTAL_ENERGY, te + re + pe);
+        varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px);
+        varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py);
+        varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy);
     };
     Dynamics2.prototype.updateVarsFromBody = function (body, idx, vars) {
-        vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
-        vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
-        vars.setValue(OFFSET_ATTITUDE_A + idx, body.R.a);
-        vars.setValue(OFFSET_ATTITUDE_XY + idx, body.R.b);
-        vars.setValue(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-        vars.setValue(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-        vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
+        vars.setValueJump(OFFSET_POSITION_X + idx, body.X.x);
+        vars.setValueJump(OFFSET_POSITION_Y + idx, body.X.y);
+        vars.setValueJump(OFFSET_ATTITUDE_A + idx, body.R.a);
+        vars.setValueJump(OFFSET_ATTITUDE_XY + idx, body.R.b);
+        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
+        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
+        vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
     };
     Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;

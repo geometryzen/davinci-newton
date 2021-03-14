@@ -50,11 +50,11 @@ import { AbstractSubject } from '../util/AbstractSubject';
  */
 export declare class VarsList extends AbstractSubject implements GraphVarsList {
     /**
-     *
+     * This name cannot be used as a variable name.
      */
     private static readonly DELETED;
     /**
-     *
+     * This name is the reserved name for the time variable.
      */
     static readonly TIME = "TIME";
     /**
@@ -62,13 +62,18 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      */
     private static readonly VARS_MODIFIED;
     /**
-     *
+     * The zero-based index of the time variable.
      */
-    private timeIdx_;
+    private $timeIdx;
     /**
-     *
+     * The variables that provide the data for this wrapper.
      */
-    private varList_;
+    private $variables;
+    /**
+     * A lazy cache of variable values to minimize creation of temporary objects.
+     * This is only synchronized when the state is requested.
+     */
+    private readonly $values;
     /**
      * Whether to save simulation state history.
      */
@@ -126,7 +131,8 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
     getSequence(index: number): number;
     /**
      * Returns an array with the current value of each variable.
-     * The returned array is a copy and will not change.
+     * The returned array is a copy of the variable values; changing the array will not change the variable values.
+     * However, for performance, the array is maintained between invocations.
      */
     getValues(): number[];
     /**
@@ -142,6 +148,10 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      */
     setValues(vars: number[], continuous?: boolean): void;
     /**
+     * @hidden
+     */
+    setValuesContinuous(vars: number[]): void;
+    /**
      * Sets the specified variable to the given value. Variables are numbered starting at
      * zero. Assumes this is a discontinous change, so the sequence number is incremented
      * unless you specify that this is a continuous change in the variable.
@@ -153,6 +163,14 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      * @throws if value is `NaN`
      */
     setValue(index: number, value: number, continuous?: boolean): void;
+    /**
+     * @hidden
+     */
+    setValueContinuous(index: number, value: number): void;
+    /**
+     * @hidden
+     */
+    setValueJump(index: number, value: number): void;
     /**
      *
      */

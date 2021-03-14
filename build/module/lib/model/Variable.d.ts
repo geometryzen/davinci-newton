@@ -40,10 +40,10 @@ export interface Variable extends Parameter {
     /**
      * Sets the value of this Variable and increases the sequence number.
      */
-    setValue(value: number): void;
+    setValueJump(value: number): void;
     /**
      * Sets the value of this Variable without changing the sequence number which means
      * it is a 'smooth' continuous change to the variable.
      */
-    setValueSmooth(value: number): void;
+    setValueContinuous(value: number): void;
 }

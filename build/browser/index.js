@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-13';
+            this.LAST_MODIFIED = '2021-03-14';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.39';
+            this.VERSION = '1.0.40';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -3465,7 +3465,7 @@
         /**
          *
          */
-        ConcreteVariable.prototype.setValue = function (value) {
+        ConcreteVariable.prototype.setValueJump = function (value) {
             if (this.value_ !== value) {
                 this.value_ = value;
                 this.seq_++;
@@ -3474,7 +3474,7 @@
                 }
             }
         };
-        ConcreteVariable.prototype.setValueSmooth = function (value) {
+        ConcreteVariable.prototype.setValueContinuous = function (value) {
             this.value_ = value;
         };
         /**
@@ -3573,13 +3573,18 @@
         function VarsList(names) {
             var _this = _super.call(this) || this;
             /**
-             *
+             * The zero-based index of the time variable.
              */
-            _this.timeIdx_ = -1;
+            _this.$timeIdx = -1;
             /**
-             *
+             * The variables that provide the data for this wrapper.
              */
-            _this.varList_ = [];
+            _this.$variables = [];
+            /**
+             * A lazy cache of variable values to minimize creation of temporary objects.
+             * This is only synchronized when the state is requested.
+             */
+            _this.$values = [];
             /**
              * Whether to save simulation state history.
              */
@@ -3589,28 +3594,12 @@
              * An array of copies of the vars array.
              */
             _this.histArray_ = [];
+            // console.lg(`VarsList.constructor(names=${JSON.stringify(names)})`);
             var howMany = names.length;
             if (howMany !== 0) {
                 _this.addVariables(names);
             }
             return _this;
-            /*
-            for (let i = 0, n = names.length; i < n; i++) {
-                let s = names[i];
-                if (!isString(s)) {
-                    throw new Error('variable name ' + s + ' is not a string i=' + i);
-                }
-                s = validName(toName(s));
-                names[i] = s;
-                // find index of the time variable.
-                if (s === VarsList.TIME) {
-                    this.timeIdx_ = i;
-                }
-            }
-            for (let i = 0, n = names.length; i < n; i++) {
-                this.varList_.push(new ConcreteVariable(this, names[i]));
-            }
-            */
         }
         /**
          * Returns index to put a contiguous group of variables.  Expands the set of variables
@@ -3621,8 +3610,8 @@
         VarsList.prototype.findOpenSlot_ = function (quantity) {
             var found = 0;
             var startIdx = -1;
-            for (var i = 0, n = this.varList_.length; i < n; i++) {
-                if (this.varList_[i].name === VarsList.DELETED) {
+            for (var i = 0, n = this.$variables.length; i < n; i++) {
+                if (this.$variables[i].name === VarsList.DELETED) {
                     if (startIdx === -1) {
                         startIdx = i;
                     }
@@ -3645,14 +3634,14 @@
             else {
                 // Did not find contiguous group of deleted variables of requested size.
                 // Add space at end of current variables.
-                startIdx = this.varList_.length;
+                startIdx = this.$variables.length;
                 expand = quantity;
             }
             var newVars = [];
             for (var i = 0; i < expand; i++) {
                 newVars.push(new ConcreteVariable(this, VarsList.DELETED));
             }
-            extendArray(this.varList_, expand, newVars);
+            extendArray(this.$variables, expand, newVars);
             return startIdx;
         };
         /**
@@ -3665,19 +3654,19 @@
         VarsList.prototype.addVariables = function (names) {
             var howMany = names.length;
             if (howMany === 0) {
-                throw new Error();
+                throw new Error("names must not be empty.");
             }
             var position = this.findOpenSlot_(howMany);
             for (var i = 0; i < howMany; i++) {
                 var name_1 = validName(toName(names[i]));
                 if (name_1 === VarsList.DELETED) {
-                    throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
+                    throw new Error("variable cannot be named '" + VarsList.DELETED + "'.");
                 }
                 var idx = position + i;
-                this.varList_[idx] = new ConcreteVariable(this, name_1);
+                this.$variables[idx] = new ConcreteVariable(this, name_1);
                 if (name_1 === VarsList.TIME) {
                     // auto-detect time variable
-                    this.timeIdx_ = idx;
+                    this.$timeIdx = idx;
                 }
             }
             this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
@@ -3696,11 +3685,11 @@
             if (howMany === 0) {
                 return;
             }
-            if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
+            if (howMany < 0 || index < 0 || index + howMany > this.$variables.length) {
                 throw new Error('deleteVariables');
             }
             for (var i = index; i < index + howMany; i++) {
-                this.varList_[i] = new ConcreteVariable(this, VarsList.DELETED);
+                this.$variables[i] = new ConcreteVariable(this, VarsList.DELETED);
             }
             this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
         };
@@ -3718,8 +3707,8 @@
             }
             if (arguments.length === 0) {
                 // increment sequence number on all variables
-                for (var i = 0, n = this.varList_.length; i < n; i++) {
-                    this.varList_[i].incrSequence();
+                for (var i = 0, n = this.$variables.length; i < n; i++) {
+                    this.$variables[i].incrSequence();
                 }
             }
             else {
@@ -3727,7 +3716,7 @@
                 for (var i = 0, n = arguments.length; i < n; i++) {
                     var idx = arguments[i];
                     this.checkIndex_(idx);
-                    this.varList_[idx].incrSequence();
+                    this.$variables[idx].incrSequence();
                 }
             }
         };
@@ -3738,22 +3727,32 @@
          */
         VarsList.prototype.getValue = function (index) {
             this.checkIndex_(index);
-            return this.varList_[index].getValue();
+            return this.$variables[index].getValue();
         };
         VarsList.prototype.getName = function (index) {
             this.checkIndex_(index);
-            return this.varList_[index].name;
+            return this.$variables[index].name;
         };
         VarsList.prototype.getSequence = function (index) {
             this.checkIndex_(index);
-            return this.varList_[index].getSequence();
+            return this.$variables[index].getSequence();
         };
         /**
          * Returns an array with the current value of each variable.
-         * The returned array is a copy and will not change.
+         * The returned array is a copy of the variable values; changing the array will not change the variable values.
+         * However, for performance, the array is maintained between invocations.
          */
         VarsList.prototype.getValues = function () {
-            return this.varList_.map(function (v) { return v.getValue(); });
+            var values = this.$values;
+            var variables = this.$variables;
+            var N = variables.length;
+            if (values.length !== N) {
+                values.length = N;
+            }
+            for (var i = 0; i < N; i++) {
+                values[i] = variables[i].getValue();
+            }
+            return this.$values;
         };
         /**
          * Sets the value of each variable from the given list of values. When the length of
@@ -3768,8 +3767,7 @@
          */
         VarsList.prototype.setValues = function (vars, continuous) {
             if (continuous === void 0) { continuous = false; }
-            // NOTE: vars.length can be less than this.varList_.length
-            var N = this.varList_.length;
+            var N = this.$variables.length;
             var n = vars.length;
             if (n > N) {
                 throw new Error("setValues bad length n = " + n + " > N = " + N);
@@ -3777,6 +3775,18 @@
             for (var i = 0; i < N; i++) {
                 if (i < n) {
                     this.setValue(i, vars[i], continuous);
+                }
+            }
+        };
+        /**
+         * @hidden
+         */
+        VarsList.prototype.setValuesContinuous = function (vars) {
+            var N = this.$variables.length;
+            var n = vars.length;
+            for (var i = 0; i < N; i++) {
+                if (i < n) {
+                    this.setValueContinuous(i, vars[i]);
                 }
             }
         };
@@ -3794,23 +3804,37 @@
         VarsList.prototype.setValue = function (index, value, continuous) {
             if (continuous === void 0) { continuous = false; }
             this.checkIndex_(index);
-            var variable = this.varList_[index];
+            var variable = this.$variables[index];
             if (isNaN(value)) {
                 throw new Error('cannot set variable ' + variable.name + ' to NaN');
             }
             if (continuous) {
-                variable.setValueSmooth(value);
+                variable.setValueContinuous(value);
             }
             else {
-                variable.setValue(value);
+                variable.setValueJump(value);
             }
+        };
+        /**
+         * @hidden
+         */
+        VarsList.prototype.setValueContinuous = function (index, value) {
+            var variable = this.$variables[index];
+            variable.setValueContinuous(value);
+        };
+        /**
+         * @hidden
+         */
+        VarsList.prototype.setValueJump = function (index, value) {
+            var variable = this.$variables[index];
+            variable.setValueJump(value);
         };
         /**
          *
          */
         VarsList.prototype.checkIndex_ = function (index) {
-            if (index < 0 || index >= this.varList_.length) {
-                throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
+            if (index < 0 || index >= this.$variables.length) {
+                throw new Error('bad variable index=' + index + '; numVars=' + this.$variables.length);
             }
         };
         /**
@@ -3826,10 +3850,10 @@
             }
             // add variable to first open slot
             var position = this.findOpenSlot_(1);
-            this.varList_[position] = variable;
+            this.$variables[position] = variable;
             if (name === VarsList.TIME) {
                 // auto-detect time variable
-                this.timeIdx_ = position;
+                this.$timeIdx = position;
             }
             this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
             return position;
@@ -3843,7 +3867,7 @@
         };
         VarsList.prototype.getParameter = function (name) {
             name = toName(name);
-            var p = find(this.varList_, function (p) {
+            var p = find(this.$variables, function (p) {
                 return p.name === name;
             });
             if (p != null) {
@@ -3852,7 +3876,7 @@
             throw new Error('Parameter not found ' + name);
         };
         VarsList.prototype.getParameters = function () {
-            return clone(this.varList_);
+            return clone(this.$variables);
         };
         /**
          * Returns the value of the time variable, or throws an exception if there is no time variable.
@@ -3863,10 +3887,10 @@
          * @throws if there is no time variable
          */
         VarsList.prototype.getTime = function () {
-            if (this.timeIdx_ < 0) {
+            if (this.$timeIdx < 0) {
                 throw new Error('no time variable');
             }
-            return this.getValue(this.timeIdx_);
+            return this.getValue(this.$timeIdx);
         };
         /**
          * Returns the Variable object at the given index or with the given name
@@ -3881,7 +3905,7 @@
             }
             else if (isString(id)) {
                 id = toName(id);
-                index = findIndex(this.varList_, function (v) { return v.name === id; });
+                index = findIndex(this.$variables, function (v) { return v.name === id; });
                 if (index < 0) {
                     throw new Error('unknown variable name ' + id);
                 }
@@ -3890,7 +3914,7 @@
                 throw new Error();
             }
             this.checkIndex_(index);
-            return this.varList_[index];
+            return this.$variables[index];
         };
         /**
          * Returns the number of variables available. This includes any deleted
@@ -3898,7 +3922,7 @@
          * @return the number of variables in this VarsList
          */
         VarsList.prototype.numVariables = function () {
-            return this.varList_.length;
+            return this.$variables.length;
         };
         /**
          * Saves the current variables in a 'history' set, for debugging, to be able to
@@ -3927,7 +3951,7 @@
             for (var i = 0, n = arguments.length; i < n; i++) {
                 var idx = arguments[i];
                 this.checkIndex_(idx);
-                this.varList_[idx].setComputed(true);
+                this.$variables[idx].setComputed(true);
             }
         };
         /**
@@ -3943,26 +3967,26 @@
          * @throws {Error} if there is no time variable
          */
         VarsList.prototype.setTime = function (time) {
-            this.setValue(this.timeIdx_, time);
+            this.setValueJump(this.$timeIdx, time);
         };
         /**
          * Returns the index of the time variable, or -1 if there is no time variable.
          */
         VarsList.prototype.timeIndex = function () {
-            return this.timeIdx_;
+            return this.$timeIdx;
         };
         /**
          * Returns the set of Variable objects in this VarsList, in their correct ordering.
          */
         VarsList.prototype.toArray = function () {
-            return clone(this.varList_);
+            return clone(this.$variables);
         };
         /**
-         *
+         * This name cannot be used as a variable name.
          */
         VarsList.DELETED = 'DELETED';
         /**
-         *
+         * This name is the reserved name for the time variable.
          */
         VarsList.TIME = 'TIME';
         /**
@@ -4115,6 +4139,8 @@
         };
         /**
          * Gets the state vector, Y(t).
+         * The returned array is a copy of the state vector variable values.
+         * However, for performance, the array is maintained between invocations.
          * @hidden
          */
         Physics.prototype.getState = function () {
@@ -4125,7 +4151,7 @@
          * @hidden
          */
         Physics.prototype.setState = function (state) {
-            this.varsList.setValues(state, true);
+            this.varsList.setValuesContinuous(state);
         };
         /**
          * The time value is not being used because the DiffEqSolver has updated the vars.
@@ -8156,22 +8182,22 @@
             for (var i = 0; i < Nf; i++) {
                 pe += fs[i].potentialEnergy().a;
             }
-            varsList.setValue(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-            varsList.setValue(INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-            varsList.setValue(INDEX_POTENTIAL_ENERGY, pe, true);
-            varsList.setValue(INDEX_TOTAL_ENERGY, te + re + pe, true);
-            varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X$1, Px, true);
-            varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y$1, Py, true);
-            varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY$1, Lxy, true);
+            varsList.setValueContinuous(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te);
+            varsList.setValueContinuous(INDEX_ROTATIONAL_KINETIC_ENERGY, re);
+            varsList.setValueContinuous(INDEX_POTENTIAL_ENERGY, pe);
+            varsList.setValueContinuous(INDEX_TOTAL_ENERGY, te + re + pe);
+            varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_X$1, Px);
+            varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_Y$1, Py);
+            varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_XY$1, Lxy);
         };
         Dynamics2.prototype.updateVarsFromBody = function (body, idx, vars) {
-            vars.setValue(OFFSET_POSITION_X$1 + idx, body.X.x);
-            vars.setValue(OFFSET_POSITION_Y$1 + idx, body.X.y);
-            vars.setValue(OFFSET_ATTITUDE_A$1 + idx, body.R.a);
-            vars.setValue(OFFSET_ATTITUDE_XY$1 + idx, body.R.b);
-            vars.setValue(OFFSET_LINEAR_MOMENTUM_X$1 + idx, body.P.x);
-            vars.setValue(OFFSET_LINEAR_MOMENTUM_Y$1 + idx, body.P.y);
-            vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY$1 + idx, body.L.b);
+            vars.setValueJump(OFFSET_POSITION_X$1 + idx, body.X.x);
+            vars.setValueJump(OFFSET_POSITION_Y$1 + idx, body.X.y);
+            vars.setValueJump(OFFSET_ATTITUDE_A$1 + idx, body.R.a);
+            vars.setValueJump(OFFSET_ATTITUDE_XY$1 + idx, body.R.b);
+            vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X$1 + idx, body.P.x);
+            vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y$1 + idx, body.P.y);
+            vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY$1 + idx, body.L.b);
         };
         Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] += force.x;
@@ -12658,31 +12684,31 @@
             for (var i = 0; i < Nf; i++) {
                 pe += fs[i].potentialEnergy().a;
             }
-            varsList.setValue(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te, true);
-            varsList.setValue(INDEX_ROTATIONAL_KINETIC_ENERGY, re, true);
-            varsList.setValue(INDEX_POTENTIAL_ENERGY, pe, true);
-            varsList.setValue(INDEX_TOTAL_ENERGY, te + re + pe, true);
-            varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px, true);
-            varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py, true);
-            varsList.setValue(INDEX_TOTAL_LINEAR_MOMENTUM_Z, Pz, true);
-            varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, Lyz, true);
-            varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx, true);
-            varsList.setValue(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy, true);
+            varsList.setValueContinuous(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te);
+            varsList.setValueContinuous(INDEX_ROTATIONAL_KINETIC_ENERGY, re);
+            varsList.setValueContinuous(INDEX_POTENTIAL_ENERGY, pe);
+            varsList.setValueContinuous(INDEX_TOTAL_ENERGY, te + re + pe);
+            varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_X, Px);
+            varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py);
+            varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_Z, Pz);
+            varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_YZ, Lyz);
+            varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_ZX, Lzx);
+            varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy);
         };
         Dynamics3.prototype.updateVarsFromBody = function (body, idx, vars) {
-            vars.setValue(OFFSET_POSITION_X + idx, body.X.x);
-            vars.setValue(OFFSET_POSITION_Y + idx, body.X.y);
-            vars.setValue(OFFSET_POSITION_Z + idx, body.X.z);
-            vars.setValue(OFFSET_ATTITUDE_A + idx, body.R.a);
-            vars.setValue(OFFSET_ATTITUDE_XY + idx, body.R.xy);
-            vars.setValue(OFFSET_ATTITUDE_YZ + idx, body.R.yz);
-            vars.setValue(OFFSET_ATTITUDE_ZX + idx, body.R.zx);
-            vars.setValue(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-            vars.setValue(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-            vars.setValue(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
-            vars.setValue(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
-            vars.setValue(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
-            vars.setValue(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
+            vars.setValueJump(OFFSET_POSITION_X + idx, body.X.x);
+            vars.setValueJump(OFFSET_POSITION_Y + idx, body.X.y);
+            vars.setValueJump(OFFSET_POSITION_Z + idx, body.X.z);
+            vars.setValueJump(OFFSET_ATTITUDE_A + idx, body.R.a);
+            vars.setValueJump(OFFSET_ATTITUDE_XY + idx, body.R.xy);
+            vars.setValueJump(OFFSET_ATTITUDE_YZ + idx, body.R.yz);
+            vars.setValueJump(OFFSET_ATTITUDE_ZX + idx, body.R.zx);
+            vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
+            vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
+            vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
+            vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
+            vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
+            vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
         };
         Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;

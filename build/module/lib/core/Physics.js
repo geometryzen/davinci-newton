@@ -150,6 +150,8 @@ var Physics = /** @class */ (function (_super) {
     };
     /**
      * Gets the state vector, Y(t).
+     * The returned array is a copy of the state vector variable values.
+     * However, for performance, the array is maintained between invocations.
      * @hidden
      */
     Physics.prototype.getState = function () {
@@ -160,7 +162,7 @@ var Physics = /** @class */ (function (_super) {
      * @hidden
      */
     Physics.prototype.setState = function (state) {
-        this.varsList.setValues(state, true);
+        this.varsList.setValuesContinuous(state);
     };
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.

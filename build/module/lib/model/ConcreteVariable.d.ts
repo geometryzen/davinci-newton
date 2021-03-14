@@ -50,8 +50,8 @@ export declare class ConcreteVariable implements Variable {
     /**
      *
      */
-    setValue(value: number): void;
-    setValueSmooth(value: number): void;
+    setValueJump(value: number): void;
+    setValueContinuous(value: number): void;
     /**
      *
      */

@@ -61,11 +61,11 @@ import validName from '../util/validName';
  */
 export class VarsList extends AbstractSubject implements GraphVarsList {
     /**
-     * 
+     * This name cannot be used as a variable name.
      */
     private static readonly DELETED = 'DELETED';
     /**
-     * 
+     * This name is the reserved name for the time variable.
      */
     public static readonly TIME = 'TIME';
     /**
@@ -73,13 +73,18 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     private static readonly VARS_MODIFIED = 'VARS_MODIFIED';
     /**
-     * 
+     * The zero-based index of the time variable.
      */
-    private timeIdx_ = -1;
+    private $timeIdx = -1;
     /**
-     * 
+     * The variables that provide the data for this wrapper.
      */
-    private varList_: Variable[] = [];
+    private $variables: Variable[] = [];
+    /**
+     * A lazy cache of variable values to minimize creation of temporary objects.
+     * This is only synchronized when the state is requested.
+     */
+    private readonly $values: number[] = [];
     /**
      * Whether to save simulation state history.
      */
@@ -95,27 +100,11 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     constructor(names: string[]) {
         super();
+        // console.lg(`VarsList.constructor(names=${JSON.stringify(names)})`);
         const howMany = names.length;
         if (howMany !== 0) {
             this.addVariables(names);
         }
-        /*
-        for (let i = 0, n = names.length; i < n; i++) {
-            let s = names[i];
-            if (!isString(s)) {
-                throw new Error('variable name ' + s + ' is not a string i=' + i);
-            }
-            s = validName(toName(s));
-            names[i] = s;
-            // find index of the time variable.
-            if (s === VarsList.TIME) {
-                this.timeIdx_ = i;
-            }
-        }
-        for (let i = 0, n = names.length; i < n; i++) {
-            this.varList_.push(new ConcreteVariable(this, names[i]));
-        }
-        */
     }
 
     /**
@@ -127,8 +116,8 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     private findOpenSlot_(quantity: number): number {
         let found = 0;
         let startIdx = -1;
-        for (let i = 0, n = this.varList_.length; i < n; i++) {
-            if (this.varList_[i].name === VarsList.DELETED) {
+        for (let i = 0, n = this.$variables.length; i < n; i++) {
+            if (this.$variables[i].name === VarsList.DELETED) {
                 if (startIdx === -1) {
                     startIdx = i;
                 }
@@ -151,14 +140,14 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         else {
             // Did not find contiguous group of deleted variables of requested size.
             // Add space at end of current variables.
-            startIdx = this.varList_.length;
+            startIdx = this.$variables.length;
             expand = quantity;
         }
         const newVars: ConcreteVariable[] = [];
         for (let i = 0; i < expand; i++) {
             newVars.push(new ConcreteVariable(this, VarsList.DELETED));
         }
-        extendArray(this.varList_, expand, newVars);
+        extendArray(this.$variables, expand, newVars);
         return startIdx;
     }
 
@@ -172,19 +161,19 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     addVariables(names: string[]): number {
         const howMany = names.length;
         if (howMany === 0) {
-            throw new Error();
+            throw new Error("names must not be empty.");
         }
         const position = this.findOpenSlot_(howMany);
         for (let i = 0; i < howMany; i++) {
             const name = validName(toName(names[i]));
             if (name === VarsList.DELETED) {
-                throw new Error(`variable cannot be named '${VarsList.DELETED}'`);
+                throw new Error(`variable cannot be named '${VarsList.DELETED}'.`);
             }
             const idx = position + i;
-            this.varList_[idx] = new ConcreteVariable(this, name);
+            this.$variables[idx] = new ConcreteVariable(this, name);
             if (name === VarsList.TIME) {
                 // auto-detect time variable
-                this.timeIdx_ = idx;
+                this.$timeIdx = idx;
             }
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
@@ -204,11 +193,11 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         if (howMany === 0) {
             return;
         }
-        if (howMany < 0 || index < 0 || index + howMany > this.varList_.length) {
+        if (howMany < 0 || index < 0 || index + howMany > this.$variables.length) {
             throw new Error('deleteVariables');
         }
         for (let i = index; i < index + howMany; i++) {
-            this.varList_[i] = new ConcreteVariable(this, VarsList.DELETED);
+            this.$variables[i] = new ConcreteVariable(this, VarsList.DELETED);
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
     }
@@ -223,8 +212,8 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     incrSequence(...indexes: number[]) {
         if (arguments.length === 0) {
             // increment sequence number on all variables
-            for (let i = 0, n = this.varList_.length; i < n; i++) {
-                this.varList_[i].incrSequence();
+            for (let i = 0, n = this.$variables.length; i < n; i++) {
+                this.$variables[i].incrSequence();
             }
         }
         else {
@@ -232,7 +221,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
             for (let i = 0, n = arguments.length; i < n; i++) {
                 const idx = arguments[i];
                 this.checkIndex_(idx);
-                this.varList_[idx].incrSequence();
+                this.$variables[idx].incrSequence();
             }
         }
     }
@@ -244,25 +233,35 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     getValue(index: number): number {
         this.checkIndex_(index);
-        return this.varList_[index].getValue();
+        return this.$variables[index].getValue();
     }
 
     getName(index: number): string {
         this.checkIndex_(index);
-        return this.varList_[index].name;
+        return this.$variables[index].name;
     }
 
     getSequence(index: number): number {
         this.checkIndex_(index);
-        return this.varList_[index].getSequence();
+        return this.$variables[index].getSequence();
     }
 
     /**
      * Returns an array with the current value of each variable.
-     * The returned array is a copy and will not change.
+     * The returned array is a copy of the variable values; changing the array will not change the variable values.
+     * However, for performance, the array is maintained between invocations.
      */
     getValues(): number[] {
-        return this.varList_.map(function (v) { return v.getValue(); });
+        const values = this.$values;
+        const variables = this.$variables;
+        const N = variables.length;
+        if (values.length !== N) {
+            values.length = N;
+        }
+        for (let i = 0; i < N; i++) {
+            values[i] = variables[i].getValue();
+        }
+        return this.$values;
     }
 
     /**
@@ -277,8 +276,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * @throws if length of `vars` exceeds length of VarsList
      */
     setValues(vars: number[], continuous = false) {
-        // NOTE: vars.length can be less than this.varList_.length
-        const N = this.varList_.length;
+        const N = this.$variables.length;
         const n = vars.length;
         if (n > N) {
             throw new Error(`setValues bad length n = ${n} > N = ${N}`);
@@ -286,6 +284,19 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         for (let i = 0; i < N; i++) {
             if (i < n) {
                 this.setValue(i, vars[i], continuous);
+            }
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    setValuesContinuous(vars: number[]): void {
+        const N = this.$variables.length;
+        const n = vars.length;
+        for (let i = 0; i < N; i++) {
+            if (i < n) {
+                this.setValueContinuous(i, vars[i]);
             }
         }
     }
@@ -303,24 +314,40 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     setValue(index: number, value: number, continuous = false) {
         this.checkIndex_(index);
-        const variable = this.varList_[index];
+        const variable = this.$variables[index];
         if (isNaN(value)) {
             throw new Error('cannot set variable ' + variable.name + ' to NaN');
         }
         if (continuous) {
-            variable.setValueSmooth(value);
+            variable.setValueContinuous(value);
         }
         else {
-            variable.setValue(value);
+            variable.setValueJump(value);
         }
+    }
+
+    /**
+     * @hidden
+     */
+    setValueContinuous(index: number, value: number) {
+        const variable = this.$variables[index];
+        variable.setValueContinuous(value);
+    }
+
+    /**
+     * @hidden
+     */
+    setValueJump(index: number, value: number) {
+        const variable = this.$variables[index];
+        variable.setValueJump(value);
     }
 
     /**
      * 
      */
     private checkIndex_(index: number) {
-        if (index < 0 || index >= this.varList_.length) {
-            throw new Error('bad variable index=' + index + '; numVars=' + this.varList_.length);
+        if (index < 0 || index >= this.$variables.length) {
+            throw new Error('bad variable index=' + index + '; numVars=' + this.$variables.length);
         }
     }
 
@@ -337,10 +364,10 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         }
         // add variable to first open slot
         const position = this.findOpenSlot_(1);
-        this.varList_[position] = variable;
+        this.$variables[position] = variable;
         if (name === VarsList.TIME) {
             // auto-detect time variable
-            this.timeIdx_ = position;
+            this.$timeIdx = position;
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
         return position;
@@ -356,7 +383,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
 
     getParameter(name: string) {
         name = toName(name);
-        const p = find(this.varList_, function (p) {
+        const p = find(this.$variables, function (p) {
             return p.name === name;
         });
         if (p != null) {
@@ -366,7 +393,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     }
 
     getParameters(): Variable[] {
-        return clone(this.varList_);
+        return clone(this.$variables);
     }
 
     /**
@@ -378,10 +405,10 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * @throws if there is no time variable
      */
     getTime(): number {
-        if (this.timeIdx_ < 0) {
+        if (this.$timeIdx < 0) {
             throw new Error('no time variable');
         }
-        return this.getValue(this.timeIdx_);
+        return this.getValue(this.$timeIdx);
     }
 
     /**
@@ -397,7 +424,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         }
         else if (isString(id)) {
             id = toName(id);
-            index = findIndex(this.varList_, v => v.name === id);
+            index = findIndex(this.$variables, v => v.name === id);
             if (index < 0) {
                 throw new Error('unknown variable name ' + id);
             }
@@ -406,7 +433,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
             throw new Error();
         }
         this.checkIndex_(index);
-        return this.varList_[index];
+        return this.$variables[index];
     }
 
     /**
@@ -415,7 +442,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * @return the number of variables in this VarsList
      */
     numVariables(): number {
-        return this.varList_.length;
+        return this.$variables.length;
     }
 
     /**
@@ -442,7 +469,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         for (let i = 0, n = arguments.length; i < n; i++) {
             const idx = arguments[i];
             this.checkIndex_(idx);
-            this.varList_[idx].setComputed(true);
+            this.$variables[idx].setComputed(true);
         }
     }
 
@@ -460,20 +487,20 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * @throws {Error} if there is no time variable
      */
     setTime(time: number) {
-        this.setValue(this.timeIdx_, time);
+        this.setValueJump(this.$timeIdx, time);
     }
 
     /**
      * Returns the index of the time variable, or -1 if there is no time variable.
      */
     timeIndex(): number {
-        return this.timeIdx_;
+        return this.$timeIdx;
     }
 
     /**
      * Returns the set of Variable objects in this VarsList, in their correct ordering.
      */
     toArray(): Variable[] {
-        return clone(this.varList_);
+        return clone(this.$variables);
     }
 }

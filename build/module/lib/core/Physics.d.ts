@@ -94,6 +94,8 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     prolog(): void;
     /**
      * Gets the state vector, Y(t).
+     * The returned array is a copy of the state vector variable values.
+     * However, for performance, the array is maintained between invocations.
      * @hidden
      */
     getState(): number[];

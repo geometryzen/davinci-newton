@@ -103,7 +103,7 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
-    setValue(value: number): void {
+    setValueJump(value: number): void {
         if (this.value_ !== value) {
             this.value_ = value;
             this.seq_++;
@@ -113,7 +113,7 @@ export class ConcreteVariable implements Variable {
         }
     }
 
-    setValueSmooth(value: number): void {
+    setValueContinuous(value: number): void {
         this.value_ = value;
     }
 
