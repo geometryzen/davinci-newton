@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import isFunction from '../checks/isFunction';
 import { veryDifferent } from '../util/veryDifferent';
 
 /**
@@ -148,7 +147,7 @@ export class ScreenRect {
     makeOval(context: CanvasRenderingContext2D) {
         const w = this.width_ / 2;
         const h = this.height_ / 2;
-        if (isFunction(context.ellipse)) {
+        if (typeof context.ellipse === 'function') {
             context.beginPath();
             context.moveTo(this.left_ + this.width_, this.top_ + h);
             // ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);

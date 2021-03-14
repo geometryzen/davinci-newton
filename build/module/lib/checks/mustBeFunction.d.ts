@@ -1,4 +1,4 @@
 /**
  * @hidden
  */
-export default function mustBeFunction(name: string, value: any, contextBuilder?: () => string): any;
+export declare function mustBeFunction(name: string, value: unknown, contextBuilder?: () => string): Function;

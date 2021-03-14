@@ -1,4 +1,3 @@
-import isArray from '../checks/isArray';
 /**
  * Returns a new array which is an expanded copy of the given array.
  * Adds `quantity` new entries at `position` location in the array.
@@ -14,7 +13,7 @@ export default function extendArray(array, quantity, value) {
     }
     var startIdx = array.length;
     array.length = startIdx + quantity;
-    if (isArray(value)) {
+    if (Array.isArray(value)) {
         var vs = value;
         if (vs.length !== quantity) {
             throw new Error();

@@ -1,5 +1,5 @@
 import { __extends } from "tslib";
-import mustBeFunction from '../checks/mustBeFunction';
+import { mustBeFunction } from '../checks/mustBeFunction';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { Unit } from '../math/Unit';

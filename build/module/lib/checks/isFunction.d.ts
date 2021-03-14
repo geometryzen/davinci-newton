@@ -1,4 +1,4 @@
 /**
  * @hidden
  */
-export default function isFunction(x: any): boolean;
+export declare function isFunction(x: any): boolean;

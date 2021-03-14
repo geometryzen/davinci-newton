@@ -1,5 +1,4 @@
-import mustSatisfy from '../checks/mustSatisfy';
-import isFunction from '../checks/isFunction';
+import { doesNotSatisfy } from '../checks/mustSatisfy';
 /**
  * @hidden
  */
@@ -9,7 +8,11 @@ function beFunction() {
 /**
  * @hidden
  */
-export default function mustBeFunction(name, value, contextBuilder) {
-    mustSatisfy(name, isFunction(value), beFunction, contextBuilder);
-    return value;
+export function mustBeFunction(name, value, contextBuilder) {
+    if (typeof value === 'function') {
+        return value;
+    }
+    else {
+        doesNotSatisfy(name, beFunction, contextBuilder);
+    }
 }

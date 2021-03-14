@@ -1,5 +1,5 @@
 import isDefined from '../checks/isDefined';
-import mustBeArray from '../checks/mustBeArray';
+import { mustBeArray } from '../checks/mustBeArray';
 import { Unit } from './Unit';
 
 /**

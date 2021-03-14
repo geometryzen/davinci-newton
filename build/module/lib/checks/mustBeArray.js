@@ -1,5 +1,4 @@
-import mustSatisfy from '../checks/mustSatisfy';
-import isArray from '../checks/isArray';
+import { doesNotSatisfy } from '../checks/mustSatisfy';
 /**
  * @hidden
  */
@@ -9,7 +8,11 @@ function beAnArray() {
 /**
  * @hidden
  */
-export default function (name, value, contextBuilder) {
-    mustSatisfy(name, isArray(value), beAnArray, contextBuilder);
-    return value;
+export function mustBeArray(name, value, contextBuilder) {
+    if (Array.isArray(value)) {
+        return value;
+    }
+    else {
+        doesNotSatisfy(name, beAnArray, contextBuilder);
+    }
 }

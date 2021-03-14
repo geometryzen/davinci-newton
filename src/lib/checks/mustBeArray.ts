@@ -1,17 +1,19 @@
-import mustSatisfy from '../checks/mustSatisfy';
-import isArray from '../checks/isArray';
+import { doesNotSatisfy } from '../checks/mustSatisfy';
 
 /**
  * @hidden
  */
-function beAnArray() {
+function beAnArray(): string {
     return "be an array";
 }
 
 /**
  * @hidden
  */
-export default function <T>(name: string, value: T[], contextBuilder?: () => string): T[] {
-    mustSatisfy(name, isArray(value), beAnArray, contextBuilder);
-    return value;
+export function mustBeArray<T>(name: string, value: T[], contextBuilder?: () => string): T[] {
+    if (Array.isArray(value)) {
+        return value;
+    } else {
+        doesNotSatisfy(name, beAnArray, contextBuilder);
+    }
 }

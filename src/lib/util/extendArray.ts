@@ -1,5 +1,3 @@
-import isArray from '../checks/isArray';
-
 /**
  * Returns a new array which is an expanded copy of the given array.
  * Adds `quantity` new entries at `position` location in the array.
@@ -15,7 +13,7 @@ export default function extendArray<T>(array: T[], quantity: number, value: T | 
     }
     const startIdx = array.length;
     array.length = startIdx + quantity;
-    if (isArray(value)) {
+    if (Array.isArray(value)) {
         const vs = <T[]>value;
         if (vs.length !== quantity) {
             throw new Error();

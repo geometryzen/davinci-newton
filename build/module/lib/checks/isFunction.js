@@ -1,6 +1,6 @@
 /**
  * @hidden
  */
-export default function isFunction(x) {
+export function isFunction(x) {
     return (typeof x === 'function');
 }

@@ -422,10 +422,19 @@
      */
     function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
         if (!condition) {
-            var message = messageBuilder ? messageBuilder() : "satisfy some condition";
-            var context = contextBuilder ? " in " + contextBuilder() : "";
-            throw new Error(name + " must " + message + context + ".");
+            doesNotSatisfy(name, messageBuilder, contextBuilder);
         }
+    }
+    /**
+     * @hidden
+     * @param name
+     * @param messageBuilder
+     * @param contextBuilder
+     */
+    function doesNotSatisfy(name, messageBuilder, contextBuilder) {
+        var message = messageBuilder ? messageBuilder() : "satisfy some condition";
+        var context = contextBuilder ? " in " + contextBuilder() : "";
+        throw new Error(name + " must " + message + context + ".");
     }
 
     /**
@@ -3572,13 +3581,6 @@
     }());
 
     /**
-     * @hidden
-     */
-    function isArray(x) {
-        return Object.prototype.toString.call(x) === '[object Array]';
-    }
-
-    /**
      * Returns a new array which is an expanded copy of the given array.
      * Adds `quantity` new entries at `position` location in the array.
      * Negative quantity will delete array entries.
@@ -3593,7 +3595,7 @@
         }
         var startIdx = array.length;
         array.length = startIdx + quantity;
-        if (isArray(value)) {
+        if (Array.isArray(value)) {
             var vs = value;
             if (vs.length !== quantity) {
                 throw new Error();
@@ -4572,13 +4574,6 @@
     /**
      * @hidden
      */
-    function isFunction(x) {
-        return (typeof x === 'function');
-    }
-
-    /**
-     * @hidden
-     */
     function beFunction() {
         return "be a function";
     }
@@ -4586,8 +4581,12 @@
      * @hidden
      */
     function mustBeFunction(name, value, contextBuilder) {
-        mustSatisfy(name, isFunction(value), beFunction, contextBuilder);
-        return value;
+        if (typeof value === 'function') {
+            return value;
+        }
+        else {
+            doesNotSatisfy(name, beFunction, contextBuilder);
+        }
     }
 
     /**
@@ -5467,9 +5466,13 @@
     /**
      * @hidden
      */
-    function mustBeArray (name, value, contextBuilder) {
-        mustSatisfy(name, isArray(value), beAnArray, contextBuilder);
-        return value;
+    function mustBeArray(name, value, contextBuilder) {
+        if (Array.isArray(value)) {
+            return value;
+        }
+        else {
+            doesNotSatisfy(name, beAnArray, contextBuilder);
+        }
     }
 
     /**
@@ -13053,7 +13056,7 @@
         ScreenRect.prototype.makeOval = function (context) {
             var w = this.width_ / 2;
             var h = this.height_ / 2;
-            if (isFunction(context.ellipse)) {
+            if (typeof context.ellipse === 'function') {
                 context.beginPath();
                 context.moveTo(this.left_ + this.width_, this.top_ + h);
                 // ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);

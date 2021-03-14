@@ -1,4 +1,4 @@
-import mustBeArray from './mustBeArray';
+import { mustBeArray } from './mustBeArray';
 /**
  * Determines whether the actual options supplied are expected.
  *

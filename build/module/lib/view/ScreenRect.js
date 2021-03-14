@@ -12,7 +12,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import isFunction from '../checks/isFunction';
 import { veryDifferent } from '../util/veryDifferent';
 /**
  * An immutable rectangle corresponding to screen coordinates where the
@@ -126,7 +125,7 @@ var ScreenRect = /** @class */ (function () {
     ScreenRect.prototype.makeOval = function (context) {
         var w = this.width_ / 2;
         var h = this.height_ / 2;
-        if (isFunction(context.ellipse)) {
+        if (typeof context.ellipse === 'function') {
             context.beginPath();
             context.moveTo(this.left_ + this.width_, this.top_ + h);
             // ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
