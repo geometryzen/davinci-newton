@@ -4,6 +4,7 @@ import { Dynamics } from './Dynamics';
 import { EnergySystem } from './EnergySystem';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { TorqueLaw } from './TorqueLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
@@ -36,11 +37,19 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     /**
      *
      */
+    private readonly $torqueLaws;
+    /**
+     *
+     */
     private readonly $constraints;
     /**
      *
      */
     private $showForces;
+    /**
+     *
+     */
+    private $showTorques;
     /**
      *
      */
@@ -69,6 +78,11 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     get showForces(): boolean;
     set showForces(showForces: boolean);
     /**
+     * Determines whether calculated torques will be added to the simulation list.
+     */
+    get showTorques(): boolean;
+    set showTorques(showTorques: boolean);
+    /**
      *
      */
     addBody(body: ForceBody<T>): void;
@@ -84,6 +98,14 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      *
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    /**
+     *
+     */
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    /**
+     *
+     */
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     /**
      *
      * @param geometry
@@ -117,18 +139,21 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     setState(state: number[]): void;
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
-     * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.calculateForces.
+     * This will move the objects and forces will be recalculated.u
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
+    private applyForces;
     /**
      * Applying forces gives rise to linear and angular momentum.
      * @param rateOfChange The (output) rate of change of the state variables.
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
     private applyForce;
-    private constrainForce;
+    private applyTorques;
+    private applyTorque;
+    private applyConstraints;
+    private applyConstraint;
     /**
      *
      */

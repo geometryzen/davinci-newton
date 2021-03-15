@@ -1,8 +1,9 @@
 import { Geometric2 } from "../math/Geometric2";
-import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
+import { Unit } from "../math/Unit";
 import { Force2 } from "./Force2";
+import { Torque2 } from "./Torque2";
 /**
  * @hidden
  */
@@ -42,6 +43,9 @@ var Euclidean2 = /** @class */ (function () {
     };
     Euclidean2.prototype.createForce = function (body) {
         return new Force2(body);
+    };
+    Euclidean2.prototype.createTorque = function (body) {
+        return new Torque2(body);
     };
     Euclidean2.prototype.direction = function (mv, mutate) {
         return mv.direction(mutate);
@@ -122,6 +126,9 @@ var Euclidean2 = /** @class */ (function () {
     };
     Euclidean2.prototype.writeVector = function (source, target) {
         source.writeVector(target);
+    };
+    Euclidean2.prototype.writeBivector = function (source, target) {
+        source.writeBivector(target);
     };
     Euclidean2.prototype.zero = function () {
         return Geometric2.zero.clone();

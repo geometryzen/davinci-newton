@@ -53,6 +53,24 @@ var Engine = /** @class */ (function () {
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.removeForceLaw(forceLaw);
     };
+    /**
+     *
+     * @param torqueLaw
+     */
+    Engine.prototype.addTorqueLaw = function (torqueLaw) {
+        var contextBuilder = function () { return "Engine.addTorqueLaw(torqueLaw: TorqueLaw): void"; };
+        mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+        this.physics.addTorqueLaw(torqueLaw);
+    };
+    /**
+     *
+     * @param torqueLaw
+     */
+    Engine.prototype.removeTorqueLaw = function (torqueLaw) {
+        var contextBuilder = function () { return "Engine.removeTorqueLaw(torqueLaw: TorqueLaw): void"; };
+        mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+        this.physics.removeTorqueLaw(torqueLaw);
+    };
     Engine.prototype.addConstraint = function (geometry) {
         var contextBuilder = function () { return "Engine.addGeometricConstraint(geometry: GeometricConstraint): void"; };
         mustBeNonNullObject('geometry', geometry, contextBuilder);

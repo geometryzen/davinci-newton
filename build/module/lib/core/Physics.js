@@ -36,11 +36,19 @@ var Physics = /** @class */ (function (_super) {
         /**
          *
          */
+        _this.$torqueLaws = [];
+        /**
+         *
+         */
         _this.$constraints = [];
         /**
          *
          */
         _this.$showForces = false;
+        /**
+         *
+         */
+        _this.$showTorques = false;
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('dynamics', dynamics);
         _this.$varsList = new VarsList(dynamics.getVarNames());
@@ -62,6 +70,20 @@ var Physics = /** @class */ (function (_super) {
         set: function (showForces) {
             mustBeBoolean('showForces', showForces);
             this.$showForces = showForces;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Physics.prototype, "showTorques", {
+        /**
+         * Determines whether calculated torques will be added to the simulation list.
+         */
+        get: function () {
+            return this.$showTorques;
+        },
+        set: function (showTorques) {
+            mustBeBoolean('showTorques', showTorques);
+            this.$showTorques = showTorques;
         },
         enumerable: false,
         configurable: true
@@ -117,6 +139,25 @@ var Physics = /** @class */ (function (_super) {
         forceLaw.disconnect();
         this.discontinuosChangeToEnergy();
         remove(this.$forceLaws, forceLaw);
+    };
+    /**
+     *
+     */
+    Physics.prototype.addTorqueLaw = function (torqueLaw) {
+        mustBeNonNullObject('torqueLaw', torqueLaw);
+        if (!contains(this.$torqueLaws, torqueLaw)) {
+            this.$torqueLaws.push(torqueLaw);
+        }
+        this.discontinuosChangeToEnergy();
+    };
+    /**
+     *
+     */
+    Physics.prototype.removeTorqueLaw = function (torqueLaw) {
+        mustBeNonNullObject('torqueLaw', torqueLaw);
+        torqueLaw.disconnect();
+        this.discontinuosChangeToEnergy();
+        remove(this.$torqueLaws, torqueLaw);
     };
     /**
      *
@@ -184,8 +225,7 @@ var Physics = /** @class */ (function (_super) {
     };
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
-     * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.calculateForces.
+     * This will move the objects and forces will be recalculated.u
      * @hidden
      */
     Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
@@ -214,24 +254,23 @@ var Physics = /** @class */ (function (_super) {
                 dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
+        this.applyForces(rateOfChange, Δt, uomTime);
+        this.applyTorques(rateOfChange, Δt, uomTime);
+        this.applyConstraints(rateOfChange, Δt, uomTime);
+        rateOfChange[this.$varsList.timeIndex()] = 1;
+    };
+    Physics.prototype.applyForces = function (rateOfChange, Δt, uomTime) {
         var forceLaws = this.$forceLaws;
-        var Nlaws = forceLaws.length;
-        for (var lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
-            var forceLaw = forceLaws[lawIndex];
+        var N = forceLaws.length;
+        for (var i = 0; i < N; i++) {
+            var forceLaw = forceLaws[i];
             // The forces will give rise to changes in both linear and angular momentum.
-            var forces = forceLaw.calculateForces();
+            var forces = forceLaw.updateForces();
             var Nforces = forces.length;
             for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
             }
         }
-        var constraints = this.$constraints;
-        var Nconstraints = constraints.length;
-        for (var i = 0; i < Nconstraints; i++) {
-            var constraint = constraints[i];
-            this.constrainForce(rateOfChange, constraint);
-        }
-        rateOfChange[this.$varsList.timeIndex()] = 1;
     };
     /**
      * Applying forces gives rise to linear and angular momentum.
@@ -274,7 +313,65 @@ var Physics = /** @class */ (function (_super) {
             this.$simList.add(forceApp);
         }
     };
-    Physics.prototype.constrainForce = function (rateOfChange, constraint) {
+    Physics.prototype.applyTorques = function (rateOfChange, Δt, uomTime) {
+        var torqueLaws = this.$torqueLaws;
+        var Ni = torqueLaws.length;
+        for (var i = 0; i < Ni; i++) {
+            var torqueLaw = torqueLaws[i];
+            var torques = torqueLaw.updateTorques();
+            var Nj = torques.length;
+            for (var j = 0; j < Nj; j++) {
+                this.applyTorque(rateOfChange, torques[j], Δt, uomTime);
+            }
+        }
+    };
+    Physics.prototype.applyTorque = function (rateOfChange, torqueApp, Δt, uomTime) {
+        var body = torqueApp.getBody();
+        if (!(contains(this.$bodies, body))) {
+            return;
+        }
+        var idx = body.varsIndex;
+        if (idx < 0) {
+            return;
+        }
+        var metric = this.metric;
+        var dynamics = this.dynamics;
+        // The rate of change of angular momentum is torque.
+        // dL/dt = T
+        torqueApp.computeTorque(this.$torque);
+        var T = this.$torque;
+        // Bootstrap the angular momentum unit of measure.
+        if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+        }
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+        // TODO: When the torque is applied away from the center of mass, do we add linear momentum?
+        // The rate of change of angular momentum (bivector) is given by
+        // dL/dt = r ^ F = Γ
+        /*
+        torqueApp.computeTorque(this.$torque);
+        const T = this.$torque;
+        // Bootstrap the angular momentum unit of measure.
+        if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+        }
+        // TODO: Could we add geometric constraints for torques here?
+        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, T);
+        */
+        if (this.$showTorques) {
+            torqueApp.expireTime = this.$varsList.getTime();
+            this.$simList.add(torqueApp);
+        }
+    };
+    Physics.prototype.applyConstraints = function (rateOfChange, Δt, uomTime) {
+        var constraints = this.$constraints;
+        var Nconstraints = constraints.length;
+        for (var i = 0; i < Nconstraints; i++) {
+            var constraint = constraints[i];
+            this.applyConstraint(rateOfChange, constraint);
+        }
+    };
+    Physics.prototype.applyConstraint = function (rateOfChange, constraint) {
         var body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -286,9 +383,9 @@ var Physics = /** @class */ (function (_super) {
         var metric = this.metric;
         var dynamics = this.dynamics;
         // TODO: This could be a scratch variable.
-        var F = metric.scalar(0);
-        var e = metric.scalar(0);
-        var N = metric.scalar(0);
+        var F = metric.zero();
+        var e = metric.zero();
+        var N = metric.zero();
         dynamics.getForce(rateOfChange, idx, F);
         var X = body.X;
         constraint.computeNormal(X, e);

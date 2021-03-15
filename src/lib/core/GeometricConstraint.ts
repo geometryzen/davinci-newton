@@ -6,8 +6,7 @@ export class GeometricConstraint<T> {
     constructor(private readonly body: ForceBody<T>, private readonly normalFn: (x: T, N: T) => void) {
         mustBeNonNullObject('body', body);
         const metric = body.metric;
-        // TODO: Would be nicer to create a zero vector.
-        this.N = metric.scalar(0);
+        this.N = metric.zero();
     }
     getBody(): ForceBody<T> {
         return this.body;

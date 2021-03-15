@@ -493,7 +493,8 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      */
     versor(a: VectorE3, b: VectorE3): this;
     write(mv: GeometricE3): void;
-    writeVector(vector: VectorE3): void;
+    writeVector(v: VectorE3): void;
+    writeBivector(B: BivectorE3): void;
     /**
      * @param M
      * @param α

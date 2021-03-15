@@ -18,7 +18,8 @@ export declare class ConstantForceLaw<T> extends AbstractSimObject implements Fo
     /**
      *
      */
-    constructor($body: ForceBody<T>, vector: T, vectorCoordType?: CoordType);
+    constructor($body: ForceBody<T>, value: T, valueCoordType?: CoordType);
+    get forces(): Force<T>[];
     get location(): T;
     set location(location: T);
     get vector(): T;
@@ -26,7 +27,7 @@ export declare class ConstantForceLaw<T> extends AbstractSimObject implements Fo
     /**
      *
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      *
      */

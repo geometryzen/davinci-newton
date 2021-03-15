@@ -11,6 +11,7 @@ import { ForceLaw } from './ForceLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { Physics } from './Physics';
+import { TorqueLaw } from './TorqueLaw';
 
 /**
  * @hidden
@@ -54,6 +55,7 @@ export class Engine<T> {
         mustBeNonNullObject('body', body, contextBuilder);
         this.physics.removeBody(body);
     }
+
     /**
      * 
      * @param forceLaw 
@@ -71,6 +73,25 @@ export class Engine<T> {
         const contextBuilder = () => "Engine.removeForceLaw(forceLaw: ForceLaw): void";
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.removeForceLaw(forceLaw);
+    }
+
+    /**
+     * 
+     * @param torqueLaw 
+     */
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void {
+        const contextBuilder = () => "Engine.addTorqueLaw(torqueLaw: TorqueLaw): void";
+        mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+        this.physics.addTorqueLaw(torqueLaw);
+    }
+    /**
+     * 
+     * @param torqueLaw 
+     */
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void {
+        const contextBuilder = () => "Engine.removeTorqueLaw(torqueLaw: TorqueLaw): void";
+        mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+        this.physics.removeTorqueLaw(torqueLaw);
     }
 
     addConstraint(geometry: GeometricConstraint<T>): void {

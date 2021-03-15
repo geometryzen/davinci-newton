@@ -39,7 +39,7 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
     /**
      *
      */
-    private readonly forces;
+    private readonly $forces;
     /**
      * Scratch variable for computing endpoint in world coordinates.
      */
@@ -60,6 +60,7 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
      *
      */
     constructor(body1: RigidBody<T>, body2: RigidBody<T>);
+    get forces(): Force<T>[];
     get restLength(): T;
     set restLength(restLength: T);
     get k(): T;
@@ -79,7 +80,7 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
     /**
      *
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      *
      */

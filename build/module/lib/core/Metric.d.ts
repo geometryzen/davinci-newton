@@ -2,6 +2,7 @@ import { MatrixLike } from "../math/MatrixLike";
 import { Unit } from "../math/Unit";
 import { Force } from "./Force";
 import { ForceBody } from "./ForceBody";
+import { Torque } from "./Torque";
 /**
  * @hidden
  */
@@ -21,6 +22,7 @@ export interface Metric<T> {
      * force application (F, and x) will have non-generic types.
      */
     createForce(body: ForceBody<T>): Force<T>;
+    createTorque(body: ForceBody<T>): Torque<T>;
     direction(mv: T, mutate?: boolean): T;
     divByScalar(lhs: T, a: number, uom: Unit): T;
     ext(lhs: T, rhs: T): T;
@@ -52,5 +54,10 @@ export interface Metric<T> {
     uom(mv: T): Unit;
     write(source: T, target: T): void;
     writeVector(source: T, target: T): void;
+    writeBivector(source: T, target: T): void;
+    /**
+     * Constructs a multivector representing the number zero.
+     * The returned multivector is mutable.
+     */
     zero(): T;
 }

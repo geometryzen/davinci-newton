@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.44
+// Type definitions for davinci-newton 1.0.46
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2434,7 +2434,7 @@ export abstract class Force<T> implements SimObject {
     /**
      * 
      */
-    constructor(body: RigidBody<T>, metric: Metric<T>);
+    constructor(body: RigidBody<T>);
     /**
      * 
      */
@@ -2456,7 +2456,40 @@ export class Force3 extends Force<Geometric3> {
 }
 
 export interface ForceLaw<T> extends SimObject {
-    calculateForces(): Force<T>[];
+    /**
+     * The forces which are being applied to the bodies.
+     */
+    readonly forces: Force<T>[];
+    /**
+     * Updates the forces which are being applied to the bodies.
+     */
+    updateForces(): Force<T>[];
+    disconnect(): void;
+    potentialEnergy(): T;
+}
+
+export abstract class Torque<T> implements SimObject {
+    expireTime: number;
+    constructor(body: RigidBody<T>);
+}
+
+export class Torque2 extends Torque<Geometric2> {
+    constructor(body: ForceBody<Geometric2>);
+}
+
+export class Torque3 extends Torque<Geometric3> {
+    constructor(body: ForceBody<Geometric3>);
+}
+
+export interface TorqueLaw<T> extends SimObject {
+    /**
+     * The torques which are being applied to the bodies.
+     */
+    readonly torques: Torque<T>[];
+    /**
+     * Updates the torques which are being applied to the bodies.
+     */
+    updateTorques(): Torque<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
@@ -2509,6 +2542,11 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * 
      */
     addForceLaw(forceLaw: ForceLaw<T>): void;
+    /**
+     * 
+     * @param torqueLaw 
+     */
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
 
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
@@ -2780,6 +2818,10 @@ export class ConstantForceLaw<T> implements ForceLaw<T> {
     /**
      * 
      */
+    readonly forces: Force<T>[];
+    /**
+     * 
+     */
     expireTime: number;
     /**
      * The attachment point to the body in body coordinates.
@@ -2796,7 +2838,7 @@ export class ConstantForceLaw<T> implements ForceLaw<T> {
     /**
      * 
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      * 
      */
@@ -2815,13 +2857,34 @@ export class ConstantForceLaw3 extends ConstantForceLaw<Geometric3> {
     constructor(body: ForceBody<Geometric3>, vector: Geometric3, vectorCoordType?: CoordType);
 }
 
+export class ConstantTorqueLaw<T> implements TorqueLaw<T> {
+    readonly torques: Torque<T>[];
+    expireTime: number;
+    constructor(body: RigidBody<T>, value: T, valueCoordType?: CoordType);
+    updateTorques(): Torque<T>[];
+    disconnect(): void;
+    potentialEnergy(): T;
+}
+
+export class ConstantTorqueLaw2 extends ConstantTorqueLaw<Geometric2> {
+    constructor(body: ForceBody<Geometric2>, value: Geometric2);
+}
+
+export class ConstantTorqueLaw3 extends ConstantTorqueLaw<Geometric3> {
+    constructor(body: ForceBody<Geometric3>, value: Geometric3, valueCoordType?: CoordType);
+}
+
 /**
  * 
  */
 export class CoulombLaw<T> implements ForceLaw<T> {
     /**
-     *
+     * 
      */
+    readonly forces: Force<T>[];
+    /**
+    *
+    */
     k: Geometric3;
     /**
      * 
@@ -2831,16 +2894,20 @@ export class CoulombLaw<T> implements ForceLaw<T> {
      * 
      */
     constructor(body1: RigidBody<T>, body2: RigidBody<T>, G?: T);
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
 
 export class GravitationLaw<T> implements ForceLaw<T> {
     /**
-     * The proportionality constant, Newton's constant.
-     * The default value is one (1).
+     * 
      */
+    readonly forces: Force<T>[];
+    /**
+    * The proportionality constant, Newton's constant.
+    * The default value is one (1).
+    */
     public G: T;
     /**
      * 
@@ -2854,7 +2921,7 @@ export class GravitationLaw<T> implements ForceLaw<T> {
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      * 
      */
@@ -2882,6 +2949,10 @@ export class Spring<T> implements ForceLaw<T> {
     /**
      * 
      */
+    readonly forces: Force<T>[];
+    /**
+    * 
+    */
     restLength: T;
     /**
      * Alias for springConstant or stiffness.
@@ -2919,7 +2990,7 @@ export class Spring<T> implements ForceLaw<T> {
      * 
      */
     constructor(body1: RigidBody<T>, body2: RigidBody<T>);
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
@@ -2940,8 +3011,12 @@ export class Spring3 extends Spring<Geometric3> {
 
 export class LinearDamper<T> implements ForceLaw<T> {
     /**
-     * Alias for frictionCoefficient.
+     * 
      */
+    readonly forces: Force<T>[];
+    /**
+    * Alias for frictionCoefficient.
+    */
     b: T;
     /**
      * Alias for b.
@@ -2952,7 +3027,7 @@ export class LinearDamper<T> implements ForceLaw<T> {
      */
     expireTime: number;
     constructor(body1: RigidBody<T>, body2: RigidBody<T>);
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }

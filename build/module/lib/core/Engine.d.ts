@@ -4,6 +4,7 @@ import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
+import { TorqueLaw } from './TorqueLaw';
 /**
  *
  */
@@ -38,6 +39,16 @@ export declare class Engine<T> {
      * @param forceLaw
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    /**
+     *
+     * @param torqueLaw
+     */
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    /**
+     *
+     * @param torqueLaw
+     */
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     addConstraint(geometry: GeometricConstraint<T>): void;
     removeConstraint(geometry: GeometricConstraint<T>): void;
     /**

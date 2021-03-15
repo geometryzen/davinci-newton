@@ -9,21 +9,28 @@ var ConstantForceLaw = /** @class */ (function (_super) {
     /**
      *
      */
-    function ConstantForceLaw($body, vector, vectorCoordType) {
-        if (vectorCoordType === void 0) { vectorCoordType = WORLD; }
+    function ConstantForceLaw($body, value, valueCoordType) {
+        if (valueCoordType === void 0) { valueCoordType = WORLD; }
         var _this = _super.call(this) || this;
         _this.$body = $body;
         _this.$forces = [];
         var metric = _this.$body.metric;
         _this.$force = metric.createForce(_this.$body);
         _this.$force.locationCoordType = LOCAL;
-        _this.vector = vector;
-        _this.$force.vectorCoordType = vectorCoordType;
+        metric.copyVector(value, _this.$force.vector);
+        _this.$force.vectorCoordType = valueCoordType;
         _this.$forces = [_this.$force];
         _this.$potentialEnergy = metric.zero();
         _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
         return _this;
     }
+    Object.defineProperty(ConstantForceLaw.prototype, "forces", {
+        get: function () {
+            return this.$forces;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(ConstantForceLaw.prototype, "location", {
         get: function () {
             return this.$force.location;
@@ -49,14 +56,14 @@ var ConstantForceLaw = /** @class */ (function (_super) {
     /**
      *
      */
-    ConstantForceLaw.prototype.calculateForces = function () {
+    ConstantForceLaw.prototype.updateForces = function () {
         return this.$forces;
     };
     /**
      *
      */
     ConstantForceLaw.prototype.disconnect = function () {
-        // Does nothing
+        // Does nothing yet.
     };
     /**
      *

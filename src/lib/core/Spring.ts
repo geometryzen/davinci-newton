@@ -43,7 +43,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    private readonly forces: Force<T>[] = [];
+    private readonly $forces: Force<T>[] = [];
 
     /**
      * Scratch variable for computing endpoint in world coordinates.
@@ -102,7 +102,11 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.potentialEnergy_ = metric.zero();
         this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
 
-        this.forces = [this.F1, this.F2];
+        this.$forces = [this.F1, this.F2];
+    }
+
+    get forces(): Force<T>[] {
+        return this.$forces;
     }
 
     get restLength(): T {
@@ -188,7 +192,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    calculateForces(): Force<T>[] {
+    updateForces(): Force<T>[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
@@ -215,7 +219,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.metric.copyVector(this.F1.vector, this.F2.vector);
         this.metric.neg(this.F2.vector);
 
-        return this.forces;
+        return this.$forces;
     }
 
     /**

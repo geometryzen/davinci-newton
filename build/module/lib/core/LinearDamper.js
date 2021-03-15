@@ -21,7 +21,7 @@ var LinearDamper = /** @class */ (function (_super) {
         /**
          *
          */
-        _this.forces = [];
+        _this.$forces = [];
         var metric = body1.metric;
         _this.$frictionCoefficient = new LockableMeasure(metric, metric.scalar(1));
         _this.F1 = metric.createForce(_this.body1);
@@ -30,9 +30,16 @@ var LinearDamper = /** @class */ (function (_super) {
         _this.F2 = metric.createForce(_this.body2);
         _this.F2.locationCoordType = WORLD;
         _this.F2.vectorCoordType = WORLD;
-        _this.forces = [_this.F1, _this.F2];
+        _this.$forces = [_this.F1, _this.F2];
         return _this;
     }
+    Object.defineProperty(LinearDamper.prototype, "forces", {
+        get: function () {
+            return this.$forces;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(LinearDamper.prototype, "b", {
         get: function () {
             return this.$frictionCoefficient.get();
@@ -55,22 +62,22 @@ var LinearDamper = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
-    LinearDamper.prototype.calculateForces = function () {
+    LinearDamper.prototype.updateForces = function () {
         var metric = this.body1.metric;
         var b = this.$frictionCoefficient.get();
         var x1 = this.body1.X;
         var x2 = this.body2.X;
-        var e = metric.scalar(0);
+        var e = metric.zero();
         metric.addVector(e, x1);
         metric.subVector(e, x2);
         metric.direction(e);
-        var v1 = metric.scalar(0);
+        var v1 = metric.zero();
         metric.copyVector(this.body1.P, v1);
         metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-        var v2 = metric.scalar(0);
+        var v2 = metric.zero();
         metric.copyVector(this.body2.P, v2);
         metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-        var v = metric.scalar(0);
+        var v = metric.zero();
         metric.copyVector(v1, v);
         metric.subVector(v, v2);
         var f1 = this.F1.vector;
@@ -84,7 +91,7 @@ var LinearDamper = /** @class */ (function (_super) {
         metric.neg(f2); // f2 = - f1
         metric.copyVector(x1, this.F1.location);
         metric.copyVector(x2, this.F2.location);
-        return this.forces;
+        return this.$forces;
     };
     LinearDamper.prototype.disconnect = function () {
         // Do nothing yet.

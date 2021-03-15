@@ -2,6 +2,7 @@
 .vscode
 /amd
 /bower_components
+/build/module
 /coverage
 /docs
 /jspm_packages

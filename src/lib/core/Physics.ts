@@ -9,11 +9,13 @@ import { EnergySystem } from './EnergySystem';
 import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { TorqueLaw } from './TorqueLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
 import { Simulation } from './Simulation';
 import { VarsList } from './VarsList';
+import { Torque } from './Torque';
 
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
@@ -38,20 +40,25 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      */
     private readonly $forceLaws: ForceLaw<T>[] = [];
     /**
+     * 
+     */
+    private readonly $torqueLaws: TorqueLaw<T>[] = [];
+    /**
      *
      */
     private readonly $constraints: GeometricConstraint<T>[] = [];
-
     /**
      * 
      */
     private $showForces = false;
-
+    /**
+     * 
+     */
+    private $showTorques = false;
     /**
      * 
      */
     private readonly $potentialOffset: T;
-
     /**
      * Scratch variable for computing force.
      */
@@ -93,6 +100,17 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     set showForces(showForces: boolean) {
         mustBeBoolean('showForces', showForces);
         this.$showForces = showForces;
+    }
+
+    /**
+     * Determines whether calculated torques will be added to the simulation list.
+     */
+    get showTorques(): boolean {
+        return this.$showTorques;
+    }
+    set showTorques(showTorques: boolean) {
+        mustBeBoolean('showTorques', showTorques);
+        this.$showTorques = showTorques;
     }
 
     /**
@@ -149,6 +167,27 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         forceLaw.disconnect();
         this.discontinuosChangeToEnergy();
         remove(this.$forceLaws, forceLaw);
+    }
+
+    /**
+     * 
+     */
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void {
+        mustBeNonNullObject('torqueLaw', torqueLaw);
+        if (!contains(this.$torqueLaws, torqueLaw)) {
+            this.$torqueLaws.push(torqueLaw);
+        }
+        this.discontinuosChangeToEnergy();
+    }
+
+    /**
+     * 
+     */
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void {
+        mustBeNonNullObject('torqueLaw', torqueLaw);
+        torqueLaw.disconnect();
+        this.discontinuosChangeToEnergy();
+        remove(this.$torqueLaws, torqueLaw);
     }
 
     /**
@@ -223,8 +262,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
 
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
-     * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.calculateForces.
+     * This will move the objects and forces will be recalculated.u
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
@@ -253,24 +291,24 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
                 dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
+        this.applyForces(rateOfChange, Δt, uomTime);
+        this.applyTorques(rateOfChange, Δt, uomTime);
+        this.applyConstraints(rateOfChange, Δt, uomTime);
+        rateOfChange[this.$varsList.timeIndex()] = 1;
+    }
+
+    private applyForces(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
         const forceLaws = this.$forceLaws;
-        const Nlaws = forceLaws.length;
-        for (let lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
-            const forceLaw = forceLaws[lawIndex];
+        const N = forceLaws.length;
+        for (let i = 0; i < N; i++) {
+            const forceLaw = forceLaws[i];
             // The forces will give rise to changes in both linear and angular momentum.
-            const forces = forceLaw.calculateForces();
+            const forces = forceLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
             }
         }
-        const constraints = this.$constraints;
-        const Nconstraints = constraints.length;
-        for (let i = 0; i < Nconstraints; i++) {
-            const constraint = constraints[i];
-            this.constrainForce(rateOfChange, constraint);
-        }
-        rateOfChange[this.$varsList.timeIndex()] = 1;
     }
 
     /**
@@ -319,7 +357,72 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
-    private constrainForce(rateOfChange: number[], constraint: GeometricConstraint<T>): void {
+    private applyTorques(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+        const torqueLaws = this.$torqueLaws;
+        const Ni = torqueLaws.length;
+        for (let i = 0; i < Ni; i++) {
+            const torqueLaw = torqueLaws[i];
+            const torques = torqueLaw.updateTorques();
+            const Nj = torques.length;
+            for (let j = 0; j < Nj; j++) {
+                this.applyTorque(rateOfChange, torques[j], Δt, uomTime);
+            }
+        }
+    }
+
+    private applyTorque(rateOfChange: number[], torqueApp: Torque<T>, Δt: number, uomTime?: Unit): void {
+        const body = torqueApp.getBody();
+        if (!(contains(this.$bodies, body))) {
+            return;
+        }
+        const idx = body.varsIndex;
+        if (idx < 0) {
+            return;
+        }
+
+        const metric = this.metric;
+        const dynamics = this.dynamics;
+
+        // The rate of change of angular momentum is torque.
+        // dL/dt = T
+        torqueApp.computeTorque(this.$torque);
+        const T = this.$torque;
+        // Bootstrap the angular momentum unit of measure.
+        if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+        }
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+
+        // TODO: When the torque is applied away from the center of mass, do we add linear momentum?
+        // The rate of change of angular momentum (bivector) is given by
+        // dL/dt = r ^ F = Γ
+        /*
+        torqueApp.computeTorque(this.$torque);
+        const T = this.$torque;
+        // Bootstrap the angular momentum unit of measure.
+        if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+        }
+        // TODO: Could we add geometric constraints for torques here?
+        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, T);
+        */
+
+        if (this.$showTorques) {
+            torqueApp.expireTime = this.$varsList.getTime();
+            this.$simList.add(torqueApp);
+        }
+    }
+
+    private applyConstraints(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+        const constraints = this.$constraints;
+        const Nconstraints = constraints.length;
+        for (let i = 0; i < Nconstraints; i++) {
+            const constraint = constraints[i];
+            this.applyConstraint(rateOfChange, constraint);
+        }
+    }
+
+    private applyConstraint(rateOfChange: number[], constraint: GeometricConstraint<T>): void {
         const body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -333,9 +436,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const dynamics = this.dynamics;
 
         // TODO: This could be a scratch variable.
-        const F = metric.scalar(0);
-        const e = metric.scalar(0);
-        const N = metric.scalar(0);
+        const F = metric.zero();
+        const e = metric.zero();
+        const N = metric.zero();
 
         dynamics.getForce(rateOfChange, idx, F);
         const X = body.X;

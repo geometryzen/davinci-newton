@@ -15,7 +15,7 @@ export declare class GravitationLaw<T> extends AbstractSimObject implements Forc
     G: T;
     private readonly F1;
     private readonly F2;
-    private readonly forces;
+    private readonly $forces;
     /**
      * Scratch variable for computing potential energy.
      */
@@ -26,11 +26,12 @@ export declare class GravitationLaw<T> extends AbstractSimObject implements Forc
      *
      */
     constructor(body1_: Massive<T>, body2_: Massive<T>, G: T);
+    get forces(): Force<T>[];
     /**
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      *
      */

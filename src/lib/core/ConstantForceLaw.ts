@@ -19,18 +19,22 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     /**
      * 
      */
-    constructor(private $body: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
+    constructor(private $body: ForceBody<T>, value: T, valueCoordType: CoordType = WORLD) {
         super();
         const metric = this.$body.metric;
         this.$force = metric.createForce(this.$body);
 
         this.$force.locationCoordType = LOCAL;
-        this.vector = vector;
-        this.$force.vectorCoordType = vectorCoordType;
+        metric.copyVector(value, this.$force.vector);
+        this.$force.vectorCoordType = valueCoordType;
         this.$forces = [this.$force];
 
         this.$potentialEnergy = metric.zero();
         this.$potentialEnergyLock = metric.lock(this.$potentialEnergy);
+    }
+
+    get forces(): Force<T>[] {
+        return this.$forces;
     }
 
     get location(): T {
@@ -52,7 +56,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     /**
      * 
      */
-    calculateForces(): Force<T>[] {
+    updateForces(): Force<T>[] {
         return this.$forces;
     }
 
@@ -60,7 +64,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
      * 
      */
     disconnect(): void {
-        // Does nothing
+        // Does nothing yet.
     }
 
     /**

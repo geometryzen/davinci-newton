@@ -26,7 +26,7 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    private readonly forces: Force<T>[] = [];
+    private readonly $forces: Force<T>[] = [];
     /**
      * 
      * @param body1 
@@ -46,7 +46,11 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
-        this.forces = [this.F1, this.F2];
+        this.$forces = [this.F1, this.F2];
+    }
+
+    get forces(): Force<T>[] {
+        return this.$forces;
     }
 
     get b(): T {
@@ -65,23 +69,23 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
         this.$frictionCoefficient.set(frictionCoefficient);
     }
 
-    calculateForces(): Force<T>[] {
+    updateForces(): Force<T>[] {
         const metric = this.body1.metric;
         const b = this.$frictionCoefficient.get();
         const x1 = this.body1.X;
         const x2 = this.body2.X;
-        const e = metric.scalar(0);
+        const e = metric.zero();
         metric.addVector(e, x1);
         metric.subVector(e, x2);
         metric.direction(e);
 
-        const v1 = metric.scalar(0);
+        const v1 = metric.zero();
         metric.copyVector(this.body1.P, v1);
         metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-        const v2 = metric.scalar(0);
+        const v2 = metric.zero();
         metric.copyVector(this.body2.P, v2);
         metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-        const v = metric.scalar(0);
+        const v = metric.zero();
         metric.copyVector(v1, v);
         metric.subVector(v, v2);
 
@@ -99,7 +103,7 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
         metric.copyVector(x1, this.F1.location);
         metric.copyVector(x2, this.F2.location);
 
-        return this.forces;
+        return this.$forces;
     }
     disconnect(): void {
         // Do nothing yet.

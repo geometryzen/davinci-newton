@@ -20,7 +20,7 @@ var Spring = /** @class */ (function (_super) {
         /**
          *
          */
-        _this.forces = [];
+        _this.$forces = [];
         _this.metric = body1.metric;
         var metric = _this.metric;
         _this.$restLength = metric.scalar(1);
@@ -42,9 +42,16 @@ var Spring = /** @class */ (function (_super) {
         _this.F2.vectorCoordType = WORLD;
         _this.potentialEnergy_ = metric.zero();
         _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-        _this.forces = [_this.F1, _this.F2];
+        _this.$forces = [_this.F1, _this.F2];
         return _this;
     }
+    Object.defineProperty(Spring.prototype, "forces", {
+        get: function () {
+            return this.$forces;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Spring.prototype, "restLength", {
         get: function () {
             return this.$restLength;
@@ -150,7 +157,7 @@ var Spring = /** @class */ (function (_super) {
     /**
      *
      */
-    Spring.prototype.calculateForces = function () {
+    Spring.prototype.updateForces = function () {
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
         var metric = this.metric;
@@ -172,7 +179,7 @@ var Spring = /** @class */ (function (_super) {
         // 4. The F2 vector property is the reaction to the F1 vector action.
         this.metric.copyVector(this.F1.vector, this.F2.vector);
         this.metric.neg(this.F2.vector);
-        return this.forces;
+        return this.$forces;
     };
     /**
      *

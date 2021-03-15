@@ -2,6 +2,7 @@ import { Geometric3 } from "../math/Geometric3";
 import { Mat3 } from "../math/Mat3";
 import { Matrix3 } from "../math/Matrix3";
 import { Force3 } from "./Force3";
+import { Torque3 } from "./Torque3";
 /**
  * @hidden
  */
@@ -37,6 +38,9 @@ var Euclidean3 = /** @class */ (function () {
     };
     Euclidean3.prototype.createForce = function (body) {
         return new Force3(body);
+    };
+    Euclidean3.prototype.createTorque = function (body) {
+        return new Torque3(body);
     };
     Euclidean3.prototype.direction = function (mv, mutate) {
         return mv.direction(mutate);
@@ -116,6 +120,9 @@ var Euclidean3 = /** @class */ (function () {
     };
     Euclidean3.prototype.writeVector = function (source, target) {
         source.writeVector(target);
+    };
+    Euclidean3.prototype.writeBivector = function (source, target) {
+        source.writeBivector(target);
     };
     Euclidean3.prototype.zero = function () {
         return Geometric3.zero.clone();

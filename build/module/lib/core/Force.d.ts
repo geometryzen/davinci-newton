@@ -1,13 +1,11 @@
 import { CoordType } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { ForceBody } from './ForceBody';
-import { Metric } from './Metric';
 /**
  * @hidden
  */
 export declare abstract class Force<T> extends AbstractSimObject {
     private readonly body;
-    private readonly metric;
     /**
      *
      */
@@ -17,6 +15,7 @@ export declare abstract class Force<T> extends AbstractSimObject {
      */
     locationCoordType: CoordType;
     /**
+     * TODO: Call value or measure?
      * The force vector, may be in local or world coordinates.
      */
     readonly vector: T;
@@ -29,7 +28,7 @@ export declare abstract class Force<T> extends AbstractSimObject {
     /**
      *
      */
-    constructor(body: ForceBody<T>, metric: Metric<T>);
+    constructor(body: ForceBody<T>);
     /**
      *
      */

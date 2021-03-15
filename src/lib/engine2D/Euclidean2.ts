@@ -1,12 +1,14 @@
+import { Force } from "../core/Force";
+import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
+import { Torque } from "../core/Torque";
 import { Geometric2 } from "../math/Geometric2";
-import { MatrixLike } from "../math/MatrixLike";
-import { Unit } from "../math/Unit";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
-import { Force } from "../..";
-import { ForceBody } from "../core/ForceBody";
+import { MatrixLike } from "../math/MatrixLike";
+import { Unit } from "../math/Unit";
 import { Force2 } from "./Force2";
+import { Torque2 } from "./Torque2";
 
 /**
  * @hidden
@@ -45,6 +47,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     createForce(body: ForceBody<Geometric2>): Force<Geometric2> {
         return new Force2(body);
+    }
+    createTorque(body: ForceBody<Geometric2>): Torque<Geometric2> {
+        return new Torque2(body);
     }
     direction(mv: Geometric2, mutate: boolean): Geometric2 {
         return mv.direction(mutate);
@@ -125,6 +130,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     writeVector(source: Geometric2, target: Geometric2): void {
         source.writeVector(target);
+    }
+    writeBivector(source: Geometric2, target: Geometric2): void {
+        source.writeBivector(target);
     }
     zero(): Geometric2 {
         return Geometric2.zero.clone();

@@ -23,18 +23,19 @@ export declare class LinearDamper<T> extends AbstractSimObject implements ForceL
     /**
      *
      */
-    private readonly forces;
+    private readonly $forces;
     /**
      *
      * @param body1
      * @param body2
      */
     constructor(body1: ForceBody<T>, body2: ForceBody<T>);
+    get forces(): Force<T>[];
     get b(): T;
     set b(b: T);
     get frictionCoefficient(): T;
     set frictionCoefficient(frictionCoefficient: T);
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }

@@ -1,7 +1,6 @@
 import { CoordType, LOCAL, WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { ForceBody } from './ForceBody';
-import { Metric } from './Metric';
 
 /**
  * @hidden
@@ -16,6 +15,7 @@ export abstract class Force<T> extends AbstractSimObject {
      */
     public locationCoordType: CoordType;
     /**
+     * TODO: Call value or measure?
      * The force vector, may be in local or world coordinates.
      */
     public readonly vector: T;
@@ -30,8 +30,9 @@ export abstract class Force<T> extends AbstractSimObject {
     /**
      * 
      */
-    constructor(private readonly body: ForceBody<T>, private readonly metric: Metric<T>) {
+    constructor(private readonly body: ForceBody<T>) {
         super();
+        const metric = body.metric;
         this.location = metric.zero();
         this.vector = metric.zero();
         this.$temp1 = metric.zero();
@@ -51,16 +52,17 @@ export abstract class Force<T> extends AbstractSimObject {
      * @param force (output)
      */
     computeForce(force: T): void {
+        const metric = this.body.metric;
         switch (this.vectorCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.vector, this.$temp2);
-                this.metric.rotate(this.$temp2, this.body.R);
-                this.metric.writeVector(this.$temp2, force);
+                metric.copyVector(this.vector, this.$temp2);
+                metric.rotate(this.$temp2, this.body.R);
+                metric.writeVector(this.$temp2, force);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.vector, this.$temp2);
-                this.metric.writeVector(this.$temp2, force);
+                metric.copyVector(this.vector, this.$temp2);
+                metric.writeVector(this.$temp2, force);
                 break;
             }
         }
@@ -82,19 +84,20 @@ export abstract class Force<T> extends AbstractSimObject {
      * @param position (output)
      */
     computePosition(position: T): void {
+        const metric = this.body.metric;
         switch (this.locationCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.location, this.$temp1);
+                metric.copyVector(this.location, this.$temp1);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                this.metric.rotate(this.$temp1, this.body.R);
-                this.metric.addVector(this.$temp1, this.body.X);
-                this.metric.writeVector(this.$temp1, position);
+                metric.rotate(this.$temp1, this.body.R);
+                metric.addVector(this.$temp1, this.body.X);
+                metric.writeVector(this.$temp1, position);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.location, this.$temp1);
-                this.metric.writeVector(this.$temp1, position);
+                metric.copyVector(this.location, this.$temp1);
+                metric.writeVector(this.$temp1, position);
                 break;
             }
         }
@@ -106,10 +109,11 @@ export abstract class Force<T> extends AbstractSimObject {
      * Torque = r ^ F because r = x - X
      */
     computeTorque(torque: T): void {
-        this.computePosition(this.$temp1);
-        this.computeForce(this.$temp2);
-        this.metric.subVector(this.$temp1, this.body.X);    // position contains x - X
-        this.metric.ext(this.$temp1, this.$temp2);         // 
-        this.metric.write(this.$temp1, torque);
+        this.computePosition(this.$temp1);          // temp1 = x
+        this.computeForce(this.$temp2);             // temp2 = F
+        const metric = this.body.metric;
+        metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
+        metric.ext(this.$temp1, this.$temp2);       // temp1 = (x - X) ^ F 
+        metric.write(this.$temp1, torque);          // torque = (x - X) ^ F
     }
 }

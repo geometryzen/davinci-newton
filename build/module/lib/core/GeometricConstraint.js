@@ -5,8 +5,7 @@ var GeometricConstraint = /** @class */ (function () {
         this.normalFn = normalFn;
         mustBeNonNullObject('body', body);
         var metric = body.metric;
-        // TODO: Would be nicer to create a zero vector.
-        this.N = metric.scalar(0);
+        this.N = metric.zero();
     }
     GeometricConstraint.prototype.getBody = function () {
         return this.body;

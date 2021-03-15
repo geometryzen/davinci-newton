@@ -1846,10 +1846,14 @@ var Geometric2 = /** @class */ (function () {
         mv.b = this.b;
         mv.uom = this.uom;
     };
-    Geometric2.prototype.writeVector = function (vector) {
-        vector.x = this.x;
-        vector.y = this.y;
-        vector.uom = this.uom;
+    Geometric2.prototype.writeVector = function (v) {
+        v.x = this.x;
+        v.y = this.y;
+        v.uom = this.uom;
+    };
+    Geometric2.prototype.writeBivector = function (B) {
+        B.xy = this.xy;
+        B.uom = this.uom;
     };
     /**
      * Sets this multivector to the identity element for addition, 0.

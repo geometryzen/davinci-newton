@@ -13,7 +13,7 @@ var CoulombLaw = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.body1_ = body1_;
         _this.body2_ = body2_;
-        _this.forces = [];
+        _this.$forces = [];
         _this.metric = body1_.metric;
         var metric = _this.metric;
         _this.F1 = metric.createForce(_this.body1_);
@@ -23,16 +23,23 @@ var CoulombLaw = /** @class */ (function (_super) {
         _this.F2.locationCoordType = WORLD;
         _this.F2.vectorCoordType = WORLD;
         _this.k = k;
-        _this.forces = [_this.F1, _this.F2];
+        _this.$forces = [_this.F1, _this.F2];
         _this.potentialEnergy_ = metric.zero();
         _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
         return _this;
     }
+    Object.defineProperty(CoulombLaw.prototype, "forces", {
+        get: function () {
+            return this.$forces;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * Computes the forces due to the Coulomb interaction.
      * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    CoulombLaw.prototype.calculateForces = function () {
+    CoulombLaw.prototype.updateForces = function () {
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         var numer = this.F1.location;
@@ -54,7 +61,7 @@ var CoulombLaw = /** @class */ (function (_super) {
         // Restore the contents of the location variables.
         metric.copyVector(this.body1_.X, this.F1.location);
         metric.copyVector(this.body2_.X, this.F2.location);
-        return this.forces;
+        return this.$forces;
     };
     /**
      *

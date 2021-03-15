@@ -176,6 +176,78 @@ describe("engine", function () {
             expect(block.X.z).toBe(0);
         });
     });
+    describe("constant force", function () {
+        it("Euclidean2D", function () {
+            const metric = new Euclidean2();
+            const dynamics = new Dynamics2();
+            const engine = new Engine(metric, dynamics);
+
+            const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
+            block.M = Geometric2.scalar(1, Unit.KILOGRAM);
+            block.P.x = 0;
+            block.P.y = 0;
+            block.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+
+            const F = new ConstantForceLaw(block, Geometric2.vector(1, 0, Unit.NEWTON));
+
+            expect(block.X.x).toBe(0);
+            expect(block.X.y).toBe(0);
+
+            engine.addBody(block);
+            engine.addForceLaw(F);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(0.5);
+            expect(block.X.y).toBe(0);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(2);
+            expect(block.X.y).toBe(0);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(4.5);
+            expect(block.X.y).toBe(0);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(8);
+            expect(block.X.y).toBe(0);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(12.5);
+            expect(block.X.y).toBe(0);
+        });
+        it("Euclidean3D", function () {
+            const metric = new Euclidean3();
+            const dynamics = new Dynamics3();
+            const engine = new Engine(metric, dynamics);
+
+            const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
+            block.M = Geometric3.scalar(1, Unit.KILOGRAM);
+            block.P.x = 0;
+            block.P.y = 0;
+            block.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+
+            const F = new ConstantForceLaw(block, Geometric3.vector(1, 0, 0, Unit.NEWTON));
+
+            engine.addBody(block);
+            engine.addForceLaw(F);
+
+            expect(block.X.x).toBe(0);
+            expect(block.X.y).toBe(0);
+            expect(block.X.z).toBe(0);
+
+            engine.advance(1, Unit.SECOND);
+
+            expect(block.X.x).toBe(0.5);
+            expect(block.X.y).toBe(0);
+            expect(block.X.z).toBe(0);
+        });
+    });
     describe("spring force", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();

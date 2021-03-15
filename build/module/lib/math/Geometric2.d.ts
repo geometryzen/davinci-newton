@@ -549,7 +549,8 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     toString(radix?: number): string;
     write(mv: Geometric): void;
-    writeVector(vector: Vector): void;
+    writeVector(v: Vector): void;
+    writeBivector(B: Bivector): void;
     /**
      * Sets this multivector to the identity element for addition, 0.
      */

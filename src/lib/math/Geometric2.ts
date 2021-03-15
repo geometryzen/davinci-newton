@@ -2013,10 +2013,15 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         mv.uom = this.uom;
     }
 
-    writeVector(vector: Vector): void {
-        vector.x = this.x;
-        vector.y = this.y;
-        vector.uom = this.uom;
+    writeVector(v: Vector): void {
+        v.x = this.x;
+        v.y = this.y;
+        v.uom = this.uom;
+    }
+
+    writeBivector(B: Bivector): void {
+        B.xy = this.xy;
+        B.uom = this.uom;
     }
 
     /**

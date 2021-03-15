@@ -17,7 +17,7 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
 
     private readonly F1: Force<T>;
     private readonly F2: Force<T>;
-    private readonly forces: Force<T>[] = [];
+    private readonly $forces: Force<T>[] = [];
 
     /**
      * Scratch variable for computing potential energy.
@@ -43,16 +43,20 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
 
         this.G = G;
 
-        this.forces = [this.F1, this.F2];
+        this.$forces = [this.F1, this.F2];
         this.potentialEnergy_ = metric.zero();
         this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+    }
+
+    get forces(): Force<T>[] {
+        return this.$forces;
     }
 
     /**
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    calculateForces(): Force<T>[] {
+    updateForces(): Force<T>[] {
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         const numer = this.F1.location;
@@ -82,7 +86,7 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
         metric.copyVector(this.body1_.X, this.F1.location);
         metric.copyVector(this.body2_.X, this.F2.location);
 
-        return this.forces;
+        return this.$forces;
     }
 
     /**

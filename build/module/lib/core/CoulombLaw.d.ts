@@ -16,7 +16,7 @@ export declare class CoulombLaw<T> extends AbstractSimObject implements ForceLaw
     k: T;
     private readonly F1;
     private readonly F2;
-    private readonly forces;
+    private readonly $forces;
     /**
      * Scratch variable for computing potential energy.
      */
@@ -27,11 +27,12 @@ export declare class CoulombLaw<T> extends AbstractSimObject implements ForceLaw
      *
      */
     constructor(body1_: Charged<T>, body2_: Charged<T>, k: T);
+    get forces(): Force<T>[];
     /**
      * Computes the forces due to the Coulomb interaction.
      * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    calculateForces(): Force<T>[];
+    updateForces(): Force<T>[];
     /**
      *
      */

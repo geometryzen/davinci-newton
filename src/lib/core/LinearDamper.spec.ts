@@ -79,7 +79,7 @@ describe("LinearDamper", function () {
             Bob.X = Geometric2.vector(1, 0);
 
             const damper = new LinearDamper(Alice, Bob);
-            const forces = damper.calculateForces();
+            const forces = damper.updateForces();
             expect(forces.length).toBe(2);
             const app1 = forces[0];
             const f1 = app1.vector;
@@ -106,7 +106,7 @@ describe("LinearDamper", function () {
             Bob.P = eR.mulByNumber(0.5);
 
             const damper = new LinearDamper(Alice, Bob);
-            const forces = damper.calculateForces();
+            const forces = damper.updateForces();
             expect(forces.length).toBe(2);
             const appA = forces[0];
             const forceOnA = appA.vector;
@@ -133,7 +133,7 @@ describe("LinearDamper", function () {
             Bob.P = eL.mulByNumber(0.5);
 
             const damper = new LinearDamper(Alice, Bob);
-            const forces = damper.calculateForces();
+            const forces = damper.updateForces();
             expect(forces.length).toBe(2);
             const appA = forces[0];
             const forceOnA = appA.vector;
@@ -163,7 +163,7 @@ describe("LinearDamper", function () {
             Bob.P = up;
 
             const damper = new LinearDamper(Alice, Bob);
-            const forces = damper.calculateForces();
+            const forces = damper.updateForces();
             expect(forces.length).toBe(2);
             const appA = forces[0];
             const forceOnA = appA.vector;
@@ -193,7 +193,7 @@ describe("LinearDamper", function () {
             Bob.P = right;
 
             const damper = new LinearDamper(Alice, Bob);
-            const forces = damper.calculateForces();
+            const forces = damper.updateForces();
             expect(forces.length).toBe(2);
             const appA = forces[0];
             const forceOnA = appA.vector;

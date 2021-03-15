@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-15';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.44';
+            this.VERSION = '1.0.46';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -164,21 +164,28 @@
         /**
          *
          */
-        function ConstantForceLaw($body, vector, vectorCoordType) {
-            if (vectorCoordType === void 0) { vectorCoordType = WORLD; }
+        function ConstantForceLaw($body, value, valueCoordType) {
+            if (valueCoordType === void 0) { valueCoordType = WORLD; }
             var _this = _super.call(this) || this;
             _this.$body = $body;
             _this.$forces = [];
             var metric = _this.$body.metric;
             _this.$force = metric.createForce(_this.$body);
             _this.$force.locationCoordType = LOCAL;
-            _this.vector = vector;
-            _this.$force.vectorCoordType = vectorCoordType;
+            metric.copyVector(value, _this.$force.vector);
+            _this.$force.vectorCoordType = valueCoordType;
             _this.$forces = [_this.$force];
             _this.$potentialEnergy = metric.zero();
             _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
             return _this;
         }
+        Object.defineProperty(ConstantForceLaw.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(ConstantForceLaw.prototype, "location", {
             get: function () {
                 return this.$force.location;
@@ -204,14 +211,14 @@
         /**
          *
          */
-        ConstantForceLaw.prototype.calculateForces = function () {
+        ConstantForceLaw.prototype.updateForces = function () {
             return this.$forces;
         };
         /**
          *
          */
         ConstantForceLaw.prototype.disconnect = function () {
-            // Does nothing
+            // Does nothing yet.
         };
         /**
          *
@@ -229,6 +236,42 @@
     }(AbstractSimObject));
 
     /**
+     * @hidden
+     */
+    var ConstantTorqueLaw = /** @class */ (function (_super) {
+        __extends(ConstantTorqueLaw, _super);
+        function ConstantTorqueLaw($body, value, valueCoordType) {
+            var _this = _super.call(this) || this;
+            _this.$body = $body;
+            var metric = _this.$body.metric;
+            _this.$torque = metric.createTorque(_this.$body);
+            metric.copyBivector(value, _this.$torque.bivector);
+            _this.$torque.bivectorCoordType = valueCoordType;
+            _this.$torques = [_this.$torque];
+            return _this;
+        }
+        Object.defineProperty(ConstantTorqueLaw.prototype, "torques", {
+            get: function () {
+                return this.$torques;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        ConstantTorqueLaw.prototype.updateTorques = function () {
+            return this.$torques;
+        };
+        ConstantTorqueLaw.prototype.disconnect = function () {
+            // Do nothing yet.
+        };
+        ConstantTorqueLaw.prototype.potentialEnergy = function () {
+            var metric = this.$body.metric;
+            // We don't really want to return a mutable quantity.
+            return metric.zero();
+        };
+        return ConstantTorqueLaw;
+    }(AbstractSimObject));
+
+    /**
      *
      */
     var CoulombLaw = /** @class */ (function (_super) {
@@ -240,7 +283,7 @@
             var _this = _super.call(this) || this;
             _this.body1_ = body1_;
             _this.body2_ = body2_;
-            _this.forces = [];
+            _this.$forces = [];
             _this.metric = body1_.metric;
             var metric = _this.metric;
             _this.F1 = metric.createForce(_this.body1_);
@@ -250,16 +293,23 @@
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.k = k;
-            _this.forces = [_this.F1, _this.F2];
+            _this.$forces = [_this.F1, _this.F2];
             _this.potentialEnergy_ = metric.zero();
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
             return _this;
         }
+        Object.defineProperty(CoulombLaw.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
         /**
          * Computes the forces due to the Coulomb interaction.
          * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
          */
-        CoulombLaw.prototype.calculateForces = function () {
+        CoulombLaw.prototype.updateForces = function () {
             // We can use the F1.location and F2.location as temporary variables
             // as long as we restore their contents.
             var numer = this.F1.location;
@@ -281,7 +331,7 @@
             // Restore the contents of the location variables.
             metric.copyVector(this.body1_.X, this.F1.location);
             metric.copyVector(this.body2_.X, this.F2.location);
-            return this.forces;
+            return this.$forces;
         };
         /**
          *
@@ -4037,11 +4087,19 @@
             /**
              *
              */
+            _this.$torqueLaws = [];
+            /**
+             *
+             */
             _this.$constraints = [];
             /**
              *
              */
             _this.$showForces = false;
+            /**
+             *
+             */
+            _this.$showTorques = false;
             mustBeNonNullObject('metric', metric);
             mustBeNonNullObject('dynamics', dynamics);
             _this.$varsList = new VarsList(dynamics.getVarNames());
@@ -4063,6 +4121,20 @@
             set: function (showForces) {
                 mustBeBoolean('showForces', showForces);
                 this.$showForces = showForces;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Physics.prototype, "showTorques", {
+            /**
+             * Determines whether calculated torques will be added to the simulation list.
+             */
+            get: function () {
+                return this.$showTorques;
+            },
+            set: function (showTorques) {
+                mustBeBoolean('showTorques', showTorques);
+                this.$showTorques = showTorques;
             },
             enumerable: false,
             configurable: true
@@ -4118,6 +4190,25 @@
             forceLaw.disconnect();
             this.discontinuosChangeToEnergy();
             remove(this.$forceLaws, forceLaw);
+        };
+        /**
+         *
+         */
+        Physics.prototype.addTorqueLaw = function (torqueLaw) {
+            mustBeNonNullObject('torqueLaw', torqueLaw);
+            if (!contains(this.$torqueLaws, torqueLaw)) {
+                this.$torqueLaws.push(torqueLaw);
+            }
+            this.discontinuosChangeToEnergy();
+        };
+        /**
+         *
+         */
+        Physics.prototype.removeTorqueLaw = function (torqueLaw) {
+            mustBeNonNullObject('torqueLaw', torqueLaw);
+            torqueLaw.disconnect();
+            this.discontinuosChangeToEnergy();
+            remove(this.$torqueLaws, torqueLaw);
         };
         /**
          *
@@ -4185,8 +4276,7 @@
         };
         /**
          * The time value is not being used because the DiffEqSolver has updated the vars.
-         * This will move the objects and forces will be recalculated.
-         * If anything it could be passed to forceLaw.calculateForces.
+         * This will move the objects and forces will be recalculated.u
          * @hidden
          */
         Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
@@ -4215,24 +4305,23 @@
                     dynamics.zeroAngularMomentumVars(rateOfChange, idx);
                 }
             }
+            this.applyForces(rateOfChange, Δt, uomTime);
+            this.applyTorques(rateOfChange, Δt, uomTime);
+            this.applyConstraints(rateOfChange, Δt, uomTime);
+            rateOfChange[this.$varsList.timeIndex()] = 1;
+        };
+        Physics.prototype.applyForces = function (rateOfChange, Δt, uomTime) {
             var forceLaws = this.$forceLaws;
-            var Nlaws = forceLaws.length;
-            for (var lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
-                var forceLaw = forceLaws[lawIndex];
+            var N = forceLaws.length;
+            for (var i = 0; i < N; i++) {
+                var forceLaw = forceLaws[i];
                 // The forces will give rise to changes in both linear and angular momentum.
-                var forces = forceLaw.calculateForces();
+                var forces = forceLaw.updateForces();
                 var Nforces = forces.length;
                 for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                     this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
                 }
             }
-            var constraints = this.$constraints;
-            var Nconstraints = constraints.length;
-            for (var i = 0; i < Nconstraints; i++) {
-                var constraint = constraints[i];
-                this.constrainForce(rateOfChange, constraint);
-            }
-            rateOfChange[this.$varsList.timeIndex()] = 1;
         };
         /**
          * Applying forces gives rise to linear and angular momentum.
@@ -4275,7 +4364,65 @@
                 this.$simList.add(forceApp);
             }
         };
-        Physics.prototype.constrainForce = function (rateOfChange, constraint) {
+        Physics.prototype.applyTorques = function (rateOfChange, Δt, uomTime) {
+            var torqueLaws = this.$torqueLaws;
+            var Ni = torqueLaws.length;
+            for (var i = 0; i < Ni; i++) {
+                var torqueLaw = torqueLaws[i];
+                var torques = torqueLaw.updateTorques();
+                var Nj = torques.length;
+                for (var j = 0; j < Nj; j++) {
+                    this.applyTorque(rateOfChange, torques[j], Δt, uomTime);
+                }
+            }
+        };
+        Physics.prototype.applyTorque = function (rateOfChange, torqueApp, Δt, uomTime) {
+            var body = torqueApp.getBody();
+            if (!(contains(this.$bodies, body))) {
+                return;
+            }
+            var idx = body.varsIndex;
+            if (idx < 0) {
+                return;
+            }
+            var metric = this.metric;
+            var dynamics = this.dynamics;
+            // The rate of change of angular momentum is torque.
+            // dL/dt = T
+            torqueApp.computeTorque(this.$torque);
+            var T = this.$torque;
+            // Bootstrap the angular momentum unit of measure.
+            if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+                metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+            }
+            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+            // TODO: When the torque is applied away from the center of mass, do we add linear momentum?
+            // The rate of change of angular momentum (bivector) is given by
+            // dL/dt = r ^ F = Γ
+            /*
+            torqueApp.computeTorque(this.$torque);
+            const T = this.$torque;
+            // Bootstrap the angular momentum unit of measure.
+            if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
+                metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+            }
+            // TODO: Could we add geometric constraints for torques here?
+            dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, T);
+            */
+            if (this.$showTorques) {
+                torqueApp.expireTime = this.$varsList.getTime();
+                this.$simList.add(torqueApp);
+            }
+        };
+        Physics.prototype.applyConstraints = function (rateOfChange, Δt, uomTime) {
+            var constraints = this.$constraints;
+            var Nconstraints = constraints.length;
+            for (var i = 0; i < Nconstraints; i++) {
+                var constraint = constraints[i];
+                this.applyConstraint(rateOfChange, constraint);
+            }
+        };
+        Physics.prototype.applyConstraint = function (rateOfChange, constraint) {
             var body = constraint.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4287,9 +4434,9 @@
             var metric = this.metric;
             var dynamics = this.dynamics;
             // TODO: This could be a scratch variable.
-            var F = metric.scalar(0);
-            var e = metric.scalar(0);
-            var N = metric.scalar(0);
+            var F = metric.zero();
+            var e = metric.zero();
+            var N = metric.zero();
             dynamics.getForce(rateOfChange, idx, F);
             var X = body.X;
             constraint.computeNormal(X, e);
@@ -4454,6 +4601,24 @@
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
             this.physics.removeForceLaw(forceLaw);
         };
+        /**
+         *
+         * @param torqueLaw
+         */
+        Engine.prototype.addTorqueLaw = function (torqueLaw) {
+            var contextBuilder = function () { return "Engine.addTorqueLaw(torqueLaw: TorqueLaw): void"; };
+            mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+            this.physics.addTorqueLaw(torqueLaw);
+        };
+        /**
+         *
+         * @param torqueLaw
+         */
+        Engine.prototype.removeTorqueLaw = function (torqueLaw) {
+            var contextBuilder = function () { return "Engine.removeTorqueLaw(torqueLaw: TorqueLaw): void"; };
+            mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
+            this.physics.removeTorqueLaw(torqueLaw);
+        };
         Engine.prototype.addConstraint = function (geometry) {
             var contextBuilder = function () { return "Engine.addGeometricConstraint(geometry: GeometricConstraint): void"; };
             mustBeNonNullObject('geometry', geometry, contextBuilder);
@@ -4490,10 +4655,10 @@
         /**
          *
          */
-        function Force(body, metric) {
+        function Force(body) {
             var _this = _super.call(this) || this;
             _this.body = body;
-            _this.metric = metric;
+            var metric = body.metric;
             _this.location = metric.zero();
             _this.vector = metric.zero();
             _this.$temp1 = metric.zero();
@@ -4512,16 +4677,17 @@
          * @param force (output)
          */
         Force.prototype.computeForce = function (force) {
+            var metric = this.body.metric;
             switch (this.vectorCoordType) {
                 case LOCAL: {
-                    this.metric.copyVector(this.vector, this.$temp2);
-                    this.metric.rotate(this.$temp2, this.body.R);
-                    this.metric.writeVector(this.$temp2, force);
+                    metric.copyVector(this.vector, this.$temp2);
+                    metric.rotate(this.$temp2, this.body.R);
+                    metric.writeVector(this.$temp2, force);
                     break;
                 }
                 case WORLD: {
-                    this.metric.copyVector(this.vector, this.$temp2);
-                    this.metric.writeVector(this.$temp2, force);
+                    metric.copyVector(this.vector, this.$temp2);
+                    metric.writeVector(this.$temp2, force);
                     break;
                 }
             }
@@ -4548,19 +4714,20 @@
          * @param position (output)
          */
         Force.prototype.computePosition = function (position) {
+            var metric = this.body.metric;
             switch (this.locationCoordType) {
                 case LOCAL: {
-                    this.metric.copyVector(this.location, this.$temp1);
+                    metric.copyVector(this.location, this.$temp1);
                     // We could subtract the body center-of-mass in body coordinates here.
                     // Instead we assume that it is always zero.
-                    this.metric.rotate(this.$temp1, this.body.R);
-                    this.metric.addVector(this.$temp1, this.body.X);
-                    this.metric.writeVector(this.$temp1, position);
+                    metric.rotate(this.$temp1, this.body.R);
+                    metric.addVector(this.$temp1, this.body.X);
+                    metric.writeVector(this.$temp1, position);
                     break;
                 }
                 case WORLD: {
-                    this.metric.copyVector(this.location, this.$temp1);
-                    this.metric.writeVector(this.$temp1, position);
+                    metric.copyVector(this.location, this.$temp1);
+                    metric.writeVector(this.$temp1, position);
                     break;
                 }
             }
@@ -4571,11 +4738,12 @@
          * Torque = r ^ F because r = x - X
          */
         Force.prototype.computeTorque = function (torque) {
-            this.computePosition(this.$temp1);
-            this.computeForce(this.$temp2);
-            this.metric.subVector(this.$temp1, this.body.X); // position contains x - X
-            this.metric.ext(this.$temp1, this.$temp2); // 
-            this.metric.write(this.$temp1, torque);
+            this.computePosition(this.$temp1); // temp1 = x
+            this.computeForce(this.$temp2); // temp2 = F
+            var metric = this.body.metric;
+            metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
+            metric.ext(this.$temp1, this.$temp2); // temp1 = (x - X) ^ F 
+            metric.write(this.$temp1, torque); // torque = (x - X) ^ F
         };
         return Force;
     }(AbstractSimObject));
@@ -4592,7 +4760,7 @@
             var _this = _super.call(this) || this;
             _this.body1_ = body1_;
             _this.body2_ = body2_;
-            _this.forces = [];
+            _this.$forces = [];
             _this.metric = body1_.metric;
             var metric = _this.metric;
             _this.F1 = metric.createForce(_this.body1_);
@@ -4602,16 +4770,23 @@
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.G = G;
-            _this.forces = [_this.F1, _this.F2];
+            _this.$forces = [_this.F1, _this.F2];
             _this.potentialEnergy_ = metric.zero();
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
             return _this;
         }
+        Object.defineProperty(GravitationLaw.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
         /**
          * Computes the forces due to the gravitational interaction.
          * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
          */
-        GravitationLaw.prototype.calculateForces = function () {
+        GravitationLaw.prototype.updateForces = function () {
             // We can use the F1.location and F2.location as temporary variables
             // as long as we restore their contents.
             var numer = this.F1.location;
@@ -4633,7 +4808,7 @@
             // Restore the contents of the location variables.
             metric.copyVector(this.body1_.X, this.F1.location);
             metric.copyVector(this.body2_.X, this.F2.location);
-            return this.forces;
+            return this.$forces;
         };
         /**
          *
@@ -4750,7 +4925,7 @@
             /**
              *
              */
-            _this.forces = [];
+            _this.$forces = [];
             var metric = body1.metric;
             _this.$frictionCoefficient = new LockableMeasure(metric, metric.scalar(1));
             _this.F1 = metric.createForce(_this.body1);
@@ -4759,9 +4934,16 @@
             _this.F2 = metric.createForce(_this.body2);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
-            _this.forces = [_this.F1, _this.F2];
+            _this.$forces = [_this.F1, _this.F2];
             return _this;
         }
+        Object.defineProperty(LinearDamper.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(LinearDamper.prototype, "b", {
             get: function () {
                 return this.$frictionCoefficient.get();
@@ -4784,22 +4966,22 @@
             enumerable: false,
             configurable: true
         });
-        LinearDamper.prototype.calculateForces = function () {
+        LinearDamper.prototype.updateForces = function () {
             var metric = this.body1.metric;
             var b = this.$frictionCoefficient.get();
             var x1 = this.body1.X;
             var x2 = this.body2.X;
-            var e = metric.scalar(0);
+            var e = metric.zero();
             metric.addVector(e, x1);
             metric.subVector(e, x2);
             metric.direction(e);
-            var v1 = metric.scalar(0);
+            var v1 = metric.zero();
             metric.copyVector(this.body1.P, v1);
             metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-            var v2 = metric.scalar(0);
+            var v2 = metric.zero();
             metric.copyVector(this.body2.P, v2);
             metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-            var v = metric.scalar(0);
+            var v = metric.zero();
             metric.copyVector(v1, v);
             metric.subVector(v, v2);
             var f1 = this.F1.vector;
@@ -4813,7 +4995,7 @@
             metric.neg(f2); // f2 = - f1
             metric.copyVector(x1, this.F1.location);
             metric.copyVector(x2, this.F2.location);
-            return this.forces;
+            return this.$forces;
         };
         LinearDamper.prototype.disconnect = function () {
             // Do nothing yet.
@@ -5196,7 +5378,7 @@
             /**
              *
              */
-            _this.forces = [];
+            _this.$forces = [];
             _this.metric = body1.metric;
             var metric = _this.metric;
             _this.$restLength = metric.scalar(1);
@@ -5218,9 +5400,16 @@
             _this.F2.vectorCoordType = WORLD;
             _this.potentialEnergy_ = metric.zero();
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-            _this.forces = [_this.F1, _this.F2];
+            _this.$forces = [_this.F1, _this.F2];
             return _this;
         }
+        Object.defineProperty(Spring.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(Spring.prototype, "restLength", {
             get: function () {
                 return this.$restLength;
@@ -5326,7 +5515,7 @@
         /**
          *
          */
-        Spring.prototype.calculateForces = function () {
+        Spring.prototype.updateForces = function () {
             this.computeBody1AttachPointInWorldCoords(this.F1.location);
             this.computeBody2AttachPointInWorldCoords(this.F2.location);
             var metric = this.metric;
@@ -5348,7 +5537,7 @@
             // 4. The F2 vector property is the reaction to the F1 vector action.
             this.metric.copyVector(this.F1.vector, this.F2.vector);
             this.metric.neg(this.F2.vector);
-            return this.forces;
+            return this.$forces;
         };
         /**
          *
@@ -5384,6 +5573,48 @@
             return this.potentialEnergy_;
         };
         return Spring;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
+    var Torque = /** @class */ (function (_super) {
+        __extends(Torque, _super);
+        function Torque(body) {
+            var _this = _super.call(this) || this;
+            _this.body = body;
+            var metric = body.metric;
+            _this.bivector = metric.zero();
+            _this.$temp1 = metric.zero();
+            return _this;
+        }
+        /**
+         *
+         */
+        Torque.prototype.getBody = function () {
+            return this.body;
+        };
+        /**
+         *
+         * @param torque
+         */
+        Torque.prototype.computeTorque = function (torque) {
+            var metric = this.body.metric;
+            switch (this.bivectorCoordType) {
+                case LOCAL: {
+                    metric.copyBivector(this.bivector, this.$temp1);
+                    metric.rotate(this.$temp1, this.body.R);
+                    metric.writeBivector(this.$temp1, torque);
+                    break;
+                }
+                case WORLD: {
+                    metric.copyBivector(this.bivector, this.$temp1);
+                    metric.writeBivector(this.$temp1, torque);
+                    break;
+                }
+            }
+        };
+        return Torque;
     }(AbstractSimObject));
 
     /**
@@ -7650,10 +7881,14 @@
             mv.b = this.b;
             mv.uom = this.uom;
         };
-        Geometric2.prototype.writeVector = function (vector) {
-            vector.x = this.x;
-            vector.y = this.y;
-            vector.uom = this.uom;
+        Geometric2.prototype.writeVector = function (v) {
+            v.x = this.x;
+            v.y = this.y;
+            v.uom = this.uom;
+        };
+        Geometric2.prototype.writeBivector = function (B) {
+            B.xy = this.xy;
+            B.uom = this.uom;
         };
         /**
          * Sets this multivector to the identity element for addition, 0.
@@ -7929,10 +8164,21 @@
     var Force2 = /** @class */ (function (_super) {
         __extends(Force2, _super);
         function Force2(body) {
-            return _super.call(this, body, body.metric) || this;
+            return _super.call(this, body) || this;
         }
         return Force2;
     }(Force));
+
+    /**
+     *
+     */
+    var Torque2 = /** @class */ (function (_super) {
+        __extends(Torque2, _super);
+        function Torque2(body) {
+            return _super.call(this, body) || this;
+        }
+        return Torque2;
+    }(Torque));
 
     /**
      * @hidden
@@ -7973,6 +8219,9 @@
         };
         Euclidean2.prototype.createForce = function (body) {
             return new Force2(body);
+        };
+        Euclidean2.prototype.createTorque = function (body) {
+            return new Torque2(body);
         };
         Euclidean2.prototype.direction = function (mv, mutate) {
             return mv.direction(mutate);
@@ -8053,6 +8302,9 @@
         };
         Euclidean2.prototype.writeVector = function (source, target) {
             source.writeVector(target);
+        };
+        Euclidean2.prototype.writeBivector = function (source, target) {
+            source.writeBivector(target);
         };
         Euclidean2.prototype.zero = function () {
             return Geometric2.zero.clone();
@@ -8172,6 +8424,14 @@
         }
         return ConstantForceLaw2;
     }(ConstantForceLaw));
+
+    var ConstantTorqueLaw2 = /** @class */ (function (_super) {
+        __extends(ConstantTorqueLaw2, _super);
+        function ConstantTorqueLaw2(body, value) {
+            return _super.call(this, body, value, WORLD) || this;
+        }
+        return ConstantTorqueLaw2;
+    }(ConstantTorqueLaw));
 
     /**
      * A solid disk of uniform surface density.
@@ -11398,11 +11658,17 @@
             mv.b = this.b;
             mv.uom = this.uom;
         };
-        Geometric3.prototype.writeVector = function (vector) {
-            vector.x = this.x;
-            vector.y = this.y;
-            vector.z = this.z;
-            vector.uom = this.uom;
+        Geometric3.prototype.writeVector = function (v) {
+            v.x = this.x;
+            v.y = this.y;
+            v.z = this.z;
+            v.uom = this.uom;
+        };
+        Geometric3.prototype.writeBivector = function (B) {
+            B.xy = this.xy;
+            B.yz = this.yz;
+            B.zx = this.zx;
+            B.uom = this.uom;
         };
         /**
          * @param M
@@ -12415,10 +12681,21 @@
     var Force3 = /** @class */ (function (_super) {
         __extends(Force3, _super);
         function Force3(body) {
-            return _super.call(this, body, body.metric) || this;
+            return _super.call(this, body) || this;
         }
         return Force3;
     }(Force));
+
+    /**
+     *
+     */
+    var Torque3 = /** @class */ (function (_super) {
+        __extends(Torque3, _super);
+        function Torque3(body) {
+            return _super.call(this, body) || this;
+        }
+        return Torque3;
+    }(Torque));
 
     /**
      * @hidden
@@ -12455,6 +12732,9 @@
         };
         Euclidean3.prototype.createForce = function (body) {
             return new Force3(body);
+        };
+        Euclidean3.prototype.createTorque = function (body) {
+            return new Torque3(body);
         };
         Euclidean3.prototype.direction = function (mv, mutate) {
             return mv.direction(mutate);
@@ -12534,6 +12814,9 @@
         };
         Euclidean3.prototype.writeVector = function (source, target) {
             source.writeVector(target);
+        };
+        Euclidean3.prototype.writeBivector = function (source, target) {
+            source.writeBivector(target);
         };
         Euclidean3.prototype.zero = function () {
             return Geometric3.zero.clone();
@@ -12648,6 +12931,14 @@
         }
         return ConstantForceLaw3;
     }(ConstantForceLaw));
+
+    var ConstantTorqueLaw3 = /** @class */ (function (_super) {
+        __extends(ConstantTorqueLaw3, _super);
+        function ConstantTorqueLaw3(body, value, valueCoordType) {
+            return _super.call(this, body, value, valueCoordType) || this;
+        }
+        return ConstantTorqueLaw3;
+    }(ConstantTorqueLaw));
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
     /**
@@ -18059,6 +18350,9 @@
     exports.ConstantForceLaw = ConstantForceLaw;
     exports.ConstantForceLaw2 = ConstantForceLaw2;
     exports.ConstantForceLaw3 = ConstantForceLaw3;
+    exports.ConstantTorqueLaw = ConstantTorqueLaw;
+    exports.ConstantTorqueLaw2 = ConstantTorqueLaw2;
+    exports.ConstantTorqueLaw3 = ConstantTorqueLaw3;
     exports.CoulombLaw = CoulombLaw;
     exports.Cylinder3 = Cylinder3;
     exports.DefaultAdvanceStrategy = DefaultAdvanceStrategy;
@@ -18110,6 +18404,9 @@
     exports.Spring = Spring;
     exports.Spring2 = Spring2;
     exports.Spring3 = Spring3;
+    exports.Torque = Torque;
+    exports.Torque2 = Torque2;
+    exports.Torque3 = Torque3;
     exports.Unit = Unit;
     exports.VarsList = VarsList;
     exports.Vec3 = Vec3;

@@ -9,10 +9,10 @@ var Force = /** @class */ (function (_super) {
     /**
      *
      */
-    function Force(body, metric) {
+    function Force(body) {
         var _this = _super.call(this) || this;
         _this.body = body;
-        _this.metric = metric;
+        var metric = body.metric;
         _this.location = metric.zero();
         _this.vector = metric.zero();
         _this.$temp1 = metric.zero();
@@ -31,16 +31,17 @@ var Force = /** @class */ (function (_super) {
      * @param force (output)
      */
     Force.prototype.computeForce = function (force) {
+        var metric = this.body.metric;
         switch (this.vectorCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.vector, this.$temp2);
-                this.metric.rotate(this.$temp2, this.body.R);
-                this.metric.writeVector(this.$temp2, force);
+                metric.copyVector(this.vector, this.$temp2);
+                metric.rotate(this.$temp2, this.body.R);
+                metric.writeVector(this.$temp2, force);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.vector, this.$temp2);
-                this.metric.writeVector(this.$temp2, force);
+                metric.copyVector(this.vector, this.$temp2);
+                metric.writeVector(this.$temp2, force);
                 break;
             }
         }
@@ -67,19 +68,20 @@ var Force = /** @class */ (function (_super) {
      * @param position (output)
      */
     Force.prototype.computePosition = function (position) {
+        var metric = this.body.metric;
         switch (this.locationCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.location, this.$temp1);
+                metric.copyVector(this.location, this.$temp1);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                this.metric.rotate(this.$temp1, this.body.R);
-                this.metric.addVector(this.$temp1, this.body.X);
-                this.metric.writeVector(this.$temp1, position);
+                metric.rotate(this.$temp1, this.body.R);
+                metric.addVector(this.$temp1, this.body.X);
+                metric.writeVector(this.$temp1, position);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.location, this.$temp1);
-                this.metric.writeVector(this.$temp1, position);
+                metric.copyVector(this.location, this.$temp1);
+                metric.writeVector(this.$temp1, position);
                 break;
             }
         }
@@ -90,11 +92,12 @@ var Force = /** @class */ (function (_super) {
      * Torque = r ^ F because r = x - X
      */
     Force.prototype.computeTorque = function (torque) {
-        this.computePosition(this.$temp1);
-        this.computeForce(this.$temp2);
-        this.metric.subVector(this.$temp1, this.body.X); // position contains x - X
-        this.metric.ext(this.$temp1, this.$temp2); // 
-        this.metric.write(this.$temp1, torque);
+        this.computePosition(this.$temp1); // temp1 = x
+        this.computeForce(this.$temp2); // temp2 = F
+        var metric = this.body.metric;
+        metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
+        metric.ext(this.$temp1, this.$temp2); // temp1 = (x - X) ^ F 
+        metric.write(this.$temp1, torque); // torque = (x - X) ^ F
     };
     return Force;
 }(AbstractSimObject));

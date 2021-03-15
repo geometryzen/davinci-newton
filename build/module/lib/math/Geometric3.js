@@ -1798,11 +1798,17 @@ var Geometric3 = /** @class */ (function () {
         mv.b = this.b;
         mv.uom = this.uom;
     };
-    Geometric3.prototype.writeVector = function (vector) {
-        vector.x = this.x;
-        vector.y = this.y;
-        vector.z = this.z;
-        vector.uom = this.uom;
+    Geometric3.prototype.writeVector = function (v) {
+        v.x = this.x;
+        v.y = this.y;
+        v.z = this.z;
+        v.uom = this.uom;
+    };
+    Geometric3.prototype.writeBivector = function (B) {
+        B.xy = this.xy;
+        B.yz = this.yz;
+        B.zx = this.zx;
+        B.uom = this.uom;
     };
     /**
      * @param M
