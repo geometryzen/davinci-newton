@@ -223,6 +223,16 @@ export class Dynamics3 implements Dynamics<Geometric3> {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
     }
+    getForce(rateOfChange: number[], idx: number, force: Geometric3): void {
+        force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
+        force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
+        force.z = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z];
+    }
+    setForce(rateOfChange: number[], idx: number, force: Geometric3): void {
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+    }
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric3): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;

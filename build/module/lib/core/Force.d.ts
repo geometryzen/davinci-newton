@@ -6,7 +6,7 @@ import { Metric } from './Metric';
  * @hidden
  */
 export declare abstract class Force<T> extends AbstractSimObject {
-    private body_;
+    private readonly body;
     private readonly metric;
     /**
      *
@@ -24,30 +24,28 @@ export declare abstract class Force<T> extends AbstractSimObject {
      *
      */
     vectorCoordType: CoordType;
-    /**
-     * Scratch variable for computing position (world coordinates).
-     */
-    private readonly position_;
-    /**
-     * Scratch variable for computing force (world coordinates).
-     */
-    private readonly force_;
+    private readonly $temp1;
+    private readonly $temp2;
     /**
      *
      */
-    constructor(body_: ForceBody<T>, metric: Metric<T>);
+    constructor(body: ForceBody<T>, metric: Metric<T>);
     /**
      *
      */
     getBody(): ForceBody<T>;
     /**
      * Computes the force being applied (vector).
+     *
+     * @param force (output)
      */
     computeForce(force: T): void;
     get F(): T;
     get x(): T;
     /**
      * Computes the point of application of the force in world coordinates.
+     *
+     * @param position (output)
      */
     computePosition(position: T): void;
     /**

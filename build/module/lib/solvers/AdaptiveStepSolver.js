@@ -3,6 +3,7 @@
  */
 var AdaptiveStepSolver = /** @class */ (function () {
     function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
+        this.energySystem = energySystem;
         this.metric = metric;
         this.stepUBound = 1;
         /**
@@ -11,7 +12,6 @@ var AdaptiveStepSolver = /** @class */ (function () {
          */
         this.stepLBound = 1E-5;
         this.diffEq_ = diffEq;
-        this.energySystem_ = energySystem;
         this.odeSolver_ = diffEqSolver;
         // this.totSteps_ = 0;
         this.secondDiff_ = true;
@@ -31,7 +31,7 @@ var AdaptiveStepSolver = /** @class */ (function () {
          */
         // let steps = 0;
         this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
-        var startEnergy = metric.a(this.energySystem_.totalEnergy());
+        var startEnergy = metric.a(this.energySystem.totalEnergy());
         var lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -68,7 +68,7 @@ var AdaptiveStepSolver = /** @class */ (function () {
                 this.diffEq_.epilog();
                 t += h;
             }
-            var finishEnergy = metric.a(this.energySystem_.totalEnergy());
+            var finishEnergy = metric.a(this.energySystem.totalEnergy());
             var energyDiff = Math.abs(startEnergy - finishEnergy);
             if (this.secondDiff_) {
                 // reduce time step until change in energy stabilizes

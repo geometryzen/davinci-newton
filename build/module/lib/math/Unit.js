@@ -712,6 +712,13 @@ var Unit = /** @class */ (function () {
      * The unit for a Spring constant, N/m.
      */
     Unit.STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
+    /**
+     * The unit for a Friction Coefficient, Ns/m.
+     */
+    Unit.FRICTION_COEFFICIENT = new Unit(1, Dimensions.FRICTION_COEFFICIENT, SYMBOLS_SI);
+    /**
+     *
+     */
     Unit.METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
     Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
     Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);

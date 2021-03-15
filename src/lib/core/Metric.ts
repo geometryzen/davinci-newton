@@ -32,7 +32,7 @@ export interface Metric<T> {
      */
     createForce(body: ForceBody<T>): Force<T>;
 
-    direction(mv: T, mutate: boolean): T;
+    direction(mv: T, mutate?: boolean): T;
 
     divByScalar(lhs: T, a: number, uom: Unit): T;
 
@@ -46,7 +46,7 @@ export interface Metric<T> {
 
     lock(mv: T): number;
 
-    magnitude(mv: T, mutate: boolean): T;
+    magnitude(mv: T, mutate?: boolean): T;
 
     mulByNumber(lhs: T, alpha: number): T;
 
@@ -56,7 +56,7 @@ export interface Metric<T> {
 
     neg(mv: T): T;
 
-    quaditude(mv: T, mutate: boolean): T;
+    quaditude(mv: T, mutate?: boolean): T;
 
     rev(mv: T): T;
 

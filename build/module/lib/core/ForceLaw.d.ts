@@ -7,7 +7,7 @@ export interface ForceLaw<T> extends SimObject {
     /**
      *
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      * TODO: This does not do anything in the existing implementations of ForceLaw.
      */

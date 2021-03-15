@@ -21,7 +21,8 @@ export class Particle<T> extends RigidBody<T> {
      *
      */
     public updateAngularVelocity(): void {
-        throw new Error();
+        // Do nothing yet.
+        // The angular velocity will remain at zero.
     }
 
     /**
@@ -29,5 +30,6 @@ export class Particle<T> extends RigidBody<T> {
      */
     protected updateInertiaTensor(): void {
         // Do nothing yet.
+        // The inertia tensor will remain as the identity matrix.
     }
 }

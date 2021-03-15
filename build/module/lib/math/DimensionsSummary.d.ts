@@ -24,41 +24,42 @@ export declare enum DimensionsSummary {
     ELECTRIC_PERMITTIVITY_TIMES_AREA = 6,
     ENERGY_OR_TORQUE = 7,
     FORCE = 8,
+    FRICTION_COEFFICIENT = 9,
     /**
      * The `liminous intensity` base quantity.
      */
-    LUMINOUS_INTENSITY = 9,
-    INV_LENGTH = 10,
-    INV_MOMENT_OF_INERTIA = 11,
-    INV_MASS = 12,
-    INV_TIME = 13,
+    LUMINOUS_INTENSITY = 10,
+    INV_LENGTH = 11,
+    INV_MOMENT_OF_INERTIA = 12,
+    INV_MASS = 13,
+    INV_TIME = 14,
     /**
      * The `length` base qiantity.
      */
-    LENGTH = 14,
+    LENGTH = 15,
     /**
      * The `mass` base quantity.
      */
-    MASS = 15,
-    MOMENT_OF_INERTIA = 16,
-    MOMENTUM = 17,
-    MOMENTUM_SQUARED = 18,
-    ONE = 19,
-    RATE_OF_CHANGE_OF_AREA = 20,
-    STIFFNESS = 21,
+    MASS = 16,
+    MOMENT_OF_INERTIA = 17,
+    MOMENTUM = 18,
+    MOMENTUM_SQUARED = 19,
+    ONE = 20,
+    RATE_OF_CHANGE_OF_AREA = 21,
+    STIFFNESS = 22,
     /**
      * The `time` base quantity.
      */
-    TIME = 22,
-    TIME_SQUARED = 23,
+    TIME = 23,
+    TIME_SQUARED = 24,
     /**
      * The `thermodynamic temperature` base quantity.
      */
-    THERMODYNAMIC_TEMPERATURE = 24,
-    VELOCITY = 25,
-    VELOCITY_SQUARED = 26,
+    THERMODYNAMIC_TEMPERATURE = 25,
+    VELOCITY = 26,
+    VELOCITY_SQUARED = 27,
     /**
      * The `volume` derived quantity.
      */
-    VOLUME = 27
+    VOLUME = 28
 }

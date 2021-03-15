@@ -44,7 +44,7 @@ describe("Spring", function () {
             const Bob = new Particle(Geometric2.scalar(1), Geometric2.scalar(0), metric);
             Bob.X = Geometric2.vector(0.5, 0);
             const spring = new Spring(Alice, Bob);
-            const forces = spring.updateForces();
+            const forces = spring.calculateForces();
             expect(forces.length).toBe(2);
             expect(forces[0].F.x).toBe(0);
             expect(forces[0].F.y).toBe(0);
@@ -61,7 +61,7 @@ describe("Spring", function () {
         const Bob = new Particle(Geometric2.scalar(1), Geometric2.scalar(0), metric);
         Bob.X = Geometric2.vector(1, 0);
         const spring = new Spring(Alice, Bob);
-        const forces = spring.updateForces();
+        const forces = spring.calculateForces();
         expect(forces.length).toBe(2);
         expect(forces[0].F.x).toBe(1);
         expect(forces[0].F.y).toBe(0);
@@ -77,7 +77,7 @@ describe("Spring", function () {
         const Bob = new Particle(Geometric2.scalar(1), Geometric2.scalar(0), metric);
         Bob.X = Geometric2.vector(0.25, 0);
         const spring = new Spring(Alice, Bob);
-        const forces = spring.updateForces();
+        const forces = spring.calculateForces();
         expect(forces.length).toBe(2);
         expect(forces[0].F.x).toBe(-0.5);
         expect(forces[0].F.y).toBe(0);

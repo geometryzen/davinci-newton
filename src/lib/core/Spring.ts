@@ -4,6 +4,7 @@ import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
+import { LockableMeasure } from './LockableMeasure';
 import { Metric } from './Metric';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 import { RigidBody } from './RigidBody';
@@ -18,10 +19,9 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     private $restLength: T;
     private $restLengthLock: number;
     /**
-     * 
+     * Spring Constant.
      */
-    private $stiffness: T;
-    private $stiffnessLock: number;
+    private readonly $springConstant: LockableMeasure<T>;
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
@@ -68,17 +68,16 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    constructor(private body1_: RigidBody<T>, private body2_: RigidBody<T>) {
+    constructor(private readonly body1: RigidBody<T>, private readonly body2: RigidBody<T>) {
         super();
 
-        this.metric = body1_.metric;
+        this.metric = body1.metric;
         const metric = this.metric;
 
         this.$restLength = metric.scalar(1);
         this.$restLengthLock = metric.lock(this.$restLength);
 
-        this.$stiffness = metric.scalar(1);
-        this.$stiffnessLock = metric.lock(this.$stiffness);
+        this.$springConstant = new LockableMeasure(metric, metric.scalar(1));
 
         this.attach1_ = metric.zero();
         this.attach1Lock = metric.lock(this.attach1_);
@@ -92,11 +91,11 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.end2_ = metric.zero();
         this.end2Lock_ = metric.lock(this.end2_);
 
-        this.F1 = metric.createForce(this.body1_);
+        this.F1 = metric.createForce(this.body1);
         this.F1.locationCoordType = WORLD;
         this.F1.vectorCoordType = WORLD;
 
-        this.F2 = metric.createForce(this.body2_);
+        this.F2 = metric.createForce(this.body2);
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
@@ -116,28 +115,42 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.$restLengthLock = this.metric.lock(this.$restLength);
     }
 
+    get k(): T {
+        return this.$springConstant.get();
+    }
+    set k(k: T) {
+        mustBeDimensionlessOrCorrectUnits('k', k, Unit.STIFFNESS, this.metric);
+        this.$springConstant.set(k);
+    }
+
+    get springConstant(): T {
+        return this.$springConstant.get();
+    }
+    set springConstant(springConstant: T) {
+        mustBeDimensionlessOrCorrectUnits('springConstant', springConstant, Unit.STIFFNESS, this.metric);
+        this.$springConstant.set(springConstant);
+    }
+
     get stiffness(): T {
-        return this.$stiffness;
+        return this.$springConstant.get();
     }
     set stiffness(stiffness: T) {
         mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
-        this.metric.unlock(this.$stiffness, this.$stiffnessLock);
-        this.metric.copy(stiffness, this.$stiffness);
-        this.$stiffnessLock = this.metric.lock(this.$stiffness);
+        this.$springConstant.set(stiffness);
     }
 
     private computeBody1AttachPointInWorldCoords(x: T): void {
-        if (this.attach1_ == null || this.body1_ == null) {
+        if (this.attach1_ == null || this.body1 == null) {
             throw new Error();
         }
-        this.body1_.localPointToWorldPoint(this.attach1_, x);
+        this.body1.localPointToWorldPoint(this.attach1_, x);
     }
 
     private computeBody2AttachPointInWorldCoords(x: T): void {
-        if (this.attach2_ == null || this.body2_ == null) {
+        if (this.attach2_ == null || this.body2 == null) {
             throw new Error();
         }
-        this.body2_.localPointToWorldPoint(this.attach2_, x);
+        this.body2.localPointToWorldPoint(this.attach2_, x);
     }
 
     get attach1(): T {
@@ -175,7 +188,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
      * 
      */
-    updateForces(): Force<T>[] {
+    calculateForces(): Force<T>[] {
 
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);

@@ -205,6 +205,11 @@ export class Dimensions {
     public static readonly STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary.STIFFNESS);
 
     /**
+     * Friction.
+     */
+    public static readonly FRICTION_COEFFICIENT = new Dimensions(R1, R0, M1, R0, R0, R0, R0, DimensionsSummary.FRICTION_COEFFICIENT);
+
+    /**
      * Time squared.
      */
     public static readonly TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary.TIME_SQUARED);

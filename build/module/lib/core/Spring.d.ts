@@ -7,18 +7,17 @@ import { RigidBody } from './RigidBody';
  * @hidden
  */
 export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
-    private body1_;
-    private body2_;
+    private readonly body1;
+    private readonly body2;
     /**
      *
      */
     private $restLength;
     private $restLengthLock;
     /**
-     *
+     * Spring Constant.
      */
-    private $stiffness;
-    private $stiffnessLock;
+    private readonly $springConstant;
     /**
      * The attachment point to body1 in the local coordinates frame of body 1.
      */
@@ -60,9 +59,13 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
     /**
      *
      */
-    constructor(body1_: RigidBody<T>, body2_: RigidBody<T>);
+    constructor(body1: RigidBody<T>, body2: RigidBody<T>);
     get restLength(): T;
     set restLength(restLength: T);
+    get k(): T;
+    set k(k: T);
+    get springConstant(): T;
+    set springConstant(springConstant: T);
     get stiffness(): T;
     set stiffness(stiffness: T);
     private computeBody1AttachPointInWorldCoords;
@@ -76,7 +79,7 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
     /**
      *
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      *
      */

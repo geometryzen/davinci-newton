@@ -404,10 +404,10 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     copyVector(vector: Vector): this;
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
+     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
      * @returns this / magnitude(this)
      */
-    direction(mutate: boolean): Geometric2;
+    direction(mutate?: boolean): Geometric2;
     divByPseudo(β: number, uom?: Unit): Geometric2;
     /**
      * <p>

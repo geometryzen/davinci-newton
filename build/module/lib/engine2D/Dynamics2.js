@@ -149,6 +149,14 @@ var Dynamics2 = /** @class */ (function () {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
     };
+    Dynamics2.prototype.getForce = function (rateOfChange, idx, force) {
+        force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
+        force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
+    };
+    Dynamics2.prototype.setForce = function (rateOfChange, idx, force) {
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+    };
     Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
     };

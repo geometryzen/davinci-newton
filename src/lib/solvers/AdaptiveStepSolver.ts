@@ -9,7 +9,6 @@ import { EnergySystem } from '../core/EnergySystem';
  */
 export class AdaptiveStepSolver<T> implements DiffEqSolver {
     private diffEq_: Simulation;
-    private energySystem_: EnergySystem<T>;
     private odeSolver_: DiffEqSolver;
     // private totSteps_: number;
     private secondDiff_: boolean;
@@ -24,9 +23,8 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
      * enables debug code for particular test
      */
     private tolerance_: number;
-    constructor(diffEq: Simulation, energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver, private readonly metric: Metric<T>) {
+    constructor(diffEq: Simulation, private readonly energySystem: EnergySystem<T>, diffEqSolver: DiffEqSolver, private readonly metric: Metric<T>) {
         this.diffEq_ = diffEq;
-        this.energySystem_ = energySystem;
         this.odeSolver_ = diffEqSolver;
         // this.totSteps_ = 0;
         this.secondDiff_ = true;
@@ -46,7 +44,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
          */
         // let steps = 0;
         this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
-        const startEnergy: number = metric.a(this.energySystem_.totalEnergy());
+        const startEnergy: number = metric.a(this.energySystem.totalEnergy());
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
          * the value we are trying to reduce to zero
@@ -83,7 +81,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
                 this.diffEq_.epilog();
                 t += h;
             }
-            const finishEnergy: number = metric.a(this.energySystem_.totalEnergy());
+            const finishEnergy: number = metric.a(this.energySystem.totalEnergy());
             const energyDiff = Math.abs(startEnergy - finishEnergy);
             if (this.secondDiff_) {
                 // reduce time step until change in energy stabilizes

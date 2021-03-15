@@ -94,6 +94,13 @@ export declare class Unit {
      * The unit for a Spring constant, N/m.
      */
     static readonly STIFFNESS: Unit;
+    /**
+     * The unit for a Friction Coefficient, Ns/m.
+     */
+    static readonly FRICTION_COEFFICIENT: Unit;
+    /**
+     *
+     */
     private static readonly METER_PER_SECOND;
     private static readonly METER_SQUARED_PER_SECOND;
     private static readonly METER_SQUARED_PER_SECOND_SQUARED;

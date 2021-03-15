@@ -49,7 +49,7 @@ var ConstantForceLaw = /** @class */ (function (_super) {
     /**
      *
      */
-    ConstantForceLaw.prototype.updateForces = function () {
+    ConstantForceLaw.prototype.calculateForces = function () {
         return this.$forces;
     };
     /**

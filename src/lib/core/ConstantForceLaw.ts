@@ -52,7 +52,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
     /**
      * 
      */
-    updateForces(): Force<T>[] {
+    calculateForces(): Force<T>[] {
         return this.$forces;
     }
 

@@ -7,9 +7,9 @@ import { EnergySystem } from '../core/EnergySystem';
  * @hidden
  */
 export declare class AdaptiveStepSolver<T> implements DiffEqSolver {
+    private readonly energySystem;
     private readonly metric;
     private diffEq_;
-    private energySystem_;
     private odeSolver_;
     private secondDiff_;
     private savedState;

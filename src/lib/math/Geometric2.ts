@@ -1451,33 +1451,30 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
+     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
      * @returns this / magnitude(this)
      */
-    direction(mutate: boolean): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().direction(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric2.");
-            }
-        }
-        else {
+    direction(mutate?: boolean): Geometric2 {
+        if (typeof mutate === 'boolean') {
             if (mutate) {
-                const norm: number = this.magnitudeSansUnits();
-                if (norm !== 0) {
-                    this.a = this.a / norm;
-                    this.x = this.x / norm;
-                    this.y = this.y / norm;
-                    this.b = this.b / norm;
+                if (this.isLocked()) {
+                    throw new Error("Unable to mutate this locked Geometric2.");
+                } else {
+                    const norm: number = this.magnitudeSansUnits();
+                    if (norm !== 0) {
+                        this.a = this.a / norm;
+                        this.x = this.x / norm;
+                        this.y = this.y / norm;
+                        this.b = this.b / norm;
+                    }
+                    this.uom = void 0;
+                    return this;
                 }
-                this.uom = void 0;
-                return this;
-            }
-            else {
+            } else {
                 return lock(this.clone().direction(true));
             }
+        } else {
+            return this.direction(this.isMutable());
         }
     }
 

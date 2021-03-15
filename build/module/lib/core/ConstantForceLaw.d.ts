@@ -26,7 +26,7 @@ export declare class ConstantForceLaw<T> extends AbstractSimObject implements Fo
     /**
      *
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      *
      */

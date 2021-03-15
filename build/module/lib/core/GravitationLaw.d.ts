@@ -30,7 +30,7 @@ export declare class GravitationLaw<T> extends AbstractSimObject implements Forc
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      *
      */

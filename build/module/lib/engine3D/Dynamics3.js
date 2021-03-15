@@ -211,6 +211,16 @@ var Dynamics3 = /** @class */ (function () {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
     };
+    Dynamics3.prototype.getForce = function (rateOfChange, idx, force) {
+        force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
+        force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
+        force.z = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z];
+    };
+    Dynamics3.prototype.setForce = function (rateOfChange, idx, force) {
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+    };
     Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;

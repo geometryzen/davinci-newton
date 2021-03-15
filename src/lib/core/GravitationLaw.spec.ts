@@ -52,8 +52,8 @@ describe("GravitationLaw", function () {
         expect(pe.uom.dimensions.T.numer).toBe(-2);
         expect(pe.uom.dimensions.Q.numer).toBe(0);
     });
-    it("updateForces", function () {
-        const forces = gravity.updateForces();
+    it("calculateForces", function () {
+        const forces = gravity.calculateForces();
         const force1 = forces[0];
         const force2 = forces[1];
         expect(force1.F.x).toBe(+G.a * m1 * m2 / (r * r));

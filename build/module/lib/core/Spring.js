@@ -3,6 +3,7 @@ import { Unit } from '../math/Unit';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
+import { LockableMeasure } from './LockableMeasure';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 /**
  * @hidden
@@ -12,20 +13,19 @@ var Spring = /** @class */ (function (_super) {
     /**
      *
      */
-    function Spring(body1_, body2_) {
+    function Spring(body1, body2) {
         var _this = _super.call(this) || this;
-        _this.body1_ = body1_;
-        _this.body2_ = body2_;
+        _this.body1 = body1;
+        _this.body2 = body2;
         /**
          *
          */
         _this.forces = [];
-        _this.metric = body1_.metric;
+        _this.metric = body1.metric;
         var metric = _this.metric;
         _this.$restLength = metric.scalar(1);
         _this.$restLengthLock = metric.lock(_this.$restLength);
-        _this.$stiffness = metric.scalar(1);
-        _this.$stiffnessLock = metric.lock(_this.$stiffness);
+        _this.$springConstant = new LockableMeasure(metric, metric.scalar(1));
         _this.attach1_ = metric.zero();
         _this.attach1Lock = metric.lock(_this.attach1_);
         _this.attach2_ = metric.zero();
@@ -34,10 +34,10 @@ var Spring = /** @class */ (function (_super) {
         _this.end1Lock_ = metric.lock(_this.end1_);
         _this.end2_ = metric.zero();
         _this.end2Lock_ = metric.lock(_this.end2_);
-        _this.F1 = metric.createForce(_this.body1_);
+        _this.F1 = metric.createForce(_this.body1);
         _this.F1.locationCoordType = WORLD;
         _this.F1.vectorCoordType = WORLD;
-        _this.F2 = metric.createForce(_this.body2_);
+        _this.F2 = metric.createForce(_this.body2);
         _this.F2.locationCoordType = WORLD;
         _this.F2.vectorCoordType = WORLD;
         _this.potentialEnergy_ = metric.zero();
@@ -58,30 +58,50 @@ var Spring = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Spring.prototype, "k", {
+        get: function () {
+            return this.$springConstant.get();
+        },
+        set: function (k) {
+            mustBeDimensionlessOrCorrectUnits('k', k, Unit.STIFFNESS, this.metric);
+            this.$springConstant.set(k);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Spring.prototype, "springConstant", {
+        get: function () {
+            return this.$springConstant.get();
+        },
+        set: function (springConstant) {
+            mustBeDimensionlessOrCorrectUnits('springConstant', springConstant, Unit.STIFFNESS, this.metric);
+            this.$springConstant.set(springConstant);
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Spring.prototype, "stiffness", {
         get: function () {
-            return this.$stiffness;
+            return this.$springConstant.get();
         },
         set: function (stiffness) {
             mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
-            this.metric.unlock(this.$stiffness, this.$stiffnessLock);
-            this.metric.copy(stiffness, this.$stiffness);
-            this.$stiffnessLock = this.metric.lock(this.$stiffness);
+            this.$springConstant.set(stiffness);
         },
         enumerable: false,
         configurable: true
     });
     Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
-        if (this.attach1_ == null || this.body1_ == null) {
+        if (this.attach1_ == null || this.body1 == null) {
             throw new Error();
         }
-        this.body1_.localPointToWorldPoint(this.attach1_, x);
+        this.body1.localPointToWorldPoint(this.attach1_, x);
     };
     Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
-        if (this.attach2_ == null || this.body2_ == null) {
+        if (this.attach2_ == null || this.body2 == null) {
             throw new Error();
         }
-        this.body2_.localPointToWorldPoint(this.attach2_, x);
+        this.body2.localPointToWorldPoint(this.attach2_, x);
     };
     Object.defineProperty(Spring.prototype, "attach1", {
         get: function () {
@@ -130,7 +150,7 @@ var Spring = /** @class */ (function (_super) {
     /**
      *
      */
-    Spring.prototype.updateForces = function () {
+    Spring.prototype.calculateForces = function () {
         this.computeBody1AttachPointInWorldCoords(this.F1.location);
         this.computeBody2AttachPointInWorldCoords(this.F2.location);
         var metric = this.metric;

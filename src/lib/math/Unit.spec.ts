@@ -104,6 +104,14 @@ const HENRY = KILOGRAM.mul(METER).mul(METER).div(COULOMB).div(COULOMB);
  * @hidden
  */
 const PASCAL = NEWTON.div(METER).div(METER);
+/**
+ * @hidden
+ */
+const FRICTION_COEFFICIENT = Unit.FRICTION_COEFFICIENT;
+/**
+ * @hidden
+ */
+const SPRING_CONSTANT = Unit.STIFFNESS;
 
 describe("Unit", function () {
     const symbols = ["kg", "m", "s", "C", "K", "mol", "cd"];
@@ -321,6 +329,13 @@ describe("Unit", function () {
     });
     it("Coulomb's constant", function () {
         expect(NEWTON.mul(METER).mul(METER).div(COULOMB).div(COULOMB).toString(10, true)).toBe("N·m**2/C**2");
+    });
+    it("Friction Coefficient", function () {
+        // TODO: Could also be N·s/m or Ns/m
+        expect(FRICTION_COEFFICIENT.toString(10, true)).toBe("kg s**-1");
+    });
+    it("Spring Constant", function () {
+        expect(SPRING_CONSTANT.toString(10, true)).toBe("N/m");
     });
 
     describe("Operator Overloading", function () {

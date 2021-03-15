@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-14';
+            this.LAST_MODIFIED = '2021-03-15';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.40';
+            this.VERSION = '1.0.43';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -204,7 +204,7 @@
         /**
          *
          */
-        ConstantForceLaw.prototype.updateForces = function () {
+        ConstantForceLaw.prototype.calculateForces = function () {
             return this.$forces;
         };
         /**
@@ -259,7 +259,7 @@
          * Computes the forces due to the Coulomb interaction.
          * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
          */
-        CoulombLaw.prototype.updateForces = function () {
+        CoulombLaw.prototype.calculateForces = function () {
             // We can use the F1.location and F2.location as temporary variables
             // as long as we restore their contents.
             var numer = this.F1.location;
@@ -952,43 +952,44 @@
         DimensionsSummary[DimensionsSummary["ELECTRIC_PERMITTIVITY_TIMES_AREA"] = 6] = "ELECTRIC_PERMITTIVITY_TIMES_AREA";
         DimensionsSummary[DimensionsSummary["ENERGY_OR_TORQUE"] = 7] = "ENERGY_OR_TORQUE";
         DimensionsSummary[DimensionsSummary["FORCE"] = 8] = "FORCE";
+        DimensionsSummary[DimensionsSummary["FRICTION_COEFFICIENT"] = 9] = "FRICTION_COEFFICIENT";
         /**
          * The `liminous intensity` base quantity.
          */
-        DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 9] = "LUMINOUS_INTENSITY";
-        DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 10] = "INV_LENGTH";
-        DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 11] = "INV_MOMENT_OF_INERTIA";
-        DimensionsSummary[DimensionsSummary["INV_MASS"] = 12] = "INV_MASS";
-        DimensionsSummary[DimensionsSummary["INV_TIME"] = 13] = "INV_TIME";
+        DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 10] = "LUMINOUS_INTENSITY";
+        DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 11] = "INV_LENGTH";
+        DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 12] = "INV_MOMENT_OF_INERTIA";
+        DimensionsSummary[DimensionsSummary["INV_MASS"] = 13] = "INV_MASS";
+        DimensionsSummary[DimensionsSummary["INV_TIME"] = 14] = "INV_TIME";
         /**
          * The `length` base qiantity.
          */
-        DimensionsSummary[DimensionsSummary["LENGTH"] = 14] = "LENGTH";
+        DimensionsSummary[DimensionsSummary["LENGTH"] = 15] = "LENGTH";
         /**
          * The `mass` base quantity.
          */
-        DimensionsSummary[DimensionsSummary["MASS"] = 15] = "MASS";
-        DimensionsSummary[DimensionsSummary["MOMENT_OF_INERTIA"] = 16] = "MOMENT_OF_INERTIA";
-        DimensionsSummary[DimensionsSummary["MOMENTUM"] = 17] = "MOMENTUM";
-        DimensionsSummary[DimensionsSummary["MOMENTUM_SQUARED"] = 18] = "MOMENTUM_SQUARED";
-        DimensionsSummary[DimensionsSummary["ONE"] = 19] = "ONE";
-        DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 20] = "RATE_OF_CHANGE_OF_AREA";
-        DimensionsSummary[DimensionsSummary["STIFFNESS"] = 21] = "STIFFNESS";
+        DimensionsSummary[DimensionsSummary["MASS"] = 16] = "MASS";
+        DimensionsSummary[DimensionsSummary["MOMENT_OF_INERTIA"] = 17] = "MOMENT_OF_INERTIA";
+        DimensionsSummary[DimensionsSummary["MOMENTUM"] = 18] = "MOMENTUM";
+        DimensionsSummary[DimensionsSummary["MOMENTUM_SQUARED"] = 19] = "MOMENTUM_SQUARED";
+        DimensionsSummary[DimensionsSummary["ONE"] = 20] = "ONE";
+        DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 21] = "RATE_OF_CHANGE_OF_AREA";
+        DimensionsSummary[DimensionsSummary["STIFFNESS"] = 22] = "STIFFNESS";
         /**
          * The `time` base quantity.
          */
-        DimensionsSummary[DimensionsSummary["TIME"] = 22] = "TIME";
-        DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 23] = "TIME_SQUARED";
+        DimensionsSummary[DimensionsSummary["TIME"] = 23] = "TIME";
+        DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 24] = "TIME_SQUARED";
         /**
          * The `thermodynamic temperature` base quantity.
          */
-        DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 24] = "THERMODYNAMIC_TEMPERATURE";
-        DimensionsSummary[DimensionsSummary["VELOCITY"] = 25] = "VELOCITY";
-        DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 26] = "VELOCITY_SQUARED";
+        DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 25] = "THERMODYNAMIC_TEMPERATURE";
+        DimensionsSummary[DimensionsSummary["VELOCITY"] = 26] = "VELOCITY";
+        DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 27] = "VELOCITY_SQUARED";
         /**
          * The `volume` derived quantity.
          */
-        DimensionsSummary[DimensionsSummary["VOLUME"] = 27] = "VOLUME";
+        DimensionsSummary[DimensionsSummary["VOLUME"] = 28] = "VOLUME";
     })(DimensionsSummary || (DimensionsSummary = {}));
 
     /**
@@ -2096,6 +2097,10 @@
          */
         Dimensions.STIFFNESS = new Dimensions(R1, R0, M2, R0, R0, R0, R0, DimensionsSummary.STIFFNESS);
         /**
+         * Friction.
+         */
+        Dimensions.FRICTION_COEFFICIENT = new Dimensions(R1, R0, M1, R0, R0, R0, R0, DimensionsSummary.FRICTION_COEFFICIENT);
+        /**
          * Time squared.
          */
         Dimensions.TIME_SQUARED = new Dimensions(R0, R0, R2, R0, R0, R0, R0, DimensionsSummary.TIME_SQUARED);
@@ -2818,6 +2823,13 @@
          * The unit for a Spring constant, N/m.
          */
         Unit.STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
+        /**
+         * The unit for a Friction Coefficient, Ns/m.
+         */
+        Unit.FRICTION_COEFFICIENT = new Unit(1, Dimensions.FRICTION_COEFFICIENT, SYMBOLS_SI);
+        /**
+         *
+         */
         Unit.METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
         Unit.METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
         Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
@@ -4025,6 +4037,10 @@
             /**
              *
              */
+            _this.$constraints = [];
+            /**
+             *
+             */
             _this.$showForces = false;
             mustBeNonNullObject('metric', metric);
             mustBeNonNullObject('dynamics', dynamics);
@@ -4103,6 +4119,20 @@
             this.discontinuosChangeToEnergy();
             remove(this.$forceLaws, forceLaw);
         };
+        /**
+         *
+         * @param geometry
+         */
+        Physics.prototype.addConstraint = function (geometry) {
+            mustBeNonNullObject('geometry', geometry);
+            if (!contains(this.$constraints, geometry)) {
+                this.$constraints.push(geometry);
+            }
+        };
+        Physics.prototype.removeConstraint = function (geometry) {
+            mustBeNonNullObject('geometry', geometry);
+            remove(this.$constraints, geometry);
+        };
         Physics.prototype.discontinuosChangeToEnergy = function () {
             var _a;
             var dynamics = this.dynamics;
@@ -4156,7 +4186,7 @@
         /**
          * The time value is not being used because the DiffEqSolver has updated the vars.
          * This will move the objects and forces will be recalculated.
-         * If anything it could be passed to forceLaw.updateForces.
+         * If anything it could be passed to forceLaw.calculateForces.
          * @hidden
          */
         Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
@@ -4190,11 +4220,17 @@
             for (var lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
                 var forceLaw = forceLaws[lawIndex];
                 // The forces will give rise to changes in both linear and angular momentum.
-                var forces = forceLaw.updateForces();
+                var forces = forceLaw.calculateForces();
                 var Nforces = forces.length;
                 for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                     this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
                 }
+            }
+            var constraints = this.$constraints;
+            var Nconstraints = constraints.length;
+            for (var i = 0; i < Nconstraints; i++) {
+                var constraint = constraints[i];
+                this.constrainForce(rateOfChange, constraint);
             }
             rateOfChange[this.$varsList.timeIndex()] = 1;
         };
@@ -4222,6 +4258,7 @@
             if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
                 metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
             }
+            // TODO: Here we could apply geometric constraints on the forces.
             dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
             // The rate of change of angular momentum (bivector) is given by
             // dL/dt = r ^ F = Γ
@@ -4231,11 +4268,39 @@
             if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
                 metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
             }
+            // TODO: Could we add geometric constraints for torques here?
             dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
             if (this.$showForces) {
                 forceApp.expireTime = this.$varsList.getTime();
                 this.$simList.add(forceApp);
             }
+        };
+        Physics.prototype.constrainForce = function (rateOfChange, constraint) {
+            var body = constraint.getBody();
+            if (!(contains(this.$bodies, body))) {
+                return;
+            }
+            var idx = body.varsIndex;
+            if (idx < 0) {
+                return;
+            }
+            var metric = this.metric;
+            var dynamics = this.dynamics;
+            // TODO: This could be a scratch variable.
+            var F = metric.scalar(0);
+            var e = metric.scalar(0);
+            var N = metric.scalar(0);
+            dynamics.getForce(rateOfChange, idx, F);
+            var X = body.X;
+            constraint.computeNormal(X, e);
+            metric.copyVector(e, N);
+            metric.scp(N, e);
+            metric.mulByVector(N, e);
+            metric.subVector(F, N);
+            // Update the rateOfChange of Linear Momentum (force); 
+            dynamics.setForce(rateOfChange, idx, F);
+            // The constraint holds the computed force so that it can be visualized.
+            constraint.setForce(N);
         };
         Object.defineProperty(Physics.prototype, "time", {
             /**
@@ -4389,6 +4454,16 @@
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
             this.physics.removeForceLaw(forceLaw);
         };
+        Engine.prototype.addConstraint = function (geometry) {
+            var contextBuilder = function () { return "Engine.addGeometricConstraint(geometry: GeometricConstraint): void"; };
+            mustBeNonNullObject('geometry', geometry, contextBuilder);
+            this.physics.addConstraint(geometry);
+        };
+        Engine.prototype.removeConstraint = function (geometry) {
+            var contextBuilder = function () { return "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void"; };
+            mustBeNonNullObject('geometry', geometry, contextBuilder);
+            this.physics.removeConstraint(geometry);
+        };
         /**
          * Advances the Physics model by the specified time interval, Δt * uomTime.
          * @param Δt The time interval.
@@ -4415,73 +4490,77 @@
         /**
          *
          */
-        function Force(body_, metric) {
+        function Force(body, metric) {
             var _this = _super.call(this) || this;
-            _this.body_ = body_;
+            _this.body = body;
             _this.metric = metric;
             _this.location = metric.zero();
             _this.vector = metric.zero();
-            _this.position_ = metric.zero();
-            _this.force_ = metric.zero();
+            _this.$temp1 = metric.zero();
+            _this.$temp2 = metric.zero();
             return _this;
         }
         /**
          *
          */
         Force.prototype.getBody = function () {
-            return this.body_;
+            return this.body;
         };
         /**
          * Computes the force being applied (vector).
+         *
+         * @param force (output)
          */
         Force.prototype.computeForce = function (force) {
             switch (this.vectorCoordType) {
                 case LOCAL: {
-                    this.metric.copyVector(this.vector, this.force_); // force_ contains this.vector.
-                    this.metric.rotate(this.force_, this.body_.R);
-                    this.metric.writeVector(this.force_, force);
+                    this.metric.copyVector(this.vector, this.$temp2);
+                    this.metric.rotate(this.$temp2, this.body.R);
+                    this.metric.writeVector(this.$temp2, force);
                     break;
                 }
                 case WORLD: {
-                    this.metric.copyVector(this.vector, this.force_);
-                    this.metric.writeVector(this.force_, force);
+                    this.metric.copyVector(this.vector, this.$temp2);
+                    this.metric.writeVector(this.$temp2, force);
                     break;
                 }
             }
         };
         Object.defineProperty(Force.prototype, "F", {
             get: function () {
-                this.computeForce(this.force_);
-                return this.force_;
+                this.computeForce(this.$temp2);
+                return this.$temp2;
             },
             enumerable: false,
             configurable: true
         });
         Object.defineProperty(Force.prototype, "x", {
             get: function () {
-                this.computePosition(this.position_);
-                return this.position_;
+                this.computePosition(this.$temp1);
+                return this.$temp1;
             },
             enumerable: false,
             configurable: true
         });
         /**
          * Computes the point of application of the force in world coordinates.
+         *
+         * @param position (output)
          */
         Force.prototype.computePosition = function (position) {
             switch (this.locationCoordType) {
                 case LOCAL: {
-                    this.metric.copyVector(this.location, this.position_);
+                    this.metric.copyVector(this.location, this.$temp1);
                     // We could subtract the body center-of-mass in body coordinates here.
                     // Instead we assume that it is always zero.
-                    this.metric.rotate(this.position_, this.body_.R);
-                    this.metric.addVector(this.position_, this.body_.X);
-                    this.metric.writeVector(this.position_, position);
+                    this.metric.rotate(this.$temp1, this.body.R);
+                    this.metric.addVector(this.$temp1, this.body.X);
+                    this.metric.writeVector(this.$temp1, position);
                     break;
                 }
                 case WORLD: {
-                    this.metric.copyVector(this.location, this.position_);
-                    this.metric.writeVector(this.position_, position);
+                    this.metric.copyVector(this.location, this.$temp1);
+                    this.metric.writeVector(this.$temp1, position);
                     break;
                 }
             }
@@ -4492,11 +4571,11 @@
          * Torque = r ^ F because r = x - X
          */
         Force.prototype.computeTorque = function (torque) {
-            this.computePosition(this.position_);
-            this.computeForce(this.force_);
-            this.metric.subVector(this.position_, this.body_.X); // position contains x - X
-            this.metric.ext(this.position_, this.force_); // 
-            this.metric.write(this.position_, torque);
+            this.computePosition(this.$temp1);
+            this.computeForce(this.$temp2);
+            this.metric.subVector(this.$temp1, this.body.X); // position contains x - X
+            this.metric.ext(this.$temp1, this.$temp2); // 
+            this.metric.write(this.$temp1, torque);
         };
         return Force;
     }(AbstractSimObject));
@@ -4532,7 +4611,7 @@
          * Computes the forces due to the gravitational interaction.
          * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
          */
-        GravitationLaw.prototype.updateForces = function () {
+        GravitationLaw.prototype.calculateForces = function () {
             // We can use the F1.location and F2.location as temporary variables
             // as long as we restore their contents.
             var numer = this.F1.location;
@@ -4600,44 +4679,6 @@
     /**
      * @hidden
      */
-    function beFunction() {
-        return "be a function";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeFunction(name, value, contextBuilder) {
-        if (typeof value === 'function') {
-            return value;
-        }
-        else {
-            doesNotSatisfy(name, beFunction, contextBuilder);
-        }
-    }
-
-    /**
-     * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
-     * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
-     * @hidden
-     */
-    function assertConsistentUnits(aName, A, bName, B, metric) {
-        if (!metric.isZero(A) && !metric.isZero(B)) {
-            if (Unit.isOne(metric.uom(A))) {
-                if (!Unit.isOne(metric.uom(B))) {
-                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
-                }
-            }
-            else {
-                if (Unit.isOne(metric.uom(B))) {
-                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
-                }
-            }
-        }
-    }
-
-    /**
-     * @hidden
-     */
     var LockableMeasure = /** @class */ (function () {
         function LockableMeasure(metric, initialValue) {
             this.metric = metric;
@@ -4649,6 +4690,14 @@
         LockableMeasure.prototype.get = function () {
             return this.$value;
         };
+        /**
+         * 1. Asserts that the value is defined and not null.
+         * 2. Unlocks the `this` value.
+         * 3. Copies the value to the `this` value.
+         * 4. Locks the `this` value.
+         *
+         * @param value The value to be set into `this` value.
+         */
         LockableMeasure.prototype.set = function (value) {
             mustBeNonNullObject('value', value);
             this.metric.copy(value, this.unlock());
@@ -4681,6 +4730,137 @@
         }
         else {
             return value;
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    var LinearDamper = /** @class */ (function (_super) {
+        __extends(LinearDamper, _super);
+        /**
+         *
+         * @param body1
+         * @param body2
+         */
+        function LinearDamper(body1, body2) {
+            var _this = _super.call(this) || this;
+            _this.body1 = body1;
+            _this.body2 = body2;
+            /**
+             *
+             */
+            _this.forces = [];
+            var metric = body1.metric;
+            _this.$frictionCoefficient = new LockableMeasure(metric, metric.scalar(1));
+            _this.F1 = metric.createForce(_this.body1);
+            _this.F1.locationCoordType = WORLD;
+            _this.F1.vectorCoordType = WORLD;
+            _this.F2 = metric.createForce(_this.body2);
+            _this.F2.locationCoordType = WORLD;
+            _this.F2.vectorCoordType = WORLD;
+            _this.forces = [_this.F1, _this.F2];
+            return _this;
+        }
+        Object.defineProperty(LinearDamper.prototype, "b", {
+            get: function () {
+                return this.$frictionCoefficient.get();
+            },
+            set: function (b) {
+                mustBeDimensionlessOrCorrectUnits('b', b, Unit.FRICTION_COEFFICIENT, this.body1.metric);
+                this.$frictionCoefficient.set(b);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(LinearDamper.prototype, "frictionCoefficient", {
+            get: function () {
+                return this.$frictionCoefficient.get();
+            },
+            set: function (frictionCoefficient) {
+                mustBeDimensionlessOrCorrectUnits('frictionCoefficient', frictionCoefficient, Unit.FRICTION_COEFFICIENT, this.body1.metric);
+                this.$frictionCoefficient.set(frictionCoefficient);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        LinearDamper.prototype.calculateForces = function () {
+            var metric = this.body1.metric;
+            var b = this.$frictionCoefficient.get();
+            var x1 = this.body1.X;
+            var x2 = this.body2.X;
+            var e = metric.scalar(0);
+            metric.addVector(e, x1);
+            metric.subVector(e, x2);
+            metric.direction(e);
+            var v1 = metric.scalar(0);
+            metric.copyVector(this.body1.P, v1);
+            metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
+            var v2 = metric.scalar(0);
+            metric.copyVector(this.body2.P, v2);
+            metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
+            var v = metric.scalar(0);
+            metric.copyVector(v1, v);
+            metric.subVector(v, v2);
+            var f1 = this.F1.vector;
+            metric.copyVector(v, f1); // f1 = v
+            metric.scp(f1, e); // f1 = v | e
+            metric.mulByScalar(f1, metric.a(b), metric.uom(b)); // f1 = b * (v | e)
+            metric.neg(f1); // f1 = - b * (v | e)
+            metric.mulByVector(f1, e); // f1 = - b * (v | e) e
+            var f2 = this.F2.vector;
+            metric.copyVector(f1, f2); // f2 = f1
+            metric.neg(f2); // f2 = - f1
+            metric.copyVector(x1, this.F1.location);
+            metric.copyVector(x2, this.F2.location);
+            return this.forces;
+        };
+        LinearDamper.prototype.disconnect = function () {
+            // Do nothing yet.
+            // TODO: zero the forces?
+        };
+        LinearDamper.prototype.potentialEnergy = function () {
+            var metric = this.body1.metric;
+            return metric.zero();
+        };
+        return LinearDamper;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
+    function beFunction() {
+        return "be a function";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeFunction(name, value, contextBuilder) {
+        if (typeof value === 'function') {
+            return value;
+        }
+        else {
+            doesNotSatisfy(name, beFunction, contextBuilder);
+        }
+    }
+
+    /**
+     * Asserts that the specified quantities are either both dimensionless or neither dimensionless.
+     * If either measure is zero, the unit of dimensions are meaningless and can be ignored.
+     * @hidden
+     */
+    function assertConsistentUnits(aName, A, bName, B, metric) {
+        if (!metric.isZero(A) && !metric.isZero(B)) {
+            if (Unit.isOne(metric.uom(A))) {
+                if (!Unit.isOne(metric.uom(B))) {
+                    throw new Error(aName + " => " + A + " must have dimensions if " + bName + " => " + B + " has dimensions.");
+                }
+            }
+            else {
+                if (Unit.isOne(metric.uom(B))) {
+                    throw new Error(bName + " => " + B + " must have dimensions if " + aName + " => " + A + " has dimensions.");
+                }
+            }
         }
     }
 
@@ -4988,13 +5168,15 @@
          *
          */
         Particle.prototype.updateAngularVelocity = function () {
-            throw new Error();
+            // Do nothing yet.
+            // The angular velocity will remain at zero.
         };
         /**
          * The inertia tensor should always be zero.
          */
         Particle.prototype.updateInertiaTensor = function () {
             // Do nothing yet.
+            // The inertia tensor will remain as the identity matrix.
         };
         return Particle;
     }(RigidBody));
@@ -5007,20 +5189,19 @@
         /**
          *
          */
-        function Spring(body1_, body2_) {
+        function Spring(body1, body2) {
             var _this = _super.call(this) || this;
-            _this.body1_ = body1_;
-            _this.body2_ = body2_;
+            _this.body1 = body1;
+            _this.body2 = body2;
             /**
              *
              */
             _this.forces = [];
-            _this.metric = body1_.metric;
+            _this.metric = body1.metric;
             var metric = _this.metric;
             _this.$restLength = metric.scalar(1);
             _this.$restLengthLock = metric.lock(_this.$restLength);
-            _this.$stiffness = metric.scalar(1);
-            _this.$stiffnessLock = metric.lock(_this.$stiffness);
+            _this.$springConstant = new LockableMeasure(metric, metric.scalar(1));
             _this.attach1_ = metric.zero();
             _this.attach1Lock = metric.lock(_this.attach1_);
             _this.attach2_ = metric.zero();
@@ -5029,10 +5210,10 @@
             _this.end1Lock_ = metric.lock(_this.end1_);
             _this.end2_ = metric.zero();
             _this.end2Lock_ = metric.lock(_this.end2_);
-            _this.F1 = metric.createForce(_this.body1_);
+            _this.F1 = metric.createForce(_this.body1);
             _this.F1.locationCoordType = WORLD;
             _this.F1.vectorCoordType = WORLD;
-            _this.F2 = metric.createForce(_this.body2_);
+            _this.F2 = metric.createForce(_this.body2);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
             _this.potentialEnergy_ = metric.zero();
@@ -5053,30 +5234,50 @@
             enumerable: false,
             configurable: true
         });
+        Object.defineProperty(Spring.prototype, "k", {
+            get: function () {
+                return this.$springConstant.get();
+            },
+            set: function (k) {
+                mustBeDimensionlessOrCorrectUnits('k', k, Unit.STIFFNESS, this.metric);
+                this.$springConstant.set(k);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spring.prototype, "springConstant", {
+            get: function () {
+                return this.$springConstant.get();
+            },
+            set: function (springConstant) {
+                mustBeDimensionlessOrCorrectUnits('springConstant', springConstant, Unit.STIFFNESS, this.metric);
+                this.$springConstant.set(springConstant);
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(Spring.prototype, "stiffness", {
             get: function () {
-                return this.$stiffness;
+                return this.$springConstant.get();
             },
             set: function (stiffness) {
                 mustBeDimensionlessOrCorrectUnits('stiffness', stiffness, Unit.STIFFNESS, this.metric);
-                this.metric.unlock(this.$stiffness, this.$stiffnessLock);
-                this.metric.copy(stiffness, this.$stiffness);
-                this.$stiffnessLock = this.metric.lock(this.$stiffness);
+                this.$springConstant.set(stiffness);
             },
             enumerable: false,
             configurable: true
         });
         Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
-            if (this.attach1_ == null || this.body1_ == null) {
+            if (this.attach1_ == null || this.body1 == null) {
                 throw new Error();
             }
-            this.body1_.localPointToWorldPoint(this.attach1_, x);
+            this.body1.localPointToWorldPoint(this.attach1_, x);
         };
         Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
-            if (this.attach2_ == null || this.body2_ == null) {
+            if (this.attach2_ == null || this.body2 == null) {
                 throw new Error();
             }
-            this.body2_.localPointToWorldPoint(this.attach2_, x);
+            this.body2.localPointToWorldPoint(this.attach2_, x);
         };
         Object.defineProperty(Spring.prototype, "attach1", {
             get: function () {
@@ -5125,7 +5326,7 @@
         /**
          *
          */
-        Spring.prototype.updateForces = function () {
+        Spring.prototype.calculateForces = function () {
             this.computeBody1AttachPointInWorldCoords(this.F1.location);
             this.computeBody2AttachPointInWorldCoords(this.F2.location);
             var metric = this.metric;
@@ -6925,33 +7126,33 @@
             return this;
         };
         /**
-         * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
+         * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
          * @returns this / magnitude(this)
          */
         Geometric2.prototype.direction = function (mutate) {
-            if (this.lock_ !== UNLOCKED$1) {
-                if (!mutate) {
-                    return lock$1(this.clone().direction(true));
+            if (typeof mutate === 'boolean') {
+                if (mutate) {
+                    if (this.isLocked()) {
+                        throw new Error("Unable to mutate this locked Geometric2.");
+                    }
+                    else {
+                        var norm = this.magnitudeSansUnits();
+                        if (norm !== 0) {
+                            this.a = this.a / norm;
+                            this.x = this.x / norm;
+                            this.y = this.y / norm;
+                            this.b = this.b / norm;
+                        }
+                        this.uom = void 0;
+                        return this;
+                    }
                 }
                 else {
-                    throw new Error("Unable to mutate this locked Geometric2.");
+                    return lock$1(this.clone().direction(true));
                 }
             }
             else {
-                if (mutate) {
-                    var norm = this.magnitudeSansUnits();
-                    if (norm !== 0) {
-                        this.a = this.a / norm;
-                        this.x = this.x / norm;
-                        this.y = this.y / norm;
-                        this.b = this.b / norm;
-                    }
-                    this.uom = void 0;
-                    return this;
-                }
-                else {
-                    return lock$1(this.clone().direction(true));
-                }
+                return this.direction(this.isMutable());
             }
         };
         Geometric2.prototype.divByPseudo = function (β, uom) {
@@ -8203,6 +8404,14 @@
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] += force.x;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] += force.y;
         };
+        Dynamics2.prototype.getForce = function (rateOfChange, idx, force) {
+            force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1];
+            force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
+        };
+        Dynamics2.prototype.setForce = function (rateOfChange, idx, force) {
+            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] = force.x;
+            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = force.y;
+        };
         Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] += torque.b;
         };
@@ -8280,6 +8489,17 @@
         }
         return GravitationForceLaw2;
     }(GravitationLaw));
+
+    /**
+     *
+     */
+    var LinearDamper2 = /** @class */ (function (_super) {
+        __extends(LinearDamper2, _super);
+        function LinearDamper2(body1, body2) {
+            return _super.call(this, body1, body2) || this;
+        }
+        return LinearDamper2;
+    }(LinearDamper));
 
     var Particle2 = /** @class */ (function (_super) {
         __extends(Particle2, _super);
@@ -12715,6 +12935,16 @@
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
             rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
         };
+        Dynamics3.prototype.getForce = function (rateOfChange, idx, force) {
+            force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
+            force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
+            force.z = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z];
+        };
+        Dynamics3.prototype.setForce = function (rateOfChange, idx, force) {
+            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+        };
         Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
             rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
@@ -12795,6 +13025,17 @@
         }
         return GravitationForceLaw3;
     }(GravitationLaw));
+
+    /**
+     *
+     */
+    var LinearDamper3 = /** @class */ (function (_super) {
+        __extends(LinearDamper3, _super);
+        function LinearDamper3(body1, body2) {
+            return _super.call(this, body1, body2) || this;
+        }
+        return LinearDamper3;
+    }(LinearDamper));
 
     var Particle3 = /** @class */ (function (_super) {
         __extends(Particle3, _super);
@@ -17483,6 +17724,7 @@
      */
     var AdaptiveStepSolver = /** @class */ (function () {
         function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
+            this.energySystem = energySystem;
             this.metric = metric;
             this.stepUBound = 1;
             /**
@@ -17491,7 +17733,6 @@
              */
             this.stepLBound = 1E-5;
             this.diffEq_ = diffEq;
-            this.energySystem_ = energySystem;
             this.odeSolver_ = diffEqSolver;
             // this.totSteps_ = 0;
             this.secondDiff_ = true;
@@ -17511,7 +17752,7 @@
              */
             // let steps = 0;
             this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
-            var startEnergy = metric.a(this.energySystem_.totalEnergy());
+            var startEnergy = metric.a(this.energySystem.totalEnergy());
             var lastEnergyDiff = Number.POSITIVE_INFINITY;
             /**
              * the value we are trying to reduce to zero
@@ -17548,7 +17789,7 @@
                     this.diffEq_.epilog();
                     t += h;
                 }
-                var finishEnergy = metric.a(this.energySystem_.totalEnergy());
+                var finishEnergy = metric.a(this.energySystem.totalEnergy());
                 var energyDiff = Math.abs(startEnergy - finishEnergy);
                 if (this.secondDiff_) {
                     // reduce time step until change in energy stabilizes
@@ -17845,6 +18086,9 @@
     exports.GravitationLaw = GravitationLaw;
     exports.LOCAL = LOCAL;
     exports.LabCanvas = LabCanvas;
+    exports.LinearDamper = LinearDamper;
+    exports.LinearDamper2 = LinearDamper2;
+    exports.LinearDamper3 = LinearDamper3;
     exports.Matrix1 = Matrix1;
     exports.Matrix3 = Matrix3;
     exports.ModifiedEuler = ModifiedEuler;

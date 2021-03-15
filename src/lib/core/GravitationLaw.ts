@@ -52,7 +52,7 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    updateForces(): Force<T>[] {
+    calculateForces(): Force<T>[] {
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         const numer = this.F1.location;

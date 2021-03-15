@@ -83,6 +83,8 @@ export interface Dynamics<T> {
      * @param force
      */
     addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: T): void;
+    getForce(rateOfChange: number[], idx: number, force: T): void;
+    setForce(rateOfChange: number[], idx: number, force: T): void;
     /**
      * Adds the specified torque to the rateOfChange variables for AngularMomentum.
      * @param rateOfChange

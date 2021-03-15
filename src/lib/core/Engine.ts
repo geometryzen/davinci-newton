@@ -8,6 +8,7 @@ import { DiffEqSolver } from './DiffEqSolver';
 import { Dynamics } from './Dynamics';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { Physics } from './Physics';
 
@@ -70,6 +71,18 @@ export class Engine<T> {
         const contextBuilder = () => "Engine.removeForceLaw(forceLaw: ForceLaw): void";
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.removeForceLaw(forceLaw);
+    }
+
+    addConstraint(geometry: GeometricConstraint<T>): void {
+        const contextBuilder = () => "Engine.addGeometricConstraint(geometry: GeometricConstraint): void";
+        mustBeNonNullObject('geometry', geometry, contextBuilder);
+        this.physics.addConstraint(geometry);
+    }
+
+    removeConstraint(geometry: GeometricConstraint<T>): void {
+        const contextBuilder = () => "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void";
+        mustBeNonNullObject('geometry', geometry, contextBuilder);
+        this.physics.removeConstraint(geometry);
     }
 
     /**

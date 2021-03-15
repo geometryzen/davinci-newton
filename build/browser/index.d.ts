@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.40
+// Type definitions for davinci-newton 1.0.43
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2456,7 +2456,7 @@ export class Force3 extends Force<Geometric3> {
 }
 
 export interface ForceLaw<T> extends SimObject {
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
@@ -2796,7 +2796,7 @@ export class ConstantForceLaw<T> implements ForceLaw<T> {
     /**
      * 
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      * 
      */
@@ -2831,7 +2831,7 @@ export class CoulombLaw<T> implements ForceLaw<T> {
      * 
      */
     constructor(body1: RigidBody<T>, body2: RigidBody<T>, G?: T);
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
@@ -2854,7 +2854,7 @@ export class GravitationLaw<T> implements ForceLaw<T> {
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     /**
      * 
      */
@@ -2884,7 +2884,15 @@ export class Spring<T> implements ForceLaw<T> {
      */
     restLength: T;
     /**
-     * 
+     * Alias for springConstant or stiffness.
+     */
+    k: T;
+    /**
+    * Alias for k or stiffness.
+    */
+    springConstant: T;
+    /**
+     * Alias for k or springConstant.
      */
     stiffness: T;
     /**
@@ -2911,7 +2919,7 @@ export class Spring<T> implements ForceLaw<T> {
      * 
      */
     constructor(body1: RigidBody<T>, body2: RigidBody<T>);
-    updateForces(): Force<T>[];
+    calculateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
 }
@@ -2922,11 +2930,39 @@ export class Spring<T> implements ForceLaw<T> {
 export class Spring2 extends Spring<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
+
 /**
  *
  */
 export class Spring3 extends Spring<Geometric3> {
     constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);
+}
+
+export class LinearDamper<T> implements ForceLaw<T> {
+    /**
+     * Alias for frictionCoefficient.
+     */
+    b: T;
+    /**
+     * Alias for b.
+     */
+    frictionCoefficient: T;
+    /**
+     *
+     */
+    expireTime: number;
+    constructor(body1: RigidBody<T>, body2: RigidBody<T>);
+    calculateForces(): Force<T>[];
+    disconnect(): void;
+    potentialEnergy(): T;
+}
+
+export class LinearDamper2 extends LinearDamper<Geometric2> {
+    constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
+}
+
+export class LinearDamper3 extends LinearDamper<Geometric2> {
+    constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
 
 /**

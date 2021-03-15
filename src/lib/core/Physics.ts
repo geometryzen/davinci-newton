@@ -9,6 +9,7 @@ import { EnergySystem } from './EnergySystem';
 import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
 import { Simulation } from './Simulation';
@@ -36,6 +37,10 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * 
      */
     private readonly $forceLaws: ForceLaw<T>[] = [];
+    /**
+     *
+     */
+    private readonly $constraints: GeometricConstraint<T>[] = [];
 
     /**
      * 
@@ -146,6 +151,22 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         remove(this.$forceLaws, forceLaw);
     }
 
+    /**
+     * 
+     * @param geometry 
+     */
+    addConstraint(geometry: GeometricConstraint<T>): void {
+        mustBeNonNullObject('geometry', geometry);
+        if (!contains(this.$constraints, geometry)) {
+            this.$constraints.push(geometry);
+        }
+    }
+
+    removeConstraint(geometry: GeometricConstraint<T>): void {
+        mustBeNonNullObject('geometry', geometry);
+        remove(this.$constraints, geometry);
+    }
+
     private discontinuosChangeToEnergy(): void {
         const dynamics = this.dynamics;
         this.$varsList.incrSequence(...dynamics.discontinuousEnergyVars());
@@ -203,7 +224,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.updateForces.
+     * If anything it could be passed to forceLaw.calculateForces.
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
@@ -237,11 +258,17 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         for (let lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
             const forceLaw = forceLaws[lawIndex];
             // The forces will give rise to changes in both linear and angular momentum.
-            const forces = forceLaw.updateForces();
+            const forces = forceLaw.calculateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
             }
+        }
+        const constraints = this.$constraints;
+        const Nconstraints = constraints.length;
+        for (let i = 0; i < Nconstraints; i++) {
+            const constraint = constraints[i];
+            this.constrainForce(rateOfChange, constraint);
         }
         rateOfChange[this.$varsList.timeIndex()] = 1;
     }
@@ -272,6 +299,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
             metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
         }
+        // TODO: Here we could apply geometric constraints on the forces.
         dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
 
         // The rate of change of angular momentum (bivector) is given by
@@ -282,12 +310,47 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
             metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
         }
+        // TODO: Could we add geometric constraints for torques here?
         dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
 
         if (this.$showForces) {
             forceApp.expireTime = this.$varsList.getTime();
             this.$simList.add(forceApp);
         }
+    }
+
+    private constrainForce(rateOfChange: number[], constraint: GeometricConstraint<T>): void {
+        const body = constraint.getBody();
+        if (!(contains(this.$bodies, body))) {
+            return;
+        }
+        const idx = body.varsIndex;
+        if (idx < 0) {
+            return;
+        }
+
+        const metric = this.metric;
+        const dynamics = this.dynamics;
+
+        // TODO: This could be a scratch variable.
+        const F = metric.scalar(0);
+        const e = metric.scalar(0);
+        const N = metric.scalar(0);
+
+        dynamics.getForce(rateOfChange, idx, F);
+        const X = body.X;
+        constraint.computeNormal(X, e);
+
+        metric.copyVector(e, N);
+        metric.scp(N, e);
+        metric.mulByVector(N, e);
+        metric.subVector(F, N);
+
+        // Update the rateOfChange of Linear Momentum (force); 
+        dynamics.setForce(rateOfChange, idx, F);
+
+        // The constraint holds the computed force so that it can be visualized.
+        constraint.setForce(N);
     }
 
     /**

@@ -20,13 +20,15 @@ var Particle = /** @class */ (function (_super) {
      *
      */
     Particle.prototype.updateAngularVelocity = function () {
-        throw new Error();
+        // Do nothing yet.
+        // The angular velocity will remain at zero.
     };
     /**
      * The inertia tensor should always be zero.
      */
     Particle.prototype.updateInertiaTensor = function () {
         // Do nothing yet.
+        // The inertia tensor will remain as the identity matrix.
     };
     return Particle;
 }(RigidBody));

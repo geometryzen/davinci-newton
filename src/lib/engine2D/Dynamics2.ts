@@ -158,6 +158,14 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
         rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
     }
+    getForce(rateOfChange: number[], idx: number, force: Geometric2): void {
+        force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
+        force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
+    }
+    setForce(rateOfChange: number[], idx: number, force: Geometric2): void {
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+    }
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric2): void {
         rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.b;
     }

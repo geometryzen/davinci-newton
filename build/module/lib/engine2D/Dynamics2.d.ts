@@ -54,6 +54,8 @@ export declare class Dynamics2 implements Dynamics<Geometric2> {
     epilog(bodies: ForceBody<Geometric2>[], forceLaws: ForceLaw<Geometric2>[], potentialOffset: Geometric2, varsList: VarsList): void;
     updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void;
     addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: Geometric2): void;
+    getForce(rateOfChange: number[], idx: number, force: Geometric2): void;
+    setForce(rateOfChange: number[], idx: number, force: Geometric2): void;
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric2): void;
     updateBodyFromVars(vars: number[], idx: number, body: ForceBody<Geometric2>): void;
     setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void;

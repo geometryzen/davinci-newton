@@ -24,79 +24,77 @@ export abstract class Force<T> extends AbstractSimObject {
      */
     public vectorCoordType: CoordType;
 
-    /**
-     * Scratch variable for computing position (world coordinates).
-     */
-    private readonly position_: T;
-    /**
-     * Scratch variable for computing force (world coordinates).
-     */
-    private readonly force_: T;
+    private readonly $temp1: T;
+    private readonly $temp2: T;
 
     /**
      * 
      */
-    constructor(private body_: ForceBody<T>, private readonly metric: Metric<T>) {
+    constructor(private readonly body: ForceBody<T>, private readonly metric: Metric<T>) {
         super();
         this.location = metric.zero();
         this.vector = metric.zero();
-        this.position_ = metric.zero();
-        this.force_ = metric.zero();
+        this.$temp1 = metric.zero();
+        this.$temp2 = metric.zero();
     }
 
     /**
      * 
      */
     getBody(): ForceBody<T> {
-        return this.body_;
+        return this.body;
     }
 
     /**
      * Computes the force being applied (vector).
+     * 
+     * @param force (output)
      */
     computeForce(force: T): void {
         switch (this.vectorCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.vector, this.force_);   // force_ contains this.vector.
-                this.metric.rotate(this.force_, this.body_.R);
-                this.metric.writeVector(this.force_, force);
+                this.metric.copyVector(this.vector, this.$temp2);
+                this.metric.rotate(this.$temp2, this.body.R);
+                this.metric.writeVector(this.$temp2, force);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.vector, this.force_);
-                this.metric.writeVector(this.force_, force);
+                this.metric.copyVector(this.vector, this.$temp2);
+                this.metric.writeVector(this.$temp2, force);
                 break;
             }
         }
     }
 
     get F(): T {
-        this.computeForce(this.force_);
-        return this.force_;
+        this.computeForce(this.$temp2);
+        return this.$temp2;
     }
 
     get x(): T {
-        this.computePosition(this.position_);
-        return this.position_;
+        this.computePosition(this.$temp1);
+        return this.$temp1;
     }
 
     /**
      * Computes the point of application of the force in world coordinates.
+     * 
+     * @param position (output)
      */
     computePosition(position: T): void {
         switch (this.locationCoordType) {
             case LOCAL: {
-                this.metric.copyVector(this.location, this.position_);
+                this.metric.copyVector(this.location, this.$temp1);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                this.metric.rotate(this.position_, this.body_.R);
-                this.metric.addVector(this.position_, this.body_.X);
-                this.metric.writeVector(this.position_, position);
+                this.metric.rotate(this.$temp1, this.body.R);
+                this.metric.addVector(this.$temp1, this.body.X);
+                this.metric.writeVector(this.$temp1, position);
                 break;
             }
             case WORLD: {
-                this.metric.copyVector(this.location, this.position_);
-                this.metric.writeVector(this.position_, position);
+                this.metric.copyVector(this.location, this.$temp1);
+                this.metric.writeVector(this.$temp1, position);
                 break;
             }
         }
@@ -108,10 +106,10 @@ export abstract class Force<T> extends AbstractSimObject {
      * Torque = r ^ F because r = x - X
      */
     computeTorque(torque: T): void {
-        this.computePosition(this.position_);
-        this.computeForce(this.force_);
-        this.metric.subVector(this.position_, this.body_.X);    // position contains x - X
-        this.metric.ext(this.position_, this.force_);         // 
-        this.metric.write(this.position_, torque);
+        this.computePosition(this.$temp1);
+        this.computeForce(this.$temp2);
+        this.metric.subVector(this.$temp1, this.body.X);    // position contains x - X
+        this.metric.ext(this.$temp1, this.$temp2);         // 
+        this.metric.write(this.$temp1, torque);
     }
 }

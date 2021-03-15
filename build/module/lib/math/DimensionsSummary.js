@@ -25,41 +25,42 @@ export var DimensionsSummary;
     DimensionsSummary[DimensionsSummary["ELECTRIC_PERMITTIVITY_TIMES_AREA"] = 6] = "ELECTRIC_PERMITTIVITY_TIMES_AREA";
     DimensionsSummary[DimensionsSummary["ENERGY_OR_TORQUE"] = 7] = "ENERGY_OR_TORQUE";
     DimensionsSummary[DimensionsSummary["FORCE"] = 8] = "FORCE";
+    DimensionsSummary[DimensionsSummary["FRICTION_COEFFICIENT"] = 9] = "FRICTION_COEFFICIENT";
     /**
      * The `liminous intensity` base quantity.
      */
-    DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 9] = "LUMINOUS_INTENSITY";
-    DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 10] = "INV_LENGTH";
-    DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 11] = "INV_MOMENT_OF_INERTIA";
-    DimensionsSummary[DimensionsSummary["INV_MASS"] = 12] = "INV_MASS";
-    DimensionsSummary[DimensionsSummary["INV_TIME"] = 13] = "INV_TIME";
+    DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 10] = "LUMINOUS_INTENSITY";
+    DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 11] = "INV_LENGTH";
+    DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 12] = "INV_MOMENT_OF_INERTIA";
+    DimensionsSummary[DimensionsSummary["INV_MASS"] = 13] = "INV_MASS";
+    DimensionsSummary[DimensionsSummary["INV_TIME"] = 14] = "INV_TIME";
     /**
      * The `length` base qiantity.
      */
-    DimensionsSummary[DimensionsSummary["LENGTH"] = 14] = "LENGTH";
+    DimensionsSummary[DimensionsSummary["LENGTH"] = 15] = "LENGTH";
     /**
      * The `mass` base quantity.
      */
-    DimensionsSummary[DimensionsSummary["MASS"] = 15] = "MASS";
-    DimensionsSummary[DimensionsSummary["MOMENT_OF_INERTIA"] = 16] = "MOMENT_OF_INERTIA";
-    DimensionsSummary[DimensionsSummary["MOMENTUM"] = 17] = "MOMENTUM";
-    DimensionsSummary[DimensionsSummary["MOMENTUM_SQUARED"] = 18] = "MOMENTUM_SQUARED";
-    DimensionsSummary[DimensionsSummary["ONE"] = 19] = "ONE";
-    DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 20] = "RATE_OF_CHANGE_OF_AREA";
-    DimensionsSummary[DimensionsSummary["STIFFNESS"] = 21] = "STIFFNESS";
+    DimensionsSummary[DimensionsSummary["MASS"] = 16] = "MASS";
+    DimensionsSummary[DimensionsSummary["MOMENT_OF_INERTIA"] = 17] = "MOMENT_OF_INERTIA";
+    DimensionsSummary[DimensionsSummary["MOMENTUM"] = 18] = "MOMENTUM";
+    DimensionsSummary[DimensionsSummary["MOMENTUM_SQUARED"] = 19] = "MOMENTUM_SQUARED";
+    DimensionsSummary[DimensionsSummary["ONE"] = 20] = "ONE";
+    DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 21] = "RATE_OF_CHANGE_OF_AREA";
+    DimensionsSummary[DimensionsSummary["STIFFNESS"] = 22] = "STIFFNESS";
     /**
      * The `time` base quantity.
      */
-    DimensionsSummary[DimensionsSummary["TIME"] = 22] = "TIME";
-    DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 23] = "TIME_SQUARED";
+    DimensionsSummary[DimensionsSummary["TIME"] = 23] = "TIME";
+    DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 24] = "TIME_SQUARED";
     /**
      * The `thermodynamic temperature` base quantity.
      */
-    DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 24] = "THERMODYNAMIC_TEMPERATURE";
-    DimensionsSummary[DimensionsSummary["VELOCITY"] = 25] = "VELOCITY";
-    DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 26] = "VELOCITY_SQUARED";
+    DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 25] = "THERMODYNAMIC_TEMPERATURE";
+    DimensionsSummary[DimensionsSummary["VELOCITY"] = 26] = "VELOCITY";
+    DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 27] = "VELOCITY_SQUARED";
     /**
      * The `volume` derived quantity.
      */
-    DimensionsSummary[DimensionsSummary["VOLUME"] = 27] = "VOLUME";
+    DimensionsSummary[DimensionsSummary["VOLUME"] = 28] = "VOLUME";
 })(DimensionsSummary || (DimensionsSummary = {}));

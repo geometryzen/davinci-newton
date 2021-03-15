@@ -32,7 +32,7 @@ var CoulombLaw = /** @class */ (function (_super) {
      * Computes the forces due to the Coulomb interaction.
      * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
      */
-    CoulombLaw.prototype.updateForces = function () {
+    CoulombLaw.prototype.calculateForces = function () {
         // We can use the F1.location and F2.location as temporary variables
         // as long as we restore their contents.
         var numer = this.F1.location;

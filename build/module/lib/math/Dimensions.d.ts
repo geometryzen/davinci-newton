@@ -118,6 +118,10 @@ export declare class Dimensions {
      */
     static readonly STIFFNESS: Dimensions;
     /**
+     * Friction.
+     */
+    static readonly FRICTION_COEFFICIENT: Dimensions;
+    /**
      * Time squared.
      */
     static readonly TIME_SQUARED: Dimensions;

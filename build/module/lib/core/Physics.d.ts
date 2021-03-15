@@ -4,6 +4,7 @@ import { Dynamics } from './Dynamics';
 import { EnergySystem } from './EnergySystem';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
 import { Simulation } from './Simulation';
@@ -32,6 +33,10 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      *
      */
     private readonly $forceLaws;
+    /**
+     *
+     */
+    private readonly $constraints;
     /**
      *
      */
@@ -79,6 +84,12 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      *
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    /**
+     *
+     * @param geometry
+     */
+    addConstraint(geometry: GeometricConstraint<T>): void;
+    removeConstraint(geometry: GeometricConstraint<T>): void;
     private discontinuosChangeToEnergy;
     /**
      * Transfer state vector back to the rigid bodies.
@@ -107,7 +118,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.updateForces.
+     * If anything it could be passed to forceLaw.calculateForces.
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
@@ -117,6 +128,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
     private applyForce;
+    private constrainForce;
     /**
      *
      */

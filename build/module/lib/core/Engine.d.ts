@@ -2,6 +2,7 @@ import { Unit } from '../math/Unit';
 import { Dynamics } from './Dynamics';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
+import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 /**
  *
@@ -37,6 +38,8 @@ export declare class Engine<T> {
      * @param forceLaw
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    addConstraint(geometry: GeometricConstraint<T>): void;
+    removeConstraint(geometry: GeometricConstraint<T>): void;
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.
      * @param Δt The time interval.

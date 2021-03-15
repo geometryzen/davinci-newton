@@ -1322,33 +1322,33 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
+     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
      * @returns this / magnitude(this)
      */
     Geometric2.prototype.direction = function (mutate) {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().direction(true));
+        if (typeof mutate === 'boolean') {
+            if (mutate) {
+                if (this.isLocked()) {
+                    throw new Error("Unable to mutate this locked Geometric2.");
+                }
+                else {
+                    var norm = this.magnitudeSansUnits();
+                    if (norm !== 0) {
+                        this.a = this.a / norm;
+                        this.x = this.x / norm;
+                        this.y = this.y / norm;
+                        this.b = this.b / norm;
+                    }
+                    this.uom = void 0;
+                    return this;
+                }
             }
             else {
-                throw new Error("Unable to mutate this locked Geometric2.");
+                return lock(this.clone().direction(true));
             }
         }
         else {
-            if (mutate) {
-                var norm = this.magnitudeSansUnits();
-                if (norm !== 0) {
-                    this.a = this.a / norm;
-                    this.x = this.x / norm;
-                    this.y = this.y / norm;
-                    this.b = this.b / norm;
-                }
-                this.uom = void 0;
-                return this;
-            }
-            else {
-                return lock(this.clone().direction(true));
-            }
+            return this.direction(this.isMutable());
         }
     };
     Geometric2.prototype.divByPseudo = function (β, uom) {

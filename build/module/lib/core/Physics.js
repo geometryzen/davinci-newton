@@ -36,6 +36,10 @@ var Physics = /** @class */ (function (_super) {
         /**
          *
          */
+        _this.$constraints = [];
+        /**
+         *
+         */
         _this.$showForces = false;
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('dynamics', dynamics);
@@ -114,6 +118,20 @@ var Physics = /** @class */ (function (_super) {
         this.discontinuosChangeToEnergy();
         remove(this.$forceLaws, forceLaw);
     };
+    /**
+     *
+     * @param geometry
+     */
+    Physics.prototype.addConstraint = function (geometry) {
+        mustBeNonNullObject('geometry', geometry);
+        if (!contains(this.$constraints, geometry)) {
+            this.$constraints.push(geometry);
+        }
+    };
+    Physics.prototype.removeConstraint = function (geometry) {
+        mustBeNonNullObject('geometry', geometry);
+        remove(this.$constraints, geometry);
+    };
     Physics.prototype.discontinuosChangeToEnergy = function () {
         var _a;
         var dynamics = this.dynamics;
@@ -167,7 +185,7 @@ var Physics = /** @class */ (function (_super) {
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars.
      * This will move the objects and forces will be recalculated.
-     * If anything it could be passed to forceLaw.updateForces.
+     * If anything it could be passed to forceLaw.calculateForces.
      * @hidden
      */
     Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
@@ -201,11 +219,17 @@ var Physics = /** @class */ (function (_super) {
         for (var lawIndex = 0; lawIndex < Nlaws; lawIndex++) {
             var forceLaw = forceLaws[lawIndex];
             // The forces will give rise to changes in both linear and angular momentum.
-            var forces = forceLaw.updateForces();
+            var forces = forceLaw.calculateForces();
             var Nforces = forces.length;
             for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
             }
+        }
+        var constraints = this.$constraints;
+        var Nconstraints = constraints.length;
+        for (var i = 0; i < Nconstraints; i++) {
+            var constraint = constraints[i];
+            this.constrainForce(rateOfChange, constraint);
         }
         rateOfChange[this.$varsList.timeIndex()] = 1;
     };
@@ -233,6 +257,7 @@ var Physics = /** @class */ (function (_super) {
         if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
             metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
         }
+        // TODO: Here we could apply geometric constraints on the forces.
         dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
@@ -242,11 +267,39 @@ var Physics = /** @class */ (function (_super) {
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
             metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
         }
+        // TODO: Could we add geometric constraints for torques here?
         dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
         if (this.$showForces) {
             forceApp.expireTime = this.$varsList.getTime();
             this.$simList.add(forceApp);
         }
+    };
+    Physics.prototype.constrainForce = function (rateOfChange, constraint) {
+        var body = constraint.getBody();
+        if (!(contains(this.$bodies, body))) {
+            return;
+        }
+        var idx = body.varsIndex;
+        if (idx < 0) {
+            return;
+        }
+        var metric = this.metric;
+        var dynamics = this.dynamics;
+        // TODO: This could be a scratch variable.
+        var F = metric.scalar(0);
+        var e = metric.scalar(0);
+        var N = metric.scalar(0);
+        dynamics.getForce(rateOfChange, idx, F);
+        var X = body.X;
+        constraint.computeNormal(X, e);
+        metric.copyVector(e, N);
+        metric.scp(N, e);
+        metric.mulByVector(N, e);
+        metric.subVector(F, N);
+        // Update the rateOfChange of Linear Momentum (force); 
+        dynamics.setForce(rateOfChange, idx, F);
+        // The constraint holds the computed force so that it can be visualized.
+        constraint.setForce(N);
     };
     Object.defineProperty(Physics.prototype, "time", {
         /**

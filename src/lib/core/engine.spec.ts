@@ -1,14 +1,17 @@
 import { Block2 } from '../engine2D/Block2';
 import { Dynamics2 } from '../engine2D/Dynamics2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
+import { Particle2 } from '../engine2D/Particle2';
 import { Block3 } from '../engine3D/Block3';
 import { Dynamics3 } from '../engine3D/Dynamics3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
+import { Particle3 } from '../engine3D/Particle3';
 import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { ConstantForceLaw } from './ConstantForceLaw';
 import { Engine } from './Engine';
+import { GeometricConstraint } from './GeometricConstraint';
 import { Spring } from './Spring';
 
 describe("engine", function () {
@@ -253,6 +256,62 @@ describe("engine", function () {
             expect(block.X.x).toBe(0.5);
             expect(block.X.y).toBe(0);
             expect(block.X.z).toBe(0);
+        });
+    });
+    describe("constraints", function () {
+        it("Euclidean2D", function () {
+            const metric = new Euclidean2();
+            const dynamics = new Dynamics2();
+            const engine = new Engine(metric, dynamics);
+
+            const bead = new Particle2(Geometric2.scalar(1, Unit.KILOGRAM), Geometric2.scalar(0, Unit.COULOMB));
+            const F = new ConstantForceLaw(bead, Geometric2.vector(0, -1, Unit.NEWTON));
+
+            bead.X = Geometric2.vector(1, 1).direction();
+
+            const unitCircle = function (x: Geometric2, N: Geometric2): void {
+                N.copyVector(x).direction();
+            };
+            const S = new GeometricConstraint(bead, unitCircle);
+
+            engine.addBody(bead);
+            engine.addForceLaw(F);
+            engine.addConstraint(S);
+            // engine.removeConstraint(S);
+
+            for (let i = 0; i < 1000; i++) {
+                engine.advance(0.001, Unit.SECOND);
+                // console.log(`X=>${bead.X}`);
+                // console.log(`|X|=>${bead.X.magnitude(false)}`);
+            }
+            expect(true).toBe(true);
+        });
+        it("Euclidean3D", function () {
+            const metric = new Euclidean3();
+            const dynamics = new Dynamics3();
+            const engine = new Engine(metric, dynamics);
+
+            const bead = new Particle3(Geometric3.scalar(1, Unit.KILOGRAM), Geometric3.scalar(0, Unit.COULOMB));
+            const F = new ConstantForceLaw(bead, Geometric3.vector(0, -1, 0, Unit.NEWTON));
+
+            bead.X = Geometric3.vector(1, 1, 0).direction(true); // TODO
+
+            const unitCircle = function (x: Geometric3, N: Geometric3): void {
+                N.copyVector(x).direction(true); // TODO
+            };
+            const S = new GeometricConstraint(bead, unitCircle);
+
+            engine.addBody(bead);
+            engine.addForceLaw(F);
+            engine.addConstraint(S);
+            // engine.removeConstraint(S);
+
+            for (let i = 0; i < 1000; i++) {
+                engine.advance(0.001, Unit.SECOND);
+                // console.log(`X=>${bead.X}`);
+                // console.log(`|X|=>${bead.X.magnitude(false)}`);
+            }
+            expect(true).toBe(true);
         });
     });
 });

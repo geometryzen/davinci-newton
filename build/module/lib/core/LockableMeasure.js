@@ -13,6 +13,14 @@ var LockableMeasure = /** @class */ (function () {
     LockableMeasure.prototype.get = function () {
         return this.$value;
     };
+    /**
+     * 1. Asserts that the value is defined and not null.
+     * 2. Unlocks the `this` value.
+     * 3. Copies the value to the `this` value.
+     * 4. Locks the `this` value.
+     *
+     * @param value The value to be set into `this` value.
+     */
     LockableMeasure.prototype.set = function (value) {
         mustBeNonNullObject('value', value);
         this.metric.copy(value, this.unlock());

@@ -53,6 +53,16 @@ var Engine = /** @class */ (function () {
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.removeForceLaw(forceLaw);
     };
+    Engine.prototype.addConstraint = function (geometry) {
+        var contextBuilder = function () { return "Engine.addGeometricConstraint(geometry: GeometricConstraint): void"; };
+        mustBeNonNullObject('geometry', geometry, contextBuilder);
+        this.physics.addConstraint(geometry);
+    };
+    Engine.prototype.removeConstraint = function (geometry) {
+        var contextBuilder = function () { return "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void"; };
+        mustBeNonNullObject('geometry', geometry, contextBuilder);
+        this.physics.removeConstraint(geometry);
+    };
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.
      * @param Δt The time interval.

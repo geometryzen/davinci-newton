@@ -61,8 +61,8 @@ describe("CoulombLaw", function () {
         expect(pe.uom.dimensions.T.numer).toBe(-2);
         expect(pe.uom.dimensions.Q.numer).toBe(0);
     });
-    it("updateForces", function () {
-        const forces = interaction.updateForces();
+    it("calculateForces", function () {
+        const forces = interaction.calculateForces();
         const force1 = forces[0];
         const force2 = forces[1];
         expect(force1.F.x).toBe(-k.a * q1 * q2 / (r * r));

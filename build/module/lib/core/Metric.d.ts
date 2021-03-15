@@ -21,19 +21,19 @@ export interface Metric<T> {
      * force application (F, and x) will have non-generic types.
      */
     createForce(body: ForceBody<T>): Force<T>;
-    direction(mv: T, mutate: boolean): T;
+    direction(mv: T, mutate?: boolean): T;
     divByScalar(lhs: T, a: number, uom: Unit): T;
     ext(lhs: T, rhs: T): T;
     identityMatrix(): MatrixLike;
     invertMatrix(m: MatrixLike): MatrixLike;
     isZero(mv: T): boolean;
     lock(mv: T): number;
-    magnitude(mv: T, mutate: boolean): T;
+    magnitude(mv: T, mutate?: boolean): T;
     mulByNumber(lhs: T, alpha: number): T;
     mulByScalar(lhs: T, a: number, uom: Unit): T;
     mulByVector(lhs: T, rhs: T): T;
     neg(mv: T): T;
-    quaditude(mv: T, mutate: boolean): T;
+    quaditude(mv: T, mutate?: boolean): T;
     rev(mv: T): T;
     rotate(mv: T, spinor: T): T;
     /**
