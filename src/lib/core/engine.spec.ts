@@ -2,16 +2,17 @@ import { Block2 } from '../engine2D/Block2';
 import { Dynamics2 } from '../engine2D/Dynamics2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
 import { Particle2 } from '../engine2D/Particle2';
+import { SurfaceConstraint2 } from '../engine2D/SurfaceConstraint2';
 import { Block3 } from '../engine3D/Block3';
 import { Dynamics3 } from '../engine3D/Dynamics3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
 import { Particle3 } from '../engine3D/Particle3';
+import { SurfaceConstraint3 } from '../engine3D/SurfaceConstraint3';
 import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { ConstantForceLaw } from './ConstantForceLaw';
 import { Engine } from './Engine';
-import { GeometricConstraint } from './GeometricConstraint';
 import { Spring } from './Spring';
 
 describe("engine", function () {
@@ -344,7 +345,7 @@ describe("engine", function () {
             const unitCircle = function (x: Geometric2, N: Geometric2): void {
                 N.copyVector(x).direction();
             };
-            const S = new GeometricConstraint(bead, unitCircle);
+            const S = new SurfaceConstraint2(bead, unitCircle);
 
             engine.addBody(bead);
             engine.addForceLaw(F);
@@ -371,7 +372,7 @@ describe("engine", function () {
             const unitCircle = function (x: Geometric3, N: Geometric3): void {
                 N.copyVector(x).direction(true); // TODO
             };
-            const S = new GeometricConstraint(bead, unitCircle);
+            const S = new SurfaceConstraint3(bead, unitCircle);
 
             engine.addBody(bead);
             engine.addForceLaw(F);

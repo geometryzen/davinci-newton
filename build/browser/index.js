@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-15';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.46';
+            this.VERSION = '1.0.47';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -8912,6 +8912,38 @@
 
     /**
      * @hidden
+     */
+    var SurfaceConstraint = /** @class */ (function () {
+        function SurfaceConstraint(body, normalFn) {
+            this.body = body;
+            this.normalFn = normalFn;
+            mustBeNonNullObject('body', body);
+            var metric = body.metric;
+            this.N = metric.zero();
+        }
+        SurfaceConstraint.prototype.getBody = function () {
+            return this.body;
+        };
+        SurfaceConstraint.prototype.computeNormal = function (x, N) {
+            this.normalFn(x, N);
+        };
+        SurfaceConstraint.prototype.setForce = function (N) {
+            var metric = this.body.metric;
+            metric.copyVector(N, this.N);
+        };
+        return SurfaceConstraint;
+    }());
+
+    var SurfaceConstraint2 = /** @class */ (function (_super) {
+        __extends(SurfaceConstraint2, _super);
+        function SurfaceConstraint2(body, normalFn) {
+            return _super.call(this, body, normalFn) || this;
+        }
+        return SurfaceConstraint2;
+    }(SurfaceConstraint));
+
+    /**
+     * @hidden
      * @param a
      * @param b
      * @returns
@@ -13425,6 +13457,14 @@
         }
         return Spring3;
     }(Spring));
+
+    var SurfaceConstraint3 = /** @class */ (function (_super) {
+        __extends(SurfaceConstraint3, _super);
+        function SurfaceConstraint3(body, normalFn) {
+            return _super.call(this, body, normalFn) || this;
+        }
+        return SurfaceConstraint3;
+    }(SurfaceConstraint));
 
     /**
      * @hidden
@@ -18404,6 +18444,8 @@
     exports.Spring = Spring;
     exports.Spring2 = Spring2;
     exports.Spring3 = Spring3;
+    exports.SurfaceConstraint2 = SurfaceConstraint2;
+    exports.SurfaceConstraint3 = SurfaceConstraint3;
     exports.Torque = Torque;
     exports.Torque2 = Torque2;
     exports.Torque3 = Torque3;

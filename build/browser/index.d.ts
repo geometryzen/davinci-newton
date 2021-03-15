@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.46
+// Type definitions for davinci-newton 1.0.47
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2494,6 +2494,27 @@ export interface TorqueLaw<T> extends SimObject {
     potentialEnergy(): T;
 }
 
+export interface GeometricConstraint<T> {
+    getBody(): ForceBody<T>;
+    computeNormal(x: T, N: T): void;
+    setForce(N: T): void;
+}
+
+export class SurfaceConstraint<T> implements GeometricConstraint<T> {
+    constructor(body: ForceBody<T>, normalFn: (x: T, N: T) => void);
+    getBody(): ForceBody<T>;
+    computeNormal(x: T, N: T): void;
+    setForce(N: T): void;
+}
+
+export class SurfaceConstraint2 extends SurfaceConstraint<Geometric2> {
+    constructor(body: ForceBody<Geometric2>, normalFn: (x: Geometric2, N: Geometric2) => void);
+}
+
+export class SurfaceConstraint3 extends SurfaceConstraint<Geometric3> {
+    constructor(body: ForceBody<Geometric3>, normalFn: (x: Geometric3, N: Geometric3) => void);
+}
+
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
@@ -2542,11 +2563,16 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * 
      */
     addForceLaw(forceLaw: ForceLaw<T>): void;
+
     /**
-     * 
-     * @param torqueLaw 
+     *
      */
     addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+
+    /**
+     *
+     */
+    addConstraint(geometry: GeometricConstraint<T>): void;
 
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
@@ -2576,9 +2602,15 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * 
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    removeConstraint(geometry: GeometricConstraint<T>): void;
+
     /**
-     * Sets the 
+     * 
      */
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    /**
+    * Sets the 
+    */
     setState(state: number[]): void;
     /**
      * 
@@ -2600,6 +2632,8 @@ export class Engine<T> {
     removeBody(body: ForceBody<T>): void;
     addForceLaw(forceLaw: ForceLaw<T>): void;
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+    addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     advance(Δt: number, uomTime?: Unit): void;
     updateFromBodies(): void;
 }
