@@ -45,6 +45,10 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     /**
      *
      */
+    private readonly $driftLaws;
+    /**
+     *
+     */
     private $showForces;
     /**
      *
@@ -112,6 +116,14 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      */
     addConstraint(geometry: GeometricConstraint<T>): void;
     removeConstraint(geometry: GeometricConstraint<T>): void;
+    /**
+     *
+     */
+    addDriftLaw(driftLaw: ForceLaw<T>): void;
+    /**
+     *
+     */
+    removeDriftLaw(driftLaw: ForceLaw<T>): void;
     private discontinuosChangeToEnergy;
     /**
      * Transfer state vector back to the rigid bodies.
@@ -143,14 +155,15 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
-    private applyForces;
+    private applyForceLaws;
+    private applyDriftLaws;
     /**
      * Applying forces gives rise to linear and angular momentum.
      * @param rateOfChange The (output) rate of change of the state variables.
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
     private applyForce;
-    private applyTorques;
+    private applyTorqueLaws;
     private applyTorque;
     private applyConstraints;
     private applyConstraint;

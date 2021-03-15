@@ -50,6 +50,10 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     /**
      * 
      */
+    private readonly $driftLaws: ForceLaw<T>[] = [];
+    /**
+     * 
+     */
     private $showForces = false;
     /**
      * 
@@ -206,6 +210,28 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         remove(this.$constraints, geometry);
     }
 
+    /**
+     * 
+     */
+    addDriftLaw(driftLaw: ForceLaw<T>): void {
+        mustBeNonNullObject('driftLaw', driftLaw);
+        if (!contains(this.$driftLaws, driftLaw)) {
+            this.$driftLaws.push(driftLaw);
+        }
+        this.discontinuosChangeToEnergy();
+    }
+
+    /**
+     * 
+     */
+    removeDriftLaw(driftLaw: ForceLaw<T>): void {
+        mustBeNonNullObject('driftLaw', driftLaw);
+        driftLaw.disconnect();
+        this.discontinuosChangeToEnergy();
+        remove(this.$driftLaws, driftLaw);
+    }
+
+
     private discontinuosChangeToEnergy(): void {
         const dynamics = this.dynamics;
         this.$varsList.incrSequence(...dynamics.discontinuousEnergyVars());
@@ -291,19 +317,32 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
                 dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
-        this.applyForces(rateOfChange, Δt, uomTime);
-        this.applyTorques(rateOfChange, Δt, uomTime);
+        this.applyForceLaws(rateOfChange, Δt, uomTime);
+        this.applyTorqueLaws(rateOfChange, Δt, uomTime);
         this.applyConstraints(rateOfChange, Δt, uomTime);
+        this.applyDriftLaws(rateOfChange, Δt, uomTime);
         rateOfChange[this.$varsList.timeIndex()] = 1;
     }
 
-    private applyForces(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    private applyForceLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
         const forceLaws = this.$forceLaws;
         const N = forceLaws.length;
         for (let i = 0; i < N; i++) {
             const forceLaw = forceLaws[i];
-            // The forces will give rise to changes in both linear and angular momentum.
             const forces = forceLaw.updateForces();
+            const Nforces = forces.length;
+            for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
+                this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+            }
+        }
+    }
+
+    private applyDriftLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+        const driftLaws = this.$driftLaws;
+        const N = driftLaws.length;
+        for (let i = 0; i < N; i++) {
+            const driftLaw = driftLaws[i];
+            const forces = driftLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
@@ -357,7 +396,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
-    private applyTorques(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    private applyTorqueLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
         const torqueLaws = this.$torqueLaws;
         const Ni = torqueLaws.length;
         for (let i = 0; i < Ni; i++) {

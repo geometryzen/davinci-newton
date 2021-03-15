@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-15';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.49';
+            this.VERSION = '1.0.50';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4095,6 +4095,10 @@
             /**
              *
              */
+            _this.$driftLaws = [];
+            /**
+             *
+             */
             _this.$showForces = false;
             /**
              *
@@ -4224,6 +4228,25 @@
             mustBeNonNullObject('geometry', geometry);
             remove(this.$constraints, geometry);
         };
+        /**
+         *
+         */
+        Physics.prototype.addDriftLaw = function (driftLaw) {
+            mustBeNonNullObject('driftLaw', driftLaw);
+            if (!contains(this.$driftLaws, driftLaw)) {
+                this.$driftLaws.push(driftLaw);
+            }
+            this.discontinuosChangeToEnergy();
+        };
+        /**
+         *
+         */
+        Physics.prototype.removeDriftLaw = function (driftLaw) {
+            mustBeNonNullObject('driftLaw', driftLaw);
+            driftLaw.disconnect();
+            this.discontinuosChangeToEnergy();
+            remove(this.$driftLaws, driftLaw);
+        };
         Physics.prototype.discontinuosChangeToEnergy = function () {
             var _a;
             var dynamics = this.dynamics;
@@ -4305,18 +4328,30 @@
                     dynamics.zeroAngularMomentumVars(rateOfChange, idx);
                 }
             }
-            this.applyForces(rateOfChange, Δt, uomTime);
-            this.applyTorques(rateOfChange, Δt, uomTime);
+            this.applyForceLaws(rateOfChange, Δt, uomTime);
+            this.applyTorqueLaws(rateOfChange, Δt, uomTime);
             this.applyConstraints(rateOfChange, Δt, uomTime);
+            this.applyDriftLaws(rateOfChange, Δt, uomTime);
             rateOfChange[this.$varsList.timeIndex()] = 1;
         };
-        Physics.prototype.applyForces = function (rateOfChange, Δt, uomTime) {
+        Physics.prototype.applyForceLaws = function (rateOfChange, Δt, uomTime) {
             var forceLaws = this.$forceLaws;
             var N = forceLaws.length;
             for (var i = 0; i < N; i++) {
                 var forceLaw = forceLaws[i];
-                // The forces will give rise to changes in both linear and angular momentum.
                 var forces = forceLaw.updateForces();
+                var Nforces = forces.length;
+                for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
+                    this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+                }
+            }
+        };
+        Physics.prototype.applyDriftLaws = function (rateOfChange, Δt, uomTime) {
+            var driftLaws = this.$driftLaws;
+            var N = driftLaws.length;
+            for (var i = 0; i < N; i++) {
+                var driftLaw = driftLaws[i];
+                var forces = driftLaw.updateForces();
                 var Nforces = forces.length;
                 for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                     this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
@@ -4364,7 +4399,7 @@
                 this.$simList.add(forceApp);
             }
         };
-        Physics.prototype.applyTorques = function (rateOfChange, Δt, uomTime) {
+        Physics.prototype.applyTorqueLaws = function (rateOfChange, Δt, uomTime) {
             var torqueLaws = this.$torqueLaws;
             var Ni = torqueLaws.length;
             for (var i = 0; i < Ni; i++) {
@@ -4584,19 +4619,11 @@
             mustBeNonNullObject('body', body, contextBuilder);
             this.physics.removeBody(body);
         };
-        /**
-         *
-         * @param forceLaw
-         */
         Engine.prototype.addForceLaw = function (forceLaw) {
             var contextBuilder = function () { return "Engine.addForceLaw(forceLaw: ForceLaw): void"; };
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
             this.physics.addForceLaw(forceLaw);
         };
-        /**
-         *
-         * @param forceLaw
-         */
         Engine.prototype.removeForceLaw = function (forceLaw) {
             var contextBuilder = function () { return "Engine.removeForceLaw(forceLaw: ForceLaw): void"; };
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
@@ -4629,6 +4656,16 @@
             var contextBuilder = function () { return "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void"; };
             mustBeNonNullObject('geometry', geometry, contextBuilder);
             this.physics.removeConstraint(geometry);
+        };
+        Engine.prototype.addDriftLaw = function (driftLaw) {
+            var contextBuilder = function () { return "Engine.addDriftLaw(driftLaw: ForceLaw): void"; };
+            mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+            this.physics.addDriftLaw(driftLaw);
+        };
+        Engine.prototype.removeDriftLaw = function (driftLaw) {
+            var contextBuilder = function () { return "Engine.removeDriftLaw(driftLaw: ForceLaw): void"; };
+            mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+            this.physics.removeDriftLaw(driftLaw);
         };
         /**
          * Advances the Physics model by the specified time interval, Δt * uomTime.

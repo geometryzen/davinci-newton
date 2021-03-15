@@ -26,6 +26,7 @@ CONTRIBUTING.md
 deploy.sh
 Gruntfile.js
 karma.conf.js
+karma-test-shim.js
 requirejs.config.js
 rollup.config.js
 specrunner.html

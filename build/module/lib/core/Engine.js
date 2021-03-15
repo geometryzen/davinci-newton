@@ -35,19 +35,11 @@ var Engine = /** @class */ (function () {
         mustBeNonNullObject('body', body, contextBuilder);
         this.physics.removeBody(body);
     };
-    /**
-     *
-     * @param forceLaw
-     */
     Engine.prototype.addForceLaw = function (forceLaw) {
         var contextBuilder = function () { return "Engine.addForceLaw(forceLaw: ForceLaw): void"; };
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.addForceLaw(forceLaw);
     };
-    /**
-     *
-     * @param forceLaw
-     */
     Engine.prototype.removeForceLaw = function (forceLaw) {
         var contextBuilder = function () { return "Engine.removeForceLaw(forceLaw: ForceLaw): void"; };
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
@@ -80,6 +72,16 @@ var Engine = /** @class */ (function () {
         var contextBuilder = function () { return "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void"; };
         mustBeNonNullObject('geometry', geometry, contextBuilder);
         this.physics.removeConstraint(geometry);
+    };
+    Engine.prototype.addDriftLaw = function (driftLaw) {
+        var contextBuilder = function () { return "Engine.addDriftLaw(driftLaw: ForceLaw): void"; };
+        mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+        this.physics.addDriftLaw(driftLaw);
+    };
+    Engine.prototype.removeDriftLaw = function (driftLaw) {
+        var contextBuilder = function () { return "Engine.removeDriftLaw(driftLaw: ForceLaw): void"; };
+        mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+        this.physics.removeDriftLaw(driftLaw);
     };
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.

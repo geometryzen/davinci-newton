@@ -29,15 +29,7 @@ export declare class Engine<T> {
      * @param body
      */
     removeBody(body: ForceBody<T>): void;
-    /**
-     *
-     * @param forceLaw
-     */
     addForceLaw(forceLaw: ForceLaw<T>): void;
-    /**
-     *
-     * @param forceLaw
-     */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
     /**
      *
@@ -51,6 +43,8 @@ export declare class Engine<T> {
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     addConstraint(geometry: GeometricConstraint<T>): void;
     removeConstraint(geometry: GeometricConstraint<T>): void;
+    addDriftLaw(driftLaw: ForceLaw<T>): void;
+    removeDriftLaw(driftLaw: ForceLaw<T>): void;
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.
      * @param Δt The time interval.

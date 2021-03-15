@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.49
+// Type definitions for davinci-newton 1.0.50
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2564,16 +2564,25 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * 
      */
     addForceLaw(forceLaw: ForceLaw<T>): void;
+    removeForceLaw(forceLaw: ForceLaw<T>): void;
 
     /**
      *
      */
     addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
 
     /**
      *
      */
     addConstraint(geometry: GeometricConstraint<T>): void;
+    removeConstraint(geometry: GeometricConstraint<T>): void;
+
+    /**
+     * 
+     */
+    addDriftLaw(driftLaw: ForceLaw<T>): void;
+    removeDriftLaw(driftLaw: ForceLaw<T>): void;
 
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
@@ -2599,16 +2608,10 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
      * 
      */
     removeBody(body: ForceBody<T>): void;
-    /**
-     * 
-     */
-    removeForceLaw(forceLaw: ForceLaw<T>): void;
-    removeConstraint(geometry: GeometricConstraint<T>): void;
 
     /**
      * 
      */
-    removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     /**
     * Sets the 
     */
@@ -2637,6 +2640,8 @@ export class Engine<T> {
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     addConstraint(geometry: GeometricConstraint<T>): void;
     removeConstraint(geometry: GeometricConstraint<T>): void;
+    addDriftLaw(driftLaw: ForceLaw<T>): void;
+    removeDriftLaw(driftLaw: ForceLaw<T>): void;
     advance(Δt: number, uomTime?: Unit): void;
     updateFromBodies(): void;
 }

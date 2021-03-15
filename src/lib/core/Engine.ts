@@ -56,19 +56,12 @@ export class Engine<T> {
         this.physics.removeBody(body);
     }
 
-    /**
-     * 
-     * @param forceLaw 
-     */
     addForceLaw(forceLaw: ForceLaw<T>): void {
         const contextBuilder = () => "Engine.addForceLaw(forceLaw: ForceLaw): void";
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
         this.physics.addForceLaw(forceLaw);
     }
-    /**
-     * 
-     * @param forceLaw 
-     */
+
     removeForceLaw(forceLaw: ForceLaw<T>): void {
         const contextBuilder = () => "Engine.removeForceLaw(forceLaw: ForceLaw): void";
         mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
@@ -104,6 +97,18 @@ export class Engine<T> {
         const contextBuilder = () => "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void";
         mustBeNonNullObject('geometry', geometry, contextBuilder);
         this.physics.removeConstraint(geometry);
+    }
+
+    addDriftLaw(driftLaw: ForceLaw<T>): void {
+        const contextBuilder = () => "Engine.addDriftLaw(driftLaw: ForceLaw): void";
+        mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+        this.physics.addDriftLaw(driftLaw);
+    }
+
+    removeDriftLaw(driftLaw: ForceLaw<T>): void {
+        const contextBuilder = () => "Engine.removeDriftLaw(driftLaw: ForceLaw): void";
+        mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
+        this.physics.removeDriftLaw(driftLaw);
     }
 
     /**

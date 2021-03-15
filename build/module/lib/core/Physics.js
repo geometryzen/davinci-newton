@@ -44,6 +44,10 @@ var Physics = /** @class */ (function (_super) {
         /**
          *
          */
+        _this.$driftLaws = [];
+        /**
+         *
+         */
         _this.$showForces = false;
         /**
          *
@@ -173,6 +177,25 @@ var Physics = /** @class */ (function (_super) {
         mustBeNonNullObject('geometry', geometry);
         remove(this.$constraints, geometry);
     };
+    /**
+     *
+     */
+    Physics.prototype.addDriftLaw = function (driftLaw) {
+        mustBeNonNullObject('driftLaw', driftLaw);
+        if (!contains(this.$driftLaws, driftLaw)) {
+            this.$driftLaws.push(driftLaw);
+        }
+        this.discontinuosChangeToEnergy();
+    };
+    /**
+     *
+     */
+    Physics.prototype.removeDriftLaw = function (driftLaw) {
+        mustBeNonNullObject('driftLaw', driftLaw);
+        driftLaw.disconnect();
+        this.discontinuosChangeToEnergy();
+        remove(this.$driftLaws, driftLaw);
+    };
     Physics.prototype.discontinuosChangeToEnergy = function () {
         var _a;
         var dynamics = this.dynamics;
@@ -254,18 +277,30 @@ var Physics = /** @class */ (function (_super) {
                 dynamics.zeroAngularMomentumVars(rateOfChange, idx);
             }
         }
-        this.applyForces(rateOfChange, Δt, uomTime);
-        this.applyTorques(rateOfChange, Δt, uomTime);
+        this.applyForceLaws(rateOfChange, Δt, uomTime);
+        this.applyTorqueLaws(rateOfChange, Δt, uomTime);
         this.applyConstraints(rateOfChange, Δt, uomTime);
+        this.applyDriftLaws(rateOfChange, Δt, uomTime);
         rateOfChange[this.$varsList.timeIndex()] = 1;
     };
-    Physics.prototype.applyForces = function (rateOfChange, Δt, uomTime) {
+    Physics.prototype.applyForceLaws = function (rateOfChange, Δt, uomTime) {
         var forceLaws = this.$forceLaws;
         var N = forceLaws.length;
         for (var i = 0; i < N; i++) {
             var forceLaw = forceLaws[i];
-            // The forces will give rise to changes in both linear and angular momentum.
             var forces = forceLaw.updateForces();
+            var Nforces = forces.length;
+            for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
+                this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+            }
+        }
+    };
+    Physics.prototype.applyDriftLaws = function (rateOfChange, Δt, uomTime) {
+        var driftLaws = this.$driftLaws;
+        var N = driftLaws.length;
+        for (var i = 0; i < N; i++) {
+            var driftLaw = driftLaws[i];
+            var forces = driftLaw.updateForces();
             var Nforces = forces.length;
             for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
                 this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
@@ -313,7 +348,7 @@ var Physics = /** @class */ (function (_super) {
             this.$simList.add(forceApp);
         }
     };
-    Physics.prototype.applyTorques = function (rateOfChange, Δt, uomTime) {
+    Physics.prototype.applyTorqueLaws = function (rateOfChange, Δt, uomTime) {
         var torqueLaws = this.$torqueLaws;
         var Ni = torqueLaws.length;
         for (var i = 0; i < Ni; i++) {
