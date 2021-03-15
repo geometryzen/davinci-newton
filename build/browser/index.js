@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-15';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.48';
+            this.VERSION = '1.0.49';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4440,10 +4440,11 @@
             dynamics.getForce(rateOfChange, idx, F);
             var X = body.X;
             constraint.computeNormal(X, e);
-            metric.copyVector(e, N); // N = e
-            metric.scp(N, F); // N = F | e
+            metric.copyVector(F, N); // N = F
+            metric.scp(N, e); // N = F | e
             metric.mulByVector(N, e); // N = (F | e) e
-            metric.subVector(F, N);
+            metric.neg(N); // N = - (F | e) e
+            metric.addVector(F, N); // F is replaced by F - (F | e) e 
             // Update the rateOfChange of Linear Momentum (force); 
             dynamics.setForce(rateOfChange, idx, F);
             // The constraint holds the computed force so that it can be visualized.

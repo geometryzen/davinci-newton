@@ -444,10 +444,11 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const X = body.X;
         constraint.computeNormal(X, e);
 
-        metric.copyVector(e, N);    // N = e
-        metric.scp(N, F);           // N = F | e
+        metric.copyVector(F, N);    // N = F
+        metric.scp(N, e);           // N = F | e
         metric.mulByVector(N, e);   // N = (F | e) e
-        metric.subVector(F, N);
+        metric.neg(N);              // N = - (F | e) e
+        metric.addVector(F, N);     // F is replaced by F - (F | e) e 
 
         // Update the rateOfChange of Linear Momentum (force); 
         dynamics.setForce(rateOfChange, idx, F);
