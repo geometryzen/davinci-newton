@@ -2761,11 +2761,23 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="geometric3.html" class="tsd-kind-icon">Geometric3</a>
 		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="geometricconstraint.html" class="tsd-kind-icon">Geometric<wbr>Constraint</a>
+		</li>
 		<li class=" tsd-kind-class">
 			<a href="gravitationforcelaw2.html" class="tsd-kind-icon">Gravitation<wbr>Force<wbr>Law2</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="gravitationforcelaw3.html" class="tsd-kind-icon">Gravitation<wbr>Force<wbr>Law3</a>
+		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="lineardamper.html" class="tsd-kind-icon">Linear<wbr>Damper</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="lineardamper2.html" class="tsd-kind-icon">Linear<wbr>Damper2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="lineardamper3.html" class="tsd-kind-icon">Linear<wbr>Damper3</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="matrix1.html" class="tsd-kind-icon">Matrix1</a>
@@ -2804,10 +2816,16 @@ img {
 					<a href="physics3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="physics3.html#addconstraint" class="tsd-kind-icon">add<wbr>Constraint</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="physics3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="physics3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="physics3.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="physics3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a>
@@ -2907,8 +2925,10 @@ img {
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#addconstraint" class="tsd-kind-icon">add<wbr>Constraint</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#totalenergy" class="tsd-kind-icon">total<wbr>Energy</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="physics3.html#updatefrombodies" class="tsd-kind-icon">update<wbr>From<wbr>Bodies</a></li>
@@ -2930,7 +2950,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides Physics.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/engine3D/Physics3.ts#L10">lib/engine3D/Physics3.ts:10</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/engine3D/Physics3.ts#L10">lib/engine3D/Physics3.ts:10</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="physics3.html" class="tsd-signature-type">Physics3</a></h4>
@@ -2947,7 +2967,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from Physics.metric</p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L69">lib/core/Physics.ts:69</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L74">lib/core/Physics.ts:74</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2965,7 +2985,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.bodies</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L338">lib/core/Physics.ts:338</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L401">lib/core/Physics.ts:401</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2989,7 +3009,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.showForces</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L85">lib/core/Physics.ts:85</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L90">lib/core/Physics.ts:90</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3003,7 +3023,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.showForces</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L88">lib/core/Physics.ts:88</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L93">lib/core/Physics.ts:93</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3032,7 +3052,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.time</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L296">lib/core/Physics.ts:296</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L359">lib/core/Physics.ts:359</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -3053,13 +3073,41 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.addBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L96">lib/core/Physics.ts:96</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L101">lib/core/Physics.ts:101</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="addconstraint" class="tsd-anchor"></a>
+				<h3>add<wbr>Constraint</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Physics.addConstraint</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L158">lib/core/Physics.ts:158</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>geometry: <a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3077,7 +3125,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.addForceLaw</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L131">lib/core/Physics.ts:131</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L136">lib/core/Physics.ts:136</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3101,13 +3149,37 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.removeBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L117">lib/core/Physics.ts:117</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L122">lib/core/Physics.ts:122</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="removeconstraint" class="tsd-anchor"></a>
+				<h3>remove<wbr>Constraint</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Physics.removeConstraint</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L165">lib/core/Physics.ts:165</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>geometry: <a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3125,7 +3197,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.removeForceLaw</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L142">lib/core/Physics.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L147">lib/core/Physics.ts:147</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3149,7 +3221,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.totalEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L360">lib/core/Physics.ts:360</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L423">lib/core/Physics.ts:423</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3173,7 +3245,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Physics.updateFromBodies</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Physics.ts#L303">lib/core/Physics.ts:303</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Physics.ts#L366">lib/core/Physics.ts:366</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

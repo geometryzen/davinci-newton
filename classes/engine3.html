@@ -2756,6 +2756,9 @@ img {
 					<a href="engine3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#addconstraint" class="tsd-kind-icon">add<wbr>Constraint</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="engine3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -2763,6 +2766,9 @@ img {
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="engine3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="engine3.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="engine3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a>
@@ -2784,11 +2790,23 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="geometric3.html" class="tsd-kind-icon">Geometric3</a>
 		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="geometricconstraint.html" class="tsd-kind-icon">Geometric<wbr>Constraint</a>
+		</li>
 		<li class=" tsd-kind-class">
 			<a href="gravitationforcelaw2.html" class="tsd-kind-icon">Gravitation<wbr>Force<wbr>Law2</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="gravitationforcelaw3.html" class="tsd-kind-icon">Gravitation<wbr>Force<wbr>Law3</a>
+		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="lineardamper.html" class="tsd-kind-icon">Linear<wbr>Damper</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="lineardamper2.html" class="tsd-kind-icon">Linear<wbr>Damper2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="lineardamper3.html" class="tsd-kind-icon">Linear<wbr>Damper3</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="matrix1.html" class="tsd-kind-icon">Matrix1</a>
@@ -2872,9 +2890,11 @@ img {
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#addbody" class="tsd-kind-icon">add<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#addconstraint" class="tsd-kind-icon">add<wbr>Constraint</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#addforcelaw" class="tsd-kind-icon">add<wbr>Force<wbr>Law</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#advance" class="tsd-kind-icon">advance</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#removebody" class="tsd-kind-icon">remove<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#removeconstraint" class="tsd-kind-icon">remove<wbr>Constraint</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#removeforcelaw" class="tsd-kind-icon">remove<wbr>Force<wbr>Law</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="engine3.html#updatefrombodies" class="tsd-kind-icon">update<wbr>From<wbr>Bodies</a></li>
 						</ul>
@@ -2895,7 +2915,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides Engine.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/engine3D/Engine3.ts#L9">lib/engine3D/Engine3.ts:9</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/engine3D/Engine3.ts#L9">lib/engine3D/Engine3.ts:9</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2922,7 +2942,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.addBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L42">lib/core/Engine.ts:42</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L43">lib/core/Engine.ts:43</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2940,6 +2960,30 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="addconstraint" class="tsd-anchor"></a>
+				<h3>add<wbr>Constraint</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.addConstraint</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L76">lib/core/Engine.ts:76</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>geometry: <a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="addforcelaw" class="tsd-anchor"></a>
 				<h3>add<wbr>Force<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -2950,7 +2994,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.addForceLaw</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L60">lib/core/Engine.ts:60</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L61">lib/core/Engine.ts:61</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2978,7 +3022,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.advance</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L80">lib/core/Engine.ts:80</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L93">lib/core/Engine.ts:93</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3016,7 +3060,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.removeBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L51">lib/core/Engine.ts:51</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L52">lib/core/Engine.ts:52</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3034,6 +3078,30 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="removeconstraint" class="tsd-anchor"></a>
+				<h3>remove<wbr>Constraint</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Engine.removeConstraint</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L82">lib/core/Engine.ts:82</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>geometry: <a href="geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="removeforcelaw" class="tsd-anchor"></a>
 				<h3>remove<wbr>Force<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -3044,7 +3112,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.removeForceLaw</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L69">lib/core/Engine.ts:69</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L70">lib/core/Engine.ts:70</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3072,7 +3140,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Engine.updateFromBodies</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/9df26ca/src/lib/core/Engine.ts#L87">lib/core/Engine.ts:87</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/030e40c/src/lib/core/Engine.ts#L100">lib/core/Engine.ts:100</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
