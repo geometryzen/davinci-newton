@@ -2734,6 +2734,12 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="constantforcelaw3.html" class="tsd-kind-icon">Constant<wbr>Force<wbr>Law3</a>
 		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw2.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw3.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law3</a>
+		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="coulomblaw.html" class="tsd-kind-icon">Coulomb<wbr>Law</a>
 		</li>
@@ -2836,6 +2842,9 @@ img {
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a href="spring3.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
 				</li>
+				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a href="spring3.html#forces" class="tsd-kind-icon">forces</a>
+				</li>
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a href="spring3.html#k" class="tsd-kind-icon">k</a>
 				</li>
@@ -2849,15 +2858,21 @@ img {
 					<a href="spring3.html#stiffness" class="tsd-kind-icon">stiffness</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="spring3.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="spring3.html#disconnect" class="tsd-kind-icon">disconnect</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="spring3.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
 				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="spring3.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a>
+				</li>
 			</ul>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque2.html" class="tsd-kind-icon">Torque2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque3.html" class="tsd-kind-icon">Torque3</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="unit.html" class="tsd-kind-icon">Unit</a>
@@ -2919,6 +2934,7 @@ img {
 							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#end1" class="tsd-kind-icon">end1</a></li>
 							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#end2" class="tsd-kind-icon">end2</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
+							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#forces" class="tsd-kind-icon">forces</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#k" class="tsd-kind-icon">k</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#restlength" class="tsd-kind-icon">rest<wbr>Length</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#springconstant" class="tsd-kind-icon">spring<wbr>Constant</a></li>
@@ -2928,9 +2944,9 @@ img {
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring3.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2949,7 +2965,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides Spring.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/engine3D/Spring3.ts#L8">lib/engine3D/Spring3.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/engine3D/Spring3.ts#L8">lib/engine3D/Spring3.ts:8</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2975,7 +2991,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from Spring.metric</p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L66">lib/core/Spring.ts:66</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L66">lib/core/Spring.ts:66</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2994,7 +3010,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.attach1</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L156">lib/core/Spring.ts:156</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L160">lib/core/Spring.ts:160</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3003,7 +3019,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.attach1</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L159">lib/core/Spring.ts:159</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L163">lib/core/Spring.ts:163</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3028,7 +3044,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.attach2</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L165">lib/core/Spring.ts:165</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L169">lib/core/Spring.ts:169</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3037,7 +3053,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.attach2</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L168">lib/core/Spring.ts:168</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L172">lib/core/Spring.ts:172</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3061,7 +3077,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.end1</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L174">lib/core/Spring.ts:174</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L178">lib/core/Spring.ts:178</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3079,7 +3095,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.end2</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L181">lib/core/Spring.ts:181</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L185">lib/core/Spring.ts:185</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3098,7 +3114,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -3107,7 +3123,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3117,6 +3133,24 @@ img {
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+				<a name="forces" class="tsd-anchor"></a>
+				<h3>forces</h3>
+				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Spring.forces</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L108">lib/core/Spring.ts:108</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -3132,7 +3166,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.k</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L118">lib/core/Spring.ts:118</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L122">lib/core/Spring.ts:122</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3141,7 +3175,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.k</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L121">lib/core/Spring.ts:121</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L125">lib/core/Spring.ts:125</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3166,7 +3200,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.restLength</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L108">lib/core/Spring.ts:108</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L112">lib/core/Spring.ts:112</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3175,7 +3209,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.restLength</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L111">lib/core/Spring.ts:111</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L115">lib/core/Spring.ts:115</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3200,7 +3234,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.springConstant</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L126">lib/core/Spring.ts:126</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L130">lib/core/Spring.ts:130</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3209,7 +3243,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.springConstant</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L129">lib/core/Spring.ts:129</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L133">lib/core/Spring.ts:133</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3234,7 +3268,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.stiffness</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L134">lib/core/Spring.ts:134</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L138">lib/core/Spring.ts:138</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
@@ -3243,7 +3277,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.stiffness</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L137">lib/core/Spring.ts:137</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L141">lib/core/Spring.ts:141</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3260,24 +3294,6 @@ img {
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="calculateforces" class="tsd-anchor"></a>
-				<h3>calculate<wbr>Forces</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">calculate<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<p>Inherited from Spring.calculateForces</p>
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L191">lib/core/Spring.ts:191</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="disconnect" class="tsd-anchor"></a>
 				<h3>disconnect</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -3288,7 +3304,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.disconnect</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L224">lib/core/Spring.ts:224</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L228">lib/core/Spring.ts:228</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3306,10 +3322,28 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from Spring.potentialEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/Spring.ts#L231">lib/core/Spring.ts:231</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L235">lib/core/Spring.ts:235</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="updateforces" class="tsd-anchor"></a>
+				<h3>update<wbr>Forces</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from Spring.updateForces</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/Spring.ts#L195">lib/core/Spring.ts:195</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>

@@ -2734,6 +2734,12 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="constantforcelaw3.html" class="tsd-kind-icon">Constant<wbr>Force<wbr>Law3</a>
 		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw2.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw3.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law3</a>
+		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="coulomblaw.html" class="tsd-kind-icon">Coulomb<wbr>Law</a>
 		</li>
@@ -2782,17 +2788,20 @@ img {
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a href="lineardamper2.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
 				</li>
+				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a href="lineardamper2.html#forces" class="tsd-kind-icon">forces</a>
+				</li>
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a href="lineardamper2.html#frictioncoefficient" class="tsd-kind-icon">friction<wbr>Coefficient</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="lineardamper2.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="lineardamper2.html#disconnect" class="tsd-kind-icon">disconnect</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="lineardamper2.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="lineardamper2.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a>
 				</li>
 			</ul>
 		</li>
@@ -2837,6 +2846,12 @@ img {
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="spring3.html" class="tsd-kind-icon">Spring3</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque2.html" class="tsd-kind-icon">Torque2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque3.html" class="tsd-kind-icon">Torque3</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="unit.html" class="tsd-kind-icon">Unit</a>
@@ -2889,15 +2904,16 @@ img {
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#b" class="tsd-kind-icon">b</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
+							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#forces" class="tsd-kind-icon">forces</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#frictioncoefficient" class="tsd-kind-icon">friction<wbr>Coefficient</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper2.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2916,7 +2932,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides LinearDamper.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/engine2D/LinearDamper2.ts#L8">lib/engine2D/LinearDamper2.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/engine2D/LinearDamper2.ts#L8">lib/engine2D/LinearDamper2.ts:8</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2947,7 +2963,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.b</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L52">lib/core/LinearDamper.ts:52</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L56">lib/core/LinearDamper.ts:56</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h4>
@@ -2956,7 +2972,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.b</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L55">lib/core/LinearDamper.ts:55</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L59">lib/core/LinearDamper.ts:59</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2981,7 +2997,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -2990,7 +3006,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3000,6 +3016,24 @@ img {
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+				<a name="forces" class="tsd-anchor"></a>
+				<h3>forces</h3>
+				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from LinearDamper.forces</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L52">lib/core/LinearDamper.ts:52</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -3015,7 +3049,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.frictionCoefficient</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L60">lib/core/LinearDamper.ts:60</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L64">lib/core/LinearDamper.ts:64</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h4>
@@ -3024,7 +3058,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.frictionCoefficient</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L63">lib/core/LinearDamper.ts:63</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L67">lib/core/LinearDamper.ts:67</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3041,24 +3075,6 @@ img {
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="calculateforces" class="tsd-anchor"></a>
-				<h3>calculate<wbr>Forces</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">calculate<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<p>Inherited from LinearDamper.calculateForces</p>
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L68">lib/core/LinearDamper.ts:68</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="disconnect" class="tsd-anchor"></a>
 				<h3>disconnect</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -3069,7 +3085,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.disconnect</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L104">lib/core/LinearDamper.ts:104</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L108">lib/core/LinearDamper.ts:108</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3087,10 +3103,28 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from LinearDamper.potentialEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/LinearDamper.ts#L108">lib/core/LinearDamper.ts:108</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L112">lib/core/LinearDamper.ts:112</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="updateforces" class="tsd-anchor"></a>
+				<h3>update<wbr>Forces</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from LinearDamper.updateForces</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/LinearDamper.ts#L72">lib/core/LinearDamper.ts:72</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>

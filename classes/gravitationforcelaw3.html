@@ -2734,6 +2734,12 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="constantforcelaw3.html" class="tsd-kind-icon">Constant<wbr>Force<wbr>Law3</a>
 		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw2.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="constanttorquelaw3.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law3</a>
+		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="coulomblaw.html" class="tsd-kind-icon">Coulomb<wbr>Law</a>
 		</li>
@@ -2779,14 +2785,17 @@ img {
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 					<a href="gravitationforcelaw3.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
 				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="gravitationforcelaw3.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a>
+				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a href="gravitationforcelaw3.html#forces" class="tsd-kind-icon">forces</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="gravitationforcelaw3.html#disconnect" class="tsd-kind-icon">disconnect</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="gravitationforcelaw3.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="gravitationforcelaw3.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a>
 				</li>
 			</ul>
 		</li>
@@ -2834,6 +2843,12 @@ img {
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="spring3.html" class="tsd-kind-icon">Spring3</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque2.html" class="tsd-kind-icon">Torque2</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="torque3.html" class="tsd-kind-icon">Torque3</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="unit.html" class="tsd-kind-icon">Unit</a>
@@ -2891,14 +2906,15 @@ img {
 						<h3>Accessors</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
+							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#forces" class="tsd-kind-icon">forces</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#calculateforces" class="tsd-kind-icon">calculate<wbr>Forces</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="gravitationforcelaw3.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2917,7 +2933,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides GravitationLaw.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/engine3D/GravitationForceLaw3.ts#L5">lib/engine3D/GravitationForceLaw3.ts:5</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/engine3D/GravitationForceLaw3.ts#L5">lib/engine3D/GravitationForceLaw3.ts:5</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2943,7 +2959,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from GravitationLaw.G</p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/GravitationLaw.ts#L16">lib/core/GravitationLaw.ts:16</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/GravitationLaw.ts#L16">lib/core/GravitationLaw.ts:16</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2968,7 +2984,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -2977,7 +2993,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractSimObject.expireTime</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2990,33 +3006,27 @@ img {
 					</li>
 				</ul>
 			</section>
-		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-			<h2>Methods</h2>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="calculateforces" class="tsd-anchor"></a>
-				<h3>calculate<wbr>Forces</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">calculate<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+				<a name="forces" class="tsd-anchor"></a>
+				<h3>forces</h3>
+				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from GravitationLaw.calculateForces</p>
+							<p>Inherited from GravitationLaw.forces</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/GravitationLaw.ts#L55">lib/core/GravitationLaw.ts:55</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/GravitationLaw.ts#L51">lib/core/GravitationLaw.ts:51</a></li>
 							</ul>
 						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Computes the forces due to the gravitational interaction.
-								F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)</p>
-							</div>
-						</div>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="disconnect" class="tsd-anchor"></a>
 				<h3>disconnect</h3>
@@ -3028,7 +3038,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from GravitationLaw.disconnect</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/GravitationLaw.ts#L91">lib/core/GravitationLaw.ts:91</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/GravitationLaw.ts#L95">lib/core/GravitationLaw.ts:95</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3046,7 +3056,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from GravitationLaw.potentialEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b8def16/src/lib/core/GravitationLaw.ts#L100">lib/core/GravitationLaw.ts:100</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/GravitationLaw.ts#L104">lib/core/GravitationLaw.ts:104</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3057,6 +3067,30 @@ img {
 							</div>
 						</div>
 						<h4 class="tsd-returns-title">Returns <a href="geometric3.html" class="tsd-signature-type">Geometric3</a></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="updateforces" class="tsd-anchor"></a>
+				<h3>update<wbr>Forces</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from GravitationLaw.updateForces</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/e6d4e2b/src/lib/core/GravitationLaw.ts#L59">lib/core/GravitationLaw.ts:59</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Computes the forces due to the gravitational interaction.
+								F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric3.html" class="tsd-signature-type">Geometric3</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
