@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.47
+// Type definitions for davinci-newton 1.0.48
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2501,6 +2501,7 @@ export interface GeometricConstraint<T> {
 }
 
 export class SurfaceConstraint<T> implements GeometricConstraint<T> {
+    readonly N: T;
     constructor(body: ForceBody<T>, normalFn: (x: T, N: T) => void);
     getBody(): ForceBody<T>;
     computeNormal(x: T, N: T): void;
@@ -2634,6 +2635,8 @@ export class Engine<T> {
     removeForceLaw(forceLaw: ForceLaw<T>): void;
     addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+    addConstraint(geometry: GeometricConstraint<T>): void;
+    removeConstraint(geometry: GeometricConstraint<T>): void;
     advance(Δt: number, uomTime?: Unit): void;
     updateFromBodies(): void;
 }

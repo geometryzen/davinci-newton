@@ -6,7 +6,7 @@ import { GeometricConstraint } from "./GeometricConstraint";
  * @hidden
  */
 export class SurfaceConstraint<T> implements GeometricConstraint<T> {
-    private readonly N: T;
+    public readonly N: T;
     constructor(private readonly body: ForceBody<T>, private readonly normalFn: (x: T, N: T) => void) {
         mustBeNonNullObject('body', body);
         const metric = body.metric;
