@@ -71,6 +71,9 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.magnitude = function (mv, mutate) {
         return mv.magnitude(mutate);
     };
+    Euclidean2.prototype.mul = function (lhs, rhs) {
+        return lhs.mul(rhs);
+    };
     Euclidean2.prototype.mulByNumber = function (lhs, alpha) {
         return lhs.mulByNumber(alpha);
     };

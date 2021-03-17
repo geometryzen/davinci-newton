@@ -64,6 +64,9 @@ var Euclidean3 = /** @class */ (function () {
     Euclidean3.prototype.magnitude = function (mv, mutate) {
         return mv.magnitude(mutate);
     };
+    Euclidean3.prototype.mul = function (lhs, rhs) {
+        return lhs.mul(rhs);
+    };
     Euclidean3.prototype.mulByNumber = function (lhs, alpha) {
         return lhs.mulByNumber(alpha);
     };

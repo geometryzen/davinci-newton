@@ -50,6 +50,8 @@ export interface Metric<T> {
 
     magnitude(mv: T, mutate?: boolean): T;
 
+    mul(lhs: T, rhs: T): T;
+
     mulByNumber(lhs: T, alpha: number): T;
 
     mulByScalar(lhs: T, a: number, uom: Unit): T;

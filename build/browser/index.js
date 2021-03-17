@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-17';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.52';
+            this.VERSION = '1.0.53';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4471,23 +4471,42 @@
             var dynamics = this.dynamics;
             // TODO: This could be a scratch variable.
             var F = metric.zero();
+            var r = metric.zero();
+            var B = metric.zero();
+            var eΘ = metric.zero();
             var e = metric.zero();
+            var Fnew = metric.zero();
+            var FnewR = metric.zero();
+            var FnewΘ = metric.zero();
             var N = metric.zero();
             // const end = metric.zero();
             dynamics.getForce(rateOfChange, idx, F);
             var X = body.X;
+            var P = body.P;
+            var M = body.M;
             // metric.copyVector(body.P, end);
             // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
             // metric.mulByScalar(end, Δt, uomTime);
             // metric.addVector(end, body.X);
-            constraint.computeNormal(X, e);
-            metric.copyVector(F, N); // N = F
-            metric.scp(N, e); // N = F | e
-            metric.mulByVector(N, e); // N = (F | e) e
-            metric.neg(N); // N = - (F | e) e
-            metric.addVector(F, N); // F is replaced by F - (F | e) e 
+            constraint.computeRadius(X, r);
+            constraint.computeRotation(X, B);
+            constraint.computeTangent(X, eΘ);
+            metric.copyVector(eΘ, FnewR); // FnewR = eΘ
+            metric.mul(FnewR, B); // FnewR = er 
+            metric.mulByVector(FnewR, P); // FnewR = er * P
+            metric.mulByVector(FnewR, P); // FnewR = er * P * P = (P * P) er
+            metric.divByScalar(FnewR, metric.a(M), metric.uom(M)); // FnewR = ((P * P) / m) er
+            metric.divByScalar(FnewR, metric.a(r), metric.uom(r)); // FnewR = ((P * P) / (m * r)) er
+            metric.neg(FnewR); // FnewR = - ((P * P) / (m * r)) er
+            metric.copyVector(F, FnewΘ); // FnewΘ = F
+            metric.scp(FnewΘ, eΘ); // FnewΘ = F | eΘ
+            metric.mulByVector(FnewΘ, e); // FnewΘ = (F | eΘ) eΘ
+            metric.copyVector(FnewR, Fnew); // Fnew = FnewR
+            metric.addVector(Fnew, FnewΘ); // Fnew = FnewR + FnewΘ
+            metric.copyVector(Fnew, N); // N = Fnew
+            metric.subVector(N, F); // N = Fnew - F or Fnew = F + N 
             // Update the rateOfChange of Linear Momentum (force); 
-            dynamics.setForce(rateOfChange, idx, F);
+            dynamics.setForce(rateOfChange, idx, Fnew);
             // The constraint holds the computed force so that it can be visualized.
             constraint.setForce(N);
         };
@@ -8338,6 +8357,9 @@
         Euclidean2.prototype.magnitude = function (mv, mutate) {
             return mv.magnitude(mutate);
         };
+        Euclidean2.prototype.mul = function (lhs, rhs) {
+            return lhs.mul(rhs);
+        };
         Euclidean2.prototype.mulByNumber = function (lhs, alpha) {
             return lhs.mulByNumber(alpha);
         };
@@ -9005,9 +9027,11 @@
      * @hidden
      */
     var SurfaceConstraint = /** @class */ (function () {
-        function SurfaceConstraint(body, normalFn) {
+        function SurfaceConstraint(body, radiusFn, rotationFn, tangentFn) {
             this.body = body;
-            this.normalFn = normalFn;
+            this.radiusFn = radiusFn;
+            this.rotationFn = rotationFn;
+            this.tangentFn = tangentFn;
             mustBeNonNullObject('body', body);
             var metric = body.metric;
             this.N = metric.zero();
@@ -9015,8 +9039,14 @@
         SurfaceConstraint.prototype.getBody = function () {
             return this.body;
         };
-        SurfaceConstraint.prototype.computeNormal = function (x, N) {
-            this.normalFn(x, N);
+        SurfaceConstraint.prototype.computeRadius = function (x, radius) {
+            this.radiusFn(x, radius);
+        };
+        SurfaceConstraint.prototype.computeRotation = function (x, plane) {
+            this.rotationFn(x, plane);
+        };
+        SurfaceConstraint.prototype.computeTangent = function (x, tangent) {
+            this.tangentFn(x, tangent);
         };
         SurfaceConstraint.prototype.setForce = function (N) {
             var metric = this.body.metric;
@@ -9027,8 +9057,8 @@
 
     var SurfaceConstraint2 = /** @class */ (function (_super) {
         __extends(SurfaceConstraint2, _super);
-        function SurfaceConstraint2(body, normalFn) {
-            return _super.call(this, body, normalFn) || this;
+        function SurfaceConstraint2(body, radiusFn, rotationFn, tangentFn) {
+            return _super.call(this, body, radiusFn, rotationFn, tangentFn) || this;
         }
         return SurfaceConstraint2;
     }(SurfaceConstraint));
@@ -12881,6 +12911,9 @@
         Euclidean3.prototype.magnitude = function (mv, mutate) {
             return mv.magnitude(mutate);
         };
+        Euclidean3.prototype.mul = function (lhs, rhs) {
+            return lhs.mul(rhs);
+        };
         Euclidean3.prototype.mulByNumber = function (lhs, alpha) {
             return lhs.mulByNumber(alpha);
         };
@@ -13551,8 +13584,8 @@
 
     var SurfaceConstraint3 = /** @class */ (function (_super) {
         __extends(SurfaceConstraint3, _super);
-        function SurfaceConstraint3(body, normalFn) {
-            return _super.call(this, body, normalFn) || this;
+        function SurfaceConstraint3(body, radiusFn, rotationFn, tangentFn) {
+            return _super.call(this, body, radiusFn, rotationFn, tangentFn) || this;
         }
         return SurfaceConstraint3;
     }(SurfaceConstraint));

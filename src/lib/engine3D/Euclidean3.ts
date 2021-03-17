@@ -68,6 +68,9 @@ export class Euclidean3 implements Metric<Geometric3> {
     magnitude(mv: Geometric3, mutate: boolean): Geometric3 {
         return mv.magnitude(mutate);
     }
+    mul(lhs: Geometric3, rhs: Geometric3): Geometric3 {
+        return lhs.mul(rhs);
+    }
     mulByNumber(lhs: Geometric3, alpha: number): Geometric3 {
         return lhs.mulByNumber(alpha);
     }

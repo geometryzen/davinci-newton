@@ -31,6 +31,7 @@ export interface Metric<T> {
     isZero(mv: T): boolean;
     lock(mv: T): number;
     magnitude(mv: T, mutate?: boolean): T;
+    mul(lhs: T, rhs: T): T;
     mulByNumber(lhs: T, alpha: number): T;
     mulByScalar(lhs: T, a: number, uom: Unit): T;
     mulByVector(lhs: T, rhs: T): T;

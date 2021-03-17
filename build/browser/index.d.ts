@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.52
+// Type definitions for davinci-newton 1.0.53
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2521,24 +2521,47 @@ export interface TorqueLaw<T> extends SimObject {
 
 export interface GeometricConstraint<T> {
     getBody(): ForceBody<T>;
-    computeNormal(x: T, N: T): void;
+    /**
+     * Computes the radius of the curve.
+     * @param x (input) The location at which the radius is required.
+     * @param r (output) The radius (scalar).
+     */
+    computeRadius(x: T, r: T): void;
+    /**
+     * Computes the plane containing the rotation.
+     * The orientation is ambiguous.
+     * However tangent * rotation should give the direction towards the center of curvature. 
+     * @param x (input) The position (vector) at which the rotation is required.
+     * @param B (output) The rotation (bivector).
+     */
+    computeRotation(x: T, B: T): void;
+    /**
+    * Computes the tangent to the wire.
+    * The orientation is ambiguous.
+    * However tangent * rotation should give the direction towards the center of curvature. 
+    * @param x (input) The position (vector) at which the tangent is required.
+    * @param v (output) The tangent (vector).
+    */
+    computeTangent(x: T, v: T): void;
     setForce(N: T): void;
 }
 
 export class SurfaceConstraint<T> implements GeometricConstraint<T> {
     readonly N: T;
-    constructor(body: ForceBody<T>, normalFn: (x: T, N: T) => void);
+    constructor(body: ForceBody<T>, radiusFn: (x: T, radius: T) => void, rotationFn: (x: T, plane: T) => void, tangentFn: (x: T, tangent: T) => void);
     getBody(): ForceBody<T>;
-    computeNormal(x: T, N: T): void;
+    computeRadius(x: T, radius: T): void;
+    computeRotation(x: T, plane: T): void;
+    computeTangent(x: T, tangent: T): void;
     setForce(N: T): void;
 }
 
 export class SurfaceConstraint2 extends SurfaceConstraint<Geometric2> {
-    constructor(body: ForceBody<Geometric2>, normalFn: (x: Geometric2, N: Geometric2) => void);
+    constructor(body: ForceBody<Geometric2>, radiusFn: (x: Geometric2, radius: Geometric2) => void, rotationFn: (x: Geometric2, plane: Geometric2) => void, tangentFn: (x: Geometric2, tangent: Geometric2) => void);
 }
 
 export class SurfaceConstraint3 extends SurfaceConstraint<Geometric3> {
-    constructor(body: ForceBody<Geometric3>, normalFn: (x: Geometric3, N: Geometric3) => void);
+    constructor(body: ForceBody<Geometric3>, radiusFn: (x: Geometric3, radius: Geometric3) => void, rotationFn: (x: Geometric3, plane: Geometric3) => void, tangentFn: (x: Geometric3, tangent: Geometric3) => void);
 }
 
 /**

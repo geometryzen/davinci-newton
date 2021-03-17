@@ -342,18 +342,26 @@ describe("engine", function () {
 
             bead.X = Geometric2.vector(1, 1).direction();
 
-            const unitCircle = function (x: Geometric2, N: Geometric2): void {
-                N.copyVector(x).direction();
+            const radiusFn = function (x: Geometric2, radius: Geometric2): void {
+                radius.copyScalar(1, void 0); // TODO uom optinal
             };
-            const S = new SurfaceConstraint2(bead, unitCircle);
+
+            const rotationFn = function (x: Geometric2, plane: Geometric2): void {
+                plane.copyVector(Geometric2.e1).mulByVector(Geometric2.e2).direction();
+            };
+
+            const tangentFn = function (x: Geometric2, tangent: Geometric2): void {
+                tangent.copyVector(x).mulByVector(Geometric2.e1).mulByVector(Geometric2.e2).direction();
+            };
+            const S = new SurfaceConstraint2(bead, radiusFn, rotationFn, tangentFn);
 
             engine.addBody(bead);
             engine.addForceLaw(F);
             engine.addConstraint(S);
             // engine.removeConstraint(S);
 
-            for (let i = 0; i < 10; i++) {
-                engine.advance(0.001, Unit.SECOND);
+            for (let i = 0; i < 100; i++) {
+                engine.advance(0.01, Unit.SECOND);
                 // console.log(`X=>${bead.X}`);
                 // console.log(`|X|=>${bead.X.magnitude(false)}`);
             }
@@ -367,20 +375,29 @@ describe("engine", function () {
             const bead = new Particle3(Geometric3.scalar(1, Unit.KILOGRAM), Geometric3.scalar(0, Unit.COULOMB));
             const F = new ConstantForceLaw(bead, Geometric3.vector(0, -1, 0, Unit.NEWTON));
 
-            bead.X = Geometric3.vector(1, 1, 0).direction(true); // TODO
+            bead.X = Geometric3.vector(1, 1, 0).direction(true); // TODO mutate optional
 
-            const unitCircle = function (x: Geometric3, N: Geometric3): void {
-                N.copyVector(x).direction(true); // TODO
+            const radiusFn = function (x: Geometric3, radius: Geometric3): void {
+                radius.copyScalar(1, void 0); // TODO uom optinal
             };
-            const S = new SurfaceConstraint3(bead, unitCircle);
+
+            const rotationFn = function (x: Geometric3, plane: Geometric3): void {
+                plane.copyVector(Geometric3.e1).mulByVector(Geometric3.e2).direction(true); // TODO: mutate optional
+            };
+
+            const tangentFn = function (x: Geometric3, tangent: Geometric3): void {
+                tangent.copyVector(x).mulByVector(Geometric3.e1).mulByVector(Geometric3.e2).direction(true);
+            };
+
+            const S = new SurfaceConstraint3(bead, radiusFn, rotationFn, tangentFn);
 
             engine.addBody(bead);
             engine.addForceLaw(F);
             engine.addConstraint(S);
             // engine.removeConstraint(S);
 
-            for (let i = 0; i < 10; i++) {
-                engine.advance(0.001, Unit.SECOND);
+            for (let i = 0; i < 100; i++) {
+                engine.advance(0.01, Unit.SECOND);
                 // console.log(`X=>${bead.X}`);
                 // console.log(`|X|=>${bead.X.magnitude(false)}`);
             }

@@ -27,6 +27,7 @@ export declare class Euclidean2 implements Metric<Geometric2> {
     isZero(mv: Geometric2): boolean;
     lock(mv: Geometric2): number;
     magnitude(mv: Geometric2, mutate: boolean): Geometric2;
+    mul(lhs: Geometric2, rhs: Geometric2): Geometric2;
     mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
     mulByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
     mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;

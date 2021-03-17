@@ -477,27 +477,49 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
 
         // TODO: This could be a scratch variable.
         const F = metric.zero();
+        const r = metric.zero();
+        const B = metric.zero();
+        const eΘ = metric.zero();
         const e = metric.zero();
+        const Fnew = metric.zero();
+        const FnewR = metric.zero();
+        const FnewΘ = metric.zero();
         const N = metric.zero();
 
         // const end = metric.zero();
 
         dynamics.getForce(rateOfChange, idx, F);
         const X = body.X;
+        const P = body.P;
+        const M = body.M;
         // metric.copyVector(body.P, end);
         // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
         // metric.mulByScalar(end, Δt, uomTime);
         // metric.addVector(end, body.X);
-        constraint.computeNormal(X, e);
+        constraint.computeRadius(X, r);
+        constraint.computeRotation(X, B);
+        constraint.computeTangent(X, eΘ);
 
-        metric.copyVector(F, N);    // N = F
-        metric.scp(N, e);           // N = F | e
-        metric.mulByVector(N, e);   // N = (F | e) e
-        metric.neg(N);              // N = - (F | e) e
-        metric.addVector(F, N);     // F is replaced by F - (F | e) e 
+        metric.copyVector(eΘ, FnewR);                           // FnewR = eΘ
+        metric.mul(FnewR, B);                                   // FnewR = er 
+        metric.mulByVector(FnewR, P);                           // FnewR = er * P
+        metric.mulByVector(FnewR, P);                           // FnewR = er * P * P = (P * P) er
+        metric.divByScalar(FnewR, metric.a(M), metric.uom(M));  // FnewR = ((P * P) / m) er
+        metric.divByScalar(FnewR, metric.a(r), metric.uom(r));   // FnewR = ((P * P) / (m * r)) er
+        metric.neg(FnewR);                                      // FnewR = - ((P * P) / (m * r)) er
+
+        metric.copyVector(F, FnewΘ);                            // FnewΘ = F
+        metric.scp(FnewΘ, eΘ);                                  // FnewΘ = F | eΘ
+        metric.mulByVector(FnewΘ, e);                           // FnewΘ = (F | eΘ) eΘ
+
+        metric.copyVector(FnewR, Fnew);                         // Fnew = FnewR
+        metric.addVector(Fnew, FnewΘ);                          // Fnew = FnewR + FnewΘ
+
+        metric.copyVector(Fnew, N);                             // N = Fnew
+        metric.subVector(N, F);                                 // N = Fnew - F or Fnew = F + N 
 
         // Update the rateOfChange of Linear Momentum (force); 
-        dynamics.setForce(rateOfChange, idx, F);
+        dynamics.setForce(rateOfChange, idx, Fnew);
 
         // The constraint holds the computed force so that it can be visualized.
         constraint.setForce(N);

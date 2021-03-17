@@ -3,7 +3,7 @@ import { SurfaceConstraint } from "../core/SurfaceConstraint";
 import { Geometric3 } from "../math/Geometric3";
 
 export class SurfaceConstraint3 extends SurfaceConstraint<Geometric3> {
-    constructor(body: ForceBody<Geometric3>, normalFn: (x: Geometric3, N: Geometric3) => void) {
-        super(body, normalFn);
+    constructor(body: ForceBody<Geometric3>, radiusFn: (x: Geometric3, radius: Geometric3) => void, rotationFn: (x: Geometric3, plane: Geometric3) => void, tangentFn: (x: Geometric3, tangent: Geometric3) => void) {
+        super(body, radiusFn, rotationFn, tangentFn);
     }
 }
