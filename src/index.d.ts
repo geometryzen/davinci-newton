@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.51
+// Type definitions for davinci-newton 1.0.52
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -974,6 +974,25 @@ export class Geometric2 implements GeometricE2 {
      * 
      */
     unlock(token: number): void;
+
+    /**
+     * Sets this Geometric2 to have the specified cartesian coordinates and unit of measure.
+     * 
+     * this.a   ⟼ 0,
+     * this.x   ⟼ x,
+     * this.y   ⟼ y,
+     * this.b   ⟼ 0,
+     * this.uom ⟼ uom
+     * 
+     * 
+     * 
+     * @param x The cartesian x coordinate corresponding to the e1 basis vector.
+     * @param y The cartesian y coordinate corresponding to the e2 basis vector.
+     * @param uom The optional unit of measure.
+     * @returns this Geometric2.
+     * @throws An Error if this Geometric2 is not mutable.
+     */
+    vectorFromCoords(x: number, y: number, uom?: Unit): this | never;
 
     /**
      * 

@@ -1862,6 +1862,37 @@ var Geometric2 = /** @class */ (function () {
         mv.b = this.b;
         mv.uom = this.uom;
     };
+    /**
+     * Sets this Geometric2 to have the specified cartesian coordinates and unit of measure.
+     *
+     * this.a   ⟼ 0,
+     * this.x   ⟼ x,
+     * this.y   ⟼ y,
+     * this.b   ⟼ 0,
+     * this.uom ⟼ uom
+     *
+     * @param x The cartesian x coordinate corresponding to the e1 basis vector.
+     * @param y The cartesian y coordinate corresponding to the e2 basis vector.
+     * @param uom The optional unit of measure.
+     * @returns this Geometric2.
+     * @throws An Error if this Geometric2 is not mutable.
+     */
+    Geometric2.prototype.vectorFromCoords = function (x, y, uom) {
+        var contextBuilder = function () { return "vectorFromCoords(x: number, y: number, uom?: Unit): this"; };
+        mustBeNumber('x', x, contextBuilder);
+        mustBeNumber('y', y, contextBuilder);
+        if (this.isMutable()) {
+            this.a = 0;
+            this.x = x;
+            this.y = y;
+            this.b = 0;
+            this.uom = uom;
+            return this;
+        }
+        else {
+            throw new Error("Unable to mutate this locked Geometric2.");
+        }
+    };
     Geometric2.prototype.writeVector = function (v) {
         v.x = this.x;
         v.y = this.y;
