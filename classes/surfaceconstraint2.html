@@ -2828,7 +2828,13 @@ img {
 					<a href="surfaceconstraint2.html#n" class="tsd-kind-icon">N</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="surfaceconstraint2.html#computenormal" class="tsd-kind-icon">compute<wbr>Normal</a>
+					<a href="surfaceconstraint2.html#computeradius" class="tsd-kind-icon">compute<wbr>Radius</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="surfaceconstraint2.html#computerotation" class="tsd-kind-icon">compute<wbr>Rotation</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="surfaceconstraint2.html#computetangent" class="tsd-kind-icon">compute<wbr>Tangent</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="surfaceconstraint2.html#getbody" class="tsd-kind-icon">get<wbr>Body</a>
@@ -2901,7 +2907,9 @@ img {
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#computenormal" class="tsd-kind-icon">compute<wbr>Normal</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#computeradius" class="tsd-kind-icon">compute<wbr>Radius</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#computerotation" class="tsd-kind-icon">compute<wbr>Rotation</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#computetangent" class="tsd-kind-icon">compute<wbr>Tangent</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#getbody" class="tsd-kind-icon">get<wbr>Body</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="surfaceconstraint2.html#setforce" class="tsd-kind-icon">set<wbr>Force</a></li>
 						</ul>
@@ -2915,14 +2923,14 @@ img {
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
 				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Surface<wbr>Constraint2<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>, normalFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, N<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="surfaceconstraint2.html" class="tsd-signature-type">SurfaceConstraint2</a></li>
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Surface<wbr>Constraint2<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>, radiusFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, radius<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span>, rotationFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, plane<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span>, tangentFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, tangent<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="surfaceconstraint2.html" class="tsd-signature-type">SurfaceConstraint2</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<p>Overrides SurfaceConstraint.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/659a5d2/src/lib/engine2D/SurfaceConstraint2.ts#L5">lib/engine2D/SurfaceConstraint2.ts:5</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/engine2D/SurfaceConstraint2.ts#L5">lib/engine2D/SurfaceConstraint2.ts:5</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2931,11 +2939,11 @@ img {
 								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
-								<h5>normalFn: <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, N<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<h5>radiusFn: <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, radius<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 								<ul class="tsd-parameters">
 									<li class="tsd-parameter-signature">
 										<ul class="tsd-signatures tsd-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, N<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, radius<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 										</ul>
 										<ul class="tsd-descriptions">
 											<li class="tsd-description">
@@ -2945,7 +2953,55 @@ img {
 														<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
 													</li>
 													<li>
-														<h5>N: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+														<h5>radius: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<h5>rotationFn: <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, plane<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-signature">
+										<ul class="tsd-signatures tsd-kind-type-literal">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, plane<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+													</li>
+													<li>
+														<h5>plane: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<h5>tangentFn: <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, tangent<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-signature">
+										<ul class="tsd-signatures tsd-kind-type-literal">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, tangent<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+													</li>
+													<li>
+														<h5>tangent: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
 													</li>
 												</ul>
 												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2969,7 +3025,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from SurfaceConstraint.N</p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/659a5d2/src/lib/core/SurfaceConstraint.ts#L9">lib/core/SurfaceConstraint.ts:9</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L9">lib/core/SurfaceConstraint.ts:9</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2977,17 +3033,17 @@ img {
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="computenormal" class="tsd-anchor"></a>
-				<h3>compute<wbr>Normal</h3>
+				<a name="computeradius" class="tsd-anchor"></a>
+				<h3>compute<wbr>Radius</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">compute<wbr>Normal<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, N<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">compute<wbr>Radius<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, radius<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from SurfaceConstraint.computeNormal</p>
+							<p>Inherited from SurfaceConstraint.computeRadius</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/659a5d2/src/lib/core/SurfaceConstraint.ts#L18">lib/core/SurfaceConstraint.ts:18</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L18">lib/core/SurfaceConstraint.ts:18</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2996,7 +3052,61 @@ img {
 								<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
 							</li>
 							<li>
-								<h5>N: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+								<h5>radius: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="computerotation" class="tsd-anchor"></a>
+				<h3>compute<wbr>Rotation</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">compute<wbr>Rotation<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, plane<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from SurfaceConstraint.computeRotation</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L21">lib/core/SurfaceConstraint.ts:21</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+							</li>
+							<li>
+								<h5>plane: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="computetangent" class="tsd-anchor"></a>
+				<h3>compute<wbr>Tangent</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">compute<wbr>Tangent<span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a>, tangent<span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from SurfaceConstraint.computeTangent</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L24">lib/core/SurfaceConstraint.ts:24</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>x: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
+							</li>
+							<li>
+								<h5>tangent: <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3014,7 +3124,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from SurfaceConstraint.getBody</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/659a5d2/src/lib/core/SurfaceConstraint.ts#L15">lib/core/SurfaceConstraint.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L15">lib/core/SurfaceConstraint.ts:15</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -3032,7 +3142,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from SurfaceConstraint.setForce</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/659a5d2/src/lib/core/SurfaceConstraint.ts#L21">lib/core/SurfaceConstraint.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/68910ee/src/lib/core/SurfaceConstraint.ts#L27">lib/core/SurfaceConstraint.ts:27</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
