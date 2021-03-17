@@ -352,7 +352,7 @@ describe("engine", function () {
             engine.addConstraint(S);
             // engine.removeConstraint(S);
 
-            for (let i = 0; i < 1000; i++) {
+            for (let i = 0; i < 10; i++) {
                 engine.advance(0.001, Unit.SECOND);
                 // console.log(`X=>${bead.X}`);
                 // console.log(`|X|=>${bead.X.magnitude(false)}`);
@@ -379,7 +379,7 @@ describe("engine", function () {
             engine.addConstraint(S);
             // engine.removeConstraint(S);
 
-            for (let i = 0; i < 1000; i++) {
+            for (let i = 0; i < 10; i++) {
                 engine.advance(0.001, Unit.SECOND);
                 // console.log(`X=>${bead.X}`);
                 // console.log(`|X|=>${bead.X.magnitude(false)}`);

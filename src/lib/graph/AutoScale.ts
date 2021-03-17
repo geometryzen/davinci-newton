@@ -20,7 +20,7 @@ import { Memorizable } from '../util/Memorizable';
 import { Observer } from '../util/Observer';
 import { ParameterNumber } from '../util/ParameterNumber';
 import removeAt from '../util/removeAt';
-import repeat from '../util/repeat';
+import { repeat } from '../util/repeat';
 import { SubjectEvent } from '../util/SubjectEvent';
 import { veryDifferent } from '../util/veryDifferent';
 import { DoubleRect } from '../view/DoubleRect';

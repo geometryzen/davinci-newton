@@ -287,11 +287,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     }
 
     /**
-     * The time value is not being used because the DiffEqSolver has updated the vars.
+     * The time value is not being used because the DiffEqSolver has updated the vars?
      * This will move the objects and forces will be recalculated.u
      * @hidden
      */
     evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+        // console.log(`Δt=${Δt}`);
         const metric = this.metric;
         const dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
@@ -457,11 +458,11 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const Nconstraints = constraints.length;
         for (let i = 0; i < Nconstraints; i++) {
             const constraint = constraints[i];
-            this.applyConstraint(rateOfChange, constraint);
+            this.applyConstraint(rateOfChange, constraint, Δt, uomTime);
         }
     }
 
-    private applyConstraint(rateOfChange: number[], constraint: GeometricConstraint<T>): void {
+    private applyConstraint(rateOfChange: number[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
         const body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -479,8 +480,14 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const e = metric.zero();
         const N = metric.zero();
 
+        // const end = metric.zero();
+
         dynamics.getForce(rateOfChange, idx, F);
         const X = body.X;
+        // metric.copyVector(body.P, end);
+        // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
+        // metric.mulByScalar(end, Δt, uomTime);
+        // metric.addVector(end, body.X);
         constraint.computeNormal(X, e);
 
         metric.copyVector(F, N);    // N = F

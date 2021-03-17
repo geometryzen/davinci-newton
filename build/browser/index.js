@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-15';
+            this.LAST_MODIFIED = '2021-03-16';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.50';
+            this.VERSION = '1.0.51';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4298,11 +4298,12 @@
             this.varsList.setValuesContinuous(state);
         };
         /**
-         * The time value is not being used because the DiffEqSolver has updated the vars.
+         * The time value is not being used because the DiffEqSolver has updated the vars?
          * This will move the objects and forces will be recalculated.u
          * @hidden
          */
         Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
+            // console.log(`Δt=${Δt}`);
             var metric = this.metric;
             var dynamics = this.dynamics;
             // Move objects so that rigid body objects know their current state.
@@ -4454,10 +4455,10 @@
             var Nconstraints = constraints.length;
             for (var i = 0; i < Nconstraints; i++) {
                 var constraint = constraints[i];
-                this.applyConstraint(rateOfChange, constraint);
+                this.applyConstraint(rateOfChange, constraint, Δt, uomTime);
             }
         };
-        Physics.prototype.applyConstraint = function (rateOfChange, constraint) {
+        Physics.prototype.applyConstraint = function (rateOfChange, constraint, Δt, uomTime) {
             var body = constraint.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4472,8 +4473,13 @@
             var F = metric.zero();
             var e = metric.zero();
             var N = metric.zero();
+            // const end = metric.zero();
             dynamics.getForce(rateOfChange, idx, F);
             var X = body.X;
+            // metric.copyVector(body.P, end);
+            // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
+            // metric.mulByScalar(end, Δt, uomTime);
+            // metric.addVector(end, body.X);
             constraint.computeNormal(X, e);
             metric.copyVector(F, N); // N = F
             metric.scp(N, e); // N = F | e
@@ -6452,7 +6458,7 @@
             throw new Error(notImplemented('__lt_').message);
         };
         Geometric2.prototype.__tilde__ = function () {
-            return lock$1(Geometric2.copy(this).rev());
+            return lock$1(Geometric2.copy(this).rev(true));
         };
         Geometric2.prototype.__add__ = function (rhs) {
             if (rhs instanceof Geometric2) {
@@ -6702,7 +6708,7 @@
                 // It's always the case that the scalar commutes with every other
                 // grade of the multivector, so we can pull it out the front.
                 var expW = Math.exp(this.a);
-                // In Geometric3 we have the special case that the pseudoscalar also commutes.
+                // In Geometric2 we have the special case that the pseudoscalar also commutes.
                 // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
                 // let cosβ = cos(this.b)
                 // let sinβ = sin(this.b)
@@ -7086,7 +7092,7 @@
          * <p>
          * <code>this ⟼ a * b</code>
          * </p>
-         * Sets this Geometric3 to the geometric product a * b of the vector arguments.
+         * Sets this Geometric2 to the geometric product a * b of the vector arguments.
          */
         Geometric2.prototype.versor = function (a, b) {
             this.a = a.x * b.x + a.y * b.y;
@@ -7698,7 +7704,7 @@
                     return lock$1(this.clone().quaditude(true));
                 }
                 else {
-                    throw new Error("Unable to mutate this locked Geometric3.");
+                    throw new Error("Unable to mutate this locked Geometric2.");
                 }
             }
             else {
@@ -7716,20 +7722,36 @@
             }
         };
         /**
-         * @returns reverse(this)
+         * reverse has a ++-- structure on the grades.
+         * The scalar component, a, will not change.
+         * The vector components, x and y, will not change.
+         * The bivector component, b, will change sign.
+         *
+         * @param mutate Determines whether `this` will contain the result.
          */
-        Geometric2.prototype.rev = function () {
-            if (this.lock_ !== UNLOCKED$1) {
-                return lock$1(this.clone().rev());
+        Geometric2.prototype.rev = function (mutate) {
+            if (typeof mutate === 'boolean') {
+                if (mutate) {
+                    if (this.isMutable()) {
+                        // reverse has a ++-- structure on the grades.
+                        this.a = +this.a;
+                        this.x = +this.x;
+                        this.y = +this.y;
+                        this.b = -this.b;
+                        // The unit of measure is unchanged.
+                        return this;
+                    }
+                    else {
+                        // You can't ask to mutate that which is immutable.
+                        throw new Error("Unable to mutate this locked Geometric2.");
+                    }
+                }
+                else {
+                    return lock$1(this.clone().rev(true));
+                }
             }
             else {
-                // reverse has a ++-- structure on the grades.
-                this.a = +this.a;
-                this.x = +this.x;
-                this.y = +this.y;
-                this.b = -this.b;
-                // The unit of measure is unchanged.
-                return this;
+                return this.rev(this.isMutable());
             }
         };
         /**

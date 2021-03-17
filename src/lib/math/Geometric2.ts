@@ -511,7 +511,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         throw new Error(notImplemented('__lt_').message);
     }
     __tilde__(): Geometric2 {
-        return lock(Geometric2.copy(this).rev());
+        return lock(Geometric2.copy(this).rev(true));
     }
     __add__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
@@ -761,7 +761,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             // grade of the multivector, so we can pull it out the front.
             const expW = Math.exp(this.a);
 
-            // In Geometric3 we have the special case that the pseudoscalar also commutes.
+            // In Geometric2 we have the special case that the pseudoscalar also commutes.
             // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
             // let cosβ = cos(this.b)
             // let sinβ = sin(this.b)
@@ -1153,7 +1153,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * <p>
      * <code>this ⟼ a * b</code>
      * </p>
-     * Sets this Geometric3 to the geometric product a * b of the vector arguments.
+     * Sets this Geometric2 to the geometric product a * b of the vector arguments.
      */
     versor(a: Vector, b: Vector): this {
         this.a = a.x * b.x + a.y * b.y;
@@ -1777,7 +1777,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
                 return lock(this.clone().quaditude(true));
             }
             else {
-                throw new Error("Unable to mutate this locked Geometric3.");
+                throw new Error("Unable to mutate this locked Geometric2.");
             }
         }
         else {
@@ -1796,20 +1796,33 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * @returns reverse(this)
+     * reverse has a ++-- structure on the grades.
+     * The scalar component, a, will not change.
+     * The vector components, x and y, will not change.
+     * The bivector component, b, will change sign.
+     * 
+     * @param mutate Determines whether `this` will contain the result. 
      */
-    rev(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().rev());
-        }
-        else {
-            // reverse has a ++-- structure on the grades.
-            this.a = +this.a;
-            this.x = +this.x;
-            this.y = +this.y;
-            this.b = -this.b;
-            // The unit of measure is unchanged.
-            return this;
+    rev(mutate?: boolean): Geometric2 {
+        if (typeof mutate === 'boolean') {
+            if (mutate) {
+                if (this.isMutable()) {
+                    // reverse has a ++-- structure on the grades.
+                    this.a = +this.a;
+                    this.x = +this.x;
+                    this.y = +this.y;
+                    this.b = -this.b;
+                    // The unit of measure is unchanged.
+                    return this;
+                } else {
+                    // You can't ask to mutate that which is immutable.
+                    throw new Error("Unable to mutate this locked Geometric2.");
+                }
+            } else {
+                return lock(this.clone().rev(true));
+            }
+        } else {
+            return this.rev(this.isMutable());
         }
     }
 

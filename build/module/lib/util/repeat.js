@@ -2,7 +2,7 @@
  * Returns an array consisting of the given `value` repeated `N` times.
  * @hidden
  */
-export default function repeat(value, N) {
+export function repeat(value, N) {
     var xs = [];
     for (var i = 0; i < N; i++) {
         xs[i] = value;

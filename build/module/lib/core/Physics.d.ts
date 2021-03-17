@@ -150,7 +150,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      */
     setState(state: number[]): void;
     /**
-     * The time value is not being used because the DiffEqSolver has updated the vars.
+     * The time value is not being used because the DiffEqSolver has updated the vars?
      * This will move the objects and forces will be recalculated.u
      * @hidden
      */

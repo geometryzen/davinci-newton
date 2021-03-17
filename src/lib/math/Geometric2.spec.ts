@@ -760,45 +760,103 @@ describe("Geometric2", function () {
             }).toThrowError("mutate is true, but isMutable() is false.");
         });
     });
-    describe("toString", function () {
-        it("zero is scalar(0)", function () {
-            const M = Geometric2.zero;
-            expect(M.toString()).toBe("0");
+    describe("reflect", function () {
+        it("e1 in the plane perpendicular to e1 should be -e1", function () {
+            const reflected = e1.reflect(e1);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(-1);
+            expect(reflected.y).toBe(0);
+            expect(reflected.b).toBe(0);
         });
-        it("one", function () {
-            const M = Geometric2.one;
-            expect(M.toString()).toBe("1");
+        it("e2 in the plane perpendicular to e2 should be -e2", function () {
+            const reflected = e2.reflect(e2);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(0);
+            expect(reflected.y).toBe(-1);
+            expect(reflected.b).toBe(0);
         });
-        it("e1", function () {
-            const M = Geometric2.e1;
-            expect(M.toString()).toBe("e1");
+        it("v in the plane perpendicular to e1 should reverse x component only", function () {
+            const x = Math.random();
+            const y = Math.random();
+            const v = Geometric2.vector(x, y);
+            v.lock();
+            const reflected = v.reflect(e1);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(-x);
+            expect(reflected.y).toBe(y);
+            expect(reflected.b).toBe(0);
         });
-        it("e2", function () {
-            const M = Geometric2.e2;
-            expect(M.toString()).toBe("e2");
+        it("v in the plane perpendicular to e2 should reverse y component only", function () {
+            const x = Math.random();
+            const y = Math.random();
+            const v = Geometric2.vector(x, y);
+            v.lock();
+            const reflected = v.reflect(e2);
+            expect(reflected.a).toBe(0);
+            expect(reflected.x).toBe(x);
+            expect(reflected.y).toBe(-y);
+            expect(reflected.b).toBe(0);
         });
-        it("I is e12", function () {
-            const M = Geometric2.I;
-            expect(M.toString()).toBe("e12");
+        it("M in the plane perpendicular to e1 should change sign of scalar part.", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const y = Math.random();
+            const b = Math.random();
+            const v = new Geometric2([a, x, y, b]);
+            v.lock();
+            const reflected = v.reflect(e1);
+            expect(reflected.a).toBe(-a);
+            expect(reflected.x).toBe(-x);
+            expect(reflected.y).toBe(y);
+            expect(reflected.b).toBe(b);
         });
-        it("10", function () {
-            const M = Geometric2.one.mulByNumber(10);
-            expect(M.toString()).toBe("10");
-            expect(M.toString(10)).toBe("10");
-            expect(M.toString(2)).toBe("1010");
-            expect(M.toString(16)).toBe("a");
+    });
+    describe("rev", function () {
+        it("locked=false, mutate=false", function () {
+            const M = new Geometric2([1, 2, 3, 4]);
+            const dir = M.rev(false);
+            expect(dir.a).toBe(1);
+            expect(dir.x).toBe(2);
+            expect(dir.y).toBe(3);
+            expect(dir.b).toBe(-4);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(4);
         });
-        it("kilogram", function () {
-            const M = Geometric2.kilogram;
-            expect(M.toString()).toBe("1 kg");
+        it("locked=false, mutate=true", function () {
+            const M = new Geometric2([1, 2, 3, 4]);
+            const dir = M.rev(true);
+            expect(dir.a).toBe(1);
+            expect(dir.x).toBe(2);
+            expect(dir.y).toBe(3);
+            expect(dir.b).toBe(-4);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(-4);
+            // dir should be the same as M.
+            expect(dir).toBe(M);
         });
-        it("meter", function () {
-            const M = Geometric2.meter;
-            expect(M.toString()).toBe("1 m");
+        it("locked=true, mutate=false", function () {
+            const M = new Geometric2([1, 2, 3, 4]);
+            M.lock();
+            const dir = M.rev(false);
+            expect(dir.a).toBe(1);
+            expect(dir.x).toBe(2);
+            expect(dir.y).toBe(3);
+            expect(dir.b).toBe(-4);
+            expect(M.a).toBe(1);
+            expect(M.x).toBe(2);
+            expect(M.y).toBe(3);
+            expect(M.b).toBe(4);
         });
-        it("second", function () {
-            const M = Geometric2.second;
-            expect(M.toString()).toBe("1 s");
+        it("locked=true, mutate=true", function () {
+            const M = new Geometric2([1, 2, 3, 4]);
+            M.lock();
+            expect(function () {
+                M.rev(true);
+            }).toThrowError("Unable to mutate this locked Geometric2.");
         });
     });
     describe("rotorFromDirections", function () {
@@ -932,55 +990,45 @@ describe("Geometric2", function () {
             expect(rotated.y).toBe(3.999999999999999);
         });
     });
-    describe("reflect", function () {
-        it("e1 in the plane perpendicular to e1 should be -e1", function () {
-            const reflected = e1.reflect(e1);
-            expect(reflected.a).toBe(0);
-            expect(reflected.x).toBe(-1);
-            expect(reflected.y).toBe(0);
-            expect(reflected.b).toBe(0);
+    describe("toString", function () {
+        it("zero is scalar(0)", function () {
+            const M = Geometric2.zero;
+            expect(M.toString()).toBe("0");
         });
-        it("e2 in the plane perpendicular to e2 should be -e2", function () {
-            const reflected = e2.reflect(e2);
-            expect(reflected.a).toBe(0);
-            expect(reflected.x).toBe(0);
-            expect(reflected.y).toBe(-1);
-            expect(reflected.b).toBe(0);
+        it("one", function () {
+            const M = Geometric2.one;
+            expect(M.toString()).toBe("1");
         });
-        it("v in the plane perpendicular to e1 should reverse x component only", function () {
-            const x = Math.random();
-            const y = Math.random();
-            const v = Geometric2.vector(x, y);
-            v.lock();
-            const reflected = v.reflect(e1);
-            expect(reflected.a).toBe(0);
-            expect(reflected.x).toBe(-x);
-            expect(reflected.y).toBe(y);
-            expect(reflected.b).toBe(0);
+        it("e1", function () {
+            const M = Geometric2.e1;
+            expect(M.toString()).toBe("e1");
         });
-        it("v in the plane perpendicular to e2 should reverse y component only", function () {
-            const x = Math.random();
-            const y = Math.random();
-            const v = Geometric2.vector(x, y);
-            v.lock();
-            const reflected = v.reflect(e2);
-            expect(reflected.a).toBe(0);
-            expect(reflected.x).toBe(x);
-            expect(reflected.y).toBe(-y);
-            expect(reflected.b).toBe(0);
+        it("e2", function () {
+            const M = Geometric2.e2;
+            expect(M.toString()).toBe("e2");
         });
-        it("M in the plane perpendicular to e1 should change sign of scalar part.", function () {
-            const a = Math.random();
-            const x = Math.random();
-            const y = Math.random();
-            const b = Math.random();
-            const v = new Geometric2([a, x, y, b]);
-            v.lock();
-            const reflected = v.reflect(e1);
-            expect(reflected.a).toBe(-a);
-            expect(reflected.x).toBe(-x);
-            expect(reflected.y).toBe(y);
-            expect(reflected.b).toBe(b);
+        it("I is e12", function () {
+            const M = Geometric2.I;
+            expect(M.toString()).toBe("e12");
+        });
+        it("10", function () {
+            const M = Geometric2.one.mulByNumber(10);
+            expect(M.toString()).toBe("10");
+            expect(M.toString(10)).toBe("10");
+            expect(M.toString(2)).toBe("1010");
+            expect(M.toString(16)).toBe("a");
+        });
+        it("kilogram", function () {
+            const M = Geometric2.kilogram;
+            expect(M.toString()).toBe("1 kg");
+        });
+        it("meter", function () {
+            const M = Geometric2.meter;
+            expect(M.toString()).toBe("1 m");
+        });
+        it("second", function () {
+            const M = Geometric2.second;
+            expect(M.toString()).toBe("1 s");
         });
     });
     describe("__add__", function () {

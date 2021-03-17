@@ -247,11 +247,12 @@ var Physics = /** @class */ (function (_super) {
         this.varsList.setValuesContinuous(state);
     };
     /**
-     * The time value is not being used because the DiffEqSolver has updated the vars.
+     * The time value is not being used because the DiffEqSolver has updated the vars?
      * This will move the objects and forces will be recalculated.u
      * @hidden
      */
     Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
+        // console.log(`Δt=${Δt}`);
         var metric = this.metric;
         var dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
@@ -403,10 +404,10 @@ var Physics = /** @class */ (function (_super) {
         var Nconstraints = constraints.length;
         for (var i = 0; i < Nconstraints; i++) {
             var constraint = constraints[i];
-            this.applyConstraint(rateOfChange, constraint);
+            this.applyConstraint(rateOfChange, constraint, Δt, uomTime);
         }
     };
-    Physics.prototype.applyConstraint = function (rateOfChange, constraint) {
+    Physics.prototype.applyConstraint = function (rateOfChange, constraint, Δt, uomTime) {
         var body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -421,8 +422,13 @@ var Physics = /** @class */ (function (_super) {
         var F = metric.zero();
         var e = metric.zero();
         var N = metric.zero();
+        // const end = metric.zero();
         dynamics.getForce(rateOfChange, idx, F);
         var X = body.X;
+        // metric.copyVector(body.P, end);
+        // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
+        // metric.mulByScalar(end, Δt, uomTime);
+        // metric.addVector(end, body.X);
         constraint.computeNormal(X, e);
         metric.copyVector(F, N); // N = F
         metric.scp(N, e); // N = F | e

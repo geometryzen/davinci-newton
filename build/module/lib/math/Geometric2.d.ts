@@ -291,7 +291,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * <p>
      * <code>this ⟼ a * b</code>
      * </p>
-     * Sets this Geometric3 to the geometric product a * b of the vector arguments.
+     * Sets this Geometric2 to the geometric product a * b of the vector arguments.
      */
     versor(a: Vector, b: Vector): this;
     /**
@@ -481,9 +481,14 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     quaditude(mutate: boolean): Geometric2;
     /**
-     * @returns reverse(this)
+     * reverse has a ++-- structure on the grades.
+     * The scalar component, a, will not change.
+     * The vector components, x and y, will not change.
+     * The bivector component, b, will change sign.
+     *
+     * @param mutate Determines whether `this` will contain the result.
      */
-    rev(): Geometric2;
+    rev(mutate?: boolean): Geometric2;
     /**
      * (α + βI)(a + x.e1 + y.e2 + b.I)(α - β.I)
      *

@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.50
+// Type definitions for davinci-newton 1.0.51
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -833,7 +833,13 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ rev(this)
      * 
      */
-    rev(): Geometric2;
+    /**
+     * 
+     * @param mutate Determines whether `this` Geometric2 is set to the result of the computation
+     */
+    rev(mutate?: boolean): Geometric2;
+    rev(mutate: true): this | never;
+    rev(mutate: false): Geometric2;
 
     /**
      * 
