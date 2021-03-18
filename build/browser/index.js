@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.56';
+            this.VERSION = '1.0.57';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4638,7 +4638,7 @@
                 this.applyConstraint(rateOfChange, rateOfChangeUoms, constraint, Δt, uomTime);
             }
         };
-        Physics.prototype.applyConstraint = function (rateOfChange, rateOfChangeUoms, constraint, Δt, uomTime) {
+        Physics.prototype.applyConstraint = function (rateOfChangeVals, rateOfChangeUoms, constraint, Δt, uomTime) {
             var body = constraint.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4658,7 +4658,7 @@
             var FnewR = metric.zero();
             var FnewΘ = metric.zero();
             var N = metric.zero();
-            dynamics.getForce(rateOfChange, rateOfChangeUoms, idx, F);
+            dynamics.getForce(rateOfChangeVals, rateOfChangeUoms, idx, F);
             var X = body.X;
             var P = body.P;
             var M = body.M;
@@ -4666,7 +4666,9 @@
             constraint.computeRotation(X, B);
             constraint.computeTangent(X, eΘ);
             metric.copyVector(eΘ, FnewR); // FnewR = eΘ
-            metric.mul(FnewR, B); // FnewR = er 
+            metric.mul(FnewR, B); // FnewR = eΘ * B = -er
+            metric.neg(FnewR); // FnewR = er (approx)
+            metric.direction(FnewR); // FnewR = er 
             metric.mulByVector(FnewR, P); // FnewR = er * P
             metric.mulByVector(FnewR, P); // FnewR = er * P * P = (P * P) er
             metric.divByScalar(FnewR, metric.a(M), metric.uom(M)); // FnewR = ((P * P) / m) er
@@ -4680,7 +4682,7 @@
             metric.copyVector(Fnew, N); // N = Fnew
             metric.subVector(N, F); // N = Fnew - F or Fnew = F + N 
             // Update the rateOfChange of Linear Momentum (force); 
-            dynamics.setForce(rateOfChange, rateOfChangeUoms, idx, Fnew);
+            dynamics.setForce(rateOfChangeVals, rateOfChangeUoms, idx, Fnew);
             // The constraint holds the computed force so that it can be visualized.
             constraint.setForce(N);
         };

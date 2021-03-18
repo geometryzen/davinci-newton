@@ -502,7 +502,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
-    private applyConstraint(rateOfChange: number[], rateOfChangeUoms: Unit[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
+    private applyConstraint(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
         const body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -525,7 +525,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const FnewΘ = metric.zero();
         const N = metric.zero();
 
-        dynamics.getForce(rateOfChange, rateOfChangeUoms, idx, F);
+        dynamics.getForce(rateOfChangeVals, rateOfChangeUoms, idx, F);
         const X = body.X;
         const P = body.P;
         const M = body.M;
@@ -535,7 +535,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         constraint.computeTangent(X, eΘ);
 
         metric.copyVector(eΘ, FnewR);                           // FnewR = eΘ
-        metric.mul(FnewR, B);                                   // FnewR = er 
+        metric.mul(FnewR, B);                                   // FnewR = eΘ * B = -er
+        metric.neg(FnewR);                                      // FnewR = er (approx)
+        metric.direction(FnewR);                                // FnewR = er 
         metric.mulByVector(FnewR, P);                           // FnewR = er * P
         metric.mulByVector(FnewR, P);                           // FnewR = er * P * P = (P * P) er
         metric.divByScalar(FnewR, metric.a(M), metric.uom(M));  // FnewR = ((P * P) / m) er
@@ -553,7 +555,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         metric.subVector(N, F);                                 // N = Fnew - F or Fnew = F + N 
 
         // Update the rateOfChange of Linear Momentum (force); 
-        dynamics.setForce(rateOfChange, rateOfChangeUoms, idx, Fnew);
+        dynamics.setForce(rateOfChangeVals, rateOfChangeUoms, idx, Fnew);
 
         // The constraint holds the computed force so that it can be visualized.
         constraint.setForce(N);
