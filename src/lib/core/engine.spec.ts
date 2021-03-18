@@ -1,5 +1,7 @@
 import { Block2 } from '../engine2D/Block2';
+import { ConstantForceLaw2 } from '../engine2D/ConstantForceLaw2';
 import { Dynamics2 } from '../engine2D/Dynamics2';
+import { Engine2 } from '../engine2D/Engine2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
 import { Particle2 } from '../engine2D/Particle2';
 import { SurfaceConstraint2 } from '../engine2D/SurfaceConstraint2';
@@ -565,6 +567,110 @@ describe("engine", function () {
                 // console.lg(`X=>${bead.X}`);
                 // console.lg(`|X|=>${bead.X.magnitude(false)}`);
             }
+            expect(true).toBe(true);
+        });
+    });
+    describe("examples", function () {
+        it("Physics Engine Collisions", function () {
+            const e1 = Geometric2.e1;
+            const kg = Geometric2.kilogram;
+            const m = Geometric2.meter;
+            const s = Geometric2.second;
+
+            const sim = new Engine2();
+            const Δt = s.mulByNumber(0.01);
+
+            const bodies: Block2[] = [];
+            const width = m;
+            const height = m;
+            const blockA = new Block2(width, height);
+            bodies.push(blockA);
+            const blockB = new Block2(width.mulByNumber(2), height.mulByNumber(2));
+            bodies.push(blockB);
+            const wallL = new Block2(width.mulByNumber(0.5), height.mulByNumber(8));
+            bodies.push(wallL);
+            const wallR = new Block2(width.mulByNumber(0.5), height.mulByNumber(8));
+            bodies.push(wallR);
+
+            // blockA.M = kg;
+            // blockA.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            blockA.X = m.mulByNumber(-3).mulByVector(e1);
+            blockA.P = e1.mulByNumber(10).mul(kg).mul(m).div(s);
+            // blockA.L.uom = Unit.JOULE_SECOND;
+            blockA.updateAngularVelocity();
+
+            blockB.M = kg.mulByNumber(4);
+            blockB.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            blockB.X = m.mulByNumber(0).mulByVector(e1);
+            blockB.X = m.mulByNumber(0); // The direction is not important when the value is zero but the units are.
+            blockB.L.uom = Unit.JOULE_SECOND;
+            blockB.updateAngularVelocity();
+
+            wallL.M = kg.mulByNumber(100000000);
+            wallL.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            wallL.X = m.mulByNumber(-5.25).mulByVector(e1);
+            wallL.L.uom = Unit.JOULE_SECOND;
+            wallL.updateAngularVelocity();
+
+            wallR.M = kg.mulByNumber(100000000);
+            wallR.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            wallR.X = m.mulByNumber(5.25).mulByVector(e1);
+            wallR.L.uom = Unit.JOULE_SECOND;
+            wallR.updateAngularVelocity();
+
+            sim.addBody(blockA);
+            sim.addBody(blockB);
+            sim.addBody(wallL);
+            sim.addBody(wallR);
+
+            sim.advance(Δt.a, Δt.uom);
+
+            expect(true).toBe(true);
+        });
+        it("Physics Engine Rotating Bodies", function () {
+            const one = Geometric2.one;
+            const e1 = Geometric2.e1;
+            const e2 = Geometric2.e2;
+            const kg = Geometric2.kilogram;
+            const m = Geometric2.meter;
+            const s = Geometric2.second;
+            const N = Geometric2.newton;
+
+            const sim = new Engine2();
+            const Δt = s.mulByNumber(0.01);
+
+            const width = m.mulByNumber(6);
+            const height = m;
+            const block = new Block2(width, height);
+
+            block.M = kg.mulByNumber(0.1);
+            block.X = m.mulByNumber(0).mulByVector(e1);
+            block.R = one;
+            // Ω is initialized to zero with an undefined unit of measure (equivalent to 1).
+            // The dependencies are M, L, h, and w.
+            // block.L.uom = Unit.JOULE_SECOND;
+            block.updateAngularVelocity();
+
+            expect(block.Ω.a).toBe(0);
+            expect(block.Ω.x).toBe(0);
+            expect(block.Ω.y).toBe(0);
+            expect(block.Ω.b).toBe(0);
+            expect(block.Ω.uom).toBe(Unit.INV_SECOND);
+
+            const f1 = new ConstantForceLaw2(block, N.mulByNumber(1.0).mulByVector(e2), 1);
+            const f2 = new ConstantForceLaw2(block, N.mulByNumber(-0.7).mulByVector(e2), 1);
+            const f3 = new ConstantForceLaw2(block, N.mulByNumber(-0.3).mulByVector(e2), 1);
+
+            f2.location = m.mulByNumber(-2).mulByVector(e1);
+            f3.location = m.mulByNumber(2).mulByVector(e1);
+
+            sim.addBody(block);
+            sim.addForceLaw(f1);
+            sim.addForceLaw(f2);
+            sim.addForceLaw(f3);
+
+            sim.advance(Δt.a, Δt.uom);
+
             expect(true).toBe(true);
         });
     });

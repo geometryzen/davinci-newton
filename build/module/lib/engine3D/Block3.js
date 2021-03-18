@@ -36,6 +36,17 @@ var Block3 = /** @class */ (function (_super) {
         _this.heightLock_ = _this.height_.lock();
         _this.depth_ = Geometric3.copy(depth);
         _this.depthLock_ = _this.depth_.lock();
+        if (Unit.isOne(width.uom) && Unit.isOne(height.uom) && Unit.isOne(depth.uom)) {
+            // dimensionless
+        }
+        else {
+            _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         _this.updateInertiaTensor();
         return _this;
     }

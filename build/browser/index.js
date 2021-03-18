@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.54';
+            this.VERSION = '1.0.55';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -8676,6 +8676,15 @@
             _this.widthLock_ = _this.width_.lock();
             _this.height_ = Geometric2.copy(height);
             _this.heightLock_ = _this.height_.lock();
+            if (Unit.isOne(width.uom) && Unit.isOne(height.uom)) ;
+            else {
+                _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             _this.updateInertiaTensor();
             return _this;
         }
@@ -13320,6 +13329,15 @@
             _this.heightLock_ = _this.height_.lock();
             _this.depth_ = Geometric3.copy(depth);
             _this.depthLock_ = _this.depth_.lock();
+            if (Unit.isOne(width.uom) && Unit.isOne(height.uom) && Unit.isOne(depth.uom)) ;
+            else {
+                _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             _this.updateInertiaTensor();
             return _this;
         }

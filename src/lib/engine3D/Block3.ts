@@ -55,6 +55,17 @@ export class Block3 extends RigidBody<Geometric3> {
         this.depth_ = Geometric3.copy(depth);
         this.depthLock_ = this.depth_.lock();
 
+        if (Unit.isOne(width.uom) && Unit.isOne(height.uom) && Unit.isOne(depth.uom)) {
+            // dimensionless
+        } else {
+            this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
+            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         this.updateInertiaTensor();
     }
 

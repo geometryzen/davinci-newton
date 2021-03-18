@@ -45,6 +45,17 @@ export class Block2 extends RigidBody2 {
         this.height_ = Geometric2.copy(height);
         this.heightLock_ = this.height_.lock();
 
+        if (Unit.isOne(width.uom) && Unit.isOne(height.uom)) {
+            // dimensionless
+        } else {
+            this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
+            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         this.updateInertiaTensor();
     }
 

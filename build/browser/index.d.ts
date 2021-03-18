@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.54
+// Type definitions for davinci-newton 1.0.55
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -204,6 +204,11 @@ export class Unit {
      * The second.
      */
     static SECOND: Unit;
+
+    /**
+     * The unit of angular momentum.
+     */
+    static JOULE_SECOND: Unit;
 
     /**
      * 
