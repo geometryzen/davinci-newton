@@ -21,6 +21,18 @@ export class Disc2 extends RigidBody2 {
         super();
         this.radius_ = Geometric2.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
+
+        if (Unit.isOne(radius.uom)) {
+            // dimensionless
+        } else {
+            this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
+            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         this.updateInertiaTensor();
     }
 

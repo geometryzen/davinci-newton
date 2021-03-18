@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.55';
+            this.VERSION = '1.0.56';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -8776,6 +8776,15 @@
             var _this = _super.call(this) || this;
             _this.radius_ = Geometric2.fromScalar(radius);
             _this.radiusLock_ = _this.radius_.lock();
+            if (Unit.isOne(radius.uom)) ;
+            else {
+                _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             _this.updateInertiaTensor();
             return _this;
         }

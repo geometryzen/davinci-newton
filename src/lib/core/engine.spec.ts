@@ -1,9 +1,12 @@
 import { Block2 } from '../engine2D/Block2';
 import { ConstantForceLaw2 } from '../engine2D/ConstantForceLaw2';
+import { Disc2 } from '../engine2D/Disc2';
 import { Dynamics2 } from '../engine2D/Dynamics2';
 import { Engine2 } from '../engine2D/Engine2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
+import { LinearDamper2 } from '../engine2D/LinearDamper2';
 import { Particle2 } from '../engine2D/Particle2';
+import { Spring2 } from '../engine2D/Spring2';
 import { SurfaceConstraint2 } from '../engine2D/SurfaceConstraint2';
 import { Block3 } from '../engine3D/Block3';
 import { Dynamics3 } from '../engine3D/Dynamics3';
@@ -668,6 +671,72 @@ describe("engine", function () {
             sim.addForceLaw(f1);
             sim.addForceLaw(f2);
             sim.addForceLaw(f3);
+
+            sim.advance(Δt.a, Δt.uom);
+
+            expect(true).toBe(true);
+        });
+        it("Ball Hanging from a Spring", function () {
+            // const zero = Geometric2.zero
+            // const one = Geometric2.one;
+            const e1 = Geometric2.e1;
+            const e2 = Geometric2.e2;
+            const kg = Geometric2.kilogram;
+            const m = Geometric2.meter;
+            const s = Geometric2.second;
+            const N = Geometric2.newton;
+
+            const gram = kg.mulByNumber(0.001);
+            const cm = m.mulByNumber(0.01);
+            const g = N.mulByNumber(-9.81).div(kg).mul(e2);
+
+            const BALL_MASS = gram.mulByNumber(500);
+            const ROPE_FORCE = N.mulByNumber(3).mulByVector(e1);
+            const SPRING_K = N.mulByNumber(1000).div(m);
+            const SPRING_L = cm.mulByNumber(20);
+
+            const sim = new Engine2();
+            const Δt = s.mulByNumber(0.01);
+
+            const hangPoint = cm.mulByNumber(100).mulByVector(e2);
+
+            const ball = new Disc2(cm.mulByNumber(2));
+            const support = new Block2(cm.mulByNumber(40), cm.mulByNumber(10));
+            support.I.uom = Unit.mul(Unit.JOULE_SECOND, Unit.SECOND);
+            support.X = cm.mulByNumber(78).mulByVector(e2);
+            // support.R.uom = Unit.ONE
+            // support.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            // support.L.uom = Unit.JOULE_SECOND;
+            support.updateAngularVelocity();
+
+            ball.M = BALL_MASS;
+            // ball.I.uom = Unit.mul(Unit.JOULE_SECOND, Unit.SECOND);
+            ball.X = cm.mulByNumber(78).mulByVector(e2);
+            // ball.R.uom = Unit.ONE;
+            // ball.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            // ball.L.uom = Unit.JOULE_SECOND;
+            ball.updateAngularVelocity();
+
+            support.M = kg.mulByNumber(100000000); // TODO: Try working with infinity
+            support.X = e2.mul(support.height).divByNumber(2).add(hangPoint);
+
+            const spring = new Spring2(support, ball);
+            spring.restLength = SPRING_L;
+            spring.stiffness = SPRING_K;
+            spring.attach1 = e2.mul(support.height).divByNumber(2).neg();
+
+            const damper = new LinearDamper2(support, ball);
+            damper.b = N.mulByNumber(1).mul(s).div(m);
+
+            const ropeForce = new ConstantForceLaw2(ball, ROPE_FORCE);
+            const gravForce = new ConstantForceLaw2(ball, g.mul(ball.M));
+
+            sim.addBody(ball);
+            sim.addBody(support);
+            sim.addForceLaw(spring);
+            // sim.addForceLaw(damper)
+            sim.addForceLaw(ropeForce);
+            sim.addForceLaw(gravForce);
 
             sim.advance(Δt.a, Δt.uom);
 

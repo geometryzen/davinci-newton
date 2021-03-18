@@ -16,6 +16,17 @@ var Disc2 = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.radius_ = Geometric2.fromScalar(radius);
         _this.radiusLock_ = _this.radius_.lock();
+        if (Unit.isOne(radius.uom)) {
+            // dimensionless
+        }
+        else {
+            _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         _this.updateInertiaTensor();
         return _this;
     }
