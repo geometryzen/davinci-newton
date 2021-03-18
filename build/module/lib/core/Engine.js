@@ -17,6 +17,13 @@ var Engine = /** @class */ (function () {
         var rk4 = new RungeKutta(this.physics);
         this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
     }
+    Object.defineProperty(Engine.prototype, "varsList", {
+        get: function () {
+            return this.physics.varsList;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      *
      * @param body

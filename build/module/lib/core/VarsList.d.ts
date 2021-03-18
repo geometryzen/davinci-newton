@@ -1,4 +1,5 @@
 import { GraphVarsList } from '../graph/GraphVarsList';
+import { Unit } from '../math/Unit';
 import { Variable } from '../model/Variable';
 import { AbstractSubject } from '../util/AbstractSubject';
 /**
@@ -74,6 +75,7 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      * This is only synchronized when the state is requested.
      */
     private readonly $values;
+    private readonly $units;
     /**
      * Whether to save simulation state history.
      */
@@ -171,6 +173,9 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      * @hidden
      */
     setValueJump(index: number, value: number): void;
+    getUnits(): Unit[];
+    setUnits(units: Unit[]): void;
+    setUnit(index: number, unit: Unit): void;
     /**
      *
      */

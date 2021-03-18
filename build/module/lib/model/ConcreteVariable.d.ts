@@ -1,3 +1,4 @@
+import { Unit } from '../math/Unit';
 import { VarsList } from '../core/VarsList';
 import { Variable } from './Variable';
 /**
@@ -8,7 +9,11 @@ export declare class ConcreteVariable implements Variable {
     /**
      *
      */
-    private value_;
+    private $value;
+    /**
+     *
+     */
+    private $uom;
     /**
      *
      */
@@ -43,10 +48,12 @@ export declare class ConcreteVariable implements Variable {
      *
      */
     getValue(): number;
+    getUnit(): Unit;
     nameEquals(name: string): boolean;
     setBroadcast(value: boolean): void;
     setComputed(value: boolean): void;
     get isComputed(): boolean;
+    setUnit(uom: Unit): void;
     /**
      *
      */

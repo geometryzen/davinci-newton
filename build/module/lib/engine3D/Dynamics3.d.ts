@@ -3,6 +3,7 @@ import { ForceBody } from '../core/ForceBody';
 import { ForceLaw } from '../core/ForceLaw';
 import { VarsList } from '../core/VarsList';
 import { Geometric3 } from "../math/Geometric3";
+import { Unit } from '../math/Unit';
 /**
  * @hidden
  */
@@ -89,13 +90,13 @@ export declare class Dynamics3 implements Dynamics<Geometric3> {
     discontinuousEnergyVars(): number[];
     epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, varsList: VarsList): void;
     updateVarsFromBody(body: ForceBody<Geometric3>, idx: number, vars: VarsList): void;
-    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: Geometric3): void;
-    getForce(rateOfChange: number[], idx: number, force: Geometric3): void;
-    setForce(rateOfChange: number[], idx: number, force: Geometric3): void;
-    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: Geometric3): void;
-    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<Geometric3>): void;
-    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void;
-    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void;
+    addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3, uomTime: Unit): void;
+    getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3): void;
+    setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3): void;
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric3, uomTime: Unit): void;
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric3>): void;
+    setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>): void;
+    setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>): void;
+    zeroLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>, uomTime: Unit): void;
+    zeroAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>, uomTime: Unit): void;
 }

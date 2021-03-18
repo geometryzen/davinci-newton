@@ -78,6 +78,7 @@ var VarsList = /** @class */ (function (_super) {
          * This is only synchronized when the state is requested.
          */
         _this.$values = [];
+        _this.$units = [];
         /**
          * Whether to save simulation state history.
          */
@@ -321,6 +322,35 @@ var VarsList = /** @class */ (function (_super) {
     VarsList.prototype.setValueJump = function (index, value) {
         var variable = this.$variables[index];
         variable.setValueJump(value);
+    };
+    VarsList.prototype.getUnits = function () {
+        var units = this.$units;
+        var variables = this.$variables;
+        var N = variables.length;
+        if (units.length !== N) {
+            units.length = N;
+        }
+        for (var i = 0; i < N; i++) {
+            units[i] = variables[i].getUnit();
+        }
+        return this.$units;
+    };
+    VarsList.prototype.setUnits = function (units) {
+        var N = this.$variables.length;
+        var n = units.length;
+        if (n > N) {
+            throw new Error("setUnits bad length n = " + n + " > N = " + N);
+        }
+        for (var i = 0; i < N; i++) {
+            if (i < n) {
+                this.setUnit(i, units[i]);
+            }
+        }
+    };
+    VarsList.prototype.setUnit = function (index, unit) {
+        this.checkIndex_(index);
+        var variable = this.$variables[index];
+        variable.setUnit(unit);
     };
     /**
      *

@@ -154,8 +154,9 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$X;
         },
         set: function (position) {
-            mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-            this.metric.copy(position, this.$X);
+            var metric = this.metric;
+            mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
+            metric.copy(position, this.$X);
         },
         enumerable: false,
         configurable: true
@@ -278,6 +279,9 @@ var RigidBody = /** @class */ (function (_super) {
     /**
      * Converts a point in local coordinates to the same point in world coordinates.
      * x = R (localPoint - centerOfMassLocal) * ~R + X
+     *
+     * @param localPoint (input)
+     * @param worldPoint (output)
      */
     RigidBody.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
         // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
@@ -285,7 +289,13 @@ var RigidBody = /** @class */ (function (_super) {
         this.metric.copyVector(localPoint, this.$worldPoint);
         this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
         this.metric.rotate(this.$worldPoint, this.R);
-        this.metric.addVector(this.$worldPoint, this.X);
+        try {
+            this.metric.addVector(this.$worldPoint, this.X);
+        }
+        catch (e) {
+            var cause = (e instanceof Error) ? e.message : "" + e;
+            throw new Error(this.$worldPoint + " + " + this.X + " is not allowed. Cause: " + cause);
+        }
         this.metric.writeVector(this.$worldPoint, worldPoint);
     };
     return RigidBody;

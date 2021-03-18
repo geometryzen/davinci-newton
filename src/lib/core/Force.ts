@@ -52,6 +52,7 @@ export abstract class Force<T> extends AbstractSimObject {
      * @param force (output)
      */
     computeForce(force: T): void {
+        // TODO: Just use the output variable directly...
         const metric = this.body.metric;
         switch (this.vectorCoordType) {
             case LOCAL: {
@@ -84,13 +85,18 @@ export abstract class Force<T> extends AbstractSimObject {
      * @param position (output)
      */
     computePosition(position: T): void {
+        // TODO: Just use the output variable directly...
         const metric = this.body.metric;
         switch (this.locationCoordType) {
             case LOCAL: {
                 metric.copyVector(this.location, this.$temp1);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                metric.rotate(this.$temp1, this.body.R);
+                try {
+                    metric.rotate(this.$temp1, this.body.R);
+                } catch (e) {
+                    throw new Error(`this.body.R=${this.body.R}. Cause: ${e}`);
+                }
                 metric.addVector(this.$temp1, this.body.X);
                 metric.writeVector(this.$temp1, position);
                 break;
@@ -109,9 +115,10 @@ export abstract class Force<T> extends AbstractSimObject {
      * Torque = r ^ F because r = x - X
      */
     computeTorque(torque: T): void {
+        const metric = this.body.metric;
+        // TODO: Just use the output variable directly...
         this.computePosition(this.$temp1);          // temp1 = x
         this.computeForce(this.$temp2);             // temp2 = F
-        const metric = this.body.metric;
         metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
         metric.ext(this.$temp1, this.$temp2);       // temp1 = (x - X) ^ F 
         metric.write(this.$temp1, torque);          // torque = (x - X) ^ F

@@ -77,6 +77,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     private readonly $totalEnergy: T;
     private $totalEnergyLock: number;
 
+    /**
+     * We should be able to calculate this from the dimensionality?
+     */
     private readonly $numVariablesPerBody: number;
 
     /**
@@ -123,6 +126,10 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     addBody(body: ForceBody<T>): void {
         mustBeNonNullObject('body', body);
         if (!contains(this.$bodies, body)) {
+            // const X = body.X;
+            // const R = body.R;
+            // const P = body.P;
+            // const L = body.L;
             const dynamics = this.dynamics;
             // create variables in vars array for this body
             const names = [];
@@ -241,7 +248,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
-    private updateBodiesFromStateVariables(vars: number[]): void {
+    private updateBodiesFromStateVariables(vars: number[], units: Unit[]): void {
         const dynamics = this.dynamics;
         const bodies = this.$bodies;
         const N = bodies.length;
@@ -254,7 +261,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             // Delegate the updating of the body from the state variables because
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
-            dynamics.updateBodyFromVars(vars, idx, body);
+            dynamics.updateBodyFromVars(vars, units, idx, body);
         }
     }
 
@@ -286,17 +293,24 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         this.varsList.setValuesContinuous(state);
     }
 
+    getUnits(): Unit[] {
+        return this.$varsList.getUnits();
+    }
+
+    setUnits(units: Unit[]): void {
+        this.varsList.setUnits(units);
+    }
+
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars?
      * This will move the objects and forces will be recalculated.u
      * @hidden
      */
-    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
-        // console.log(`Δt=${Δt}`);
+    evaluate(state: number[], stateUnits: Unit[], rateOfChangeVals: number[], rateOfChangeUoms: Unit[], Δt: number, uomTime?: Unit): void {
         const metric = this.metric;
         const dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
-        this.updateBodiesFromStateVariables(state);
+        this.updateBodiesFromStateVariables(state, stateUnits);
         const bodies = this.$bodies;
         const Nb = bodies.length;
         for (let bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -308,24 +322,31 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             const mass = metric.a(body.M);
             if (mass === Number.POSITIVE_INFINITY) {
                 for (let k = 0; k < this.$numVariablesPerBody; k++) {
-                    rateOfChange[idx + k] = 0;  // infinite mass objects don't move
+                    rateOfChangeVals[idx + k] = 0;  // infinite mass objects don't move
                 }
             }
             else {
-                dynamics.setPositionRateOfChangeVars(rateOfChange, idx, body);
-                dynamics.setAttitudeRateOfChangeVars(rateOfChange, idx, body);
-                dynamics.zeroLinearMomentumVars(rateOfChange, idx);
-                dynamics.zeroAngularMomentumVars(rateOfChange, idx);
+                dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
+                dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
+                dynamics.zeroLinearMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
+                dynamics.zeroAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
             }
         }
-        this.applyForceLaws(rateOfChange, Δt, uomTime);
-        this.applyTorqueLaws(rateOfChange, Δt, uomTime);
-        this.applyConstraints(rateOfChange, Δt, uomTime);
-        this.applyDriftLaws(rateOfChange, Δt, uomTime);
-        rateOfChange[this.$varsList.timeIndex()] = 1;
+        this.applyForceLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+        this.applyTorqueLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+        this.applyConstraints(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+        this.applyDriftLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+        rateOfChangeVals[this.$varsList.timeIndex()] = 1;
     }
 
-    private applyForceLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    /**
+     * 
+     * @param rateOfChange (output)
+     * @param rateOfChangeUnits (output)
+     * @param Δt 
+     * @param uomTime 
+     */
+    private applyForceLaws(rateOfChange: number[], rateOfChangeUnits: Unit[], Δt: number, uomTime?: Unit): void {
         const forceLaws = this.$forceLaws;
         const N = forceLaws.length;
         for (let i = 0; i < N; i++) {
@@ -333,12 +354,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             const forces = forceLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+                this.applyForce(rateOfChange, rateOfChangeUnits, forces[forceIndex], Δt, uomTime);
             }
         }
     }
 
-    private applyDriftLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    private applyDriftLaws(rateOfChange: number[], rateOfChangeUnits: Unit[], Δt: number, uomTime?: Unit): void {
         const driftLaws = this.$driftLaws;
         const N = driftLaws.length;
         for (let i = 0; i < N; i++) {
@@ -346,17 +367,18 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             const forces = driftLaw.updateForces();
             const Nforces = forces.length;
             for (let forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+                this.applyForce(rateOfChange, rateOfChangeUnits, forces[forceIndex], Δt, uomTime);
             }
         }
     }
 
     /**
      * Applying forces gives rise to linear and angular momentum.
-     * @param rateOfChange The (output) rate of change of the state variables.
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
-    private applyForce(rateOfChange: number[], forceApp: Force<T>, Δt: number, uomTime?: Unit): void {
+    private applyForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], forceApp: Force<T>, Δt: number, uomTime?: Unit): void {
         const body = forceApp.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -373,23 +395,30 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         // dP/dt = F
         forceApp.computeForce(this.$force);
         const F = this.$force;
-        // Bootstrap the linear momentum unit of measure.
+        // TODO: We may not need to bootstrap when units are correctly handled?
+        // Bootstrap the linear momentum unit of measure for the body.
         if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
-            metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
+            const uom = Unit.mul(metric.uom(F), uomTime);
+            // console.lg(`Bootstrap P.uom to ${uom}`);
+            metric.setUom(body.P, uom);
         }
         // TODO: Here we could apply geometric constraints on the forces.
-        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
+        dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, F, uomTime);
 
         // The rate of change of angular momentum (bivector) is given by
         // dL/dt = r ^ F = Γ
         forceApp.computeTorque(this.$torque);
         const T = this.$torque;
-        // Bootstrap the angular momentum unit of measure.
+        // TODO: We may not need to bootstrap when units are correctly handled?
+        // Bootstrap the angular momentum unit of measure for the body.
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
-            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+            const uom = Unit.mul(metric.uom(T), uomTime);
+            // console.lg(`Bootstrap L.uom to ${uom}`);
+            metric.setUom(body.L, uom);
         }
         // TODO: Could we add geometric constraints for torques here?
-        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+        // TODO: we don't know how to handle the indices, so dynamics must check units compatibility.
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, T, uomTime);
 
         if (this.$showForces) {
             forceApp.expireTime = this.$varsList.getTime();
@@ -397,7 +426,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
-    private applyTorqueLaws(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    private applyTorqueLaws(rateOfChange: number[], units: Unit[], Δt: number, uomTime?: Unit): void {
         const torqueLaws = this.$torqueLaws;
         const Ni = torqueLaws.length;
         for (let i = 0; i < Ni; i++) {
@@ -405,12 +434,21 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             const torques = torqueLaw.updateTorques();
             const Nj = torques.length;
             for (let j = 0; j < Nj; j++) {
-                this.applyTorque(rateOfChange, torques[j], Δt, uomTime);
+                this.applyTorque(rateOfChange, units, torques[j], Δt, uomTime);
             }
         }
     }
 
-    private applyTorque(rateOfChange: number[], torqueApp: Torque<T>, Δt: number, uomTime?: Unit): void {
+    /**
+     * 
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
+     * @param torqueApp 
+     * @param Δt 
+     * @param uomTime 
+     * @returns 
+     */
+    private applyTorque(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], torqueApp: Torque<T>, Δt: number, uomTime?: Unit): void {
         const body = torqueApp.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -429,9 +467,11 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const T = this.$torque;
         // Bootstrap the angular momentum unit of measure.
         if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
-            metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+            const uom = Unit.mul(metric.uom(T), uomTime);
+            // console.lg(`Bootstrap L.uom to ${uom}`);
+            metric.setUom(body.L, uom);
         }
-        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+        dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, T, uomTime);
 
         // TODO: When the torque is applied away from the center of mass, do we add linear momentum?
         // The rate of change of angular momentum (bivector) is given by
@@ -453,16 +493,16 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
-    private applyConstraints(rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    private applyConstraints(rateOfChange: number[], rateOfChangeUoms: Unit[], Δt: number, uomTime?: Unit): void {
         const constraints = this.$constraints;
         const Nconstraints = constraints.length;
         for (let i = 0; i < Nconstraints; i++) {
             const constraint = constraints[i];
-            this.applyConstraint(rateOfChange, constraint, Δt, uomTime);
+            this.applyConstraint(rateOfChange, rateOfChangeUoms, constraint, Δt, uomTime);
         }
     }
 
-    private applyConstraint(rateOfChange: number[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
+    private applyConstraint(rateOfChange: number[], rateOfChangeUoms: Unit[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
         const body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {
             return;
@@ -480,22 +520,16 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const r = metric.zero();
         const B = metric.zero();
         const eΘ = metric.zero();
-        const e = metric.zero();
         const Fnew = metric.zero();
         const FnewR = metric.zero();
         const FnewΘ = metric.zero();
         const N = metric.zero();
 
-        // const end = metric.zero();
-
-        dynamics.getForce(rateOfChange, idx, F);
+        dynamics.getForce(rateOfChange, rateOfChangeUoms, idx, F);
         const X = body.X;
         const P = body.P;
         const M = body.M;
-        // metric.copyVector(body.P, end);
-        // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
-        // metric.mulByScalar(end, Δt, uomTime);
-        // metric.addVector(end, body.X);
+
         constraint.computeRadius(X, r);
         constraint.computeRotation(X, B);
         constraint.computeTangent(X, eΘ);
@@ -505,12 +539,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         metric.mulByVector(FnewR, P);                           // FnewR = er * P
         metric.mulByVector(FnewR, P);                           // FnewR = er * P * P = (P * P) er
         metric.divByScalar(FnewR, metric.a(M), metric.uom(M));  // FnewR = ((P * P) / m) er
-        metric.divByScalar(FnewR, metric.a(r), metric.uom(r));   // FnewR = ((P * P) / (m * r)) er
+        metric.divByScalar(FnewR, metric.a(r), metric.uom(r));  // FnewR = ((P * P) / (m * r)) er
         metric.neg(FnewR);                                      // FnewR = - ((P * P) / (m * r)) er
 
         metric.copyVector(F, FnewΘ);                            // FnewΘ = F
         metric.scp(FnewΘ, eΘ);                                  // FnewΘ = F | eΘ
-        metric.mulByVector(FnewΘ, e);                           // FnewΘ = (F | eΘ) eΘ
+        metric.mulByVector(FnewΘ, eΘ);                          // FnewΘ = (F | eΘ) eΘ
 
         metric.copyVector(FnewR, Fnew);                         // Fnew = FnewR
         metric.addVector(Fnew, FnewΘ);                          // Fnew = FnewR + FnewΘ
@@ -519,7 +553,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         metric.subVector(N, F);                                 // N = Fnew - F or Fnew = F + N 
 
         // Update the rateOfChange of Linear Momentum (force); 
-        dynamics.setForce(rateOfChange, idx, Fnew);
+        dynamics.setForce(rateOfChange, rateOfChangeUoms, idx, Fnew);
 
         // The constraint holds the computed force so that it can be visualized.
         constraint.setForce(N);
@@ -562,7 +596,8 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     epilog(): void {
         const varsList = this.$varsList;
         const vars = varsList.getValues();
-        this.updateBodiesFromStateVariables(vars);
+        const units = varsList.getUnits();
+        this.updateBodiesFromStateVariables(vars, units);
         const dynamics = this.dynamics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     }

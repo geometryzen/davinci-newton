@@ -26,7 +26,8 @@ var ConstantEnergySolver = /** @class */ (function () {
     }
     ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
         // save the vars in case we need to back up and start again
-        this.savedState = this.simulation.getState();
+        this.savedVals = this.simulation.getState();
+        this.savedUoms = this.simulation.getUnits();
         var startTime = this.simulation.time;
         /**
          * The adapted step size.
@@ -52,7 +53,8 @@ var ConstantEnergySolver = /** @class */ (function () {
             var t = startTime; // t = current time
             if (!firstTime) {
                 // restore state and solve again with smaller step size
-                this.simulation.setState(this.savedState);
+                this.simulation.setState(this.savedVals);
+                this.simulation.setUnits(this.savedUoms);
                 this.simulation.epilog();
                 // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();

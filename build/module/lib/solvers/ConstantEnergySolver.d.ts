@@ -11,7 +11,8 @@ export declare class ConstantEnergySolver<T> implements DiffEqSolver {
     private readonly simulation;
     private energySystem_;
     private solverMethod_;
-    private savedState;
+    private savedVals;
+    private savedUoms;
     stepUpperBound: number;
     /**
      * The smallest time step that will executed.

@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Unit } from '../math/Unit';
 import { Parameter } from '../util/Parameter';
 
 /**
@@ -44,6 +45,10 @@ export interface Variable extends Parameter {
      * Returns the value of this variable.
      */
     getValue(): number;
+    /**
+     * Returns the unit of measure of this variable.
+     */
+    getUnit(): Unit;
 
     /**
      * Increments the sequence number of this Variable, which indicates that a
@@ -68,4 +73,9 @@ export interface Variable extends Parameter {
      * it is a 'smooth' continuous change to the variable.
      */
     setValueContinuous(value: number): void;
+
+    /**
+     * Sets the unit of measure of this variable.
+     */
+    setUnit(unit: Unit): void;
 }

@@ -143,11 +143,18 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.$springConstant.set(stiffness);
     }
 
+    /**
+     * @param x (output)
+     */
     private computeBody1AttachPointInWorldCoords(x: T): void {
         if (this.attach1_ == null || this.body1 == null) {
             throw new Error();
         }
-        this.body1.localPointToWorldPoint(this.attach1_, x);
+        try {
+            this.body1.localPointToWorldPoint(this.attach1_, x);
+        } catch (e) {
+            throw new Error(`localPointToWorldPoint(attach1=${this.attach1_}). Cause: ${e}`);
+        }
     }
 
     private computeBody2AttachPointInWorldCoords(x: T): void {

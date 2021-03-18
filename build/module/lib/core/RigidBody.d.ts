@@ -178,6 +178,9 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     /**
      * Converts a point in local coordinates to the same point in world coordinates.
      * x = R (localPoint - centerOfMassLocal) * ~R + X
+     *
+     * @param localPoint (input)
+     * @param worldPoint (output)
      */
     localPointToWorldPoint(localPoint: T, worldPoint: T): void;
 }

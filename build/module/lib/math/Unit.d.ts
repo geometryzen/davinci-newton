@@ -147,6 +147,7 @@ export declare class Unit {
     __neg__(): Unit;
     /**
      * @param uom The unit of measure.
+     * @returns `true` if the uom is one or if it is undefined.
      */
     static isOne(uom: Unit): boolean;
     /**

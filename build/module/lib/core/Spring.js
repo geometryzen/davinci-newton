@@ -98,11 +98,19 @@ var Spring = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    /**
+     * @param x (output)
+     */
     Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
         if (this.attach1_ == null || this.body1 == null) {
             throw new Error();
         }
-        this.body1.localPointToWorldPoint(this.attach1_, x);
+        try {
+            this.body1.localPointToWorldPoint(this.attach1_, x);
+        }
+        catch (e) {
+            throw new Error("localPointToWorldPoint(attach1=" + this.attach1_ + "). Cause: " + e);
+        }
     };
     Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
         if (this.attach2_ == null || this.body2 == null) {

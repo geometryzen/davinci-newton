@@ -71,6 +71,9 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      */
     private readonly $totalEnergy;
     private $totalEnergyLock;
+    /**
+     * We should be able to calculate this from the dimensionality?
+     */
     private readonly $numVariablesPerBody;
     /**
      * Constructs a Physics engine for 3D simulations.
@@ -149,21 +152,40 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * @hidden
      */
     setState(state: number[]): void;
+    getUnits(): Unit[];
+    setUnits(units: Unit[]): void;
     /**
      * The time value is not being used because the DiffEqSolver has updated the vars?
      * This will move the objects and forces will be recalculated.u
      * @hidden
      */
-    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void;
+    evaluate(state: number[], stateUnits: Unit[], rateOfChangeVals: number[], rateOfChangeUoms: Unit[], Δt: number, uomTime?: Unit): void;
+    /**
+     *
+     * @param rateOfChange (output)
+     * @param rateOfChangeUnits (output)
+     * @param Δt
+     * @param uomTime
+     */
     private applyForceLaws;
     private applyDriftLaws;
     /**
      * Applying forces gives rise to linear and angular momentum.
-     * @param rateOfChange The (output) rate of change of the state variables.
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
      * @param forceApp The force application which results in a rate of change of linear and angular momentum
      */
     private applyForce;
     private applyTorqueLaws;
+    /**
+     *
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
+     * @param torqueApp
+     * @param Δt
+     * @param uomTime
+     * @returns
+     */
     private applyTorque;
     private applyConstraints;
     private applyConstraint;

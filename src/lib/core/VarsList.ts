@@ -1,6 +1,7 @@
 import isNumber from '../checks/isNumber';
 import isString from '../checks/isString';
 import { GraphVarsList } from '../graph/GraphVarsList';
+import { Unit } from '../math/Unit';
 import { ConcreteVariable } from '../model/ConcreteVariable';
 import { Variable } from '../model/Variable';
 import { AbstractSubject } from '../util/AbstractSubject';
@@ -85,6 +86,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * This is only synchronized when the state is requested.
      */
     private readonly $values: number[] = [];
+    private readonly $units: Unit[] = [];
     /**
      * Whether to save simulation state history.
      */
@@ -340,6 +342,38 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
     setValueJump(index: number, value: number) {
         const variable = this.$variables[index];
         variable.setValueJump(value);
+    }
+
+    getUnits(): Unit[] {
+        const units = this.$units;
+        const variables = this.$variables;
+        const N = variables.length;
+        if (units.length !== N) {
+            units.length = N;
+        }
+        for (let i = 0; i < N; i++) {
+            units[i] = variables[i].getUnit();
+        }
+        return this.$units;
+    }
+
+    setUnits(units: Unit[]): void {
+        const N = this.$variables.length;
+        const n = units.length;
+        if (n > N) {
+            throw new Error(`setUnits bad length n = ${n} > N = ${N}`);
+        }
+        for (let i = 0; i < N; i++) {
+            if (i < n) {
+                this.setUnit(i, units[i]);
+            }
+        }
+    }
+
+    setUnit(index: number, unit: Unit) {
+        this.checkIndex_(index);
+        const variable = this.$variables[index];
+        variable.setUnit(unit);
     }
 
     /**

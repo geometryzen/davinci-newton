@@ -4,7 +4,7 @@ import { Unit } from '../math/Unit';
 import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 import { RungeKutta } from '../solvers/RungeKutta';
 import { DefaultAdvanceStrategy } from '../strategy/DefaultAdvanceStrategy';
-import { DiffEqSolver } from './DiffEqSolver';
+// import { DiffEqSolver } from './DiffEqSolver';
 import { Dynamics } from './Dynamics';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
@@ -12,6 +12,7 @@ import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { Physics } from './Physics';
 import { TorqueLaw } from './TorqueLaw';
+import { VarsList } from './VarsList';
 
 /**
  * @hidden
@@ -34,9 +35,14 @@ export class Engine<T> {
     private readonly strategy: AdvanceStrategy;
     constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>) {
         this.physics = new Physics(metric, dynamics);
-        const rk4: DiffEqSolver = new RungeKutta(this.physics);
+        const rk4 = new RungeKutta(this.physics);
         this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
     }
+
+    get varsList(): VarsList {
+        return this.physics.varsList;
+    }
+
     /**
      * 
      * @param body 

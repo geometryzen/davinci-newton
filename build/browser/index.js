@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-17';
+            this.LAST_MODIFIED = '2021-03-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.53';
+            this.VERSION = '1.0.54';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -443,134 +443,6 @@
      */
     function mustBeNumber(name, value, contextBuilder) {
         mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
-        return value;
-    }
-
-    /**
-     * @hidden
-     */
-    function zeroArray(xs) {
-        var N = xs.length;
-        for (var i = 0; i < N; i++) {
-            xs[i] = 0;
-        }
-    }
-
-    // Copyright 2017-2021 David Holmes.  All Rights Reserved.
-    /**
-     * A differential equation solver that achieves O(h cubed) Local Truncation Error (LTE),
-     * where h is the step size.
-     * @hidden
-     */
-    var RungeKutta = /** @class */ (function () {
-        /**
-         * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
-         * @param system The model that provides the system state and computes rates of change.
-         */
-        function RungeKutta(system) {
-            this.system = system;
-            this.inp_ = [];
-            this.k1_ = [];
-            this.k2_ = [];
-            this.k3_ = [];
-            this.k4_ = [];
-            mustBeNonNullObject('system', system);
-        }
-        /**
-         *
-         */
-        RungeKutta.prototype.step = function (stepSize, uomStep) {
-            var vars = this.system.getState();
-            var N = vars.length;
-            if (this.inp_.length < N) {
-                this.inp_ = new Array(N);
-                this.k1_ = new Array(N);
-                this.k2_ = new Array(N);
-                this.k3_ = new Array(N);
-                this.k4_ = new Array(N);
-            }
-            var inp = this.inp_;
-            var k1 = this.k1_;
-            var k2 = this.k2_;
-            var k3 = this.k3_;
-            var k4 = this.k4_;
-            // evaluate at time t
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i];
-            }
-            zeroArray(k1);
-            this.system.evaluate(inp, k1, 0, uomStep);
-            // evaluate at time t + stepSize / 2
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k1[i] * stepSize / 2;
-            }
-            zeroArray(k2);
-            this.system.evaluate(inp, k2, stepSize / 2, uomStep);
-            // evaluate at time t + stepSize / 2
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k2[i] * stepSize / 2;
-            }
-            zeroArray(k3);
-            this.system.evaluate(inp, k3, stepSize / 2, uomStep);
-            // evaluate at time t + stepSize
-            for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k3[i] * stepSize;
-            }
-            zeroArray(k4);
-            this.system.evaluate(inp, k4, stepSize, uomStep);
-            for (var i = 0; i < N; i++) {
-                vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
-            }
-            this.system.setState(vars);
-        };
-        return RungeKutta;
-    }());
-
-    /**
-     * @hidden
-     */
-    var DefaultAdvanceStrategy = /** @class */ (function () {
-        /**
-         *
-         */
-        function DefaultAdvanceStrategy(simulation, solver) {
-            this.simulation = simulation;
-            this.solver = solver;
-            mustBeNonNullObject('simulation', simulation);
-            mustBeNonNullObject('solver', solver);
-        }
-        /**
-         * 1.
-         * 2. The solver integrates the derivatives from the simulation.
-         * 3. Compute system variables such as energies, linear momentum, and angular momentum.
-         */
-        DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
-            mustBeNumber("stepSize", stepSize);
-            this.simulation.prolog();
-            this.solver.step(stepSize, uomStep);
-            this.simulation.epilog();
-        };
-        return DefaultAdvanceStrategy;
-    }());
-
-    /**
-     * @hidden
-     */
-    function isBoolean(x) {
-        return (typeof x === 'boolean');
-    }
-
-    /**
-     * @hidden
-     */
-    function beBoolean() {
-        return "be `boolean`";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeBoolean(name, value, contextBuilder) {
-        mustSatisfy(name, isBoolean(value), beBoolean, contextBuilder);
         return value;
     }
 
@@ -2408,7 +2280,13 @@
         }
         Unit.prototype.compatible = function (rhs) {
             if (rhs instanceof Unit) {
-                this.dimensions.compatible(rhs.dimensions);
+                try {
+                    this.dimensions.compatible(rhs.dimensions);
+                }
+                catch (e) {
+                    var cause = (e instanceof Error) ? e.message : "" + e;
+                    throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
+                }
                 return this;
             }
             else {
@@ -2552,6 +2430,7 @@
         };
         /**
          * @param uom The unit of measure.
+         * @returns `true` if the uom is one or if it is undefined.
          */
         Unit.isOne = function (uom) {
             if (uom === void 0) {
@@ -2885,6 +2764,232 @@
         Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
         return Unit;
     }());
+
+    /**
+     * @hidden
+     */
+    function zeroArray(xs) {
+        var N = xs.length;
+        for (var i = 0; i < N; i++) {
+            xs[i] = 0;
+        }
+    }
+
+    // Copyright 2017-2021 David Holmes.  All Rights Reserved.
+    /**
+     * A differential equation solver that achieves O(h cubed) Local Truncation Error (LTE),
+     * where h is the step size.
+     * @hidden
+     */
+    var RungeKutta = /** @class */ (function () {
+        /**
+         * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
+         * @param system The model that provides the system state and computes rates of change.
+         */
+        function RungeKutta(system) {
+            this.system = system;
+            this.invals = [];
+            this.inuoms = [];
+            this.k1vals = [];
+            this.k1uoms = [];
+            this.k2vals = [];
+            this.k2uoms = [];
+            this.k3vals = [];
+            this.k3uoms = [];
+            this.k4vals = [];
+            this.k4uoms = [];
+            mustBeNonNullObject('system', system);
+        }
+        /**
+         *
+         */
+        RungeKutta.prototype.step = function (stepSize, uomStep) {
+            var system = this.system;
+            var stateVals = system.getState();
+            var stateUoms = system.getUnits();
+            var N = stateVals.length;
+            if (this.invals.length < N) {
+                this.invals = new Array(N);
+                this.inuoms = new Array(N);
+                this.k1vals = new Array(N);
+                this.k1uoms = new Array(N);
+                this.k2vals = new Array(N);
+                this.k2uoms = new Array(N);
+                this.k3vals = new Array(N);
+                this.k3uoms = new Array(N);
+                this.k4vals = new Array(N);
+                this.k4uoms = new Array(N);
+            }
+            var invals = this.invals;
+            var inuoms = this.inuoms;
+            var k1vals = this.k1vals;
+            var k1uoms = this.k1uoms;
+            var k2vals = this.k2vals;
+            var k2uoms = this.k2uoms;
+            var k3vals = this.k3vals;
+            var k3uoms = this.k3uoms;
+            var k4vals = this.k4vals;
+            var k4uoms = this.k4uoms;
+            // evaluate at time t
+            for (var i = 0; i < N; i++) {
+                invals[i] = stateVals[i];
+                inuoms[i] = stateUoms[i];
+            }
+            zeroArray(k1vals);
+            system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
+            // evaluate at time t + stepSize / 2
+            for (var i = 0; i < N; i++) {
+                if (i > 10 && !Unit.isOne(uomStep)) {
+                    if (Unit.isOne(k1uoms[i]) && k1vals[i] !== 0) {
+                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep);
+                    }
+                }
+                var uom = Unit.mul(k1uoms[i], uomStep);
+                if (stateVals[i] !== 0) {
+                    try {
+                        if (k1vals[i] !== 0) {
+                            inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                        }
+                        else {
+                            // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}`);
+                            // inuoms[i] = stateUoms[i];
+                            inuoms[i] = uom;
+                        }
+                    }
+                    catch (e) {
+                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                    }
+                }
+                else {
+                    inuoms[i] = uom;
+                }
+                invals[i] = stateVals[i] + k1vals[i] * stepSize / 2;
+            }
+            zeroArray(k2vals);
+            system.evaluate(invals, inuoms, k2vals, k2uoms, stepSize / 2, uomStep);
+            // evaluate at time t + stepSize / 2
+            for (var i = 0; i < N; i++) {
+                var uom = Unit.mul(k2uoms[i], uomStep);
+                if (stateVals[i] !== 0) {
+                    try {
+                        if (k2vals[i] !== 0) {
+                            inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                        }
+                        else {
+                            // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}`);
+                            // inuoms[i] = stateUoms[i];
+                            inuoms[i] = uom;
+                        }
+                    }
+                    catch (e) {
+                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k2vals[" + i + "]=" + k2vals[i] + ", k2uoms[" + i + "]=" + k2uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                    }
+                }
+                else {
+                    inuoms[i] = uom;
+                }
+                invals[i] = stateVals[i] + k2vals[i] * stepSize / 2;
+            }
+            zeroArray(k3vals);
+            system.evaluate(invals, inuoms, k3vals, k3uoms, stepSize / 2, uomStep);
+            // evaluate at time t + stepSize
+            for (var i = 0; i < N; i++) {
+                var uom = Unit.mul(k3uoms[i], uomStep);
+                if (stateVals[i] !== 0) {
+                    try {
+                        if (k3vals[i] !== 0) {
+                            inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                        }
+                        else {
+                            // inuoms[i] = stateUoms[i];
+                            inuoms[i] = uom;
+                        }
+                    }
+                    catch (e) {
+                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k3vals[" + i + "]=" + k3vals[i] + ", k3uoms[" + i + "]=" + k3uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                    }
+                }
+                else {
+                    inuoms[i] = uom;
+                }
+                invals[i] = stateVals[i] + k3vals[i] * stepSize;
+            }
+            zeroArray(k4vals);
+            system.evaluate(invals, inuoms, k4vals, k4uoms, stepSize, uomStep);
+            for (var i = 0; i < N; i++) {
+                var uom = Unit.mul(k4uoms[i], uomStep);
+                if (stateVals[i] !== 0) {
+                    try {
+                        if (k4vals[i] !== 0) {
+                            stateUoms[i] = Unit.compatible(stateUoms[i], uom);
+                        }
+                        else {
+                            // Do nothing.
+                            stateUoms[i] = uom;
+                        }
+                    }
+                    catch (e) {
+                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k4vals[" + i + "]=" + k4vals[i] + ", k4uoms[" + i + "]=" + k4uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                    }
+                }
+                else {
+                    stateUoms[i] = uom;
+                }
+                stateVals[i] += (k1vals[i] + 2 * k2vals[i] + 2 * k3vals[i] + k4vals[i]) * stepSize / 6;
+            }
+            system.setState(stateVals);
+            system.setUnits(stateUoms);
+        };
+        return RungeKutta;
+    }());
+
+    /**
+     * @hidden
+     */
+    var DefaultAdvanceStrategy = /** @class */ (function () {
+        /**
+         *
+         */
+        function DefaultAdvanceStrategy(simulation, solver) {
+            this.simulation = simulation;
+            this.solver = solver;
+            mustBeNonNullObject('simulation', simulation);
+            mustBeNonNullObject('solver', solver);
+        }
+        /**
+         * 1.
+         * 2. The solver integrates the derivatives from the simulation.
+         * 3. Compute system variables such as energies, linear momentum, and angular momentum.
+         */
+        DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
+            mustBeNumber("stepSize", stepSize);
+            this.simulation.prolog();
+            this.solver.step(stepSize, uomStep);
+            this.simulation.epilog();
+        };
+        return DefaultAdvanceStrategy;
+    }());
+
+    /**
+     * @hidden
+     */
+    function isBoolean(x) {
+        return (typeof x === 'boolean');
+    }
+
+    /**
+     * @hidden
+     */
+    function beBoolean() {
+        return "be `boolean`";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeBoolean(name, value, contextBuilder) {
+        mustSatisfy(name, isBoolean(value), beBoolean, contextBuilder);
+        return value;
+    }
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
     // Copyright 2016 Erik Neumann.  All Rights Reserved.
@@ -3465,7 +3570,11 @@
             /**
              *
              */
-            this.value_ = 0;
+            this.$value = 0;
+            /**
+             *
+             */
+            this.$uom = Unit.ONE;
             /**
              * Sequence numbers, to detect discontinuity in a variable.
              */
@@ -3506,7 +3615,10 @@
          *
          */
         ConcreteVariable.prototype.getValue = function () {
-            return this.value_;
+            return this.$value;
+        };
+        ConcreteVariable.prototype.getUnit = function () {
+            return this.$uom;
         };
         ConcreteVariable.prototype.nameEquals = function (name) {
             return this.name_ === toName(name);
@@ -3524,12 +3636,15 @@
             enumerable: false,
             configurable: true
         });
+        ConcreteVariable.prototype.setUnit = function (uom) {
+            this.$uom = uom;
+        };
         /**
          *
          */
         ConcreteVariable.prototype.setValueJump = function (value) {
-            if (this.value_ !== value) {
-                this.value_ = value;
+            if (this.$value !== value) {
+                this.$value = value;
                 this.seq_++;
                 if (this.doesBroadcast_) {
                     this.varsList_.broadcast(this);
@@ -3537,7 +3652,7 @@
             }
         };
         ConcreteVariable.prototype.setValueContinuous = function (value) {
-            this.value_ = value;
+            this.$value = value;
         };
         /**
          *
@@ -3647,6 +3762,7 @@
              * This is only synchronized when the state is requested.
              */
             _this.$values = [];
+            _this.$units = [];
             /**
              * Whether to save simulation state history.
              */
@@ -3890,6 +4006,35 @@
         VarsList.prototype.setValueJump = function (index, value) {
             var variable = this.$variables[index];
             variable.setValueJump(value);
+        };
+        VarsList.prototype.getUnits = function () {
+            var units = this.$units;
+            var variables = this.$variables;
+            var N = variables.length;
+            if (units.length !== N) {
+                units.length = N;
+            }
+            for (var i = 0; i < N; i++) {
+                units[i] = variables[i].getUnit();
+            }
+            return this.$units;
+        };
+        VarsList.prototype.setUnits = function (units) {
+            var N = this.$variables.length;
+            var n = units.length;
+            if (n > N) {
+                throw new Error("setUnits bad length n = " + n + " > N = " + N);
+            }
+            for (var i = 0; i < N; i++) {
+                if (i < n) {
+                    this.setUnit(i, units[i]);
+                }
+            }
+        };
+        VarsList.prototype.setUnit = function (index, unit) {
+            this.checkIndex_(index);
+            var variable = this.$variables[index];
+            variable.setUnit(unit);
         };
         /**
          *
@@ -4149,6 +4294,10 @@
         Physics.prototype.addBody = function (body) {
             mustBeNonNullObject('body', body);
             if (!contains(this.$bodies, body)) {
+                // const X = body.X;
+                // const R = body.R;
+                // const P = body.P;
+                // const L = body.L;
                 var dynamics = this.dynamics;
                 // create variables in vars array for this body
                 var names = [];
@@ -4256,7 +4405,7 @@
          * Transfer state vector back to the rigid bodies.
          * Also takes care of updating auxiliary variables, which are also mutable.
          */
-        Physics.prototype.updateBodiesFromStateVariables = function (vars) {
+        Physics.prototype.updateBodiesFromStateVariables = function (vars, units) {
             var dynamics = this.dynamics;
             var bodies = this.$bodies;
             var N = bodies.length;
@@ -4269,7 +4418,7 @@
                 // Delegate the updating of the body from the state variables because
                 // we do not know how to access the properties of the bodies in the
                 // various dimensions.
-                dynamics.updateBodyFromVars(vars, idx, body);
+                dynamics.updateBodyFromVars(vars, units, idx, body);
             }
         };
         /**
@@ -4297,17 +4446,22 @@
         Physics.prototype.setState = function (state) {
             this.varsList.setValuesContinuous(state);
         };
+        Physics.prototype.getUnits = function () {
+            return this.$varsList.getUnits();
+        };
+        Physics.prototype.setUnits = function (units) {
+            this.varsList.setUnits(units);
+        };
         /**
          * The time value is not being used because the DiffEqSolver has updated the vars?
          * This will move the objects and forces will be recalculated.u
          * @hidden
          */
-        Physics.prototype.evaluate = function (state, rateOfChange, Δt, uomTime) {
-            // console.log(`Δt=${Δt}`);
+        Physics.prototype.evaluate = function (state, stateUnits, rateOfChangeVals, rateOfChangeUoms, Δt, uomTime) {
             var metric = this.metric;
             var dynamics = this.dynamics;
             // Move objects so that rigid body objects know their current state.
-            this.updateBodiesFromStateVariables(state);
+            this.updateBodiesFromStateVariables(state, stateUnits);
             var bodies = this.$bodies;
             var Nb = bodies.length;
             for (var bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -4319,23 +4473,30 @@
                 var mass = metric.a(body.M);
                 if (mass === Number.POSITIVE_INFINITY) {
                     for (var k = 0; k < this.$numVariablesPerBody; k++) {
-                        rateOfChange[idx + k] = 0; // infinite mass objects don't move
+                        rateOfChangeVals[idx + k] = 0; // infinite mass objects don't move
                     }
                 }
                 else {
-                    dynamics.setPositionRateOfChangeVars(rateOfChange, idx, body);
-                    dynamics.setAttitudeRateOfChangeVars(rateOfChange, idx, body);
-                    dynamics.zeroLinearMomentumVars(rateOfChange, idx);
-                    dynamics.zeroAngularMomentumVars(rateOfChange, idx);
+                    dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
+                    dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
+                    dynamics.zeroLinearMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
+                    dynamics.zeroAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
                 }
             }
-            this.applyForceLaws(rateOfChange, Δt, uomTime);
-            this.applyTorqueLaws(rateOfChange, Δt, uomTime);
-            this.applyConstraints(rateOfChange, Δt, uomTime);
-            this.applyDriftLaws(rateOfChange, Δt, uomTime);
-            rateOfChange[this.$varsList.timeIndex()] = 1;
+            this.applyForceLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+            this.applyTorqueLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+            this.applyConstraints(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+            this.applyDriftLaws(rateOfChangeVals, rateOfChangeUoms, Δt, uomTime);
+            rateOfChangeVals[this.$varsList.timeIndex()] = 1;
         };
-        Physics.prototype.applyForceLaws = function (rateOfChange, Δt, uomTime) {
+        /**
+         *
+         * @param rateOfChange (output)
+         * @param rateOfChangeUnits (output)
+         * @param Δt
+         * @param uomTime
+         */
+        Physics.prototype.applyForceLaws = function (rateOfChange, rateOfChangeUnits, Δt, uomTime) {
             var forceLaws = this.$forceLaws;
             var N = forceLaws.length;
             for (var i = 0; i < N; i++) {
@@ -4343,11 +4504,11 @@
                 var forces = forceLaw.updateForces();
                 var Nforces = forces.length;
                 for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                    this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+                    this.applyForce(rateOfChange, rateOfChangeUnits, forces[forceIndex], Δt, uomTime);
                 }
             }
         };
-        Physics.prototype.applyDriftLaws = function (rateOfChange, Δt, uomTime) {
+        Physics.prototype.applyDriftLaws = function (rateOfChange, rateOfChangeUnits, Δt, uomTime) {
             var driftLaws = this.$driftLaws;
             var N = driftLaws.length;
             for (var i = 0; i < N; i++) {
@@ -4355,16 +4516,17 @@
                 var forces = driftLaw.updateForces();
                 var Nforces = forces.length;
                 for (var forceIndex = 0; forceIndex < Nforces; forceIndex++) {
-                    this.applyForce(rateOfChange, forces[forceIndex], Δt, uomTime);
+                    this.applyForce(rateOfChange, rateOfChangeUnits, forces[forceIndex], Δt, uomTime);
                 }
             }
         };
         /**
          * Applying forces gives rise to linear and angular momentum.
-         * @param rateOfChange The (output) rate of change of the state variables.
+         * @param rateOfChangeVals (output)
+         * @param rateOfChangeUoms (output)
          * @param forceApp The force application which results in a rate of change of linear and angular momentum
          */
-        Physics.prototype.applyForce = function (rateOfChange, forceApp, Δt, uomTime) {
+        Physics.prototype.applyForce = function (rateOfChangeVals, rateOfChangeUoms, forceApp, Δt, uomTime) {
             var body = forceApp.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4379,28 +4541,35 @@
             // dP/dt = F
             forceApp.computeForce(this.$force);
             var F = this.$force;
-            // Bootstrap the linear momentum unit of measure.
+            // TODO: We may not need to bootstrap when units are correctly handled?
+            // Bootstrap the linear momentum unit of measure for the body.
             if (Unit.isOne(metric.uom(body.P)) && metric.isZero(body.P)) {
-                metric.setUom(body.P, Unit.mul(metric.uom(F), uomTime));
+                var uom = Unit.mul(metric.uom(F), uomTime);
+                // console.lg(`Bootstrap P.uom to ${uom}`);
+                metric.setUom(body.P, uom);
             }
             // TODO: Here we could apply geometric constraints on the forces.
-            dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChange, idx, F);
+            dynamics.addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, F, uomTime);
             // The rate of change of angular momentum (bivector) is given by
             // dL/dt = r ^ F = Γ
             forceApp.computeTorque(this.$torque);
             var T = this.$torque;
-            // Bootstrap the angular momentum unit of measure.
+            // TODO: We may not need to bootstrap when units are correctly handled?
+            // Bootstrap the angular momentum unit of measure for the body.
             if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
-                metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+                var uom = Unit.mul(metric.uom(T), uomTime);
+                // console.lg(`Bootstrap L.uom to ${uom}`);
+                metric.setUom(body.L, uom);
             }
             // TODO: Could we add geometric constraints for torques here?
-            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+            // TODO: we don't know how to handle the indices, so dynamics must check units compatibility.
+            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, T, uomTime);
             if (this.$showForces) {
                 forceApp.expireTime = this.$varsList.getTime();
                 this.$simList.add(forceApp);
             }
         };
-        Physics.prototype.applyTorqueLaws = function (rateOfChange, Δt, uomTime) {
+        Physics.prototype.applyTorqueLaws = function (rateOfChange, units, Δt, uomTime) {
             var torqueLaws = this.$torqueLaws;
             var Ni = torqueLaws.length;
             for (var i = 0; i < Ni; i++) {
@@ -4408,11 +4577,20 @@
                 var torques = torqueLaw.updateTorques();
                 var Nj = torques.length;
                 for (var j = 0; j < Nj; j++) {
-                    this.applyTorque(rateOfChange, torques[j], Δt, uomTime);
+                    this.applyTorque(rateOfChange, units, torques[j], Δt, uomTime);
                 }
             }
         };
-        Physics.prototype.applyTorque = function (rateOfChange, torqueApp, Δt, uomTime) {
+        /**
+         *
+         * @param rateOfChangeVals (input/output)
+         * @param rateOfChangeUoms (input/output)
+         * @param torqueApp
+         * @param Δt
+         * @param uomTime
+         * @returns
+         */
+        Physics.prototype.applyTorque = function (rateOfChangeVals, rateOfChangeUoms, torqueApp, Δt, uomTime) {
             var body = torqueApp.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4429,9 +4607,11 @@
             var T = this.$torque;
             // Bootstrap the angular momentum unit of measure.
             if (Unit.isOne(metric.uom(body.L)) && metric.isZero(body.L)) {
-                metric.setUom(body.L, Unit.mul(metric.uom(T), uomTime));
+                var uom = Unit.mul(metric.uom(T), uomTime);
+                // console.lg(`Bootstrap L.uom to ${uom}`);
+                metric.setUom(body.L, uom);
             }
-            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChange, idx, T);
+            dynamics.addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, T, uomTime);
             // TODO: When the torque is applied away from the center of mass, do we add linear momentum?
             // The rate of change of angular momentum (bivector) is given by
             // dL/dt = r ^ F = Γ
@@ -4450,15 +4630,15 @@
                 this.$simList.add(torqueApp);
             }
         };
-        Physics.prototype.applyConstraints = function (rateOfChange, Δt, uomTime) {
+        Physics.prototype.applyConstraints = function (rateOfChange, rateOfChangeUoms, Δt, uomTime) {
             var constraints = this.$constraints;
             var Nconstraints = constraints.length;
             for (var i = 0; i < Nconstraints; i++) {
                 var constraint = constraints[i];
-                this.applyConstraint(rateOfChange, constraint, Δt, uomTime);
+                this.applyConstraint(rateOfChange, rateOfChangeUoms, constraint, Δt, uomTime);
             }
         };
-        Physics.prototype.applyConstraint = function (rateOfChange, constraint, Δt, uomTime) {
+        Physics.prototype.applyConstraint = function (rateOfChange, rateOfChangeUoms, constraint, Δt, uomTime) {
             var body = constraint.getBody();
             if (!(contains(this.$bodies, body))) {
                 return;
@@ -4474,20 +4654,14 @@
             var r = metric.zero();
             var B = metric.zero();
             var eΘ = metric.zero();
-            var e = metric.zero();
             var Fnew = metric.zero();
             var FnewR = metric.zero();
             var FnewΘ = metric.zero();
             var N = metric.zero();
-            // const end = metric.zero();
-            dynamics.getForce(rateOfChange, idx, F);
+            dynamics.getForce(rateOfChange, rateOfChangeUoms, idx, F);
             var X = body.X;
             var P = body.P;
             var M = body.M;
-            // metric.copyVector(body.P, end);
-            // metric.divByScalar(end, metric.a(body.M), metric.uom(body.M));
-            // metric.mulByScalar(end, Δt, uomTime);
-            // metric.addVector(end, body.X);
             constraint.computeRadius(X, r);
             constraint.computeRotation(X, B);
             constraint.computeTangent(X, eΘ);
@@ -4500,13 +4674,13 @@
             metric.neg(FnewR); // FnewR = - ((P * P) / (m * r)) er
             metric.copyVector(F, FnewΘ); // FnewΘ = F
             metric.scp(FnewΘ, eΘ); // FnewΘ = F | eΘ
-            metric.mulByVector(FnewΘ, e); // FnewΘ = (F | eΘ) eΘ
+            metric.mulByVector(FnewΘ, eΘ); // FnewΘ = (F | eΘ) eΘ
             metric.copyVector(FnewR, Fnew); // Fnew = FnewR
             metric.addVector(Fnew, FnewΘ); // Fnew = FnewR + FnewΘ
             metric.copyVector(Fnew, N); // N = Fnew
             metric.subVector(N, F); // N = Fnew - F or Fnew = F + N 
             // Update the rateOfChange of Linear Momentum (force); 
-            dynamics.setForce(rateOfChange, idx, Fnew);
+            dynamics.setForce(rateOfChange, rateOfChangeUoms, idx, Fnew);
             // The constraint holds the computed force so that it can be visualized.
             constraint.setForce(N);
         };
@@ -4548,7 +4722,8 @@
         Physics.prototype.epilog = function () {
             var varsList = this.$varsList;
             var vars = varsList.getValues();
-            this.updateBodiesFromStateVariables(vars);
+            var units = varsList.getUnits();
+            this.updateBodiesFromStateVariables(vars, units);
             var dynamics = this.dynamics;
             dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
         };
@@ -4626,6 +4801,13 @@
             var rk4 = new RungeKutta(this.physics);
             this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
         }
+        Object.defineProperty(Engine.prototype, "varsList", {
+            get: function () {
+                return this.physics.varsList;
+            },
+            enumerable: false,
+            configurable: true
+        });
         /**
          *
          * @param body
@@ -4740,6 +4922,7 @@
          * @param force (output)
          */
         Force.prototype.computeForce = function (force) {
+            // TODO: Just use the output variable directly...
             var metric = this.body.metric;
             switch (this.vectorCoordType) {
                 case LOCAL: {
@@ -4777,13 +4960,19 @@
          * @param position (output)
          */
         Force.prototype.computePosition = function (position) {
+            // TODO: Just use the output variable directly...
             var metric = this.body.metric;
             switch (this.locationCoordType) {
                 case LOCAL: {
                     metric.copyVector(this.location, this.$temp1);
                     // We could subtract the body center-of-mass in body coordinates here.
                     // Instead we assume that it is always zero.
-                    metric.rotate(this.$temp1, this.body.R);
+                    try {
+                        metric.rotate(this.$temp1, this.body.R);
+                    }
+                    catch (e) {
+                        throw new Error("this.body.R=" + this.body.R + ". Cause: " + e);
+                    }
                     metric.addVector(this.$temp1, this.body.X);
                     metric.writeVector(this.$temp1, position);
                     break;
@@ -4801,9 +4990,10 @@
          * Torque = r ^ F because r = x - X
          */
         Force.prototype.computeTorque = function (torque) {
+            var metric = this.body.metric;
+            // TODO: Just use the output variable directly...
             this.computePosition(this.$temp1); // temp1 = x
             this.computeForce(this.$temp2); // temp2 = F
-            var metric = this.body.metric;
             metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
             metric.ext(this.$temp1, this.$temp2); // temp1 = (x - X) ^ F 
             metric.write(this.$temp1, torque); // torque = (x - X) ^ F
@@ -5256,8 +5446,9 @@
                 return this.$X;
             },
             set: function (position) {
-                mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-                this.metric.copy(position, this.$X);
+                var metric = this.metric;
+                mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
+                metric.copy(position, this.$X);
             },
             enumerable: false,
             configurable: true
@@ -5380,6 +5571,9 @@
         /**
          * Converts a point in local coordinates to the same point in world coordinates.
          * x = R (localPoint - centerOfMassLocal) * ~R + X
+         *
+         * @param localPoint (input)
+         * @param worldPoint (output)
          */
         RigidBody.prototype.localPointToWorldPoint = function (localPoint, worldPoint) {
             // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
@@ -5387,7 +5581,13 @@
             this.metric.copyVector(localPoint, this.$worldPoint);
             this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
             this.metric.rotate(this.$worldPoint, this.R);
-            this.metric.addVector(this.$worldPoint, this.X);
+            try {
+                this.metric.addVector(this.$worldPoint, this.X);
+            }
+            catch (e) {
+                var cause = (e instanceof Error) ? e.message : "" + e;
+                throw new Error(this.$worldPoint + " + " + this.X + " is not allowed. Cause: " + cause);
+            }
             this.metric.writeVector(this.$worldPoint, worldPoint);
         };
         return RigidBody;
@@ -5519,11 +5719,19 @@
             enumerable: false,
             configurable: true
         });
+        /**
+         * @param x (output)
+         */
         Spring.prototype.computeBody1AttachPointInWorldCoords = function (x) {
             if (this.attach1_ == null || this.body1 == null) {
                 throw new Error();
             }
-            this.body1.localPointToWorldPoint(this.attach1_, x);
+            try {
+                this.body1.localPointToWorldPoint(this.attach1_, x);
+            }
+            catch (e) {
+                throw new Error("localPointToWorldPoint(attach1=" + this.attach1_ + "). Cause: " + e);
+            }
         };
         Spring.prototype.computeBody2AttachPointInWorldCoords = function (x) {
             if (this.attach2_ == null || this.body2 == null) {
@@ -8698,6 +8906,7 @@
      */
     var Dynamics2 = /** @class */ (function () {
         function Dynamics2() {
+            this.debug = false;
         }
         Dynamics2.prototype.numVarsPerBody = function () {
             // Each body is described by 7 kinematic components.
@@ -8765,39 +8974,92 @@
             varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_XY$1, Lxy);
         };
         Dynamics2.prototype.updateVarsFromBody = function (body, idx, vars) {
-            vars.setValueJump(OFFSET_POSITION_X$1 + idx, body.X.x);
-            vars.setValueJump(OFFSET_POSITION_Y$1 + idx, body.X.y);
-            vars.setValueJump(OFFSET_ATTITUDE_A$1 + idx, body.R.a);
-            vars.setValueJump(OFFSET_ATTITUDE_XY$1 + idx, body.R.b);
+            var X = body.X;
+            var R = body.R;
+            vars.setValueJump(OFFSET_POSITION_X$1 + idx, X.x);
+            vars.setValueJump(OFFSET_POSITION_Y$1 + idx, X.y);
+            vars.setUnit(OFFSET_POSITION_X$1 + idx, X.uom);
+            vars.setUnit(OFFSET_POSITION_Y$1 + idx, X.uom);
+            vars.setValueJump(OFFSET_ATTITUDE_A$1 + idx, R.a);
+            vars.setValueJump(OFFSET_ATTITUDE_XY$1 + idx, R.b);
+            if (!Unit.isOne(R.uom)) {
+                throw new Error("R.uom should be one, but was " + R.uom);
+            }
+            vars.setUnit(OFFSET_ATTITUDE_A$1 + idx, R.uom);
+            vars.setUnit(OFFSET_ATTITUDE_XY$1 + idx, R.uom);
             vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X$1 + idx, body.P.x);
             vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y$1 + idx, body.P.y);
+            vars.setUnit(OFFSET_LINEAR_MOMENTUM_X$1 + idx, body.P.uom);
+            vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y$1 + idx, body.P.uom);
             vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY$1 + idx, body.L.b);
+            vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY$1 + idx, body.L.uom);
         };
-        Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] += force.x;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] += force.y;
+        Dynamics2.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+            if (this.debug) {
+                console.log("addForceToRateOfChangeLinearMomentumVars()");
+            }
+            var Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1];
+            var Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
+            if (this.debug) {
+                console.log("BEFORE");
+                console.log("Fx=" + Fx + ", Fy=" + Fy + ", Fuom=" + rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1]);
+                console.log("force=" + force + ", uomTime=" + uomTime);
+            }
+            if (Fx !== 0 || Fy !== 0) {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1], force.uom);
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1], force.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1] = force.uom;
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = force.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1] = Fx + force.x;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = Fy + force.y;
+            if (this.debug) {
+                console.log("AFTER");
+                console.log("Fx=" + rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1] + ", Fxuom=" + rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1]);
+                console.log("Fy=" + rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1] + ", Fyuom=" + rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1]);
+                console.log("force=" + force + ", uomTime=" + uomTime);
+            }
         };
-        Dynamics2.prototype.getForce = function (rateOfChange, idx, force) {
-            force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1];
-            force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
+        Dynamics2.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            force.x = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1];
+            force.y = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
+            force.uom = rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1];
         };
-        Dynamics2.prototype.setForce = function (rateOfChange, idx, force) {
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] = force.x;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = force.y;
+        Dynamics2.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1] = force.x;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1] = force.uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = force.y;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = force.uom;
         };
-        Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] += torque.b;
+        Dynamics2.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+            if (this.debug) {
+                console.log("addTorqueToRateOfChangeAngularMomentumVars(torque=" + torque + ")");
+            }
+            var Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY$1];
+            if (Tb !== 0) {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY$1], torque.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = torque.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = Tb + torque.b;
         };
-        Dynamics2.prototype.updateBodyFromVars = function (vars, idx, body) {
+        Dynamics2.prototype.updateBodyFromVars = function (vars, units, idx, body) {
             body.X.a = 0;
             body.X.x = vars[idx + OFFSET_POSITION_X$1];
             body.X.y = vars[idx + OFFSET_POSITION_Y$1];
             body.X.b = 0;
-            // body.X.uom
+            body.X.uom = units[idx + OFFSET_POSITION_X$1];
             body.R.a = vars[idx + OFFSET_ATTITUDE_A$1];
             body.R.x = 0;
             body.R.y = 0;
             body.R.b = vars[idx + OFFSET_ATTITUDE_XY$1];
+            body.R.uom = units[idx + OFFSET_ATTITUDE_XY$1];
+            if (!Unit.isOne(body.R.uom)) {
+                throw new Error("body.R.uom should be one, but was " + body.R.uom);
+            }
             // Keep the magnitude of the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a + R.b * R.b);
@@ -8807,21 +9069,40 @@
             body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X$1];
             body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y$1];
             body.P.b = 0;
-            // body.P.uom
+            body.P.uom = units[idx + OFFSET_LINEAR_MOMENTUM_X$1];
             body.L.a = 0;
             body.L.x = 0;
             body.L.y = 0;
             body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY$1];
-            // body.L.uom
+            if (!Unit.isOne(body.L.uom)) {
+                if (Unit.isOne(units[idx + OFFSET_ANGULAR_MOMENTUM_XY$1])) {
+                    throw new Error("Overwriting Angular Momentum Units!");
+                }
+            }
+            body.L.uom = units[idx + OFFSET_ANGULAR_MOMENTUM_XY$1];
             body.updateAngularVelocity();
         };
-        Dynamics2.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
+        Dynamics2.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
             var P = body.P;
-            var mass = body.M.a;
-            rateOfChange[idx + OFFSET_POSITION_X$1] = P.x / mass;
-            rateOfChange[idx + OFFSET_POSITION_Y$1] = P.y / mass;
+            var M = body.M;
+            if (!Unit.isOne(P.uom)) {
+                if (!Unit.isCompatible(P.uom, Unit.KILOGRAM_METER_PER_SECOND)) {
+                    throw new Error("P.uom should be " + Unit.KILOGRAM_METER_PER_SECOND + ", but was " + P.uom);
+                }
+            }
+            if (!Unit.isOne(M.uom)) {
+                if (!Unit.isCompatible(M.uom, Unit.KILOGRAM)) {
+                    throw new Error("M.uom should be " + Unit.KILOGRAM + ", but was " + M.uom);
+                }
+            }
+            var m = M.a;
+            rateOfChangeVals[idx + OFFSET_POSITION_X$1] = P.x / m;
+            rateOfChangeVals[idx + OFFSET_POSITION_Y$1] = P.y / m;
+            var uom = Unit.div(P.uom, M.uom);
+            rateOfChangeUoms[idx + OFFSET_POSITION_X$1] = uom;
+            rateOfChangeUoms[idx + OFFSET_POSITION_Y$1] = uom;
         };
-        Dynamics2.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
+        Dynamics2.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
             // Let Ω(t) be the (bivector) angular velocity.
             // Let R(t) be the (spinor) attitude of the rigid body. 
             // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -8829,17 +9110,56 @@
             // Ω and R are auxiliary and primary variables that have already been computed.
             var R = body.R;
             var Ω = body.Ω;
+            if (!Unit.isOne(R.uom)) {
+                throw new Error("R.uom should be one, but was " + R.uom);
+            }
+            if (!Unit.isOne(Ω.uom)) {
+                if (!Unit.isCompatible(Ω.uom, Unit.INV_SECOND)) {
+                    throw new Error("\u03A9.uom should be " + Unit.INV_SECOND + ", but was " + Ω.uom);
+                }
+            }
             // dR/dt = +(1/2)(Ω.b)(R.b) - (1/2)(Ω.b)(R.a) I, where I = e1e2. 
-            rateOfChange[idx + OFFSET_ATTITUDE_A$1] = +0.5 * (Ω.xy * R.xy);
-            rateOfChange[idx + OFFSET_ATTITUDE_XY$1] = -0.5 * (Ω.xy * R.a);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_A$1] = +0.5 * (Ω.xy * R.xy);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_XY$1] = -0.5 * (Ω.xy * R.a);
+            var uom = Unit.mul(Ω.uom, R.uom);
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_A$1] = uom;
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_XY$1] = uom;
         };
-        Dynamics2.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
+        Dynamics2.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            var P = body.P;
+            var M = body.M;
+            if (!Unit.isOne(P.uom)) {
+                if (!Unit.isCompatible(P.uom, Unit.KILOGRAM_METER_PER_SECOND)) {
+                    throw new Error("P.uom should be " + Unit.KILOGRAM_METER_PER_SECOND + ", but was " + P.uom);
+                }
+            }
+            if (!Unit.isOne(M.uom)) {
+                if (!Unit.isCompatible(M.uom, Unit.KILOGRAM)) {
+                    throw new Error("M.uom should be " + Unit.KILOGRAM + ", but was " + M.uom);
+                }
+            }
             // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X$1] = 0;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = 0;
+            var uom = Unit.div(P.uom, uomTime);
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$1] = 0;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X$1] = uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = 0;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y$1] = uom;
         };
-        Dynamics2.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = 0;
+        Dynamics2.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            var L = body.L;
+            var R = body.R;
+            var Ω = body.Ω;
+            if (!Unit.isOne(R.uom)) {
+                throw new Error("R.uom should be one, but was " + R.uom);
+            }
+            if (!Unit.isOne(Ω.uom)) {
+                if (!Unit.isCompatible(Ω.uom, Unit.INV_SECOND)) {
+                    throw new Error("\u03A9.uom should be " + Unit.INV_SECOND + ", but was " + Ω.uom);
+                }
+            }
+            var uom = Unit.div(L.uom, uomTime);
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = 0;
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = uom;
         };
         return Dynamics2;
     }());
@@ -13352,6 +13672,7 @@
                 pe += fs[i].potentialEnergy().a;
             }
             varsList.setValueContinuous(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te);
+            // TODO: varsList.setUnit(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te); etc
             varsList.setValueContinuous(INDEX_ROTATIONAL_KINETIC_ENERGY, re);
             varsList.setValueContinuous(INDEX_POTENTIAL_ENERGY, pe);
             varsList.setValueContinuous(INDEX_TOTAL_ENERGY, te + re + pe);
@@ -13366,45 +13687,106 @@
             vars.setValueJump(OFFSET_POSITION_X + idx, body.X.x);
             vars.setValueJump(OFFSET_POSITION_Y + idx, body.X.y);
             vars.setValueJump(OFFSET_POSITION_Z + idx, body.X.z);
+            vars.setUnit(OFFSET_POSITION_X + idx, body.X.uom);
+            vars.setUnit(OFFSET_POSITION_Y + idx, body.X.uom);
+            vars.setUnit(OFFSET_POSITION_Z + idx, body.X.uom);
             vars.setValueJump(OFFSET_ATTITUDE_A + idx, body.R.a);
             vars.setValueJump(OFFSET_ATTITUDE_XY + idx, body.R.xy);
             vars.setValueJump(OFFSET_ATTITUDE_YZ + idx, body.R.yz);
             vars.setValueJump(OFFSET_ATTITUDE_ZX + idx, body.R.zx);
+            vars.setUnit(OFFSET_ATTITUDE_A + idx, body.R.uom);
+            vars.setUnit(OFFSET_ATTITUDE_XY + idx, body.R.uom);
+            vars.setUnit(OFFSET_ATTITUDE_YZ + idx, body.R.uom);
+            vars.setUnit(OFFSET_ATTITUDE_ZX + idx, body.R.uom);
             vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
             vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
             vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
+            vars.setUnit(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.uom);
+            vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.uom);
+            vars.setUnit(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.uom);
             vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
             vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
             vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
+            vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.uom);
+            vars.setUnit(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.uom);
+            vars.setUnit(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.uom);
         };
-        Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
+        Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+            var Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
+            if (Fx !== 0) {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
+            var Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
+            if (Fy !== 0) {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y], force.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = Fy + force.y;
+            var Fz = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z];
+            if (Fz !== 0) {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z], force.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = Fz + force.z;
         };
-        Dynamics3.prototype.getForce = function (rateOfChange, idx, force) {
-            force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
-            force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
-            force.z = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z];
+        Dynamics3.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            force.x = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
+            force.y = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
+            force.z = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z];
+            force.uom = rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X];
         };
-        Dynamics3.prototype.setForce = function (rateOfChange, idx, force) {
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+        Dynamics3.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
         };
-        Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
+        Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+            var Tyz = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ];
+            if (Tyz !== 0) {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ], torque.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = torque.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Tyz + torque.yz;
+            var Tzx = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
+            if (Tzx !== 0) {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX], torque.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = torque.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Tzx + torque.zx;
+            var Txy = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY];
+            if (Txy !== 0) {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY], torque.uom);
+            }
+            else {
+                rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = torque.uom;
+            }
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Txy + torque.xy;
         };
-        Dynamics3.prototype.updateBodyFromVars = function (vars, idx, body) {
+        Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body) {
             body.X.x = vars[idx + OFFSET_POSITION_X];
             body.X.y = vars[idx + OFFSET_POSITION_Y];
             body.X.z = vars[idx + OFFSET_POSITION_Z];
+            body.X.uom = units[idx + OFFSET_POSITION_X];
             body.R.a = vars[idx + OFFSET_ATTITUDE_A];
             body.R.xy = vars[idx + OFFSET_ATTITUDE_XY];
             body.R.yz = vars[idx + OFFSET_ATTITUDE_YZ];
             body.R.zx = vars[idx + OFFSET_ATTITUDE_ZX];
+            body.R.uom = units[idx + OFFSET_ATTITUDE_A];
             // Keep the magnitude of the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a + R.xy * R.xy + R.yz * R.yz + R.zx * R.zx);
@@ -13415,41 +13797,62 @@
             body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
             body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
             body.P.z = vars[idx + OFFSET_LINEAR_MOMENTUM_Z];
+            body.P.uom = units[idx + OFFSET_LINEAR_MOMENTUM_X];
             body.L.xy = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
             body.L.yz = vars[idx + OFFSET_ANGULAR_MOMENTUM_YZ];
             body.L.zx = vars[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
+            body.L.uom = units[idx + OFFSET_ANGULAR_MOMENTUM_XY];
             body.updateAngularVelocity();
         };
-        Dynamics3.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
+        Dynamics3.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
             // The rate of change of position is the velocity.
             // dX/dt = V = P / M
             var P = body.P;
-            var mass = body.M.a;
-            rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
-            rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
-            rateOfChange[idx + OFFSET_POSITION_Z] = P.z / mass;
+            var M = body.M;
+            var m = M.a;
+            rateOfChangeVals[idx + OFFSET_POSITION_X] = P.x / m;
+            rateOfChangeVals[idx + OFFSET_POSITION_Y] = P.y / m;
+            rateOfChangeVals[idx + OFFSET_POSITION_Z] = P.z / m;
+            var uom = Unit.div(P.uom, M.uom);
+            rateOfChangeUoms[idx + OFFSET_POSITION_X] = uom;
+            rateOfChangeUoms[idx + OFFSET_POSITION_Y] = uom;
+            rateOfChangeUoms[idx + OFFSET_POSITION_Z] = uom;
         };
-        Dynamics3.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
+        Dynamics3.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
             // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
             // requiring the geometric product of Ω and R.
             // Ω and R are auxiliary and primary variables that have already been computed.
             var R = body.R;
             var Ω = body.Ω;
-            rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-            rateOfChange[idx + OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
-            rateOfChange[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
-            rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+            rateOfChangeVals[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+            var uom = Unit.mul(Ω.uom, R.uom);
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_A] = uom;
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_YZ] = uom;
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_ZX] = uom;
+            rateOfChangeUoms[idx + OFFSET_ATTITUDE_XY] = uom;
         };
-        Dynamics3.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
-            // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
-            rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
+        Dynamics3.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            var P = body.P;
+            var uom = Unit.div(P.uom, uomTime);
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = uom;
+            rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = uom;
         };
-        Dynamics3.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
-            rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+        Dynamics3.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            var L = body.L;
+            var uom = Unit.div(L.uom, uomTime);
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = uom;
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = uom;
+            rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = uom;
         };
         return Dynamics3;
     }());
@@ -18337,7 +18740,8 @@
         }
         ConstantEnergySolver.prototype.step = function (Δt, uomTime) {
             // save the vars in case we need to back up and start again
-            this.savedState = this.simulation.getState();
+            this.savedVals = this.simulation.getState();
+            this.savedUoms = this.simulation.getUnits();
             var startTime = this.simulation.time;
             /**
              * The adapted step size.
@@ -18363,7 +18767,8 @@
                 var t = startTime; // t = current time
                 if (!firstTime) {
                     // restore state and solve again with smaller step size
-                    this.simulation.setState(this.savedState);
+                    this.simulation.setState(this.savedVals);
+                    this.simulation.setUnits(this.savedUoms);
                     this.simulation.epilog();
                     // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                     // const e = this.energySystem_.totalEnergy();
@@ -18430,29 +18835,49 @@
          */
         function EulerMethod(system) {
             this.system = system;
-            this.inp_ = [];
-            this.k1_ = [];
+            this.$invals = [];
+            this.$inuoms = [];
+            this.$k1vals = [];
+            this.$k1uoms = [];
             mustBeNonNullObject('system', system);
         }
         EulerMethod.prototype.step = function (stepSize, uomStep) {
-            var vars = this.system.getState();
-            var N = vars.length;
-            if (this.inp_.length !== N) {
-                this.inp_ = new Array(N);
-                this.k1_ = new Array(N);
+            var stateVals = this.system.getState();
+            var stateUoms = this.system.getUnits();
+            var N = stateVals.length;
+            if (this.$invals.length !== N) {
+                this.$invals = new Array(N);
+                this.$inuoms = new Array(N);
+                this.$k1vals = new Array(N);
+                this.$k1uoms = new Array(N);
             }
-            var inp = this.inp_;
-            var k1 = this.k1_;
+            var invals = this.$invals;
+            var inuoms = this.$inuoms;
+            var k1vals = this.$k1vals;
+            var k1uoms = this.$k1uoms;
             for (var i = 0; i < N; i++) {
                 // set up input to diffeqs (note: this protects vars from being changed)
-                inp[i] = vars[i];
+                invals[i] = stateVals[i];
+                inuoms[i] = stateUoms[i];
             }
-            zeroArray(k1);
-            this.system.evaluate(inp, k1, 0, uomStep);
+            zeroArray(k1vals); // TODO: Is this redundant for an output variable?
+            this.system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
             for (var i = 0; i < N; i++) {
-                vars[i] += k1[i] * stepSize;
+                try {
+                    if (stateVals[i] !== 0) {
+                        stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
+                    }
+                    else {
+                        stateUoms[i] = Unit.mul(k1uoms[i], uomStep);
+                    }
+                }
+                catch (e) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                }
+                stateVals[i] += k1vals[i] * stepSize;
             }
-            this.system.setState(vars);
+            this.system.setState(stateVals);
+            this.system.setUnits(stateUoms);
         };
         return EulerMethod;
     }());
@@ -18470,38 +18895,64 @@
          */
         function ModifiedEuler(system) {
             this.system = system;
-            this.inp_ = [];
-            this.k1_ = [];
-            this.k2_ = [];
+            this.$invals = [];
+            this.$inuoms = [];
+            this.$k1vals = [];
+            this.$k1uoms = [];
+            this.$k2vals = [];
+            this.$k2uoms = [];
             mustBeNonNullObject('system', system);
         }
         ModifiedEuler.prototype.step = function (stepSize, uomStep) {
-            var vars = this.system.getState();
-            var N = vars.length;
-            if (this.inp_.length !== N) {
-                this.inp_ = new Array(N);
-                this.k1_ = new Array(N);
-                this.k2_ = new Array(N);
+            var stateVals = this.system.getState();
+            var stateUoms = this.system.getUnits();
+            var N = stateVals.length;
+            if (this.$invals.length !== N) {
+                this.$invals = new Array(N);
+                this.$inuoms = new Array(N);
+                this.$k1vals = new Array(N);
+                this.$k1uoms = new Array(N);
+                this.$k2vals = new Array(N);
+                this.$k2uoms = new Array(N);
             }
-            var inp = this.inp_;
-            var k1 = this.k1_;
-            var k2 = this.k2_;
+            var invals = this.$invals;
+            var inuoms = this.$inuoms;
+            var k1vals = this.$k1vals;
+            var k1uoms = this.$k1uoms;
+            var k2vals = this.$k2vals;
+            var k2uoms = this.$k2uoms;
             // evaluate at time t
             for (var i = 0; i < N; i++) {
-                inp[i] = vars[i];
+                invals[i] = stateVals[i];
+                inuoms[i] = stateUoms[i];
             }
-            zeroArray(k1);
-            this.system.evaluate(inp, k1, 0, uomStep);
+            zeroArray(k1vals);
+            this.system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
             // evaluate at time t+stepSize
             for (var i = 0; i < N; i++) {
-                inp[i] = vars[i] + k1[i] * stepSize;
+                if (stateVals[i] !== 0) {
+                    inuoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
+                }
+                else {
+                    inuoms[i] = Unit.mul(k1uoms[i], uomStep);
+                }
+                invals[i] = stateVals[i] + k1vals[i] * stepSize;
             }
-            zeroArray(k2);
-            this.system.evaluate(inp, k2, stepSize, uomStep);
+            zeroArray(k2vals);
+            this.system.evaluate(invals, inuoms, k2vals, k2uoms, stepSize, uomStep);
             for (var i = 0; i < N; i++) {
-                vars[i] += (k1[i] + k2[i]) * stepSize / 2;
+                if (stateVals[i] !== 0) {
+                    if (k2vals[i] !== 0) {
+                        stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k2uoms[i], uomStep));
+                    }
+                }
+                else {
+                    stateUoms[i] = Unit.mul(k2uoms[i], uomStep);
+                }
+                stateVals[i] += (k1vals[i] + k2vals[i]) * stepSize / 2;
             }
-            this.system.setState(vars);
+            this.system.setState(stateVals);
+            this.system.setUnits(stateUoms);
         };
         return ModifiedEuler;
     }());

@@ -1,3 +1,4 @@
+import { Unit } from "../math/Unit";
 import { ForceBody } from "./ForceBody";
 import { ForceLaw } from "./ForceLaw";
 import { VarsList } from "./VarsList";
@@ -33,11 +34,12 @@ export interface Dynamics<T> {
      * The rate of change of position is the velocity.
      * dX/dt = V = P / M
      *
-     * @param rateOfChange
-     * @param idx
-     * @param body
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
      */
-    setPositionRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>): void;
     /**
      * Let Ω(t) be the (bivector) angular velocity.
      * Let R(t) be the (spinor) attitude of the rigid body.
@@ -45,30 +47,38 @@ export interface Dynamics<T> {
      * requiring the geometric product of Ω and R.
      * Ω and R are auxiliary and primary variables that have already been computed.
      *
-     * @param rateOfChange
-     * @param idx
-     * @param body
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
      */
-    setAttitudeRateOfChangeVars(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>): void;
     /**
      *
-     * @param rateOfChange
-     * @param idx
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input)
      */
-    zeroLinearMomentumVars(rateOfChange: number[], idx: number): void;
+    zeroLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      *
-     * @param rateOfChange
-     * @param idx
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input)
      */
-    zeroAngularMomentumVars(rateOfChange: number[], idx: number): void;
+    zeroAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      *
      * @param vars
+     * @param units
      * @param idx
      * @param body
      */
-    updateBodyFromVars(vars: number[], idx: number, body: ForceBody<T>): void;
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<T>): void;
     /**
      *
      * @param body
@@ -78,20 +88,38 @@ export interface Dynamics<T> {
     updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
     /**
      * Adds the specified force to the rateOfChange variables for Linear Momentum.
-     * @param rateOfChange
-     * @param idx
-     * @param force
+     * @param rateOfChange (input/output)
+     * @param units (input/output)
+     * @param idx (input)
+     * @param force (input)
+     * @param uomTime (input)
      */
-    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], idx: number, force: T): void;
-    getForce(rateOfChange: number[], idx: number, force: T): void;
-    setForce(rateOfChange: number[], idx: number, force: T): void;
+    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], units: Unit[], idx: number, force: T, uomTime: Unit): void;
+    /**
+     *
+     * @param rateOfChange (input)
+     * @param units (input)
+     * @param idx (input)
+     * @param force (output)
+     */
+    getForce(rateOfChange: number[], units: Unit[], idx: number, force: T): void;
+    /**
+     *
+     * @param rateOfChange (output)
+     * @param units (output)
+     * @param idx (input)
+     * @param force (input)
+     */
+    setForce(rateOfChange: number[], units: Unit[], idx: number, force: T): void;
     /**
      * Adds the specified torque to the rateOfChange variables for AngularMomentum.
-     * @param rateOfChange
-     * @param idx
-     * @param torque
+     * @param rateOfChange (input/output)
+     * @param units (input/output)
+     * @param idx (input)
+     * @param torque (input)
+     * @param uomTime (input)
      */
-    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], idx: number, torque: T): void;
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], units: Unit[], idx: number, torque: T, uomTime: Unit): void;
     /**
      *
      * @param bodies

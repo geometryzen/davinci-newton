@@ -12,6 +12,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import { Unit } from '../math/Unit';
 import toName from '../util/toName';
 import validName from '../util/validName';
 /**
@@ -26,7 +27,11 @@ var ConcreteVariable = /** @class */ (function () {
         /**
          *
          */
-        this.value_ = 0;
+        this.$value = 0;
+        /**
+         *
+         */
+        this.$uom = Unit.ONE;
         /**
          * Sequence numbers, to detect discontinuity in a variable.
          */
@@ -67,7 +72,10 @@ var ConcreteVariable = /** @class */ (function () {
      *
      */
     ConcreteVariable.prototype.getValue = function () {
-        return this.value_;
+        return this.$value;
+    };
+    ConcreteVariable.prototype.getUnit = function () {
+        return this.$uom;
     };
     ConcreteVariable.prototype.nameEquals = function (name) {
         return this.name_ === toName(name);
@@ -85,12 +93,15 @@ var ConcreteVariable = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    ConcreteVariable.prototype.setUnit = function (uom) {
+        this.$uom = uom;
+    };
     /**
      *
      */
     ConcreteVariable.prototype.setValueJump = function (value) {
-        if (this.value_ !== value) {
-            this.value_ = value;
+        if (this.$value !== value) {
+            this.$value = value;
             this.seq_++;
             if (this.doesBroadcast_) {
                 this.varsList_.broadcast(this);
@@ -98,7 +109,7 @@ var ConcreteVariable = /** @class */ (function () {
         }
     };
     ConcreteVariable.prototype.setValueContinuous = function (value) {
-        this.value_ = value;
+        this.$value = value;
     };
     /**
      *

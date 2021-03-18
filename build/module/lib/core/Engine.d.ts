@@ -5,6 +5,7 @@ import { ForceLaw } from './ForceLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Metric } from './Metric';
 import { TorqueLaw } from './TorqueLaw';
+import { VarsList } from './VarsList';
 /**
  *
  */
@@ -19,6 +20,7 @@ export declare class Engine<T> {
     private readonly physics;
     private readonly strategy;
     constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
+    get varsList(): VarsList;
     /**
      *
      * @param body

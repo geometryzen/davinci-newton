@@ -214,8 +214,9 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$X;
     }
     set X(position: T) {
-        mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, this.metric);
-        this.metric.copy(position, this.$X);
+        const metric = this.metric;
+        mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
+        metric.copy(position, this.$X);
     }
 
     /**
@@ -320,6 +321,9 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * Converts a point in local coordinates to the same point in world coordinates.
      * x = R (localPoint - centerOfMassLocal) * ~R + X
+     * 
+     * @param localPoint (input)
+     * @param worldPoint (output)
      */
     localPointToWorldPoint(localPoint: T, worldPoint: T): void {
         // Note: It appears that we might be able to use the worldPoint argument as a scratch variable.
@@ -327,7 +331,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         this.metric.copyVector(localPoint, this.$worldPoint);
         this.metric.subVector(this.$worldPoint, this.centerOfMassLocal);
         this.metric.rotate(this.$worldPoint, this.R);
-        this.metric.addVector(this.$worldPoint, this.X);
+        try {
+            this.metric.addVector(this.$worldPoint, this.X);
+        } catch (e) {
+            const cause = (e instanceof Error) ? e.message : `${e}`;
+            throw new Error(`${this.$worldPoint} + ${this.X} is not allowed. Cause: ${cause}`);
+        }
         this.metric.writeVector(this.$worldPoint, worldPoint);
     }
 

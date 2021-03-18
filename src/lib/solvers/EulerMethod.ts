@@ -25,8 +25,10 @@ import { zeroArray } from '../util/zeroArray';
  * @hidden
  */
 export class EulerMethod implements DiffEqSolver {
-    private inp_: number[] = [];
-    private k1_: number[] = [];
+    private $invals: number[] = [];
+    private $inuoms: Unit[] = [];
+    private $k1vals: number[] = [];
+    private $k1uoms: Unit[] = [];
     /**
      * 
      */
@@ -34,23 +36,39 @@ export class EulerMethod implements DiffEqSolver {
         mustBeNonNullObject('system', system);
     }
     step(stepSize: number, uomStep?: Unit): void {
-        const vars = this.system.getState();
-        const N = vars.length;
-        if (this.inp_.length !== N) {
-            this.inp_ = new Array(N);
-            this.k1_ = new Array(N);
+        const stateVals = this.system.getState();
+        const stateUoms = this.system.getUnits();
+        const N = stateVals.length;
+        if (this.$invals.length !== N) {
+            this.$invals = new Array(N);
+            this.$inuoms = new Array(N);
+            this.$k1vals = new Array(N);
+            this.$k1uoms = new Array(N);
         }
-        const inp = this.inp_;
-        const k1 = this.k1_;
+        const invals = this.$invals;
+        const inuoms = this.$inuoms;
+        const k1vals = this.$k1vals;
+        const k1uoms = this.$k1uoms;
         for (let i = 0; i < N; i++) {
             // set up input to diffeqs (note: this protects vars from being changed)
-            inp[i] = vars[i];
+            invals[i] = stateVals[i];
+            inuoms[i] = stateUoms[i];
         }
-        zeroArray(k1);
-        this.system.evaluate(inp, k1, 0, uomStep);
+        zeroArray(k1vals); // TODO: Is this redundant for an output variable?
+        this.system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
         for (let i = 0; i < N; i++) {
-            vars[i] += k1[i] * stepSize;
+            try {
+                if (stateVals[i] !== 0) {
+                    stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
+                } else {
+                    stateUoms[i] = Unit.mul(k1uoms[i], uomStep);
+                }
+            } catch (e) {
+                throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
+            }
+            stateVals[i] += k1vals[i] * stepSize;
         }
-        this.system.setState(vars);
+        this.system.setState(stateVals);
+        this.system.setUnits(stateUoms);
     }
 }

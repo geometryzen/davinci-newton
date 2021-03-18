@@ -12,7 +12,8 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
     private energySystem_: EnergySystem<T>;
     private solverMethod_: DiffEqSolver;
     // private totSteps_: number;
-    private savedState: number[];
+    private savedVals: number[];
+    private savedUoms: Unit[];
     public stepUpperBound = 1;
     /**
      * The smallest time step that will executed.
@@ -34,7 +35,8 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
     }
     step(Δt: number, uomTime?: Unit): void {
         // save the vars in case we need to back up and start again
-        this.savedState = this.simulation.getState();
+        this.savedVals = this.simulation.getState();
+        this.savedUoms = this.simulation.getUnits();
         const startTime = this.simulation.time;
         /**
          * The adapted step size.
@@ -60,7 +62,8 @@ export class ConstantEnergySolver<T> implements DiffEqSolver {
             let t = startTime;  // t = current time
             if (!firstTime) {
                 // restore state and solve again with smaller step size
-                this.simulation.setState(this.savedState);
+                this.simulation.setState(this.savedVals);
+                this.simulation.setUnits(this.savedUoms);
                 this.simulation.epilog();
                 // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();

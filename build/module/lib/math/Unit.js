@@ -244,7 +244,13 @@ var Unit = /** @class */ (function () {
     }
     Unit.prototype.compatible = function (rhs) {
         if (rhs instanceof Unit) {
-            this.dimensions.compatible(rhs.dimensions);
+            try {
+                this.dimensions.compatible(rhs.dimensions);
+            }
+            catch (e) {
+                var cause = (e instanceof Error) ? e.message : "" + e;
+                throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
+            }
             return this;
         }
         else {
@@ -388,6 +394,7 @@ var Unit = /** @class */ (function () {
     };
     /**
      * @param uom The unit of measure.
+     * @returns `true` if the uom is one or if it is undefined.
      */
     Unit.isOne = function (uom) {
         if (uom === void 0) {

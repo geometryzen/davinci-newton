@@ -9,9 +9,12 @@ import { Unit } from '../math/Unit';
  */
 export declare class ModifiedEuler implements DiffEqSolver {
     private readonly system;
-    private inp_;
-    private k1_;
-    private k2_;
+    private $invals;
+    private $inuoms;
+    private $k1vals;
+    private $k1uoms;
+    private $k2vals;
+    private $k2uoms;
     /**
      *
      */

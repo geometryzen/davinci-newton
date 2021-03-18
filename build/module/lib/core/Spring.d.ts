@@ -69,6 +69,9 @@ export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> 
     set springConstant(springConstant: T);
     get stiffness(): T;
     set stiffness(stiffness: T);
+    /**
+     * @param x (output)
+     */
     private computeBody1AttachPointInWorldCoords;
     private computeBody2AttachPointInWorldCoords;
     get attach1(): T;

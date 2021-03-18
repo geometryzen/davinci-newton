@@ -6,7 +6,7 @@ import { ModifiedEuler } from "./ModifiedEuler";
  * @hiddenI
  */
 class MockSystem implements DiffEqSolverSystem {
-    constructor(private readonly state: number[], private readonly rateOfChange: number[], public readonly stateEnd: number[]) {
+    constructor(private readonly state: number[], private readonly units: Unit[], private readonly rateOfChange: number[], private readonly rateOfChangeUnits: Unit[], public readonly stateEnd: number[], public readonly unitsEnd: Unit[]) {
 
     }
     /**
@@ -15,6 +15,9 @@ class MockSystem implements DiffEqSolverSystem {
     getState(): number[] {
         return this.state;
     }
+    getUnits(): Unit[] {
+        return this.units;
+    }
     /**
      * This is the second method of the simulation that is called by the solver.
      * @param state 
@@ -22,10 +25,11 @@ class MockSystem implements DiffEqSolverSystem {
      * @param Δt 
      * @param uomTime 
      */
-    evaluate(state: number[], rateOfChange: number[], Δt: number, uomTime?: Unit): void {
+    evaluate(state: number[], stateUoms: Unit[], rateOfChange: number[], rateOfChangeUnits: Unit[], Δt: number, uomTime?: Unit): void {
         const N = this.rateOfChange.length;
         for (let i = 0; i < N; i++) {
             rateOfChange[i] = this.rateOfChange[i];
+            rateOfChangeUnits[i] = this.rateOfChangeUnits[i];
         }
     }
     /**
@@ -38,6 +42,12 @@ class MockSystem implements DiffEqSolverSystem {
             this.stateEnd.push(state[i]);
         }
     }
+    setUnits(units: Unit[]): void {
+        const N = units.length;
+        for (let i = 0; i < N; i++) {
+            this.unitsEnd.push(units[i]);
+        }
+    }
 }
 
 describe("ModifiedEuler", function () {
@@ -45,9 +55,12 @@ describe("ModifiedEuler", function () {
         const x = Math.random();
         const ΔxOverΔt = Math.random();
         const state = [x];
+        const units = [Unit.METER];
         const rateOfChange = [ΔxOverΔt];
+        const rateOfChangeUnits = [Unit.div(Unit.METER, Unit.SECOND)];
         const stateEnd: number[] = [];
-        const system = new MockSystem(state, rateOfChange, stateEnd);
+        const unitsEnd: Unit[] = [];
+        const system = new MockSystem(state, units, rateOfChange, rateOfChangeUnits, stateEnd, unitsEnd);
         const method = new ModifiedEuler(system);
         expect(method).toBeDefined();
     });
@@ -56,12 +69,17 @@ describe("ModifiedEuler", function () {
         const ΔxOverΔt = Math.random();
         const Δt = Math.random();
         const state = [x];
+        const units = [Unit.METER];
         const rateOfChange = [ΔxOverΔt];
+        const rateOfChangeUnits = [Unit.div(Unit.METER, Unit.SECOND)];
         const stateEnd: number[] = [];
-        const system = new MockSystem(state, rateOfChange, stateEnd);
+        const unitsEnd: Unit[] = [];
+        const system = new MockSystem(state, units, rateOfChange, rateOfChangeUnits, stateEnd, unitsEnd);
         const method = new ModifiedEuler(system);
-        method.step(Δt);
+        method.step(Δt, Unit.SECOND);
         expect(system.stateEnd.length).toBe(1);
         expect(system.stateEnd[0]).toBe(x + ΔxOverΔt * Δt);
+        expect(system.unitsEnd.length).toBe(1);
+        expect(system.unitsEnd[0]).toBe(Unit.METER);
     });
 });

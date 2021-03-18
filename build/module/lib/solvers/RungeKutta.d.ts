@@ -8,11 +8,16 @@ import { Unit } from '../math/Unit';
  */
 export declare class RungeKutta implements DiffEqSolver {
     private readonly system;
-    private inp_;
-    private k1_;
-    private k2_;
-    private k3_;
-    private k4_;
+    private invals;
+    private inuoms;
+    private k1vals;
+    private k1uoms;
+    private k2vals;
+    private k2uoms;
+    private k3vals;
+    private k3uoms;
+    private k4vals;
+    private k4uoms;
     /**
      * Constructs a differential equation solver (integrator) that uses the classical Runge-Kutta method.
      * @param system The model that provides the system state and computes rates of change.

@@ -31,7 +31,5 @@ export class ConstantTorqueLaw<T> extends AbstractSimObject implements TorqueLaw
         const metric = this.$body.metric;
         // We don't really want to return a mutable quantity.
         return metric.zero();
-        throw new Error("Method not implemented.");
     }
-
 }

@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { Unit } from '../math/Unit';
 import { zeroArray } from '../util/zeroArray';
 /**
  * A differential equation solver that achieves O(h cubed) Local Truncation Error (LTE),
@@ -26,59 +27,157 @@ var RungeKutta = /** @class */ (function () {
      */
     function RungeKutta(system) {
         this.system = system;
-        this.inp_ = [];
-        this.k1_ = [];
-        this.k2_ = [];
-        this.k3_ = [];
-        this.k4_ = [];
+        this.invals = [];
+        this.inuoms = [];
+        this.k1vals = [];
+        this.k1uoms = [];
+        this.k2vals = [];
+        this.k2uoms = [];
+        this.k3vals = [];
+        this.k3uoms = [];
+        this.k4vals = [];
+        this.k4uoms = [];
         mustBeNonNullObject('system', system);
     }
     /**
      *
      */
     RungeKutta.prototype.step = function (stepSize, uomStep) {
-        var vars = this.system.getState();
-        var N = vars.length;
-        if (this.inp_.length < N) {
-            this.inp_ = new Array(N);
-            this.k1_ = new Array(N);
-            this.k2_ = new Array(N);
-            this.k3_ = new Array(N);
-            this.k4_ = new Array(N);
+        var system = this.system;
+        var stateVals = system.getState();
+        var stateUoms = system.getUnits();
+        var N = stateVals.length;
+        if (this.invals.length < N) {
+            this.invals = new Array(N);
+            this.inuoms = new Array(N);
+            this.k1vals = new Array(N);
+            this.k1uoms = new Array(N);
+            this.k2vals = new Array(N);
+            this.k2uoms = new Array(N);
+            this.k3vals = new Array(N);
+            this.k3uoms = new Array(N);
+            this.k4vals = new Array(N);
+            this.k4uoms = new Array(N);
         }
-        var inp = this.inp_;
-        var k1 = this.k1_;
-        var k2 = this.k2_;
-        var k3 = this.k3_;
-        var k4 = this.k4_;
+        var invals = this.invals;
+        var inuoms = this.inuoms;
+        var k1vals = this.k1vals;
+        var k1uoms = this.k1uoms;
+        var k2vals = this.k2vals;
+        var k2uoms = this.k2uoms;
+        var k3vals = this.k3vals;
+        var k3uoms = this.k3uoms;
+        var k4vals = this.k4vals;
+        var k4uoms = this.k4uoms;
         // evaluate at time t
         for (var i = 0; i < N; i++) {
-            inp[i] = vars[i];
+            invals[i] = stateVals[i];
+            inuoms[i] = stateUoms[i];
         }
-        zeroArray(k1);
-        this.system.evaluate(inp, k1, 0, uomStep);
+        zeroArray(k1vals);
+        system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
         // evaluate at time t + stepSize / 2
         for (var i = 0; i < N; i++) {
-            inp[i] = vars[i] + k1[i] * stepSize / 2;
+            if (i > 10 && !Unit.isOne(uomStep)) {
+                if (Unit.isOne(k1uoms[i]) && k1vals[i] !== 0) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep);
+                }
+            }
+            var uom = Unit.mul(k1uoms[i], uomStep);
+            if (stateVals[i] !== 0) {
+                try {
+                    if (k1vals[i] !== 0) {
+                        inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                    }
+                    else {
+                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}`);
+                        // inuoms[i] = stateUoms[i];
+                        inuoms[i] = uom;
+                    }
+                }
+                catch (e) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                }
+            }
+            else {
+                inuoms[i] = uom;
+            }
+            invals[i] = stateVals[i] + k1vals[i] * stepSize / 2;
         }
-        zeroArray(k2);
-        this.system.evaluate(inp, k2, stepSize / 2, uomStep);
+        zeroArray(k2vals);
+        system.evaluate(invals, inuoms, k2vals, k2uoms, stepSize / 2, uomStep);
         // evaluate at time t + stepSize / 2
         for (var i = 0; i < N; i++) {
-            inp[i] = vars[i] + k2[i] * stepSize / 2;
+            var uom = Unit.mul(k2uoms[i], uomStep);
+            if (stateVals[i] !== 0) {
+                try {
+                    if (k2vals[i] !== 0) {
+                        inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                    }
+                    else {
+                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}`);
+                        // inuoms[i] = stateUoms[i];
+                        inuoms[i] = uom;
+                    }
+                }
+                catch (e) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k2vals[" + i + "]=" + k2vals[i] + ", k2uoms[" + i + "]=" + k2uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                }
+            }
+            else {
+                inuoms[i] = uom;
+            }
+            invals[i] = stateVals[i] + k2vals[i] * stepSize / 2;
         }
-        zeroArray(k3);
-        this.system.evaluate(inp, k3, stepSize / 2, uomStep);
+        zeroArray(k3vals);
+        system.evaluate(invals, inuoms, k3vals, k3uoms, stepSize / 2, uomStep);
         // evaluate at time t + stepSize
         for (var i = 0; i < N; i++) {
-            inp[i] = vars[i] + k3[i] * stepSize;
+            var uom = Unit.mul(k3uoms[i], uomStep);
+            if (stateVals[i] !== 0) {
+                try {
+                    if (k3vals[i] !== 0) {
+                        inuoms[i] = Unit.compatible(stateUoms[i], uom);
+                    }
+                    else {
+                        // inuoms[i] = stateUoms[i];
+                        inuoms[i] = uom;
+                    }
+                }
+                catch (e) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k3vals[" + i + "]=" + k3vals[i] + ", k3uoms[" + i + "]=" + k3uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                }
+            }
+            else {
+                inuoms[i] = uom;
+            }
+            invals[i] = stateVals[i] + k3vals[i] * stepSize;
         }
-        zeroArray(k4);
-        this.system.evaluate(inp, k4, stepSize, uomStep);
+        zeroArray(k4vals);
+        system.evaluate(invals, inuoms, k4vals, k4uoms, stepSize, uomStep);
         for (var i = 0; i < N; i++) {
-            vars[i] += (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * stepSize / 6;
+            var uom = Unit.mul(k4uoms[i], uomStep);
+            if (stateVals[i] !== 0) {
+                try {
+                    if (k4vals[i] !== 0) {
+                        stateUoms[i] = Unit.compatible(stateUoms[i], uom);
+                    }
+                    else {
+                        // Do nothing.
+                        stateUoms[i] = uom;
+                    }
+                }
+                catch (e) {
+                    throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k4vals[" + i + "]=" + k4vals[i] + ", k4uoms[" + i + "]=" + k4uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                }
+            }
+            else {
+                stateUoms[i] = uom;
+            }
+            stateVals[i] += (k1vals[i] + 2 * k2vals[i] + 2 * k3vals[i] + k4vals[i]) * stepSize / 6;
         }
-        this.system.setState(vars);
+        system.setState(stateVals);
+        system.setUnits(stateUoms);
     };
     return RungeKutta;
 }());

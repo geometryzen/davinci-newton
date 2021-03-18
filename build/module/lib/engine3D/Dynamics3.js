@@ -1,5 +1,6 @@
 import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { VarsList } from '../core/VarsList';
+import { Unit } from '../math/Unit';
 import { wedgeXY, wedgeYZ, wedgeZX } from '../math/wedge3';
 /**
  * @hidden
@@ -181,6 +182,7 @@ var Dynamics3 = /** @class */ (function () {
             pe += fs[i].potentialEnergy().a;
         }
         varsList.setValueContinuous(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te);
+        // TODO: varsList.setUnit(INDEX_TRANSLATIONAL_KINETIC_ENERGY, te); etc
         varsList.setValueContinuous(INDEX_ROTATIONAL_KINETIC_ENERGY, re);
         varsList.setValueContinuous(INDEX_POTENTIAL_ENERGY, pe);
         varsList.setValueContinuous(INDEX_TOTAL_ENERGY, te + re + pe);
@@ -195,45 +197,106 @@ var Dynamics3 = /** @class */ (function () {
         vars.setValueJump(OFFSET_POSITION_X + idx, body.X.x);
         vars.setValueJump(OFFSET_POSITION_Y + idx, body.X.y);
         vars.setValueJump(OFFSET_POSITION_Z + idx, body.X.z);
+        vars.setUnit(OFFSET_POSITION_X + idx, body.X.uom);
+        vars.setUnit(OFFSET_POSITION_Y + idx, body.X.uom);
+        vars.setUnit(OFFSET_POSITION_Z + idx, body.X.uom);
         vars.setValueJump(OFFSET_ATTITUDE_A + idx, body.R.a);
         vars.setValueJump(OFFSET_ATTITUDE_XY + idx, body.R.xy);
         vars.setValueJump(OFFSET_ATTITUDE_YZ + idx, body.R.yz);
         vars.setValueJump(OFFSET_ATTITUDE_ZX + idx, body.R.zx);
+        vars.setUnit(OFFSET_ATTITUDE_A + idx, body.R.uom);
+        vars.setUnit(OFFSET_ATTITUDE_XY + idx, body.R.uom);
+        vars.setUnit(OFFSET_ATTITUDE_YZ + idx, body.R.uom);
+        vars.setUnit(OFFSET_ATTITUDE_ZX + idx, body.R.uom);
         vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
         vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
         vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.z);
+        vars.setUnit(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.uom);
+        vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.uom);
+        vars.setUnit(OFFSET_LINEAR_MOMENTUM_Z + idx, body.P.uom);
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.xy);
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.yz);
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.zx);
+        vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.uom);
+        vars.setUnit(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.uom);
+        vars.setUnit(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.uom);
     };
-    Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChange, idx, force) {
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] += force.x;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] += force.y;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] += force.z;
+    Dynamics3.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+        var Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
+        if (Fx !== 0) {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
+        var Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
+        if (Fy !== 0) {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y], force.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = Fy + force.y;
+        var Fz = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z];
+        if (Fz !== 0) {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z], force.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = Fz + force.z;
     };
-    Dynamics3.prototype.getForce = function (rateOfChange, idx, force) {
-        force.x = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X];
-        force.y = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y];
-        force.z = rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z];
+    Dynamics3.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+        force.x = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
+        force.y = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
+        force.z = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z];
+        force.uom = rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X];
     };
-    Dynamics3.prototype.setForce = function (rateOfChange, idx, force) {
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+    Dynamics3.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
     };
-    Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChange, idx, torque) {
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] += torque.yz;
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] += torque.zx;
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] += torque.xy;
+    Dynamics3.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+        var Tyz = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ];
+        if (Tyz !== 0) {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ], torque.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = torque.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Tyz + torque.yz;
+        var Tzx = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
+        if (Tzx !== 0) {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX], torque.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = torque.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Tzx + torque.zx;
+        var Txy = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY];
+        if (Txy !== 0) {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY], torque.uom);
+        }
+        else {
+            rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = torque.uom;
+        }
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Txy + torque.xy;
     };
-    Dynamics3.prototype.updateBodyFromVars = function (vars, idx, body) {
+    Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body) {
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
         body.X.z = vars[idx + OFFSET_POSITION_Z];
+        body.X.uom = units[idx + OFFSET_POSITION_X];
         body.R.a = vars[idx + OFFSET_ATTITUDE_A];
         body.R.xy = vars[idx + OFFSET_ATTITUDE_XY];
         body.R.yz = vars[idx + OFFSET_ATTITUDE_YZ];
         body.R.zx = vars[idx + OFFSET_ATTITUDE_ZX];
+        body.R.uom = units[idx + OFFSET_ATTITUDE_A];
         // Keep the magnitude of the attitude as close to 1 as possible.
         var R = body.R;
         var magR = Math.sqrt(R.a * R.a + R.xy * R.xy + R.yz * R.yz + R.zx * R.zx);
@@ -244,41 +307,62 @@ var Dynamics3 = /** @class */ (function () {
         body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
         body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
         body.P.z = vars[idx + OFFSET_LINEAR_MOMENTUM_Z];
+        body.P.uom = units[idx + OFFSET_LINEAR_MOMENTUM_X];
         body.L.xy = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
         body.L.yz = vars[idx + OFFSET_ANGULAR_MOMENTUM_YZ];
         body.L.zx = vars[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
+        body.L.uom = units[idx + OFFSET_ANGULAR_MOMENTUM_XY];
         body.updateAngularVelocity();
     };
-    Dynamics3.prototype.setPositionRateOfChangeVars = function (rateOfChange, idx, body) {
+    Dynamics3.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
         // The rate of change of position is the velocity.
         // dX/dt = V = P / M
         var P = body.P;
-        var mass = body.M.a;
-        rateOfChange[idx + OFFSET_POSITION_X] = P.x / mass;
-        rateOfChange[idx + OFFSET_POSITION_Y] = P.y / mass;
-        rateOfChange[idx + OFFSET_POSITION_Z] = P.z / mass;
+        var M = body.M;
+        var m = M.a;
+        rateOfChangeVals[idx + OFFSET_POSITION_X] = P.x / m;
+        rateOfChangeVals[idx + OFFSET_POSITION_Y] = P.y / m;
+        rateOfChangeVals[idx + OFFSET_POSITION_Z] = P.z / m;
+        var uom = Unit.div(P.uom, M.uom);
+        rateOfChangeUoms[idx + OFFSET_POSITION_X] = uom;
+        rateOfChangeUoms[idx + OFFSET_POSITION_Y] = uom;
+        rateOfChangeUoms[idx + OFFSET_POSITION_Z] = uom;
     };
-    Dynamics3.prototype.setAttitudeRateOfChangeVars = function (rateOfChange, idx, body) {
+    Dynamics3.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
         // requiring the geometric product of Ω and R.
         // Ω and R are auxiliary and primary variables that have already been computed.
         var R = body.R;
         var Ω = body.Ω;
-        rateOfChange[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
-        rateOfChange[idx + OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
-        rateOfChange[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
-        rateOfChange[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+        rateOfChangeVals[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy + Ω.yz * R.yz + Ω.zx * R.zx);
+        rateOfChangeVals[idx + OFFSET_ATTITUDE_YZ] = -0.5 * (Ω.yz * R.a + Ω.xy * R.zx - Ω.zx * R.xy);
+        rateOfChangeVals[idx + OFFSET_ATTITUDE_ZX] = -0.5 * (Ω.zx * R.a + Ω.yz * R.xy - Ω.xy * R.yz);
+        rateOfChangeVals[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a + Ω.zx * R.yz - Ω.yz * R.zx);
+        var uom = Unit.mul(Ω.uom, R.uom);
+        rateOfChangeUoms[idx + OFFSET_ATTITUDE_A] = uom;
+        rateOfChangeUoms[idx + OFFSET_ATTITUDE_YZ] = uom;
+        rateOfChangeUoms[idx + OFFSET_ATTITUDE_ZX] = uom;
+        rateOfChangeUoms[idx + OFFSET_ATTITUDE_XY] = uom;
     };
-    Dynamics3.prototype.zeroLinearMomentumVars = function (rateOfChange, idx) {
-        // The rate of change change in linear and angular velocity are set to zero, ready for accumulation.
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
-        rateOfChange[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
+    Dynamics3.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+        var P = body.P;
+        var uom = Unit.div(P.uom, uomTime);
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = 0;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = uom;
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = 0;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = uom;
+        rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = 0;
+        rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = uom;
     };
-    Dynamics3.prototype.zeroAngularMomentumVars = function (rateOfChange, idx) {
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
-        rateOfChange[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+    Dynamics3.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+        var L = body.L;
+        var uom = Unit.div(L.uom, uomTime);
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = 0;
+        rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = uom;
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = 0;
+        rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = uom;
+        rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = 0;
+        rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = uom;
     };
     return Dynamics3;
 }());

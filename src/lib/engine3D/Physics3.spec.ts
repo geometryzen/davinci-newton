@@ -1,6 +1,8 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { Geometric3 as G3 } from '../math/Geometric3';
-import { ConstantEnergySolver } from '../solvers/ConstantEnergySolver';
+// import { EulerMethod } from '../solvers/EulerMethod';
+// import { ModifiedEuler } from '../solvers/ModifiedEuler';
+// import { ConstantEnergySolver } from '../solvers/ConstantEnergySolver';
 import { RungeKutta } from '../solvers/RungeKutta';
 import { DefaultAdvanceStrategy } from '../strategy/DefaultAdvanceStrategy';
 import { Block3 } from './Block3';
@@ -28,9 +30,10 @@ describe("Physics3", function () {
 
         const state = new Physics3();
         const rk4: DiffEqSolver = new RungeKutta(state);
-        const solver = new ConstantEnergySolver(state, state, rk4);
-        solver.tolerance = 1E-5;
-        solver.stepLowerBound = 1E-7;
+        const solver = rk4;
+        // const solver = new ConstantEnergySolver(state, state, rk4);
+        // solver.tolerance = 1E-5;
+        // solver.stepLowerBound = 1E-7;
         const strategy = new DefaultAdvanceStrategy(state, solver);
         const Δt = G3.scalar(0.01).mul(s);
 
@@ -44,6 +47,12 @@ describe("Physics3", function () {
         block2.M = G3.scalar(1).mul(kg);
         block1.X = G3.scalar(-1.0).mul(e1).mul(m);
         block2.X = G3.scalar(+1.0).mul(e1).mul(m);
+        // Why is this needed?
+        block1.P = G3.scalar(0).mul(kg).mul(m).div(s);
+        block2.P = G3.scalar(0).mul(kg).mul(m).div(s);
+        // And this?
+        block1.L = G3.scalar(0).mul(m).mul(kg).mul(m).div(s);
+        block2.L = G3.scalar(0).mul(m).mul(kg).mul(m).div(s);
 
         state.addBody(block1);
         state.addBody(block2);
@@ -52,8 +61,13 @@ describe("Physics3", function () {
         const spring = new Spring3(block1, block2);
         spring.restLength = G3.scalar(1).mul(m);
         spring.stiffness = G3.scalar(1).mul(N).divByScalar(m.a, m.uom);
-        state.addForceLaw(spring);
+        // state.addForceLaw(spring);
         spring.attach1 = G3.scalar(1).mul(block1.width).mul(e1).add(G3.scalar(1).mul(block1.depth).mul(e3)).divByNumber(2);
+
+        const forces = spring.updateForces();
+        expect(forces.length).toBe(2);
+        expect(forces[0].F.toString()).toBe("0.7600505063388335*e1-0.1085786437626905*e3 N");
+        expect(forces[1].F.toString()).toBe("-0.7600505063388335*e1+0.1085786437626905*e3 N");
 
         // Advance one step so that the forces are computed and visible.
         strategy.advance(Δt.a, Δt.uom);

@@ -26,9 +26,12 @@ import { zeroArray } from '../util/zeroArray';
  * @hidden
  */
 export class ModifiedEuler implements DiffEqSolver {
-    private inp_: number[] = [];
-    private k1_: number[] = [];
-    private k2_: number[] = [];
+    private $invals: number[] = [];
+    private $inuoms: Unit[] = [];
+    private $k1vals: number[] = [];
+    private $k1uoms: Unit[] = [];
+    private $k2vals: number[] = [];
+    private $k2uoms: Unit[] = [];
     /**
      * 
      */
@@ -36,31 +39,54 @@ export class ModifiedEuler implements DiffEqSolver {
         mustBeNonNullObject('system', system);
     }
     step(stepSize: number, uomStep?: Unit): void {
-        const vars = this.system.getState();
-        const N = vars.length;
-        if (this.inp_.length !== N) {
-            this.inp_ = new Array(N);
-            this.k1_ = new Array(N);
-            this.k2_ = new Array(N);
+        const stateVals = this.system.getState();
+        const stateUoms = this.system.getUnits();
+        const N = stateVals.length;
+        if (this.$invals.length !== N) {
+            this.$invals = new Array(N);
+            this.$inuoms = new Array(N);
+            this.$k1vals = new Array(N);
+            this.$k1uoms = new Array(N);
+            this.$k2vals = new Array(N);
+            this.$k2uoms = new Array(N);
         }
-        const inp = this.inp_;
-        const k1 = this.k1_;
-        const k2 = this.k2_;
+        const invals = this.$invals;
+        const inuoms = this.$inuoms;
+        const k1vals = this.$k1vals;
+        const k1uoms = this.$k1uoms;
+        const k2vals = this.$k2vals;
+        const k2uoms = this.$k2uoms;
         // evaluate at time t
         for (let i = 0; i < N; i++) {
-            inp[i] = vars[i];
+            invals[i] = stateVals[i];
+            inuoms[i] = stateUoms[i];
         }
-        zeroArray(k1);
-        this.system.evaluate(inp, k1, 0, uomStep);
+        zeroArray(k1vals);
+        this.system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
         // evaluate at time t+stepSize
         for (let i = 0; i < N; i++) {
-            inp[i] = vars[i] + k1[i] * stepSize;
+            if (stateVals[i] !== 0) {
+                inuoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
+            } else {
+                inuoms[i] = Unit.mul(k1uoms[i], uomStep);
+            }
+            invals[i] = stateVals[i] + k1vals[i] * stepSize;
         }
-        zeroArray(k2);
-        this.system.evaluate(inp, k2, stepSize, uomStep);
+        zeroArray(k2vals);
+        this.system.evaluate(invals, inuoms, k2vals, k2uoms, stepSize, uomStep);
         for (let i = 0; i < N; i++) {
-            vars[i] += (k1[i] + k2[i]) * stepSize / 2;
+            if (stateVals[i] !== 0) {
+                if (k2vals[i] !== 0) {
+                    stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k2uoms[i], uomStep));
+                } else {
+                    // Do nothing.
+                }
+            } else {
+                stateUoms[i] = Unit.mul(k2uoms[i], uomStep);
+            }
+            stateVals[i] += (k1vals[i] + k2vals[i]) * stepSize / 2;
         }
-        this.system.setState(vars);
+        this.system.setState(stateVals);
+        this.system.setUnits(stateUoms);
     }
 }

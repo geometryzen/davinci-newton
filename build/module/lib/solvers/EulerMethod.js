@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
+import { Unit } from '../math/Unit';
 import { zeroArray } from '../util/zeroArray';
 /**
  * The Euler algorithm uses the rate of change values at the
@@ -25,29 +26,49 @@ var EulerMethod = /** @class */ (function () {
      */
     function EulerMethod(system) {
         this.system = system;
-        this.inp_ = [];
-        this.k1_ = [];
+        this.$invals = [];
+        this.$inuoms = [];
+        this.$k1vals = [];
+        this.$k1uoms = [];
         mustBeNonNullObject('system', system);
     }
     EulerMethod.prototype.step = function (stepSize, uomStep) {
-        var vars = this.system.getState();
-        var N = vars.length;
-        if (this.inp_.length !== N) {
-            this.inp_ = new Array(N);
-            this.k1_ = new Array(N);
+        var stateVals = this.system.getState();
+        var stateUoms = this.system.getUnits();
+        var N = stateVals.length;
+        if (this.$invals.length !== N) {
+            this.$invals = new Array(N);
+            this.$inuoms = new Array(N);
+            this.$k1vals = new Array(N);
+            this.$k1uoms = new Array(N);
         }
-        var inp = this.inp_;
-        var k1 = this.k1_;
+        var invals = this.$invals;
+        var inuoms = this.$inuoms;
+        var k1vals = this.$k1vals;
+        var k1uoms = this.$k1uoms;
         for (var i = 0; i < N; i++) {
             // set up input to diffeqs (note: this protects vars from being changed)
-            inp[i] = vars[i];
+            invals[i] = stateVals[i];
+            inuoms[i] = stateUoms[i];
         }
-        zeroArray(k1);
-        this.system.evaluate(inp, k1, 0, uomStep);
+        zeroArray(k1vals); // TODO: Is this redundant for an output variable?
+        this.system.evaluate(invals, inuoms, k1vals, k1uoms, 0, uomStep);
         for (var i = 0; i < N; i++) {
-            vars[i] += k1[i] * stepSize;
+            try {
+                if (stateVals[i] !== 0) {
+                    stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
+                }
+                else {
+                    stateUoms[i] = Unit.mul(k1uoms[i], uomStep);
+                }
+            }
+            catch (e) {
+                throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+            }
+            stateVals[i] += k1vals[i] * stepSize;
         }
-        this.system.setState(vars);
+        this.system.setState(stateVals);
+        this.system.setUnits(stateUoms);
     };
     return EulerMethod;
 }());

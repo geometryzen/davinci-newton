@@ -8,8 +8,10 @@ import { Unit } from '../math/Unit';
  */
 export declare class EulerMethod implements DiffEqSolver {
     private readonly system;
-    private inp_;
-    private k1_;
+    private $invals;
+    private $inuoms;
+    private $k1vals;
+    private $k1uoms;
     /**
      *
      */

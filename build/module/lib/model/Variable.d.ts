@@ -1,3 +1,4 @@
+import { Unit } from '../math/Unit';
 import { Parameter } from '../util/Parameter';
 /**
  * Represents a variable with a numeric value; usually stored in a VarsList.
@@ -27,6 +28,10 @@ export interface Variable extends Parameter {
      */
     getValue(): number;
     /**
+     * Returns the unit of measure of this variable.
+     */
+    getUnit(): Unit;
+    /**
      * Increments the sequence number of this Variable, which indicates that a
      * discontinuity has occurred in the value of this variable.
      *  This information is used in a graph to prevent drawing a line between points that have a discontinuity.
@@ -46,4 +51,8 @@ export interface Variable extends Parameter {
      * it is a 'smooth' continuous change to the variable.
      */
     setValueContinuous(value: number): void;
+    /**
+     * Sets the unit of measure of this variable.
+     */
+    setUnit(unit: Unit): void;
 }

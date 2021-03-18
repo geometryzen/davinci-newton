@@ -363,9 +363,14 @@ export class Unit {
     this.labels = labels;
   }
 
-  private compatible(rhs: Unit): Unit {
+  private compatible(rhs: Unit): this | never {
     if (rhs instanceof Unit) {
-      this.dimensions.compatible(rhs.dimensions);
+      try {
+        this.dimensions.compatible(rhs.dimensions);
+      } catch (e) {
+        const cause = (e instanceof Error) ? e.message : `${e}`;
+        throw new Error(`${this} is not compatible with ${rhs}. Cause: ${cause}`);
+      }
       return this;
     }
     else {
@@ -532,6 +537,7 @@ export class Unit {
 
   /**
    * @param uom The unit of measure.
+   * @returns `true` if the uom is one or if it is undefined.
    */
   static isOne(uom: Unit): boolean {
     if (uom === void 0) {

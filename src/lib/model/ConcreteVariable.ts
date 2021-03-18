@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Unit } from '../math/Unit';
 import { VarsList } from '../core/VarsList';
 import toName from '../util/toName';
 import validName from '../util/validName';
@@ -26,7 +27,12 @@ export class ConcreteVariable implements Variable {
     /**
      * 
      */
-    private value_ = 0;
+    private $value = 0;
+
+    /**
+     *
+     */
+    private $uom: Unit = Unit.ONE;
 
     /**
      * 
@@ -81,7 +87,11 @@ export class ConcreteVariable implements Variable {
      * 
      */
     getValue(): number {
-        return this.value_;
+        return this.$value;
+    }
+
+    getUnit(): Unit {
+        return this.$uom;
     }
 
     nameEquals(name: string): boolean {
@@ -100,12 +110,16 @@ export class ConcreteVariable implements Variable {
         return this.isComputed_;
     }
 
+    setUnit(uom: Unit): void {
+        this.$uom = uom;
+    }
+
     /**
      * 
      */
     setValueJump(value: number): void {
-        if (this.value_ !== value) {
-            this.value_ = value;
+        if (this.$value !== value) {
+            this.$value = value;
             this.seq_++;
             if (this.doesBroadcast_) {
                 this.varsList_.broadcast(this);
@@ -114,7 +128,7 @@ export class ConcreteVariable implements Variable {
     }
 
     setValueContinuous(value: number): void {
-        this.value_ = value;
+        this.$value = value;
     }
 
     /**
