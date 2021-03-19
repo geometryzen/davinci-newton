@@ -86,6 +86,7 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      */
     private histArray_;
     /**
+     * Initializes the list of variables. The names argument must contain the reserved, case-insensitive, 'time' variable.
      * @param names  array of language-independent variable names;
      * these will be underscorized so the English names can be passed in here.
      */
@@ -180,13 +181,6 @@ export declare class VarsList extends AbstractSubject implements GraphVarsList {
      *
      */
     private checkIndex_;
-    /**
-     * Add a Variable to this VarsList.
-     * @param variable the Variable to add
-     * @return the index number of the variable
-     * @throws if name if the Variable is 'DELETED'
-     */
-    addVariable(variable: Variable): number;
     /**
      * Whether recent history is being stored, see `saveHistory`.
      * @return true if recent history is being stored

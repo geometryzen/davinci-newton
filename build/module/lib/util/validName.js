@@ -17,9 +17,22 @@
  * and first character is a letter or underscore.
  * @hidden
  */
-export default function validName(text) {
-    if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
-        throw new Error('not a valid name: ' + text);
+export function validName(text) {
+    if (!isValidName(text)) {
+        throw new Error("The string '" + text + "' is not a valid name. The name must consist of only uppercase letters, numbers, and underscore. The first character must be a letter or an underscore.");
     }
     return text;
+}
+/**
+ * @hidden
+ * @param text
+ * @returns
+ */
+export function isValidName(text) {
+    if (text.match(/^[A-Z_][A-Z_0-9]*$/)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }

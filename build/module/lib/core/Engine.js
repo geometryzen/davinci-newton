@@ -105,6 +105,9 @@ var Engine = /** @class */ (function () {
     Engine.prototype.updateFromBodies = function () {
         this.physics.updateFromBodies();
     };
+    Engine.prototype.totalEnergy = function () {
+        return this.physics.totalEnergy();
+    };
     return Engine;
 }());
 export { Engine };

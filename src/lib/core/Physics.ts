@@ -16,6 +16,10 @@ import { SimList } from './SimList';
 import { Simulation } from './Simulation';
 import { VarsList } from './VarsList';
 import { Torque } from './Torque';
+import { varNamesContainsTime } from './varNamesContainsTime';
+import { isValidName } from '../util/validName';
+import { toName } from '../util/toName';
+
 
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
@@ -60,7 +64,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      */
     private $showTorques = false;
     /**
-     * 
+     * Scratch variavle for computing a potential energy offset.
      */
     private readonly $potentialOffset: T;
     /**
@@ -89,13 +93,20 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         super();
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('dynamics', dynamics);
-        this.$varsList = new VarsList(dynamics.getVarNames());
+        const varNames = dynamics.getVarNames();
+        if (!varNamesContainsTime(varNames)) {
+            throw new Error("Dynamics.getVarNames() must contain a time variable.");
+        }
+        this.$varsList = new VarsList(varNames);
         this.$potentialOffset = metric.zero();
         this.$force = metric.zero();
         this.$torque = metric.zero();
         this.$totalEnergy = metric.zero();
         this.$totalEnergyLock = metric.lock(this.$totalEnergy);
         this.$numVariablesPerBody = dynamics.numVarsPerBody();
+        if (this.$numVariablesPerBody <= 0) {
+            throw new Error("Dynamics.numVarsPerBody() must define at least one variable per body.");
+        }
     }
     getVariableName(idx: number): string {
         return this.varsList.getVariable(idx).name;
@@ -137,7 +148,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             // create variables in vars array for this body
             const names = [];
             for (let k = 0; k < this.$numVariablesPerBody; k++) {
-                names.push(dynamics.getOffsetName(k));
+                const name = dynamics.getOffsetName(k);
+                if (isValidName(toName(name))) {
+                    names.push(name);
+                } else {
+                    throw new Error(`Body kinematic variable name, '${name}', returned by Dynamics.getOffsetName(${k}) is not a valid name.`);
+                }
             }
             body.varsIndex = this.$varsList.addVariables(names);
             // add body to end of list of bodies
@@ -598,11 +614,11 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    epilog(stepSize: number, uomStep?: Unit): void {
+    epilog(stepSize: number, uomTime?: Unit): void {
         const varsList = this.$varsList;
         const vars = varsList.getValues();
         const units = varsList.getUnits();
-        this.updateBodiesFromStateVariables(vars, units, uomStep);
+        this.updateBodiesFromStateVariables(vars, units, uomTime);
         const dynamics = this.dynamics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     }

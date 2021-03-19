@@ -57,4 +57,5 @@ export declare class Engine<T> {
      *
      */
     updateFromBodies(): void;
+    totalEnergy(): T;
 }

@@ -7,6 +7,9 @@ import { contains } from '../util/contains';
 import remove from '../util/remove';
 import { SimList } from './SimList';
 import { VarsList } from './VarsList';
+import { varNamesContainsTime } from './varNamesContainsTime';
+import { isValidName } from '../util/validName';
+import { toName } from '../util/toName';
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
@@ -55,13 +58,20 @@ var Physics = /** @class */ (function (_super) {
         _this.$showTorques = false;
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('dynamics', dynamics);
-        _this.$varsList = new VarsList(dynamics.getVarNames());
+        var varNames = dynamics.getVarNames();
+        if (!varNamesContainsTime(varNames)) {
+            throw new Error("Dynamics.getVarNames() must contain a time variable.");
+        }
+        _this.$varsList = new VarsList(varNames);
         _this.$potentialOffset = metric.zero();
         _this.$force = metric.zero();
         _this.$torque = metric.zero();
         _this.$totalEnergy = metric.zero();
         _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
         _this.$numVariablesPerBody = dynamics.numVarsPerBody();
+        if (_this.$numVariablesPerBody <= 0) {
+            throw new Error("Dynamics.numVarsPerBody() must define at least one variable per body.");
+        }
         return _this;
     }
     Physics.prototype.getVariableName = function (idx) {
@@ -109,7 +119,13 @@ var Physics = /** @class */ (function (_super) {
             // create variables in vars array for this body
             var names = [];
             for (var k = 0; k < this.$numVariablesPerBody; k++) {
-                names.push(dynamics.getOffsetName(k));
+                var name_1 = dynamics.getOffsetName(k);
+                if (isValidName(toName(name_1))) {
+                    names.push(name_1);
+                }
+                else {
+                    throw new Error("Body kinematic variable name, '" + name_1 + "', returned by Dynamics.getOffsetName(" + k + ") is not a valid name.");
+                }
             }
             body.varsIndex = this.$varsList.addVariables(names);
             // add body to end of list of bodies
@@ -528,11 +544,11 @@ var Physics = /** @class */ (function (_super) {
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    Physics.prototype.epilog = function (stepSize, uomStep) {
+    Physics.prototype.epilog = function (stepSize, uomTime) {
         var varsList = this.$varsList;
         var vars = varsList.getValues();
         var units = varsList.getUnits();
-        this.updateBodiesFromStateVariables(vars, units, uomStep);
+        this.updateBodiesFromStateVariables(vars, units, uomTime);
         var dynamics = this.dynamics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     };

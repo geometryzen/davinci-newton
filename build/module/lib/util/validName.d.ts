@@ -3,4 +3,10 @@
  * and first character is a letter or underscore.
  * @hidden
  */
-export default function validName(text: string): string;
+export declare function validName(text: string): string;
+/**
+ * @hidden
+ * @param text
+ * @returns
+ */
+export declare function isValidName(text: string): boolean;

@@ -132,4 +132,8 @@ export class Engine<T> {
     updateFromBodies(): void {
         this.physics.updateFromBodies();
     }
+
+    totalEnergy(): T {
+        return this.physics.totalEnergy();
+    }
 }

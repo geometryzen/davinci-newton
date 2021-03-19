@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import toName from '../util/toName';
+import { toName } from '../util/toName';
 import clone from './clone';
 import { contains } from './contains';
 import find from './find';

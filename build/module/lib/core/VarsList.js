@@ -8,8 +8,8 @@ import extendArray from '../util/extendArray';
 import find from '../util/find';
 import findIndex from '../util/findIndex';
 import { GenericEvent } from '../util/GenericEvent';
-import toName from '../util/toName';
-import validName from '../util/validName';
+import { toName } from '../util/toName';
+import { validName } from '../util/validName';
 /**
  * @hidden
  * A set of Variables.
@@ -60,6 +60,7 @@ import validName from '../util/validName';
 var VarsList = /** @class */ (function (_super) {
     __extends(VarsList, _super);
     /**
+     * Initializes the list of variables. The names argument must contain the reserved, case-insensitive, 'time' variable.
      * @param names  array of language-independent variable names;
      * these will be underscorized so the English names can be passed in here.
      */
@@ -93,6 +94,8 @@ var VarsList = /** @class */ (function (_super) {
         if (howMany !== 0) {
             _this.addVariables(names);
         }
+        // This call has the side-effect of throwing an exception if the time variable has not been defined.
+        _this.getTime();
         return _this;
     }
     /**
@@ -146,6 +149,10 @@ var VarsList = /** @class */ (function (_super) {
      * @throws if any of the variable names is 'DELETED', or array of names is empty
      */
     VarsList.prototype.addVariables = function (names) {
+        // TODO: This is used BOTH when adding a body and when constructing the summary variables.
+        // But the check for the time variable only happens for the summary variables (and could be
+        // prohibited for adding a body). Additionally, the broadcast does not make sense in the constructor
+        // since there would be no listeners.
         var howMany = names.length;
         if (howMany === 0) {
             throw new Error("names must not be empty.");
@@ -157,6 +164,7 @@ var VarsList = /** @class */ (function (_super) {
                 throw new Error("variable cannot be named '" + VarsList.DELETED + "'.");
             }
             var idx = position + i;
+            // DRY: Why aren't we delegating to this.addVariable with the newly created variable?
             this.$variables[idx] = new ConcreteVariable(this, name_1);
             if (name_1 === VarsList.TIME) {
                 // auto-detect time variable
@@ -360,19 +368,20 @@ var VarsList = /** @class */ (function (_super) {
             throw new Error('bad variable index=' + index + '; numVars=' + this.$variables.length);
         }
     };
-    /**
-     * Add a Variable to this VarsList.
-     * @param variable the Variable to add
-     * @return the index number of the variable
-     * @throws if name if the Variable is 'DELETED'
-     */
-    VarsList.prototype.addVariable = function (variable) {
-        var name = variable.name;
+    //
+    // Add a Variable to this VarsList.
+    // @param variable the Variable to add
+    // @return the index number of the variable
+    // @throws if name if the Variable is 'DELETED'
+    //
+    /*
+    private addVariable(variable: Variable): number {
+        const name = variable.name;
         if (name === VarsList.DELETED) {
-            throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
+            throw new Error(`variable cannot be named '${VarsList.DELETED}'`);
         }
         // add variable to first open slot
-        var position = this.findOpenSlot_(1);
+        const position = this.findOpenSlot_(1);
         this.$variables[position] = variable;
         if (name === VarsList.TIME) {
             // auto-detect time variable
@@ -380,7 +389,8 @@ var VarsList = /** @class */ (function (_super) {
         }
         this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
         return position;
-    };
+    }
+    */
     /**
      * Whether recent history is being stored, see `saveHistory`.
      * @return true if recent history is being stored
@@ -411,7 +421,7 @@ var VarsList = /** @class */ (function (_super) {
      */
     VarsList.prototype.getTime = function () {
         if (this.$timeIdx < 0) {
-            throw new Error('no time variable');
+            throw new Error('No "time" variable.');
         }
         return this.getValue(this.$timeIdx);
     };

@@ -3,4 +3,4 @@
  * and replacing spaces and dashes with underscores.
  * @hidden
  */
-export default function toName(text: string): string;
+export declare function toName(text: string): string;

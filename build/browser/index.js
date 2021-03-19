@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-18';
+            this.LAST_MODIFIED = '2021-03-19';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.58';
+            this.VERSION = '1.0.59';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -3096,10 +3096,23 @@
      * @hidden
      */
     function validName(text) {
-        if (!text.match(/^[A-Z_][A-Z_0-9]*$/)) {
-            throw new Error('not a valid name: ' + text);
+        if (!isValidName(text)) {
+            throw new Error("The string '" + text + "' is not a valid name. The name must consist of only uppercase letters, numbers, and underscore. The first character must be a letter or an underscore.");
         }
         return text;
+    }
+    /**
+     * @hidden
+     * @param text
+     * @returns
+     */
+    function isValidName(text) {
+        if (text.match(/^[A-Z_][A-Z_0-9]*$/)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     // Copyright 2017 David Holmes.  All Rights Reserved.
@@ -3748,6 +3761,7 @@
     var VarsList = /** @class */ (function (_super) {
         __extends(VarsList, _super);
         /**
+         * Initializes the list of variables. The names argument must contain the reserved, case-insensitive, 'time' variable.
          * @param names  array of language-independent variable names;
          * these will be underscorized so the English names can be passed in here.
          */
@@ -3781,6 +3795,8 @@
             if (howMany !== 0) {
                 _this.addVariables(names);
             }
+            // This call has the side-effect of throwing an exception if the time variable has not been defined.
+            _this.getTime();
             return _this;
         }
         /**
@@ -3834,6 +3850,10 @@
          * @throws if any of the variable names is 'DELETED', or array of names is empty
          */
         VarsList.prototype.addVariables = function (names) {
+            // TODO: This is used BOTH when adding a body and when constructing the summary variables.
+            // But the check for the time variable only happens for the summary variables (and could be
+            // prohibited for adding a body). Additionally, the broadcast does not make sense in the constructor
+            // since there would be no listeners.
             var howMany = names.length;
             if (howMany === 0) {
                 throw new Error("names must not be empty.");
@@ -3845,6 +3865,7 @@
                     throw new Error("variable cannot be named '" + VarsList.DELETED + "'.");
                 }
                 var idx = position + i;
+                // DRY: Why aren't we delegating to this.addVariable with the newly created variable?
                 this.$variables[idx] = new ConcreteVariable(this, name_1);
                 if (name_1 === VarsList.TIME) {
                     // auto-detect time variable
@@ -4048,19 +4069,20 @@
                 throw new Error('bad variable index=' + index + '; numVars=' + this.$variables.length);
             }
         };
-        /**
-         * Add a Variable to this VarsList.
-         * @param variable the Variable to add
-         * @return the index number of the variable
-         * @throws if name if the Variable is 'DELETED'
-         */
-        VarsList.prototype.addVariable = function (variable) {
-            var name = variable.name;
+        //
+        // Add a Variable to this VarsList.
+        // @param variable the Variable to add
+        // @return the index number of the variable
+        // @throws if name if the Variable is 'DELETED'
+        //
+        /*
+        private addVariable(variable: Variable): number {
+            const name = variable.name;
             if (name === VarsList.DELETED) {
-                throw new Error("variable cannot be named '" + VarsList.DELETED + "'");
+                throw new Error(`variable cannot be named '${VarsList.DELETED}'`);
             }
             // add variable to first open slot
-            var position = this.findOpenSlot_(1);
+            const position = this.findOpenSlot_(1);
             this.$variables[position] = variable;
             if (name === VarsList.TIME) {
                 // auto-detect time variable
@@ -4068,7 +4090,8 @@
             }
             this.broadcast(new GenericEvent(this, VarsList.VARS_MODIFIED));
             return position;
-        };
+        }
+        */
         /**
          * Whether recent history is being stored, see `saveHistory`.
          * @return true if recent history is being stored
@@ -4099,7 +4122,7 @@
          */
         VarsList.prototype.getTime = function () {
             if (this.$timeIdx < 0) {
-                throw new Error('no time variable');
+                throw new Error('No "time" variable.');
             }
             return this.getValue(this.$timeIdx);
         };
@@ -4208,6 +4231,20 @@
     }(AbstractSubject));
 
     /**
+     * @hidden
+     * @param varNames
+     * @returns
+     */
+    function varNamesContainsTime(varNames) {
+        if (Array.isArray(varNames)) {
+            return (varNames.indexOf('TIME') >= 0);
+        }
+        else {
+            throw new Error("varNames must be an array.");
+        }
+    }
+
+    /**
      * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
      * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
      * @hidden
@@ -4255,13 +4292,20 @@
             _this.$showTorques = false;
             mustBeNonNullObject('metric', metric);
             mustBeNonNullObject('dynamics', dynamics);
-            _this.$varsList = new VarsList(dynamics.getVarNames());
+            var varNames = dynamics.getVarNames();
+            if (!varNamesContainsTime(varNames)) {
+                throw new Error("Dynamics.getVarNames() must contain a time variable.");
+            }
+            _this.$varsList = new VarsList(varNames);
             _this.$potentialOffset = metric.zero();
             _this.$force = metric.zero();
             _this.$torque = metric.zero();
             _this.$totalEnergy = metric.zero();
             _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
             _this.$numVariablesPerBody = dynamics.numVarsPerBody();
+            if (_this.$numVariablesPerBody <= 0) {
+                throw new Error("Dynamics.numVarsPerBody() must define at least one variable per body.");
+            }
             return _this;
         }
         Physics.prototype.getVariableName = function (idx) {
@@ -4309,7 +4353,13 @@
                 // create variables in vars array for this body
                 var names = [];
                 for (var k = 0; k < this.$numVariablesPerBody; k++) {
-                    names.push(dynamics.getOffsetName(k));
+                    var name_1 = dynamics.getOffsetName(k);
+                    if (isValidName(toName(name_1))) {
+                        names.push(name_1);
+                    }
+                    else {
+                        throw new Error("Body kinematic variable name, '" + name_1 + "', returned by Dynamics.getOffsetName(" + k + ") is not a valid name.");
+                    }
                 }
                 body.varsIndex = this.$varsList.addVariables(names);
                 // add body to end of list of bodies
@@ -4728,11 +4778,11 @@
          * Computes the system energy, linear momentum and angular momentum.
          * @hidden
          */
-        Physics.prototype.epilog = function (stepSize, uomStep) {
+        Physics.prototype.epilog = function (stepSize, uomTime) {
             var varsList = this.$varsList;
             var vars = varsList.getValues();
             var units = varsList.getUnits();
-            this.updateBodiesFromStateVariables(vars, units, uomStep);
+            this.updateBodiesFromStateVariables(vars, units, uomTime);
             var dynamics = this.dynamics;
             dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
         };
@@ -4897,6 +4947,9 @@
          */
         Engine.prototype.updateFromBodies = function () {
             this.physics.updateFromBodies();
+        };
+        Engine.prototype.totalEnergy = function () {
+            return this.physics.totalEnergy();
         };
         return Engine;
     }());
@@ -5900,6 +5953,520 @@
     /**
      * @hidden
      */
+    var zero$2 = function () {
+        return [0, 0];
+    };
+    /**
+     * Sentinel value to indicate that the Geometric2 is not locked.
+     * UNLOCKED is in the range -1 to 0.
+     * @hidden
+     */
+    var UNLOCKED$2 = -1 * Math.random();
+    var Geometric1 = /** @class */ (function () {
+        /**
+         *
+         * @param coords
+         * @param uom
+         */
+        function Geometric1(coords, uom) {
+            if (coords === void 0) { coords = zero$2(); }
+            /**
+             *
+             */
+            this.lock_ = UNLOCKED$2;
+            if (coords.length !== 2) {
+                throw new Error("coords.length must be 2.");
+            }
+            this.coords = coords;
+            this.unit = uom;
+        }
+        Object.defineProperty(Geometric1.prototype, "a", {
+            get: function () {
+                return this.coords[0];
+            },
+            set: function (a) {
+                this.coords[0] = a;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Geometric1.prototype, "x", {
+            get: function () {
+                return this.coords[1];
+            },
+            set: function (x) {
+                this.coords[1] = x;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Geometric1.prototype, "uom", {
+            get: function () {
+                return this.unit;
+            },
+            set: function (uom) {
+                this.unit = uom;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Determines whether this multivector is locked.
+         * If the multivector is in the unlocked state then it is mutable.
+         * If the multivector is in the locked state then it is immutable.
+         */
+        Geometric1.prototype.isLocked = function () {
+            return this.lock_ !== UNLOCKED$2;
+        };
+        Geometric1.prototype.isMutable = function () {
+            return this.lock_ === UNLOCKED$2;
+        };
+        /**
+         * Locks this multivector (preventing any further mutation),
+         * and returns a token that may be used to unlock it.
+         */
+        Geometric1.prototype.lock = function () {
+            if (this.lock_ !== UNLOCKED$2) {
+                throw new Error("already locked");
+            }
+            else {
+                this.lock_ = Math.random();
+                return this.lock_;
+            }
+        };
+        /**
+         * Unlocks this multivector (allowing mutation),
+         * using a token that was obtained from a preceding lock method call.
+         */
+        Geometric1.prototype.unlock = function (token) {
+            if (this.lock_ === UNLOCKED$2) {
+                throw new Error("not locked");
+            }
+            else if (this.lock_ === token) {
+                this.lock_ = UNLOCKED$2;
+            }
+            else {
+                throw new Error("unlock denied");
+            }
+        };
+        return Geometric1;
+    }());
+
+    /**
+     * @hidden
+     */
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+
+    /**
+     * @hidden
+     */
+    function beDefined() {
+        return "not be 'undefined'";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeDefined(name, value, contextBuilder) {
+        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
+        return value;
+    }
+
+    /**
+     * @hidden
+     */
+    function isInteger(x) {
+        // % coerces its operand to numbers so a typeof test is required.
+        // Not ethat ECMAScript 6 provides Number.isInteger().
+        return isNumber(x) && x % 1 === 0;
+    }
+
+    /**
+     * @hidden
+     */
+    function beAnInteger() {
+        return "be an integer";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeInteger(name, value, contextBuilder) {
+        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
+        return value;
+    }
+
+    /**
+     * @hidden
+     * @param elements
+     * @param length
+     */
+    function checkElementsLength(elements, length) {
+        if (elements.length !== length) {
+            throw new Error("elements must have length " + length);
+        }
+    }
+    /**
+     * Base class for matrices with the expectation that they will be used with WebGL.
+     * The underlying data storage is a <code>Float32Array</code>.
+     * @hidden
+     */
+    var AbstractMatrix = /** @class */ (function () {
+        /**
+         * @param elements
+         * @param dimensions
+         */
+        function AbstractMatrix(elements, dimensions, uom) {
+            this._elements = mustBeDefined('elements', elements);
+            this._dimensions = mustBeInteger('dimensions', dimensions);
+            this._length = dimensions * dimensions;
+            checkElementsLength(elements, this._length);
+            this.modified = false;
+            this.uom = Unit.mustBeUnit('uom', uom);
+        }
+        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
+            get: function () {
+                return this._dimensions;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(AbstractMatrix.prototype, "elements", {
+            get: function () {
+                return this._elements;
+            },
+            set: function (elements) {
+                checkElementsLength(elements, this._length);
+                this._elements = elements;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        AbstractMatrix.prototype.copy = function (source) {
+            var N = this.dimensions;
+            for (var i = 0; i < N; i++) {
+                for (var j = 0; j < N; j++) {
+                    var value = source.getElement(i, j);
+                    this.setElement(i, j, value);
+                }
+            }
+            this.uom = source.uom;
+            return this;
+        };
+        /**
+         * Returns the element at the specified (zero-based) row and column.
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         */
+        AbstractMatrix.prototype.getElement = function (row, column) {
+            return this.elements[row + column * this._dimensions];
+        };
+        /**
+         * Determines whether this matrix is the identity matrix.
+         */
+        AbstractMatrix.prototype.isOne = function () {
+            for (var i = 0; i < this._dimensions; i++) {
+                for (var j = 0; j < this._dimensions; j++) {
+                    var value = this.getElement(i, j);
+                    if (i === j) {
+                        if (value !== 1) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (value !== 0) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        };
+        /**
+         * @param row The zero-based row.
+         * @param column The zero-based column.
+         * @param value The value of the element.
+         */
+        AbstractMatrix.prototype.setElement = function (row, column, value) {
+            this.elements[row + column * this._dimensions] = value;
+        };
+        return AbstractMatrix;
+    }());
+
+    var Matrix0 = /** @class */ (function (_super) {
+        __extends(Matrix0, _super);
+        function Matrix0(elements, uom) {
+            return _super.call(this, elements, 0, uom) || this;
+        }
+        return Matrix0;
+    }(AbstractMatrix));
+
+    /**
+     *
+     */
+    var Force1 = /** @class */ (function (_super) {
+        __extends(Force1, _super);
+        function Force1(body) {
+            return _super.call(this, body) || this;
+        }
+        return Force1;
+    }(Force));
+
+    /**
+     * @hidden
+     */
+    var Euclidean1 = /** @class */ (function () {
+        function Euclidean1() {
+        }
+        Euclidean1.prototype.a = function (mv) {
+            return mv.a;
+        };
+        Euclidean1.prototype.add = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.addVector = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.applyMatrix = function (mv, matrix) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.copy = function (source, target) {
+            target.a = source.a;
+            target.uom = source.uom;
+            return target;
+        };
+        Euclidean1.prototype.copyBivector = function (source, target) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.copyMatrix = function (m) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.copyScalar = function (a, uom, target) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.copyVector = function (source, target) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.createForce = function (body) {
+            return new Force1(body);
+        };
+        Euclidean1.prototype.createTorque = function (body) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.direction = function (mv, mutate) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.divByScalar = function (lhs, a, uom) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.ext = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.identityMatrix = function () {
+            return new Matrix0(new Float32Array([]));
+        };
+        Euclidean1.prototype.invertMatrix = function (m) {
+            return m;
+        };
+        Euclidean1.prototype.isZero = function (mv) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.lock = function (mv) {
+            return mv.lock();
+        };
+        Euclidean1.prototype.magnitude = function (mv, mutate) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.mul = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.mulByNumber = function (lhs, alpha) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.mulByScalar = function (lhs, a, uom) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.mulByVector = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.neg = function (mv) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.quaditude = function (mv, mutate) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.rev = function (mv) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.rotate = function (mv, spinor) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.scalar = function (a, uom) {
+            return new Geometric1([a, 0], uom);
+        };
+        Euclidean1.prototype.scp = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.setUom = function (mv, uom) {
+            mv.uom = uom;
+        };
+        Euclidean1.prototype.sub = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.subScalar = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.subVector = function (lhs, rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.unlock = function (mv, token) {
+            mv.unlock(token);
+        };
+        Euclidean1.prototype.uom = function (mv) {
+            return mv.uom;
+        };
+        Euclidean1.prototype.write = function (source, target) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.writeVector = function (source, target) {
+            throw new Error('Method not implemented.');
+        };
+        /**
+         * This doesn't happen in 1D because there are no bivectors.
+         */
+        Euclidean1.prototype.writeBivector = function (source, target) {
+            throw new Error('Method not implemented.');
+        };
+        Euclidean1.prototype.zero = function () {
+            return new Geometric1();
+        };
+        return Euclidean1;
+    }());
+
+    var RigidBody1 = /** @class */ (function (_super) {
+        __extends(RigidBody1, _super);
+        function RigidBody1() {
+            return _super.call(this, new Euclidean1()) || this;
+        }
+        return RigidBody1;
+    }(RigidBody));
+
+    var Block1 = /** @class */ (function (_super) {
+        __extends(Block1, _super);
+        function Block1(width) {
+            var _this = _super.call(this) || this;
+            var metric = _this.metric;
+            _this.$width = new LockableMeasure(metric, width);
+            if (Unit.isOne(metric.uom(width))) ;
+            else {
+                _this.M = metric.scalar(metric.a(_this.M), Unit.KILOGRAM);
+                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                metric.setUom(_this.X, Unit.METER);
+                metric.setUom(_this.R, Unit.ONE);
+                metric.setUom(_this.P, Unit.KILOGRAM_METER_PER_SECOND);
+                metric.setUom(_this.L, Unit.JOULE_SECOND);
+            }
+            _this.updateInertiaTensor();
+            return _this;
+        }
+        Object.defineProperty(Block1.prototype, "width", {
+            get: function () {
+                return this.$width.get();
+            },
+            set: function (width) {
+                this.$width.set(width);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        return Block1;
+    }(RigidBody1));
+
+    var ConstantForceLaw1 = /** @class */ (function (_super) {
+        __extends(ConstantForceLaw1, _super);
+        function ConstantForceLaw1(body, vector, vectorCoordType) {
+            if (vectorCoordType === void 0) { vectorCoordType = WORLD; }
+            return _super.call(this, body, vector, vectorCoordType) || this;
+        }
+        return ConstantForceLaw1;
+    }(ConstantForceLaw));
+
+    /**
+     * @hidden
+     */
+    var Dynamics1 = /** @class */ (function () {
+        function Dynamics1() {
+        }
+        Dynamics1.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.updateBodyFromVars = function (vars, units, idx, body, uomTime) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.updateVarsFromBody = function (body, idx, vars) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.epilog = function (bodies, forceLaws, potentialOffset, vars) {
+            // Do nothing yet.
+        };
+        Dynamics1.prototype.discontinuousEnergyVars = function () {
+            return [];
+        };
+        Dynamics1.prototype.getOffsetName = function (offset) {
+            return "position x";
+        };
+        Dynamics1.prototype.getVarNames = function () {
+            return ['TIME'];
+        };
+        Dynamics1.prototype.numVarsPerBody = function () {
+            return 1;
+        };
+        return Dynamics1;
+    }());
+
+    var Particle1 = /** @class */ (function (_super) {
+        __extends(Particle1, _super);
+        function Particle1(mass, charge) {
+            return _super.call(this, mass, charge, new Euclidean1()) || this;
+        }
+        return Particle1;
+    }(Particle));
+
+    /**
+     *
+     */
+    var Spring1 = /** @class */ (function (_super) {
+        __extends(Spring1, _super);
+        function Spring1(body1, body2) {
+            return _super.call(this, body1, body2) || this;
+        }
+        return Spring1;
+    }(Spring));
+
+    /**
+     * @hidden
+     */
     function beAString() {
         return "be a string";
     }
@@ -5958,13 +6525,6 @@
                 coords[i] = 0;
             }
         }
-    }
-
-    /**
-     * @hidden
-     */
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
     }
 
     /**
@@ -8330,140 +8890,6 @@
             }
         };
         return Mat1;
-    }());
-
-    /**
-     * @hidden
-     */
-    function beDefined() {
-        return "not be 'undefined'";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeDefined(name, value, contextBuilder) {
-        mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
-        return value;
-    }
-
-    /**
-     * @hidden
-     */
-    function isInteger(x) {
-        // % coerces its operand to numbers so a typeof test is required.
-        // Not ethat ECMAScript 6 provides Number.isInteger().
-        return isNumber(x) && x % 1 === 0;
-    }
-
-    /**
-     * @hidden
-     */
-    function beAnInteger() {
-        return "be an integer";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeInteger(name, value, contextBuilder) {
-        mustSatisfy(name, isInteger(value), beAnInteger, contextBuilder);
-        return value;
-    }
-
-    /**
-     * @hidden
-     * @param elements
-     * @param length
-     */
-    function checkElementsLength(elements, length) {
-        if (elements.length !== length) {
-            throw new Error("elements must have length " + length);
-        }
-    }
-    /**
-     * Base class for matrices with the expectation that they will be used with WebGL.
-     * The underlying data storage is a <code>Float32Array</code>.
-     * @hidden
-     */
-    var AbstractMatrix = /** @class */ (function () {
-        /**
-         * @param elements
-         * @param dimensions
-         */
-        function AbstractMatrix(elements, dimensions, uom) {
-            this._elements = mustBeDefined('elements', elements);
-            this._dimensions = mustBeInteger('dimensions', dimensions);
-            this._length = dimensions * dimensions;
-            checkElementsLength(elements, this._length);
-            this.modified = false;
-            this.uom = Unit.mustBeUnit('uom', uom);
-        }
-        Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
-            get: function () {
-                return this._dimensions;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(AbstractMatrix.prototype, "elements", {
-            get: function () {
-                return this._elements;
-            },
-            set: function (elements) {
-                checkElementsLength(elements, this._length);
-                this._elements = elements;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        AbstractMatrix.prototype.copy = function (source) {
-            var N = this.dimensions;
-            for (var i = 0; i < N; i++) {
-                for (var j = 0; j < N; j++) {
-                    var value = source.getElement(i, j);
-                    this.setElement(i, j, value);
-                }
-            }
-            this.uom = source.uom;
-            return this;
-        };
-        /**
-         * Returns the element at the specified (zero-based) row and column.
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         */
-        AbstractMatrix.prototype.getElement = function (row, column) {
-            return this.elements[row + column * this._dimensions];
-        };
-        /**
-         * Determines whether this matrix is the identity matrix.
-         */
-        AbstractMatrix.prototype.isOne = function () {
-            for (var i = 0; i < this._dimensions; i++) {
-                for (var j = 0; j < this._dimensions; j++) {
-                    var value = this.getElement(i, j);
-                    if (i === j) {
-                        if (value !== 1) {
-                            return false;
-                        }
-                    }
-                    else {
-                        if (value !== 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        };
-        /**
-         * @param row The zero-based row.
-         * @param column The zero-based column.
-         * @param value The value of the element.
-         */
-        AbstractMatrix.prototype.setElement = function (row, column, value) {
-            this.elements[row + column * this._dimensions] = value;
-        };
-        return AbstractMatrix;
     }());
 
     var Matrix1 = /** @class */ (function (_super) {
@@ -19032,11 +19458,13 @@
     }());
 
     exports.AdaptiveStepSolver = AdaptiveStepSolver;
+    exports.Block1 = Block1;
     exports.Block2 = Block2;
     exports.Block3 = Block3;
     exports.CircularList = CircularList;
     exports.ConstantEnergySolver = ConstantEnergySolver;
     exports.ConstantForceLaw = ConstantForceLaw;
+    exports.ConstantForceLaw1 = ConstantForceLaw1;
     exports.ConstantForceLaw2 = ConstantForceLaw2;
     exports.ConstantForceLaw3 = ConstantForceLaw3;
     exports.ConstantTorqueLaw = ConstantTorqueLaw;
@@ -19048,18 +19476,22 @@
     exports.Dimensions = Dimensions;
     exports.Disc2 = Disc2;
     exports.DisplayGraph = DisplayGraph;
+    exports.Dynamics1 = Dynamics1;
     exports.Dynamics2 = Dynamics2;
     exports.Dynamics3 = Dynamics3;
     exports.EnergyTimeGraph = EnergyTimeGraph;
     exports.Engine = Engine;
     exports.Engine2 = Engine2;
     exports.Engine3 = Engine3;
+    exports.Euclidean1 = Euclidean1;
     exports.Euclidean2 = Euclidean2;
     exports.Euclidean3 = Euclidean3;
     exports.EulerMethod = EulerMethod;
     exports.Force = Force;
+    exports.Force1 = Force1;
     exports.Force2 = Force2;
     exports.Force3 = Force3;
+    exports.Geometric1 = Geometric1;
     exports.Geometric2 = Geometric2;
     exports.Geometric3 = Geometric3;
     exports.Graph = Graph;
@@ -19076,6 +19508,7 @@
     exports.Matrix3 = Matrix3;
     exports.ModifiedEuler = ModifiedEuler;
     exports.Particle = Particle;
+    exports.Particle1 = Particle1;
     exports.Particle2 = Particle2;
     exports.Particle3 = Particle3;
     exports.Physics = Physics;
@@ -19084,6 +19517,7 @@
     exports.Polygon2 = Polygon2;
     exports.QQ = QQ;
     exports.RigidBody = RigidBody;
+    exports.RigidBody1 = RigidBody1;
     exports.RigidBody2 = RigidBody2;
     exports.RigidBody3 = RigidBody3;
     exports.Rod2 = Rod2;
@@ -19091,6 +19525,7 @@
     exports.SimView = SimView;
     exports.Sphere3 = Sphere3;
     exports.Spring = Spring;
+    exports.Spring1 = Spring1;
     exports.Spring2 = Spring2;
     exports.Spring3 = Spring3;
     exports.SurfaceConstraint2 = SurfaceConstraint2;

@@ -18,6 +18,6 @@
  * and replacing spaces and dashes with underscores.
  * @hidden
  */
-export default function toName(text: string): string {
+export function toName(text: string): string {
     return text.toUpperCase().replace(/[ -]/g, '_');
 }

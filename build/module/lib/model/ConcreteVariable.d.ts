@@ -1,5 +1,5 @@
-import { Unit } from '../math/Unit';
 import { VarsList } from '../core/VarsList';
+import { Unit } from '../math/Unit';
 import { Variable } from './Variable';
 /**
  * @hidden

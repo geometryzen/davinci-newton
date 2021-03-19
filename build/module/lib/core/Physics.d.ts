@@ -55,7 +55,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      */
     private $showTorques;
     /**
-     *
+     * Scratch variavle for computing a potential energy offset.
      */
     private readonly $potentialOffset;
     /**
@@ -207,7 +207,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    epilog(stepSize: number, uomStep?: Unit): void;
+    epilog(stepSize: number, uomTime?: Unit): void;
     /**
      * Provides a reference to the bodies in the simulation.
      */

@@ -7,10 +7,20 @@ import { Torque } from "./Torque";
  * @hidden
  */
 export interface Metric<T> {
+    /**
+     * Returns the scalar component of the multivector.
+     * @param mv The multivector for which the scalar component is required.
+     */
     a(mv: T): number;
     add(lhs: T, rhs: T): T;
     addVector(lhs: T, rhs: T): T;
     applyMatrix(mv: T, matrix: MatrixLike): T;
+    /**
+     * Modifies the target to have the same property values as the source.
+     * @param source
+     * @param target
+     * @returns the target.
+     */
     copy(source: T, target: T): T;
     copyBivector(source: T, target: T): T;
     copyMatrix(m: MatrixLike): MatrixLike;
@@ -29,6 +39,13 @@ export interface Metric<T> {
     identityMatrix(): MatrixLike;
     invertMatrix(m: MatrixLike): MatrixLike;
     isZero(mv: T): boolean;
+    /**
+     * Used to change the mutability of the multivector from mutable to immutable.
+     * An immutable multivector is also described as locked. The number returned is
+     * a token that may be used to unlock the multivector, making it mutable again.
+     * @param mv The multivector to be locked.
+     * @returns A token that may be used to unlock the multivector.
+     */
     lock(mv: T): number;
     magnitude(mv: T, mutate?: boolean): T;
     mul(lhs: T, rhs: T): T;
@@ -54,6 +71,11 @@ export interface Metric<T> {
     unlock(mv: T, token: number): void;
     uom(mv: T): Unit;
     write(source: T, target: T): void;
+    /**
+     * TODO: This looks a lot like copyVector. Is there any difference?
+     * @param source
+     * @param target
+     */
     writeVector(source: T, target: T): void;
     writeBivector(source: T, target: T): void;
     /**

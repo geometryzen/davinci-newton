@@ -15,8 +15,8 @@
 
 import { Subject } from './Subject';
 import { SubjectEvent } from './SubjectEvent';
-import toName from './toName';
-import validName from './validName';
+import { toName } from './toName';
+import { validName } from './validName';
 
 /**
  * @hidden

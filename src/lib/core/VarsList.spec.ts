@@ -3,16 +3,18 @@ import { VarsList } from "./VarsList";
 describe("VarsList", function () {
     describe("constructor", function () {
         it("([])", function () {
-            const vars = new VarsList([]);
-            expect(vars).toBeDefined();
-            expect(vars.numVariables()).toBe(0);
+            expect(function () {
+                const vars = new VarsList([]);
+                expect(vars).toBeDefined();
+                expect(vars.numVariables()).toBe(0);
+            }).toThrowError("");
         });
     });
     //
     // VarsList uses the case-insensitive name 'time' to identify which variable holds the time.
     //
     describe("timeIndex", function () {
-        it("([]) should have a timeIndex of -1.", function () {
+        xit("([]) should have a timeIndex of -1.", function () {
             const vars = new VarsList([]);
             expect(vars).toBeDefined();
             expect(vars.timeIndex()).toBe(-1);

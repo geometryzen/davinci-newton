@@ -33,6 +33,9 @@ export const INDEX_RESERVED_LAST = 4;
 
 /**
  * @hidden
+ * An implementation of this interface provides the mapping from a specific multivector implementation to a vector of state variables.
+ * Each state variable is a pair consisting of (number, Unit). This decomposition allows the solvers (integrators) to treat the whole
+ * system as a single particle in a large vector space.
  */
 export interface Dynamics<T> {
     /**
@@ -78,76 +81,85 @@ export interface Dynamics<T> {
     zeroAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param vars
-     * @param units 
-     * @param idx 
-     * @param body 
+     * @param stateVals (input)
+     * @param stateUoms (input)
+     * @param idx (input)
+     * @param body (output)
+     * @param uomTime (input)
      */
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
+    updateBodyFromVars(stateVals: number[], stateUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param body 
-     * @param idx 
-     * @param vars 
+     * @param body (input)
+     * @param idx (input)
+     * @param vars (output)
      */
     updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
     /**
      * Adds the specified force to the rateOfChange variables for Linear Momentum.
-     * @param rateOfChange (input/output)
-     * @param units (input/output)
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
      * @param idx (input)
      * @param force (input)
      * @param uomTime (input)
      */
-    addForceToRateOfChangeLinearMomentumVars(rateOfChange: number[], units: Unit[], idx: number, force: T, uomTime: Unit): void;
+    addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T, uomTime: Unit): void;
     /**
      * 
-     * @param rateOfChange (input)
-     * @param units (input)
+     * @param rateOfChangeVals (input)
+     * @param rateOfChangeUoms (input)
      * @param idx (input)
      * @param force (output)
      */
-    getForce(rateOfChange: number[], units: Unit[], idx: number, force: T): void;
+    getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T): void;
     /**
      * 
-     * @param rateOfChange (output)
-     * @param units (output) 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output) 
      * @param idx (input)
      * @param force (input)
      */
-    setForce(rateOfChange: number[], units: Unit[], idx: number, force: T): void;
+    setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T): void;
     /**
      * Adds the specified torque to the rateOfChange variables for AngularMomentum.
-     * @param rateOfChange (input/output)
-     * @param units (input/output)
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
      * @param idx (input)
      * @param torque (input)
      * @param uomTime (input)
      */
-    addTorqueToRateOfChangeAngularMomentumVars(rateOfChange: number[], units: Unit[], idx: number, torque: T, uomTime: Unit): void;
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: T, uomTime: Unit): void;
     /**
-     * 
-     * @param bodies 
-     * @param forceLaws 
-     * @param potentialOffset 
-     * @param vars 
+     * Called by the Physics Engine during the epilog.
+     * @param bodies (input) Provides intrinsic kinetic energy.
+     * @param forceLaws (input) Provides potential energy.
+     * @param potentialOffset  (input) Provides a an offset in the potential energy.
+     * @param vars (output) The list of variables containing the summary variables to be updated.
      */
     epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
     /**
-     * 
+     * Called by the Physics Engine to determine the indices of all the variables that are affected by a
+     * discontinuous change to the energy of the system. i.e., an "intervention" where the bodies in the
+     * system are changed independently of the differential equations that are implemented by the Physics Engine.
+     * @returns The indices into the variables list.
      */
     discontinuousEnergyVars(): number[];
     /**
+     * Used by the Physics engine when adding a body to the system.
+     * Returns the name of the kinematic variable at the specified index which
+     * ranges over [0, numVarsPerBody - 1].
      * 
-     * @param offset 
+     * The name must be valid (isValidName) after having being munged (toName).
      */
     getOffsetName(offset: number): string;
     /**
-     * 
+     * Used by the Physics class constructor to create a list of variables.
+     * One of the names returned must be the (case-sensitive) "TIME" variable.
      */
     getVarNames(): string[];
     /**
-     * 
+     * Use by the Physics engine to add the correct number of variables for each body added.
+     * The number of variables must be at least one.
      */
     numVarsPerBody(): number;
 }
