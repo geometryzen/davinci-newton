@@ -13,7 +13,7 @@ export declare class DefaultAdvanceStrategy implements AdvanceStrategy {
      */
     constructor(simulation: Simulation, solver: DiffEqSolver);
     /**
-     * 1.
+     * 1. Update the state vector from bodies.
      * 2. The solver integrates the derivatives from the simulation.
      * 3. Compute system variables such as energies, linear momentum, and angular momentum.
      */

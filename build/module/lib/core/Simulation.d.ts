@@ -1,3 +1,4 @@
+import { Unit } from '../math/Unit';
 import { DiffEqSolverSystem } from './DiffEqSolverSystem';
 /**
  * @hidden
@@ -12,11 +13,11 @@ export interface Simulation extends DiffEqSolverSystem {
      * A simulation may remove temporary simulation objects, such as forces, from
      * the list of simulation objects. This method will normally be called by the strategy.
      */
-    prolog(): void;
+    prolog(stepSize: number, uomStep?: Unit): void;
     /**
      * Handler for actions to be performed after the evaluate calls and setState.
      * Computes the system energy, linear momentum and angular momentum.
      * This method will normally be called by the strategy.
      */
-    epilog(): void;
+    epilog(stepSize: number, uomStep?: Unit): void;
 }

@@ -6,6 +6,9 @@ class MockSystem implements DiffEqSolverSystem {
     constructor(private readonly state: number[], private readonly units: Unit[], private readonly rateOfChange: number[], private readonly rateOfChangeUnits: Unit[], public readonly stateEnd: number[], public readonly unitsEnd: Unit[]) {
 
     }
+    getVariableName(idx: number): string {
+        throw new Error("Method not implemented.");
+    }
     /**
      * This is the first method of the Simulation that is called by the solver.
      */

@@ -1,6 +1,7 @@
 import { __extends } from "tslib";
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
+import { Unit } from "../math/Unit";
 import { RigidBody2 } from "./RigidBody2";
 /**
  * @hidden
@@ -17,6 +18,17 @@ var Polygon2 = /** @class */ (function (_super) {
          */
         _this.rs = [];
         mustBeAtLeastThreePoints(points);
+        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+            // dimensionless
+        }
+        else {
+            _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         var X = centerOfMass(points);
         for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
             var point = points_1[_i];

@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-18';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.57';
+            this.VERSION = '1.0.58';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -2743,7 +2743,7 @@
         Unit.INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
         Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
         /**
-         * The unit of momentum.
+         * The unit of linear momentum.
          */
         Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
         Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
@@ -2857,7 +2857,11 @@
                         }
                     }
                     catch (e) {
-                        throw new Error("i=" + i + ", stateVals[" + i + "]=" + stateVals[i] + ", stateUoms[" + i + "]=" + stateUoms[i] + ", k1vals[" + i + "]=" + k1vals[i] + ", k1uoms[" + i + "]=" + k1uoms[i] + ", uomStep=" + uomStep + ". Cause: " + e);
+                        var cause = (e instanceof Error) ? e.message : "" + e;
+                        throw new Error(system.getVariableName(i) + ". Cause: " + cause);
+                        // It would be good to translate the index into a variable name.
+                        // system.getVariableName(i);
+                        // throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                     }
                 }
                 else {
@@ -2957,15 +2961,15 @@
             mustBeNonNullObject('solver', solver);
         }
         /**
-         * 1.
+         * 1. Update the state vector from bodies.
          * 2. The solver integrates the derivatives from the simulation.
          * 3. Compute system variables such as energies, linear momentum, and angular momentum.
          */
         DefaultAdvanceStrategy.prototype.advance = function (stepSize, uomStep) {
             mustBeNumber("stepSize", stepSize);
-            this.simulation.prolog();
+            this.simulation.prolog(stepSize, uomStep);
             this.solver.step(stepSize, uomStep);
-            this.simulation.epilog();
+            this.simulation.epilog(stepSize, uomStep);
         };
         return DefaultAdvanceStrategy;
     }());
@@ -4260,6 +4264,9 @@
             _this.$numVariablesPerBody = dynamics.numVarsPerBody();
             return _this;
         }
+        Physics.prototype.getVariableName = function (idx) {
+            return this.varsList.getVariable(idx).name;
+        };
         Object.defineProperty(Physics.prototype, "showForces", {
             /**
              * Determines whether calculated forces will be added to the simulation list.
@@ -4405,7 +4412,7 @@
          * Transfer state vector back to the rigid bodies.
          * Also takes care of updating auxiliary variables, which are also mutable.
          */
-        Physics.prototype.updateBodiesFromStateVariables = function (vars, units) {
+        Physics.prototype.updateBodiesFromStateVariables = function (vars, units, uomTime) {
             var dynamics = this.dynamics;
             var bodies = this.$bodies;
             var N = bodies.length;
@@ -4418,7 +4425,7 @@
                 // Delegate the updating of the body from the state variables because
                 // we do not know how to access the properties of the bodies in the
                 // various dimensions.
-                dynamics.updateBodyFromVars(vars, units, idx, body);
+                dynamics.updateBodyFromVars(vars, units, idx, body, uomTime);
             }
         };
         /**
@@ -4461,7 +4468,7 @@
             var metric = this.metric;
             var dynamics = this.dynamics;
             // Move objects so that rigid body objects know their current state.
-            this.updateBodiesFromStateVariables(state, stateUnits);
+            this.updateBodiesFromStateVariables(state, stateUnits, uomTime);
             var bodies = this.$bodies;
             var Nb = bodies.length;
             for (var bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -4721,11 +4728,11 @@
          * Computes the system energy, linear momentum and angular momentum.
          * @hidden
          */
-        Physics.prototype.epilog = function () {
+        Physics.prototype.epilog = function (stepSize, uomStep) {
             var varsList = this.$varsList;
             var vars = varsList.getValues();
             var units = varsList.getUnits();
-            this.updateBodiesFromStateVariables(vars, units);
+            this.updateBodiesFromStateVariables(vars, units, uomStep);
             var dynamics = this.dynamics;
             dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
         };
@@ -8828,6 +8835,32 @@
         return Disc2;
     }(RigidBody2));
 
+    /**
+     * Helper function to be called from Dynamics.updateBodyFromVars.
+     * Checks the unit of measure for the attitute (R) and suggests resolutions.
+     * A prominent feature is to detect a missing uom in a simulation time step and to suggest the resolution.
+     * @hidden
+     * @param uom The unit of measure of the attitude, R.
+     * @param uomTime The optional unit of measure for the time step. This provides context for resolution suggestions.
+     */
+    function checkBodyAttitudeUnit(uom, uomTime) {
+        if (!Unit.isOne(uom)) {
+            if (Unit.isOne(uomTime)) {
+                // The time unit of measure was not defined or is dimensionless.
+                if (Unit.isOne(uom.mul(Unit.SECOND))) {
+                    // Providing a time uom would fix the issue.
+                    throw new Error("body.R.uom should be one, but was " + uom + ". The unit of measure for the time step appears to be missing. Consider adding a time step unit of measure of " + Unit.SECOND + ".");
+                }
+                else {
+                    throw new Error("body.R.uom should be one, but was " + uom + ".");
+                }
+            }
+            else {
+                throw new Error("body.R.uom should be one, but was " + uom + ".");
+            }
+        }
+    }
+
     //
     // Indices which MUST be common to all implementations.
     //
@@ -9066,7 +9099,7 @@
             }
             rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY$1] = Tb + torque.b;
         };
-        Dynamics2.prototype.updateBodyFromVars = function (vars, units, idx, body) {
+        Dynamics2.prototype.updateBodyFromVars = function (vars, units, idx, body, uomTime) {
             body.X.a = 0;
             body.X.x = vars[idx + OFFSET_POSITION_X$1];
             body.X.y = vars[idx + OFFSET_POSITION_Y$1];
@@ -9076,10 +9109,8 @@
             body.R.x = 0;
             body.R.y = 0;
             body.R.b = vars[idx + OFFSET_ATTITUDE_XY$1];
+            checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY$1], uomTime);
             body.R.uom = units[idx + OFFSET_ATTITUDE_XY$1];
-            if (!Unit.isOne(body.R.uom)) {
-                throw new Error("body.R.uom should be one, but was " + body.R.uom);
-            }
             // Keep the magnitude of the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a + R.b * R.b);
@@ -9248,6 +9279,15 @@
              */
             _this.rs = [];
             mustBeAtLeastThreePoints(points);
+            if (points.every(function (point) { return Unit.isOne(point.uom); })) ;
+            else {
+                _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             var X = centerOfMass(points);
             for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
                 var point = points_1[_i];
@@ -13806,7 +13846,7 @@
             }
             rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Txy + torque.xy;
         };
-        Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body) {
+        Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body, uomTime) {
             body.X.x = vars[idx + OFFSET_POSITION_X];
             body.X.y = vars[idx + OFFSET_POSITION_Y];
             body.X.z = vars[idx + OFFSET_POSITION_Z];
@@ -13815,6 +13855,11 @@
             body.R.xy = vars[idx + OFFSET_ATTITUDE_XY];
             body.R.yz = vars[idx + OFFSET_ATTITUDE_YZ];
             body.R.zx = vars[idx + OFFSET_ATTITUDE_ZX];
+            // We will only use one of the following units. Check them all for integrity.
+            checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_A], uomTime);
+            checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
+            checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_YZ], uomTime);
+            checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_ZX], uomTime);
             body.R.uom = units[idx + OFFSET_ATTITUDE_A];
             // Keep the magnitude of the attitude as close to 1 as possible.
             var R = body.R;
@@ -18638,7 +18683,7 @@
              * number of diffEqSolver steps taken during this step
              */
             // let steps = 0;
-            this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
+            this.diffEq_.epilog(stepSize, uomStep); // to ensure getEnergyInfo gives correct value
             var startEnergy = metric.a(this.energySystem.totalEnergy());
             var lastEnergyDiff = Number.POSITIVE_INFINITY;
             /**
@@ -18654,7 +18699,7 @@
                 if (!firstTime) {
                     // restore state and solve again with smaller step size
                     this.diffEq_.setState(this.savedState);
-                    this.diffEq_.epilog();
+                    this.diffEq_.epilog(stepSize, uomStep);
                     // goog.asserts.assert(Math.abs(this.diffEq_.time - startTime) < 1E-12);
                     // const e = this.energySystem_.totalEnergy();
                     // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -18673,7 +18718,7 @@
                     }
                     // steps++;
                     this.odeSolver_.step(h, uomStep);
-                    this.diffEq_.epilog();
+                    this.diffEq_.epilog(stepSize, uomStep);
                     t += h;
                 }
                 var finishEnergy = metric.a(this.energySystem.totalEnergy());
@@ -18780,7 +18825,7 @@
              * number of diffEqSolver steps taken during this step
              */
             // let steps = 0;
-            this.simulation.epilog(); // to ensure getEnergyInfo gives correct value
+            this.simulation.epilog(Δt, uomTime); // to ensure getEnergyInfo gives correct value
             var metric = this.energySystem_.metric;
             var startEnergy = metric.a(this.energySystem_.totalEnergy());
             // let lastEnergyDiff = Number.POSITIVE_INFINITY;
@@ -18798,7 +18843,7 @@
                     // restore state and solve again with smaller step size
                     this.simulation.setState(this.savedVals);
                     this.simulation.setUnits(this.savedUoms);
-                    this.simulation.epilog();
+                    this.simulation.epilog(Δt, uomTime);
                     // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                     // const e = this.energySystem_.totalEnergy();
                     // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -18817,7 +18862,7 @@
                     }
                     // steps++;
                     this.solverMethod_.step(h, uomTime);
-                    this.simulation.epilog();
+                    this.simulation.epilog(Δt, uomTime);
                     t += h;
                 }
                 var finishEnergy = metric.a(this.energySystem_.totalEnergy());

@@ -710,7 +710,7 @@ var Unit = /** @class */ (function () {
     Unit.INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
     Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
     /**
-     * The unit of momentum.
+     * The unit of linear momentum.
      */
     Unit.KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
     Unit.KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);

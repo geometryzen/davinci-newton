@@ -1,3 +1,4 @@
+import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
 import { Dynamics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
@@ -224,7 +225,7 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Tb + torque.b;
     }
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric2>): void {
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric2>, uomTime: Unit): void {
         body.X.a = 0;
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
@@ -235,10 +236,8 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         body.R.x = 0;
         body.R.y = 0;
         body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
         body.R.uom = units[idx + OFFSET_ATTITUDE_XY];
-        if (!Unit.isOne(body.R.uom)) {
-            throw new Error(`body.R.uom should be one, but was ${body.R.uom}`);
-        }
 
         // Keep the magnitude of the attitude as close to 1 as possible.
         const R = body.R;

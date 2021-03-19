@@ -37,7 +37,7 @@ var ConstantEnergySolver = /** @class */ (function () {
          * number of diffEqSolver steps taken during this step
          */
         // let steps = 0;
-        this.simulation.epilog(); // to ensure getEnergyInfo gives correct value
+        this.simulation.epilog(Δt, uomTime); // to ensure getEnergyInfo gives correct value
         var metric = this.energySystem_.metric;
         var startEnergy = metric.a(this.energySystem_.totalEnergy());
         // let lastEnergyDiff = Number.POSITIVE_INFINITY;
@@ -55,7 +55,7 @@ var ConstantEnergySolver = /** @class */ (function () {
                 // restore state and solve again with smaller step size
                 this.simulation.setState(this.savedVals);
                 this.simulation.setUnits(this.savedUoms);
-                this.simulation.epilog();
+                this.simulation.epilog(Δt, uomTime);
                 // goog.asserts.assert(Math.abs(this.simulation_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();
                 // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -74,7 +74,7 @@ var ConstantEnergySolver = /** @class */ (function () {
                 }
                 // steps++;
                 this.solverMethod_.step(h, uomTime);
-                this.simulation.epilog();
+                this.simulation.epilog(Δt, uomTime);
                 t += h;
             }
             var finishEnergy = metric.a(this.energySystem_.totalEnergy());

@@ -1,5 +1,6 @@
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
+import { Unit } from "../math/Unit";
 import { RigidBody2 } from "./RigidBody2";
 
 /**
@@ -16,7 +17,20 @@ export class Polygon2 extends RigidBody2 {
     public readonly rs: Geometric2[] = [];
     constructor(points: Geometric2[]) {
         super();
+
         mustBeAtLeastThreePoints(points);
+
+        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+            // dimensionless
+        } else {
+            this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
+            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         const X = centerOfMass(points);
         for (const point of points) {
             const r = fromVector(point).sub(X);
@@ -24,6 +38,7 @@ export class Polygon2 extends RigidBody2 {
             this.rs.push(r);
         }
         this.X = X;
+
         this.updateInertiaTensor();
     }
 

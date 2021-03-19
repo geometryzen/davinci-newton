@@ -28,4 +28,10 @@ export interface DiffEqSolverSystem {
      */
     setState(state: number[]): void;
     setUnits(units: Unit[]): void;
+
+    /**
+     * Enables the solver to report errors in terms of the variable name.
+     * @param idx 
+     */
+    getVariableName(idx: number): string;
 }

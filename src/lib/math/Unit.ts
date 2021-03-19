@@ -329,7 +329,7 @@ export class Unit {
   public static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
   private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
   /**
-   * The unit of momentum.
+   * The unit of linear momentum.
    */
   public static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
   private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);

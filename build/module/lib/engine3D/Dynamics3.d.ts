@@ -94,7 +94,7 @@ export declare class Dynamics3 implements Dynamics<Geometric3> {
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3): void;
     setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3): void;
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric3, uomTime: Unit): void;
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric3>): void;
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric3>, uomTime: Unit): void;
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>): void;
     setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>): void;
     zeroLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric3>, uomTime: Unit): void;

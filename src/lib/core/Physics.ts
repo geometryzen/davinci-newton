@@ -97,6 +97,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         this.$totalEnergyLock = metric.lock(this.$totalEnergy);
         this.$numVariablesPerBody = dynamics.numVarsPerBody();
     }
+    getVariableName(idx: number): string {
+        return this.varsList.getVariable(idx).name;
+    }
 
     /**
      * Determines whether calculated forces will be added to the simulation list.
@@ -248,7 +251,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
-    private updateBodiesFromStateVariables(vars: number[], units: Unit[]): void {
+    private updateBodiesFromStateVariables(vars: number[], units: Unit[], uomTime: Unit): void {
         const dynamics = this.dynamics;
         const bodies = this.$bodies;
         const N = bodies.length;
@@ -261,7 +264,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             // Delegate the updating of the body from the state variables because
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
-            dynamics.updateBodyFromVars(vars, units, idx, body);
+            dynamics.updateBodyFromVars(vars, units, idx, body, uomTime);
         }
     }
 
@@ -310,7 +313,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const metric = this.metric;
         const dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
-        this.updateBodiesFromStateVariables(state, stateUnits);
+        this.updateBodiesFromStateVariables(state, stateUnits, uomTime);
         const bodies = this.$bodies;
         const Nb = bodies.length;
         for (let bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -595,11 +598,11 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    epilog(): void {
+    epilog(stepSize: number, uomStep?: Unit): void {
         const varsList = this.$varsList;
         const vars = varsList.getValues();
         const units = varsList.getUnits();
-        this.updateBodiesFromStateVariables(vars, units);
+        this.updateBodiesFromStateVariables(vars, units, uomStep);
         const dynamics = this.dynamics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     }

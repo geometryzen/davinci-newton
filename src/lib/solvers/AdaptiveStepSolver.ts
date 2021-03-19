@@ -43,7 +43,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
          * number of diffEqSolver steps taken during this step
          */
         // let steps = 0;
-        this.diffEq_.epilog(); // to ensure getEnergyInfo gives correct value
+        this.diffEq_.epilog(stepSize, uomStep); // to ensure getEnergyInfo gives correct value
         const startEnergy: number = metric.a(this.energySystem.totalEnergy());
         let lastEnergyDiff = Number.POSITIVE_INFINITY;
         /**
@@ -59,7 +59,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
             if (!firstTime) {
                 // restore state and solve again with smaller step size
                 this.diffEq_.setState(this.savedState);
-                this.diffEq_.epilog();
+                this.diffEq_.epilog(stepSize, uomStep);
                 // goog.asserts.assert(Math.abs(this.diffEq_.time - startTime) < 1E-12);
                 // const e = this.energySystem_.totalEnergy();
                 // goog.asserts.assert(Math.abs(e - startEnergy) < 1E-10);
@@ -78,7 +78,7 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
                 }
                 // steps++;
                 this.odeSolver_.step(h, uomStep);
-                this.diffEq_.epilog();
+                this.diffEq_.epilog(stepSize, uomStep);
                 t += h;
             }
             const finishEnergy: number = metric.a(this.energySystem.totalEnergy());

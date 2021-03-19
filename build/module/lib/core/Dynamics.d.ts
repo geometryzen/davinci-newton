@@ -78,7 +78,7 @@ export interface Dynamics<T> {
      * @param idx
      * @param body
      */
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<T>): void;
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      *
      * @param body

@@ -64,6 +64,9 @@ var Physics = /** @class */ (function (_super) {
         _this.$numVariablesPerBody = dynamics.numVarsPerBody();
         return _this;
     }
+    Physics.prototype.getVariableName = function (idx) {
+        return this.varsList.getVariable(idx).name;
+    };
     Object.defineProperty(Physics.prototype, "showForces", {
         /**
          * Determines whether calculated forces will be added to the simulation list.
@@ -209,7 +212,7 @@ var Physics = /** @class */ (function (_super) {
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
-    Physics.prototype.updateBodiesFromStateVariables = function (vars, units) {
+    Physics.prototype.updateBodiesFromStateVariables = function (vars, units, uomTime) {
         var dynamics = this.dynamics;
         var bodies = this.$bodies;
         var N = bodies.length;
@@ -222,7 +225,7 @@ var Physics = /** @class */ (function (_super) {
             // Delegate the updating of the body from the state variables because
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
-            dynamics.updateBodyFromVars(vars, units, idx, body);
+            dynamics.updateBodyFromVars(vars, units, idx, body, uomTime);
         }
     };
     /**
@@ -265,7 +268,7 @@ var Physics = /** @class */ (function (_super) {
         var metric = this.metric;
         var dynamics = this.dynamics;
         // Move objects so that rigid body objects know their current state.
-        this.updateBodiesFromStateVariables(state, stateUnits);
+        this.updateBodiesFromStateVariables(state, stateUnits, uomTime);
         var bodies = this.$bodies;
         var Nb = bodies.length;
         for (var bodyIndex = 0; bodyIndex < Nb; bodyIndex++) {
@@ -525,11 +528,11 @@ var Physics = /** @class */ (function (_super) {
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    Physics.prototype.epilog = function () {
+    Physics.prototype.epilog = function (stepSize, uomStep) {
         var varsList = this.$varsList;
         var vars = varsList.getValues();
         var units = varsList.getUnits();
-        this.updateBodiesFromStateVariables(vars, units);
+        this.updateBodiesFromStateVariables(vars, units, uomStep);
         var dynamics = this.dynamics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     };

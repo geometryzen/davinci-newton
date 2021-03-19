@@ -1,3 +1,4 @@
+import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
 import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { VarsList } from "../core/VarsList";
 import { Unit } from '../math/Unit';
@@ -211,7 +212,7 @@ var Dynamics2 = /** @class */ (function () {
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Tb + torque.b;
     };
-    Dynamics2.prototype.updateBodyFromVars = function (vars, units, idx, body) {
+    Dynamics2.prototype.updateBodyFromVars = function (vars, units, idx, body, uomTime) {
         body.X.a = 0;
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
@@ -221,10 +222,8 @@ var Dynamics2 = /** @class */ (function () {
         body.R.x = 0;
         body.R.y = 0;
         body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
         body.R.uom = units[idx + OFFSET_ATTITUDE_XY];
-        if (!Unit.isOne(body.R.uom)) {
-            throw new Error("body.R.uom should be one, but was " + body.R.uom);
-        }
         // Keep the magnitude of the attitude as close to 1 as possible.
         var R = body.R;
         var magR = Math.sqrt(R.a * R.a + R.b * R.b);

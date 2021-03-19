@@ -101,7 +101,11 @@ export class RungeKutta implements DiffEqSolver {
                         inuoms[i] = uom;
                     }
                 } catch (e) {
-                    throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
+                    const cause = (e instanceof Error) ? e.message : `${e}`;
+                    throw new Error(`${system.getVariableName(i)}. Cause: ${cause}`);
+                    // It would be good to translate the index into a variable name.
+                    // system.getVariableName(i);
+                    // throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                 }
             } else {
                 inuoms[i] = uom;

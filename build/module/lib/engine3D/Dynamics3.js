@@ -1,3 +1,4 @@
+import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
 import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
 import { VarsList } from '../core/VarsList';
 import { Unit } from '../math/Unit';
@@ -287,7 +288,7 @@ var Dynamics3 = /** @class */ (function () {
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Txy + torque.xy;
     };
-    Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body) {
+    Dynamics3.prototype.updateBodyFromVars = function (vars, units, idx, body, uomTime) {
         body.X.x = vars[idx + OFFSET_POSITION_X];
         body.X.y = vars[idx + OFFSET_POSITION_Y];
         body.X.z = vars[idx + OFFSET_POSITION_Z];
@@ -296,6 +297,11 @@ var Dynamics3 = /** @class */ (function () {
         body.R.xy = vars[idx + OFFSET_ATTITUDE_XY];
         body.R.yz = vars[idx + OFFSET_ATTITUDE_YZ];
         body.R.zx = vars[idx + OFFSET_ATTITUDE_ZX];
+        // We will only use one of the following units. Check them all for integrity.
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_A], uomTime);
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_YZ], uomTime);
+        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_ZX], uomTime);
         body.R.uom = units[idx + OFFSET_ATTITUDE_A];
         // Keep the magnitude of the attitude as close to 1 as possible.
         var R = body.R;

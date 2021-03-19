@@ -59,7 +59,7 @@ export declare class Dynamics2 implements Dynamics<Geometric2> {
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2): void;
     setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2): void;
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric2, uomTime: Unit): void;
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric2>): void;
+    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric2>, uomTime: Unit): void;
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric2>): void;
     setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric2>): void;
     zeroLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric2>, uomTime: Unit): void;

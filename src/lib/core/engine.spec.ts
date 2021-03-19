@@ -6,6 +6,7 @@ import { Engine2 } from '../engine2D/Engine2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
 import { LinearDamper2 } from '../engine2D/LinearDamper2';
 import { Particle2 } from '../engine2D/Particle2';
+import { Polygon2 } from '../engine2D/Polygon2';
 import { Spring2 } from '../engine2D/Spring2';
 import { SurfaceConstraint2 } from '../engine2D/SurfaceConstraint2';
 import { Block3 } from '../engine3D/Block3';
@@ -740,6 +741,31 @@ describe("engine", function () {
 
             sim.advance(Δt.a, Δt.uom);
 
+            expect(true).toBe(true);
+        });
+        it("Polygon Rigid Body", function () {
+            const e1 = Geometric2.e1;
+            const e2 = Geometric2.e2;
+
+            const sim = new Engine2();
+
+            const points: Geometric2[] = [];
+
+            points.push(Geometric2.vector(0, 0, Unit.METER));
+            points.push(Geometric2.vector(2, 0, Unit.METER));
+            points.push(Geometric2.vector(2, 1, Unit.METER));
+            points.push(Geometric2.vector(1, 1, Unit.METER));
+            points.push(Geometric2.vector(1, 3, Unit.METER));
+            points.push(Geometric2.vector(0, 3, Unit.METER));
+
+            const body = new Polygon2(points);
+            body.X = Geometric2.vector(1, 0, Unit.METER);
+            body.R = Geometric2.rotorFromDirections(e1, e1.add(e2));
+            body.P = Geometric2.vector(1, 0, Unit.KILOGRAM_METER_PER_SECOND);
+            // body.L = Geometric2.bivector(1);
+
+            sim.addBody(body);
+            sim.advance(0.1, Unit.SECOND);
             expect(true).toBe(true);
         });
     });

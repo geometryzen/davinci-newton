@@ -85,7 +85,7 @@ export declare class Unit {
     static readonly INV_SECOND: Unit;
     private static readonly KILOGRAM_METER_SQUARED;
     /**
-     * The unit of momentum.
+     * The unit of linear momentum.
      */
     static readonly KILOGRAM_METER_PER_SECOND: Unit;
     private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED;

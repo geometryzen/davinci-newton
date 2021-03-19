@@ -79,6 +79,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * Constructs a Physics engine for 3D simulations.
      */
     constructor(metric: Metric<T>, dynamics: Dynamics<T>);
+    getVariableName(idx: number): string;
     /**
      * Determines whether calculated forces will be added to the simulation list.
      */
@@ -206,7 +207,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      * Computes the system energy, linear momentum and angular momentum.
      * @hidden
      */
-    epilog(): void;
+    epilog(stepSize: number, uomStep?: Unit): void;
     /**
      * Provides a reference to the bodies in the simulation.
      */
