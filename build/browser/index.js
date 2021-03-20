@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.63';
+            this.VERSION = '1.0.64';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5572,11 +5572,11 @@
             // Ω back to world coordinates.
             // Notice that in the following we avoid creating temporary variables by computing
             // the reversion of the mutable body.R twice.
-            this.metric.copy(this.L, this.Ω); // Ω contains L
-            this.metric.rev(this.R);
-            this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R
-            this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R
-            this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R)
+            this.metric.copy(this.L, this.Ω); // Ω = L
+            this.metric.rev(this.R); // R = ~R
+            this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R ...  ~R L R ?
+            this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R ... ~R L R
+            this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R) ... Iinv (~R L R)
             this.metric.copyBivector(this.Ω_scratch, this.Ω); // Ω contains Iinv (R L ~R)
             this.metric.rev(this.R);
             this.metric.rotate(this.Ω, this.R); // Ω contains R (Iinv (R L ~R)) ~R
@@ -6826,6 +6826,46 @@
                 }
             }
         };
+        Geometric1.prototype.addVector = function (v, α) {
+            if (α === void 0) { α = 1; }
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().addVector(v, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = v.uom;
+                }
+                else if (v.x === 0) {
+                    // α has no effect because v is zero.
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, v.uom);
+                }
+                this.x += v.x * α;
+                return this;
+            }
+        };
+        Geometric1.prototype.subVector = function (v, α) {
+            if (α === void 0) { α = 1; }
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().subVector(v, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = v.uom;
+                }
+                else if (v.x === 0) {
+                    // α has no effect because v is zero.
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, v.uom);
+                }
+                this.x -= v.x * α;
+                return this;
+            }
+        };
         Geometric1.prototype.divByScalar = function (α, uom) {
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(this.clone().divByScalar(α, uom));
@@ -7701,7 +7741,7 @@
                         return mv;
                     }
                     else {
-                        throw new Error("matrix has units!");
+                        throw new Error("matrix has units " + matrix.uom + "!");
                     }
                 }
                 else {

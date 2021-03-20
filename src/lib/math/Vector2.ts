@@ -65,6 +65,7 @@ export class Vector2 implements VectorE2, GradeMasked {
         this.x = n11 * x + n12 * y;
         this.y = n21 * x + n22 * y;
 
+        // TODO: Units?
         return this;
     }
 

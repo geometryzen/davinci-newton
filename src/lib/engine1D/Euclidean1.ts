@@ -62,7 +62,7 @@ export class Euclidean1 implements Metric<Geometric1> {
                 if (Unit.isOne(matrix.uom)) {
                     return mv;
                 } else {
-                    throw new Error("matrix has units!");
+                    throw new Error(`matrix has units ${matrix.uom}!`);
                 }
             } else {
                 throw new Error(`applyMatrix(mv=Geometric1([${mv.a}, ${mv.x}], mv.uom), matrix=dimensions=${matrix.dimensions} Method not implemented.`);

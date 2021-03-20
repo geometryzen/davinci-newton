@@ -53,6 +53,7 @@ var Vector2 = /** @class */ (function () {
         var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1);
         this.x = n11 * x + n12 * y;
         this.y = n21 * x + n22 * y;
+        // TODO: Units?
         return this;
     };
     /**

@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.63
+// Type definitions for davinci-newton 1.0.64
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -565,16 +565,21 @@ export class Geometric1 implements GeometricE1 {
     a: number;
     x: number;
     uom?: Unit;
+    readonly grades: number;
     constructor(coords?: [number, number], uom?: Unit);
-    grades: number;
+    add(rhs: Geometric1, α?: number): Geometric1;
     addScalar(a: number, uom?: Unit, α?: number): Geometric1;
+    addVector(v: VectorE1, α?: number): Geometric1;
     adj(): Geometric1;
     angle(): Geometric1;
+    clone(): Geometric1;
     conj(): Geometric1;
     copy(source: Geometric1): Geometric1;
     copyVector(vector: Geometric1): Geometric1;
     lco(rhs: Geometric1): Geometric1;
     div(rhs: Geometric1): Geometric1;
+    divByNumber(α: number): Geometric1;
+    divByScalar(α: number, uom?: Unit): Geometric1;
     exp(): Geometric1;
     ext(rhs: Geometric1): Geometric1;
     grade(grade: number): Geometric1;
@@ -589,8 +594,6 @@ export class Geometric1 implements GeometricE1 {
     squaredNorm(): Geometric1;
     subScalar(a: number, uom?: Unit, α?: number): Geometric1;
     scp(rhs: Geometric1): Geometric1;
-    add(rhs: Geometric1, α?: number): Geometric1;
-    divByScalar(α: number, uom: Unit): Geometric1;
     lerp(target: Geometric1, α: number): Geometric1;
     scale(α: number): Geometric1;
     reflect(n: Geometric1): Geometric1;
@@ -598,6 +601,8 @@ export class Geometric1 implements GeometricE1 {
     slerp(target: Geometric1, α: number): Geometric1;
     stress(σ: Geometric1): Geometric1;
     sub(rhs: Geometric1, α?: number): Geometric1;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric1;
+    subVector(v: VectorE1, α?: number): Geometric1;
     toExponential(fractionDigits?: number): string;
     toFixed(fractionDigits?: number): string;
     toPrecision(precision?: number): string;
@@ -663,7 +668,7 @@ export class Geometric2 implements GeometricE2 {
     /**
      * Do not call this constructor. Use the static construction methods instead.
      */
-    constructor(coords?: number[], uom?: Unit, code?: number);
+    constructor(coords?: [number, number, number, number], uom?: Unit, code?: number);
 
     /**
      * Adds M * α to this multivector.
@@ -1442,7 +1447,7 @@ export class Geometric3 implements GeometricE3 {
     /**
      * Do not call this constructor. Use the static construction methods instead.
      */
-    constructor(coords?: number[], uom?: Unit, code?: number);
+    constructor(coords?: [number, number, number, number, number, number, number, number], uom?: Unit, code?: number);
 
     /**
      * Adds M * α to this multivector.

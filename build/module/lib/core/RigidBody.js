@@ -97,11 +97,11 @@ var RigidBody = /** @class */ (function (_super) {
         // Ω back to world coordinates.
         // Notice that in the following we avoid creating temporary variables by computing
         // the reversion of the mutable body.R twice.
-        this.metric.copy(this.L, this.Ω); // Ω contains L
-        this.metric.rev(this.R);
-        this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R
-        this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R
-        this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R)
+        this.metric.copy(this.L, this.Ω); // Ω = L
+        this.metric.rev(this.R); // R = ~R
+        this.metric.rotate(this.Ω, this.R); // Ω contains R L ~R ...  ~R L R ?
+        this.metric.copy(this.Ω, this.Ω_scratch); // scratch contains R L ~R ... ~R L R
+        this.metric.applyMatrix(this.Ω_scratch, this.Iinv); // scratch contains Iinv (R L ~R) ... Iinv (~R L R)
         this.metric.copyBivector(this.Ω_scratch, this.Ω); // Ω contains Iinv (R L ~R)
         this.metric.rev(this.R);
         this.metric.rotate(this.Ω, this.R); // Ω contains R (Iinv (R L ~R)) ~R

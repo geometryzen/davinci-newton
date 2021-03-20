@@ -555,6 +555,44 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             }
         }
     }
+    addVector(v: Vector, α = 1): Geometric1 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().addVector(v, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (v.x === 0) {
+                // α has no effect because v is zero.
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.x += v.x * α;
+            return this;
+        }
+    }
+    subVector(v: Vector, α = 1): Geometric1 {
+        if (this.lock_ !== UNLOCKED) {
+            return lock(this.clone().subVector(v, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (v.x === 0) {
+                // α has no effect because v is zero.
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.x -= v.x * α;
+            return this;
+        }
+    }
     divByScalar(α: number, uom: Unit): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().divByScalar(α, uom));

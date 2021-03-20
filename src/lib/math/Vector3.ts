@@ -71,6 +71,7 @@ export class Vector3 implements VectorE3, GradeMasked {
         this.y = n21 * x + n22 * y + n23 * z;
         this.z = n31 * x + n32 * y + n33 * z;
 
+        // TODO: Units
         return this;
     }
 
