@@ -10,6 +10,21 @@ import { Force1 } from './Force1';
 import { Torque1 } from './Torque1';
 
 /**
+ * @hidden 
+ */
+function copy(mv: Geometric1): Geometric1 {
+    return new Geometric1([mv.a, mv.x], mv.uom);
+}
+
+/**
+ * @hidden 
+ */
+function lock(mv: Geometric1): Geometric1 {
+    mv.lock();
+    return mv;
+}
+
+/**
  * @hidden
  */
 export class Euclidean1 implements Metric<Geometric1> {
@@ -89,10 +104,10 @@ export class Euclidean1 implements Metric<Geometric1> {
                     mv.uom = Unit.ONE;
                     return mv;
                 } else {
-                    return this.direction(new Geometric1([mv.a, mv.x], mv.uom));
+                    return this.direction(copy(mv));
                 }
             } else {
-                const result = this.direction(new Geometric1([mv.a, mv.x], mv.uom));
+                const result = this.direction(copy(mv));
                 result.lock();
                 return result;
             }
@@ -107,9 +122,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.div(lhs.uom, uom);
             return lhs;
         } else {
-            const result = this.divByScalar(new Geometric1([lhs.a, lhs.x], lhs.uom), a, uom);
-            result.lock();
-            return result;
+            return lock(this.divByScalar(copy(lhs), a, uom));
         }
     }
     ext(lhs: Geometric1, rhs: Geometric1): Geometric1 {
@@ -123,9 +136,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            const result = this.ext(new Geometric1([lhs.a, lhs.x], lhs.uom), rhs);
-            result.lock();
-            return result;
+            return lock(this.ext(copy(lhs), rhs));
         }
     }
     identityMatrix(): MatrixLike {
@@ -173,7 +184,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.mul(copy(lhs), rhs));
         }
     }
     mulByNumber(lhs: Geometric1, alpha: number): Geometric1 {
@@ -186,7 +197,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.x = x;
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.mulByNumber(copy(lhs), alpha));
         }
     }
     mulByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1 {
@@ -196,7 +207,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.mul(lhs.uom, uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.mulByScalar(copy(lhs), a, uom));
         }
     }
     mulByVector(lhs: Geometric1, rhs: Geometric1): Geometric1 {
@@ -208,7 +219,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.mulByVector(copy(lhs), rhs));
         }
     }
     neg(mv: Geometric1): Geometric1 {
@@ -245,7 +256,7 @@ export class Euclidean1 implements Metric<Geometric1> {
         if (mv.isMutable()) {
             return mv;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.rev(copy(mv)));
         }
     }
     rotate(mv: Geometric1, spinor: Geometric1): Geometric1 {
@@ -253,7 +264,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             // TODO: Assert that the spinor is 1.
             return mv;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.rotate(copy(mv), spinor));
         }
     }
     scalar(a: number, uom?: Unit): Geometric1 {
@@ -270,7 +281,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.scp(copy(lhs), rhs));
         }
     }
     setUom(mv: Geometric1, uom: Unit): void {
@@ -283,7 +294,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.sub(copy(lhs), rhs));
         }
     }
     subScalar(lhs: Geometric1, rhs: Geometric1): Geometric1 {
@@ -292,7 +303,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.subScalar(copy(lhs), rhs));
         }
     }
     subVector(lhs: Geometric1, rhs: Geometric1): Geometric1 {
@@ -301,7 +312,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
         } else {
-            throw new Error('Method not implemented.');
+            return lock(this.subVector(copy(lhs), rhs));
         }
     }
     unlock(mv: Geometric1, token: number): void {
@@ -324,7 +335,9 @@ export class Euclidean1 implements Metric<Geometric1> {
      * This doesn't happen in 1D because there are no bivectors.
      */
     writeBivector(source: Geometric1, target: Geometric1): void {
-        throw new Error('Method not implemented.');
+        target.a = 0;
+        target.x = 0;
+        target.uom = source.uom;
     }
     zero(): Geometric1 {
         return new Geometric1();
