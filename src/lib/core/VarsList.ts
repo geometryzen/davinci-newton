@@ -349,7 +349,11 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     setValueJump(index: number, value: number) {
         const variable = this.$variables[index];
-        variable.setValueJump(value);
+        if (variable) {
+            variable.setValueJump(value);
+        } else {
+            throw new Error(`index is invalid in setValueJump(index=${index}, value=${value}).`);
+        }
     }
 
     getUnits(): Unit[] {

@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.59
+// Type definitions for davinci-newton 1.0.60
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -416,6 +416,10 @@ export interface VectorE3 {
     uom?: Unit;
 }
 
+export interface BivectorE1 {
+    uom?: Unit;
+}
+
 export interface BivectorE2 {
     xy: number;
     uom?: Unit;
@@ -428,10 +432,20 @@ export interface BivectorE3 {
     uom?: Unit;
 }
 
+export interface SpinorE1 extends Scalar, BivectorE1 {
+}
+
 export interface SpinorE2 extends Scalar, BivectorE2 {
 }
 
 export interface SpinorE3 extends Scalar, BivectorE3 {
+}
+
+/**
+ * The coordinates for a multivector in 2D in geometric Cartesian basis.
+ */
+export interface GeometricE1 extends Scalar, SpinorE1, VectorE1 {
+
 }
 
 /**
@@ -446,6 +460,13 @@ export interface GeometricE2 extends Pseudo, Scalar, SpinorE2, VectorE2 {
  */
 export interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 
+}
+
+export class Geometric1 implements GeometricE1 {
+    a: number;
+    x: number;
+    uom?: Unit;
+    constructor(coords?: number[], uom?: Unit);
 }
 
 /**
@@ -2072,6 +2093,41 @@ export interface Metric<T> {
     zero(): T;
 }
 
+export class Euclidean1 implements Metric<Geometric1> {
+    a(mv: Geometric1): number;
+    add(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    addVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    applyMatrix(mv: Geometric1, matrix: MatrixLike): Geometric1;
+    copy(source: Geometric1, target: Geometric1): Geometric1;
+    copyBivector(source: Geometric1, target: Geometric1): Geometric1;
+    copyScalar(a: number, uom: Unit, target: Geometric1): Geometric1;
+    copyVector(source: Geometric1, target: Geometric1): Geometric1;
+    direction(mv: Geometric1, mutate: boolean): Geometric1;
+    divByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
+    ext(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    isZero(mv: Geometric1): boolean;
+    lock(mv: Geometric1): number;
+    magnitude(mv: Geometric1, mutate?: boolean): Geometric1;
+    mulByNumber(lhs: Geometric1, alpha: number): Geometric1;
+    mulByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
+    mulByVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    neg(mv: Geometric1): Geometric1;
+    quaditude(mv: Geometric1, mutate: boolean): Geometric1;
+    rev(mv: Geometric1): Geometric1;
+    rotate(mv: Geometric1, spinor: Geometric1): Geometric1;
+    scalar(a: number, uom?: Unit): Geometric1;
+    scp(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    setUom(mv: Geometric1, uom: Unit): void;
+    sub(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    subScalar(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    subVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
+    unlock(mv: Geometric1, token: number): void;
+    uom(mv: Geometric1): Unit;
+    write(source: Geometric1, target: Geometric1): void;
+    writeVector(source: Geometric1, target: Geometric1): void;
+    zero(): Geometric1;
+}
+
 export class Euclidean2 implements Metric<Geometric2> {
     a(mv: Geometric2): number;
     add(lhs: Geometric2, rhs: Geometric2): Geometric2;
@@ -2183,6 +2239,22 @@ export interface Dynamics<T> {
     addForce(rateOfChange: number[], idx: number, force: T): void;
     addTorque(rateOfChange: number[], idx: number, torque: T): void;
     epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
+    discontinuousEnergyVariables(): number[];
+    getOffsetName(offset: number): string;
+    getVarNames(): string[];
+    numVariablesPerBody(): number;
+}
+
+export class Dynamics1 implements Dynamics<Geometric1> {
+    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric1>): void;
+    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric1>): void;
+    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+    updateBody(vars: number[], idx: number, body: ForceBody<Geometric1>): void;
+    updateVarsFromBody(body: ForceBody<Geometric1>, idx: number, vars: VarsList): void;
+    addForce(rateOfChange: number[], idx: number, force: Geometric1): void;
+    addTorque(rateOfChange: number[], idx: number, torque: Geometric1): void;
+    epilog(bodies: ForceBody<Geometric1>[], forceLaws: ForceLaw<Geometric1>[], potentialOffset: Geometric1, vars: VarsList): void;
     discontinuousEnergyVariables(): number[];
     getOffsetName(offset: number): string;
     getVarNames(): string[];
@@ -2313,6 +2385,14 @@ export class RigidBody<T> implements ForceBody<T>, SimObject {
     translationalEnergy(): T;
 }
 
+export class RigidBody1 extends RigidBody<Geometric1> {
+    constructor();
+    /**
+     *
+     */
+    updateAngularVelocity(): void;
+}
+
 export class RigidBody2 extends RigidBody<Geometric2> {
     constructor();
     /**
@@ -2326,7 +2406,16 @@ export class RigidBody3 extends RigidBody<Geometric3> {
 }
 
 /**
- * A rectangular block of uniform surface density.
+ * A block of uniform line density.
+ */
+export class Block1 extends RigidBody1 {
+    width: Geometric1;
+    height: Geometric1;
+    constructor(width?: GeometricE1, height?: GeometricE1);
+}
+
+/**
+ * A block of uniform surface density.
  */
 export class Block2 extends RigidBody2 {
     width: Geometric2;
@@ -2335,7 +2424,7 @@ export class Block2 extends RigidBody2 {
 }
 
 /**
- * A rectangular block of uniform volume density.
+ * A block of uniform volume density.
  */
 export class Block3 extends RigidBody<Geometric3> {
     width: Geometric3;
@@ -2417,6 +2506,14 @@ export class Particle<T> extends RigidBody<T> {
     constructor(mass: T, charge: T, metric: Metric<T>);
 }
 
+export class Particle1 extends Particle<Geometric1> {
+    /**
+     * M is the mass of the particle. Defaults to 1.
+     * Q is the electric charge of the particle. Defaults to 0.
+     */
+    constructor(mass: Geometric1, charge: Geometric1);
+}
+
 export class Particle2 extends Particle<Geometric2> {
     /**
      * M is the mass of the particle. Defaults to 1.
@@ -2478,6 +2575,12 @@ export abstract class Force<T> implements SimObject {
 /**
  *
  */
+export class Force1 extends Force<Geometric1> {
+    constructor(body: ForceBody<Geometric1>);
+}
+/**
+ *
+ */
 export class Force2 extends Force<Geometric2> {
     constructor(body: ForceBody<Geometric2>);
 }
@@ -2505,6 +2608,10 @@ export interface ForceLaw<T> extends SimObject {
 export abstract class Torque<T> implements SimObject {
     expireTime: number;
     constructor(body: RigidBody<T>);
+}
+
+export class Torque1 extends Torque<Geometric1> {
+    constructor(body: ForceBody<Geometric1>);
 }
 
 export class Torque2 extends Torque<Geometric2> {
@@ -2703,6 +2810,10 @@ export class Engine<T> {
     updateFromBodies(): void;
 }
 
+export class Engine1 extends Engine<Geometric1> {
+    constructor(options?: Partial<EngineOptions>);
+}
+
 export class Engine2 extends Engine<Geometric2> {
     constructor(options?: Partial<EngineOptions>);
 }
@@ -2712,16 +2823,25 @@ export class Engine3 extends Engine<Geometric3> {
 }
 
 /**
- * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+ * The Physics1 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
- * It uses Geometric2 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
+ * It uses Geometric1 to provide the Geometric Algebra of Euclidean Line with a 1,0 metric.
+ */
+export class Physics1 extends Physics<Geometric1> implements EnergySystem<Geometric1> {
+    constructor();
+}
+
+/**
+ * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
+ * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
+ * It uses Geometric2 to provide the Geometric Algebra of Euclidean Plane with a 2,0 metric.
  */
 export class Physics2 extends Physics<Geometric2> implements EnergySystem<Geometric2> {
     constructor();
 }
 
 /**
- * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, J for each body,
+ * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
  * It uses Geometric3 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
  */
@@ -2948,6 +3068,10 @@ export class ConstantForceLaw<T> implements ForceLaw<T> {
     potentialEnergy(): T;
 }
 
+export class ConstantForceLaw1 extends ConstantForceLaw<Geometric1> {
+    constructor(body: ForceBody<Geometric1>, vector: Geometric1, vectorCoordType?: CoordType);
+}
+
 export class ConstantForceLaw2 extends ConstantForceLaw<Geometric2> {
     constructor(body: ForceBody<Geometric2>, vector: Geometric2, vectorCoordType?: CoordType);
 }
@@ -2963,6 +3087,10 @@ export class ConstantTorqueLaw<T> implements TorqueLaw<T> {
     updateTorques(): Torque<T>[];
     disconnect(): void;
     potentialEnergy(): T;
+}
+
+export class ConstantTorqueLaw1 extends ConstantTorqueLaw<Geometric1> {
+    constructor(body: ForceBody<Geometric1>, value: Geometric1);
 }
 
 export class ConstantTorqueLaw2 extends ConstantTorqueLaw<Geometric2> {
@@ -3033,6 +3161,10 @@ export class GravitationLaw<T> implements ForceLaw<T> {
     potentialEnergy(): T;
 }
 
+export class GravitationForceLaw1 extends GravitationLaw<Geometric1> {
+    constructor(body1: RigidBody<Geometric1>, body2: RigidBody<Geometric1>);
+}
+
 export class GravitationForceLaw2 extends GravitationLaw<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
@@ -3097,6 +3229,13 @@ export class Spring<T> implements ForceLaw<T> {
 /**
  *
  */
+export class Spring1 extends Spring<Geometric1> {
+    constructor(body1: RigidBody<Geometric1>, body2: RigidBody<Geometric1>);
+}
+
+/**
+ *
+ */
 export class Spring2 extends Spring<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
@@ -3129,6 +3268,10 @@ export class LinearDamper<T> implements ForceLaw<T> {
     updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
+}
+
+export class LinearDamper1 extends LinearDamper<Geometric1> {
+    constructor(body1: RigidBody<Geometric1>, body2: RigidBody<Geometric1>);
 }
 
 export class LinearDamper2 extends LinearDamper<Geometric2> {

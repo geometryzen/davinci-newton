@@ -15,7 +15,7 @@ export declare class Particle<T> extends RigidBody<T> {
      */
     updateAngularVelocity(): void;
     /**
-     * The inertia tensor should always be zero.
+     *
      */
     protected updateInertiaTensor(): void;
 }

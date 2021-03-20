@@ -1,4 +1,3 @@
-import { VarsList } from "../core/VarsList";
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
 import { Dynamics1 } from "./Dynamics1";
@@ -36,31 +35,12 @@ describe("Dynamics1", function () {
             expect(Array.isArray(vars)).toBe(true);
         });
     });
-    describe("epilog() method", function () {
-        it("should be callable.", function () {
-            const varsList = new VarsList(['TIME']);
-            const dynamics = new Dynamics1();
-            dynamics.epilog([], [], void 0, varsList);
-            expect(true).toBe(true);
-        });
-    });
     describe("getOffsetName() method", function () {
         it("should be callable.", function () {
             const dynamics = new Dynamics1();
             const name = dynamics.getOffsetName(0);
             expect(name).toBeDefined();
             expect(typeof name).toBe('string');
-        });
-    });
-    describe("updateVarsFromBody() method", function () {
-        it("should work.", function () {
-            const dynamics = new Dynamics1();
-            const varsList = new VarsList(['TIME']);
-            const M = new Geometric1();
-            const Q = new Geometric1();
-            const body = new Particle1(M, Q);
-            dynamics.updateVarsFromBody(body, 0, varsList);
-            expect(true).toBe(true);
         });
     });
     describe("updateBodyFromVars() method", function () {
@@ -84,7 +64,8 @@ describe("Dynamics1", function () {
             const body = new Particle1(M, Q);
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];
-            dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, 0, body);
+            const uomTime = Unit.ONE;
+            dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, 0, body, uomTime);
             expect(true).toBe(true);
         });
     });
@@ -96,7 +77,8 @@ describe("Dynamics1", function () {
             const body = new Particle1(M, Q);
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];
-            dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, 0, body);
+            const uomTime = Unit.ONE;
+            dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, 0, body, uomTime);
             expect(true).toBe(true);
         });
     });

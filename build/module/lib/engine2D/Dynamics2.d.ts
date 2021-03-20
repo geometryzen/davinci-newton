@@ -48,7 +48,6 @@ export declare const OFFSET_ANGULAR_MOMENTUM_XY = 6;
  * @hidden
  */
 export declare class Dynamics2 implements Dynamics<Geometric2> {
-    debug: boolean;
     numVarsPerBody(): number;
     getVarNames(): string[];
     getOffsetName(offset: number): string;

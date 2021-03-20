@@ -8,22 +8,22 @@ export interface AbelianOperators<T, UNIT> {
     /**
      * Binary this + other
      */
-    __add__(other: UNIT | T): T;
+    __add__(other: T | UNIT | number): T;
 
     /**
      * Binary other + this
      */
-    __radd__(other: UNIT | T): T;
+    __radd__(other: T | UNIT | number): T;
 
     /**
      * Binary this - other
      */
-    __sub__(other: UNIT | T): T;
+    __sub__(other: T | UNIT | number): T;
 
     /**
      * Binary other - this
      */
-    __rsub__(other: UNIT | T): T;
+    __rsub__(other: T | UNIT | number): T;
 
     /**
      * Unary +

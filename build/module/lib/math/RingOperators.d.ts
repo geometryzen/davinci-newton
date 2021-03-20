@@ -8,11 +8,11 @@ export interface RingOperators<T, UNIT> extends AbelianOperators<T, UNIT> {
     /**
      * Multiplication of the the target from the right.
      */
-    __mul__(rhs: any): T;
+    __mul__(rhs: T | UNIT | number): T;
     /**
      * Multiplication of the the target from the left.
      */
-    __rmul__(lhs: any): T;
+    __rmul__(lhs: T | UNIT | number): T;
     /**
      * The multiplicative inverse is denoted by inv.
      */

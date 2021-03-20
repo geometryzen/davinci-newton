@@ -329,7 +329,12 @@ var VarsList = /** @class */ (function (_super) {
      */
     VarsList.prototype.setValueJump = function (index, value) {
         var variable = this.$variables[index];
-        variable.setValueJump(value);
+        if (variable) {
+            variable.setValueJump(value);
+        }
+        else {
+            throw new Error("index is invalid in setValueJump(index=" + index + ", value=" + value + ").");
+        }
     };
     VarsList.prototype.getUnits = function () {
         var units = this.$units;
@@ -421,7 +426,7 @@ var VarsList = /** @class */ (function (_super) {
      */
     VarsList.prototype.getTime = function () {
         if (this.$timeIdx < 0) {
-            throw new Error('No "time" variable.');
+            throw new Error('No time variable.');
         }
         return this.getValue(this.$timeIdx);
     };

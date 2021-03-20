@@ -83,7 +83,10 @@ export declare class Unit {
      * The unit of angular velocity.
      */
     static readonly INV_SECOND: Unit;
-    private static readonly KILOGRAM_METER_SQUARED;
+    /**
+     * The unit of moment of inertia.
+     */
+    static readonly KILOGRAM_METER_SQUARED: Unit;
     /**
      * The unit of linear momentum.
      */

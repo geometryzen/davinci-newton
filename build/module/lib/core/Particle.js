@@ -1,4 +1,5 @@
 import { __extends } from "tslib";
+import { Unit } from '../math/Unit';
 import { RigidBody } from './RigidBody';
 /**
  * An object with no internal structure.
@@ -20,15 +21,39 @@ var Particle = /** @class */ (function (_super) {
      *
      */
     Particle.prototype.updateAngularVelocity = function () {
-        // Do nothing yet.
-        // The angular velocity will remain at zero.
+        var metric = this.metric;
+        if (Unit.isOne(metric.uom(this.L))) {
+            if (!Unit.isOne(metric.uom(this.Ω))) {
+                metric.setUom(this.Ω, Unit.ONE);
+            }
+        }
+        else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
+            if (!Unit.isCompatible(metric.uom(this.Ω), Unit.INV_SECOND)) {
+                metric.setUom(this.Ω, Unit.INV_SECOND);
+            }
+        }
+        else {
+            throw new Error("updateAngularVelocity() body.L.uom=" + metric.uom(this.L) + ", body.\u03A9.uom=" + metric.uom(this.Ω));
+        }
     };
     /**
-     * The inertia tensor should always be zero.
+     *
      */
     Particle.prototype.updateInertiaTensor = function () {
-        // Do nothing yet.
-        // The inertia tensor will remain as the identity matrix.
+        var metric = this.metric;
+        if (Unit.isOne(metric.uom(this.L))) {
+            if (!Unit.isOne(this.I.uom)) {
+                this.I.uom = Unit.ONE;
+            }
+        }
+        else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
+            if (!Unit.isCompatible(this.I.uom, Unit.KILOGRAM_METER_SQUARED)) {
+                this.I.uom = Unit.KILOGRAM_METER_SQUARED;
+            }
+        }
+        else {
+            throw new Error("updateInertiaTensor() body.L.uom=" + metric.uom(this.L) + ", body.\u03A9.uom=" + metric.uom(this.Ω));
+        }
     };
     return Particle;
 }(RigidBody));

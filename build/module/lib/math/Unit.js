@@ -708,6 +708,9 @@ var Unit = /** @class */ (function () {
      * The unit of angular velocity.
      */
     Unit.INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
+    /**
+     * The unit of moment of inertia.
+     */
     Unit.KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
     /**
      * The unit of linear momentum.

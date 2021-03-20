@@ -1,4 +1,5 @@
 import { readOnly } from "../i18n/readOnly";
+import { GeometricOperators } from "./GeometricOperators";
 import { Unit } from "./Unit";
 
 /**
@@ -24,7 +25,7 @@ const COORD_X = 1;
  */
 const UNLOCKED = -1 * Math.random();
 
-export class Geometric1 {
+export class Geometric1 implements GeometricOperators<Geometric1, Unit> {
     private readonly coords: number[];
     private unit: Unit;
 
@@ -44,6 +45,96 @@ export class Geometric1 {
         }
         this.coords = coords;
         this.unit = uom;
+    }
+    __div__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rdiv__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __vbar__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rvbar__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __wedge__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rwedge__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __lshift__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rlshift__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rshift__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rrshift__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __bang__(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    inv(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __eq__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __ne__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __ge__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __gt__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __le__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __lt__(rhs: Geometric1): boolean {
+        throw new Error("Method not implemented.");
+    }
+    __tilde__(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __add__(other: Unit | Geometric1): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __radd__(other: Unit | Geometric1): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __sub__(other: Unit | Geometric1): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rsub__(other: Unit | Geometric1): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __pos__(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __neg__(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    neg(): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    isZero(): boolean {
+        return this.coords[COORD_A] === 0 && this.coords[COORD_X] === 0;
+    }
+    __mul__(rhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    __rmul__(lhs: any): Geometric1 {
+        throw new Error("Method not implemented.");
+    }
+    isOne(): boolean {
+        return this.coords[COORD_A] === 1 && this.coords[COORD_X] === 0 && Unit.isOne(this.unit);
     }
 
     get a(): number {

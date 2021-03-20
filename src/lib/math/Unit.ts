@@ -327,7 +327,10 @@ export class Unit {
    * The unit of angular velocity.
    */
   public static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
-  private static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
+  /**
+   * The unit of moment of inertia.
+   */
+  public static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
   /**
    * The unit of linear momentum.
    */

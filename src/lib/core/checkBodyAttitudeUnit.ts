@@ -19,7 +19,7 @@ export function checkBodyAttitudeUnit(uom: Unit, uomTime: Unit): void {
                 throw new Error(`body.R.uom should be one, but was ${uom}.`);
             }
         } else {
-            throw new Error(`body.R.uom should be one, but was ${uom}.`);
+            throw new Error(`checkBodyAttitudeUnit(uom=${uom},uomTime=${uomTime}): body.R.uom should be one, but was ${uom}.`);
         }
     }
 }

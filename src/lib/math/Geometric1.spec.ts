@@ -129,4 +129,40 @@ describe("Geometric1", function () {
             }).toThrowError("unlock denied");
         });
     });
+    describe("isOne", function () {
+        it("one", function () {
+            const one = new Geometric1([1, 0]);
+            expect(one.isOne()).toBe(true);
+        });
+        it("two", function () {
+            const two = new Geometric1([2, 0]);
+            expect(two.isOne()).toBe(false);
+        });
+        it("1 + e1", function () {
+            const mv = new Geometric1([1, 1]);
+            expect(mv.isOne()).toBe(false);
+        });
+        it("kg", function () {
+            const kg = new Geometric1([1, 0], Unit.KILOGRAM);
+            expect(kg.isOne()).toBe(false);
+        });
+    });
+    describe("isZero", function () {
+        it("zero", function () {
+            const zero = new Geometric1([0, 0]);
+            expect(zero.isZero()).toBe(true);
+        });
+        it("one", function () {
+            const one = new Geometric1([1, 0]);
+            expect(one.isZero()).toBe(false);
+        });
+        it("e1", function () {
+            const mv = new Geometric1([0, 1]);
+            expect(mv.isZero()).toBe(false);
+        });
+        it("0 * kg", function () {
+            const kg = new Geometric1([0, 0], Unit.KILOGRAM);
+            expect(kg.isZero()).toBe(true);
+        });
+    });
 });

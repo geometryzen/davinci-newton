@@ -46,8 +46,9 @@ export interface Dynamics<T> {
      * @param rateOfChangeUoms (output) 
      * @param idx (input)
      * @param body (input)
+     * @param uomTime (input)
      */
-    setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>): void;
+    setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * Let Ω(t) be the (bivector) angular velocity.
      * Let R(t) be the (spinor) attitude of the rigid body. 
@@ -59,8 +60,9 @@ export interface Dynamics<T> {
      * @param rateOfChangeUoms (output) 
      * @param idx (input)
      * @param body (input)
+     * @param uomTime (input)
      */
-    setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>): void;
+    setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
      * @param rateOfChangeVals (output)

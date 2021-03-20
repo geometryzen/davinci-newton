@@ -19,6 +19,8 @@ import { Torque } from './Torque';
 import { varNamesContainsTime } from './varNamesContainsTime';
 import { isValidName } from '../util/validName';
 import { toName } from '../util/toName';
+import { checkBodyKinematicUnits } from './checkBodyKinematicUnits';
+import { checkBodyAngularVelocityUnits } from './checkBodyAngularVelocityUnits';
 
 
 /**
@@ -281,6 +283,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             // we do not know how to access the properties of the bodies in the
             // various dimensions.
             dynamics.updateBodyFromVars(vars, units, idx, body, uomTime);
+            checkBodyAngularVelocityUnits(body, this.metric, uomTime);
         }
     }
 
@@ -345,8 +348,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
                 }
             }
             else {
-                dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
-                dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body);
+                checkBodyKinematicUnits(body, metric, uomTime);
+                dynamics.setPositionRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
+                dynamics.setAttitudeRateOfChangeVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
                 dynamics.zeroLinearMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
                 dynamics.zeroAngularMomentumVars(rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime);
             }

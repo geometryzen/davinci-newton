@@ -57,7 +57,19 @@ export class Euclidean1 implements Metric<Geometric1> {
         }
     }
     applyMatrix(mv: Geometric1, matrix: MatrixLike): Geometric1 {
-        throw new Error('Method not implemented.');
+        if (mv) {
+            if (mv.a === 0 && mv.x === 0) {
+                if (Unit.isOne(matrix.uom)) {
+                    return mv;
+                } else {
+                    throw new Error("matrix has units!");
+                }
+            } else {
+                throw new Error(`applyMatrix(mv=Geometric1([${mv.a}, ${mv.x}], mv.uom), matrix=dimensions=${matrix.dimensions} Method not implemented.`);
+            }
+        } else {
+            throw new Error("mv must be defined in Metric.applyMatrix(mv, matrix)");
+        }
     }
     copy(source: Geometric1, target: Geometric1): Geometric1 {
         target.a = source.a;
@@ -177,8 +189,8 @@ export class Euclidean1 implements Metric<Geometric1> {
             const Lx = lhs.x;
             const Ra = rhs.a;
             const Rx = rhs.x;
-            const a = La * Ra + Lx * Rx;
-            const x = La * Rx + Lx * Ra;
+            const a = La * Ra + Lx * Rx;    // scp only does this, ext gives La * Ra.
+            const x = La * Rx + Lx * Ra;    // ext does this.
             lhs.a = a;
             lhs.x = x;
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);

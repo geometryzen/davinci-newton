@@ -78,7 +78,6 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class Dynamics2 implements Dynamics<Geometric2> {
-    public debug = false;
     numVarsPerBody(): number {
         // Each body is described by 7 kinematic components.
         // 2 position
@@ -151,38 +150,35 @@ export class Dynamics2 implements Dynamics<Geometric2> {
     updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void {
         const X = body.X;
         const R = body.R;
-        vars.setValueJump(OFFSET_POSITION_X + idx, X.x);
-        vars.setValueJump(OFFSET_POSITION_Y + idx, X.y);
-        vars.setUnit(OFFSET_POSITION_X + idx, X.uom);
-        vars.setUnit(OFFSET_POSITION_Y + idx, X.uom);
 
-        vars.setValueJump(OFFSET_ATTITUDE_A + idx, R.a);
-        vars.setValueJump(OFFSET_ATTITUDE_XY + idx, R.b);
         if (!Unit.isOne(R.uom)) {
             throw new Error(`R.uom should be one, but was ${R.uom}`);
         }
+
+        vars.setValueJump(OFFSET_POSITION_X + idx, X.x);
+        vars.setUnit(OFFSET_POSITION_Y + idx, X.uom);
+
+        vars.setValueJump(OFFSET_POSITION_Y + idx, X.y);
+        vars.setUnit(OFFSET_POSITION_X + idx, X.uom);
+
+        vars.setValueJump(OFFSET_ATTITUDE_A + idx, R.a);
         vars.setUnit(OFFSET_ATTITUDE_A + idx, R.uom);
+
+        vars.setValueJump(OFFSET_ATTITUDE_XY + idx, R.b);
         vars.setUnit(OFFSET_ATTITUDE_XY + idx, R.uom);
 
         vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
         vars.setUnit(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.uom);
+
+        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
         vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.uom);
 
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.uom);
     }
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2, uomTime: Unit): void {
-        if (this.debug) {
-            console.log(`addForceToRateOfChangeLinearMomentumVars()`);
-        }
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
         const Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
-        if (this.debug) {
-            console.log("BEFORE");
-            console.log(`Fx=${Fx}, Fy=${Fy}, Fuom=${rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X]}`);
-            console.log(`force=${force}, uomTime=${uomTime}`);
-        }
 
         if (Fx !== 0 || Fy !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
@@ -193,13 +189,6 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = Fy + force.y;
-
-        if (this.debug) {
-            console.log("AFTER");
-            console.log(`Fx=${rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X]}, Fxuom=${rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X]}`);
-            console.log(`Fy=${rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y]}, Fyuom=${rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y]}`);
-            console.log(`force=${force}, uomTime=${uomTime}`);
-        }
     }
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2): void {
         force.x = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
@@ -214,9 +203,6 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
     }
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric2, uomTime: Unit): void {
-        if (this.debug) {
-            console.log(`addTorqueToRateOfChangeAngularMomentumVars(torque=${torque})`);
-        }
         const Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY];
         if (Tb !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY], torque.uom);
@@ -267,16 +253,6 @@ export class Dynamics2 implements Dynamics<Geometric2> {
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric2>) {
         const P = body.P;
         const M = body.M;
-        if (!Unit.isOne(P.uom)) {
-            if (!Unit.isCompatible(P.uom, Unit.KILOGRAM_METER_PER_SECOND)) {
-                throw new Error(`P.uom should be ${Unit.KILOGRAM_METER_PER_SECOND}, but was ${P.uom}`);
-            }
-        }
-        if (!Unit.isOne(M.uom)) {
-            if (!Unit.isCompatible(M.uom, Unit.KILOGRAM)) {
-                throw new Error(`M.uom should be ${Unit.KILOGRAM}, but was ${M.uom}`);
-            }
-        }
         const m = M.a;
         rateOfChangeVals[idx + OFFSET_POSITION_X] = P.x / m;
         rateOfChangeVals[idx + OFFSET_POSITION_Y] = P.y / m;
@@ -292,14 +268,6 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         // Ω and R are auxiliary and primary variables that have already been computed.
         const R = body.R;
         const Ω = body.Ω;
-        if (!Unit.isOne(R.uom)) {
-            throw new Error(`R.uom should be one, but was ${R.uom}`);
-        }
-        if (!Unit.isOne(Ω.uom)) {
-            if (!Unit.isCompatible(Ω.uom, Unit.INV_SECOND)) {
-                throw new Error(`Ω.uom should be ${Unit.INV_SECOND}, but was ${Ω.uom}`);
-            }
-        }
         // dR/dt = +(1/2)(Ω.b)(R.b) - (1/2)(Ω.b)(R.a) I, where I = e1e2. 
         rateOfChangeVals[idx + OFFSET_ATTITUDE_A] = +0.5 * (Ω.xy * R.xy);
         rateOfChangeVals[idx + OFFSET_ATTITUDE_XY] = -0.5 * (Ω.xy * R.a);
