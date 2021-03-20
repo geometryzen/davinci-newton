@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Force1 | davinci-newton</title>
+	<title>LinearDamper1 | davinci-newton</title>
 	<meta name="description" content="Documentation for davinci-newton">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
@@ -2723,43 +2723,31 @@ img {
 <nav class="tsd-navigation secondary">
 	<ul>
 		<li class="current tsd-kind-class">
-			<a href="force1.html" class="tsd-kind-icon">Force1</a>
+			<a href="lineardamper1.html" class="tsd-kind-icon">Linear<wbr>Damper1</a>
 			<ul>
 				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<a href="force1.html#constructor" class="tsd-kind-icon">constructor</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#location" class="tsd-kind-icon">location</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#locationcoordtype" class="tsd-kind-icon">location<wbr>Coord<wbr>Type</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#vector" class="tsd-kind-icon">vector</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#vectorcoordtype" class="tsd-kind-icon">vector<wbr>Coord<wbr>Type</a>
-				</li>
-				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#f" class="tsd-kind-icon">F</a>
+					<a href="lineardamper1.html#constructor" class="tsd-kind-icon">constructor</a>
 				</li>
 				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
+					<a href="lineardamper1.html#b" class="tsd-kind-icon">b</a>
+				</li>
+				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+					<a href="lineardamper1.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
 				</li>
 				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#x" class="tsd-kind-icon">x</a>
+					<a href="lineardamper1.html#forces" class="tsd-kind-icon">forces</a>
+				</li>
+				<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+					<a href="lineardamper1.html#frictioncoefficient" class="tsd-kind-icon">friction<wbr>Coefficient</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#computeforce" class="tsd-kind-icon">compute<wbr>Force</a>
+					<a href="lineardamper1.html#disconnect" class="tsd-kind-icon">disconnect</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#computeposition" class="tsd-kind-icon">compute<wbr>Position</a>
+					<a href="lineardamper1.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#computetorque" class="tsd-kind-icon">compute<wbr>Torque</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="force1.html#getbody" class="tsd-kind-icon">get<wbr>Body</a>
+					<a href="lineardamper1.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a>
 				</li>
 			</ul>
 		</li>
@@ -2771,10 +2759,10 @@ img {
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span>
+					<span class="tsd-signature-type">LinearDamper</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span>
 					<ul class="tsd-hierarchy">
 						<li>
-							<span class="target">Force1</span>
+							<span class="target">LinearDamper1</span>
 						</li>
 					</ul>
 				</li>
@@ -2784,6 +2772,7 @@ img {
 			<h3>Implements</h3>
 			<ul class="tsd-hierarchy">
 				<li><span class="tsd-signature-type">SimObject</span></li>
+				<li><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -2793,33 +2782,24 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Constructors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="force1.html#constructor" class="tsd-kind-icon">constructor</a></li>
-						</ul>
-					</section>
-					<section class="tsd-index-section tsd-is-inherited">
-						<h3>Properties</h3>
-						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#location" class="tsd-kind-icon">location</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#locationcoordtype" class="tsd-kind-icon">location<wbr>Coord<wbr>Type</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#vector" class="tsd-kind-icon">vector</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#vectorcoordtype" class="tsd-kind-icon">vector<wbr>Coord<wbr>Type</a></li>
+							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="lineardamper1.html#constructor" class="tsd-kind-icon">constructor</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Accessors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#f" class="tsd-kind-icon">F</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
-							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#x" class="tsd-kind-icon">x</a></li>
+							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#b" class="tsd-kind-icon">b</a></li>
+							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
+							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#forces" class="tsd-kind-icon">forces</a></li>
+							<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#frictioncoefficient" class="tsd-kind-icon">friction<wbr>Coefficient</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section tsd-is-inherited">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#computeforce" class="tsd-kind-icon">compute<wbr>Force</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#computeposition" class="tsd-kind-icon">compute<wbr>Position</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#computetorque" class="tsd-kind-icon">compute<wbr>Torque</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="force1.html#getbody" class="tsd-kind-icon">get<wbr>Body</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="lineardamper1.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2831,97 +2811,63 @@ img {
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
 				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Force1<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="force1.html" class="tsd-signature-type">Force1</a></li>
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Linear<wbr>Damper1<span class="tsd-signature-symbol">(</span>body1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span>, body2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lineardamper1.html" class="tsd-signature-type">LinearDamper1</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Overrides Force.__constructor</p>
+							<p>Overrides LinearDamper.__constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/engine1D/Force1.ts#L8">lib/engine1D/Force1.ts:8</a></li>
+								<li>Defined in lib/engine1D/LinearDamper1.ts:8</li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>body1: <span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li>
+								<h5>body2: <span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="force1.html" class="tsd-signature-type">Force1</a></h4>
+						<h4 class="tsd-returns-title">Returns <a href="lineardamper1.html" class="tsd-signature-type">LinearDamper1</a></h4>
 					</li>
 				</ul>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="location" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> location</h3>
-				<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></div>
-				<aside class="tsd-sources">
-					<p>Inherited from Force.location</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L12">lib/core/Force.ts:12</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="locationcoordtype" class="tsd-anchor"></a>
-				<h3>location<wbr>Coord<wbr>Type</h3>
-				<div class="tsd-signature tsd-kind-icon">location<wbr>Coord<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CoordType</span></div>
-				<aside class="tsd-sources">
-					<p>Inherited from Force.locationCoordType</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L16">lib/core/Force.ts:16</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="vector" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> vector</h3>
-				<div class="tsd-signature tsd-kind-icon">vector<span class="tsd-signature-symbol">:</span> <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></div>
-				<aside class="tsd-sources">
-					<p>Inherited from Force.vector</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L21">lib/core/Force.ts:21</a></li>
-					</ul>
-				</aside>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>TODO: Call value or measure?
-						The force vector, may be in local or world coordinates.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="vectorcoordtype" class="tsd-anchor"></a>
-				<h3>vector<wbr>Coord<wbr>Type</h3>
-				<div class="tsd-signature tsd-kind-icon">vector<wbr>Coord<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CoordType</span></div>
-				<aside class="tsd-sources">
-					<p>Inherited from Force.vectorCoordType</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L25">lib/core/Force.ts:25</a></li>
-					</ul>
-				</aside>
-			</section>
-		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Accessors</h2>
-			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-				<a name="f" class="tsd-anchor"></a>
-				<h3>F</h3>
-				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> F<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a></li>
+			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+				<a name="b" class="tsd-anchor"></a>
+				<h3>b</h3>
+				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> b<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> b<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Force.F</p>
+							<p>Inherited from LinearDamper.b</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L72">lib/core/Force.ts:72</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L56">lib/core/LinearDamper.ts:56</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from LinearDamper.b</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L59">lib/core/LinearDamper.ts:59</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>b: <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -2960,20 +2906,54 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-				<a name="x" class="tsd-anchor"></a>
-				<h3>x</h3>
+				<a name="forces" class="tsd-anchor"></a>
+				<h3>forces</h3>
 				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> x<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Force.x</p>
+							<p>Inherited from LinearDamper.forces</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L77">lib/core/Force.ts:77</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L52">lib/core/LinearDamper.ts:52</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+				<a name="frictioncoefficient" class="tsd-anchor"></a>
+				<h3>friction<wbr>Coefficient</h3>
+				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> frictionCoefficient<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> frictionCoefficient<span class="tsd-signature-symbol">(</span>frictionCoefficient<span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from LinearDamper.frictionCoefficient</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L64">lib/core/LinearDamper.ts:64</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from LinearDamper.frictionCoefficient</p>
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L67">lib/core/LinearDamper.ts:67</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>frictionCoefficient: <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -2981,115 +2961,56 @@ img {
 		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="computeforce" class="tsd-anchor"></a>
-				<h3>compute<wbr>Force</h3>
+				<a name="disconnect" class="tsd-anchor"></a>
+				<h3>disconnect</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">compute<wbr>Force<span class="tsd-signature-symbol">(</span>force<span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">disconnect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Force.computeForce</p>
+							<p>Inherited from LinearDamper.disconnect</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L54">lib/core/Force.ts:54</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L108">lib/core/LinearDamper.ts:108</a></li>
 							</ul>
 						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Computes the force being applied (vector).</p>
-							</div>
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>force: <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>(output)</p>
-								</div>
-							</li>
-						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="computeposition" class="tsd-anchor"></a>
-				<h3>compute<wbr>Position</h3>
+				<a name="potentialenergy" class="tsd-anchor"></a>
+				<h3>potential<wbr>Energy</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">compute<wbr>Position<span class="tsd-signature-symbol">(</span>position<span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">potential<wbr>Energy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Force.computePosition</p>
+							<p>Inherited from LinearDamper.potentialEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L87">lib/core/Force.ts:87</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L112">lib/core/LinearDamper.ts:112</a></li>
 							</ul>
 						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Computes the point of application of the force in world coordinates.</p>
-							</div>
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>position: <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>(output)</p>
-								</div>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						<h4 class="tsd-returns-title">Returns <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h4>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="computetorque" class="tsd-anchor"></a>
-				<h3>compute<wbr>Torque</h3>
+				<a name="updateforces" class="tsd-anchor"></a>
+				<h3>update<wbr>Forces</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">compute<wbr>Torque<span class="tsd-signature-symbol">(</span>torque<span class="tsd-signature-symbol">: </span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Force.computeTorque</p>
+							<p>Inherited from LinearDamper.updateForces</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L117">lib/core/Force.ts:117</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/LinearDamper.ts#L72">lib/core/LinearDamper.ts:72</a></li>
 							</ul>
 						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Computes the torque, i.e. moment of the force about the center of mass (bivector).
-									Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
-								Torque = r ^ F because r = x - X</p>
-							</div>
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>torque: <a href="geometric1.html" class="tsd-signature-type">Geometric1</a></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="getbody" class="tsd-anchor"></a>
-				<h3>get<wbr>Body</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Body<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<p>Inherited from Force.getBody</p>
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/776dc48/src/lib/core/Force.ts#L45">lib/core/Force.ts:45</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric1.html" class="tsd-signature-type">Geometric1</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
