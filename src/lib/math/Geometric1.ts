@@ -29,6 +29,15 @@ const scalar = function scalar(a: number): [number, number] {
 /**
  * @hidden
  */
+const vector = function vector(x: number): [number, number] {
+    const coords = zero();
+    coords[COORD_X] = x;
+    return coords;
+};
+
+/**
+ * @hidden
+ */
 function copy(mv: Geometric1): Geometric1 {
     return new Geometric1([mv.a, mv.x], mv.uom);
 }
@@ -76,7 +85,7 @@ BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 
 /**
- * Sentinel value to indicate that the Geometric2 is not locked.
+ * Sentinel value to indicate that the Geometric1 is not locked.
  * UNLOCKED is in the range -1 to 0.
  * @hidden
  */
@@ -86,6 +95,86 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
     static scalar(a: number, uom?: Unit): Geometric1 {
         return new Geometric1(scalar(a), uom);
     }
+
+    /**
+     * Constructs a Geometric1 representing the number zero.
+     * The identity element for addition, <b>0</b>.
+     * The returned multivector is locked.
+     */
+    static readonly zero = lock(new Geometric1(zero(), void 0));
+
+    /**
+     * Constructs a Geometric1 representing the number one.
+     * The identity element for multiplication, <b>1</b>.
+     * The returned multivector is locked.
+     */
+    static readonly one = lock(new Geometric1(scalar(1), void 0));
+
+    /**
+     * Constructs a basis vector corresponding to the <code>x</code> coordinate.
+     * The returned multivector is locked.
+     */
+    static readonly e1 = lock(new Geometric1(vector(1), void 0));
+
+    /**
+     * SI base unit of length.
+     * The meter is the length of the path travelled by light in vacuum during a time interval of 1 / 299 792 458 of a second.
+     */
+    static readonly meter = lock(new Geometric1(scalar(1), Unit.METER));
+
+    /**
+     * SI base unit of mass.
+     * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
+     */
+    static readonly kilogram = lock(new Geometric1(scalar(1), Unit.KILOGRAM));
+
+    /**
+     * SI base unit of time.
+     * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
+     */
+    static readonly second = lock(new Geometric1(scalar(1), Unit.SECOND));
+
+    /**
+     * SI base unit of electric current.
+     * The ampere is that constant current which, if maintained in two straight parallel conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum, would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
+     */
+    static readonly ampere = lock(new Geometric1(scalar(1), Unit.AMPERE));
+
+    /**
+     * SI base unit of thermodynamic temperature.
+     * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature of the triple point of water.
+     */
+    static readonly kelvin = lock(new Geometric1(scalar(1), Unit.KELVIN));
+
+    /**
+     * SI base unit of amount of substance.
+     * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+     * 
+     * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
+     */
+    static readonly mole = lock(new Geometric1(scalar(1), Unit.MOLE));
+
+    /**
+     * SI base unit of luminous intensity.
+     * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
+     */
+    static readonly candela = lock(new Geometric1(scalar(1), Unit.CANDELA));
+
+    /**
+     * SI derived unit of electric charge, quantity of electricity.
+     */
+    static readonly coulomb = lock(new Geometric1(scalar(1), Unit.COULOMB));
+
+    /**
+     * SI derived unit of force.
+     */
+    static readonly newton = lock(new Geometric1(scalar(1), Unit.NEWTON));
+
+    /**
+     * SI derived unit of energy, work, quantity of heat.
+     */
+    static readonly joule = lock(new Geometric1(scalar(1), Unit.JOULE));
+
     private readonly coords: number[];
     private unit: Unit;
 
@@ -143,6 +232,12 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
+    copyVector(vector: Vector): this {
+        this.a = 0;
+        this.x = vector.x;
+        this.uom = vector.uom;
+        return this;
+    }
     lco(rhs: Geometric1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().lco(rhs));
@@ -183,7 +278,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             // grade of the multivector, so we can pull it out the front.
             const expW = Math.exp(this.a);
 
-            // In Geometric2 we have the special case that the pseudoscalar also commutes.
+            // In Geometric1 we have the special case that the pseudoscalar also commutes.
             // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
             // let cosβ = cos(this.b)
             // let sinβ = sin(this.b)
@@ -366,7 +461,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
                     return this;
                 } else {
                     // You can't ask to mutate that which is immutable.
-                    throw new Error("Unable to mutate this locked Geometric2.");
+                    throw new Error("Unable to mutate this locked Geometric1.");
                 }
             } else {
                 return lock(this.clone().rev(true));
@@ -384,7 +479,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
                 return lock(this.clone().quaditude(true));
             }
             else {
-                throw new Error("Unable to mutate this locked Geometric2.");
+                throw new Error("Unable to mutate this locked Geometric1.");
             }
         }
         else {
@@ -593,6 +688,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return lock(copy(this).zero());
         }
     }
+    /**
+     * @hidden 
+     */
     __div__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().div(rhs));
@@ -617,6 +715,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
+    /**
+     * @hidden 
+     */
     __rdiv__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).div(this));
@@ -628,6 +729,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __vbar__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).scp(rhs));
@@ -639,6 +743,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rvbar__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).scp(this));
@@ -650,6 +757,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __wedge__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).ext(rhs));
@@ -662,6 +772,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rwedge__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).ext(this));
@@ -674,6 +787,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __lshift__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).lco(rhs));
@@ -685,6 +801,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rlshift__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).lco(this));
@@ -696,6 +815,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rshift__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).rco(rhs));
@@ -707,6 +829,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rrshift__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).rco(this));
@@ -718,6 +843,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __bang__(): Geometric1 {
         return lock(copy(this).inv());
     }
@@ -746,6 +874,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
+    /**
+     * @hidden 
+     */
     __eq__(rhs: number | Geometric1): boolean {
         if (rhs instanceof Geometric1) {
             const a0 = this.a;
@@ -760,24 +891,45 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return false;
         }
     }
+    /**
+     * @hidden 
+     */
     __ne__(rhs: Geometric1): boolean {
         throw new Error(notImplemented('__ne_').message);
     }
+    /**
+     * @hidden 
+     */
     __ge__(rhs: Geometric1): boolean {
         throw new Error(notImplemented('__ge_').message);
     }
+    /**
+     * @hidden 
+     */
     __gt__(rhs: Geometric1): boolean {
         throw new Error(notImplemented('__gt_').message);
     }
+    /**
+     * @hidden 
+     */
     __le__(rhs: Geometric1): boolean {
         throw new Error(notImplemented('__le_').message);
     }
+    /**
+     * @hidden 
+     */
     __lt__(rhs: Geometric1): boolean {
         throw new Error(notImplemented('__lt_').message);
     }
+    /**
+     * @hidden 
+     */
     __tilde__(): Geometric1 {
         return lock(copy(this).rev(true));
     }
+    /**
+     * @hidden 
+     */
     __add__(rhs: Unit | Geometric1): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().add(rhs));
@@ -792,6 +944,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __radd__(lhs: Unit | Geometric1): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).add(this));
@@ -806,6 +961,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __sub__(rhs: Unit | Geometric1): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().sub(rhs));
@@ -821,6 +979,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rsub__(lhs: Unit | Geometric1): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).sub(this));
@@ -832,9 +993,15 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __pos__(): Geometric1 {
         return lock(copy(this));
     }
+    /**
+     * @hidden 
+     */
     __neg__(): Geometric1 {
         return lock(copy(this).neg());
     }
@@ -852,6 +1019,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
     isZero(): boolean {
         return this.coords[COORD_A] === 0 && this.coords[COORD_X] === 0;
     }
+    /**
+     * @hidden 
+     */
     __mul__(rhs: any): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().mul(rhs));
@@ -865,6 +1035,9 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
+    /**
+     * @hidden 
+     */
     __rmul__(lhs: any): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).mul(this));

@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.62
+// Type definitions for davinci-newton 1.0.63
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -463,6 +463,105 @@ export interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 }
 
 export class Geometric1 implements GeometricE1 {
+
+    /**
+     * Standard Basis vector corresponding to the x coordinate.
+     * The e1 multivector (vector) is immutable (locked).
+     */
+    static readonly e1: Geometric1;
+
+    /**
+     * The identity element for multiplication, 1 (scalar).
+     * The one multivector (scalar) is immutable (locked).
+     */
+    static readonly one: Geometric1;
+
+    /**
+     * The identity element for addition, 0.
+     * The zero multivector is immutable (locked).
+     */
+    static readonly zero: Geometric1;
+
+    /**
+     * SI base unit of length.
+     * The meter is the length of the path travelled by light in vacuum
+     * during a time interval of 1 / 299 792 458 of a second.
+     * The meter multivector (scalar) is immutable (locked).
+     */
+    static readonly meter: Geometric1;
+
+    /**
+     * SI base unit of mass.
+     * The kilogram is the unit of mass; it is equal to the mass of the
+     * international prototype of the kilogram.
+     * The kilogram multivector (scalar) is immutable (locked).
+     */
+    static readonly kilogram: Geometric1;
+
+    /**
+     * SI base unit of time.
+     * The second is the duration of 9 192 631 770 periods of the radiation
+     * corresponding to the transition between
+     * the two hyperfine levels of the ground state of the cesium 133 atom.
+     * The second multivector (scalar) is immutable (locked).
+     */
+    static readonly second: Geometric1;
+
+    /**
+     * SI base unit of electric current.
+     * The ampere is that constant current which, if maintained in two straight parallel
+     * conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum,
+     * would produce between these conductors a force equal to 2E-7 newton per meter of length.
+     * The ampere multivector (scalar) is immutable (locked).
+     */
+    static readonly ampere: Geometric1;
+
+    /**
+     * SI base unit of thermodynamic temperature.
+     * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature
+     * of the triple point of water.
+     * The kelvin multivector (scalar) is immutable (locked).
+     */
+    static readonly kelvin: Geometric1;
+
+    /**
+     * SI base unit of amount of substance.
+     * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are
+     * atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+     * 
+     * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions,
+     * electrons, other particles, or specified groups of such particles.
+     * The mole multivector (scalar) is immutable (locked).
+     */
+    static readonly mole: Geometric3;
+
+    /**
+     * SI base unit of luminous intensity.
+     * The candela is the luminous intensity, in a given direction,
+     * of a source that emits monochromatic radiation of frequency 540 x 10E12
+     * hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
+     * The candela multivector (scalar) is immutable (locked).
+     */
+    static readonly candela: Geometric1;
+
+    /**
+     * SI derived unit of electric charge, quantity of electricity.
+     * The coulomb multivector (scalar) is immutable (locked).
+     */
+    static readonly coulomb: Geometric1;
+
+    /**
+     * SI derived unit of force.
+     * The newton multivector (scalar) is immutable (locked).
+     */
+    static readonly newton: Geometric1;
+
+    /**
+     * SI derived unit of energy, work, quantity of heat.
+     * The joule multivector (scalar) is immutable (locked).
+     */
+    static readonly joule: Geometric1;
+
     a: number;
     x: number;
     uom?: Unit;
@@ -472,6 +571,8 @@ export class Geometric1 implements GeometricE1 {
     adj(): Geometric1;
     angle(): Geometric1;
     conj(): Geometric1;
+    copy(source: Geometric1): Geometric1;
+    copyVector(vector: Geometric1): Geometric1;
     lco(rhs: Geometric1): Geometric1;
     div(rhs: Geometric1): Geometric1;
     exp(): Geometric1;
@@ -479,7 +580,7 @@ export class Geometric1 implements GeometricE1 {
     grade(grade: number): Geometric1;
     isScalar(): boolean;
     log(): Geometric1;
-    magnitude(mutate: boolean): Geometric1;
+    magnitude(mutate?: boolean): Geometric1;
     mul(rhs: Geometric1): Geometric1;
     norm(): Geometric1;
     quad(): Geometric1;

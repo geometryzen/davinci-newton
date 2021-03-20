@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.62';
+            this.VERSION = '1.0.63';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -6392,6 +6392,14 @@
     /**
      * @hidden
      */
+    var vector$2 = function vector(x) {
+        var coords = zero$2();
+        coords[COORD_X$4] = x;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
     function copy$1(mv) {
         return new Geometric1([mv.a, mv.x], mv.uom);
     }
@@ -6433,7 +6441,7 @@
     BASIS_LABELS$2[COORD_A$1] = '1';
     BASIS_LABELS$2[COORD_X$4] = 'e1';
     /**
-     * Sentinel value to indicate that the Geometric2 is not locked.
+     * Sentinel value to indicate that the Geometric1 is not locked.
      * UNLOCKED is in the range -1 to 0.
      * @hidden
      */
@@ -6495,6 +6503,12 @@
                 return this;
             }
         };
+        Geometric1.prototype.copyVector = function (vector) {
+            this.a = 0;
+            this.x = vector.x;
+            this.uom = vector.uom;
+            return this;
+        };
         Geometric1.prototype.lco = function (rhs) {
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(this.clone().lco(rhs));
@@ -6535,7 +6549,7 @@
                 // It's always the case that the scalar commutes with every other
                 // grade of the multivector, so we can pull it out the front.
                 var expW = Math.exp(this.a);
-                // In Geometric2 we have the special case that the pseudoscalar also commutes.
+                // In Geometric1 we have the special case that the pseudoscalar also commutes.
                 // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
                 // let cosβ = cos(this.b)
                 // let sinβ = sin(this.b)
@@ -6720,7 +6734,7 @@
                     }
                     else {
                         // You can't ask to mutate that which is immutable.
-                        throw new Error("Unable to mutate this locked Geometric2.");
+                        throw new Error("Unable to mutate this locked Geometric1.");
                     }
                 }
                 else {
@@ -6740,7 +6754,7 @@
                     return lock$3(this.clone().quaditude(true));
                 }
                 else {
-                    throw new Error("Unable to mutate this locked Geometric2.");
+                    throw new Error("Unable to mutate this locked Geometric1.");
                 }
             }
             else {
@@ -6942,6 +6956,9 @@
                 return lock$3(copy$1(this).zero());
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__div__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(this.clone().div(rhs));
@@ -6966,6 +6983,9 @@
                 return this;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rdiv__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).div(this));
@@ -6977,6 +6997,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__vbar__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(copy$1(this).scp(rhs));
@@ -6988,6 +7011,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rvbar__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).scp(this));
@@ -6999,6 +7025,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__wedge__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(copy$1(this).ext(rhs));
@@ -7011,6 +7040,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rwedge__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).ext(this));
@@ -7023,6 +7055,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__lshift__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(copy$1(this).lco(rhs));
@@ -7034,6 +7069,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rlshift__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).lco(this));
@@ -7045,6 +7083,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rshift__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(copy$1(this).rco(rhs));
@@ -7056,6 +7097,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rrshift__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).rco(this));
@@ -7067,6 +7111,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__bang__ = function () {
             return lock$3(copy$1(this).inv());
         };
@@ -7089,6 +7136,9 @@
                 return this;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__eq__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 var a0 = this.a;
@@ -7105,24 +7155,45 @@
                 return false;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__ne__ = function (rhs) {
             throw new Error(notImplemented('__ne_').message);
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__ge__ = function (rhs) {
             throw new Error(notImplemented('__ge_').message);
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__gt__ = function (rhs) {
             throw new Error(notImplemented('__gt_').message);
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__le__ = function (rhs) {
             throw new Error(notImplemented('__le_').message);
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__lt__ = function (rhs) {
             throw new Error(notImplemented('__lt_').message);
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__tilde__ = function () {
             return lock$3(copy$1(this).rev(true));
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__add__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(this.clone().add(rhs));
@@ -7137,6 +7208,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__radd__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).add(this));
@@ -7151,6 +7225,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__sub__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(this.clone().sub(rhs));
@@ -7165,6 +7242,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rsub__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).sub(this));
@@ -7176,9 +7256,15 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__pos__ = function () {
             return lock$3(copy$1(this));
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__neg__ = function () {
             return lock$3(copy$1(this).neg());
         };
@@ -7196,6 +7282,9 @@
         Geometric1.prototype.isZero = function () {
             return this.coords[COORD_A$1] === 0 && this.coords[COORD_X$4] === 0;
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__mul__ = function (rhs) {
             if (rhs instanceof Geometric1) {
                 return lock$3(this.clone().mul(rhs));
@@ -7210,6 +7299,9 @@
                 return void 0;
             }
         };
+        /**
+         * @hidden
+         */
         Geometric1.prototype.__rmul__ = function (lhs) {
             if (lhs instanceof Geometric1) {
                 return lock$3(copy$1(lhs).mul(this));
@@ -7320,6 +7412,72 @@
                 throw new Error("unlock denied");
             }
         };
+        /**
+         * Constructs a Geometric1 representing the number zero.
+         * The identity element for addition, <b>0</b>.
+         * The returned multivector is locked.
+         */
+        Geometric1.zero = lock$3(new Geometric1(zero$2(), void 0));
+        /**
+         * Constructs a Geometric1 representing the number one.
+         * The identity element for multiplication, <b>1</b>.
+         * The returned multivector is locked.
+         */
+        Geometric1.one = lock$3(new Geometric1(scalar$2(1), void 0));
+        /**
+         * Constructs a basis vector corresponding to the <code>x</code> coordinate.
+         * The returned multivector is locked.
+         */
+        Geometric1.e1 = lock$3(new Geometric1(vector$2(1), void 0));
+        /**
+         * SI base unit of length.
+         * The meter is the length of the path travelled by light in vacuum during a time interval of 1 / 299 792 458 of a second.
+         */
+        Geometric1.meter = lock$3(new Geometric1(scalar$2(1), Unit.METER));
+        /**
+         * SI base unit of mass.
+         * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
+         */
+        Geometric1.kilogram = lock$3(new Geometric1(scalar$2(1), Unit.KILOGRAM));
+        /**
+         * SI base unit of time.
+         * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
+         */
+        Geometric1.second = lock$3(new Geometric1(scalar$2(1), Unit.SECOND));
+        /**
+         * SI base unit of electric current.
+         * The ampere is that constant current which, if maintained in two straight parallel conductors of infinite length, of negligible circular cross-section, and placed 1 meter apart in vacuum, would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
+         */
+        Geometric1.ampere = lock$3(new Geometric1(scalar$2(1), Unit.AMPERE));
+        /**
+         * SI base unit of thermodynamic temperature.
+         * The kelvin, unit of thermodynamic temperature, is the fraction 1 / 273.16 of the thermodynamic temperature of the triple point of water.
+         */
+        Geometric1.kelvin = lock$3(new Geometric1(scalar$2(1), Unit.KELVIN));
+        /**
+         * SI base unit of amount of substance.
+         * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+         *
+         * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
+         */
+        Geometric1.mole = lock$3(new Geometric1(scalar$2(1), Unit.MOLE));
+        /**
+         * SI base unit of luminous intensity.
+         * The candela is the luminous intensity, in a given direction, of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1 / 683 watt per steradian.
+         */
+        Geometric1.candela = lock$3(new Geometric1(scalar$2(1), Unit.CANDELA));
+        /**
+         * SI derived unit of electric charge, quantity of electricity.
+         */
+        Geometric1.coulomb = lock$3(new Geometric1(scalar$2(1), Unit.COULOMB));
+        /**
+         * SI derived unit of force.
+         */
+        Geometric1.newton = lock$3(new Geometric1(scalar$2(1), Unit.NEWTON));
+        /**
+         * SI derived unit of energy, work, quantity of heat.
+         */
+        Geometric1.joule = lock$3(new Geometric1(scalar$2(1), Unit.JOULE));
         return Geometric1;
     }());
 
