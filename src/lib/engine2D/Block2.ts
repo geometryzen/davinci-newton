@@ -39,6 +39,14 @@ export class Block2 extends RigidBody2 {
     constructor(width = Geometric2.one, height = Geometric2.one) {
         super();
 
+        if (!(width instanceof Geometric2)) {
+            throw new Error("width must be a Geometric2.");
+        }
+
+        if (!(height instanceof Geometric2)) {
+            throw new Error("height must be a Geometric2.");
+        }
+
         this.width_ = Geometric2.copy(width);
         this.widthLock_ = this.width_.lock();
 

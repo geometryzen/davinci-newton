@@ -27,9 +27,9 @@ describe("LinearDamper", function () {
             Bob.X = Geometric2.vector(0.5, 0);
             const damper = new LinearDamper(Alice, Bob);
             expect(damper.b.a).toBe(1);
-            expect(damper.b.uom).toBeUndefined();
+            expect(Unit.isOne(damper.b.uom)).toBe(true);
             expect(damper.frictionCoefficient.a).toBe(1);
-            expect(damper.frictionCoefficient.uom).toBeUndefined();
+            expect(Unit.isOne(damper.frictionCoefficient.uom)).toBe(true);
         });
         it("b should be assignable.", function () {
             const metric = new Euclidean2();

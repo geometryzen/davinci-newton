@@ -7,6 +7,9 @@ export class Block1 extends RigidBody1 {
     private readonly $width: LockableMeasure<Geometric1>;
     constructor(width: Geometric1) {
         super();
+        if (!(width instanceof Geometric1)) {
+            throw new Error("width must be a Geometric1.");
+        }
         const metric = this.metric;
 
         this.$width = new LockableMeasure(metric, width);

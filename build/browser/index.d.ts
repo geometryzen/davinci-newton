@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.61
+// Type definitions for davinci-newton 1.0.62
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -466,7 +466,63 @@ export class Geometric1 implements GeometricE1 {
     a: number;
     x: number;
     uom?: Unit;
-    constructor(coords?: number[], uom?: Unit);
+    constructor(coords?: [number, number], uom?: Unit);
+    grades: number;
+    addScalar(a: number, uom?: Unit, α?: number): Geometric1;
+    adj(): Geometric1;
+    angle(): Geometric1;
+    conj(): Geometric1;
+    lco(rhs: Geometric1): Geometric1;
+    div(rhs: Geometric1): Geometric1;
+    exp(): Geometric1;
+    ext(rhs: Geometric1): Geometric1;
+    grade(grade: number): Geometric1;
+    isScalar(): boolean;
+    log(): Geometric1;
+    magnitude(mutate: boolean): Geometric1;
+    mul(rhs: Geometric1): Geometric1;
+    norm(): Geometric1;
+    quad(): Geometric1;
+    rco(rhs: Geometric1): Geometric1;
+    rev(): Geometric1;
+    squaredNorm(): Geometric1;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric1;
+    scp(rhs: Geometric1): Geometric1;
+    add(rhs: Geometric1, α?: number): Geometric1;
+    divByScalar(α: number, uom: Unit): Geometric1;
+    lerp(target: Geometric1, α: number): Geometric1;
+    scale(α: number): Geometric1;
+    reflect(n: Geometric1): Geometric1;
+    rotate(rotor: Geometric1): Geometric1;
+    slerp(target: Geometric1, α: number): Geometric1;
+    stress(σ: Geometric1): Geometric1;
+    sub(rhs: Geometric1, α?: number): Geometric1;
+    toExponential(fractionDigits?: number): string;
+    toFixed(fractionDigits?: number): string;
+    toPrecision(precision?: number): string;
+    toString(radix?: number): string;
+    zero(): Geometric1;
+    inv(): Geometric1;
+    neg(): Geometric1;
+    isZero(): boolean;
+    isOne(): boolean;
+    /**
+     * Determines whether this multivector is locked.
+     * If the multivector is in the unlocked state then it is mutable.
+     * If the multivector is in the locked state then it is immutable.
+     */
+    isLocked(): boolean;
+    isMutable(): boolean;
+    /**
+     * Locks this multivector (preventing any further mutation),
+     * and returns a token that may be used to unlock it.
+     */
+    lock(): number;
+    /**
+     * Unlocks this multivector (allowing mutation),
+     * using a token that was obtained from a preceding lock method call.
+     */
+    unlock(token: number): void;
 }
 
 /**
@@ -2410,8 +2466,7 @@ export class RigidBody3 extends RigidBody<Geometric3> {
  */
 export class Block1 extends RigidBody1 {
     width: Geometric1;
-    height: Geometric1;
-    constructor(width?: GeometricE1, height?: GeometricE1);
+    constructor(width?: Geometric1);
 }
 
 /**
@@ -2420,7 +2475,7 @@ export class Block1 extends RigidBody1 {
 export class Block2 extends RigidBody2 {
     width: Geometric2;
     height: Geometric2;
-    constructor(width?: GeometricE2, height?: GeometricE2);
+    constructor(width?: Geometric2, height?: Geometric2);
 }
 
 /**
@@ -2430,7 +2485,7 @@ export class Block3 extends RigidBody<Geometric3> {
     width: Geometric3;
     height: Geometric3;
     depth: Geometric3;
-    constructor(width?: GeometricE3, height?: GeometricE3, depth?: GeometricE3);
+    constructor(width?: Geometric3, height?: Geometric3, depth?: Geometric3);
 }
 
 /**

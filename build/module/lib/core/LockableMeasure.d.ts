@@ -6,6 +6,11 @@ export declare class LockableMeasure<T> {
     private readonly metric;
     private readonly $value;
     private $lock;
+    /**
+     *
+     * @param metric
+     * @param initialValue A value that is copied.
+     */
     constructor(metric: Metric<T>, initialValue: T);
     get(): T;
     /**

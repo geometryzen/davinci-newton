@@ -28,6 +28,12 @@ var Block2 = /** @class */ (function (_super) {
         if (width === void 0) { width = Geometric2.one; }
         if (height === void 0) { height = Geometric2.one; }
         var _this = _super.call(this) || this;
+        if (!(width instanceof Geometric2)) {
+            throw new Error("width must be a Geometric2.");
+        }
+        if (!(height instanceof Geometric2)) {
+            throw new Error("height must be a Geometric2.");
+        }
         _this.width_ = Geometric2.copy(width);
         _this.widthLock_ = _this.width_.lock();
         _this.height_ = Geometric2.copy(height);

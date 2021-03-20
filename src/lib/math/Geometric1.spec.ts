@@ -18,7 +18,7 @@ describe("Geometric1", function () {
         });
         it("", function () {
             expect(function () {
-                const m = new Geometric1([1, 2, 3]);
+                const m = new Geometric1([1, 2, 3] as unknown[] as [number, number]);
                 // Keep the compiler happy.
                 expect(m).toBeDefined();
                 fail();

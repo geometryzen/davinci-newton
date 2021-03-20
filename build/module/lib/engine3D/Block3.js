@@ -30,6 +30,15 @@ var Block3 = /** @class */ (function (_super) {
         if (height === void 0) { height = Geometric3.one; }
         if (depth === void 0) { depth = Geometric3.one; }
         var _this = _super.call(this, new Euclidean3()) || this;
+        if (!(width instanceof Geometric3)) {
+            throw new Error("width must be a Geometric3.");
+        }
+        if (!(height instanceof Geometric3)) {
+            throw new Error("height must be a Geometric3.");
+        }
+        if (!(depth instanceof Geometric3)) {
+            throw new Error("depth must be a Geometric3.");
+        }
         _this.width_ = Geometric3.copy(width);
         _this.widthLock_ = _this.width_.lock();
         _this.height_ = Geometric3.copy(height);

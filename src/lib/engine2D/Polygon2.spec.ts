@@ -1,5 +1,6 @@
 import { Dimensions } from "../math/Dimensions";
 import { Geometric2 } from "../math/Geometric2";
+import { Unit } from "../math/Unit";
 import { Polygon2 } from "./Polygon2";
 
 /**
@@ -103,7 +104,7 @@ describe("Polygon2", function () {
         const body = new Polygon2(unitSquare);
         expect(body.Q).toBeDefined();
         expect(body.Q.isZero()).toBe(true);
-        expect(body.Q.uom).toBeUndefined();
+        expect(Unit.isOne(body.Q.uom)).toBe(true);
     });
     it("Attitude, R should be initialized to 1", function () {
         const body = new Polygon2(unitSquare);

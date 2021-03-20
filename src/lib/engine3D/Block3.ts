@@ -46,6 +46,18 @@ export class Block3 extends RigidBody<Geometric3> {
     constructor(width = Geometric3.one, height = Geometric3.one, depth = Geometric3.one) {
         super(new Euclidean3());
 
+        if (!(width instanceof Geometric3)) {
+            throw new Error("width must be a Geometric3.");
+        }
+
+        if (!(height instanceof Geometric3)) {
+            throw new Error("height must be a Geometric3.");
+        }
+
+        if (!(depth instanceof Geometric3)) {
+            throw new Error("depth must be a Geometric3.");
+        }
+
         this.width_ = Geometric3.copy(width);
         this.widthLock_ = this.width_.lock();
 

@@ -7,10 +7,16 @@ import { Metric } from "./Metric";
 export class LockableMeasure<T> {
     private readonly $value: T;
     private $lock: number;
+    /**
+     * 
+     * @param metric 
+     * @param initialValue A value that is copied. 
+     */
     constructor(private readonly metric: Metric<T>, initialValue: T) {
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('initialValue', initialValue);
-        this.$value = initialValue;
+        this.$value = metric.zero();
+        metric.copy(initialValue, this.$value);
         this.lock();
     }
     get(): T {

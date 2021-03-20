@@ -3,11 +3,17 @@ import { mustBeNonNullObject } from "../checks/mustBeNonNullObject";
  * @hidden
  */
 var LockableMeasure = /** @class */ (function () {
+    /**
+     *
+     * @param metric
+     * @param initialValue A value that is copied.
+     */
     function LockableMeasure(metric, initialValue) {
         this.metric = metric;
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('initialValue', initialValue);
-        this.$value = initialValue;
+        this.$value = metric.zero();
+        metric.copy(initialValue, this.$value);
         this.lock();
     }
     LockableMeasure.prototype.get = function () {

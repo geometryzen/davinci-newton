@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.61';
+            this.VERSION = '1.0.62';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5285,11 +5285,17 @@
      * @hidden
      */
     var LockableMeasure = /** @class */ (function () {
+        /**
+         *
+         * @param metric
+         * @param initialValue A value that is copied.
+         */
         function LockableMeasure(metric, initialValue) {
             this.metric = metric;
             mustBeNonNullObject('metric', metric);
             mustBeNonNullObject('initialValue', initialValue);
-            this.$value = initialValue;
+            this.$value = metric.zero();
+            metric.copy(initialValue, this.$value);
             this.lock();
         }
         LockableMeasure.prototype.get = function () {
@@ -6120,16 +6126,297 @@
 
     /**
      * @hidden
+     * @param name
+     * @returns
+     */
+    function notImplemented(name) {
+        mustBeString('name', name);
+        var message = {
+            get message() {
+                return "'" + name + "' method is not yet implemented.";
+            }
+        };
+        return message;
+    }
+
+    /**
+     * @hidden
+     */
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+
+    /**
+     * @hidden
+     */
+    function beAnArray() {
+        return "be an array";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeArray(name, value, contextBuilder) {
+        if (Array.isArray(value)) {
+            return value;
+        }
+        else {
+            doesNotSatisfy(name, beAnArray, contextBuilder);
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    function isLabelOne(label) {
+        if (typeof label === 'string') {
+            return label === "1";
+        }
+        else {
+            var labels = mustBeArray('label', label);
+            if (labels.length === 2) {
+                return isLabelOne(labels[0]) && isLabelOne(labels[1]);
+            }
+            else if (labels.length === 1) {
+                return isLabelOne(labels[0]);
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    /**
+     * @hidden
+     */
+    function appendLabel(coord, label, sb) {
+        if (typeof label === 'string') {
+            sb.push(label);
+        }
+        else {
+            var labels = mustBeArray('label', label);
+            if (labels.length === 2) {
+                sb.push(coord > 0 ? labels[1] : labels[0]);
+            }
+            else if (labels.length === 1) {
+                sb.push(labels[0]);
+            }
+            else if (labels.length === 0) ;
+            else {
+                throw new Error("Unexpected basis label array length: " + labels.length);
+            }
+        }
+    }
+    /**
+     * @hidden
+     */
+    function appendCoord(coord, numberToString, label, sb) {
+        if (coord !== 0) {
+            if (coord >= 0) {
+                if (sb.length > 0) {
+                    sb.push("+");
+                }
+            }
+            else {
+                // The coordinate is negative.
+                if (typeof label === 'string') {
+                    // There's only one label, we must use minus signs.
+                    sb.push("-");
+                }
+                else {
+                    var labels = mustBeArray('label', label);
+                    if (labels.length === 2) {
+                        if (labels[0] !== labels[1]) {
+                            if (sb.length > 0) {
+                                sb.push("+");
+                            }
+                        }
+                        else {
+                            sb.push("-");
+                        }
+                    }
+                    else if (labels.length === 1) {
+                        sb.push("-");
+                    }
+                    else {
+                        // This could be considered an error, but we'll let appendLabel deal with it!
+                        sb.push("-");
+                    }
+                }
+            }
+            var n = Math.abs(coord);
+            if (n === 1) {
+                // 1 times something is just 1, so we only need the label.
+                appendLabel(coord, label, sb);
+            }
+            else {
+                sb.push(numberToString(n));
+                if (!isLabelOne(label)) {
+                    sb.push("*");
+                    appendLabel(coord, label, sb);
+                }
+            }
+        }
+    }
+    /**
+     * @hidden
+     */
+    function stringFromCoordinates(coordinates, numberToString, labels, uom) {
+        var sb = [];
+        for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
+            var coord = coordinates[i];
+            if (isDefined(coord)) {
+                appendCoord(coord, numberToString, labels[i], sb);
+            }
+            else {
+                // We'll just say that the whole thing is undefined.
+                return void 0;
+            }
+        }
+        if (Unit.isOne(uom)) {
+            return sb.length > 0 ? sb.join("") : "0";
+        }
+        else {
+            return sb.length > 0 ? sb.join("") + " " + uom.toString(10, true) : "0";
+        }
+    }
+
+    /**
+     * @hidden
+     */
+    var abs = Math.abs;
+    /**
+     * @hidden
+     * @param n
+     * @param v
+     * @returns
+     */
+    function makeColumnVector(n, v) {
+        var a = [];
+        for (var i = 0; i < n; i++) {
+            a.push(v);
+        }
+        return a;
+    }
+    /**
+     * @hidden
+     */
+    function rowWithMaximumInColumn(A, column, N) {
+        var biggest = abs(A[column][column]);
+        var maxRow = column;
+        for (var row = column + 1; row < N; row++) {
+            if (abs(A[row][column]) > biggest) {
+                biggest = abs(A[row][column]);
+                maxRow = row;
+            }
+        }
+        return maxRow;
+    }
+    /**
+     * @hidden
+     */
+    function swapRows(A, i, j, N) {
+        var colLength = N + 1;
+        for (var column = i; column < colLength; column++) {
+            var temp = A[j][column];
+            A[j][column] = A[i][column];
+            A[i][column] = temp;
+        }
+    }
+    /**
+     * @hidden
+     * @param A
+     * @param i
+     * @param N
+     */
+    function makeZeroBelow(A, i, N) {
+        for (var row = i + 1; row < N; row++) {
+            var c = -A[row][i] / A[i][i];
+            for (var column = i; column < N + 1; column++) {
+                if (i === column) {
+                    A[row][column] = 0;
+                }
+                else {
+                    A[row][column] += c * A[i][column];
+                }
+            }
+        }
+    }
+    /**
+     * @hidden
+     * @param A
+     * @param N
+     * @returns
+     */
+    function solve(A, N) {
+        var x = makeColumnVector(N, 0);
+        for (var i = N - 1; i > -1; i--) {
+            x[i] = A[i][N] / A[i][i];
+            for (var k = i - 1; k > -1; k--) {
+                A[k][N] -= A[k][i] * x[i];
+            }
+        }
+        return x;
+    }
+    /**
+     * Gaussian elimination
+     * Ax = b
+     * @hidden
+     */
+    function gauss(A, b) {
+        var N = A.length;
+        for (var i = 0; i < N; i++) {
+            var Ai = A[i];
+            var bi = b[i];
+            Ai.push(bi);
+        }
+        for (var j = 0; j < N; j++) {
+            swapRows(A, j, rowWithMaximumInColumn(A, j, N), N);
+            makeZeroBelow(A, j, N);
+        }
+        return solve(A, N);
+    }
+
+    /**
+     * @hidden
      */
     var zero$2 = function () {
         return [0, 0];
     };
+    /**
+     * @hidden
+     */
+    var scalar$2 = function scalar(a) {
+        var coords = zero$2();
+        coords[COORD_A$1] = a;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
     function copy$1(mv) {
         return new Geometric1([mv.a, mv.x], mv.uom);
     }
+    /**
+     * @hidden
+     */
     function lock$3(mv) {
         mv.lock();
         return mv;
+    }
+    /**
+     * Coordinates corresponding to basis labels.
+     * @hidden
+     */
+    var coordinates$2 = function coordinates(m) {
+        var coords = zero$2();
+        coords[COORD_A$1] = m.a;
+        coords[COORD_X$4] = m.x;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
+    function isScalar$1(m) {
+        return m.x === 0;
     }
     /**
      * @hidden
@@ -6139,6 +6426,12 @@
      * @hidden
      */
     var COORD_X$4 = 1;
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS$2 = ["1", "e1"];
+    BASIS_LABELS$2[COORD_A$1] = '1';
+    BASIS_LABELS$2[COORD_X$4] = 'e1';
     /**
      * Sentinel value to indicate that the Geometric2 is not locked.
      * UNLOCKED is in the range -1 to 0.
@@ -6163,104 +6456,480 @@
             this.coords = coords;
             this.unit = uom;
         }
+        Geometric1.scalar = function (a, uom) {
+            return new Geometric1(scalar$2(a), uom);
+        };
+        Geometric1.prototype.clone = function () {
+            return copy$1(this);
+        };
         Geometric1.prototype.addScalar = function (a, uom, α) {
-            throw new Error("addScalar Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(copy$1(this).addScalar(a, uom, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = uom;
+                }
+                else if (α === 0) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, uom);
+                }
+                this.a += a * α;
+                return this;
+            }
         };
         Geometric1.prototype.adj = function () {
             throw new Error("adj Method not implemented.");
         };
         Geometric1.prototype.angle = function () {
-            throw new Error("angle Method not implemented.");
+            return this.log().grade(2);
         };
         Geometric1.prototype.conj = function () {
-            throw new Error("conj Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().conj());
+            }
+            else {
+                this.x = -this.x;
+                return this;
+            }
         };
         Geometric1.prototype.lco = function (rhs) {
-            throw new Error("lco Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().lco(rhs));
+            }
+            else {
+                return this.lco2(this, rhs);
+            }
+        };
+        Geometric1.prototype.lco2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            this.a = a0 * b0 + a1 * b1;
+            this.x = a0 * b1;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
         };
         Geometric1.prototype.div = function (rhs) {
-            throw new Error("div Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().div(rhs));
+            }
+            else {
+                if (isScalar$1(rhs)) {
+                    return this.divByScalar(rhs.a, rhs.uom);
+                }
+                else {
+                    return this.mul(copy$1(rhs).inv());
+                }
+            }
         };
         Geometric1.prototype.exp = function () {
-            throw new Error("exp Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().exp());
+            }
+            else {
+                Unit.assertDimensionless(this.uom);
+                // It's always the case that the scalar commutes with every other
+                // grade of the multivector, so we can pull it out the front.
+                var expW = Math.exp(this.a);
+                // In Geometric2 we have the special case that the pseudoscalar also commutes.
+                // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
+                // let cosβ = cos(this.b)
+                // let sinβ = sin(this.b)
+                // We are left with the vector and bivector components.
+                // For a bivector (usual case), let B = I * φ, where φ is a vector.
+                // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
+                // φ is actually the absolute value of one half the rotation angle.
+                // The orientation of the rotation gets carried in the bivector components.
+                // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
+                // The mixture of vector and bivector parts is more complex!
+                this.a = 1;
+                return this.mulByNumber(expW);
+            }
         };
-        Geometric1.prototype.ext = function (rhs) {
-            throw new Error("ext Method not implemented.");
+        Geometric1.prototype.ext = function (m) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().ext(m));
+            }
+            else {
+                var a0 = this.a;
+                var a1 = this.x;
+                var b0 = m.a;
+                var b1 = m.x;
+                this.a = a0 * b0;
+                this.x = a0 * b1 + a1 * b0;
+                this.uom = Unit.mul(this.uom, m.uom);
+                return this;
+            }
         };
-        Geometric1.prototype.grade = function (grade) {
-            throw new Error("grade Method not implemented.");
+        Geometric1.prototype.grade = function (n) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().grade(n));
+            }
+            else {
+                // There is no change to the unit of measure.
+                switch (n) {
+                    case 0: {
+                        this.x = 0;
+                        break;
+                    }
+                    case 1: {
+                        this.a = 0;
+                        break;
+                    }
+                    case 2: {
+                        this.a = 0;
+                        this.x = 0;
+                        break;
+                    }
+                    default: {
+                        this.a = 0;
+                        this.x = 0;
+                    }
+                }
+                return this;
+            }
         };
         Geometric1.prototype.isScalar = function () {
-            throw new Error("isScalar Method not implemented.");
+            return isScalar$1(this);
+        };
+        Geometric1.prototype.isSpinor = function () {
+            return this.x === 0;
         };
         Geometric1.prototype.log = function () {
-            throw new Error("log Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().log());
+            }
+            else {
+                Unit.assertDimensionless(this.uom);
+                if (this.isSpinor()) {
+                    var α = this.a;
+                    this.a = Math.log(Math.sqrt(α * α));
+                    return this;
+                }
+                else {
+                    throw new Error(notImplemented("log(" + this.toString() + ")").message);
+                }
+            }
         };
         Geometric1.prototype.magnitude = function (mutate) {
-            throw new Error("magnitude Method not implemented.");
+            if (typeof mutate === 'boolean') {
+                if (this.isLocked()) {
+                    if (!mutate) {
+                        return lock$3(this.clone().magnitude(true));
+                    }
+                    else {
+                        throw new Error("mutate is " + mutate + ", but isMutable() is " + this.isMutable() + ".");
+                    }
+                }
+                else {
+                    if (mutate) {
+                        this.a = Math.sqrt(this.squaredNormSansUnits());
+                        this.x = 0;
+                        // The unit of measure is unchanged.
+                        return this;
+                    }
+                    else {
+                        return lock$3(this.clone().magnitude(true));
+                    }
+                }
+            }
+            else {
+                return this.magnitude(this.isMutable());
+            }
+        };
+        Geometric1.prototype.squaredNormSansUnits = function () {
+            return this.a * this.a + this.x * this.x;
         };
         Geometric1.prototype.mul = function (rhs) {
-            throw new Error("mul Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().mul(rhs));
+            }
+            else {
+                return this.mul2(this, rhs);
+            }
+        };
+        Geometric1.prototype.mul2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            this.a = a0 * b0 + a1 * b1;
+            this.x = a0 * b1 + a1 * b0;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        };
+        Geometric1.prototype.mulByNumber = function (α) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().mulByNumber(α));
+            }
+            else {
+                this.a *= α;
+                this.x *= α;
+                // There is no change in the unit of measure.
+                return this;
+            }
         };
         Geometric1.prototype.norm = function () {
-            throw new Error("norm Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().norm());
+            }
+            else {
+                this.a = this.magnitudeSansUnits();
+                this.x = 0;
+                // There is no change to the unit of measure.
+                return this;
+            }
+        };
+        Geometric1.prototype.magnitudeSansUnits = function () {
+            return Math.sqrt(this.squaredNormSansUnits());
         };
         Geometric1.prototype.quad = function () {
-            throw new Error("quad Method not implemented.");
+            return new Geometric1([this.squaredNormSansUnits(), 0], Unit.mul(this.uom, this.uom));
         };
-        Geometric1.prototype.rco = function (rhs) {
-            throw new Error("rco Method not implemented.");
+        Geometric1.prototype.rco = function (m) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().rco(m));
+            }
+            else {
+                return this.rco2(this, m);
+            }
         };
-        Geometric1.prototype.rev = function () {
-            throw new Error("rev Method not implemented.");
+        Geometric1.prototype.rco2 = function (lhs, rhs) {
+            var a0 = lhs.a;
+            var a1 = lhs.x;
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            this.a = a0 * b0 + a1 * b1;
+            this.x = -a1 * b0;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
         };
-        Geometric1.prototype.squaredNorm = function () {
-            throw new Error("squaredNorm Method not implemented.");
+        Geometric1.prototype.rev = function (mutate) {
+            if (typeof mutate === 'boolean') {
+                if (mutate) {
+                    if (this.isMutable()) {
+                        // reverse has a ++-- structure on the grades.
+                        this.a = +this.a;
+                        this.x = +this.x;
+                        // The unit of measure is unchanged.
+                        return this;
+                    }
+                    else {
+                        // You can't ask to mutate that which is immutable.
+                        throw new Error("Unable to mutate this locked Geometric2.");
+                    }
+                }
+                else {
+                    return lock$3(this.clone().rev(true));
+                }
+            }
+            else {
+                return this.rev(this.isMutable());
+            }
+        };
+        Geometric1.prototype.squaredNorm = function (mutate) {
+            return this.quaditude(mutate);
+        };
+        Geometric1.prototype.quaditude = function (mutate) {
+            if (this.lock_ !== UNLOCKED$2) {
+                if (!mutate) {
+                    return lock$3(this.clone().quaditude(true));
+                }
+                else {
+                    throw new Error("Unable to mutate this locked Geometric2.");
+                }
+            }
+            else {
+                if (mutate) {
+                    this.a = this.squaredNormSansUnits();
+                    this.x = 0;
+                    this.uom = Unit.mul(this.uom, this.uom);
+                    return this;
+                }
+                else {
+                    return lock$3(this.clone().quaditude(true));
+                }
+            }
         };
         Geometric1.prototype.subScalar = function (a, uom, α) {
-            throw new Error("suScalar Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().subScalar(a, uom, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = uom;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, uom);
+                }
+                this.a -= a * α;
+                return this;
+            }
         };
-        Geometric1.prototype.scp = function (rhs) {
-            throw new Error("scp Method not implemented.");
+        Geometric1.prototype.scp = function (m) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().scp(m));
+            }
+            else {
+                return this.scp2(this, m);
+            }
         };
-        Geometric1.prototype.add = function (rhs, α) {
-            throw new Error("add Method not implemented.");
+        Geometric1.prototype.scp2 = function (a, b) {
+            var a0 = a.a;
+            var a1 = a.x;
+            var b0 = b.a;
+            var b1 = b.x;
+            var s = a0 * b0 + a1 * b1;
+            this.a = s;
+            this.x = 0;
+            this.uom = Unit.mul(a.uom, b.uom);
+            return this;
+        };
+        Geometric1.prototype.add = function (M, α) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().add(M, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = M.a * α;
+                    this.x = M.x * α;
+                    this.uom = M.uom;
+                    return this;
+                }
+                else if (M.isZero()) {
+                    // α has no effect because M is zero.
+                    return this;
+                }
+                else {
+                    this.a += M.a * α;
+                    this.x += M.x * α;
+                    this.uom = Unit.compatible(this.uom, M.uom);
+                    return this;
+                }
+            }
         };
         Geometric1.prototype.divByScalar = function (α, uom) {
-            throw new Error("divByScalar Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().divByScalar(α, uom));
+            }
+            else {
+                this.uom = Unit.div(this.uom, uom);
+                this.a /= α;
+                this.x /= α;
+                return this;
+            }
         };
         Geometric1.prototype.lerp = function (target, α) {
-            throw new Error("lerp Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().lerp(target, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = target.uom;
+                }
+                else if (target.isZero()) ;
+                else {
+                    this.uom = Unit.compatible(this.uom, target.uom);
+                }
+                this.a += (target.a - this.a) * α;
+                this.x += (target.x - this.x) * α;
+                return this;
+            }
         };
         Geometric1.prototype.scale = function (α) {
-            throw new Error("scale Method not implemented.");
+            return new Geometric1([this.a * α, this.x * α], this.uom);
         };
         Geometric1.prototype.reflect = function (n) {
-            throw new Error("reflect Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().reflect(n));
+            }
+            else {
+                var nx = n.x;
+                var nu = n.uom;
+                var a = this.a;
+                var x = this.x;
+                var u = this.uom;
+                var nx2 = nx * nx;
+                var μ = nx2;
+                var β = nx2;
+                // The scalar component picks up a minus sign and the factor |n||n|.
+                this.a = -β * a;
+                this.x = -μ * x;
+                // In most cases, n SHOULD be dimensionless.
+                this.uom = Unit.mul(nu, Unit.mul(u, nu));
+                return this;
+            }
         };
-        Geometric1.prototype.rotate = function (rotor) {
-            throw new Error("rotate Method not implemented.");
+        Geometric1.prototype.rotate = function (spinor) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().rotate(spinor));
+            }
+            else {
+                // We are assuming that R is dimensionless.
+                Unit.assertDimensionless(spinor.uom);
+                var a = this.a;
+                var x = this.x;
+                var α = spinor.a;
+                var α2 = α * α;
+                var p = α2;
+                var s = α2;
+                this.a = s * a;
+                this.x = p * x;
+                return this;
+            }
         };
         Geometric1.prototype.slerp = function (target, α) {
-            throw new Error("slerp Method not implemented.");
+            throw new Error(notImplemented('slerp').message);
         };
         Geometric1.prototype.stress = function (σ) {
-            throw new Error("stress Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().stress(σ));
+            }
+            else {
+                this.x *= σ.x;
+                this.uom = Unit.mul(σ.uom, this.uom);
+                // TODO: Action on other components TBD.
+                return this;
+            }
         };
-        Geometric1.prototype.sub = function (rhs, α) {
-            throw new Error("sub Method not implemented.");
+        Geometric1.prototype.sub = function (M, α) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().sub(M, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = M.uom;
+                }
+                else if (M.isZero()) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, M.uom);
+                }
+                this.a -= M.a * α;
+                this.x -= M.x * α;
+                return this;
+            }
         };
         Geometric1.prototype.toExponential = function (fractionDigits) {
-            throw new Error("toExponential Method not implemented.");
+            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric1.prototype.toFixed = function (fractionDigits) {
-            throw new Error("toFixed Method not implemented.");
+            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric1.prototype.toPrecision = function (precision) {
-            throw new Error("toPrecision Method not implemented.");
+            var coordToString = function (coord) { return coord.toPrecision(precision); };
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric1.prototype.toString = function (radix) {
-            throw new Error("toString Method not implemented.");
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric1.prototype.zero = function () {
             if (this.isMutable()) {
@@ -6274,91 +6943,295 @@
             }
         };
         Geometric1.prototype.__div__ = function (rhs) {
-            throw new Error("__div__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(this.clone().div(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(this.clone().divByNumber(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$3(this.clone().divByScalar(1, rhs));
+            }
+            else {
+                return void 0;
+            }
+        };
+        Geometric1.prototype.divByNumber = function (α) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().divByNumber(α));
+            }
+            else {
+                this.a /= α;
+                this.x /= α;
+                return this;
+            }
         };
         Geometric1.prototype.__rdiv__ = function (lhs) {
-            throw new Error("__rdiv__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).div(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs, void 0).div(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__vbar__ = function (rhs) {
-            throw new Error("__vbar__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(copy$1(this).scp(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(copy$1(this).scp(Geometric1.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rvbar__ = function (lhs) {
-            throw new Error("__rvbar__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).scp(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs).scp(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__wedge__ = function (rhs) {
-            throw new Error("__wedge__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(copy$1(this).ext(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                // The outer product with a scalar is scalar multiplication.
+                return lock$3(copy$1(this).mulByNumber(rhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rwedge__ = function (lhs) {
-            throw new Error("__rwedge__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).ext(this));
+            }
+            else if (typeof lhs === 'number') {
+                // The outer product with a scalar is scalar multiplication, and commutes.
+                return lock$3(copy$1(this).mulByNumber(lhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__lshift__ = function (rhs) {
-            throw new Error("__lshift__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(copy$1(this).lco(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(copy$1(this).lco(Geometric1.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rlshift__ = function (lhs) {
-            throw new Error("__rlshift__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).lco(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs).lco(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rshift__ = function (rhs) {
-            throw new Error("__rshift__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(copy$1(this).rco(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(copy$1(this).rco(Geometric1.scalar(rhs)));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rrshift__ = function (lhs) {
-            throw new Error("__rrshift__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).rco(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs).rco(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__bang__ = function () {
-            throw new Error("__bang__ Method not implemented.");
+            return lock$3(copy$1(this).inv());
         };
         Geometric1.prototype.inv = function () {
-            throw new Error("inv Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().inv());
+            }
+            else {
+                var α = this.a;
+                var x = this.x;
+                var A = [
+                    [α, x],
+                    [x, α]
+                ];
+                var b = [1, 0];
+                var X = gauss(A, b);
+                this.a = X[0];
+                this.x = X[1];
+                this.uom = Unit.inv(this.uom);
+                return this;
+            }
         };
         Geometric1.prototype.__eq__ = function (rhs) {
-            throw new Error("__eq__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                var a0 = this.a;
+                var a1 = this.x;
+                var b0 = rhs.a;
+                var b1 = rhs.x;
+                // TODO: Should be equals on Unit, but this is close.
+                return a0 === b0 && a1 === b1 && Unit.isCompatible(this.uom, rhs.uom);
+            }
+            else if (typeof rhs === 'number') {
+                return false;
+            }
+            else {
+                return false;
+            }
         };
         Geometric1.prototype.__ne__ = function (rhs) {
-            throw new Error("__ne__ Method not implemented.");
+            throw new Error(notImplemented('__ne_').message);
         };
         Geometric1.prototype.__ge__ = function (rhs) {
-            throw new Error("__ge__ Method not implemented.");
+            throw new Error(notImplemented('__ge_').message);
         };
         Geometric1.prototype.__gt__ = function (rhs) {
-            throw new Error("__gt__ Method not implemented.");
+            throw new Error(notImplemented('__gt_').message);
         };
         Geometric1.prototype.__le__ = function (rhs) {
-            throw new Error("__le__ Method not implemented.");
+            throw new Error(notImplemented('__le_').message);
         };
         Geometric1.prototype.__lt__ = function (rhs) {
-            throw new Error("__lt__ Method not implemented.");
+            throw new Error(notImplemented('__lt_').message);
         };
         Geometric1.prototype.__tilde__ = function () {
-            throw new Error("__tilde__ Method not implemented.");
+            return lock$3(copy$1(this).rev(true));
         };
-        Geometric1.prototype.__add__ = function (other) {
-            throw new Error("__add__ Method not implemented.");
+        Geometric1.prototype.__add__ = function (rhs) {
+            if (rhs instanceof Geometric1) {
+                return lock$3(this.clone().add(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(this.clone().addScalar(rhs, void 0, 1));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$3(this.clone().addScalar(1, rhs, 1));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric1.prototype.__radd__ = function (other) {
-            throw new Error("__radd__ Method not implemented.");
+        Geometric1.prototype.__radd__ = function (lhs) {
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).add(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs).add(this));
+            }
+            else if (lhs instanceof Unit) {
+                return lock$3(Geometric1.scalar(1, lhs).add(this));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric1.prototype.__sub__ = function (other) {
-            throw new Error("__sub__ Method not implemented.");
+        Geometric1.prototype.__sub__ = function (rhs) {
+            if (rhs instanceof Geometric1) {
+                return lock$3(this.clone().sub(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(this.clone().subScalar(rhs, void 0, 1));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$3(this.clone().subScalar(1, rhs, 1));
+            }
+            else {
+                return void 0;
+            }
         };
-        Geometric1.prototype.__rsub__ = function (other) {
-            throw new Error("__rsub__ Method not implemented.");
+        Geometric1.prototype.__rsub__ = function (lhs) {
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).sub(this));
+            }
+            else if (typeof lhs === 'number') {
+                return lock$3(Geometric1.scalar(lhs).sub(this));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__pos__ = function () {
-            throw new Error("__pos__ Method not implemented.");
+            return lock$3(copy$1(this));
         };
         Geometric1.prototype.__neg__ = function () {
-            throw new Error("__neg__ Method not implemented.");
+            return lock$3(copy$1(this).neg());
         };
         Geometric1.prototype.neg = function () {
-            throw new Error("neg Method not implemented.");
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().neg());
+            }
+            else {
+                this.a = -this.a;
+                this.x = -this.x;
+                // There is no change in the unit of measure.
+                return this;
+            }
         };
         Geometric1.prototype.isZero = function () {
             return this.coords[COORD_A$1] === 0 && this.coords[COORD_X$4] === 0;
         };
         Geometric1.prototype.__mul__ = function (rhs) {
-            throw new Error("__mul__ Method not implemented.");
+            if (rhs instanceof Geometric1) {
+                return lock$3(this.clone().mul(rhs));
+            }
+            else if (typeof rhs === 'number') {
+                return lock$3(this.clone().mulByNumber(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return lock$3(this.clone().mulByScalar(1, rhs));
+            }
+            else {
+                return void 0;
+            }
         };
         Geometric1.prototype.__rmul__ = function (lhs) {
-            throw new Error("__rmul__ Method not implemented.");
+            if (lhs instanceof Geometric1) {
+                return lock$3(copy$1(lhs).mul(this));
+            }
+            else if (typeof lhs === 'number') {
+                // The ordering of operands is not important for scalar multiplication.
+                return lock$3(copy$1(this).mulByNumber(lhs));
+            }
+            else {
+                return void 0;
+            }
+        };
+        Geometric1.prototype.mulByScalar = function (α, uom) {
+            if (this.lock_ !== UNLOCKED$2) {
+                return lock$3(this.clone().mulByScalar(α, uom));
+            }
+            else {
+                this.a *= α;
+                this.x *= α;
+                this.uom = Unit.mul(this.uom, uom);
+                return this;
+            }
         };
         Geometric1.prototype.isOne = function () {
             return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.unit);
@@ -6449,13 +7322,6 @@
         };
         return Geometric1;
     }());
-
-    /**
-     * @hidden
-     */
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
-    }
 
     /**
      * @hidden
@@ -7008,6 +7874,9 @@
         __extends(Block1, _super);
         function Block1(width) {
             var _this = _super.call(this) || this;
+            if (!(width instanceof Geometric1)) {
+                throw new Error("width must be a Geometric1.");
+            }
             var metric = _this.metric;
             _this.$width = new LockableMeasure(metric, width);
             if (Unit.isOne(metric.uom(width))) ;
@@ -7420,21 +8289,6 @@
 
     /**
      * @hidden
-     * @param name
-     * @returns
-     */
-    function notImplemented(name) {
-        mustBeString('name', name);
-        var message = {
-            get message() {
-                return "'" + name + "' method is not yet implemented.";
-            }
-        };
-        return message;
-    }
-
-    /**
-     * @hidden
      * @param coords
      * @param n
      */
@@ -7492,102 +8346,6 @@
         else {
             return isUndefined(b);
         }
-    }
-
-    /**
-     * @hidden
-     */
-    var abs = Math.abs;
-    /**
-     * @hidden
-     * @param n
-     * @param v
-     * @returns
-     */
-    function makeColumnVector(n, v) {
-        var a = [];
-        for (var i = 0; i < n; i++) {
-            a.push(v);
-        }
-        return a;
-    }
-    /**
-     * @hidden
-     */
-    function rowWithMaximumInColumn(A, column, N) {
-        var biggest = abs(A[column][column]);
-        var maxRow = column;
-        for (var row = column + 1; row < N; row++) {
-            if (abs(A[row][column]) > biggest) {
-                biggest = abs(A[row][column]);
-                maxRow = row;
-            }
-        }
-        return maxRow;
-    }
-    /**
-     * @hidden
-     */
-    function swapRows(A, i, j, N) {
-        var colLength = N + 1;
-        for (var column = i; column < colLength; column++) {
-            var temp = A[j][column];
-            A[j][column] = A[i][column];
-            A[i][column] = temp;
-        }
-    }
-    /**
-     * @hidden
-     * @param A
-     * @param i
-     * @param N
-     */
-    function makeZeroBelow(A, i, N) {
-        for (var row = i + 1; row < N; row++) {
-            var c = -A[row][i] / A[i][i];
-            for (var column = i; column < N + 1; column++) {
-                if (i === column) {
-                    A[row][column] = 0;
-                }
-                else {
-                    A[row][column] += c * A[i][column];
-                }
-            }
-        }
-    }
-    /**
-     * @hidden
-     * @param A
-     * @param N
-     * @returns
-     */
-    function solve(A, N) {
-        var x = makeColumnVector(N, 0);
-        for (var i = N - 1; i > -1; i--) {
-            x[i] = A[i][N] / A[i][i];
-            for (var k = i - 1; k > -1; k--) {
-                A[k][N] -= A[k][i] * x[i];
-            }
-        }
-        return x;
-    }
-    /**
-     * Gaussian elimination
-     * Ax = b
-     * @hidden
-     */
-    function gauss(A, b) {
-        var N = A.length;
-        for (var i = 0; i < N; i++) {
-            var Ai = A[i];
-            var bi = b[i];
-            Ai.push(bi);
-        }
-        for (var j = 0; j < N; j++) {
-            swapRows(A, j, rowWithMaximumInColumn(A, j, N), N);
-            makeZeroBelow(A, j, N);
-        }
-        return solve(A, N);
     }
 
     /**
@@ -7677,139 +8435,6 @@
             // Then a and b are anti-parallel.
             // The plane of the rotation is ambiguous.
             return void 0;
-        }
-    }
-
-    /**
-     * @hidden
-     */
-    function beAnArray() {
-        return "be an array";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeArray(name, value, contextBuilder) {
-        if (Array.isArray(value)) {
-            return value;
-        }
-        else {
-            doesNotSatisfy(name, beAnArray, contextBuilder);
-        }
-    }
-
-    /**
-     * @hidden
-     */
-    function isLabelOne(label) {
-        if (typeof label === 'string') {
-            return label === "1";
-        }
-        else {
-            var labels = mustBeArray('label', label);
-            if (labels.length === 2) {
-                return isLabelOne(labels[0]) && isLabelOne(labels[1]);
-            }
-            else if (labels.length === 1) {
-                return isLabelOne(labels[0]);
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    /**
-     * @hidden
-     */
-    function appendLabel(coord, label, sb) {
-        if (typeof label === 'string') {
-            sb.push(label);
-        }
-        else {
-            var labels = mustBeArray('label', label);
-            if (labels.length === 2) {
-                sb.push(coord > 0 ? labels[1] : labels[0]);
-            }
-            else if (labels.length === 1) {
-                sb.push(labels[0]);
-            }
-            else if (labels.length === 0) ;
-            else {
-                throw new Error("Unexpected basis label array length: " + labels.length);
-            }
-        }
-    }
-    /**
-     * @hidden
-     */
-    function appendCoord(coord, numberToString, label, sb) {
-        if (coord !== 0) {
-            if (coord >= 0) {
-                if (sb.length > 0) {
-                    sb.push("+");
-                }
-            }
-            else {
-                // The coordinate is negative.
-                if (typeof label === 'string') {
-                    // There's only one label, we must use minus signs.
-                    sb.push("-");
-                }
-                else {
-                    var labels = mustBeArray('label', label);
-                    if (labels.length === 2) {
-                        if (labels[0] !== labels[1]) {
-                            if (sb.length > 0) {
-                                sb.push("+");
-                            }
-                        }
-                        else {
-                            sb.push("-");
-                        }
-                    }
-                    else if (labels.length === 1) {
-                        sb.push("-");
-                    }
-                    else {
-                        // This could be considered an error, but we'll let appendLabel deal with it!
-                        sb.push("-");
-                    }
-                }
-            }
-            var n = Math.abs(coord);
-            if (n === 1) {
-                // 1 times something is just 1, so we only need the label.
-                appendLabel(coord, label, sb);
-            }
-            else {
-                sb.push(numberToString(n));
-                if (!isLabelOne(label)) {
-                    sb.push("*");
-                    appendLabel(coord, label, sb);
-                }
-            }
-        }
-    }
-    /**
-     * @hidden
-     */
-    function stringFromCoordinates(coordinates, numberToString, labels, uom) {
-        var sb = [];
-        for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
-            var coord = coordinates[i];
-            if (isDefined(coord)) {
-                appendCoord(coord, numberToString, labels[i], sb);
-            }
-            else {
-                // We'll just say that the whole thing is undefined.
-                return void 0;
-            }
-        }
-        if (Unit.isOne(uom)) {
-            return sb.length > 0 ? sb.join("") : "0";
-        }
-        else {
-            return sb.length > 0 ? sb.join("") + " " + uom.toString(10, true) : "0";
         }
     }
 
@@ -10032,6 +10657,12 @@
             if (width === void 0) { width = Geometric2.one; }
             if (height === void 0) { height = Geometric2.one; }
             var _this = _super.call(this) || this;
+            if (!(width instanceof Geometric2)) {
+                throw new Error("width must be a Geometric2.");
+            }
+            if (!(height instanceof Geometric2)) {
+                throw new Error("height must be a Geometric2.");
+            }
             _this.width_ = Geometric2.copy(width);
             _this.widthLock_ = _this.width_.lock();
             _this.height_ = Geometric2.copy(height);
@@ -14635,6 +15266,15 @@
             if (height === void 0) { height = Geometric3.one; }
             if (depth === void 0) { depth = Geometric3.one; }
             var _this = _super.call(this, new Euclidean3()) || this;
+            if (!(width instanceof Geometric3)) {
+                throw new Error("width must be a Geometric3.");
+            }
+            if (!(height instanceof Geometric3)) {
+                throw new Error("height must be a Geometric3.");
+            }
+            if (!(depth instanceof Geometric3)) {
+                throw new Error("depth must be a Geometric3.");
+            }
             _this.width_ = Geometric3.copy(width);
             _this.widthLock_ = _this.width_.lock();
             _this.height_ = Geometric3.copy(height);
