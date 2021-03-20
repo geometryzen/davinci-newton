@@ -8,7 +8,7 @@ import { Particle1 } from "./Particle1";
 import { Spring1 } from "./Spring1";
 import { SurfaceConstraint1 } from "./SurfaceConstraint1";
 
-xdescribe("Engine1", function () {
+describe("Engine1", function () {
     describe("constructor", function () {
         it("should be defined.", function () {
             const engine = new Engine1();

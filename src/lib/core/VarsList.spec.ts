@@ -7,18 +7,13 @@ describe("VarsList", function () {
                 const vars = new VarsList([]);
                 expect(vars).toBeDefined();
                 expect(vars.numVariables()).toBe(0);
-            }).toThrowError("");
+            }).toThrowError("No time variable.");
         });
     });
     //
     // VarsList uses the case-insensitive name 'time' to identify which variable holds the time.
     //
     describe("timeIndex", function () {
-        xit("([]) should have a timeIndex of -1.", function () {
-            const vars = new VarsList([]);
-            expect(vars).toBeDefined();
-            expect(vars.timeIndex()).toBe(-1);
-        });
         it("(['TIME']) should have a timeIndex of 0.", function () {
             const vars = new VarsList(['TIME']);
             expect(vars).toBeDefined();

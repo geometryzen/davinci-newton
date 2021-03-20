@@ -1,3 +1,4 @@
+import { readOnly } from "../i18n/readOnly";
 import { Unit } from "./Unit";
 
 /**
@@ -6,6 +7,15 @@ import { Unit } from "./Unit";
 const zero = function (): number[] {
     return [0, 0];
 };
+
+/**
+ * @hidden
+ */
+const COORD_A = 0;
+/**
+ * @hidden
+ */
+const COORD_X = 1;
 
 /**
  * Sentinel value to indicate that the Geometric2 is not locked.
@@ -35,23 +45,41 @@ export class Geometric1 {
         this.coords = coords;
         this.unit = uom;
     }
+
     get a(): number {
-        return this.coords[0];
+        return this.coords[COORD_A];
     }
     set a(a: number) {
-        this.coords[0] = a;
+        if (this.isMutable()) {
+            this.coords[COORD_A] = a;
+        }
+        else {
+            throw new Error(readOnly('a').message);
+        }
     }
+
     get x(): number {
-        return this.coords[1];
+        return this.coords[COORD_X];
     }
     set x(x: number) {
-        this.coords[1] = x;
+        if (this.isMutable()) {
+            this.coords[COORD_X] = x;
+        }
+        else {
+            throw new Error(readOnly('x').message);
+        }
     }
+
     get uom(): Unit {
         return this.unit;
     }
     set uom(uom: Unit) {
-        this.unit = uom;
+        if (this.isMutable()) {
+            this.unit = uom;
+        }
+        else {
+            throw new Error(readOnly('uom').message);
+        }
     }
 
     /**

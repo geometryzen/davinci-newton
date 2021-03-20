@@ -450,7 +450,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      */
     getTime(): number {
         if (this.$timeIdx < 0) {
-            throw new Error('No "time" variable.');
+            throw new Error('No time variable.');
         }
         return this.getValue(this.$timeIdx);
     }

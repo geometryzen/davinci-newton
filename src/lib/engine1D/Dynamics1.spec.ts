@@ -4,7 +4,7 @@ import { Unit } from "../math/Unit";
 import { Dynamics1 } from "./Dynamics1";
 import { Particle1 } from "./Particle1";
 
-xdescribe("Dynamics1", function () {
+describe("Dynamics1", function () {
     describe("constructor", function () {
         it("should be defined.", function () {
             const dynamics = new Dynamics1();

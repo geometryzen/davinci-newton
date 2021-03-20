@@ -34,6 +34,14 @@ describe("Geometric1", function () {
             m.x = x;
             expect(m.a).toBe(a);
         });
+        it("should prevent mutation when locked", function () {
+            expect(function () {
+                const m = new Geometric1();
+                m.lock();
+                const a = Math.random();
+                m.a = a;
+            }).toThrowError("Property `a` is readonly.");
+        });
     });
     describe("x", function () {
         it("should support getter and setter.", function () {
@@ -44,12 +52,27 @@ describe("Geometric1", function () {
             m.x = x;
             expect(m.x).toBe(x);
         });
+        it("should prevent mutation when locked", function () {
+            expect(function () {
+                const m = new Geometric1();
+                m.lock();
+                const x = Math.random();
+                m.x = x;
+            }).toThrowError("Property `x` is readonly.");
+        });
     });
     describe("uom", function () {
         it("should support getter and setter.", function () {
             const m = new Geometric1();
             m.uom = Unit.KELVIN;
             expect(m.uom).toBe(Unit.KELVIN);
+        });
+        it("should prevent mutation when locked", function () {
+            expect(function () {
+                const m = new Geometric1();
+                m.lock();
+                m.uom = Unit.MOLE;
+            }).toThrowError("Property `uom` is readonly.");
         });
     });
     describe("isLocked", function () {

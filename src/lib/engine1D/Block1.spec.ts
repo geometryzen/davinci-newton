@@ -21,4 +21,21 @@ describe("Block1", function () {
             expect((metric.uom(block.M))).toBe(Unit.KILOGRAM);
         });
     });
+    describe("width", function () {
+        it("get", function () {
+            const metric = new Euclidean1();
+            const block = new Block1(metric.scalar(1, Unit.METER));
+            const width = block.width;
+            expect(width.a).toBe(1);
+            expect(width.uom).toBe(Unit.METER);
+        });
+        it("set", function () {
+            const metric = new Euclidean1();
+            const block = new Block1(metric.scalar(1, Unit.METER));
+            block.width = metric.scalar(2, Unit.ONE);
+            const width = block.width;
+            expect(width.a).toBe(2);
+            expect(width.uom).toBe(Unit.ONE);
+        });
+    });
 });

@@ -3,7 +3,7 @@ import { Unit } from "../math/Unit";
 import { Euclidean1 } from "./Euclidean1";
 import { Particle1 } from "./Particle1";
 
-xdescribe("Euclidean1", function () {
+describe("Euclidean1", function () {
     describe("constructor", function () {
         it("should be defined.", function () {
             const metric = new Euclidean1();
@@ -88,6 +88,20 @@ xdescribe("Euclidean1", function () {
             expect(source.uom).toBe(uom);
         });
     });
+    describe("copyScalar", function () {
+        it("should work.", function () {
+            const a = Math.random();
+            const uom = Unit.CANDELA;
+            const target = new Geometric1([Math.random(), Math.random()], Unit.MOLE);
+            const metric = new Euclidean1();
+            const result = metric.copyScalar(a, uom, target);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result === target).toBe(true);
+            expect(target.a).toBe(a);
+            expect(target.uom).toBe(uom);
+        });
+    });
     describe("a", function () {
         it("should be defined.", function () {
             const mv = new Geometric1();
@@ -144,13 +158,40 @@ xdescribe("Euclidean1", function () {
         });
     });
     describe("addVector", function () {
-        it("should be defined.", function () {
+        it("lhs.isMutable", function () {
             const metric = new Euclidean1();
-            const lhs = new Geometric1();
-            const rhs = new Geometric1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.NEWTON);
+            const rhs = new Geometric1([Ra, Rx], Unit.NEWTON);
             const result = metric.addVector(lhs, rhs);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La);
+            expect(result.x).toBe(Lx + Rx);
+            expect(result.uom).toBe(Unit.NEWTON);
+            expect(result === lhs).toBe(true);
+            expect(result === rhs).toBe(false);
+        });
+        it("lhs.isLocked", function () {
+            const metric = new Euclidean1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.NEWTON);
+            lhs.lock();
+            const rhs = new Geometric1([Ra, Rx], Unit.NEWTON);
+            const result = metric.addVector(lhs, rhs);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La);
+            expect(result.x).toBe(Lx + Rx);
+            expect(result.uom).toBe(Unit.NEWTON);
+            expect(result === lhs).toBe(false);
+            expect(result === rhs).toBe(false);
         });
     });
     describe("subVector", function () {
@@ -164,13 +205,54 @@ xdescribe("Euclidean1", function () {
         });
     });
     describe("ext", function () {
-        it("should be defined.", function () {
+        it("lhs.isMutable", function () {
             const metric = new Euclidean1();
-            const lhs = new Geometric1();
-            const rhs = new Geometric1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.JOULE);
+            const rhs = new Geometric1([Ra, Rx], Unit.SECOND);
             const result = metric.ext(lhs, rhs);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La * Ra);
+            expect(result.x).toBe(La * Rx + Lx * Ra);
+            expect(result.uom).toBe(Unit.JOULE_SECOND);
+            expect(result === lhs).toBe(true);
+            expect(result.isMutable()).toBe(true);
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.uom).toBe(Unit.SECOND);
+        });
+        it("lhs.isLocked", function () {
+            const metric = new Euclidean1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.JOULE);
+            lhs.lock();
+            const rhs = new Geometric1([Ra, Rx], Unit.SECOND);
+            const result = metric.ext(lhs, rhs);
+
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+
+            expect(result.a).toBe(La * Ra);
+            expect(result.x).toBe(La * Rx + Lx * Ra);
+            expect(result.uom).toBe(Unit.JOULE_SECOND);
+
+            expect(result === lhs).toBe(false);
+            expect(result.isMutable()).toBe(false);
+
+            expect(lhs.a).toBe(La);
+            expect(lhs.x).toBe(Lx);
+            expect(lhs.uom).toBe(Unit.JOULE);
+
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.uom).toBe(Unit.SECOND);
         });
     });
     describe("write", function () {
@@ -202,12 +284,60 @@ xdescribe("Euclidean1", function () {
         });
     });
     describe("direction", function () {
-        it("should be defined.", function () {
+        it("this.isMutable, mutate=true", function () {
             const metric = new Euclidean1();
-            const mv = new Geometric1();
+            const mv = new Geometric1([0, 5], Unit.METER);
+            const result = metric.direction(mv, true);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(1);
+            expect(Unit.isOne(result.uom)).toBe(true);
+            expect(mv.a).toBe(0);
+            expect(mv.x).toBe(1);
+            expect(Unit.isOne(mv.uom)).toBe(true);
+            expect(result === mv).toBe(true);
+            expect(result.isMutable()).toBe(true);
+        });
+        it("this.isMutable, mutate=false", function () {
+            const metric = new Euclidean1();
+            const mv = new Geometric1([0, 5], Unit.METER);
+            const result = metric.direction(mv, false);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(1);
+            expect(Unit.isOne(result.uom)).toBe(true);
+            expect(result === mv).toBe(false);
+            expect(result.isMutable()).toBe(false);
+        });
+        it("this.isMutable, mutate=undefined", function () {
+            const metric = new Euclidean1();
+            const mv = new Geometric1([0, 5], Unit.METER);
             const result = metric.direction(mv);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(1);
+            expect(Unit.isOne(result.uom)).toBe(true);
+            expect(result === mv).toBe(true);
+            expect(result.isMutable()).toBe(true);
+        });
+        it("this.isLocked, mutate=true", function () {
+            const metric = new Euclidean1();
+            const mv = new Geometric1([0, 5], Unit.METER);
+            mv.lock();
+            const result = metric.direction(mv, true);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(1);
+            expect(Unit.isOne(result.uom)).toBe(true);
+            expect(mv.a).toBe(0);
+            expect(mv.x).toBe(5);
+            expect(mv.uom).toBe(Unit.METER);
+            expect(result === mv).toBe(false);
+            expect(result.isMutable()).toBe(true);
         });
     });
     describe("mulByVector", function () {
@@ -221,13 +351,52 @@ xdescribe("Euclidean1", function () {
         });
     });
     describe("divByScalar", function () {
-        it("should be defined.", function () {
+        it("lhs isMutable", function () {
             const metric = new Euclidean1();
-            const lhs = new Geometric1();
-            const rhs = new Geometric1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.JOULE_SECOND);
+            const rhs = new Geometric1([Ra, Rx], Unit.SECOND);
             const result = metric.divByScalar(lhs, metric.a(rhs), metric.uom(rhs));
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La / Ra);
+            expect(result.x).toBe(Lx / Ra);
+            expect(result.uom).toBe(Unit.JOULE);
+            expect(lhs.a).toBe(La / Ra);
+            expect(lhs.x).toBe(Lx / Ra);
+            expect(lhs.uom).toBe(Unit.JOULE);
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.uom).toBe(Unit.SECOND);
+            expect(result === lhs).toBe(true);
+            expect(result.isMutable()).toBe(true);
+        });
+        it("lhs isLocked", function () {
+            const metric = new Euclidean1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.JOULE_SECOND);
+            lhs.lock();
+            const rhs = new Geometric1([Ra, Rx], Unit.SECOND);
+            const result = metric.divByScalar(lhs, metric.a(rhs), metric.uom(rhs));
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La / Ra);
+            expect(result.x).toBe(Lx / Ra);
+            expect(result.uom).toBe(Unit.JOULE);
+            expect(lhs.a).toBe(La);
+            expect(lhs.x).toBe(Lx);
+            expect(lhs.uom).toBe(Unit.JOULE_SECOND);
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.uom).toBe(Unit.SECOND);
+            expect(result === lhs).toBe(false);
+            expect(result.isMutable()).toBe(false);
         });
     });
     describe("scp", function () {
@@ -279,13 +448,40 @@ xdescribe("Euclidean1", function () {
         });
     });
     describe("add", function () {
-        it("should be defined.", function () {
+        it("lhs.isMutable", function () {
             const metric = new Euclidean1();
-            const lhs = new Geometric1();
-            const rhs = new Geometric1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.NEWTON);
+            const rhs = new Geometric1([Ra, Rx], Unit.NEWTON);
             const result = metric.add(lhs, rhs);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La + Ra);
+            expect(result.x).toBe(Lx + Rx);
+            expect(result.uom).toBe(Unit.NEWTON);
+            expect(result === lhs).toBe(true);
+            expect(result === rhs).toBe(false);
+        });
+        it("lhs.isLocked", function () {
+            const metric = new Euclidean1();
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.NEWTON);
+            lhs.lock();
+            const rhs = new Geometric1([Ra, Rx], Unit.NEWTON);
+            const result = metric.add(lhs, rhs);
+            expect(result).toBeDefined();
+            expect(result instanceof Geometric1).toBe(true);
+            expect(result.a).toBe(La + Ra);
+            expect(result.x).toBe(Lx + Rx);
+            expect(result.uom).toBe(Unit.NEWTON);
+            expect(result === lhs).toBe(false);
+            expect(result === rhs).toBe(false);
         });
     });
     describe("copyBivector", function () {
