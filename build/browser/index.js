@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.60';
+            this.VERSION = '1.0.61';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -4338,6 +4338,9 @@
      * @hidden
      */
     var FREQUENCY = Unit.INV_SECOND;
+    /**
+     * @hidden
+     */
     function checkBodyAngularVelocityUnits(body, metric, uomTime) {
         if (Unit.isOne(uomTime)) {
             if (!Unit.isOne(metric.uom(body.Ω))) {
@@ -6121,6 +6124,13 @@
     var zero$2 = function () {
         return [0, 0];
     };
+    function copy$1(mv) {
+        return new Geometric1([mv.a, mv.x], mv.uom);
+    }
+    function lock$3(mv) {
+        mv.lock();
+        return mv;
+    }
     /**
      * @hidden
      */
@@ -6153,92 +6163,202 @@
             this.coords = coords;
             this.unit = uom;
         }
+        Geometric1.prototype.addScalar = function (a, uom, α) {
+            throw new Error("addScalar Method not implemented.");
+        };
+        Geometric1.prototype.adj = function () {
+            throw new Error("adj Method not implemented.");
+        };
+        Geometric1.prototype.angle = function () {
+            throw new Error("angle Method not implemented.");
+        };
+        Geometric1.prototype.conj = function () {
+            throw new Error("conj Method not implemented.");
+        };
+        Geometric1.prototype.lco = function (rhs) {
+            throw new Error("lco Method not implemented.");
+        };
+        Geometric1.prototype.div = function (rhs) {
+            throw new Error("div Method not implemented.");
+        };
+        Geometric1.prototype.exp = function () {
+            throw new Error("exp Method not implemented.");
+        };
+        Geometric1.prototype.ext = function (rhs) {
+            throw new Error("ext Method not implemented.");
+        };
+        Geometric1.prototype.grade = function (grade) {
+            throw new Error("grade Method not implemented.");
+        };
+        Geometric1.prototype.isScalar = function () {
+            throw new Error("isScalar Method not implemented.");
+        };
+        Geometric1.prototype.log = function () {
+            throw new Error("log Method not implemented.");
+        };
+        Geometric1.prototype.magnitude = function (mutate) {
+            throw new Error("magnitude Method not implemented.");
+        };
+        Geometric1.prototype.mul = function (rhs) {
+            throw new Error("mul Method not implemented.");
+        };
+        Geometric1.prototype.norm = function () {
+            throw new Error("norm Method not implemented.");
+        };
+        Geometric1.prototype.quad = function () {
+            throw new Error("quad Method not implemented.");
+        };
+        Geometric1.prototype.rco = function (rhs) {
+            throw new Error("rco Method not implemented.");
+        };
+        Geometric1.prototype.rev = function () {
+            throw new Error("rev Method not implemented.");
+        };
+        Geometric1.prototype.squaredNorm = function () {
+            throw new Error("squaredNorm Method not implemented.");
+        };
+        Geometric1.prototype.subScalar = function (a, uom, α) {
+            throw new Error("suScalar Method not implemented.");
+        };
+        Geometric1.prototype.scp = function (rhs) {
+            throw new Error("scp Method not implemented.");
+        };
+        Geometric1.prototype.add = function (rhs, α) {
+            throw new Error("add Method not implemented.");
+        };
+        Geometric1.prototype.divByScalar = function (α, uom) {
+            throw new Error("divByScalar Method not implemented.");
+        };
+        Geometric1.prototype.lerp = function (target, α) {
+            throw new Error("lerp Method not implemented.");
+        };
+        Geometric1.prototype.scale = function (α) {
+            throw new Error("scale Method not implemented.");
+        };
+        Geometric1.prototype.reflect = function (n) {
+            throw new Error("reflect Method not implemented.");
+        };
+        Geometric1.prototype.rotate = function (rotor) {
+            throw new Error("rotate Method not implemented.");
+        };
+        Geometric1.prototype.slerp = function (target, α) {
+            throw new Error("slerp Method not implemented.");
+        };
+        Geometric1.prototype.stress = function (σ) {
+            throw new Error("stress Method not implemented.");
+        };
+        Geometric1.prototype.sub = function (rhs, α) {
+            throw new Error("sub Method not implemented.");
+        };
+        Geometric1.prototype.toExponential = function (fractionDigits) {
+            throw new Error("toExponential Method not implemented.");
+        };
+        Geometric1.prototype.toFixed = function (fractionDigits) {
+            throw new Error("toFixed Method not implemented.");
+        };
+        Geometric1.prototype.toPrecision = function (precision) {
+            throw new Error("toPrecision Method not implemented.");
+        };
+        Geometric1.prototype.toString = function (radix) {
+            throw new Error("toString Method not implemented.");
+        };
+        Geometric1.prototype.zero = function () {
+            if (this.isMutable()) {
+                this.a = 0;
+                this.x = 0;
+                this.uom = Unit.ONE;
+                return this;
+            }
+            else {
+                return lock$3(copy$1(this).zero());
+            }
+        };
         Geometric1.prototype.__div__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__div__ Method not implemented.");
         };
         Geometric1.prototype.__rdiv__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rdiv__ Method not implemented.");
         };
         Geometric1.prototype.__vbar__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__vbar__ Method not implemented.");
         };
         Geometric1.prototype.__rvbar__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rvbar__ Method not implemented.");
         };
         Geometric1.prototype.__wedge__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__wedge__ Method not implemented.");
         };
         Geometric1.prototype.__rwedge__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rwedge__ Method not implemented.");
         };
         Geometric1.prototype.__lshift__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__lshift__ Method not implemented.");
         };
         Geometric1.prototype.__rlshift__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rlshift__ Method not implemented.");
         };
         Geometric1.prototype.__rshift__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rshift__ Method not implemented.");
         };
         Geometric1.prototype.__rrshift__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rrshift__ Method not implemented.");
         };
         Geometric1.prototype.__bang__ = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("__bang__ Method not implemented.");
         };
         Geometric1.prototype.inv = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("inv Method not implemented.");
         };
         Geometric1.prototype.__eq__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__eq__ Method not implemented.");
         };
         Geometric1.prototype.__ne__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__ne__ Method not implemented.");
         };
         Geometric1.prototype.__ge__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__ge__ Method not implemented.");
         };
         Geometric1.prototype.__gt__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__gt__ Method not implemented.");
         };
         Geometric1.prototype.__le__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__le__ Method not implemented.");
         };
         Geometric1.prototype.__lt__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__lt__ Method not implemented.");
         };
         Geometric1.prototype.__tilde__ = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("__tilde__ Method not implemented.");
         };
         Geometric1.prototype.__add__ = function (other) {
-            throw new Error("Method not implemented.");
+            throw new Error("__add__ Method not implemented.");
         };
         Geometric1.prototype.__radd__ = function (other) {
-            throw new Error("Method not implemented.");
+            throw new Error("__radd__ Method not implemented.");
         };
         Geometric1.prototype.__sub__ = function (other) {
-            throw new Error("Method not implemented.");
+            throw new Error("__sub__ Method not implemented.");
         };
         Geometric1.prototype.__rsub__ = function (other) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rsub__ Method not implemented.");
         };
         Geometric1.prototype.__pos__ = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("__pos__ Method not implemented.");
         };
         Geometric1.prototype.__neg__ = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("__neg__ Method not implemented.");
         };
         Geometric1.prototype.neg = function () {
-            throw new Error("Method not implemented.");
+            throw new Error("neg Method not implemented.");
         };
         Geometric1.prototype.isZero = function () {
             return this.coords[COORD_A$1] === 0 && this.coords[COORD_X$4] === 0;
         };
         Geometric1.prototype.__mul__ = function (rhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__mul__ Method not implemented.");
         };
         Geometric1.prototype.__rmul__ = function (lhs) {
-            throw new Error("Method not implemented.");
+            throw new Error("__rmul__ Method not implemented.");
         };
         Geometric1.prototype.isOne = function () {
             return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.unit);
@@ -7245,6 +7365,17 @@
         };
         return Dynamics1;
     }());
+
+    /**
+     *
+     */
+    var Engine1 = /** @class */ (function (_super) {
+        __extends(Engine1, _super);
+        function Engine1(options) {
+            return _super.call(this, new Euclidean1(), new Dynamics1(), options) || this;
+        }
+        return Engine1;
+    }(Engine));
 
     /**
      *
@@ -20186,6 +20317,7 @@
     exports.Dynamics3 = Dynamics3;
     exports.EnergyTimeGraph = EnergyTimeGraph;
     exports.Engine = Engine;
+    exports.Engine1 = Engine1;
     exports.Engine2 = Engine2;
     exports.Engine3 = Engine3;
     exports.Euclidean1 = Euclidean1;

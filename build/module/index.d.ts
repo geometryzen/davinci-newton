@@ -16,6 +16,7 @@ export { Block1 } from './lib/engine1D/Block1';
 export { ConstantForceLaw1 } from './lib/engine1D/ConstantForceLaw1';
 export { ConstantTorqueLaw1 } from './lib/engine1D/ConstantTorqueLaw1';
 export { Dynamics1 } from './lib/engine1D/Dynamics1';
+export { Engine1 } from './lib/engine1D/Engine1';
 export { Euclidean1 } from './lib/engine1D/Euclidean1';
 export { Force1 } from './lib/engine1D/Force1';
 export { LinearDamper1 } from './lib/engine1D/LinearDamper1';

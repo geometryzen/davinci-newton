@@ -11,6 +11,9 @@ const TIME = Unit.SECOND;
  */
 const FREQUENCY = Unit.INV_SECOND;
 
+/**
+ * @hidden
+ */
 export function checkBodyAngularVelocityUnits<T>(body: ForceBody<T>, metric: Metric<T>, uomTime: Unit) {
     if (Unit.isOne(uomTime)) {
         if (!Unit.isOne(metric.uom(body.Ω))) {

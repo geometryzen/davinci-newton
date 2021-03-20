@@ -165,4 +165,34 @@ describe("Geometric1", function () {
             expect(kg.isZero()).toBe(true);
         });
     });
+    describe("zero", function () {
+        it("(), target isMutable", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x]);
+            expect(mv.isMutable()).toBe(true);
+            const result = mv.zero();
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(0);
+            expect(result.uom).toBe(Unit.ONE);
+            expect(result === mv).toBe(true);
+            expect(result.isMutable()).toBe(true);
+        });
+        it("(), target isLocked", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            mv.lock();
+            expect(mv.isLocked()).toBe(true);
+            const result = mv.zero();
+            expect(result.a).toBe(0);
+            expect(result.x).toBe(0);
+            expect(result.uom).toBe(Unit.ONE);
+            expect(result === mv).toBe(false);
+            expect(result.isLocked()).toBe(true);
+            expect(mv.a).toBe(a);
+            expect(mv.x).toBe(x);
+            expect(mv.uom).toBe(Unit.KELVIN);
+        });
+    });
 });
