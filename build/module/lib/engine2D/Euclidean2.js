@@ -33,7 +33,7 @@ var Euclidean2 = /** @class */ (function () {
             throw new Error("matrix dimensions must be 1.");
         }
         var value = m.getElement(0, 0);
-        return new Mat1(value);
+        return new Matrix1(new Float32Array([value]), m.uom);
     };
     Euclidean2.prototype.copyVector = function (source, target) {
         return target.copyVector(source);

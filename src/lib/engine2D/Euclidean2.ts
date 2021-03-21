@@ -37,7 +37,7 @@ export class Euclidean2 implements Metric<Geometric2> {
             throw new Error("matrix dimensions must be 1.");
         }
         const value = m.getElement(0, 0);
-        return new Mat1(value);
+        return new Matrix1(new Float32Array([value]), m.uom);
     }
     copyVector(source: Geometric2, target: Geometric2): Geometric2 {
         return target.copyVector(source);

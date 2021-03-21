@@ -20,17 +20,6 @@ export class Polygon2 extends RigidBody2 {
 
         mustBeAtLeastThreePoints(points);
 
-        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
-            // dimensionless
-        } else {
-            this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
-            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
-            this.X.uom = Unit.METER;
-            this.R.uom = Unit.ONE;
-            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
-            this.L.uom = Unit.JOULE_SECOND;
-        }
-
         const X = centerOfMass(points);
         for (const point of points) {
             const r = fromVector(point).sub(X);
@@ -39,7 +28,18 @@ export class Polygon2 extends RigidBody2 {
         }
         this.X = X;
 
-        this.updateInertiaTensor();
+        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+            // dimensionless
+            this.updateInertiaTensor();
+        } else {
+            // Changing the mass will trigger an update of the inertia tensor.
+            this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
     }
 
     /**
@@ -47,7 +47,6 @@ export class Polygon2 extends RigidBody2 {
      * The geometry is defined by the total mass, M, and the positions of the vertices. 
      */
     updateInertiaTensor(): void {
-        const matrix = Matrix1.one();
         const rs = this.rs;
         const N = rs.length;
         const numer = new Geometric2();
@@ -61,9 +60,10 @@ export class Polygon2 extends RigidBody2 {
             denom.add(A);
         }
         const I = this.M.mul(numer).divByNumber(6).divByPseudo(denom.b, denom.uom);
-        matrix.setElement(0, 0, I.a);
-        matrix.uom = I.uom;
-        this.I = matrix;
+        const matrixInv = Matrix1.one();
+        matrixInv.setElement(0, 0, 1 / I.a);
+        matrixInv.uom = Unit.div(Unit.ONE, I.uom);
+        this.Iinv = matrixInv;
     }
 }
 

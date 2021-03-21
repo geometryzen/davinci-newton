@@ -1088,7 +1088,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
-    mulByScalar(α: number, uom: Unit): Geometric1 {
+    mulByScalar(α: number, uom?: Unit): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mulByScalar(α, uom));
         }

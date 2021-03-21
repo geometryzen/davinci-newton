@@ -30,6 +30,17 @@ var Sphere3 = /** @class */ (function (_super) {
         var _this = _super.call(this, new Euclidean3()) || this;
         _this.radius_ = Geometric3.fromScalar(radius);
         _this.radiusLock_ = _this.radius_.lock();
+        if (Unit.isOne(radius.uom)) {
+            // dimensionless
+        }
+        else {
+            _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         _this.updateInertiaTensor();
         return _this;
     }
@@ -63,12 +74,12 @@ var Sphere3 = /** @class */ (function (_super) {
     Sphere3.prototype.updateInertiaTensor = function () {
         var r = this.radius_;
         var s = 2 * this.M.a * r.a * r.a / 5;
-        var I = Matrix3.zero();
-        I.setElement(0, 0, s);
-        I.setElement(1, 1, s);
-        I.setElement(2, 2, s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-        this.I = I;
+        var Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / s);
+        Iinv.setElement(1, 1, 1 / s);
+        Iinv.setElement(2, 2, 1 / s);
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom)));
+        this.Iinv = Iinv;
     };
     return Sphere3;
 }(RigidBody));

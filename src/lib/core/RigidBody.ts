@@ -181,6 +181,8 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
 
     /**
      * Inertia Tensor (in body coordinates) (3x3 matrix).
+     * The returned matrix is a copy.
+     * TODO: This copy should be locked.
      */
     get I(): MatrixLike {
         return this.metric.invertMatrix(this.$inertiaTensorInverse);

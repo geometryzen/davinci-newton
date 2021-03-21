@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { Geometric2 } from '../math/Geometric2';
-import { Mat1 } from '../math/Mat1';
+import { Matrix1 } from '../math/Matrix1';
 import { Unit } from '../math/Unit';
 import { RigidBody2 } from './RigidBody2';
 
@@ -57,7 +57,7 @@ export class Block2 extends RigidBody2 {
             // dimensionless
         } else {
             this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
-            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;
             this.R.uom = Unit.ONE;
             this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -112,9 +112,8 @@ export class Block2 extends RigidBody2 {
         const h = this.height_;
         const ww = w.a * w.a;
         const hh = h.a * h.a;
-        const s = this.M.a * (hh + ww) / 12;
-        const I = new Mat1(s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-        this.I = I;
+        const I = this.M.a * (hh + ww) / 12;
+        const Iuom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
+        this.Iinv = new Matrix1(new Float32Array([1 / I]), Unit.div(Unit.ONE, Iuom));
     }
 }

@@ -18,17 +18,6 @@ var Polygon2 = /** @class */ (function (_super) {
          */
         _this.rs = [];
         mustBeAtLeastThreePoints(points);
-        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
-            // dimensionless
-        }
-        else {
-            _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
-            _this.X.uom = Unit.METER;
-            _this.R.uom = Unit.ONE;
-            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
-            _this.L.uom = Unit.JOULE_SECOND;
-        }
         var X = centerOfMass(points);
         for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
             var point = points_1[_i];
@@ -37,7 +26,19 @@ var Polygon2 = /** @class */ (function (_super) {
             _this.rs.push(r);
         }
         _this.X = X;
-        _this.updateInertiaTensor();
+        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+            // dimensionless
+            _this.updateInertiaTensor();
+        }
+        else {
+            // Changing the mass will trigger an update of the inertia tensor.
+            _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         return _this;
     }
     /**
@@ -45,7 +46,6 @@ var Polygon2 = /** @class */ (function (_super) {
      * The geometry is defined by the total mass, M, and the positions of the vertices.
      */
     Polygon2.prototype.updateInertiaTensor = function () {
-        var matrix = Matrix1.one();
         var rs = this.rs;
         var N = rs.length;
         var numer = new Geometric2();
@@ -59,9 +59,10 @@ var Polygon2 = /** @class */ (function (_super) {
             denom.add(A);
         }
         var I = this.M.mul(numer).divByNumber(6).divByPseudo(denom.b, denom.uom);
-        matrix.setElement(0, 0, I.a);
-        matrix.uom = I.uom;
-        this.I = matrix;
+        var matrixInv = Matrix1.one();
+        matrixInv.setElement(0, 0, 1 / I.a);
+        matrixInv.uom = Unit.div(Unit.ONE, I.uom);
+        this.Iinv = matrixInv;
     };
     return Polygon2;
 }(RigidBody2));

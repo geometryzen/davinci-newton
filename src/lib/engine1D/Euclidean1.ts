@@ -62,7 +62,8 @@ export class Euclidean1 implements Metric<Geometric1> {
                 if (Unit.isOne(matrix.uom)) {
                     return mv;
                 } else {
-                    throw new Error(`matrix has units ${matrix.uom}!`);
+                    console.log(`matrix is dimensionless but has units ${matrix.uom}! mv is zero but has units ${mv.uom}`);
+                    return new Geometric1([0, 0], Unit.mul(matrix.uom, mv.uom));
                 }
             } else {
                 throw new Error(`applyMatrix(mv=Geometric1([${mv.a}, ${mv.x}], mv.uom), matrix=dimensions=${matrix.dimensions} Method not implemented.`);
@@ -84,7 +85,10 @@ export class Euclidean1 implements Metric<Geometric1> {
         return target;
     }
     copyMatrix(m: MatrixLike): MatrixLike {
-        throw new Error('Method not implemented.');
+        if (m.dimensions !== 0) {
+            throw new Error("matrix dimensions must be 0.");
+        }
+        return new Matrix0(new Float32Array([]), m.uom);
     }
     copyScalar(a: number, uom: Unit, target: Geometric1): Geometric1 {
         target.a = a;
@@ -155,7 +159,7 @@ export class Euclidean1 implements Metric<Geometric1> {
         return new Matrix0(new Float32Array([]));
     }
     invertMatrix(m: MatrixLike): MatrixLike {
-        return m;
+        return new Matrix0(new Float32Array([]), Unit.div(Unit.ONE, m.uom));
     }
     isZero(mv: Geometric1): boolean {
         return mv.a === 0 && mv.x === 0;

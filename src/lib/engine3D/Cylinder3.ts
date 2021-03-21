@@ -47,6 +47,17 @@ export class Cylinder3 extends RigidBody<Geometric3> {
         this.height_ = Geometric3.copy(height);
         this.heightLock_ = this.height_.lock();
 
+        if (Unit.isOne(radius.uom) && Unit.isOne(height.uom)) {
+            // dimensionless
+        } else {
+            this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         this.updateInertiaTensor();
     }
 
@@ -80,11 +91,11 @@ export class Cylinder3 extends RigidBody<Geometric3> {
         const hh = h.a * h.a;
         const Irr = this.M.a * (3 * rr + hh) / 12;
         const Ihh = this.M.a * rr / 2;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, Irr);
-        I.setElement(1, 1, Ihh);
-        I.setElement(2, 2, Irr);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
-        this.I = I;
+        const Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / Irr);
+        Iinv.setElement(1, 1, 1 / Ihh);
+        Iinv.setElement(2, 2, 1 / Irr);
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom)));
+        this.Iinv = Iinv;
     }
 }

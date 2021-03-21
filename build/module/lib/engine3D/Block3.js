@@ -50,7 +50,7 @@ var Block3 = /** @class */ (function (_super) {
         }
         else {
             _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
-            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            // this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             _this.X.uom = Unit.METER;
             _this.R.uom = Unit.ONE;
             _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -125,12 +125,12 @@ var Block3 = /** @class */ (function (_super) {
         var hh = h.a * h.a;
         var dd = d.a * d.a;
         var s = this.M.a / 12;
-        var I = Matrix3.zero();
-        I.setElement(0, 0, s * (hh + dd));
-        I.setElement(1, 1, s * (dd + ww));
-        I.setElement(2, 2, s * (ww + hh));
-        I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-        this.I = I;
+        var Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / (s * (hh + dd)));
+        Iinv.setElement(1, 1, 1 / (s * (dd + ww)));
+        Iinv.setElement(2, 2, 1 / (s * (ww + hh)));
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom)));
+        this.Iinv = Iinv;
     };
     return Block3;
 }(RigidBody));

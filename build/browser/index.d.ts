@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.64
+// Type definitions for davinci-newton 1.0.65
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -587,6 +587,8 @@ export class Geometric1 implements GeometricE1 {
     log(): Geometric1;
     magnitude(mutate?: boolean): Geometric1;
     mul(rhs: Geometric1): Geometric1;
+    mulByNumber(α: number): Geometric1;
+    mulByScalar(α: number, uom?: Unit): Geometric1;
     norm(): Geometric1;
     quad(): Geometric1;
     rco(rhs: Geometric1): Geometric1;

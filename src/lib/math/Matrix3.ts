@@ -21,6 +21,7 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
      */
     inv(): this {
         inv3x3(this.elements, this.elements);
+        this.uom = Unit.div(Unit.ONE, this.uom);
         return this;
     }
 

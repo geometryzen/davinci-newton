@@ -115,6 +115,8 @@ var RigidBody = /** @class */ (function (_super) {
     Object.defineProperty(RigidBody.prototype, "I", {
         /**
          * Inertia Tensor (in body coordinates) (3x3 matrix).
+         * The returned matrix is a copy.
+         * TODO: This copy should be locked.
          */
         get: function () {
             return this.metric.invertMatrix(this.$inertiaTensorInverse);

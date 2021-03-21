@@ -13,7 +13,7 @@
 // limitations under the License.
 import { __extends } from "tslib";
 import { Geometric2 } from '../math/Geometric2';
-import { Mat1 } from '../math/Mat1';
+import { Matrix1 } from '../math/Matrix1';
 import { Unit } from '../math/Unit';
 import { RigidBody2 } from './RigidBody2';
 /**
@@ -43,7 +43,7 @@ var Block2 = /** @class */ (function (_super) {
         }
         else {
             _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             _this.X.uom = Unit.METER;
             _this.R.uom = Unit.ONE;
             _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -102,10 +102,9 @@ var Block2 = /** @class */ (function (_super) {
         var h = this.height_;
         var ww = w.a * w.a;
         var hh = h.a * h.a;
-        var s = this.M.a * (hh + ww) / 12;
-        var I = new Mat1(s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-        this.I = I;
+        var I = this.M.a * (hh + ww) / 12;
+        var Iuom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
+        this.Iinv = new Matrix1(new Float32Array([1 / I]), Unit.div(Unit.ONE, Iuom));
     };
     return Block2;
 }(RigidBody2));

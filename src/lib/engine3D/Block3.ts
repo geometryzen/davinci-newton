@@ -71,7 +71,7 @@ export class Block3 extends RigidBody<Geometric3> {
             // dimensionless
         } else {
             this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
-            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            // this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;
             this.R.uom = Unit.ONE;
             this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -139,11 +139,11 @@ export class Block3 extends RigidBody<Geometric3> {
         const hh = h.a * h.a;
         const dd = d.a * d.a;
         const s = this.M.a / 12;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, s * (hh + dd));
-        I.setElement(1, 1, s * (dd + ww));
-        I.setElement(2, 2, s * (ww + hh));
-        I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-        this.I = I;
+        const Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / (s * (hh + dd)));
+        Iinv.setElement(1, 1, 1 / (s * (dd + ww)));
+        Iinv.setElement(2, 2, 1 / (s * (ww + hh)));
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom)));
+        this.Iinv = Iinv;
     }
 }

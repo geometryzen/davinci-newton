@@ -2,6 +2,7 @@ import { __extends } from "tslib";
 import { AbstractMatrix } from './AbstractMatrix';
 import inv3x3 from './inv3x3';
 import mul3x3 from './mul3x3';
+import { Unit } from './Unit';
 /**
  *
  */
@@ -19,6 +20,7 @@ var Matrix3 = /** @class */ (function (_super) {
      */
     Matrix3.prototype.inv = function () {
         inv3x3(this.elements, this.elements);
+        this.uom = Unit.div(Unit.ONE, this.uom);
         return this;
     };
     /**

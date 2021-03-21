@@ -28,6 +28,9 @@ var Euclidean3 = /** @class */ (function () {
         return target.copyBivector(source);
     };
     Euclidean3.prototype.copyMatrix = function (m) {
+        if (m.dimensions !== 3) {
+            throw new Error("matrix dimensions must be 3.");
+        }
         return new Mat3(m);
     };
     Euclidean3.prototype.copyVector = function (source, target) {

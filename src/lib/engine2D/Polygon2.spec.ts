@@ -1,4 +1,3 @@
-import { Dimensions } from "../math/Dimensions";
 import { Geometric2 } from "../math/Geometric2";
 import { Unit } from "../math/Unit";
 import { Polygon2 } from "./Polygon2";
@@ -73,13 +72,29 @@ describe("Polygon2", function () {
             expect(body.I.getElement(0, 0)).toBeCloseTo(5 / 12, 7);
         });
         it("should have correct units.", function () {
-            const body = new Polygon2([zero.mul(meter), e1.mul(meter), e1.add(e2.mulByNumber(2)).mul(meter), e2.mulByNumber(2).mul(meter)]);
+            const point0 = zero.mul(meter);
+            const point1 = e1.mul(meter);
+            const point2 = e1.add(e2.mulByNumber(2)).mul(meter);
+            const point3 = e2.mulByNumber(2).mul(meter);
+            const points = [point0, point1, point2, point3];
+            expect(points.every(function (point) { return Unit.isOne(point.uom); })).toBe(false);
+            expect(points.some(function (point) { return Unit.isOne(point.uom); })).toBe(false);
+            const body = new Polygon2(points);
+            // Polygon2 should auto-detect that we are using units of measure.
+            expect(body.M.uom).toBe(Unit.KILOGRAM);
+            expect(body.X.uom).toBe(Unit.METER);
+            expect(body.R.uom).toBe(Unit.ONE);
+            expect(body.P.uom).toBe(Unit.KILOGRAM_METER_PER_SECOND);
+            expect(body.L.uom).toBe(Unit.JOULE_SECOND);
             body.M = kilogram;
             expect(body.I).toBeDefined();
             expect(body.I.dimensions).toBe(1);
             // I = (1/12) * M * (h * h + w * w)
             expect(body.I.getElement(0, 0)).toBeCloseTo(5 / 12, 7);
-            expect(body.I.uom.dimensions.equals(Dimensions.MOMENT_OF_INERTIA)).toBe(true);
+            expect(body.Iinv.uom).toBe(Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED));
+            // expect(body.I.uom).toBe(Unit.KILOGRAM_METER_SQUARED);
+            // expect(`${body.I.uom}`).toBe(`${Unit.KILOGRAM_METER_SQUARED}`);
+            // expect(body.I.uom.dimensions.equals(Dimensions.MOMENT_OF_INERTIA)).toBe(true);
         });
     });
     it("Angular Momentum, L, should be initialized to 0", function () {

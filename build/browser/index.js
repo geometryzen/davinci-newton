@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.64';
+            this.VERSION = '1.0.65';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5590,6 +5590,8 @@
         Object.defineProperty(RigidBody.prototype, "I", {
             /**
              * Inertia Tensor (in body coordinates) (3x3 matrix).
+             * The returned matrix is a copy.
+             * TODO: This copy should be locked.
              */
             get: function () {
                 return this.metric.invertMatrix(this.$inertiaTensorInverse);
@@ -5817,13 +5819,13 @@
         Particle.prototype.updateInertiaTensor = function () {
             var metric = this.metric;
             if (Unit.isOne(metric.uom(this.L))) {
-                if (!Unit.isOne(this.I.uom)) {
-                    this.I.uom = Unit.ONE;
+                if (!Unit.isOne(this.Iinv.uom)) {
+                    this.Iinv.uom = Unit.ONE;
                 }
             }
             else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
-                if (!Unit.isCompatible(this.I.uom, Unit.KILOGRAM_METER_SQUARED)) {
-                    this.I.uom = Unit.KILOGRAM_METER_SQUARED;
+                if (!Unit.isCompatible(this.Iinv.uom, Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED))) {
+                    this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
                 }
             }
             else {
@@ -7741,7 +7743,8 @@
                         return mv;
                     }
                     else {
-                        throw new Error("matrix has units " + matrix.uom + "!");
+                        console.log("matrix is dimensionless but has units " + matrix.uom + "! mv is zero but has units " + mv.uom);
+                        return new Geometric1([0, 0], Unit.mul(matrix.uom, mv.uom));
                     }
                 }
                 else {
@@ -7765,7 +7768,10 @@
             return target;
         };
         Euclidean1.prototype.copyMatrix = function (m) {
-            throw new Error('Method not implemented.');
+            if (m.dimensions !== 0) {
+                throw new Error("matrix dimensions must be 0.");
+            }
+            return new Matrix0(new Float32Array([]), m.uom);
         };
         Euclidean1.prototype.copyScalar = function (a, uom, target) {
             target.a = a;
@@ -7841,7 +7847,7 @@
             return new Matrix0(new Float32Array([]));
         };
         Euclidean1.prototype.invertMatrix = function (m) {
-            return m;
+            return new Matrix0(new Float32Array([]), Unit.div(Unit.ONE, m.uom));
         };
         Euclidean1.prototype.isZero = function (mv) {
             return mv.a === 0 && mv.x === 0;
@@ -8080,7 +8086,7 @@
             if (Unit.isOne(metric.uom(width))) ;
             else {
                 _this.M = metric.scalar(metric.a(_this.M), Unit.KILOGRAM);
-                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
                 metric.setUom(_this.X, Unit.METER);
                 metric.setUom(_this.R, Unit.ONE);
                 metric.setUom(_this.P, Unit.KILOGRAM_METER_PER_SECOND);
@@ -10615,6 +10621,25 @@
         return Geometric2;
     }());
 
+    var Matrix1 = /** @class */ (function (_super) {
+        __extends(Matrix1, _super);
+        /**
+         *
+         * @param elements
+         * @param uom The optional unit of measure.
+         */
+        function Matrix1(elements, uom) {
+            return _super.call(this, elements, 1, uom) || this;
+        }
+        Matrix1.one = function () {
+            return new Matrix1(new Float32Array([1]));
+        };
+        Matrix1.zero = function () {
+            return new Matrix1(new Float32Array([0]));
+        };
+        return Matrix1;
+    }(AbstractMatrix));
+
     /**
      * @hidden
      */
@@ -10639,25 +10664,6 @@
         };
         return Mat1;
     }());
-
-    var Matrix1 = /** @class */ (function (_super) {
-        __extends(Matrix1, _super);
-        /**
-         *
-         * @param elements
-         * @param uom The optional unit of measure.
-         */
-        function Matrix1(elements, uom) {
-            return _super.call(this, elements, 1, uom) || this;
-        }
-        Matrix1.one = function () {
-            return new Matrix1(new Float32Array([1]));
-        };
-        Matrix1.zero = function () {
-            return new Matrix1(new Float32Array([0]));
-        };
-        return Matrix1;
-    }(AbstractMatrix));
 
     /**
      *
@@ -10710,7 +10716,7 @@
                 throw new Error("matrix dimensions must be 1.");
             }
             var value = m.getElement(0, 0);
-            return new Mat1(value);
+            return new Matrix1(new Float32Array([value]), m.uom);
         };
         Euclidean2.prototype.copyVector = function (source, target) {
             return target.copyVector(source);
@@ -10837,7 +10843,7 @@
             L.copyBivector(this.L);
             // We know that (in 2D) the moment of inertia is a scalar.
             // The angular velocity property performs copy on assignment.
-            this.Ω = L.divByScalar(this.I.getElement(0, 0), this.I.uom);
+            this.Ω = L.mulByScalar(this.Iinv.getElement(0, 0), this.Iinv.uom);
         };
         return RigidBody2;
     }(RigidBody));
@@ -10868,7 +10874,7 @@
             if (Unit.isOne(width.uom) && Unit.isOne(height.uom)) ;
             else {
                 _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
                 _this.X.uom = Unit.METER;
                 _this.R.uom = Unit.ONE;
                 _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -10927,10 +10933,9 @@
             var h = this.height_;
             var ww = w.a * w.a;
             var hh = h.a * h.a;
-            var s = this.M.a * (hh + ww) / 12;
-            var I = new Mat1(s);
-            I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-            this.I = I;
+            var I = this.M.a * (hh + ww) / 12;
+            var Iuom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
+            this.Iinv = new Matrix1(new Float32Array([1 / I]), Unit.div(Unit.ONE, Iuom));
         };
         return Block2;
     }(RigidBody2));
@@ -10968,7 +10973,7 @@
             if (Unit.isOne(radius.uom)) ;
             else {
                 _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
                 _this.X.uom = Unit.METER;
                 _this.R.uom = Unit.ONE;
                 _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -11008,9 +11013,11 @@
         Disc2.prototype.updateInertiaTensor = function () {
             var r = this.radius_;
             var s = 0.5 * this.M.a * r.a * r.a;
-            var I = new Mat1(s);
-            I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-            this.I = I;
+            var Iuom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
+            var matrixInv = Matrix1.one();
+            matrixInv.setElement(0, 0, 1 / s);
+            matrixInv.uom = Unit.div(Unit.ONE, Iuom);
+            this.Iinv = matrixInv;
         };
         return Disc2;
     }(RigidBody2));
@@ -11369,15 +11376,6 @@
              */
             _this.rs = [];
             mustBeAtLeastThreePoints(points);
-            if (points.every(function (point) { return Unit.isOne(point.uom); })) ;
-            else {
-                _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
-                _this.X.uom = Unit.METER;
-                _this.R.uom = Unit.ONE;
-                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
-                _this.L.uom = Unit.JOULE_SECOND;
-            }
             var X = centerOfMass(points);
             for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
                 var point = points_1[_i];
@@ -11386,7 +11384,19 @@
                 _this.rs.push(r);
             }
             _this.X = X;
-            _this.updateInertiaTensor();
+            if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+                // dimensionless
+                _this.updateInertiaTensor();
+            }
+            else {
+                // Changing the mass will trigger an update of the inertia tensor.
+                _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             return _this;
         }
         /**
@@ -11394,7 +11404,6 @@
          * The geometry is defined by the total mass, M, and the positions of the vertices.
          */
         Polygon2.prototype.updateInertiaTensor = function () {
-            var matrix = Matrix1.one();
             var rs = this.rs;
             var N = rs.length;
             var numer = new Geometric2();
@@ -11408,9 +11417,10 @@
                 denom.add(A);
             }
             var I = this.M.mul(numer).divByNumber(6).divByPseudo(denom.b, denom.uom);
-            matrix.setElement(0, 0, I.a);
-            matrix.uom = I.uom;
-            this.I = matrix;
+            var matrixInv = Matrix1.one();
+            matrixInv.setElement(0, 0, 1 / I.a);
+            matrixInv.uom = Unit.div(Unit.ONE, I.uom);
+            this.Iinv = matrixInv;
         };
         return Polygon2;
     }(RigidBody2));
@@ -11477,7 +11487,7 @@
             // In 2D, this simplifies to...
             // L(Ω) = (m / 3) |a||a| Ω
             var I = this.M.divByNumber(3).mulByVector(this.a).mulByVector(this.a);
-            this.I = new Matrix1(new Float32Array([I.a]), I.uom);
+            this.Iinv = new Matrix1(new Float32Array([1 / I.a]), Unit.div(Unit.ONE, I.uom));
         };
         return Rod2;
     }(RigidBody2));
@@ -15109,6 +15119,7 @@
          */
         Matrix3.prototype.inv = function () {
             inv3x3(this.elements, this.elements);
+            this.uom = Unit.div(Unit.ONE, this.uom);
             return this;
         };
         /**
@@ -15345,6 +15356,9 @@
             return target.copyBivector(source);
         };
         Euclidean3.prototype.copyMatrix = function (m) {
+            if (m.dimensions !== 3) {
+                throw new Error("matrix dimensions must be 3.");
+            }
             return new Mat3(m);
         };
         Euclidean3.prototype.copyVector = function (source, target) {
@@ -15482,7 +15496,7 @@
             if (Unit.isOne(width.uom) && Unit.isOne(height.uom) && Unit.isOne(depth.uom)) ;
             else {
                 _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
-                _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+                // this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
                 _this.X.uom = Unit.METER;
                 _this.R.uom = Unit.ONE;
                 _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -15557,12 +15571,12 @@
             var hh = h.a * h.a;
             var dd = d.a * d.a;
             var s = this.M.a / 12;
-            var I = Matrix3.zero();
-            I.setElement(0, 0, s * (hh + dd));
-            I.setElement(1, 1, s * (dd + ww));
-            I.setElement(2, 2, s * (ww + hh));
-            I.uom = Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom));
-            this.I = I;
+            var Iinv = Matrix3.zero();
+            Iinv.setElement(0, 0, 1 / (s * (hh + dd)));
+            Iinv.setElement(1, 1, 1 / (s * (dd + ww)));
+            Iinv.setElement(2, 2, 1 / (s * (ww + hh)));
+            Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(w.uom, w.uom)));
+            this.Iinv = Iinv;
         };
         return Block3;
     }(RigidBody));
@@ -15601,6 +15615,15 @@
             _this.radiusLock_ = _this.radius_.lock();
             _this.height_ = Geometric3.copy(height);
             _this.heightLock_ = _this.height_.lock();
+            if (Unit.isOne(radius.uom) && Unit.isOne(height.uom)) ;
+            else {
+                _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             _this.updateInertiaTensor();
             return _this;
         }
@@ -15640,12 +15663,12 @@
             var hh = h.a * h.a;
             var Irr = this.M.a * (3 * rr + hh) / 12;
             var Ihh = this.M.a * rr / 2;
-            var I = Matrix3.zero();
-            I.setElement(0, 0, Irr);
-            I.setElement(1, 1, Ihh);
-            I.setElement(2, 2, Irr);
-            I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
-            this.I = I;
+            var Iinv = Matrix3.zero();
+            Iinv.setElement(0, 0, 1 / Irr);
+            Iinv.setElement(1, 1, 1 / Ihh);
+            Iinv.setElement(2, 2, 1 / Irr);
+            Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom)));
+            this.Iinv = Iinv;
         };
         return Cylinder3;
     }(RigidBody));
@@ -16104,6 +16127,15 @@
             var _this = _super.call(this, new Euclidean3()) || this;
             _this.radius_ = Geometric3.fromScalar(radius);
             _this.radiusLock_ = _this.radius_.lock();
+            if (Unit.isOne(radius.uom)) ;
+            else {
+                _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+                _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+                _this.X.uom = Unit.METER;
+                _this.R.uom = Unit.ONE;
+                _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+                _this.L.uom = Unit.JOULE_SECOND;
+            }
             _this.updateInertiaTensor();
             return _this;
         }
@@ -16137,12 +16169,12 @@
         Sphere3.prototype.updateInertiaTensor = function () {
             var r = this.radius_;
             var s = 2 * this.M.a * r.a * r.a / 5;
-            var I = Matrix3.zero();
-            I.setElement(0, 0, s);
-            I.setElement(1, 1, s);
-            I.setElement(2, 2, s);
-            I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-            this.I = I;
+            var Iinv = Matrix3.zero();
+            Iinv.setElement(0, 0, 1 / s);
+            Iinv.setElement(1, 1, 1 / s);
+            Iinv.setElement(2, 2, 1 / s);
+            Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom)));
+            this.Iinv = Iinv;
         };
         return Sphere3;
     }(RigidBody));

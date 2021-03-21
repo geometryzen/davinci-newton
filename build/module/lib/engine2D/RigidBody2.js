@@ -23,7 +23,7 @@ var RigidBody2 = /** @class */ (function (_super) {
         L.copyBivector(this.L);
         // We know that (in 2D) the moment of inertia is a scalar.
         // The angular velocity property performs copy on assignment.
-        this.Ω = L.divByScalar(this.I.getElement(0, 0), this.I.uom);
+        this.Ω = L.mulByScalar(this.Iinv.getElement(0, 0), this.Iinv.uom);
     };
     return RigidBody2;
 }(RigidBody));

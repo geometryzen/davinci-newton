@@ -18,7 +18,7 @@ export class Block1 extends RigidBody1 {
             // dimensionless
         } else {
             this.M = metric.scalar(metric.a(this.M), Unit.KILOGRAM);
-            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             metric.setUom(this.X, Unit.METER);
             metric.setUom(this.R, Unit.ONE);
             metric.setUom(this.P, Unit.KILOGRAM_METER_PER_SECOND);

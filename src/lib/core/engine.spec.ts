@@ -759,6 +759,9 @@ describe("engine", function () {
             points.push(Geometric2.vector(0, 3, Unit.METER));
 
             const body = new Polygon2(points);
+
+            expect(body.X.uom).toBe(Unit.METER);
+
             body.X = Geometric2.vector(1, 0, Unit.METER);
             body.R = Geometric2.rotorFromDirections(e1, e1.add(e2));
             body.P = Geometric2.vector(1, 0, Unit.KILOGRAM_METER_PER_SECOND);

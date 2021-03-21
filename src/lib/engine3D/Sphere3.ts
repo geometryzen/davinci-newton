@@ -36,6 +36,18 @@ export class Sphere3 extends RigidBody<Geometric3> {
         super(new Euclidean3());
         this.radius_ = Geometric3.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
+
+        if (Unit.isOne(radius.uom)) {
+            // dimensionless
+        } else {
+            this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            this.X.uom = Unit.METER;
+            this.R.uom = Unit.ONE;
+            this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            this.L.uom = Unit.JOULE_SECOND;
+        }
+
         this.updateInertiaTensor();
     }
 
@@ -67,11 +79,11 @@ export class Sphere3 extends RigidBody<Geometric3> {
     protected updateInertiaTensor(): void {
         const r = this.radius_;
         const s = 2 * this.M.a * r.a * r.a / 5;
-        const I = Matrix3.zero();
-        I.setElement(0, 0, s);
-        I.setElement(1, 1, s);
-        I.setElement(2, 2, s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-        this.I = I;
+        const Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / s);
+        Iinv.setElement(1, 1, 1 / s);
+        Iinv.setElement(2, 2, 1 / s);
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom)));
+        this.Iinv = Iinv;
     }
 }

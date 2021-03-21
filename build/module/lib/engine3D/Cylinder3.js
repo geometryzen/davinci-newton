@@ -33,6 +33,17 @@ var Cylinder3 = /** @class */ (function (_super) {
         _this.radiusLock_ = _this.radius_.lock();
         _this.height_ = Geometric3.copy(height);
         _this.heightLock_ = _this.height_.lock();
+        if (Unit.isOne(radius.uom) && Unit.isOne(height.uom)) {
+            // dimensionless
+        }
+        else {
+            _this.M = Geometric3.scalar(_this.M.a, Unit.KILOGRAM);
+            _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
+            _this.X.uom = Unit.METER;
+            _this.R.uom = Unit.ONE;
+            _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
+            _this.L.uom = Unit.JOULE_SECOND;
+        }
         _this.updateInertiaTensor();
         return _this;
     }
@@ -72,12 +83,12 @@ var Cylinder3 = /** @class */ (function (_super) {
         var hh = h.a * h.a;
         var Irr = this.M.a * (3 * rr + hh) / 12;
         var Ihh = this.M.a * rr / 2;
-        var I = Matrix3.zero();
-        I.setElement(0, 0, Irr);
-        I.setElement(1, 1, Ihh);
-        I.setElement(2, 2, Irr);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom));
-        this.I = I;
+        var Iinv = Matrix3.zero();
+        Iinv.setElement(0, 0, 1 / Irr);
+        Iinv.setElement(1, 1, 1 / Ihh);
+        Iinv.setElement(2, 2, 1 / Irr);
+        Iinv.uom = Unit.div(Unit.ONE, Unit.mul(this.M.uom, Unit.mul(r.uom, h.uom)));
+        this.Iinv = Iinv;
     };
     return Cylinder3;
 }(RigidBody));

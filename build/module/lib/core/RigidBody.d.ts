@@ -109,6 +109,8 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     protected updateInertiaTensor(): void;
     /**
      * Inertia Tensor (in body coordinates) (3x3 matrix).
+     * The returned matrix is a copy.
+     * TODO: This copy should be locked.
      */
     get I(): MatrixLike;
     /**

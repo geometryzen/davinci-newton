@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { Geometric2 } from '../math/Geometric2';
-import { Mat1 } from '../math/Mat1';
+import { Matrix1 } from '../math/Matrix1';
 import { Unit } from '../math/Unit';
 import { RigidBody2 } from './RigidBody2';
 /**
@@ -21,7 +21,7 @@ var Disc2 = /** @class */ (function (_super) {
         }
         else {
             _this.M = Geometric2.scalar(_this.M.a, Unit.KILOGRAM);
-            _this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            _this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             _this.X.uom = Unit.METER;
             _this.R.uom = Unit.ONE;
             _this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -61,9 +61,11 @@ var Disc2 = /** @class */ (function (_super) {
     Disc2.prototype.updateInertiaTensor = function () {
         var r = this.radius_;
         var s = 0.5 * this.M.a * r.a * r.a;
-        var I = new Mat1(s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-        this.I = I;
+        var Iuom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
+        var matrixInv = Matrix1.one();
+        matrixInv.setElement(0, 0, 1 / s);
+        matrixInv.uom = Unit.div(Unit.ONE, Iuom);
+        this.Iinv = matrixInv;
     };
     return Disc2;
 }(RigidBody2));

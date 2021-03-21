@@ -1,6 +1,7 @@
 import { mustBeNonNullObject } from "../checks/mustBeNonNullObject";
 import { Geometric2 } from "../math/Geometric2";
 import { Matrix1 } from "../math/Matrix1";
+import { Unit } from "../math/Unit";
 import { RigidBody2 } from "./RigidBody2";
 
 export class Rod2 extends RigidBody2 {
@@ -17,6 +18,6 @@ export class Rod2 extends RigidBody2 {
         // In 2D, this simplifies to...
         // L(Ω) = (m / 3) |a||a| Ω
         const I = this.M.divByNumber(3).mulByVector(this.a).mulByVector(this.a);
-        this.I = new Matrix1(new Float32Array([I.a]), I.uom);
+        this.Iinv = new Matrix1(new Float32Array([1 / I.a]), Unit.div(Unit.ONE, I.uom));
     }
 }

@@ -37,7 +37,12 @@ export interface Metric<T> {
     divByScalar(lhs: T, a: number, uom: Unit): T;
     ext(lhs: T, rhs: T): T;
     identityMatrix(): MatrixLike;
-    invertMatrix(m: MatrixLike): MatrixLike;
+    /**
+     *
+     * @param matrix The matrix to be inverted.
+     * @returns A new matrix which is the inverse of the specified matrix.
+     */
+    invertMatrix(matrix: MatrixLike): MatrixLike;
     isZero(mv: T): boolean;
     /**
      * Used to change the mutability of the multivector from mutable to immutable.

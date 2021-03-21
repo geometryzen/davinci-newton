@@ -52,7 +52,12 @@ export interface Metric<T> {
 
     identityMatrix(): MatrixLike;
 
-    invertMatrix(m: MatrixLike): MatrixLike;
+    /**
+     * 
+     * @param matrix The matrix to be inverted.
+     * @returns A new matrix which is the inverse of the specified matrix.
+     */
+    invertMatrix(matrix: MatrixLike): MatrixLike;
 
     isZero(mv: T): boolean;
 

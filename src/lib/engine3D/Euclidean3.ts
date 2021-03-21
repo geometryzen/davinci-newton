@@ -32,6 +32,9 @@ export class Euclidean3 implements Metric<Geometric3> {
         return target.copyBivector(source);
     }
     copyMatrix(m: MatrixLike): MatrixLike {
+        if (m.dimensions !== 3) {
+            throw new Error("matrix dimensions must be 3.");
+        }
         return new Mat3(m);
     }
     copyVector(source: Geometric3, target: Geometric3): Geometric3 {

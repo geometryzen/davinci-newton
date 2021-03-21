@@ -1,5 +1,5 @@
 import { Geometric2 } from '../math/Geometric2';
-import { Mat1 } from '../math/Mat1';
+import { Matrix1 } from '../math/Matrix1';
 import { Unit } from '../math/Unit';
 import { RigidBody2 } from './RigidBody2';
 
@@ -26,7 +26,7 @@ export class Disc2 extends RigidBody2 {
             // dimensionless
         } else {
             this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
-            this.I.uom = Unit.JOULE_SECOND.mul(Unit.SECOND);
+            this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;
             this.R.uom = Unit.ONE;
             this.P.uom = Unit.KILOGRAM_METER_PER_SECOND;
@@ -65,8 +65,10 @@ export class Disc2 extends RigidBody2 {
     protected updateInertiaTensor(): void {
         const r = this.radius_;
         const s = 0.5 * this.M.a * r.a * r.a;
-        const I = new Mat1(s);
-        I.uom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
-        this.I = I;
+        const Iuom = Unit.mul(this.M.uom, Unit.mul(r.uom, r.uom));
+        const matrixInv = Matrix1.one();
+        matrixInv.setElement(0, 0, 1 / s);
+        matrixInv.uom = Unit.div(Unit.ONE, Iuom);
+        this.Iinv = matrixInv;
     }
 }
