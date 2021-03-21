@@ -232,6 +232,16 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
+    copy(rhs: Geometric1): Geometric1 {
+        if (this.isMutable()) {
+            this.a = rhs.a;
+            this.x = rhs.x;
+            this.uom = rhs.uom;
+            return this;
+        } else {
+            return lock(copy(this).copy(rhs));
+        }
+    }
     copyVector(vector: Vector): this {
         this.a = 0;
         this.x = vector.x;
