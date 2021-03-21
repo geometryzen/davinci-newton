@@ -691,11 +691,13 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    sub(M: Geometric1, α?: number): Geometric1 {
+    sub(M: Geometric1, α = 1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().sub(M, α));
         }
         else {
+            this.a -= M.a * α;
+            this.x -= M.x * α;
             if (this.isZero()) {
                 this.uom = M.uom;
             }
@@ -705,8 +707,6 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             else {
                 this.uom = Unit.compatible(this.uom, M.uom);
             }
-            this.a -= M.a * α;
-            this.x -= M.x * α;
             return this;
         }
     }

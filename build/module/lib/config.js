@@ -9,7 +9,7 @@ var Newton = /** @class */ (function () {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
         this.LAST_MODIFIED = '2021-03-21';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.68';
+        this.VERSION = '1.0.69';
     }
     Newton.prototype.log = function (message) {
         var optionalParams = [];
