@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-20';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.65';
+            this.VERSION = '1.0.66';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -7737,14 +7737,14 @@
             }
         };
         Euclidean1.prototype.applyMatrix = function (mv, matrix) {
-            if (mv) {
-                if (mv.a === 0 && mv.x === 0) {
+            if (mv.isMutable()) {
+                if (mv.isZero()) {
                     if (Unit.isOne(matrix.uom)) {
                         return mv;
                     }
                     else {
-                        console.log("matrix is dimensionless but has units " + matrix.uom + "! mv is zero but has units " + mv.uom);
-                        return new Geometric1([0, 0], Unit.mul(matrix.uom, mv.uom));
+                        mv.uom = Unit.mul(matrix.uom, mv.uom);
+                        return mv;
                     }
                 }
                 else {

@@ -14,6 +14,11 @@ export interface Metric<T> {
     a(mv: T): number;
     add(lhs: T, rhs: T): T;
     addVector(lhs: T, rhs: T): T;
+    /**
+     * TODO: Describe semantics of how this is expected to mutate the multivector argument.
+     * @param mv
+     * @param matrix
+     */
     applyMatrix(mv: T, matrix: MatrixLike): T;
     /**
      * Modifies the target to have the same property values as the source.

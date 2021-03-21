@@ -46,18 +46,19 @@ describe("Block1", function () {
             expect(block.Iinv.dimensions).toBe(0);
             expect(block.Iinv.uom).toBe(Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED));
             // The inertia tensor matrix has zero dimensions.
-            // expect(block.I.dimensions).toBe(0);
+            expect(block.I.dimensions).toBe(0);
             // The inertia tensor still has the correct units.
-            // expect(block.I.uom).toBe(Unit.KILOGRAM_METER_SQUARED);
+            expect(block.I.uom).toBe(Unit.KILOGRAM_METER_SQUARED);
             // The algular momentum must be zero because there are no bivectors.
-            // expect(block.L.a).toBe(0);
-            // expect(block.L.x).toBe(0);
+            expect(block.L.a).toBe(0);
+            expect(block.L.x).toBe(0);
             // The angular momentum still has the correct units.
-            // expect(block.L.uom).toBe(Unit.JOULE_SECOND);
-            // block.updateAngularVelocity();
-            // The angular 
-            // expect(block.L.a).toBe(0);
-            // expect(block.L.x).toBe(0);
+            expect(block.L.uom).toBe(Unit.JOULE_SECOND);
+            block.updateAngularVelocity();
+            // The angular velocity will be zero but still with correct units.
+            expect(block.Ω.a).toBe(0);
+            expect(block.Ω.x).toBe(0);
+            expect(block.Ω.uom).toBe(Unit.INV_SECOND);
         });
     });
 });

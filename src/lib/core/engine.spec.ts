@@ -1,3 +1,5 @@
+import { Block1 } from '../engine1D/Block1';
+import { Engine1 } from '../engine1D/Engine1';
 import { Block2 } from '../engine2D/Block2';
 import { ConstantForceLaw2 } from '../engine2D/ConstantForceLaw2';
 import { Disc2 } from '../engine2D/Disc2';
@@ -14,6 +16,7 @@ import { Dynamics3 } from '../engine3D/Dynamics3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
 import { Particle3 } from '../engine3D/Particle3';
 import { SurfaceConstraint3 } from '../engine3D/SurfaceConstraint3';
+import { Geometric1 } from '../math/Geometric1';
 import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
@@ -769,6 +772,26 @@ describe("engine", function () {
 
             sim.addBody(body);
             sim.advance(0.1, Unit.SECOND);
+            expect(true).toBe(true);
+        });
+        it("Physics Engine 1D", function () {
+            const e1 = Geometric1.e1;
+            const kg = Geometric1.kilogram;
+            const m = Geometric1.meter;
+            const s = Geometric1.second;
+
+            const sim = new Engine1();
+            const Δt = s.mulByNumber(0.01);
+
+            const width = m;
+            const blockA = new Block1(width);
+
+            blockA.M = kg.mulByNumber(1);
+            blockA.X = m.mulByNumber(-3).mul(e1);
+            blockA.P = e1.mulByNumber(10).mul(kg).mul(m).div(s);
+
+            sim.addBody(blockA);
+            sim.advance(Δt.a, Δt.uom);
             expect(true).toBe(true);
         });
     });

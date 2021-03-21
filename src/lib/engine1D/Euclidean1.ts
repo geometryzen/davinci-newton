@@ -57,13 +57,13 @@ export class Euclidean1 implements Metric<Geometric1> {
         }
     }
     applyMatrix(mv: Geometric1, matrix: MatrixLike): Geometric1 {
-        if (mv) {
-            if (mv.a === 0 && mv.x === 0) {
+        if (mv.isMutable()) {
+            if (mv.isZero()) {
                 if (Unit.isOne(matrix.uom)) {
                     return mv;
                 } else {
-                    console.log(`matrix is dimensionless but has units ${matrix.uom}! mv is zero but has units ${mv.uom}`);
-                    return new Geometric1([0, 0], Unit.mul(matrix.uom, mv.uom));
+                    mv.uom = Unit.mul(matrix.uom, mv.uom);
+                    return mv;
                 }
             } else {
                 throw new Error(`applyMatrix(mv=Geometric1([${mv.a}, ${mv.x}], mv.uom), matrix=dimensions=${matrix.dimensions} Method not implemented.`);
