@@ -199,7 +199,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
     clone(): Geometric1 {
         return copy(this);
     }
-    addScalar(a: number, uom?: Unit, α?: number): Geometric1 {
+    addScalar(a: number, uom?: Unit, α = 1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(copy(this).addScalar(a, uom, α));
         }
@@ -504,7 +504,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             }
         }
     }
-    subScalar(a: number, uom?: Unit, α?: number): Geometric1 {
+    subScalar(a: number, uom?: Unit, α = 1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().subScalar(a, uom, α));
         }
@@ -542,7 +542,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
 
         return this;
     }
-    add(M: Geometric1, α?: number): Geometric1 {
+    add(M: Geometric1, α = 1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().add(M, α));
         }

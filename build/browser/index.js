@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-20';
+            this.LAST_MODIFIED = '2021-03-21';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.67';
+            this.VERSION = '1.0.68';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -6473,6 +6473,7 @@
             return copy$1(this);
         };
         Geometric1.prototype.addScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(copy$1(this).addScalar(a, uom, α));
             }
@@ -6783,6 +6784,7 @@
             }
         };
         Geometric1.prototype.subScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(this.clone().subScalar(a, uom, α));
             }
@@ -6817,6 +6819,7 @@
             return this;
         };
         Geometric1.prototype.add = function (M, α) {
+            if (α === void 0) { α = 1; }
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(this.clone().add(M, α));
             }

@@ -43,6 +43,63 @@ describe("Geometric1", function () {
             }).toThrowError("Property `a` is readonly.");
         });
     });
+    describe("add", function () {
+        it("should compute a", function () {
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const Rx = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.CANDELA);
+            const rhs = new Geometric1([Ra, Rx], Unit.CANDELA);
+            const sum = lhs.add(rhs);
+            expect(sum.a).toBe(La + Ra);
+        });
+    });
+    describe("clone", function () {
+        it("should copy a", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            const clone = mv.clone();
+            expect(clone.a).toBe(a);
+        });
+        it("should copy x", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            const clone = mv.clone();
+            expect(clone.x).toBe(x);
+        });
+        it("should copy uom", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            const clone = mv.clone();
+            expect(clone.uom).toBe(Unit.KELVIN);
+        });
+        it("should be mutable if original was mutable", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            const clone = mv.clone();
+            expect(clone.isMutable()).toBe(true);
+        });
+        it("should be mutable if original was locked", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            mv.lock();
+            const clone = mv.clone();
+            expect(clone.isMutable()).toBe(true);
+        });
+        it("should be mutable if original was mutable", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const mv = new Geometric1([a, x], Unit.KELVIN);
+            const clone = mv.clone();
+            expect(clone === mv).toBe(false);
+        });
+    });
     describe("x", function () {
         it("should support getter and setter.", function () {
             const m = new Geometric1();
@@ -193,6 +250,22 @@ describe("Geometric1", function () {
             expect(mv.a).toBe(a);
             expect(mv.x).toBe(x);
             expect(mv.uom).toBe(Unit.KELVIN);
+        });
+    });
+    describe("__add__", function () {
+        it("", function () {
+            const wA = Geometric1.scalar(1, Unit.METER);
+            const wB = Geometric1.scalar(1, Unit.METER);
+            expect(wA.a).toBe(1);
+            expect(wA.x).toBe(0);
+            expect(wA.uom).toBe(Unit.METER);
+            expect(wB.a).toBe(1);
+            expect(wB.x).toBe(0);
+            expect(wB.uom).toBe(Unit.METER);
+            const d = wA.__add__(wB);
+            expect(d.a).toBe(2);
+            expect(d.x).toBe(0);
+            expect(d.uom).toBe(Unit.METER);
         });
     });
 });
