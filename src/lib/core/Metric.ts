@@ -19,11 +19,13 @@ export interface Metric<T> {
     addVector(lhs: T, rhs: T): T;
 
     /**
-     * TODO: Describe semantics of how this is expected to mutate the multivector argument. 
+     * TODO: Describe semantics of how this is expected to change the multivector argument. 
      * @param mv 
      * @param matrix 
      */
     applyMatrix(mv: T, matrix: MatrixLike): T;
+
+    clone(source: T): T;
 
     /**
      * Modifies the target to have the same property values as the source.
@@ -49,7 +51,7 @@ export interface Metric<T> {
     createForce(body: ForceBody<T>): Force<T>;
     createTorque(body: ForceBody<T>): Torque<T>;
 
-    direction(mv: T, mutate?: boolean): T;
+    direction(mv: T): T;
 
     divByScalar(lhs: T, a: number, uom: Unit): T;
 
@@ -75,7 +77,7 @@ export interface Metric<T> {
      */
     lock(mv: T): number;
 
-    magnitude(mv: T, mutate?: boolean): T;
+    norm(mv: T): T;
 
     mul(lhs: T, rhs: T): T;
 
@@ -87,7 +89,7 @@ export interface Metric<T> {
 
     neg(mv: T): T;
 
-    quaditude(mv: T, mutate?: boolean): T;
+    quad(mv: T): T;
 
     rev(mv: T): T;
 

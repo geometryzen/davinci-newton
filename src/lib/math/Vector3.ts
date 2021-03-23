@@ -97,7 +97,7 @@ export class Vector3 implements VectorE3, GradeMasked {
      * 
      */
     direction(): this {
-        const m = this.magnitude();
+        const m = this.normNoUnits();
         return this.divByScalar(m);
     }
 
@@ -135,8 +135,8 @@ export class Vector3 implements VectorE3, GradeMasked {
     /**
      * 
      */
-    magnitude(): number {
-        return Math.sqrt(this.quaditude());
+    normNoUnits(): number {
+        return Math.sqrt(this.quadNoUnits());
     }
 
     /**
@@ -157,7 +157,7 @@ export class Vector3 implements VectorE3, GradeMasked {
      * 
      */
     normalize(magnitude = 1): this {
-        const m = this.magnitude();
+        const m = this.normNoUnits();
         return this.mulByScalar(magnitude).divByScalar(m);
     }
 
@@ -182,10 +182,9 @@ export class Vector3 implements VectorE3, GradeMasked {
     }
 
     /**
-     * Computes the square of this vector.
-     * This is an alias for the `squaredNorm` method.
+     * Computes the square of this vector
      */
-    quaditude(): number {
+    quadNoUnits(): number {
         const x = this.x;
         const y = this.y;
         const z = this.z;
@@ -229,17 +228,6 @@ export class Vector3 implements VectorE3, GradeMasked {
             this.z = iz * w + iw * a + ix * c - iy * b;
             return this;
         }
-    }
-
-    /**
-     * Computes the square of this vector.
-     * This is an alias for the `quaditude` method.
-     */
-    squaredNorm(): number {
-        const x = this.x;
-        const y = this.y;
-        const z = this.z;
-        return x * x + y * y + z * z;
     }
 
     /**

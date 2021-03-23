@@ -545,7 +545,7 @@ describe("engine", function () {
             const bead = new Particle3(Geometric3.scalar(1, kg), Geometric3.scalar(0, C));
             const F = new ConstantForceLaw(bead, Geometric3.vector(0, -1, 0, N));
 
-            bead.X = Geometric3.vector(1, 1, 0).direction(true).mulByScalar(1, m);
+            bead.X = Geometric3.vector(1, 1, 0).direction().mulByScalar(1, m);
             bead.R.uom = Unit.ONE;
             bead.P.uom = KILOGRAM_METER_PER_SECOND;
             bead.L.uom = JOULE_SECOND;
@@ -555,11 +555,11 @@ describe("engine", function () {
             };
 
             const rotationFn = function (x: Geometric3, plane: Geometric3): void {
-                plane.copyVector(Geometric3.e1).mulByVector(Geometric3.e2).direction(true); // TODO: mutate optional
+                plane.copyVector(Geometric3.e1).mulByVector(Geometric3.e2).direction();
             };
 
             const tangentFn = function (x: Geometric3, tangent: Geometric3): void {
-                tangent.copyVector(x).mulByVector(Geometric3.e1).mulByVector(Geometric3.e2).direction(true);
+                tangent.copyVector(x).mulByVector(Geometric3.e1).mulByVector(Geometric3.e2).direction();
             };
 
             const S = new SurfaceConstraint3(bead, radiusFn, rotationFn, tangentFn);

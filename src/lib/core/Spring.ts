@@ -209,14 +209,14 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         // Temporarily use the F2 vector property to compute the direction (unit vector).
         metric.copyVector(this.F2.location, this.F2.vector);
         metric.subVector(this.F2.vector, this.F1.location);
-        metric.direction(this.F2.vector, true);
+        metric.direction(this.F2.vector);
         // this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
 
         // Use the the F1 vector property as working storage.
         // 1. Compute the extension.
         metric.copyVector(this.F1.location, this.F1.vector);    // vector contains F1.location
         metric.subVector(this.F1.vector, this.F2.location);     // vector contains (F1.location - F2.location)
-        metric.magnitude(this.F1.vector, true);                 // vector contains |F1.location - F2.location|
+        metric.norm(this.F1.vector);                            // vector contains |F1.location - F2.location|
         metric.subScalar(this.F1.vector, this.restLength);      // vector contains (|F1.loc - F2.loc| - restLength)
         // 2. Multiply by the stiffness.
         metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
@@ -254,12 +254,12 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
         metric.copyVector(this.F2.location, this.potentialEnergy_);
         metric.subVector(this.potentialEnergy_, this.F1.location);
-        metric.magnitude(this.potentialEnergy_, true);
+        metric.norm(this.potentialEnergy_);
         // 2. Compute the stretch.
         assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
         metric.sub(this.potentialEnergy_, this.restLength);
         // 3. Square it.
-        metric.quaditude(this.potentialEnergy_, true);
+        metric.quad(this.potentialEnergy_);
         // 4. Multiply by the stiffness.
         metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
         // 5. Multiply by the 0.5 factor.

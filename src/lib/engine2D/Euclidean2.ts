@@ -26,6 +26,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     applyMatrix(mv: Geometric2, matrix: MatrixLike): Geometric2 {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     }
+    clone(source: Geometric2): Geometric2 {
+        return source.clone();
+    }
     copy(source: Geometric2, target: Geometric2): Geometric2 {
         return target.copy(source);
     }
@@ -51,8 +54,8 @@ export class Euclidean2 implements Metric<Geometric2> {
     createTorque(body: ForceBody<Geometric2>): Torque<Geometric2> {
         return new Torque2(body);
     }
-    direction(mv: Geometric2, mutate: boolean): Geometric2 {
-        return mv.direction(mutate);
+    direction(mv: Geometric2): Geometric2 {
+        return mv.direction();
     }
     divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2 {
         return lhs.divByScalar(a, uom);
@@ -72,8 +75,8 @@ export class Euclidean2 implements Metric<Geometric2> {
     lock(mv: Geometric2): number {
         return mv.lock();
     }
-    magnitude(mv: Geometric2, mutate: boolean): Geometric2 {
-        return mv.magnitude(mutate);
+    norm(mv: Geometric2): Geometric2 {
+        return mv.norm();
     }
     mul(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         return lhs.mul(rhs);
@@ -90,8 +93,8 @@ export class Euclidean2 implements Metric<Geometric2> {
     neg(mv: Geometric2): Geometric2 {
         return mv.neg();
     }
-    quaditude(mv: Geometric2, mutate: boolean): Geometric2 {
-        return mv.quaditude(mutate);
+    quad(mv: Geometric2): Geometric2 {
+        return mv.quad();
     }
     rev(mv: Geometric2): Geometric2 {
         return mv.rev();

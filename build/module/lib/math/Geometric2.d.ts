@@ -140,7 +140,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     constructor(coords?: number[], uom?: Unit);
     adj(): Geometric2;
     isScalar(): boolean;
-    quad(): Geometric2;
     scale(α: number): Geometric2;
     slerp(target: Geometric2, α: number): Geometric2;
     stress(σ: Vector): Geometric2;
@@ -224,7 +223,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     lerp(target: Geometric, α: number): Geometric2;
     lerp2(a: Geometric, b: Geometric, α: number): Geometric2;
     log(): Geometric2;
-    norm(): Geometric2;
     one(): Geometric2;
     rco(m: Geometric): Geometric2;
     /**
@@ -285,7 +283,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     rotorFromVectorToVector(a: Vector, b: Vector): Geometric2;
     sqrt(): Geometric2;
-    squaredNorm(mutate?: boolean): Geometric2;
+    squaredNorm(): Geometric2;
     sub2(a: Geometric, b: Geometric): Geometric2;
     /**
      * <p>
@@ -404,10 +402,9 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     copyVector(vector: Vector): this;
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
      * @returns this / magnitude(this)
      */
-    direction(mutate?: boolean): Geometric2;
+    direction(): Geometric2;
     divByPseudo(β: number, uom?: Unit): Geometric2;
     /**
      * <p>
@@ -438,11 +435,8 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate?: boolean): Geometric2;
-    /**
-     * Intentionally undocumented.
-     */
-    private magnitudeSansUnits;
+    norm(): Geometric2;
+    normNoUnits(): number;
     /**
      * @param rhs
      * @returns this * m
@@ -475,20 +469,18 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     neg(): Geometric2;
     /**
-     * The quaditude of a multivector is defined in terms of the scalar products
+     * The quad of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quaditude(mutate: boolean): Geometric2;
+    quad(): Geometric2;
     /**
      * reverse has a ++-- structure on the grades.
      * The scalar component, a, will not change.
      * The vector components, x and y, will not change.
      * The bivector component, b, will change sign.
-     *
-     * @param mutate Determines whether `this` will contain the result.
      */
-    rev(mutate?: boolean): Geometric2;
+    rev(): Geometric2;
     /**
      * (α + βI)(a + x.e1 + y.e2 + b.I)(α - β.I)
      *
@@ -510,10 +502,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @param b
      */
     scp2(a: Geometric, b: Geometric): this;
-    /**
-     * Intentionally undocumented
-     */
-    private squaredNormSansUnits;
+    quadNoUnits(): number;
     /**
      * @param M
      * @param α

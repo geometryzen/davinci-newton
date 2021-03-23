@@ -21,6 +21,9 @@ var Euclidean3 = /** @class */ (function () {
     Euclidean3.prototype.applyMatrix = function (mv, matrix) {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     };
+    Euclidean3.prototype.clone = function (source) {
+        return source.clone();
+    };
     Euclidean3.prototype.copy = function (source, target) {
         return target.copy(source);
     };
@@ -45,8 +48,8 @@ var Euclidean3 = /** @class */ (function () {
     Euclidean3.prototype.createTorque = function (body) {
         return new Torque3(body);
     };
-    Euclidean3.prototype.direction = function (mv, mutate) {
-        return mv.direction(mutate);
+    Euclidean3.prototype.direction = function (mv) {
+        return mv.direction();
     };
     Euclidean3.prototype.divByScalar = function (lhs, a, uom) {
         return lhs.divByScalar(a, uom);
@@ -64,8 +67,8 @@ var Euclidean3 = /** @class */ (function () {
     Euclidean3.prototype.lock = function (mv) {
         return mv.lock();
     };
-    Euclidean3.prototype.magnitude = function (mv, mutate) {
-        return mv.magnitude(mutate);
+    Euclidean3.prototype.norm = function (mv) {
+        return mv.norm();
     };
     Euclidean3.prototype.mul = function (lhs, rhs) {
         return lhs.mul(rhs);
@@ -82,8 +85,8 @@ var Euclidean3 = /** @class */ (function () {
     Euclidean3.prototype.neg = function (mv) {
         return mv.neg();
     };
-    Euclidean3.prototype.quaditude = function (mv, mutate) {
-        return mv.quaditude(mutate);
+    Euclidean3.prototype.quad = function (mv) {
+        return mv.quad();
     };
     Euclidean3.prototype.rev = function (mv) {
         return mv.rev();
@@ -106,7 +109,7 @@ var Euclidean3 = /** @class */ (function () {
     };
     Euclidean3.prototype.subScalar = function (lhs, rhs) {
         // TODO: Could generalize to subtracting a fraction...
-        return lhs.subScalar(rhs);
+        return lhs.subScalar(rhs.a, rhs.uom);
     };
     Euclidean3.prototype.subVector = function (lhs, rhs) {
         // TODO: Could generalize to subtracting a fraction...

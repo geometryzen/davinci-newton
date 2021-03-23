@@ -1,14 +1,16 @@
 import { BivectorE3 } from './BivectorE3';
 import { GeometricE3 } from './GeometricE3';
+import { GeometricNumber } from './GeometricNumber';
+import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from './GradeMasked';
 import { Scalar } from './Scalar';
-import { SpinorE3 } from './SpinorE3';
+import { SpinorE3 as Spinor, SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
-import { VectorE3 } from './VectorE3';
+import { VectorE3 as Vector, VectorE3 } from './VectorE3';
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export declare class Geometric3 implements GradeMasked, GeometricE3 {
+export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, Geometric3, number, Unit>, GeometricOperators<Geometric3, Unit> {
     /**
      *
      */
@@ -27,12 +29,23 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      * The multivector is constructed in the unlocked (mutable) state.
      */
     constructor(coords?: number[], uom?: Unit);
+    __eq__(rhs: number | Geometric3 | Unit): boolean;
+    __ne__(rhs: number | Geometric3 | Unit): boolean;
+    __ge__(rhs: number | Geometric3 | Unit): boolean;
+    __gt__(rhs: number | Geometric3 | Unit): boolean;
+    __le__(rhs: number | Geometric3 | Unit): boolean;
+    __lt__(rhs: number | Geometric3 | Unit): boolean;
+    adj(): Geometric3;
+    isScalar(): boolean;
+    scale(α: number): Geometric3;
+    slerp(target: Geometric3, α: number): Geometric3;
     /**
      * Determines whether this multivector is locked.
      * If the multivector is in the unlocked state then it is mutable.
      * If the multivector is in the locked state then it is immutable.
      */
     isLocked(): boolean;
+    isMutable(): boolean;
     /**
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
@@ -212,10 +225,9 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      */
     cross(m: GeometricE3): Geometric3;
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
      * @returns this / magnitude(this)
      */
-    direction(mutate: boolean): Geometric3;
+    direction(): Geometric3;
     /**
      * @param m The multivector dividend.
      * @returns this / m;
@@ -312,11 +324,8 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate: boolean): Geometric3;
-    /**
-     * Intentionally undocumented.
-     */
-    private magnitudeSansUnits;
+    norm(): Geometric3;
+    normNoUnits(): number;
     /**
      * Returns the geometric product of this multivector with the rhs multivector.
      * @param rhs The operand on the right hand side of the * operator.
@@ -339,13 +348,6 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      */
     neg(): Geometric3;
     /**
-     * An alias for the `magnitude` method.
-     * <p>
-     * <code>this ⟼ sqrt(this * conj(this))</code>
-     * </p>
-     */
-    norm(): Geometric3;
-    /**
      * Sets this multivector to the identity element for multiplication, <b>1</b>.
      */
     one(): this;
@@ -354,7 +356,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quaditude(mutate: boolean): Geometric3;
+    quad(): Geometric3;
     /**
      * @param m
      * @returns this >> m
@@ -374,11 +376,8 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      *
      * This is an alias for the `quaditude` method.
      */
-    squaredNorm(mutate: boolean): Geometric3;
-    /**
-     * Intentionally undocumented
-     */
-    private squaredNormSansUnits;
+    squaredNorm(): Geometric3;
+    quadNoUnits(): number;
     /**
      * Sets this multivector to its reflection in the plane orthogonal to vector n.
      *
@@ -501,7 +500,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
      * @returns this - M * α
      */
     sub(M: GeometricE3, α?: number): Geometric3;
-    subScalar(M: Scalar, α?: number): Geometric3;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric3;
     /**
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
@@ -572,11 +571,11 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this + rhs`.
      */
-    __add__(rhs: number | GradeMasked): Geometric3;
+    __add__(rhs: number | Geometric3): Geometric3;
     /**
      * Implements `this / rhs`.
      */
-    __div__(rhs: number | GradeMasked): Geometric3;
+    __div__(rhs: number | Geometric3): Geometric3;
     /**
      * Implements `lhs / this`.
      */
@@ -584,7 +583,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this * rhs`.
      */
-    __mul__(rhs: number | GradeMasked): Geometric3;
+    __mul__(rhs: number | Geometric3): Geometric3;
     /**
      * Implements `lhs * this`.
      */
@@ -596,7 +595,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this - rhs`.
      */
-    __sub__(rhs: number | GradeMasked): Geometric3;
+    __sub__(rhs: number | Geometric3): Geometric3;
     /**
      * Implements `lhs - rhs`.
      */

@@ -1,6 +1,5 @@
 import { BivectorE3 } from './BivectorE3';
 import { Geometric3 } from './Geometric3';
-import { Spinor3 } from './Spinor3';
 import { Unit } from './Unit';
 import { Vector3 } from './Vector3';
 import { VectorE3 } from './VectorE3';
@@ -127,7 +126,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(1);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("e1", function () {
             const m = Geometric3.e1;
@@ -141,7 +141,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("e2", function () {
             const m = Geometric3.e2;
@@ -155,7 +156,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("e3", function () {
             const m = Geometric3.e3;
@@ -169,7 +171,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("one", function () {
             const m = Geometric3.one;
@@ -183,7 +186,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("zero", function () {
             const m = Geometric3.zero;
@@ -197,7 +201,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(0);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(0);
         });
         it("e12", function () {
             const m = e12;
@@ -211,7 +216,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("e23", function () {
             const m = e23;
@@ -225,7 +231,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("e31", function () {
             const m = e31;
@@ -239,7 +246,8 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
         });
         it("meter", function () {
             const m = meter;
@@ -253,8 +261,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 m");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 m");
         });
         it("kilogram", function () {
             const m = kilogram;
@@ -268,8 +277,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 kg");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 kg");
         });
         it("second", function () {
             const m = second;
@@ -283,8 +293,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 s");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 s");
         });
         it("ampere", function () {
             const m = ampere;
@@ -298,8 +309,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 A");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 A");
         });
         it("kelvin", function () {
             const m = kelvin;
@@ -313,8 +325,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 K");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 K");
         });
         it("mole", function () {
             const m = mole;
@@ -328,8 +341,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 mol");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 mol");
         });
         it("candela", function () {
             const m = candela;
@@ -343,8 +357,9 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            expect(m.magnitude(false).a).toBe(1);
-            expect(m.toString()).toBe("1 cd");
+            const clone = m.clone().norm();
+            expect(clone.a).toBe(1);
+            expect(clone.toString()).toBe("1 cd");
         });
     });
 
@@ -996,8 +1011,8 @@ describe("Geometric3", function () {
             expect(V.xy).toBe(0);
         });
         it("(random, random) should be rotor that rotates a to b", function () {
-            const a = Geometric3.random().grade(1).direction(true);
-            const b = Geometric3.random().grade(1).direction(true);
+            const a = Geometric3.random().grade(1).direction();
+            const b = Geometric3.random().grade(1).direction();
             const R = Geometric3.rotorFromDirections(a, b);
             const V = a.clone().rotate(R);
             expect(V.a).toBe(0);
@@ -1064,7 +1079,7 @@ describe("Geometric3", function () {
         });
         describe("(n)", function () {
             const S = Geometric3.random();
-            const n = Geometric3.random().grade(1).direction(true);
+            const n = Geometric3.random().grade(1).direction();
             /**
              * The 'Test' result using the specialized method.
              */
@@ -1167,70 +1182,6 @@ describe("Geometric3", function () {
             });
         });
 
-        describe("(Geomtric3, Vector3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Vector3.random();
-            const rhG = Geometric3.fromVector(r);
-            const a = l.__add__(r);
-            const b = lhG.clone().add(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-        describe("(Geomtric3, Spinor3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Spinor3.random();
-            const rhG = Geometric3.fromSpinor(r);
-            const a = l.__add__(r);
-            const b = lhG.clone().add(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
         describe("(Geoetric3, number)", function () {
             const l = Geometric3.random();
             const lhG = l.clone();
@@ -1271,72 +1222,6 @@ describe("Geometric3", function () {
             const lhG = l.clone();
             const r = Geometric3.random();
             const rhG = r.clone();
-            const a = l.__sub__(r);
-            const b = lhG.clone().sub(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
-        describe("(Geomtric3, Vector3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Vector3.random();
-            const rhG = Geometric3.fromVector(r);
-            const a = l.__sub__(r);
-            const b = lhG.clone().sub(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
-        describe("(Geomtric3, Spinor3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Spinor3.random();
-            const rhG = Geometric3.fromSpinor(r);
             const a = l.__sub__(r);
             const b = lhG.clone().sub(rhG);
             it("α", function () {
@@ -1433,72 +1318,6 @@ describe("Geometric3", function () {
             });
         });
 
-        describe("(Geomtric3, Vector3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Vector3.random();
-            const rhG = Geometric3.fromVector(r);
-            const a = l.__mul__(r);
-            const b = lhG.clone().mul(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
-        describe("(Geomtric3, Spinor3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Spinor3.random();
-            const rhG = Geometric3.fromSpinor(r);
-            const a = l.__mul__(r);
-            const b = lhG.clone().mul(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
         describe("(Geoetric3, number)", function () {
             const l = Geometric3.random();
             const lhG = l.clone();
@@ -1539,72 +1358,6 @@ describe("Geometric3", function () {
             const lhG = l.clone();
             const r = Geometric3.random();
             const rhG = r.clone();
-            const a = l.__div__(r);
-            const b = lhG.clone().div(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
-        describe("(Geomtric3, Vector3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Vector3.random();
-            const rhG = Geometric3.fromVector(r);
-            const a = l.__div__(r);
-            const b = lhG.clone().div(rhG);
-            it("α", function () {
-                expect(a.a).toBe(b.a);
-            });
-            it("x", function () {
-                expect(a.x).toBe(b.x);
-            });
-            it("y", function () {
-                expect(a.y).toBe(b.y);
-            });
-            it("z", function () {
-                expect(a.z).toBe(b.z);
-            });
-            it("yz", function () {
-                expect(a.yz).toBe(b.yz);
-            });
-            it("zx", function () {
-                expect(a.zx).toBe(b.zx);
-            });
-            it("xy", function () {
-                expect(a.xy).toBe(b.xy);
-            });
-            it("β", function () {
-                expect(a.b).toBe(b.b);
-            });
-        });
-
-        describe("(Geomtric3, Spinor3)", function () {
-            const l = Geometric3.random();
-            const lhG = l.clone();
-            const r = Spinor3.random();
-            const rhG = Geometric3.fromSpinor(r);
             const a = l.__div__(r);
             const b = lhG.clone().div(rhG);
             it("α", function () {

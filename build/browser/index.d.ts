@@ -585,15 +585,15 @@ export class Geometric1 implements GeometricE1 {
     grade(grade: number): Geometric1;
     isScalar(): boolean;
     log(): Geometric1;
-    magnitude(mutate?: boolean): Geometric1;
     mul(rhs: Geometric1): Geometric1;
     mulByNumber(α: number): Geometric1;
     mulByScalar(α: number, uom?: Unit): Geometric1;
     norm(): Geometric1;
+    normNoUnits(): number;
     quad(): Geometric1;
+    quadNoUnits(): number;
     rco(rhs: Geometric1): Geometric1;
     rev(): Geometric1;
-    squaredNorm(): Geometric1;
     subScalar(a: number, uom?: Unit, α?: number): Geometric1;
     scp(rhs: Geometric1): Geometric1;
     lerp(target: Geometric1, α: number): Geometric1;
@@ -765,7 +765,7 @@ export class Geometric2 implements GeometricE2 {
     /**
      * Normalizes this multivector by dividing it by its magnitude.
      */
-    direction(mutate?: boolean): Geometric2;
+    direction(): Geometric2;
 
     /**
      * Sets this multivector to the result of division by another multivector.
@@ -914,11 +914,6 @@ export class Geometric2 implements GeometricE2 {
     log(): Geometric2;
 
     /**
-     * Computes the <em>square root</em> of the <em>squared norm</em>.
-     */
-    magnitude(mutate?: boolean): Geometric2;
-
-    /**
      * 
      * this ⟼ this * s
      * 
@@ -966,6 +961,7 @@ export class Geometric2 implements GeometricE2 {
      * 
      */
     norm(): Geometric2;
+    normNoUnits(): number;
 
     /**
      * Sets this multivector to the identity element for multiplication, 1.
@@ -977,7 +973,8 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ this | ~this = scp(this, rev(this))
      * 
      */
-    quaditude(mutate?: boolean): Geometric2;
+    quad(): Geometric2;
+    quadNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.
@@ -1029,11 +1026,8 @@ export class Geometric2 implements GeometricE2 {
      */
     /**
      * 
-     * @param mutate Determines whether `this` Geometric2 is set to the result of the computation
      */
-    rev(mutate?: boolean): Geometric2;
-    rev(mutate: true): this | never;
-    rev(mutate: false): Geometric2;
+    rev(): Geometric2;
 
     /**
      * 
@@ -1103,11 +1097,6 @@ export class Geometric2 implements GeometricE2 {
      * Currently limited to taking the square root of a positive scalar quantity.
      */
     sqrt(): Geometric2;
-
-    /**
-     * Computes the <em>squared norm</em> of this multivector.
-     */
-    squaredNorm(mutate?: boolean): Geometric2;
 
     /**
      * 
@@ -1546,7 +1535,7 @@ export class Geometric3 implements GeometricE3 {
     /**
      * Normalizes this multivector by dividing it by its magnitude.
      */
-    direction(mutate?: boolean): Geometric3;
+    direction(): Geometric3;
 
     /**
      * Sets this multivector to the result of division by another multivector.
@@ -1697,7 +1686,7 @@ export class Geometric3 implements GeometricE3 {
     /**
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      */
-    magnitude(mutate?: boolean): Geometric3;
+    magnitude(): Geometric3;
 
     /**
      * 
@@ -1739,6 +1728,7 @@ export class Geometric3 implements GeometricE3 {
      * 
      */
     norm(): Geometric3;
+    normNoUnits(): number;
 
     /**
      * Sets this multivector to the identity element for multiplication, 1.
@@ -1750,7 +1740,8 @@ export class Geometric3 implements GeometricE3 {
      * this ⟼ this | ~this = scp(this, rev(this))
      * 
      */
-    quaditude(mutate?: boolean): Geometric3;
+    quad(): Geometric3;
+    quadNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.
@@ -1856,11 +1847,6 @@ export class Geometric3 implements GeometricE3 {
      * Currently limited to taking the square root of a positive scalar quantity.
      */
     sqrt(): Geometric3;
-
-    /**
-     * Computes the <em>squared norm</em> of this multivector.
-     */
-    squaredNorm(mutate?: boolean): Geometric3;
 
     /**
      * 
@@ -2202,7 +2188,7 @@ export interface Metric<T> {
 
     copyVector(source: T, target: T): T;
 
-    direction(mv: T, mutate: boolean): T;
+    direction(mv: T): T;
 
     divByScalar(lhs: T, a: number, uom: Unit | undefined): T;
 
@@ -2212,7 +2198,7 @@ export interface Metric<T> {
 
     lock(mv: T): number;
 
-    magnitude(mv: T, mutate?: boolean): T;
+    magnitude(mv: T): T;
 
     mulByNumber(lhs: T, alpha: number): T;
 
@@ -2222,7 +2208,7 @@ export interface Metric<T> {
 
     neg(mv: T): T;
 
-    quaditude(mv: T, mutate: boolean): T;
+    quaditude(mv: T): T;
 
     rev(mv: T): T;
 
@@ -2266,17 +2252,17 @@ export class Euclidean1 implements Metric<Geometric1> {
     copyBivector(source: Geometric1, target: Geometric1): Geometric1;
     copyScalar(a: number, uom: Unit, target: Geometric1): Geometric1;
     copyVector(source: Geometric1, target: Geometric1): Geometric1;
-    direction(mv: Geometric1, mutate: boolean): Geometric1;
+    direction(mv: Geometric1): Geometric1;
     divByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
     ext(lhs: Geometric1, rhs: Geometric1): Geometric1;
     isZero(mv: Geometric1): boolean;
     lock(mv: Geometric1): number;
-    magnitude(mv: Geometric1, mutate?: boolean): Geometric1;
+    magnitude(mv: Geometric1): Geometric1;
     mulByNumber(lhs: Geometric1, alpha: number): Geometric1;
     mulByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
     mulByVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
     neg(mv: Geometric1): Geometric1;
-    quaditude(mv: Geometric1, mutate: boolean): Geometric1;
+    quaditude(mv: Geometric1): Geometric1;
     rev(mv: Geometric1): Geometric1;
     rotate(mv: Geometric1, spinor: Geometric1): Geometric1;
     scalar(a: number, uom?: Unit): Geometric1;
@@ -2301,17 +2287,17 @@ export class Euclidean2 implements Metric<Geometric2> {
     copyBivector(source: Geometric2, target: Geometric2): Geometric2;
     copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
     copyVector(source: Geometric2, target: Geometric2): Geometric2;
-    direction(mv: Geometric2, mutate: boolean): Geometric2;
+    direction(mv: Geometric2): Geometric2;
     divByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
     ext(lhs: Geometric2, rhs: Geometric2): Geometric2;
     isZero(mv: Geometric2): boolean;
     lock(mv: Geometric2): number;
-    magnitude(mv: Geometric2, mutate?: boolean): Geometric2;
+    magnitude(mv: Geometric2): Geometric2;
     mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
     mulByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
     mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
     neg(mv: Geometric2): Geometric2;
-    quaditude(mv: Geometric2, mutate: boolean): Geometric2;
+    quaditude(mv: Geometric2): Geometric2;
     rev(mv: Geometric2): Geometric2;
     rotate(mv: Geometric2, spinor: Geometric2): Geometric2;
     scalar(a: number, uom?: Unit): Geometric2;
@@ -2336,17 +2322,17 @@ export class Euclidean3 implements Metric<Geometric3> {
     copyBivector(source: Geometric3, target: Geometric3): Geometric3;
     copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
     copyVector(source: Geometric3, target: Geometric3): Geometric3;
-    direction(mv: Geometric3, mutate: boolean): Geometric3;
+    direction(mv: Geometric3): Geometric3;
     divByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
     ext(lhs: Geometric3, rhs: Geometric3): Geometric3;
     isZero(mv: Geometric3): boolean;
     lock(mv: Geometric3): number;
-    magnitude(mv: Geometric3, mutate?: boolean): Geometric3;
+    magnitude(mv: Geometric3): Geometric3;
     mulByNumber(lhs: Geometric3, alpha: number): Geometric3;
     mulByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
     mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
     neg(mv: Geometric3): Geometric3;
-    quaditude(mv: Geometric3, mutate: boolean): Geometric3;
+    quaditude(mv: Geometric3): Geometric3;
     rev(mv: Geometric3): Geometric3;
     rotate(mv: Geometric3, spinor: Geometric3): Geometric3;
     scalar(a: number, uom?: Unit): Geometric3;

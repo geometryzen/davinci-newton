@@ -206,6 +206,36 @@ var Geometric3 = /** @class */ (function () {
         this.coords_ = coords;
         this.uom_ = uom;
     }
+    Geometric3.prototype.__eq__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.__ne__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.__ge__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.__gt__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.__le__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.__lt__ = function (rhs) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.adj = function () {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.isScalar = function () {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.scale = function (α) {
+        throw new Error('Method not implemented.');
+    };
+    Geometric3.prototype.slerp = function (target, α) {
+        throw new Error('Method not implemented.');
+    };
     /**
      * Determines whether this multivector is locked.
      * If the multivector is in the unlocked state then it is mutable.
@@ -213,6 +243,9 @@ var Geometric3 = /** @class */ (function () {
      */
     Geometric3.prototype.isLocked = function () {
         return this.lock_ !== UNLOCKED;
+    };
+    Geometric3.prototype.isMutable = function () {
+        return this.lock_ === UNLOCKED;
     };
     /**
      * Locks this multivector (preventing any further mutation),
@@ -736,37 +769,26 @@ var Geometric3 = /** @class */ (function () {
         }
     };
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
      * @returns this / magnitude(this)
      */
-    Geometric3.prototype.direction = function (mutate) {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().direction(true));
+    Geometric3.prototype.direction = function () {
+        if (this.isMutable()) {
+            var norm = this.normNoUnits();
+            if (norm !== 0) {
+                this.a = this.a / norm;
+                this.x = this.x / norm;
+                this.y = this.y / norm;
+                this.z = this.z / norm;
+                this.yz = this.yz / norm;
+                this.zx = this.zx / norm;
+                this.xy = this.xy / norm;
+                this.b = this.b / norm;
             }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+            this.uom = void 0;
+            return this;
         }
         else {
-            if (mutate) {
-                var norm = this.magnitudeSansUnits();
-                if (norm !== 0) {
-                    this.a = this.a / norm;
-                    this.x = this.x / norm;
-                    this.y = this.y / norm;
-                    this.z = this.z / norm;
-                    this.yz = this.yz / norm;
-                    this.zx = this.zx / norm;
-                    this.xy = this.xy / norm;
-                    this.b = this.b / norm;
-                }
-                this.uom = void 0;
-                return this;
-            }
-            else {
-                return lock(this.clone().direction(true));
-            }
+            return lock(this.clone().direction());
         }
     };
     /**
@@ -1166,38 +1188,25 @@ var Geometric3 = /** @class */ (function () {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    Geometric3.prototype.magnitude = function (mutate) {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().magnitude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+    Geometric3.prototype.norm = function () {
+        if (this.isMutable()) {
+            this.a = Math.sqrt(this.quadNoUnits());
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.xy = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.b = 0;
+            // The unit of measure is unchanged.
+            return this;
         }
         else {
-            if (mutate) {
-                this.a = Math.sqrt(this.squaredNormSansUnits());
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.xy = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.b = 0;
-                // The unit of measure is unchanged.
-                return this;
-            }
-            else {
-                return lock(this.clone().magnitude(true));
-            }
+            return lock(this.clone().norm());
         }
     };
-    /**
-     * Intentionally undocumented.
-     */
-    Geometric3.prototype.magnitudeSansUnits = function () {
-        return Math.sqrt(this.squaredNormSansUnits());
+    Geometric3.prototype.normNoUnits = function () {
+        return Math.sqrt(this.quadNoUnits());
     };
     /**
      * Returns the geometric product of this multivector with the rhs multivector.
@@ -1328,29 +1337,6 @@ var Geometric3 = /** @class */ (function () {
         }
     };
     /**
-     * An alias for the `magnitude` method.
-     * <p>
-     * <code>this ⟼ sqrt(this * conj(this))</code>
-     * </p>
-     */
-    Geometric3.prototype.norm = function () {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().norm());
-        }
-        else {
-            this.a = this.magnitudeSansUnits();
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.yz = 0;
-            this.zx = 0;
-            this.xy = 0;
-            this.b = 0;
-            // There is no change to the unit of measure.
-            return this;
-        }
-    };
-    /**
      * Sets this multivector to the identity element for multiplication, <b>1</b>.
      */
     Geometric3.prototype.one = function () {
@@ -1370,31 +1356,21 @@ var Geometric3 = /** @class */ (function () {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    Geometric3.prototype.quaditude = function (mutate) {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().quaditude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+    Geometric3.prototype.quad = function () {
+        if (this.isMutable()) {
+            this.a = this.quadNoUnits();
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            this.b = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
+            return this;
         }
         else {
-            if (mutate) {
-                this.a = this.squaredNormSansUnits();
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-            else {
-                return lock(this.clone().quaditude(true));
-            }
+            return lock(this.clone().quad());
         }
     };
     /**
@@ -1425,13 +1401,10 @@ var Geometric3 = /** @class */ (function () {
      *
      * This is an alias for the `quaditude` method.
      */
-    Geometric3.prototype.squaredNorm = function (mutate) {
-        return this.quaditude(mutate);
+    Geometric3.prototype.squaredNorm = function () {
+        return this.quad();
     };
-    /**
-     * Intentionally undocumented
-     */
-    Geometric3.prototype.squaredNormSansUnits = function () {
+    Geometric3.prototype.quadNoUnits = function () {
         return squaredNormG3(this);
     };
     /**
@@ -1841,19 +1814,19 @@ var Geometric3 = /** @class */ (function () {
             return this;
         }
     };
-    Geometric3.prototype.subScalar = function (M, α) {
+    Geometric3.prototype.subScalar = function (a, uom, α) {
         if (α === void 0) { α = 1; }
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().subScalar(M, α));
+            return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
-                this.uom = M.uom;
+                this.uom = uom;
             }
             else {
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a -= M.a * α;
+            this.a -= a * α;
             return this;
         }
     };

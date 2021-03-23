@@ -61,12 +61,12 @@ var Sphere3 = /** @class */ (function (_super) {
      * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
      */
     Sphere3.prototype.updateAngularVelocity = function () {
-        this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
-        this.Ω.quaditude(true);
-        this.Ω.mulByScalar(this.M.a, this.M.uom);
-        this.Ω.mulByNumber(2 / 5);
-        this.Ω.inv();
-        this.Ω.mulByBivector(this.L);
+        this.Ω.copyScalar(this.radius_.a, this.radius_.uom); // Ω = r (scalar)    
+        this.Ω.quad(); // Ω = r * r (scalar)
+        this.Ω.mulByScalar(this.M.a, this.M.uom); // Ω = r * r * M = M * r * r (scalar)
+        this.Ω.mulByNumber(2 / 5); // Ω = 2 * M * r * r / 5 (scalar)
+        this.Ω.inv(); // Ω = 5 / (2 * M * r * r) (scalar)
+        this.Ω.mulByBivector(this.L); // Ω = 5 * L / (2 * M * r * r) (bivector)
     };
     /**
      * Whenever the mass or the dimensions change, we must update the inertia tensor.

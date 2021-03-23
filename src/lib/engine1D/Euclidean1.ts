@@ -72,6 +72,9 @@ export class Euclidean1 implements Metric<Geometric1> {
             throw new Error("mv must be defined in Metric.applyMatrix(mv, matrix)");
         }
     }
+    clone(source: Geometric1): Geometric1 {
+        return source.clone();
+    }
     copy(source: Geometric1, target: Geometric1): Geometric1 {
         target.a = source.a;
         target.x = source.x;
@@ -108,27 +111,17 @@ export class Euclidean1 implements Metric<Geometric1> {
     createTorque(body: ForceBody<Geometric1>): Torque<Geometric1> {
         return new Torque1(body);
     }
-    direction(mv: Geometric1, mutate?: boolean): Geometric1 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (mv.isMutable()) {
-                    const a = mv.a;
-                    const x = mv.x;
-                    const s = Math.sqrt(a * a + x * x);
-                    mv.a = a / s;
-                    mv.x = x / s;
-                    mv.uom = Unit.ONE;
-                    return mv;
-                } else {
-                    return this.direction(copy(mv));
-                }
-            } else {
-                const result = this.direction(copy(mv));
-                result.lock();
-                return result;
-            }
+    direction(mv: Geometric1): Geometric1 {
+        if (mv.isMutable()) {
+            const a = mv.a;
+            const x = mv.x;
+            const s = mv.normNoUnits();
+            mv.a = a / s;
+            mv.x = x / s;
+            mv.uom = Unit.ONE;
+            return mv;
         } else {
-            return this.direction(mv, mv.isMutable());
+            return this.direction(copy(mv));
         }
     }
     divByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1 {
@@ -167,25 +160,8 @@ export class Euclidean1 implements Metric<Geometric1> {
     lock(mv: Geometric1): number {
         return mv.lock();
     }
-    magnitude(mv: Geometric1, mutate?: boolean): Geometric1 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (mv.isMutable()) {
-                    const a = mv.a;
-                    const x = mv.x;
-                    const m = Math.sqrt(a * a + x * x);
-                    mv.a = m;
-                    mv.x = 0;
-                    return mv;
-                } else {
-                    throw new Error('Method not implemented.');
-                }
-            } else {
-                throw new Error('Method not implemented.');
-            }
-        } else {
-            return this.magnitude(mv, mv.isMutable());
-        }
+    norm(mv: Geometric1): Geometric1 {
+        return mv.norm();
     }
     mul(lhs: Geometric1, rhs: Geometric1): Geometric1 {
         if (lhs.isMutable()) {
@@ -247,26 +223,8 @@ export class Euclidean1 implements Metric<Geometric1> {
             throw new Error('Method not implemented.');
         }
     }
-    quaditude(mv: Geometric1, mutate?: boolean): Geometric1 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (mv.isMutable()) {
-                    const a = mv.a;
-                    const x = mv.x;
-                    const uom = mv.uom;
-                    mv.a = a * a + x * x;
-                    mv.x = 0;
-                    mv.uom = Unit.mul(uom, uom);
-                    return mv;
-                } else {
-                    throw new Error('Method not implemented.');
-                }
-            } else {
-                throw new Error('Method not implemented.');
-            }
-        } else {
-            return this.magnitude(mv, mv.isMutable());
-        }
+    quad(mv: Geometric1): Geometric1 {
+        return mv.quad();
     }
     rev(mv: Geometric1): Geometric1 {
         if (mv.isMutable()) {

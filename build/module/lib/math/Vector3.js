@@ -81,7 +81,7 @@ var Vector3 = /** @class */ (function () {
      *
      */
     Vector3.prototype.direction = function () {
-        var m = this.magnitude();
+        var m = this.normNoUnits();
         return this.divByScalar(m);
     };
     /**
@@ -114,8 +114,8 @@ var Vector3 = /** @class */ (function () {
     /**
      *
      */
-    Vector3.prototype.magnitude = function () {
-        return Math.sqrt(this.quaditude());
+    Vector3.prototype.normNoUnits = function () {
+        return Math.sqrt(this.quadNoUnits());
     };
     /**
      *
@@ -134,7 +134,7 @@ var Vector3 = /** @class */ (function () {
      */
     Vector3.prototype.normalize = function (magnitude) {
         if (magnitude === void 0) { magnitude = 1; }
-        var m = this.magnitude();
+        var m = this.normNoUnits();
         return this.mulByScalar(magnitude).divByScalar(m);
     };
     /**
@@ -156,10 +156,9 @@ var Vector3 = /** @class */ (function () {
         return this;
     };
     /**
-     * Computes the square of this vector.
-     * This is an alias for the `squaredNorm` method.
+     * Computes the square of this vector
      */
-    Vector3.prototype.quaditude = function () {
+    Vector3.prototype.quadNoUnits = function () {
         var x = this.x;
         var y = this.y;
         var z = this.z;
@@ -198,16 +197,6 @@ var Vector3 = /** @class */ (function () {
             this.z = iz * w + iw * a + ix * c - iy * b;
             return this;
         }
-    };
-    /**
-     * Computes the square of this vector.
-     * This is an alias for the `quaditude` method.
-     */
-    Vector3.prototype.squaredNorm = function () {
-        var x = this.x;
-        var y = this.y;
-        var z = this.z;
-        return x * x + y * y + z * z;
     };
     /**
      *

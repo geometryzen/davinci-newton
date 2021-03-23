@@ -7,6 +7,8 @@ import dotVector from './dotVectorE3';
 import extG3 from './extG3';
 import { gauss } from './gauss';
 import { GeometricE3 } from './GeometricE3';
+import { GeometricNumber } from './GeometricNumber';
+import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from './GradeMasked';
 import isScalarG3 from './isScalarG3';
 import isVectorE3 from './isVectorE3';
@@ -22,11 +24,11 @@ import rcoG3 from './rcoG3';
 import rotorFromDirections from './rotorFromDirectionsE3';
 import { Scalar } from './Scalar';
 import scpG3 from './scpG3';
-import { SpinorE3 } from './SpinorE3';
+import { SpinorE3 as Spinor, SpinorE3 } from './SpinorE3';
 import { squaredNormG3 } from './squaredNormG3';
 import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
-import { VectorE3 } from './VectorE3';
+import { VectorE3 as Vector, VectorE3 } from './VectorE3';
 import wedgeXY from './wedgeXY';
 import wedgeYZ from './wedgeYZ';
 import wedgeZX from './wedgeZX';
@@ -210,7 +212,7 @@ const UNLOCKED = -1 * Math.random();
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export class Geometric3 implements GradeMasked, GeometricE3 {
+export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, Geometric3, number, Unit>, GeometricOperators<Geometric3, Unit> {
 
     /**
      * 
@@ -239,6 +241,36 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
         this.coords_ = coords;
         this.uom_ = uom;
     }
+    __eq__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    __ne__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    __ge__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    __gt__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    __le__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    __lt__(rhs: number | Geometric3 | Unit): boolean {
+        throw new Error('Method not implemented.');
+    }
+    adj(): Geometric3 {
+        throw new Error('Method not implemented.');
+    }
+    isScalar(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    scale(α: number): Geometric3 {
+        throw new Error('Method not implemented.');
+    }
+    slerp(target: Geometric3, α: number): Geometric3 {
+        throw new Error('Method not implemented.');
+    }
 
     /**
      * Determines whether this multivector is locked.
@@ -247,6 +279,9 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
      */
     public isLocked(): boolean {
         return this.lock_ !== UNLOCKED;
+    }
+    public isMutable(): boolean {
+        return this.lock_ === UNLOCKED;
     }
 
     /**
@@ -758,37 +793,26 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     }
 
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
      * @returns this / magnitude(this)
      */
-    direction(mutate: boolean): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().direction(true));
+    direction(): Geometric3 {
+        if (this.isMutable()) {
+            const norm: number = this.normNoUnits();
+            if (norm !== 0) {
+                this.a = this.a / norm;
+                this.x = this.x / norm;
+                this.y = this.y / norm;
+                this.z = this.z / norm;
+                this.yz = this.yz / norm;
+                this.zx = this.zx / norm;
+                this.xy = this.xy / norm;
+                this.b = this.b / norm;
             }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+            this.uom = void 0;
+            return this;
         }
         else {
-            if (mutate) {
-                const norm: number = this.magnitudeSansUnits();
-                if (norm !== 0) {
-                    this.a = this.a / norm;
-                    this.x = this.x / norm;
-                    this.y = this.y / norm;
-                    this.z = this.z / norm;
-                    this.yz = this.yz / norm;
-                    this.zx = this.zx / norm;
-                    this.xy = this.xy / norm;
-                    this.b = this.b / norm;
-                }
-                this.uom = void 0;
-                return this;
-            }
-            else {
-                return lock(this.clone().direction(true));
-            }
+            return lock(this.clone().direction());
         }
     }
 
@@ -1223,39 +1247,26 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate: boolean): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().magnitude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+    norm(): Geometric3 {
+        if (this.isMutable()) {
+            this.a = Math.sqrt(this.quadNoUnits());
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.xy = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.b = 0;
+            // The unit of measure is unchanged.
+            return this;
         }
         else {
-            if (mutate) {
-                this.a = Math.sqrt(this.squaredNormSansUnits());
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.xy = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.b = 0;
-                // The unit of measure is unchanged.
-                return this;
-            }
-            else {
-                return lock(this.clone().magnitude(true));
-            }
+            return lock(this.clone().norm());
         }
     }
 
-    /**
-     * Intentionally undocumented.
-     */
-    private magnitudeSansUnits(): number {
-        return Math.sqrt(this.squaredNormSansUnits());
+    normNoUnits(): number {
+        return Math.sqrt(this.quadNoUnits());
     }
 
     /**
@@ -1404,30 +1415,6 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     }
 
     /**
-     * An alias for the `magnitude` method.
-     * <p>
-     * <code>this ⟼ sqrt(this * conj(this))</code>
-     * </p>
-     */
-    norm(): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().norm());
-        }
-        else {
-            this.a = this.magnitudeSansUnits();
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
-            this.yz = 0;
-            this.zx = 0;
-            this.xy = 0;
-            this.b = 0;
-            // There is no change to the unit of measure.
-            return this;
-        }
-    }
-
-    /**
      * Sets this multivector to the identity element for multiplication, <b>1</b>.
      */
     one(): this {
@@ -1448,31 +1435,21 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quaditude(mutate: boolean): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().quaditude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric3.");
-            }
+    quad(): Geometric3 {
+        if (this.isMutable()) {
+            this.a = this.quadNoUnits();
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+            this.yz = 0;
+            this.zx = 0;
+            this.xy = 0;
+            this.b = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
+            return this;
         }
         else {
-            if (mutate) {
-                this.a = this.squaredNormSansUnits();
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-            else {
-                return lock(this.clone().quaditude(true));
-            }
+            return lock(this.clone().quad());
         }
     }
 
@@ -1506,14 +1483,11 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
      *
      * This is an alias for the `quaditude` method.
      */
-    squaredNorm(mutate: boolean): Geometric3 {
-        return this.quaditude(mutate);
+    squaredNorm(): Geometric3 {
+        return this.quad();
     }
 
-    /**
-     * Intentionally undocumented
-     */
-    private squaredNormSansUnits(): number {
+    quadNoUnits(): number {
         return squaredNormG3(this);
     }
 
@@ -1951,18 +1925,18 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
         }
     }
 
-    subScalar(M: Scalar, α = 1): Geometric3 {
+    subScalar(a: number, uom?: Unit, α = 1): Geometric3 {
         if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().subScalar(M, α));
+            return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
-                this.uom = M.uom;
+                this.uom = uom;
             }
             else {
-                this.uom = Unit.compatible(this.uom, M.uom);
+                this.uom = Unit.compatible(this.uom, uom);
             }
-            this.a -= M.a * α;
+            this.a -= a * α;
             return this;
         }
     }
@@ -2189,7 +2163,7 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this + rhs`.
      */
-    __add__(rhs: number | GradeMasked): Geometric3 {
+    __add__(rhs: number | Geometric3): Geometric3 {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().add(duckR));
@@ -2205,7 +2179,7 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this / rhs`.
      */
-    __div__(rhs: number | GradeMasked) {
+    __div__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().div(duckR));
@@ -2233,7 +2207,7 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this * rhs`.
      */
-    __mul__(rhs: number | GradeMasked) {
+    __mul__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().mul(duckR));
@@ -2279,7 +2253,7 @@ export class Geometric3 implements GradeMasked, GeometricE3 {
     /**
      * Implements `this - rhs`.
      */
-    __sub__(rhs: number | GradeMasked) {
+    __sub__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
         if (duckR) {
             return lock(this.clone().sub(duckR));

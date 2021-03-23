@@ -338,9 +338,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     isScalar(): boolean {
         return isScalar(this);
     }
-    quad(): Geometric2 {
-        return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit.mul(this.uom, this.uom));
-    }
     scale(α: number): Geometric2 {
         return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
     }
@@ -511,7 +508,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         throw new Error(notImplemented('__lt_').message);
     }
     __tilde__(): Geometric2 {
-        return lock(Geometric2.copy(this).rev(true));
+        return lock(Geometric2.copy(this).rev());
     }
     __add__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
@@ -931,19 +928,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             }
         }
     }
-    norm(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().norm());
-        }
-        else {
-            this.a = this.magnitudeSansUnits();
-            this.x = 0;
-            this.y = 0;
-            this.b = 0;
-            // There is no change to the unit of measure.
-            return this;
-        }
-    }
     one(): Geometric2 {
         this.a = 1;
         this.x = 0;
@@ -1122,8 +1106,8 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    squaredNorm(mutate?: boolean): Geometric2 {
-        return this.quaditude(mutate);
+    squaredNorm(): Geometric2 {
+        return this.quad();
     }
     sub2(a: Geometric, b: Geometric): Geometric2 {
         if (isZeroGeometric(a)) {
@@ -1451,30 +1435,21 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
      * @returns this / magnitude(this)
      */
-    direction(mutate?: boolean): Geometric2 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (this.isLocked()) {
-                    throw new Error("Unable to mutate this locked Geometric2.");
-                } else {
-                    const norm: number = this.magnitudeSansUnits();
-                    if (norm !== 0) {
-                        this.a = this.a / norm;
-                        this.x = this.x / norm;
-                        this.y = this.y / norm;
-                        this.b = this.b / norm;
-                    }
-                    this.uom = void 0;
-                    return this;
-                }
-            } else {
-                return lock(this.clone().direction(true));
+    direction(): Geometric2 {
+        if (this.isMutable()) {
+            const norm: number = this.normNoUnits();
+            if (norm !== 0) {
+                this.a = this.a / norm;
+                this.x = this.x / norm;
+                this.y = this.y / norm;
+                this.b = this.b / norm;
             }
+            this.uom = void 0;
+            return this;
         } else {
-            return this.direction(this.isMutable());
+            return lock(this.clone().direction());
         }
     }
 
@@ -1593,38 +1568,22 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    magnitude(mutate?: boolean): Geometric2 {
-        if (typeof mutate === 'boolean') {
-            if (this.isLocked()) {
-                if (!mutate) {
-                    return lock(this.clone().magnitude(true));
-                }
-                else {
-                    throw new Error(`mutate is ${mutate}, but isMutable() is ${this.isMutable()}.`);
-                }
-            } else {
-                if (mutate) {
-                    this.a = Math.sqrt(this.squaredNormSansUnits());
-                    this.x = 0;
-                    this.y = 0;
-                    this.b = 0;
-                    // The unit of measure is unchanged.
-                    return this;
-                }
-                else {
-                    return lock(this.clone().magnitude(true));
-                }
-            }
-        } else {
-            return this.magnitude(this.isMutable());
+    norm(): Geometric2 {
+        if (this.isMutable()) {
+            this.a = this.normNoUnits();
+            this.x = 0;
+            this.y = 0;
+            this.b = 0;
+            // The unit of measure is unchanged.
+            return this;
+        }
+        else {
+            return lock(this.clone().norm());
         }
     }
 
-    /**
-     * Intentionally undocumented.
-     */
-    private magnitudeSansUnits(): number {
-        return Math.sqrt(this.squaredNormSansUnits());
+    normNoUnits(): number {
+        return Math.sqrt(this.quadNoUnits());
     }
 
     /**
@@ -1767,31 +1726,21 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * The quaditude of a multivector is defined in terms of the scalar products
+     * The quad of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quaditude(mutate: boolean): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().quaditude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric2.");
-            }
+    quad(): Geometric2 {
+        if (this.isMutable()) {
+            this.a = this.quadNoUnits();
+            this.x = 0;
+            this.y = 0;
+            this.b = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
+            return this;
         }
         else {
-            if (mutate) {
-                this.a = this.squaredNormSansUnits();
-                this.x = 0;
-                this.y = 0;
-                this.b = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-            else {
-                return lock(this.clone().quaditude(true));
-            }
+            return lock(this.clone().quad());
         }
     }
 
@@ -1800,29 +1749,18 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * The scalar component, a, will not change.
      * The vector components, x and y, will not change.
      * The bivector component, b, will change sign.
-     * 
-     * @param mutate Determines whether `this` will contain the result. 
      */
-    rev(mutate?: boolean): Geometric2 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (this.isMutable()) {
-                    // reverse has a ++-- structure on the grades.
-                    this.a = +this.a;
-                    this.x = +this.x;
-                    this.y = +this.y;
-                    this.b = -this.b;
-                    // The unit of measure is unchanged.
-                    return this;
-                } else {
-                    // You can't ask to mutate that which is immutable.
-                    throw new Error("Unable to mutate this locked Geometric2.");
-                }
-            } else {
-                return lock(this.clone().rev(true));
-            }
+    rev(): Geometric2 {
+        if (this.isMutable()) {
+            // reverse has a ++-- structure on the grades.
+            this.a = +this.a;
+            this.x = +this.x;
+            this.y = +this.y;
+            this.b = -this.b;
+            // The unit of measure is unchanged.
+            return this;
         } else {
-            return this.rev(this.isMutable());
+            return lock(this.clone().rev());
         }
     }
 
@@ -1901,11 +1839,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
 
-    /**
-     * Intentionally undocumented
-     */
-    private squaredNormSansUnits(): number {
-        return this.a * this.a + this.x * this.x + this.y * this.y + this.b * this.b;
+    quadNoUnits(): number {
+        const a = this.a;
+        const x = this.x;
+        const y = this.y;
+        const b = this.b;
+        return a * a + x * x + y * y + b * b;
     }
 
     /**

@@ -22,6 +22,9 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.applyMatrix = function (mv, matrix) {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     };
+    Euclidean2.prototype.clone = function (source) {
+        return source.clone();
+    };
     Euclidean2.prototype.copy = function (source, target) {
         return target.copy(source);
     };
@@ -47,8 +50,8 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.createTorque = function (body) {
         return new Torque2(body);
     };
-    Euclidean2.prototype.direction = function (mv, mutate) {
-        return mv.direction(mutate);
+    Euclidean2.prototype.direction = function (mv) {
+        return mv.direction();
     };
     Euclidean2.prototype.divByScalar = function (lhs, a, uom) {
         return lhs.divByScalar(a, uom);
@@ -68,8 +71,8 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.lock = function (mv) {
         return mv.lock();
     };
-    Euclidean2.prototype.magnitude = function (mv, mutate) {
-        return mv.magnitude(mutate);
+    Euclidean2.prototype.norm = function (mv) {
+        return mv.norm();
     };
     Euclidean2.prototype.mul = function (lhs, rhs) {
         return lhs.mul(rhs);
@@ -86,8 +89,8 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.neg = function (mv) {
         return mv.neg();
     };
-    Euclidean2.prototype.quaditude = function (mv, mutate) {
-        return mv.quaditude(mutate);
+    Euclidean2.prototype.quad = function (mv) {
+        return mv.quad();
     };
     Euclidean2.prototype.rev = function (mv) {
         return mv.rev();

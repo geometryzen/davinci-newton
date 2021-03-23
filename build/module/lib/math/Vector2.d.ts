@@ -59,7 +59,7 @@ export declare class Vector2 implements VectorE2, GradeMasked {
     /**
      *
      */
-    magnitude(): number;
+    normNoUnits(): number;
     /**
      *
      */
@@ -79,9 +79,8 @@ export declare class Vector2 implements VectorE2, GradeMasked {
     zero(): this;
     /**
      * Computes the square of this vector.
-     * This is an alias for the `squaredNorm` method.
      */
-    quaditude(): number;
+    quadNoUnits(): number;
     /**
      *
      */
@@ -90,11 +89,6 @@ export declare class Vector2 implements VectorE2, GradeMasked {
      *
      */
     rotate(spinor: SpinorE2): this;
-    /**
-     * Computes the square of this vector.
-     * This is an alias for the `quaditude` method.
-     */
-    squaredNorm(): number;
     /**
      *
      */

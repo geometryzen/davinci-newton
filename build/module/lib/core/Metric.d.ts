@@ -15,11 +15,12 @@ export interface Metric<T> {
     add(lhs: T, rhs: T): T;
     addVector(lhs: T, rhs: T): T;
     /**
-     * TODO: Describe semantics of how this is expected to mutate the multivector argument.
+     * TODO: Describe semantics of how this is expected to change the multivector argument.
      * @param mv
      * @param matrix
      */
     applyMatrix(mv: T, matrix: MatrixLike): T;
+    clone(source: T): T;
     /**
      * Modifies the target to have the same property values as the source.
      * @param source
@@ -38,7 +39,7 @@ export interface Metric<T> {
      */
     createForce(body: ForceBody<T>): Force<T>;
     createTorque(body: ForceBody<T>): Torque<T>;
-    direction(mv: T, mutate?: boolean): T;
+    direction(mv: T): T;
     divByScalar(lhs: T, a: number, uom: Unit): T;
     ext(lhs: T, rhs: T): T;
     identityMatrix(): MatrixLike;
@@ -57,13 +58,13 @@ export interface Metric<T> {
      * @returns A token that may be used to unlock the multivector.
      */
     lock(mv: T): number;
-    magnitude(mv: T, mutate?: boolean): T;
+    norm(mv: T): T;
     mul(lhs: T, rhs: T): T;
     mulByNumber(lhs: T, alpha: number): T;
     mulByScalar(lhs: T, a: number, uom: Unit): T;
     mulByVector(lhs: T, rhs: T): T;
     neg(mv: T): T;
-    quaditude(mv: T, mutate?: boolean): T;
+    quad(mv: T): T;
     rev(mv: T): T;
     rotate(mv: T, spinor: T): T;
     /**

@@ -319,8 +319,8 @@
             metric.copyVector(this.body1_.X, numer);
             metric.subVector(numer, this.body2_.X);
             metric.copyVector(numer, denom);
-            metric.quaditude(denom, true);
-            metric.direction(numer, true);
+            metric.quad(denom);
+            metric.direction(numer);
             metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
             metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
             metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
@@ -359,7 +359,7 @@
             // The denominator is |r1 - r2|.
             metric.copyVector(this.body1_.X, denom);
             metric.subVector(denom, this.body2_.X);
-            metric.magnitude(denom, true);
+            metric.norm(denom);
             // Combine the numerator and denominator.
             metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
             metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
@@ -5226,8 +5226,8 @@
             metric.copyVector(this.body2_.X, numer);
             metric.subVector(numer, this.body1_.X);
             metric.copyVector(numer, denom);
-            metric.quaditude(denom, true);
-            metric.direction(numer, true);
+            metric.quad(denom);
+            metric.direction(numer);
             metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
             metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
             metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
@@ -5267,7 +5267,7 @@
             // The denominator is |r1 - r2|.
             metric.copyVector(this.body1_.X, denom);
             metric.subVector(denom, this.body2_.X);
-            metric.magnitude(denom, true);
+            metric.norm(denom);
             // Combine the numerator and denominator.
             metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
             metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
@@ -6002,13 +6002,13 @@
             // Temporarily use the F2 vector property to compute the direction (unit vector).
             metric.copyVector(this.F2.location, this.F2.vector);
             metric.subVector(this.F2.vector, this.F1.location);
-            metric.direction(this.F2.vector, true);
+            metric.direction(this.F2.vector);
             // this.F2.vector.copyVector(this.F2.location).subVector(this.F1.location).direction(true);
             // Use the the F1 vector property as working storage.
             // 1. Compute the extension.
             metric.copyVector(this.F1.location, this.F1.vector); // vector contains F1.location
             metric.subVector(this.F1.vector, this.F2.location); // vector contains (F1.location - F2.location)
-            metric.magnitude(this.F1.vector, true); // vector contains |F1.location - F2.location|
+            metric.norm(this.F1.vector); // vector contains |F1.location - F2.location|
             metric.subScalar(this.F1.vector, this.restLength); // vector contains (|F1.loc - F2.loc| - restLength)
             // 2. Multiply by the stiffness.
             metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
@@ -6039,12 +6039,12 @@
             assertConsistentUnits('F1.location', this.F1.location, 'F2.location', this.F2.location, this.metric);
             metric.copyVector(this.F2.location, this.potentialEnergy_);
             metric.subVector(this.potentialEnergy_, this.F1.location);
-            metric.magnitude(this.potentialEnergy_, true);
+            metric.norm(this.potentialEnergy_);
             // 2. Compute the stretch.
             assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
             metric.sub(this.potentialEnergy_, this.restLength);
             // 3. Square it.
-            metric.quaditude(this.potentialEnergy_, true);
+            metric.quad(this.potentialEnergy_);
             // 4. Multiply by the stiffness.
             metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
             // 5. Multiply by the 0.5 factor.
@@ -6116,6 +6116,21 @@
      * @param name
      * @returns
      */
+    function notImplemented(name) {
+        mustBeString('name', name);
+        var message = {
+            get message() {
+                return "'" + name + "' method is not yet implemented.";
+            }
+        };
+        return message;
+    }
+
+    /**
+     * @hidden
+     * @param name
+     * @returns
+     */
     function readOnly(name) {
         mustBeString('name', name);
         var message = {
@@ -6128,17 +6143,98 @@
 
     /**
      * @hidden
-     * @param name
+     */
+    var abs = Math.abs;
+    /**
+     * @hidden
+     * @param n
+     * @param v
      * @returns
      */
-    function notImplemented(name) {
-        mustBeString('name', name);
-        var message = {
-            get message() {
-                return "'" + name + "' method is not yet implemented.";
+    function makeColumnVector(n, v) {
+        var a = [];
+        for (var i = 0; i < n; i++) {
+            a.push(v);
+        }
+        return a;
+    }
+    /**
+     * @hidden
+     */
+    function rowWithMaximumInColumn(A, column, N) {
+        var biggest = abs(A[column][column]);
+        var maxRow = column;
+        for (var row = column + 1; row < N; row++) {
+            if (abs(A[row][column]) > biggest) {
+                biggest = abs(A[row][column]);
+                maxRow = row;
             }
-        };
-        return message;
+        }
+        return maxRow;
+    }
+    /**
+     * @hidden
+     */
+    function swapRows(A, i, j, N) {
+        var colLength = N + 1;
+        for (var column = i; column < colLength; column++) {
+            var temp = A[j][column];
+            A[j][column] = A[i][column];
+            A[i][column] = temp;
+        }
+    }
+    /**
+     * @hidden
+     * @param A
+     * @param i
+     * @param N
+     */
+    function makeZeroBelow(A, i, N) {
+        for (var row = i + 1; row < N; row++) {
+            var c = -A[row][i] / A[i][i];
+            for (var column = i; column < N + 1; column++) {
+                if (i === column) {
+                    A[row][column] = 0;
+                }
+                else {
+                    A[row][column] += c * A[i][column];
+                }
+            }
+        }
+    }
+    /**
+     * @hidden
+     * @param A
+     * @param N
+     * @returns
+     */
+    function solve(A, N) {
+        var x = makeColumnVector(N, 0);
+        for (var i = N - 1; i > -1; i--) {
+            x[i] = A[i][N] / A[i][i];
+            for (var k = i - 1; k > -1; k--) {
+                A[k][N] -= A[k][i] * x[i];
+            }
+        }
+        return x;
+    }
+    /**
+     * Gaussian elimination
+     * Ax = b
+     * @hidden
+     */
+    function gauss(A, b) {
+        var N = A.length;
+        for (var i = 0; i < N; i++) {
+            var Ai = A[i];
+            var bi = b[i];
+            Ai.push(bi);
+        }
+        for (var j = 0; j < N; j++) {
+            swapRows(A, j, rowWithMaximumInColumn(A, j, N), N);
+            makeZeroBelow(A, j, N);
+        }
+        return solve(A, N);
     }
 
     /**
@@ -6284,102 +6380,6 @@
     /**
      * @hidden
      */
-    var abs = Math.abs;
-    /**
-     * @hidden
-     * @param n
-     * @param v
-     * @returns
-     */
-    function makeColumnVector(n, v) {
-        var a = [];
-        for (var i = 0; i < n; i++) {
-            a.push(v);
-        }
-        return a;
-    }
-    /**
-     * @hidden
-     */
-    function rowWithMaximumInColumn(A, column, N) {
-        var biggest = abs(A[column][column]);
-        var maxRow = column;
-        for (var row = column + 1; row < N; row++) {
-            if (abs(A[row][column]) > biggest) {
-                biggest = abs(A[row][column]);
-                maxRow = row;
-            }
-        }
-        return maxRow;
-    }
-    /**
-     * @hidden
-     */
-    function swapRows(A, i, j, N) {
-        var colLength = N + 1;
-        for (var column = i; column < colLength; column++) {
-            var temp = A[j][column];
-            A[j][column] = A[i][column];
-            A[i][column] = temp;
-        }
-    }
-    /**
-     * @hidden
-     * @param A
-     * @param i
-     * @param N
-     */
-    function makeZeroBelow(A, i, N) {
-        for (var row = i + 1; row < N; row++) {
-            var c = -A[row][i] / A[i][i];
-            for (var column = i; column < N + 1; column++) {
-                if (i === column) {
-                    A[row][column] = 0;
-                }
-                else {
-                    A[row][column] += c * A[i][column];
-                }
-            }
-        }
-    }
-    /**
-     * @hidden
-     * @param A
-     * @param N
-     * @returns
-     */
-    function solve(A, N) {
-        var x = makeColumnVector(N, 0);
-        for (var i = N - 1; i > -1; i--) {
-            x[i] = A[i][N] / A[i][i];
-            for (var k = i - 1; k > -1; k--) {
-                A[k][N] -= A[k][i] * x[i];
-            }
-        }
-        return x;
-    }
-    /**
-     * Gaussian elimination
-     * Ax = b
-     * @hidden
-     */
-    function gauss(A, b) {
-        var N = A.length;
-        for (var i = 0; i < N; i++) {
-            var Ai = A[i];
-            var bi = b[i];
-            Ai.push(bi);
-        }
-        for (var j = 0; j < N; j++) {
-            swapRows(A, j, rowWithMaximumInColumn(A, j, N), N);
-            makeZeroBelow(A, j, N);
-        }
-        return solve(A, N);
-    }
-
-    /**
-     * @hidden
-     */
     var zero$2 = function () {
         return [0, 0];
     };
@@ -6467,7 +6467,10 @@
             this.unit = uom;
         }
         Geometric1.scalar = function (a, uom) {
-            return new Geometric1(scalar$2(a), uom);
+            return new Geometric1([a, 0], uom);
+        };
+        Geometric1.vector = function (x, uom) {
+            return new Geometric1([0, x], uom);
         };
         Geometric1.prototype.clone = function () {
             return copy$1(this);
@@ -6643,35 +6646,6 @@
                 }
             }
         };
-        Geometric1.prototype.magnitude = function (mutate) {
-            if (typeof mutate === 'boolean') {
-                if (this.isLocked()) {
-                    if (!mutate) {
-                        return lock$3(this.clone().magnitude(true));
-                    }
-                    else {
-                        throw new Error("mutate is " + mutate + ", but isMutable() is " + this.isMutable() + ".");
-                    }
-                }
-                else {
-                    if (mutate) {
-                        this.a = Math.sqrt(this.squaredNormSansUnits());
-                        this.x = 0;
-                        // The unit of measure is unchanged.
-                        return this;
-                    }
-                    else {
-                        return lock$3(this.clone().magnitude(true));
-                    }
-                }
-            }
-            else {
-                return this.magnitude(this.isMutable());
-            }
-        };
-        Geometric1.prototype.squaredNormSansUnits = function () {
-            return this.a * this.a + this.x * this.x;
-        };
         Geometric1.prototype.mul = function (rhs) {
             if (this.lock_ !== UNLOCKED$2) {
                 return lock$3(this.clone().mul(rhs));
@@ -6706,17 +6680,14 @@
                 return lock$3(this.clone().norm());
             }
             else {
-                this.a = this.magnitudeSansUnits();
+                this.a = this.normNoUnits();
                 this.x = 0;
                 // There is no change to the unit of measure.
                 return this;
             }
         };
-        Geometric1.prototype.magnitudeSansUnits = function () {
-            return Math.sqrt(this.squaredNormSansUnits());
-        };
-        Geometric1.prototype.quad = function () {
-            return new Geometric1([this.squaredNormSansUnits(), 0], Unit.mul(this.uom, this.uom));
+        Geometric1.prototype.normNoUnits = function () {
+            return Math.sqrt(this.quadNoUnits());
         };
         Geometric1.prototype.rco = function (m) {
             if (this.lock_ !== UNLOCKED$2) {
@@ -6736,52 +6707,33 @@
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
         };
-        Geometric1.prototype.rev = function (mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (this.isMutable()) {
-                        // reverse has a ++-- structure on the grades.
-                        this.a = +this.a;
-                        this.x = +this.x;
-                        // The unit of measure is unchanged.
-                        return this;
-                    }
-                    else {
-                        // You can't ask to mutate that which is immutable.
-                        throw new Error("Unable to mutate this locked Geometric1.");
-                    }
-                }
-                else {
-                    return lock$3(this.clone().rev(true));
-                }
+        Geometric1.prototype.rev = function () {
+            if (this.isMutable()) {
+                // reverse has a ++-- structure on the grades.
+                this.a = +this.a;
+                this.x = +this.x;
+                // The unit of measure is unchanged.
+                return this;
             }
             else {
-                return this.rev(this.isMutable());
+                return lock$3(this.clone().rev());
             }
         };
-        Geometric1.prototype.squaredNorm = function (mutate) {
-            return this.quaditude(mutate);
-        };
-        Geometric1.prototype.quaditude = function (mutate) {
-            if (this.lock_ !== UNLOCKED$2) {
-                if (!mutate) {
-                    return lock$3(this.clone().quaditude(true));
-                }
-                else {
-                    throw new Error("Unable to mutate this locked Geometric1.");
-                }
+        Geometric1.prototype.quad = function () {
+            if (this.isMutable()) {
+                this.a = this.quadNoUnits();
+                this.x = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
             }
             else {
-                if (mutate) {
-                    this.a = this.squaredNormSansUnits();
-                    this.x = 0;
-                    this.uom = Unit.mul(this.uom, this.uom);
-                    return this;
-                }
-                else {
-                    return lock$3(this.clone().quaditude(true));
-                }
+                return lock$3(this.clone().quad());
             }
+        };
+        Geometric1.prototype.quadNoUnits = function () {
+            var a = this.a;
+            var x = this.x;
+            return a * a + x * x;
         };
         Geometric1.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
@@ -7246,7 +7198,7 @@
          * @hidden
          */
         Geometric1.prototype.__tilde__ = function () {
-            return lock$3(copy$1(this).rev(true));
+            return lock$3(copy$1(this).rev());
         };
         /**
          * @hidden
@@ -7770,6 +7722,9 @@
                 throw new Error("mv must be defined in Metric.applyMatrix(mv, matrix)");
             }
         };
+        Euclidean1.prototype.clone = function (source) {
+            return source.clone();
+        };
         Euclidean1.prototype.copy = function (source, target) {
             target.a = source.a;
             target.x = source.x;
@@ -7806,30 +7761,18 @@
         Euclidean1.prototype.createTorque = function (body) {
             return new Torque1(body);
         };
-        Euclidean1.prototype.direction = function (mv, mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (mv.isMutable()) {
-                        var a = mv.a;
-                        var x = mv.x;
-                        var s = Math.sqrt(a * a + x * x);
-                        mv.a = a / s;
-                        mv.x = x / s;
-                        mv.uom = Unit.ONE;
-                        return mv;
-                    }
-                    else {
-                        return this.direction(copy(mv));
-                    }
-                }
-                else {
-                    var result = this.direction(copy(mv));
-                    result.lock();
-                    return result;
-                }
+        Euclidean1.prototype.direction = function (mv) {
+            if (mv.isMutable()) {
+                var a = mv.a;
+                var x = mv.x;
+                var s = mv.normNoUnits();
+                mv.a = a / s;
+                mv.x = x / s;
+                mv.uom = Unit.ONE;
+                return mv;
             }
             else {
-                return this.direction(mv, mv.isMutable());
+                return this.direction(copy(mv));
             }
         };
         Euclidean1.prototype.divByScalar = function (lhs, a, uom) {
@@ -7870,28 +7813,8 @@
         Euclidean1.prototype.lock = function (mv) {
             return mv.lock();
         };
-        Euclidean1.prototype.magnitude = function (mv, mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (mv.isMutable()) {
-                        var a = mv.a;
-                        var x = mv.x;
-                        var m = Math.sqrt(a * a + x * x);
-                        mv.a = m;
-                        mv.x = 0;
-                        return mv;
-                    }
-                    else {
-                        throw new Error('Method not implemented.');
-                    }
-                }
-                else {
-                    throw new Error('Method not implemented.');
-                }
-            }
-            else {
-                return this.magnitude(mv, mv.isMutable());
-            }
+        Euclidean1.prototype.norm = function (mv) {
+            return mv.norm();
         };
         Euclidean1.prototype.mul = function (lhs, rhs) {
             if (lhs.isMutable()) {
@@ -7958,29 +7881,8 @@
                 throw new Error('Method not implemented.');
             }
         };
-        Euclidean1.prototype.quaditude = function (mv, mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (mv.isMutable()) {
-                        var a = mv.a;
-                        var x = mv.x;
-                        var uom = mv.uom;
-                        mv.a = a * a + x * x;
-                        mv.x = 0;
-                        mv.uom = Unit.mul(uom, uom);
-                        return mv;
-                    }
-                    else {
-                        throw new Error('Method not implemented.');
-                    }
-                }
-                else {
-                    throw new Error('Method not implemented.');
-                }
-            }
-            else {
-                return this.magnitude(mv, mv.isMutable());
-            }
+        Euclidean1.prototype.quad = function (mv) {
+            return mv.quad();
         };
         Euclidean1.prototype.rev = function (mv) {
             if (mv.isMutable()) {
@@ -8848,9 +8750,6 @@
         Geometric2.prototype.isScalar = function () {
             return isScalar(this);
         };
-        Geometric2.prototype.quad = function () {
-            return new Geometric2([this.squaredNormSansUnits(), 0, 0, 0], Unit.mul(this.uom, this.uom));
-        };
         Geometric2.prototype.scale = function (α) {
             return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
         };
@@ -9023,7 +8922,7 @@
             throw new Error(notImplemented('__lt_').message);
         };
         Geometric2.prototype.__tilde__ = function () {
-            return lock$1(Geometric2.copy(this).rev(true));
+            return lock$1(Geometric2.copy(this).rev());
         };
         Geometric2.prototype.__add__ = function (rhs) {
             if (rhs instanceof Geometric2) {
@@ -9440,19 +9339,6 @@
                 }
             }
         };
-        Geometric2.prototype.norm = function () {
-            if (this.lock_ !== UNLOCKED$1) {
-                return lock$1(this.clone().norm());
-            }
-            else {
-                this.a = this.magnitudeSansUnits();
-                this.x = 0;
-                this.y = 0;
-                this.b = 0;
-                // There is no change to the unit of measure.
-                return this;
-            }
-        };
         Geometric2.prototype.one = function () {
             this.a = 1;
             this.x = 0;
@@ -9626,8 +9512,8 @@
                 return this;
             }
         };
-        Geometric2.prototype.squaredNorm = function (mutate) {
-            return this.quaditude(mutate);
+        Geometric2.prototype.squaredNorm = function () {
+            return this.quad();
         };
         Geometric2.prototype.sub2 = function (a, b) {
             if (isZeroGeometricE2(a)) {
@@ -9966,33 +9852,22 @@
             return this;
         };
         /**
-         * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric2.
          * @returns this / magnitude(this)
          */
-        Geometric2.prototype.direction = function (mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (this.isLocked()) {
-                        throw new Error("Unable to mutate this locked Geometric2.");
-                    }
-                    else {
-                        var norm = this.magnitudeSansUnits();
-                        if (norm !== 0) {
-                            this.a = this.a / norm;
-                            this.x = this.x / norm;
-                            this.y = this.y / norm;
-                            this.b = this.b / norm;
-                        }
-                        this.uom = void 0;
-                        return this;
-                    }
+        Geometric2.prototype.direction = function () {
+            if (this.isMutable()) {
+                var norm = this.normNoUnits();
+                if (norm !== 0) {
+                    this.a = this.a / norm;
+                    this.x = this.x / norm;
+                    this.y = this.y / norm;
+                    this.b = this.b / norm;
                 }
-                else {
-                    return lock$1(this.clone().direction(true));
-                }
+                this.uom = void 0;
+                return this;
             }
             else {
-                return this.direction(this.isMutable());
+                return lock$1(this.clone().direction());
             }
         };
         Geometric2.prototype.divByPseudo = function (β, uom) {
@@ -10100,39 +9975,21 @@
          * Computes the <em>square root</em> of the <em>squared norm</em>.
          * </p>
          */
-        Geometric2.prototype.magnitude = function (mutate) {
-            if (typeof mutate === 'boolean') {
-                if (this.isLocked()) {
-                    if (!mutate) {
-                        return lock$1(this.clone().magnitude(true));
-                    }
-                    else {
-                        throw new Error("mutate is " + mutate + ", but isMutable() is " + this.isMutable() + ".");
-                    }
-                }
-                else {
-                    if (mutate) {
-                        this.a = Math.sqrt(this.squaredNormSansUnits());
-                        this.x = 0;
-                        this.y = 0;
-                        this.b = 0;
-                        // The unit of measure is unchanged.
-                        return this;
-                    }
-                    else {
-                        return lock$1(this.clone().magnitude(true));
-                    }
-                }
+        Geometric2.prototype.norm = function () {
+            if (this.isMutable()) {
+                this.a = this.normNoUnits();
+                this.x = 0;
+                this.y = 0;
+                this.b = 0;
+                // The unit of measure is unchanged.
+                return this;
             }
             else {
-                return this.magnitude(this.isMutable());
+                return lock$1(this.clone().norm());
             }
         };
-        /**
-         * Intentionally undocumented.
-         */
-        Geometric2.prototype.magnitudeSansUnits = function () {
-            return Math.sqrt(this.squaredNormSansUnits());
+        Geometric2.prototype.normNoUnits = function () {
+            return Math.sqrt(this.quadNoUnits());
         };
         /**
          * @param rhs
@@ -10259,31 +10116,21 @@
             }
         };
         /**
-         * The quaditude of a multivector is defined in terms of the scalar products
+         * The quad of a multivector is defined in terms of the scalar products
          * of its blades.
          * this ⟼ scp(this, rev(this)) = this | ~this
          */
-        Geometric2.prototype.quaditude = function (mutate) {
-            if (this.lock_ !== UNLOCKED$1) {
-                if (!mutate) {
-                    return lock$1(this.clone().quaditude(true));
-                }
-                else {
-                    throw new Error("Unable to mutate this locked Geometric2.");
-                }
+        Geometric2.prototype.quad = function () {
+            if (this.isMutable()) {
+                this.a = this.quadNoUnits();
+                this.x = 0;
+                this.y = 0;
+                this.b = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
             }
             else {
-                if (mutate) {
-                    this.a = this.squaredNormSansUnits();
-                    this.x = 0;
-                    this.y = 0;
-                    this.b = 0;
-                    this.uom = Unit.mul(this.uom, this.uom);
-                    return this;
-                }
-                else {
-                    return lock$1(this.clone().quaditude(true));
-                }
+                return lock$1(this.clone().quad());
             }
         };
         /**
@@ -10291,32 +10138,19 @@
          * The scalar component, a, will not change.
          * The vector components, x and y, will not change.
          * The bivector component, b, will change sign.
-         *
-         * @param mutate Determines whether `this` will contain the result.
          */
-        Geometric2.prototype.rev = function (mutate) {
-            if (typeof mutate === 'boolean') {
-                if (mutate) {
-                    if (this.isMutable()) {
-                        // reverse has a ++-- structure on the grades.
-                        this.a = +this.a;
-                        this.x = +this.x;
-                        this.y = +this.y;
-                        this.b = -this.b;
-                        // The unit of measure is unchanged.
-                        return this;
-                    }
-                    else {
-                        // You can't ask to mutate that which is immutable.
-                        throw new Error("Unable to mutate this locked Geometric2.");
-                    }
-                }
-                else {
-                    return lock$1(this.clone().rev(true));
-                }
+        Geometric2.prototype.rev = function () {
+            if (this.isMutable()) {
+                // reverse has a ++-- structure on the grades.
+                this.a = +this.a;
+                this.x = +this.x;
+                this.y = +this.y;
+                this.b = -this.b;
+                // The unit of measure is unchanged.
+                return this;
             }
             else {
-                return this.rev(this.isMutable());
+                return lock$1(this.clone().rev());
             }
         };
         /**
@@ -10387,11 +10221,12 @@
             this.uom = Unit.mul(a.uom, b.uom);
             return this;
         };
-        /**
-         * Intentionally undocumented
-         */
-        Geometric2.prototype.squaredNormSansUnits = function () {
-            return this.a * this.a + this.x * this.x + this.y * this.y + this.b * this.b;
+        Geometric2.prototype.quadNoUnits = function () {
+            var a = this.a;
+            var x = this.x;
+            var y = this.y;
+            var b = this.b;
+            return a * a + x * x + y * y + b * b;
         };
         /**
          * @param M
@@ -10720,6 +10555,9 @@
         Euclidean2.prototype.applyMatrix = function (mv, matrix) {
             throw new Error("applyMatrix(mv, matrix) method not implemented.");
         };
+        Euclidean2.prototype.clone = function (source) {
+            return source.clone();
+        };
         Euclidean2.prototype.copy = function (source, target) {
             return target.copy(source);
         };
@@ -10745,8 +10583,8 @@
         Euclidean2.prototype.createTorque = function (body) {
             return new Torque2(body);
         };
-        Euclidean2.prototype.direction = function (mv, mutate) {
-            return mv.direction(mutate);
+        Euclidean2.prototype.direction = function (mv) {
+            return mv.direction();
         };
         Euclidean2.prototype.divByScalar = function (lhs, a, uom) {
             return lhs.divByScalar(a, uom);
@@ -10766,8 +10604,8 @@
         Euclidean2.prototype.lock = function (mv) {
             return mv.lock();
         };
-        Euclidean2.prototype.magnitude = function (mv, mutate) {
-            return mv.magnitude(mutate);
+        Euclidean2.prototype.norm = function (mv) {
+            return mv.norm();
         };
         Euclidean2.prototype.mul = function (lhs, rhs) {
             return lhs.mul(rhs);
@@ -10784,8 +10622,8 @@
         Euclidean2.prototype.neg = function (mv) {
             return mv.neg();
         };
-        Euclidean2.prototype.quaditude = function (mv, mutate) {
-            return mv.quaditude(mutate);
+        Euclidean2.prototype.quad = function (mv) {
+            return mv.quad();
         };
         Euclidean2.prototype.rev = function (mv) {
             return mv.rev();
@@ -11015,7 +10853,7 @@
          */
         Disc2.prototype.updateAngularVelocity = function () {
             this.Ω.copyScalar(this.radius_.a, this.radius_.uom); // Ω contains R 
-            this.Ω.quaditude(true); // Ω contains R^2
+            this.Ω.quad(); // Ω contains R^2
             this.Ω.mulByScalar(this.M.a, this.M.uom); // Ω contains M * R^2
             this.Ω.mulByNumber(0.5); // Ω contains (1/2) * M * R^2
             this.Ω.inv(); // Ω contains 2 * (1/M) * (1/R)^2
@@ -12716,6 +12554,36 @@
             this.coords_ = coords;
             this.uom_ = uom;
         }
+        Geometric3.prototype.__eq__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.__ne__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.__ge__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.__gt__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.__le__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.__lt__ = function (rhs) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.adj = function () {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.isScalar = function () {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.scale = function (α) {
+            throw new Error('Method not implemented.');
+        };
+        Geometric3.prototype.slerp = function (target, α) {
+            throw new Error('Method not implemented.');
+        };
         /**
          * Determines whether this multivector is locked.
          * If the multivector is in the unlocked state then it is mutable.
@@ -12723,6 +12591,9 @@
          */
         Geometric3.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED;
+        };
+        Geometric3.prototype.isMutable = function () {
+            return this.lock_ === UNLOCKED;
         };
         /**
          * Locks this multivector (preventing any further mutation),
@@ -13246,37 +13117,26 @@
             }
         };
         /**
-         * @param mutate Must be `true` when calling the `direction` method on an unlocked Geometric3.
          * @returns this / magnitude(this)
          */
-        Geometric3.prototype.direction = function (mutate) {
-            if (this.lock_ !== UNLOCKED) {
-                if (!mutate) {
-                    return lock(this.clone().direction(true));
+        Geometric3.prototype.direction = function () {
+            if (this.isMutable()) {
+                var norm = this.normNoUnits();
+                if (norm !== 0) {
+                    this.a = this.a / norm;
+                    this.x = this.x / norm;
+                    this.y = this.y / norm;
+                    this.z = this.z / norm;
+                    this.yz = this.yz / norm;
+                    this.zx = this.zx / norm;
+                    this.xy = this.xy / norm;
+                    this.b = this.b / norm;
                 }
-                else {
-                    throw new Error("Unable to mutate this locked Geometric3.");
-                }
+                this.uom = void 0;
+                return this;
             }
             else {
-                if (mutate) {
-                    var norm = this.magnitudeSansUnits();
-                    if (norm !== 0) {
-                        this.a = this.a / norm;
-                        this.x = this.x / norm;
-                        this.y = this.y / norm;
-                        this.z = this.z / norm;
-                        this.yz = this.yz / norm;
-                        this.zx = this.zx / norm;
-                        this.xy = this.xy / norm;
-                        this.b = this.b / norm;
-                    }
-                    this.uom = void 0;
-                    return this;
-                }
-                else {
-                    return lock(this.clone().direction(true));
-                }
+                return lock(this.clone().direction());
             }
         };
         /**
@@ -13674,38 +13534,25 @@
          * Computes the <em>square root</em> of the <em>squared norm</em>.
          * </p>
          */
-        Geometric3.prototype.magnitude = function (mutate) {
-            if (this.lock_ !== UNLOCKED) {
-                if (!mutate) {
-                    return lock(this.clone().magnitude(true));
-                }
-                else {
-                    throw new Error("Unable to mutate this locked Geometric3.");
-                }
+        Geometric3.prototype.norm = function () {
+            if (this.isMutable()) {
+                this.a = Math.sqrt(this.quadNoUnits());
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.xy = 0;
+                this.yz = 0;
+                this.zx = 0;
+                this.b = 0;
+                // The unit of measure is unchanged.
+                return this;
             }
             else {
-                if (mutate) {
-                    this.a = Math.sqrt(this.squaredNormSansUnits());
-                    this.x = 0;
-                    this.y = 0;
-                    this.z = 0;
-                    this.xy = 0;
-                    this.yz = 0;
-                    this.zx = 0;
-                    this.b = 0;
-                    // The unit of measure is unchanged.
-                    return this;
-                }
-                else {
-                    return lock(this.clone().magnitude(true));
-                }
+                return lock(this.clone().norm());
             }
         };
-        /**
-         * Intentionally undocumented.
-         */
-        Geometric3.prototype.magnitudeSansUnits = function () {
-            return Math.sqrt(this.squaredNormSansUnits());
+        Geometric3.prototype.normNoUnits = function () {
+            return Math.sqrt(this.quadNoUnits());
         };
         /**
          * Returns the geometric product of this multivector with the rhs multivector.
@@ -13836,29 +13683,6 @@
             }
         };
         /**
-         * An alias for the `magnitude` method.
-         * <p>
-         * <code>this ⟼ sqrt(this * conj(this))</code>
-         * </p>
-         */
-        Geometric3.prototype.norm = function () {
-            if (this.lock_ !== UNLOCKED) {
-                return lock(this.clone().norm());
-            }
-            else {
-                this.a = this.magnitudeSansUnits();
-                this.x = 0;
-                this.y = 0;
-                this.z = 0;
-                this.yz = 0;
-                this.zx = 0;
-                this.xy = 0;
-                this.b = 0;
-                // There is no change to the unit of measure.
-                return this;
-            }
-        };
-        /**
          * Sets this multivector to the identity element for multiplication, <b>1</b>.
          */
         Geometric3.prototype.one = function () {
@@ -13878,31 +13702,21 @@
          * of its blades.
          * this ⟼ scp(this, rev(this)) = this | ~this
          */
-        Geometric3.prototype.quaditude = function (mutate) {
-            if (this.lock_ !== UNLOCKED) {
-                if (!mutate) {
-                    return lock(this.clone().quaditude(true));
-                }
-                else {
-                    throw new Error("Unable to mutate this locked Geometric3.");
-                }
+        Geometric3.prototype.quad = function () {
+            if (this.isMutable()) {
+                this.a = this.quadNoUnits();
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                this.yz = 0;
+                this.zx = 0;
+                this.xy = 0;
+                this.b = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
             }
             else {
-                if (mutate) {
-                    this.a = this.squaredNormSansUnits();
-                    this.x = 0;
-                    this.y = 0;
-                    this.z = 0;
-                    this.yz = 0;
-                    this.zx = 0;
-                    this.xy = 0;
-                    this.b = 0;
-                    this.uom = Unit.mul(this.uom, this.uom);
-                    return this;
-                }
-                else {
-                    return lock(this.clone().quaditude(true));
-                }
+                return lock(this.clone().quad());
             }
         };
         /**
@@ -13933,13 +13747,10 @@
          *
          * This is an alias for the `quaditude` method.
          */
-        Geometric3.prototype.squaredNorm = function (mutate) {
-            return this.quaditude(mutate);
+        Geometric3.prototype.squaredNorm = function () {
+            return this.quad();
         };
-        /**
-         * Intentionally undocumented
-         */
-        Geometric3.prototype.squaredNormSansUnits = function () {
+        Geometric3.prototype.quadNoUnits = function () {
             return squaredNormG3(this);
         };
         /**
@@ -14349,19 +14160,19 @@
                 return this;
             }
         };
-        Geometric3.prototype.subScalar = function (M, α) {
+        Geometric3.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
             if (this.lock_ !== UNLOCKED) {
-                return lock(this.clone().subScalar(M, α));
+                return lock(this.clone().subScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
-                    this.uom = M.uom;
+                    this.uom = uom;
                 }
                 else {
-                    this.uom = Unit.compatible(this.uom, M.uom);
+                    this.uom = Unit.compatible(this.uom, uom);
                 }
-                this.a -= M.a * α;
+                this.a -= a * α;
                 return this;
             }
         };
@@ -15364,6 +15175,9 @@
         Euclidean3.prototype.applyMatrix = function (mv, matrix) {
             throw new Error("applyMatrix(mv, matrix) method not implemented.");
         };
+        Euclidean3.prototype.clone = function (source) {
+            return source.clone();
+        };
         Euclidean3.prototype.copy = function (source, target) {
             return target.copy(source);
         };
@@ -15388,8 +15202,8 @@
         Euclidean3.prototype.createTorque = function (body) {
             return new Torque3(body);
         };
-        Euclidean3.prototype.direction = function (mv, mutate) {
-            return mv.direction(mutate);
+        Euclidean3.prototype.direction = function (mv) {
+            return mv.direction();
         };
         Euclidean3.prototype.divByScalar = function (lhs, a, uom) {
             return lhs.divByScalar(a, uom);
@@ -15407,8 +15221,8 @@
         Euclidean3.prototype.lock = function (mv) {
             return mv.lock();
         };
-        Euclidean3.prototype.magnitude = function (mv, mutate) {
-            return mv.magnitude(mutate);
+        Euclidean3.prototype.norm = function (mv) {
+            return mv.norm();
         };
         Euclidean3.prototype.mul = function (lhs, rhs) {
             return lhs.mul(rhs);
@@ -15425,8 +15239,8 @@
         Euclidean3.prototype.neg = function (mv) {
             return mv.neg();
         };
-        Euclidean3.prototype.quaditude = function (mv, mutate) {
-            return mv.quaditude(mutate);
+        Euclidean3.prototype.quad = function (mv) {
+            return mv.quad();
         };
         Euclidean3.prototype.rev = function (mv) {
             return mv.rev();
@@ -15449,7 +15263,7 @@
         };
         Euclidean3.prototype.subScalar = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
-            return lhs.subScalar(rhs);
+            return lhs.subScalar(rhs.a, rhs.uom);
         };
         Euclidean3.prototype.subVector = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
@@ -16171,12 +15985,12 @@
          * L(Ω) = (2 M r r / 5) Ω => Ω = (5 / 2 M r r) L(Ω)
          */
         Sphere3.prototype.updateAngularVelocity = function () {
-            this.Ω.copyScalar(this.radius_.a, this.radius_.uom);
-            this.Ω.quaditude(true);
-            this.Ω.mulByScalar(this.M.a, this.M.uom);
-            this.Ω.mulByNumber(2 / 5);
-            this.Ω.inv();
-            this.Ω.mulByBivector(this.L);
+            this.Ω.copyScalar(this.radius_.a, this.radius_.uom); // Ω = r (scalar)    
+            this.Ω.quad(); // Ω = r * r (scalar)
+            this.Ω.mulByScalar(this.M.a, this.M.uom); // Ω = r * r * M = M * r * r (scalar)
+            this.Ω.mulByNumber(2 / 5); // Ω = 2 * M * r * r / 5 (scalar)
+            this.Ω.inv(); // Ω = 5 / (2 * M * r * r) (scalar)
+            this.Ω.mulByBivector(this.L); // Ω = 5 * L / (2 * M * r * r) (bivector)
         };
         /**
          * Whenever the mass or the dimensions change, we must update the inertia tensor.

@@ -284,34 +284,7 @@ describe("Euclidean1", function () {
         });
     });
     describe("direction", function () {
-        it("this.isMutable, mutate=true", function () {
-            const metric = new Euclidean1();
-            const mv = new Geometric1([0, 5], Unit.METER);
-            const result = metric.direction(mv, true);
-            expect(result).toBeDefined();
-            expect(result instanceof Geometric1).toBe(true);
-            expect(result.a).toBe(0);
-            expect(result.x).toBe(1);
-            expect(Unit.isOne(result.uom)).toBe(true);
-            expect(mv.a).toBe(0);
-            expect(mv.x).toBe(1);
-            expect(Unit.isOne(mv.uom)).toBe(true);
-            expect(result === mv).toBe(true);
-            expect(result.isMutable()).toBe(true);
-        });
-        it("this.isMutable, mutate=false", function () {
-            const metric = new Euclidean1();
-            const mv = new Geometric1([0, 5], Unit.METER);
-            const result = metric.direction(mv, false);
-            expect(result).toBeDefined();
-            expect(result instanceof Geometric1).toBe(true);
-            expect(result.a).toBe(0);
-            expect(result.x).toBe(1);
-            expect(Unit.isOne(result.uom)).toBe(true);
-            expect(result === mv).toBe(false);
-            expect(result.isMutable()).toBe(false);
-        });
-        it("this.isMutable, mutate=undefined", function () {
+        it("this.isMutable", function () {
             const metric = new Euclidean1();
             const mv = new Geometric1([0, 5], Unit.METER);
             const result = metric.direction(mv);
@@ -323,11 +296,12 @@ describe("Euclidean1", function () {
             expect(result === mv).toBe(true);
             expect(result.isMutable()).toBe(true);
         });
-        it("this.isLocked, mutate=true", function () {
+        it("this.isLocked", function () {
             const metric = new Euclidean1();
             const mv = new Geometric1([0, 5], Unit.METER);
             mv.lock();
-            const result = metric.direction(mv, true);
+            const result = metric.clone(mv);
+            metric.direction(result);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
             expect(result.a).toBe(0);
@@ -413,7 +387,7 @@ describe("Euclidean1", function () {
         it("should be defined.", function () {
             const metric = new Euclidean1();
             const mv = new Geometric1();
-            const result = metric.magnitude(mv);
+            const result = metric.norm(mv);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
         });
@@ -442,7 +416,7 @@ describe("Euclidean1", function () {
         it("should be defined.", function () {
             const metric = new Euclidean1();
             const mv = new Geometric1();
-            const result = metric.quaditude(mv);
+            const result = metric.quad(mv);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
         });

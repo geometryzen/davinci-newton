@@ -70,10 +70,6 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
      */
     log(): M;
     /**
-     * Computes the square root of the squared norm.
-     */
-    magnitude(mutate: boolean): MAGNITUDE;
-    /**
      * Multiplication.
      */
     mul(rhs: I): M;
@@ -82,9 +78,17 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
      */
     norm(): M;
     /**
+     * norm, ||x|| = sqrt(scp(x, rev(x)))
+     */
+    normNoUnits(): number;
+    /**
      * squared norm, scp(x, rev(x))
      */
     quad(): M;
+    /**
+     * squared norm, scp(x, rev(x))
+     */
+    quadNoUnits(): number;
     /**
      * Right contraction
      */
@@ -93,10 +97,6 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
      * Reverse
      */
     rev(): M;
-    /**
-     * squared norm, scp(x, rev(x))
-     */
-    squaredNorm(): MAGNITUDE;
     subScalar(a: number, uom?: UNIT, α?: number): M;
     /**
      * Scalar Product

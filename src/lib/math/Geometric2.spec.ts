@@ -535,21 +535,9 @@ describe("Geometric2", function () {
         });
     });
     describe("direction", function () {
-        it("locked=false, mutate=false", function () {
+        it("locked=false", function () {
             const M = Geometric2.vector(5, 0);
-            const dir = M.direction(false);
-            expect(dir.a).toBe(0);
-            expect(dir.x).toBe(1);
-            expect(dir.y).toBe(0);
-            expect(dir.b).toBe(0);
-            expect(M.a).toBe(0);
-            expect(M.x).toBe(5);
-            expect(M.y).toBe(0);
-            expect(M.b).toBe(0);
-        });
-        it("locked=false, mutate=true", function () {
-            const M = Geometric2.vector(5, 0);
-            const dir = M.direction(true);
+            const dir = M.direction();
             expect(dir.a).toBe(0);
             expect(dir.x).toBe(1);
             expect(dir.y).toBe(0);
@@ -559,10 +547,10 @@ describe("Geometric2", function () {
             expect(M.y).toBe(0);
             expect(M.b).toBe(0);
         });
-        it("locked=true, mutate=false", function () {
+        it("locked=true", function () {
             const M = Geometric2.vector(5, 0);
             M.lock();
-            const dir = M.direction(false);
+            const dir = M.direction();
             expect(dir.a).toBe(0);
             expect(dir.x).toBe(1);
             expect(dir.y).toBe(0);
@@ -571,13 +559,6 @@ describe("Geometric2", function () {
             expect(M.x).toBe(5);
             expect(M.y).toBe(0);
             expect(M.b).toBe(0);
-        });
-        it("locked=true, mutate=true", function () {
-            const M = Geometric2.vector(5, 0);
-            M.lock();
-            expect(function () {
-                M.direction(true);
-            }).toThrowError("Unable to mutate this locked Geometric2.");
         });
     });
     describe("inv", function () {
@@ -644,10 +625,10 @@ describe("Geometric2", function () {
             expect(M.isScalar()).toBe(false);
         });
     });
-    describe("magnitude", function () {
+    describe("norm", function () {
         it("zero is scalar(0)", function () {
             const M = Geometric2.zero;
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(0);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -655,7 +636,7 @@ describe("Geometric2", function () {
         });
         it("one is scalar(1)", function () {
             const M = Geometric2.one;
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -663,7 +644,7 @@ describe("Geometric2", function () {
         });
         it("e1 is scalar(1)", function () {
             const M = Geometric2.e1;
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -671,7 +652,7 @@ describe("Geometric2", function () {
         });
         it("e2 is scalar(1)", function () {
             const M = Geometric2.e2;
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -679,16 +660,16 @@ describe("Geometric2", function () {
         });
         it("I is scalar(1)", function () {
             const M = Geometric2.I;
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
             expect(mag.b).toBe(0);
         });
-        it("should mutate if mutate is undefined and the multivector is Mutable.", function () {
+        it("should change if the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.magnitude();
+            const mag = M.norm();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -701,7 +682,7 @@ describe("Geometric2", function () {
         it("should mutate if mutate is true and the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.magnitude(true);
+            const mag = M.norm();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -714,7 +695,7 @@ describe("Geometric2", function () {
         it("should preserve if mutate is false and the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.magnitude(false);
+            const mag = M.clone().norm();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -728,7 +709,7 @@ describe("Geometric2", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             M.lock();
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.magnitude();
+            const mag = M.norm();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -742,7 +723,7 @@ describe("Geometric2", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             M.lock();
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.magnitude(false);
+            const mag = M.norm();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -751,13 +732,6 @@ describe("Geometric2", function () {
             expect(M.x).toBe(2);
             expect(M.y).toBe(3);
             expect(M.b).toBe(4);
-        });
-        it("should throw an Error if mutate is true and the multivector is Locked.", function () {
-            const M = new Geometric2([1, 2, 3, 4]);
-            M.lock();
-            expect(function () {
-                M.magnitude(true);
-            }).toThrowError("mutate is true, but isMutable() is false.");
         });
     });
     describe("reflect", function () {
@@ -812,21 +786,9 @@ describe("Geometric2", function () {
         });
     });
     describe("rev", function () {
-        it("locked=false, mutate=false", function () {
+        it("locked=false", function () {
             const M = new Geometric2([1, 2, 3, 4]);
-            const dir = M.rev(false);
-            expect(dir.a).toBe(1);
-            expect(dir.x).toBe(2);
-            expect(dir.y).toBe(3);
-            expect(dir.b).toBe(-4);
-            expect(M.a).toBe(1);
-            expect(M.x).toBe(2);
-            expect(M.y).toBe(3);
-            expect(M.b).toBe(4);
-        });
-        it("locked=false, mutate=true", function () {
-            const M = new Geometric2([1, 2, 3, 4]);
-            const dir = M.rev(true);
+            const dir = M.rev();
             expect(dir.a).toBe(1);
             expect(dir.x).toBe(2);
             expect(dir.y).toBe(3);
@@ -835,13 +797,12 @@ describe("Geometric2", function () {
             expect(M.x).toBe(2);
             expect(M.y).toBe(3);
             expect(M.b).toBe(-4);
-            // dir should be the same as M.
-            expect(dir).toBe(M);
+            expect(dir === M).toBe(true);
         });
-        it("locked=true, mutate=false", function () {
+        it("locked=true", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             M.lock();
-            const dir = M.rev(false);
+            const dir = M.rev();
             expect(dir.a).toBe(1);
             expect(dir.x).toBe(2);
             expect(dir.y).toBe(3);
@@ -850,13 +811,7 @@ describe("Geometric2", function () {
             expect(M.x).toBe(2);
             expect(M.y).toBe(3);
             expect(M.b).toBe(4);
-        });
-        it("locked=true, mutate=true", function () {
-            const M = new Geometric2([1, 2, 3, 4]);
-            M.lock();
-            expect(function () {
-                M.rev(true);
-            }).toThrowError("Unable to mutate this locked Geometric2.");
+            expect(dir !== M).toBe(true);
         });
     });
     describe("rotorFromDirections", function () {

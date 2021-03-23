@@ -1,14 +1,14 @@
+import { notImplemented } from "../i18n/notImplemented";
 import { readOnly } from "../i18n/readOnly";
+import { gauss } from "./gauss";
+import { GeometricE1 as Geometric } from "./GeometricE1";
 import { GeometricNumber } from "./GeometricNumber";
 import { GeometricOperators } from "./GeometricOperators";
 import { GradeMasked } from "./GradeMasked";
-import { Unit } from "./Unit";
 import { SpinorE1 as Spinor } from "./SpinorE1";
-import { VectorE1 as Vector } from "./VectorE1";
-import { GeometricE1 as Geometric } from "./GeometricE1";
-import { notImplemented } from "../i18n/notImplemented";
 import { stringFromCoordinates } from "./stringFromCoordinates";
-import { gauss } from "./gauss";
+import { Unit } from "./Unit";
+import { VectorE1 as Vector } from "./VectorE1";
 
 /**
  * @hidden
@@ -45,7 +45,7 @@ function copy(mv: Geometric1): Geometric1 {
 /**
  * @hidden
  */
-function lock(mv: Geometric1): Geometric1 {
+export function lock(mv: Geometric1): Geometric1 {
     mv.lock();
     return mv;
 }
@@ -93,7 +93,10 @@ const UNLOCKED = -1 * Math.random();
 
 export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector, Geometric1, number, Unit>, GeometricOperators<Geometric1, Unit> {
     static scalar(a: number, uom?: Unit): Geometric1 {
-        return new Geometric1(scalar(a), uom);
+        return new Geometric1([a, 0], uom);
+    }
+    static vector(x: number, uom?: Unit): Geometric1 {
+        return new Geometric1([0, x], uom);
     }
 
     /**
@@ -369,33 +372,6 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             }
         }
     }
-    magnitude(mutate: boolean): Geometric1 {
-        if (typeof mutate === 'boolean') {
-            if (this.isLocked()) {
-                if (!mutate) {
-                    return lock(this.clone().magnitude(true));
-                }
-                else {
-                    throw new Error(`mutate is ${mutate}, but isMutable() is ${this.isMutable()}.`);
-                }
-            } else {
-                if (mutate) {
-                    this.a = Math.sqrt(this.squaredNormSansUnits());
-                    this.x = 0;
-                    // The unit of measure is unchanged.
-                    return this;
-                }
-                else {
-                    return lock(this.clone().magnitude(true));
-                }
-            }
-        } else {
-            return this.magnitude(this.isMutable());
-        }
-    }
-    private squaredNormSansUnits(): number {
-        return this.a * this.a + this.x * this.x;
-    }
     mul(rhs: Geometric1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
             return lock(this.clone().mul(rhs));
@@ -430,17 +406,14 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return lock(this.clone().norm());
         }
         else {
-            this.a = this.magnitudeSansUnits();
+            this.a = this.normNoUnits();
             this.x = 0;
             // There is no change to the unit of measure.
             return this;
         }
     }
-    private magnitudeSansUnits(): number {
-        return Math.sqrt(this.squaredNormSansUnits());
-    }
-    quad(): Geometric1 {
-        return new Geometric1([this.squaredNormSansUnits(), 0], Unit.mul(this.uom, this.uom));
+    normNoUnits(): number {
+        return Math.sqrt(this.quadNoUnits());
     }
     rco(m: Geometric1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
@@ -460,49 +433,31 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
-    rev(mutate?: boolean): Geometric1 {
-        if (typeof mutate === 'boolean') {
-            if (mutate) {
-                if (this.isMutable()) {
-                    // reverse has a ++-- structure on the grades.
-                    this.a = +this.a;
-                    this.x = +this.x;
-                    // The unit of measure is unchanged.
-                    return this;
-                } else {
-                    // You can't ask to mutate that which is immutable.
-                    throw new Error("Unable to mutate this locked Geometric1.");
-                }
-            } else {
-                return lock(this.clone().rev(true));
-            }
+    rev(): Geometric1 {
+        if (this.isMutable()) {
+            // reverse has a ++-- structure on the grades.
+            this.a = +this.a;
+            this.x = +this.x;
+            // The unit of measure is unchanged.
+            return this;
         } else {
-            return this.rev(this.isMutable());
+            return lock(this.clone().rev());
         }
     }
-    squaredNorm(mutate?: boolean): Geometric1 {
-        return this.quaditude(mutate);
+    quad(): Geometric1 {
+        if (this.isMutable()) {
+            this.a = this.quadNoUnits();
+            this.x = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
+            return this;
+        } else {
+            return lock(this.clone().quad());
+        }
     }
-    quaditude(mutate: boolean): Geometric1 {
-        if (this.lock_ !== UNLOCKED) {
-            if (!mutate) {
-                return lock(this.clone().quaditude(true));
-            }
-            else {
-                throw new Error("Unable to mutate this locked Geometric1.");
-            }
-        }
-        else {
-            if (mutate) {
-                this.a = this.squaredNormSansUnits();
-                this.x = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-            else {
-                return lock(this.clone().quaditude(true));
-            }
-        }
+    quadNoUnits(): number {
+        const a = this.a;
+        const x = this.x;
+        return a * a + x * x;
     }
     subScalar(a: number, uom?: Unit, α = 1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
@@ -973,7 +928,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @hidden 
      */
     __tilde__(): Geometric1 {
-        return lock(copy(this).rev(true));
+        return lock(copy(this).rev());
     }
     /**
      * @hidden 

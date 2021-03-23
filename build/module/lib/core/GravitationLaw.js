@@ -49,8 +49,8 @@ var GravitationLaw = /** @class */ (function (_super) {
         metric.copyVector(this.body2_.X, numer);
         metric.subVector(numer, this.body1_.X);
         metric.copyVector(numer, denom);
-        metric.quaditude(denom, true);
-        metric.direction(numer, true);
+        metric.quad(denom);
+        metric.direction(numer);
         metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
         metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
         metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
@@ -90,7 +90,7 @@ var GravitationLaw = /** @class */ (function (_super) {
         // The denominator is |r1 - r2|.
         metric.copyVector(this.body1_.X, denom);
         metric.subVector(denom, this.body2_.X);
-        metric.magnitude(denom, true);
+        metric.norm(denom);
         // Combine the numerator and denominator.
         metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
         metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));

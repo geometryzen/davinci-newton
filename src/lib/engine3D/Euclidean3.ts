@@ -25,6 +25,9 @@ export class Euclidean3 implements Metric<Geometric3> {
     applyMatrix(mv: Geometric3, matrix: MatrixLike): Geometric3 {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     }
+    clone(source: Geometric3): Geometric3 {
+        return source.clone();
+    }
     copy(source: Geometric3, target: Geometric3): Geometric3 {
         return target.copy(source);
     }
@@ -49,8 +52,8 @@ export class Euclidean3 implements Metric<Geometric3> {
     createTorque(body: ForceBody<Geometric3>): Torque<Geometric3> {
         return new Torque3(body);
     }
-    direction(mv: Geometric3, mutate: boolean): Geometric3 {
-        return mv.direction(mutate);
+    direction(mv: Geometric3): Geometric3 {
+        return mv.direction();
     }
     divByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3 {
         return lhs.divByScalar(a, uom);
@@ -68,8 +71,8 @@ export class Euclidean3 implements Metric<Geometric3> {
     lock(mv: Geometric3): number {
         return mv.lock();
     }
-    magnitude(mv: Geometric3, mutate: boolean): Geometric3 {
-        return mv.magnitude(mutate);
+    norm(mv: Geometric3): Geometric3 {
+        return mv.norm();
     }
     mul(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         return lhs.mul(rhs);
@@ -86,8 +89,8 @@ export class Euclidean3 implements Metric<Geometric3> {
     neg(mv: Geometric3): Geometric3 {
         return mv.neg();
     }
-    quaditude(mv: Geometric3, mutate: boolean): Geometric3 {
-        return mv.quaditude(mutate);
+    quad(mv: Geometric3): Geometric3 {
+        return mv.quad();
     }
     rev(mv: Geometric3): Geometric3 {
         return mv.rev();
@@ -110,7 +113,7 @@ export class Euclidean3 implements Metric<Geometric3> {
     }
     subScalar(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         // TODO: Could generalize to subtracting a fraction...
-        return lhs.subScalar(rhs);
+        return lhs.subScalar(rhs.a, rhs.uom);
     }
     subVector(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         // TODO: Could generalize to subtracting a fraction...

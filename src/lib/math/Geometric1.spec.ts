@@ -1,5 +1,13 @@
-import { Geometric1 } from "./Geometric1";
+import { Geometric1, lock } from "./Geometric1";
 import { Unit } from "./Unit";
+
+function checkEQ(one: Geometric1, two: Geometric1): void {
+    expect(one.a).toBe(two.a, `a, one=${one.a}, two=${two.a}`);
+    expect(one.x).toBe(two.x, `x, one=${one.x}, two=${two.x}`);
+    expect(Unit.isCompatible(one.uom, two.uom)).toBe(true, `uom, one=${one.uom}, two=${two.uom}`);
+    expect(one.isLocked()).toBe(two.isLocked(), `isLocked, one=${one.isLocked()}, two=${two.isLocked()}`);
+    expect(one.isMutable()).toBe(two.isMutable(), `isMutable, one=${one.isMutable()}, two=${two.isMutable()}`);
+}
 
 describe("Geometric1", function () {
     describe("constructor", function () {
@@ -222,6 +230,15 @@ describe("Geometric1", function () {
             expect(kg.isZero()).toBe(true);
         });
     });
+    describe("quad", function () {
+        it("", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const M = new Geometric1([a, x], Unit.METER);
+            const quaditude = M.quad();
+            checkEQ(quaditude, new Geometric1([a * a + x * x, 0], Unit.mul(Unit.METER, Unit.METER)));
+        });
+    });
     describe("zero", function () {
         it("(), target isMutable", function () {
             const a = Math.random();
@@ -263,9 +280,7 @@ describe("Geometric1", function () {
             expect(wB.x).toBe(0);
             expect(wB.uom).toBe(Unit.METER);
             const d = wA.__add__(wB);
-            expect(d.a).toBe(2);
-            expect(d.x).toBe(0);
-            expect(d.uom).toBe(Unit.METER);
+            checkEQ(d, lock(Geometric1.scalar(2, Unit.METER)));
         });
     });
 });

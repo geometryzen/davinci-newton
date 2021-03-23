@@ -1,9 +1,43 @@
 import { Spring } from './Spring';
 import { Particle } from './Particle';
+import { Euclidean1 } from '../engine1D/Euclidean1';
+import { Geometric1 } from '../math/Geometric1';
 import { Euclidean2 } from '../engine2D/Euclidean2';
 import { Geometric2 } from '../math/Geometric2';
 describe("Spring", function () {
-    describe("Potential Energy", function () {
+    describe("Potential Energy (Euclidean1)", function () {
+        it("should be zero at the rest length separation.", function () {
+            const metric = new Euclidean1();
+
+            const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Alice.X = Geometric1.vector(-0.5);
+            const Bob = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Bob.X = Geometric1.vector(0.5);
+            const spring = new Spring(Alice, Bob);
+            expect(spring.potentialEnergy().a).toBe(0);
+        });
+        it("should be increase when stretched.", function () {
+            const metric = new Euclidean1();
+
+            const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Alice.X = Geometric1.vector(-1);
+            const Bob = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Bob.X = Geometric1.vector(1);
+            const spring = new Spring(Alice, Bob);
+            expect(spring.potentialEnergy().a).toBe(0.5);
+        });
+        it("should be increase when compressed.", function () {
+            const metric = new Euclidean1();
+
+            const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Alice.X = Geometric1.vector(-0.25);
+            const Bob = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
+            Bob.X = Geometric1.vector(0.25);
+            const spring = new Spring(Alice, Bob);
+            expect(spring.potentialEnergy().a).toBe(0.125);
+        });
+    });
+    describe("Potential Energy (Euclidean2)", function () {
         it("should be zero at the rest length separation.", function () {
             const metric = new Euclidean2();
 
