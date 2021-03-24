@@ -2,7 +2,6 @@ import { Block3 } from '../engine3D/Block3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
-import { Vec3 } from '../math/Vec3';
 import { RigidBody } from './RigidBody';
 
 /**
@@ -97,7 +96,7 @@ describe("RigidBody", function () {
         describe("calculated using (1/2) Ω * ~L(Ω)", function () {
             const body = new Block3(Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()), Geometric3.scalar(Math.random()));
             body.M = Geometric3.scalar(12);
-            const ω = new Vec3(Math.random(), Math.random(), Math.random(), Unit.inv(Unit.SECOND));
+            const ω = Geometric3.vector(Math.random(), Math.random(), Math.random(), Unit.inv(Unit.SECOND));
             body.L.yz = Math.random();
             body.L.zx = Math.random();
             body.L.xy = Math.random();
@@ -108,8 +107,8 @@ describe("RigidBody", function () {
             body.Ω.xy = ω.z;
             body.Ω.uom = ω.uom;
 
-            const J = new Vec3(body.L.yz, body.L.zx, body.L.xy, body.L.uom);
-            const expectRotationalEnergy = ω.dot(J).mulByNumber(0.5);
+            const J = Geometric3.vector(body.L.yz, body.L.zx, body.L.xy, body.L.uom);
+            const expectRotationalEnergy = ω.scp(J).mulByNumber(0.5);
             const actualRotationalEnergy = body.rotationalEnergy();
             const uomExpect = expectRotationalEnergy.uom;
             const uomActual = actualRotationalEnergy.uom;

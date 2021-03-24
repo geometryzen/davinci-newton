@@ -72,7 +72,6 @@ export { Matrix1 } from './lib/math/Matrix1';
 export { Matrix3 } from './lib/math/Matrix3';
 export { QQ } from './lib/math/QQ';
 export { Unit } from './lib/math/Unit';
-export { Vec3 } from './lib/math/Vec3';
 export { LOCAL, WORLD } from './lib/model/CoordType';
 export { AdaptiveStepSolver } from './lib/solvers/AdaptiveStepSolver';
 export { ConstantEnergySolver } from './lib/solvers/ConstantEnergySolver';
