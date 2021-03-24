@@ -126,7 +126,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(1);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("e1", function () {
@@ -141,7 +141,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("e2", function () {
@@ -156,7 +156,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("e3", function () {
@@ -171,7 +171,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("one", function () {
@@ -186,7 +186,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("zero", function () {
@@ -201,7 +201,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(0);
         });
         it("e12", function () {
@@ -216,7 +216,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("e23", function () {
@@ -231,7 +231,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("e31", function () {
@@ -246,7 +246,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(true);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
         });
         it("meter", function () {
@@ -261,7 +261,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 m");
         });
@@ -277,7 +277,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 kg");
         });
@@ -293,7 +293,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 s");
         });
@@ -309,7 +309,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 A");
         });
@@ -325,7 +325,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 K");
         });
@@ -341,7 +341,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 mol");
         });
@@ -357,7 +357,7 @@ describe("Geometric3", function () {
             expect(m.b).toBe(0);
             expect(Unit.isOne(m.uom)).toBe(false);
             expect(m.isLocked()).toBe(true);
-            const clone = m.clone().norm();
+            const clone = m.clone().magnitude();
             expect(clone.a).toBe(1);
             expect(clone.toString()).toBe("1 cd");
         });

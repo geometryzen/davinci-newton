@@ -68,7 +68,7 @@ var Euclidean3 = /** @class */ (function () {
         return mv.lock();
     };
     Euclidean3.prototype.norm = function (mv) {
-        return mv.norm();
+        return mv.magnitude();
     };
     Euclidean3.prototype.mul = function (lhs, rhs) {
         return lhs.mul(rhs);
@@ -86,7 +86,7 @@ var Euclidean3 = /** @class */ (function () {
         return mv.neg();
     };
     Euclidean3.prototype.quad = function (mv) {
-        return mv.quad();
+        return mv.quaditude();
     };
     Euclidean3.prototype.rev = function (mv) {
         return mv.rev();

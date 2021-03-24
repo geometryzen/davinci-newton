@@ -66,7 +66,7 @@ export class Sphere3 extends RigidBody<Geometric3> {
      */
     public updateAngularVelocity(): void {
         this.Ω.copyScalar(this.radius_.a, this.radius_.uom);    // Ω = r (scalar)    
-        this.Ω.quad();                                          // Ω = r * r (scalar)
+        this.Ω.quaditude();                                          // Ω = r * r (scalar)
         this.Ω.mulByScalar(this.M.a, this.M.uom);               // Ω = r * r * M = M * r * r (scalar)
         this.Ω.mulByNumber(2 / 5);                              // Ω = 2 * M * r * r / 5 (scalar)
         this.Ω.inv();                                           // Ω = 5 / (2 * M * r * r) (scalar)

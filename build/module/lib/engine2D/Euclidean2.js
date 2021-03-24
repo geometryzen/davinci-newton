@@ -72,7 +72,7 @@ var Euclidean2 = /** @class */ (function () {
         return mv.lock();
     };
     Euclidean2.prototype.norm = function (mv) {
-        return mv.norm();
+        return mv.magnitude();
     };
     Euclidean2.prototype.mul = function (lhs, rhs) {
         return lhs.mul(rhs);
@@ -90,7 +90,7 @@ var Euclidean2 = /** @class */ (function () {
         return mv.neg();
     };
     Euclidean2.prototype.quad = function (mv) {
-        return mv.quad();
+        return mv.quaditude();
     };
     Euclidean2.prototype.rev = function (mv) {
         return mv.rev();

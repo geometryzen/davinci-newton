@@ -76,7 +76,7 @@ export class Euclidean2 implements Metric<Geometric2> {
         return mv.lock();
     }
     norm(mv: Geometric2): Geometric2 {
-        return mv.norm();
+        return mv.magnitude();
     }
     mul(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         return lhs.mul(rhs);
@@ -94,7 +94,7 @@ export class Euclidean2 implements Metric<Geometric2> {
         return mv.neg();
     }
     quad(mv: Geometric2): Geometric2 {
-        return mv.quad();
+        return mv.quaditude();
     }
     rev(mv: Geometric2): Geometric2 {
         return mv.rev();

@@ -51,7 +51,7 @@ export class Disc2 extends RigidBody2 {
      */
     public updateAngularVelocity(): void {
         this.Ω.copyScalar(this.radius_.a, this.radius_.uom);    // Ω contains R 
-        this.Ω.quad();                                          // Ω contains R^2
+        this.Ω.quaditude();                                          // Ω contains R^2
         this.Ω.mulByScalar(this.M.a, this.M.uom);               // Ω contains M * R^2
         this.Ω.mulByNumber(0.5);                                // Ω contains (1/2) * M * R^2
         this.Ω.inv();                                           // Ω contains 2 * (1/M) * (1/R)^2

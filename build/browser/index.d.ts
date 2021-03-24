@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.70
+// Type definitions for davinci-newton 1.0.71
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -462,7 +462,141 @@ export interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 
 }
 
-export class Geometric1 implements GeometricE1 {
+export interface LinearNumber<I, M, S, V> {
+    add(rhs: I, α?: number): M;
+    divByScalar(α: number, uom: Unit): M;
+    lerp(target: I, α: number): M;
+    scale(α: number): M;
+    neg(): M;
+    reflect(n: V): M;
+    rotate(rotor: S): M;
+    slerp(target: I, α: number): M;
+    stress(σ: V): M;
+    sub(rhs: I, α?: number): M;
+    toExponential(fractionDigits?: number): string;
+    toFixed(fractionDigits?: number): string;
+    toPrecision(precision?: number): string;
+    toString(radix?: number): string;
+}
+
+export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
+
+    /**
+     * Addition of a scalar.
+     */
+    addScalar(a: number, uom?: Unit, α?: number): M;
+
+    /**
+     * conjugate multiplied by norm (similar to inv)
+     */
+    adj(): M;
+
+    /**
+     * Assumes a spinor as the multivector.
+     * angle(M) = log(M).grade(2)
+     * In other words, throw away the scalar part of the result which is the scaling.
+     */
+    angle(): M;
+
+    /**
+     * Conjugate
+     */
+    conj(): M;
+
+    /**
+     * Left contraction
+     */
+    lco(rhs: I): M;
+
+    /**
+     * divide really only applies to division algebras, may not be defined.
+     */
+    div(rhs: I): M;
+
+    /**
+     * Exponential
+     */
+    exp(): M;
+
+    /**
+     * Exterior or Outer Product.
+     */
+    ext(rhs: I): M;
+
+    /**
+     * extraction of grade.
+     */
+    grade(grade: number): M;
+
+    /**
+     * Inverse (may not exist).
+     */
+    inv(): M;
+
+    /**
+     *
+     */
+    isOne(): boolean;
+
+    /**
+     *
+     */
+    isScalar(): boolean;
+
+    /**
+     *
+     */
+    isZero(): boolean;
+
+    /**
+     * Natural logarithm.
+     */
+    log(): M;
+
+    /**
+     * Multiplication.
+     */
+    mul(rhs: I): M;
+
+    /**
+     * norm, ||x|| = sqrt(scp(x, rev(x)))
+     */
+    magnitude(): M;
+
+    /**
+     * norm, ||x|| = sqrt(scp(x, rev(x)))
+     */
+    magnitudeNoUnits(): number;
+
+    /**
+     * squared norm, scp(x, rev(x))
+     */
+    quaditude(): M;
+
+    /**
+     * squared norm, scp(x, rev(x))
+     */
+    quaditudeNoUnits(): number;
+
+    /**
+     * Right contraction
+     */
+    rco(rhs: I): M;
+
+    /**
+     * Reverse
+     */
+    rev(): M;
+
+    subScalar(a: number, uom?: Unit, α?: number): M;
+
+    /**
+     * Scalar Product
+     */
+    scp(rhs: I): M;
+}
+
+export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geometric1, SpinorE1, VectorE1> {
 
     /**
      * Standard Basis vector corresponding to the x coordinate.
@@ -588,10 +722,10 @@ export class Geometric1 implements GeometricE1 {
     mul(rhs: Geometric1): Geometric1;
     mulByNumber(α: number): Geometric1;
     mulByScalar(α: number, uom?: Unit): Geometric1;
-    norm(): Geometric1;
-    normNoUnits(): number;
-    quad(): Geometric1;
-    quadNoUnits(): number;
+    magnitude(): Geometric1;
+    magnitudeNoUnits(): number;
+    quaditude(): Geometric1;
+    quaditudeNoUnits(): number;
     rco(rhs: Geometric1): Geometric1;
     rev(): Geometric1;
     subScalar(a: number, uom?: Unit, α?: number): Geometric1;
@@ -636,7 +770,7 @@ export class Geometric1 implements GeometricE1 {
 /**
  * A mutable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric2 implements GeometricE2 {
+export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geometric2, SpinorE2, VectorE2> {
     /**
      * The coordinate corresponding to the unit standard basis scalar.
      */
@@ -671,6 +805,11 @@ export class Geometric2 implements GeometricE2 {
      * Do not call this constructor. Use the static construction methods instead.
      */
     constructor(coords?: [number, number, number, number], uom?: Unit, code?: number);
+    adj(): Geometric2;
+    isScalar(): boolean;
+    scale(α: number): Geometric2;
+    slerp(target: GeometricE2, α: number): Geometric2;
+    stress(σ: VectorE2): Geometric2;
 
     /**
      * Adds M * α to this multivector.
@@ -960,8 +1099,11 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ sqrt(this * conj(this))
      * 
      */
-    norm(): Geometric2;
-    normNoUnits(): number;
+    magnitude(): Geometric2;
+    /**
+     * 
+     */
+    magnitudeNoUnits(): number;
 
     /**
      * Sets this multivector to the identity element for multiplication, 1.
@@ -973,8 +1115,12 @@ export class Geometric2 implements GeometricE2 {
      * this ⟼ this | ~this = scp(this, rev(this))
      * 
      */
-    quad(): Geometric2;
-    quadNoUnits(): number;
+    quaditude(): Geometric2;
+
+    /**
+     * 
+     */
+    quaditudeNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.
@@ -1389,7 +1535,7 @@ export class Geometric2 implements GeometricE2 {
 /**
  * A mutable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric3 implements GeometricE3 {
+export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geometric3, SpinorE3, VectorE3> {
     /**
      * The coordinate corresponding to the unit standard basis scalar.
      */
@@ -1439,6 +1585,12 @@ export class Geometric3 implements GeometricE3 {
      * Do not call this constructor. Use the static construction methods instead.
      */
     constructor(coords?: [number, number, number, number, number, number, number, number], uom?: Unit, code?: number);
+    adj(): Geometric3;
+    isScalar(): boolean;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric3;
+    scale(α: number): Geometric3;
+    slerp(target: GeometricE3, α: number): Geometric3;
+    stress(σ: VectorE3): Geometric3;
 
     /**
      * Adds M * α to this multivector.
@@ -1727,8 +1879,12 @@ export class Geometric3 implements GeometricE3 {
      * this ⟼ sqrt(this * conj(this))
      * 
      */
-    norm(): Geometric3;
-    normNoUnits(): number;
+    magnitude(): Geometric3;
+
+    /**
+     * 
+     */
+    magnitudeNoUnits(): number;
 
     /**
      * Sets this multivector to the identity element for multiplication, 1.
@@ -1740,8 +1896,12 @@ export class Geometric3 implements GeometricE3 {
      * this ⟼ this | ~this = scp(this, rev(this))
      * 
      */
-    quad(): Geometric3;
-    quadNoUnits(): number;
+    quaditude(): Geometric3;
+
+    /**
+     * 
+     */
+    quaditudeNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.

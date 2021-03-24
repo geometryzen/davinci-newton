@@ -967,7 +967,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.squaredNorm = function () {
-        return this.quad();
+        return this.quaditude();
     };
     Geometric2.prototype.sub2 = function (a, b) {
         if (isZeroGeometric(a)) {
@@ -1310,7 +1310,7 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.prototype.direction = function () {
         if (this.isMutable()) {
-            var norm = this.normNoUnits();
+            var norm = this.magnitudeNoUnits();
             if (norm !== 0) {
                 this.a = this.a / norm;
                 this.x = this.x / norm;
@@ -1429,9 +1429,9 @@ var Geometric2 = /** @class */ (function () {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    Geometric2.prototype.norm = function () {
+    Geometric2.prototype.magnitude = function () {
         if (this.isMutable()) {
-            this.a = this.normNoUnits();
+            this.a = this.magnitudeNoUnits();
             this.x = 0;
             this.y = 0;
             this.b = 0;
@@ -1439,11 +1439,11 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
         else {
-            return lock(this.clone().norm());
+            return lock(this.clone().magnitude());
         }
     };
-    Geometric2.prototype.normNoUnits = function () {
-        return Math.sqrt(this.quadNoUnits());
+    Geometric2.prototype.magnitudeNoUnits = function () {
+        return Math.sqrt(this.quaditudeNoUnits());
     };
     /**
      * @param rhs
@@ -1574,9 +1574,9 @@ var Geometric2 = /** @class */ (function () {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    Geometric2.prototype.quad = function () {
+    Geometric2.prototype.quaditude = function () {
         if (this.isMutable()) {
-            this.a = this.quadNoUnits();
+            this.a = this.quaditudeNoUnits();
             this.x = 0;
             this.y = 0;
             this.b = 0;
@@ -1584,7 +1584,7 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
         else {
-            return lock(this.clone().quad());
+            return lock(this.clone().quaditude());
         }
     };
     /**
@@ -1675,7 +1675,7 @@ var Geometric2 = /** @class */ (function () {
         this.uom = Unit.mul(a.uom, b.uom);
         return this;
     };
-    Geometric2.prototype.quadNoUnits = function () {
+    Geometric2.prototype.quaditudeNoUnits = function () {
         var a = this.a;
         var x = this.x;
         var y = this.y;

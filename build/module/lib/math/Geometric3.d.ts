@@ -324,8 +324,8 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    norm(): Geometric3;
-    normNoUnits(): number;
+    magnitude(): Geometric3;
+    magnitudeNoUnits(): number;
     /**
      * Returns the geometric product of this multivector with the rhs multivector.
      * @param rhs The operand on the right hand side of the * operator.
@@ -356,7 +356,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quad(): Geometric3;
+    quaditude(): Geometric3;
     /**
      * @param m
      * @returns this >> m
@@ -377,7 +377,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * This is an alias for the `quaditude` method.
      */
     squaredNorm(): Geometric3;
-    quadNoUnits(): number;
+    quaditudeNoUnits(): number;
     /**
      * Sets this multivector to its reflection in the plane orthogonal to vector n.
      *

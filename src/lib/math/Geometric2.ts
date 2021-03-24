@@ -1107,7 +1107,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     squaredNorm(): Geometric2 {
-        return this.quad();
+        return this.quaditude();
     }
     sub2(a: Geometric, b: Geometric): Geometric2 {
         if (isZeroGeometric(a)) {
@@ -1439,7 +1439,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      */
     direction(): Geometric2 {
         if (this.isMutable()) {
-            const norm: number = this.normNoUnits();
+            const norm: number = this.magnitudeNoUnits();
             if (norm !== 0) {
                 this.a = this.a / norm;
                 this.x = this.x / norm;
@@ -1568,9 +1568,9 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    norm(): Geometric2 {
+    magnitude(): Geometric2 {
         if (this.isMutable()) {
-            this.a = this.normNoUnits();
+            this.a = this.magnitudeNoUnits();
             this.x = 0;
             this.y = 0;
             this.b = 0;
@@ -1578,12 +1578,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
         else {
-            return lock(this.clone().norm());
+            return lock(this.clone().magnitude());
         }
     }
 
-    normNoUnits(): number {
-        return Math.sqrt(this.quadNoUnits());
+    magnitudeNoUnits(): number {
+        return Math.sqrt(this.quaditudeNoUnits());
     }
 
     /**
@@ -1730,9 +1730,9 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quad(): Geometric2 {
+    quaditude(): Geometric2 {
         if (this.isMutable()) {
-            this.a = this.quadNoUnits();
+            this.a = this.quaditudeNoUnits();
             this.x = 0;
             this.y = 0;
             this.b = 0;
@@ -1740,7 +1740,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
         else {
-            return lock(this.clone().quad());
+            return lock(this.clone().quaditude());
         }
     }
 
@@ -1839,7 +1839,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
 
-    quadNoUnits(): number {
+    quaditudeNoUnits(): number {
         const a = this.a;
         const x = this.x;
         const y = this.y;

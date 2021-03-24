@@ -773,7 +773,7 @@ var Geometric3 = /** @class */ (function () {
      */
     Geometric3.prototype.direction = function () {
         if (this.isMutable()) {
-            var norm = this.normNoUnits();
+            var norm = this.magnitudeNoUnits();
             if (norm !== 0) {
                 this.a = this.a / norm;
                 this.x = this.x / norm;
@@ -1188,9 +1188,9 @@ var Geometric3 = /** @class */ (function () {
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    Geometric3.prototype.norm = function () {
+    Geometric3.prototype.magnitude = function () {
         if (this.isMutable()) {
-            this.a = Math.sqrt(this.quadNoUnits());
+            this.a = Math.sqrt(this.quaditudeNoUnits());
             this.x = 0;
             this.y = 0;
             this.z = 0;
@@ -1202,11 +1202,11 @@ var Geometric3 = /** @class */ (function () {
             return this;
         }
         else {
-            return lock(this.clone().norm());
+            return lock(this.clone().magnitude());
         }
     };
-    Geometric3.prototype.normNoUnits = function () {
-        return Math.sqrt(this.quadNoUnits());
+    Geometric3.prototype.magnitudeNoUnits = function () {
+        return Math.sqrt(this.quaditudeNoUnits());
     };
     /**
      * Returns the geometric product of this multivector with the rhs multivector.
@@ -1356,9 +1356,9 @@ var Geometric3 = /** @class */ (function () {
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    Geometric3.prototype.quad = function () {
+    Geometric3.prototype.quaditude = function () {
         if (this.isMutable()) {
-            this.a = this.quadNoUnits();
+            this.a = this.quaditudeNoUnits();
             this.x = 0;
             this.y = 0;
             this.z = 0;
@@ -1370,7 +1370,7 @@ var Geometric3 = /** @class */ (function () {
             return this;
         }
         else {
-            return lock(this.clone().quad());
+            return lock(this.clone().quaditude());
         }
     };
     /**
@@ -1402,9 +1402,9 @@ var Geometric3 = /** @class */ (function () {
      * This is an alias for the `quaditude` method.
      */
     Geometric3.prototype.squaredNorm = function () {
-        return this.quad();
+        return this.quaditude();
     };
-    Geometric3.prototype.quadNoUnits = function () {
+    Geometric3.prototype.quaditudeNoUnits = function () {
         return squaredNormG3(this);
     };
     /**

@@ -115,7 +115,7 @@ export class Euclidean1 implements Metric<Geometric1> {
         if (mv.isMutable()) {
             const a = mv.a;
             const x = mv.x;
-            const s = mv.normNoUnits();
+            const s = mv.magnitudeNoUnits();
             mv.a = a / s;
             mv.x = x / s;
             mv.uom = Unit.ONE;
@@ -161,7 +161,7 @@ export class Euclidean1 implements Metric<Geometric1> {
         return mv.lock();
     }
     norm(mv: Geometric1): Geometric1 {
-        return mv.norm();
+        return mv.magnitude();
     }
     mul(lhs: Geometric1, rhs: Geometric1): Geometric1 {
         if (lhs.isMutable()) {
@@ -224,7 +224,7 @@ export class Euclidean1 implements Metric<Geometric1> {
         }
     }
     quad(mv: Geometric1): Geometric1 {
-        return mv.quad();
+        return mv.quaditude();
     }
     rev(mv: Geometric1): Geometric1 {
         if (mv.isMutable()) {

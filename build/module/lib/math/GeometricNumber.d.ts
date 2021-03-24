@@ -76,19 +76,19 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     /**
      * norm, ||x|| = sqrt(scp(x, rev(x)))
      */
-    norm(): M;
+    magnitude(): M;
     /**
      * norm, ||x|| = sqrt(scp(x, rev(x)))
      */
-    normNoUnits(): number;
+    magnitudeNoUnits(): number;
     /**
      * squared norm, scp(x, rev(x))
      */
-    quad(): M;
+    quaditude(): M;
     /**
      * squared norm, scp(x, rev(x))
      */
-    quadNoUnits(): number;
+    quaditudeNoUnits(): number;
     /**
      * Right contraction
      */

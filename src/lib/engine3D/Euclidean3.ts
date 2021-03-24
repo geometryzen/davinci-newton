@@ -72,7 +72,7 @@ export class Euclidean3 implements Metric<Geometric3> {
         return mv.lock();
     }
     norm(mv: Geometric3): Geometric3 {
-        return mv.norm();
+        return mv.magnitude();
     }
     mul(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         return lhs.mul(rhs);
@@ -90,7 +90,7 @@ export class Euclidean3 implements Metric<Geometric3> {
         return mv.neg();
     }
     quad(mv: Geometric3): Geometric3 {
-        return mv.quad();
+        return mv.quaditude();
     }
     rev(mv: Geometric3): Geometric3 {
         return mv.rev();

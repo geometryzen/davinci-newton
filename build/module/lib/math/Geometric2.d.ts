@@ -435,8 +435,8 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * Computes the <em>square root</em> of the <em>squared norm</em>.
      * </p>
      */
-    norm(): Geometric2;
-    normNoUnits(): number;
+    magnitude(): Geometric2;
+    magnitudeNoUnits(): number;
     /**
      * @param rhs
      * @returns this * m
@@ -473,7 +473,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
      */
-    quad(): Geometric2;
+    quaditude(): Geometric2;
     /**
      * reverse has a ++-- structure on the grades.
      * The scalar component, a, will not change.
@@ -502,7 +502,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @param b
      */
     scp2(a: Geometric, b: Geometric): this;
-    quadNoUnits(): number;
+    quaditudeNoUnits(): number;
     /**
      * @param M
      * @param α

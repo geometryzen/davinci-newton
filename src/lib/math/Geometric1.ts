@@ -401,19 +401,19 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    norm(): Geometric1 {
+    magnitude(): Geometric1 {
         if (this.isMutable()) {
-            this.a = this.normNoUnits();
+            this.a = this.magnitudeNoUnits();
             this.x = 0;
             // There is no change to the unit of measure.
             return this;
         }
         else {
-            return lock(this.clone().norm());
+            return lock(this.clone().magnitude());
         }
     }
-    normNoUnits(): number {
-        return Math.sqrt(this.quadNoUnits());
+    magnitudeNoUnits(): number {
+        return Math.sqrt(this.quaditudeNoUnits());
     }
     rco(m: Geometric1): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
@@ -444,17 +444,17 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return lock(this.clone().rev());
         }
     }
-    quad(): Geometric1 {
+    quaditude(): Geometric1 {
         if (this.isMutable()) {
-            this.a = this.quadNoUnits();
+            this.a = this.quaditudeNoUnits();
             this.x = 0;
             this.uom = Unit.mul(this.uom, this.uom);
             return this;
         } else {
-            return lock(this.clone().quad());
+            return lock(this.clone().quaditude());
         }
     }
-    quadNoUnits(): number {
+    quaditudeNoUnits(): number {
         const a = this.a;
         const x = this.x;
         return a * a + x * x;

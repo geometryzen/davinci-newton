@@ -628,7 +628,7 @@ describe("Geometric2", function () {
     describe("norm", function () {
         it("zero is scalar(0)", function () {
             const M = Geometric2.zero;
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(0);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -636,7 +636,7 @@ describe("Geometric2", function () {
         });
         it("one is scalar(1)", function () {
             const M = Geometric2.one;
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -644,7 +644,7 @@ describe("Geometric2", function () {
         });
         it("e1 is scalar(1)", function () {
             const M = Geometric2.e1;
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -652,7 +652,7 @@ describe("Geometric2", function () {
         });
         it("e2 is scalar(1)", function () {
             const M = Geometric2.e2;
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -660,7 +660,7 @@ describe("Geometric2", function () {
         });
         it("I is scalar(1)", function () {
             const M = Geometric2.I;
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(1);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -669,7 +669,7 @@ describe("Geometric2", function () {
         it("should change if the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -682,7 +682,7 @@ describe("Geometric2", function () {
         it("should mutate if mutate is true and the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -695,7 +695,7 @@ describe("Geometric2", function () {
         it("should preserve if mutate is false and the multivector is Mutable.", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.clone().norm();
+            const mag = M.clone().magnitude();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -709,7 +709,7 @@ describe("Geometric2", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             M.lock();
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);
@@ -723,7 +723,7 @@ describe("Geometric2", function () {
             const M = new Geometric2([1, 2, 3, 4]);
             M.lock();
             const norm = Math.sqrt(1 + 4 + 9 + 16);
-            const mag = M.norm();
+            const mag = M.magnitude();
             expect(mag.a).toBe(norm);
             expect(mag.x).toBe(0);
             expect(mag.y).toBe(0);

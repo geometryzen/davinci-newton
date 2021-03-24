@@ -288,7 +288,7 @@ describe("Geometric1", function () {
             const a = Math.random();
             const x = Math.random();
             const M = new Geometric1([a, x], Unit.METER);
-            const norm = M.norm();
+            const norm = M.magnitude();
             const comp = new Geometric1([Math.sqrt(a * a + x * x), 0], Unit.METER);
             checkEQ(norm, comp);
             expect(norm === M).toBe(true);
@@ -298,7 +298,7 @@ describe("Geometric1", function () {
             const x = Math.random();
             const M = new Geometric1([a, x], Unit.METER);
             M.lock();
-            const norm = M.norm();
+            const norm = M.magnitude();
             const comp = lock(new Geometric1([Math.sqrt(a * a + x * x), 0], Unit.METER));
             checkEQ(norm, comp);
             expect(norm !== M).toBe(true);
@@ -312,7 +312,7 @@ describe("Geometric1", function () {
             const a = Math.random();
             const x = Math.random();
             const M = new Geometric1([a, x], Unit.METER);
-            const norm = M.quad();
+            const norm = M.quaditude();
             const comp = new Geometric1([a * a + x * x, 0], Unit.mul(Unit.METER, Unit.METER));
             checkEQ(norm, comp);
             expect(norm === M).toBe(true);
@@ -322,7 +322,7 @@ describe("Geometric1", function () {
             const x = Math.random();
             const M = new Geometric1([a, x], Unit.METER);
             M.lock();
-            const norm = M.quad();
+            const norm = M.quaditude();
             const comp = lock(new Geometric1([a * a + x * x, 0], Unit.mul(Unit.METER, Unit.METER)));
             checkEQ(norm, comp);
             expect(norm !== M).toBe(true);
