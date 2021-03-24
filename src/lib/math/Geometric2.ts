@@ -139,7 +139,7 @@ function lock(m: Geometric2): Geometric2 {
  */
 const UNLOCKED = -1 * Math.random();
 
-export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, Geometric2, number, Unit>, GeometricOperators<Geometric2, Unit> {
+export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.

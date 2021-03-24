@@ -212,7 +212,7 @@ const UNLOCKED = -1 * Math.random();
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, Geometric3, number, Unit>, GeometricOperators<Geometric3, Unit> {
+export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
 
     /**
      * 

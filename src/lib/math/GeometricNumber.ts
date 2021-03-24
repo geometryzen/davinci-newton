@@ -1,4 +1,5 @@
 import { LinearNumber } from './LinearNumber';
+import { Unit } from './Unit';
 
 /**
  * @hidden
@@ -9,14 +10,13 @@ import { LinearNumber } from './LinearNumber';
  * M: The concrete class
  * S: The lightweight interface form of the spinor.
  * V: The lightweight interface form of the vector.
- * MAGNITUDE: The type for methods that compute magnitudes.
  */
-export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends LinearNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> {
+export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
 
     /**
      * Addition of a scalar.
      */
-    addScalar(a: number, uom?: UNIT, α?: number): M;
+    addScalar(a: number, uom?: Unit, α?: number): M;
 
     /**
      * conjugate multiplied by norm (similar to inv)
@@ -120,7 +120,7 @@ export interface GeometricNumber<I, M, S, V, MAGNITUDE, SCALING, UNIT> extends L
      */
     rev(): M;
 
-    subScalar(a: number, uom?: UNIT, α?: number): M;
+    subScalar(a: number, uom?: Unit, α?: number): M;
 
     /**
      * Scalar Product

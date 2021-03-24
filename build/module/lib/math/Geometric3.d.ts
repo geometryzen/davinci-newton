@@ -10,7 +10,7 @@ import { VectorE3 as Vector, VectorE3 } from './VectorE3';
 /**
  * A multivector with a Euclidean metric and Cartesian coordinates.
  */
-export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, Geometric3, number, Unit>, GeometricOperators<Geometric3, Unit> {
+export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
     /**
      *
      */

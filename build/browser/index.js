@@ -6676,14 +6676,14 @@
             }
         };
         Geometric1.prototype.norm = function () {
-            if (this.lock_ !== UNLOCKED$2) {
-                return lock$3(this.clone().norm());
-            }
-            else {
+            if (this.isMutable()) {
                 this.a = this.normNoUnits();
                 this.x = 0;
                 // There is no change to the unit of measure.
                 return this;
+            }
+            else {
+                return lock$3(this.clone().norm());
             }
         };
         Geometric1.prototype.normNoUnits = function () {

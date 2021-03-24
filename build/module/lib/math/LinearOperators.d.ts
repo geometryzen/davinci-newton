@@ -5,7 +5,7 @@ import { AbelianOperators } from './AbelianOperators';
  * It may not adhere to strict mathematical definitions.
  * @hidden
  */
-export interface LinearOperators<T, UNIT> extends AbelianOperators<T, UNIT> {
+export interface LinearOperators<T> extends AbelianOperators<T> {
     /**
      * Unary ~
      */

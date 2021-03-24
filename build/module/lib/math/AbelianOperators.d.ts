@@ -1,26 +1,27 @@
+import { Unit } from "./Unit";
 /**
  * Special methods for operators on elements of abelian groups (additive).
  * This is provided for interface consistency.
  * It may not adhere to strict mathematical definitions.
  * @hidden
  */
-export interface AbelianOperators<T, UNIT> {
+export interface AbelianOperators<T> {
     /**
      * Binary this + other
      */
-    __add__(other: T | UNIT | number): T;
+    __add__(other: T | Unit | number): T;
     /**
      * Binary other + this
      */
-    __radd__(other: T | UNIT | number): T;
+    __radd__(other: T | Unit | number): T;
     /**
      * Binary this - other
      */
-    __sub__(other: T | UNIT | number): T;
+    __sub__(other: T | Unit | number): T;
     /**
      * Binary other - this
      */
-    __rsub__(other: T | UNIT | number): T;
+    __rsub__(other: T | Unit | number): T;
     /**
      * Unary +
      */

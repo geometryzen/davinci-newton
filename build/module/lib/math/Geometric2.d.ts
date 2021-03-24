@@ -7,7 +7,7 @@ import { Scalar } from "./Scalar";
 import { SpinorE2 as Spinor } from "./SpinorE2";
 import { Unit } from "./Unit";
 import { VectorE2 as Vector } from "./VectorE2";
-export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, Geometric2, number, Unit>, GeometricOperators<Geometric2, Unit> {
+export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
      * The scalar returned is in the unlocked (mutable) state.

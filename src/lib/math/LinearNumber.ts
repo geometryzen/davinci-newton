@@ -8,14 +8,16 @@
  * For geometric quantities with units, you may use the quantity itself because it can represent a scalar.
  */
 
+import { Unit } from "./Unit";
+
 /**
  * @hidden
  */
-export interface LinearNumber<I, M, S, V, MAGNITUDE, SCALAR, UNIT> {
+export interface LinearNumber<I, M, S, V> {
   add(rhs: I, α?: number): M;
-  divByScalar(α: SCALAR, uom: UNIT): M;
+  divByScalar(α: number, uom: Unit): M;
   lerp(target: I, α: number): M;
-  scale(α: SCALAR): M;
+  scale(α: number): M;
   neg(): M;
   reflect(n: V): M;
   rotate(rotor: S): M;
