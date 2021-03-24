@@ -1,6 +1,9 @@
 import { Geometric1, lock } from "./Geometric1";
 import { Unit } from "./Unit";
 
+/**
+ * @hidden
+ */
 function checkEQ(result: Geometric1, comp: Geometric1): void {
     expect(result.a).toBe(comp.a, `a, result=${result.a}, comp=${comp.a}`);
     expect(result.x).toBe(comp.x, `x, result=${result.x}, comp=${comp.x}`);
