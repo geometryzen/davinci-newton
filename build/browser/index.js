@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-24';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.74';
+            this.VERSION = '1.0.75';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5082,13 +5082,45 @@
             _this.body = body;
             var metric = body.metric;
             _this.location = metric.zero();
-            _this.locationCoordType = WORLD;
+            _this.$locationCoordType = LOCAL;
             _this.vector = metric.zero();
-            _this.vectorCoordType = WORLD;
+            _this.$vectorCoordType = WORLD;
             _this.$temp1 = metric.zero();
             _this.$temp2 = metric.zero();
             return _this;
         }
+        Object.defineProperty(Force.prototype, "locationCoordType", {
+            /**
+             *
+             */
+            get: function () {
+                return this.$locationCoordType;
+            },
+            set: function (locationCoordType) {
+                if (locationCoordType !== LOCAL && locationCoordType !== WORLD) {
+                    throw new Error("locationCoordType must be LOCAL (0) or WORLD (1).");
+                }
+                this.$locationCoordType = locationCoordType;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Force.prototype, "vectorCoordType", {
+            /**
+             *
+             */
+            get: function () {
+                return this.$vectorCoordType;
+            },
+            set: function (vectorCoordType) {
+                if (vectorCoordType !== LOCAL && vectorCoordType !== WORLD) {
+                    throw new Error("vectorCoordType must be LOCAL (0) or WORLD (1).");
+                }
+                this.$vectorCoordType = vectorCoordType;
+            },
+            enumerable: false,
+            configurable: true
+        });
         /**
          *
          */
@@ -5096,29 +5128,59 @@
             return this.body;
         };
         /**
+         * Computes the point of application of the force in world coordinates.
+         *
+         * @param position (output)
+         */
+        Force.prototype.computePosition = function (position) {
+            var metric = this.body.metric;
+            switch (this.$locationCoordType) {
+                case LOCAL: {
+                    metric.copyVector(this.location, position);
+                    // We could subtract the body center-of-mass in body coordinates here.
+                    // Instead we assume that it is always zero.
+                    metric.rotate(position, this.body.R);
+                    metric.addVector(position, this.body.X);
+                    break;
+                }
+                case WORLD: {
+                    metric.copyVector(this.location, position);
+                    break;
+                }
+            }
+        };
+        /**
          * Computes the force being applied (vector) in WORLD coordinates.
          *
          * @param force (output)
          */
         Force.prototype.computeForce = function (force) {
-            // TODO: Just use the output variable directly...
             var metric = this.body.metric;
-            switch (this.vectorCoordType) {
+            switch (this.$vectorCoordType) {
                 case LOCAL: {
-                    metric.copyVector(this.vector, this.$temp2);
-                    metric.rotate(this.$temp2, this.body.R);
-                    metric.writeVector(this.$temp2, force);
+                    metric.copyVector(this.vector, force);
+                    metric.rotate(force, this.body.R);
                     break;
                 }
                 case WORLD: {
-                    metric.copyVector(this.vector, this.$temp2);
-                    metric.writeVector(this.$temp2, force);
+                    metric.copyVector(this.vector, force);
                     break;
                 }
-                default: {
-                    throw new Error("Force.vectorCoordType must be LOCAL (0) or WORLD (1).");
-                }
             }
+        };
+        /**
+         * Computes the torque, i.e. moment of the force about the center of mass (bivector).
+         * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
+         * Torque = r ^ F because r = x - X
+         *
+         * @param torque (output)
+         */
+        Force.prototype.computeTorque = function (torque) {
+            var metric = this.body.metric;
+            this.computePosition(torque); // torque = x
+            this.computeForce(this.$temp2); // temp2 = F
+            metric.subVector(torque, this.body.X); // torque = x - X
+            metric.ext(torque, this.$temp2); // torque = (x - X) ^ F
         };
         Object.defineProperty(Force.prototype, "F", {
             get: function () {
@@ -5136,55 +5198,6 @@
             enumerable: false,
             configurable: true
         });
-        /**
-         * Computes the point of application of the force in world coordinates.
-         *
-         * @param position (output)
-         */
-        Force.prototype.computePosition = function (position) {
-            // TODO: Just use the output variable directly...
-            var metric = this.body.metric;
-            switch (this.locationCoordType) {
-                case LOCAL: {
-                    metric.copyVector(this.location, this.$temp1);
-                    // We could subtract the body center-of-mass in body coordinates here.
-                    // Instead we assume that it is always zero.
-                    try {
-                        metric.rotate(this.$temp1, this.body.R);
-                    }
-                    catch (e) {
-                        throw new Error("this.body.R=" + this.body.R + ". Cause: " + e);
-                    }
-                    metric.addVector(this.$temp1, this.body.X);
-                    metric.writeVector(this.$temp1, position);
-                    break;
-                }
-                case WORLD: {
-                    metric.copyVector(this.location, this.$temp1);
-                    metric.writeVector(this.$temp1, position);
-                    break;
-                }
-                default: {
-                    throw new Error("Force.locationCoordType must be LOCAL (0) or WORLD (1).");
-                }
-            }
-        };
-        /**
-         * Computes the torque, i.e. moment of the force about the center of mass (bivector).
-         * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
-         * Torque = r ^ F because r = x - X
-         *
-         * @param torque (output)
-         */
-        Force.prototype.computeTorque = function (torque) {
-            var metric = this.body.metric;
-            // TODO: Just use the output variable directly...
-            this.computePosition(this.$temp1); // temp1 = x
-            this.computeForce(this.$temp2); // temp2 = F
-            metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
-            metric.ext(this.$temp1, this.$temp2); // temp1 = (x - X) ^ F 
-            metric.write(this.$temp1, torque); // torque = (x - X) ^ F
-        };
         return Force;
     }(AbstractSimObject));
 

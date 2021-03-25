@@ -45,7 +45,6 @@ class MyForceLaw1 implements ForceLaw<Geometric1> {
         const Θ = this.body.X.x;
         const cosΘ = Math.cos(Θ);
         this.force.F.zero().addVector({ x: cosΘ }).neg();
-        console.log(`F=>${this.force.F}`);
         return this.$forces;
     }
     disconnect(): void {
@@ -855,7 +854,7 @@ describe("engine", function () {
             sim.advance(Δt.a, Δt.uom);
             expect(true).toBe(true);
         });
-        xit("Motion on a Circle (Engine1)", function () {
+        it("Motion on a Circle (Engine1)", function () {
             const sim = new Engine1();
             const Δt = 0.001;
 
@@ -867,7 +866,6 @@ describe("engine", function () {
             sim.addForceLaw(forceLaw);
 
             for (let i = 0; i < 10; i++) {
-                // console.log(`bead.X=>${bead.X}`);
                 sim.advance(Δt);
             }
 
@@ -885,8 +883,6 @@ describe("engine", function () {
             sim.addForceLaw(forceLaw);
 
             for (let i = 0; i < 10; i++) {
-                // console.log(`bead.X=>${bead.X}`);
-                // console.log(`bead.P=>${bead.P}`);
                 sim.advance(Δt);
             }
 

@@ -5,7 +5,7 @@ import { ForceBody } from './ForceBody';
 /**
  * @hidden
  */
-export abstract class Force<T> extends AbstractSimObject {
+export class Force<T> extends AbstractSimObject {
     /**
      * The point of application of the force.
      */
@@ -13,7 +13,7 @@ export abstract class Force<T> extends AbstractSimObject {
     /**
      * 
      */
-    public locationCoordType: CoordType;
+    private $locationCoordType: CoordType;
     /**
      * The force vector, may be in local or world coordinates.
      */
@@ -21,7 +21,7 @@ export abstract class Force<T> extends AbstractSimObject {
     /**
      * 
      */
-    public vectorCoordType: CoordType;
+    private $vectorCoordType: CoordType;
 
     private readonly $temp1: T;
     private readonly $temp2: T;
@@ -34,13 +34,39 @@ export abstract class Force<T> extends AbstractSimObject {
         const metric = body.metric;
 
         this.location = metric.zero();
-        this.locationCoordType = WORLD;
+        this.$locationCoordType = LOCAL;
 
         this.vector = metric.zero();
-        this.vectorCoordType = WORLD;
+        this.$vectorCoordType = WORLD;
 
         this.$temp1 = metric.zero();
         this.$temp2 = metric.zero();
+    }
+
+    /**
+     * 
+     */
+    get locationCoordType(): CoordType {
+        return this.$locationCoordType;
+    }
+    set locationCoordType(locationCoordType: CoordType) {
+        if (locationCoordType !== LOCAL && locationCoordType !== WORLD) {
+            throw new Error("locationCoordType must be LOCAL (0) or WORLD (1).");
+        }
+        this.$locationCoordType = locationCoordType;
+    }
+
+    /**
+     * 
+     */
+    get vectorCoordType(): CoordType {
+        return this.$vectorCoordType;
+    }
+    set vectorCoordType(vectorCoordType: CoordType) {
+        if (vectorCoordType !== LOCAL && vectorCoordType !== WORLD) {
+            throw new Error("vectorCoordType must be LOCAL (0) or WORLD (1).");
+        }
+        this.$vectorCoordType = vectorCoordType;
     }
 
     /**
@@ -51,70 +77,44 @@ export abstract class Force<T> extends AbstractSimObject {
     }
 
     /**
-     * Computes the force being applied (vector) in WORLD coordinates.
-     * 
-     * @param force (output)
-     */
-    computeForce(force: T): void {
-        // TODO: Just use the output variable directly...
-        const metric = this.body.metric;
-        switch (this.vectorCoordType) {
-            case LOCAL: {
-                metric.copyVector(this.vector, this.$temp2);
-                metric.rotate(this.$temp2, this.body.R);
-                metric.writeVector(this.$temp2, force);
-                break;
-            }
-            case WORLD: {
-                metric.copyVector(this.vector, this.$temp2);
-                metric.writeVector(this.$temp2, force);
-                break;
-            }
-            default: {
-                throw new Error(`Force.vectorCoordType must be LOCAL (0) or WORLD (1).`);
-            }
-        }
-    }
-
-    get F(): T {
-        this.computeForce(this.$temp2);
-        return this.$temp2;
-    }
-
-    get x(): T {
-        this.computePosition(this.$temp1);
-        return this.$temp1;
-    }
-
-    /**
      * Computes the point of application of the force in world coordinates.
      * 
      * @param position (output)
      */
     computePosition(position: T): void {
-        // TODO: Just use the output variable directly...
         const metric = this.body.metric;
-        switch (this.locationCoordType) {
+        switch (this.$locationCoordType) {
             case LOCAL: {
-                metric.copyVector(this.location, this.$temp1);
+                metric.copyVector(this.location, position);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                try {
-                    metric.rotate(this.$temp1, this.body.R);
-                } catch (e) {
-                    throw new Error(`this.body.R=${this.body.R}. Cause: ${e}`);
-                }
-                metric.addVector(this.$temp1, this.body.X);
-                metric.writeVector(this.$temp1, position);
+                metric.rotate(position, this.body.R);
+                metric.addVector(position, this.body.X);
                 break;
             }
             case WORLD: {
-                metric.copyVector(this.location, this.$temp1);
-                metric.writeVector(this.$temp1, position);
+                metric.copyVector(this.location, position);
                 break;
             }
-            default: {
-                throw new Error(`Force.locationCoordType must be LOCAL (0) or WORLD (1).`);
+        }
+    }
+
+    /**
+     * Computes the force being applied (vector) in WORLD coordinates.
+     * 
+     * @param force (output)
+     */
+    computeForce(force: T): void {
+        const metric = this.body.metric;
+        switch (this.$vectorCoordType) {
+            case LOCAL: {
+                metric.copyVector(this.vector, force);
+                metric.rotate(force, this.body.R);
+                break;
+            }
+            case WORLD: {
+                metric.copyVector(this.vector, force);
+                break;
             }
         }
     }
@@ -128,11 +128,19 @@ export abstract class Force<T> extends AbstractSimObject {
      */
     computeTorque(torque: T): void {
         const metric = this.body.metric;
-        // TODO: Just use the output variable directly...
-        this.computePosition(this.$temp1);          // temp1 = x
-        this.computeForce(this.$temp2);             // temp2 = F
-        metric.subVector(this.$temp1, this.body.X); // temp1 = x - X
-        metric.ext(this.$temp1, this.$temp2);       // temp1 = (x - X) ^ F 
-        metric.write(this.$temp1, torque);          // torque = (x - X) ^ F
+        this.computePosition(torque);          // torque = x
+        this.computeForce(this.$temp2);        // temp2 = F
+        metric.subVector(torque, this.body.X); // torque = x - X
+        metric.ext(torque, this.$temp2);       // torque = (x - X) ^ F
+    }
+
+    get F(): T {
+        this.computeForce(this.$temp2);
+        return this.$temp2;
+    }
+
+    get x(): T {
+        this.computePosition(this.$temp1);
+        return this.$temp1;
     }
 }
