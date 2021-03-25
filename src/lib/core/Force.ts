@@ -7,7 +7,7 @@ import { ForceBody } from './ForceBody';
  */
 export abstract class Force<T> extends AbstractSimObject {
     /**
-     * 
+     * The point of application of the force.
      */
     public readonly location: T;
     /**
@@ -15,7 +15,6 @@ export abstract class Force<T> extends AbstractSimObject {
      */
     public locationCoordType: CoordType;
     /**
-     * TODO: Call value or measure?
      * The force vector, may be in local or world coordinates.
      */
     public readonly vector: T;
@@ -52,7 +51,7 @@ export abstract class Force<T> extends AbstractSimObject {
     }
 
     /**
-     * Computes the force being applied (vector).
+     * Computes the force being applied (vector) in WORLD coordinates.
      * 
      * @param force (output)
      */
@@ -124,6 +123,8 @@ export abstract class Force<T> extends AbstractSimObject {
      * Computes the torque, i.e. moment of the force about the center of mass (bivector).
      * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
      * Torque = r ^ F because r = x - X
+     * 
+     * @param torque (output)
      */
     computeTorque(torque: T): void {
         const metric = this.body.metric;

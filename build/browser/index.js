@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-24';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.73';
+            this.VERSION = '1.0.74';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5096,7 +5096,7 @@
             return this.body;
         };
         /**
-         * Computes the force being applied (vector).
+         * Computes the force being applied (vector) in WORLD coordinates.
          *
          * @param force (output)
          */
@@ -5173,6 +5173,8 @@
          * Computes the torque, i.e. moment of the force about the center of mass (bivector).
          * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
          * Torque = r ^ F because r = x - X
+         *
+         * @param torque (output)
          */
         Force.prototype.computeTorque = function (torque) {
             var metric = this.body.metric;

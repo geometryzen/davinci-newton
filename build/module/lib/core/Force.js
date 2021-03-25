@@ -28,7 +28,7 @@ var Force = /** @class */ (function (_super) {
         return this.body;
     };
     /**
-     * Computes the force being applied (vector).
+     * Computes the force being applied (vector) in WORLD coordinates.
      *
      * @param force (output)
      */
@@ -105,6 +105,8 @@ var Force = /** @class */ (function (_super) {
      * Computes the torque, i.e. moment of the force about the center of mass (bivector).
      * Torque = (x - X) ^ F, so the torque is being computed with center of mass as origin.
      * Torque = r ^ F because r = x - X
+     *
+     * @param torque (output)
      */
     Force.prototype.computeTorque = function (torque) {
         var metric = this.body.metric;
