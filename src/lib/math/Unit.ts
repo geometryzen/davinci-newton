@@ -542,7 +542,7 @@ export class Unit {
    * @param uom The unit of measure.
    * @returns `true` if the uom is one or if it is undefined.
    */
-  static isOne(uom: Unit): boolean {
+  static isOne(uom: Unit | undefined): boolean {
     if (uom === void 0) {
       return true;
     }
@@ -557,7 +557,7 @@ export class Unit {
   /**
    * @param uom The unit of measure that must be dimensionless.
    */
-  static assertDimensionless(uom: Unit): void {
+  static assertDimensionless(uom: Unit | undefined): void {
     if (!Unit.isOne(uom)) {
       throw new Error(`uom ${uom} must be dimensionless.`);
     }
@@ -568,7 +568,7 @@ export class Unit {
    * @param rhs
    * @returns
    */
-  static compatible(lhs: Unit, rhs: Unit): Unit | undefined {
+  static compatible(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined {
     if (lhs) {
       if (rhs) {
         return lhs.compatible(rhs);
@@ -597,7 +597,7 @@ export class Unit {
     }
   }
 
-  static isCompatible(lhs: Unit, rhs: Unit): boolean {
+  static isCompatible(lhs: Unit | undefined, rhs: Unit | undefined): boolean {
     if (lhs) {
       if (rhs) {
         return lhs.isCompatible(rhs);
@@ -631,7 +631,7 @@ export class Unit {
    * @param rhs
    * @returns
    */
-  static mul(lhs: Unit, rhs: Unit): Unit | undefined {
+  static mul(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined {
     if (lhs) {
       if (rhs) {
         return lhs.mul(rhs);
@@ -655,7 +655,7 @@ export class Unit {
    * @param lhs
    * @param rhs
    */
-  static div(lhs: Unit, rhs: Unit): Unit {
+  static div(lhs: Unit | undefined, rhs: Unit | undefined): Unit {
     if (lhs) {
       if (rhs) {
         return lhs.div(rhs);

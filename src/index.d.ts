@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.75
+// Type definitions for davinci-newton 1.0.76
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -268,35 +268,39 @@ export class Unit {
     /**
      * 
      */
-    static assertDimensionless(uom: Unit): void;
+    static assertDimensionless(uom: Unit | undefined): void;
 
     /**
      * Returns the compatible unit of measure or throws an error if the units are not compatible.
      * If either argument is undefined or null it is considered to be equal to unity.
      * This function should be used when adding or subtracting measures.
      */
-    static compatible(lhs: Unit, rhs: Unit): Unit;
+    static compatible(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
 
     /**
      * Returns the quotient of the two units of measure.
      * If either argument is undefined or null it is considered to be equal to unity.
      * This function should be used when dividing measures.
      */
-    static div(lhs: Unit, rhs: Unit): Unit;
+    static div(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
 
     /**
      * Computes the multiplicative inverse of the specified unit of measure.
      */
     static inv(uom: Unit): Unit;
 
-    static isOne(uom: Unit): boolean;
+    /**
+     * @param uom The unit of measure.
+     * @returns `true` if the uom is one or if it is undefined.
+     */
+    static isOne(uom: Unit | undefined): boolean;
 
     /**
      * Returns the product of the two units of measure.
      * If either argument is undefined or null it is considered to be equal to unity.
      * This function should be used when multiplying measures.
      */
-    static mul(lhs: Unit, rhs: Unit): Unit;
+    static mul(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
 
     static mustBeUnit(name: string, uom: Unit): Unit;
 

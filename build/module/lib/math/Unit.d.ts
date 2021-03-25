@@ -152,29 +152,29 @@ export declare class Unit {
      * @param uom The unit of measure.
      * @returns `true` if the uom is one or if it is undefined.
      */
-    static isOne(uom: Unit): boolean;
+    static isOne(uom: Unit | undefined): boolean;
     /**
      * @param uom The unit of measure that must be dimensionless.
      */
-    static assertDimensionless(uom: Unit): void;
+    static assertDimensionless(uom: Unit | undefined): void;
     /**
      * @param lhs
      * @param rhs
      * @returns
      */
-    static compatible(lhs: Unit, rhs: Unit): Unit | undefined;
-    static isCompatible(lhs: Unit, rhs: Unit): boolean;
+    static compatible(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
+    static isCompatible(lhs: Unit | undefined, rhs: Unit | undefined): boolean;
     /**
      * @param lhs
      * @param rhs
      * @returns
      */
-    static mul(lhs: Unit, rhs: Unit): Unit | undefined;
+    static mul(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
     /**
      * @param lhs
      * @param rhs
      */
-    static div(lhs: Unit, rhs: Unit): Unit;
+    static div(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
     /**
      * Computes the multiplicative inverse of the specified unit of measure.
      */
