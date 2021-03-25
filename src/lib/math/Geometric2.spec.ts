@@ -36,7 +36,7 @@ describe("Geometric2", function () {
         });
         it("should throw Error when coords.length is not 4.", function () {
             expect(function () {
-                const M = new Geometric2([]);
+                const M = new Geometric2([] as unknown[] as [number, number, number, number]);
                 M.toString();
             }).toThrowError("coords.length must be 4");
         });

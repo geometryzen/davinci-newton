@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-24';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.72';
+            this.VERSION = '1.0.73';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5082,7 +5082,9 @@
             _this.body = body;
             var metric = body.metric;
             _this.location = metric.zero();
+            _this.locationCoordType = WORLD;
             _this.vector = metric.zero();
+            _this.vectorCoordType = WORLD;
             _this.$temp1 = metric.zero();
             _this.$temp2 = metric.zero();
             return _this;
@@ -5112,6 +5114,9 @@
                     metric.copyVector(this.vector, this.$temp2);
                     metric.writeVector(this.$temp2, force);
                     break;
+                }
+                default: {
+                    throw new Error("Force.vectorCoordType must be LOCAL (0) or WORLD (1).");
                 }
             }
         };
@@ -5158,6 +5163,9 @@
                     metric.copyVector(this.location, this.$temp1);
                     metric.writeVector(this.$temp1, position);
                     break;
+                }
+                default: {
+                    throw new Error("Force.locationCoordType must be LOCAL (0) or WORLD (1).");
                 }
             }
         };

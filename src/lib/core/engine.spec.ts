@@ -1,11 +1,14 @@
 import { Block1 } from '../engine1D/Block1';
 import { Engine1 } from '../engine1D/Engine1';
+import { Force1 } from '../engine1D/Force1';
+import { Particle1 } from '../engine1D/Particle1';
 import { Block2 } from '../engine2D/Block2';
 import { ConstantForceLaw2 } from '../engine2D/ConstantForceLaw2';
 import { Disc2 } from '../engine2D/Disc2';
 import { Dynamics2 } from '../engine2D/Dynamics2';
 import { Engine2 } from '../engine2D/Engine2';
 import { Euclidean2 } from '../engine2D/Euclidean2';
+import { Force2 } from '../engine2D/Force2';
 import { LinearDamper2 } from '../engine2D/LinearDamper2';
 import { Particle2 } from '../engine2D/Particle2';
 import { Polygon2 } from '../engine2D/Polygon2';
@@ -23,7 +26,65 @@ import { Unit } from '../math/Unit';
 import { ConstantForceLaw } from './ConstantForceLaw';
 import { ConstantTorqueLaw } from './ConstantTorqueLaw';
 import { Engine } from './Engine';
+import { Force } from './Force';
+import { ForceLaw } from './ForceLaw';
 import { Spring } from './Spring';
+
+class MyForceLaw1 implements ForceLaw<Geometric1> {
+    expireTime: number;
+    private readonly force: Force1;
+    private readonly $forces: [Force1];
+    constructor(private readonly body: Particle1) {
+        this.force = new Force1(body);
+        this.$forces = [this.force];
+    }
+    get forces(): Force<Geometric1>[] {
+        return this.$forces;
+    }
+    updateForces(): Force<Geometric1>[] {
+        const Θ = this.body.X.x;
+        const cosΘ = Math.cos(Θ);
+        this.force.F.zero().addVector({ x: cosΘ }).neg();
+        console.log(`F=>${this.force.F}`);
+        return this.$forces;
+    }
+    disconnect(): void {
+        // Do nothing.
+    }
+    potentialEnergy(): Geometric1 {
+        return new Geometric1();
+    }
+}
+
+class MyForceLaw2 implements ForceLaw<Geometric2> {
+    expireTime: number;
+    private readonly force: Force2;
+    private readonly $forces: [Force2];
+    constructor(private readonly body: Particle2) {
+        this.force = new Force2(body);
+        console.log(this.force.locationCoordType);
+        console.log(this.force.vectorCoordType);
+        this.$forces = [this.force];
+    }
+    get forces(): Force<Geometric2>[] {
+        return this.$forces;
+    }
+    updateForces(): Force<Geometric2>[] {
+        // console.log(`BEFORE F=>${this.force.F}`);
+        const Θ = this.body.X.x;
+        const cosΘ = Math.cos(Θ);
+        this.force.vector.zero().addVector({ x: cosΘ, y: 0 }).neg();
+        this.force.location.copyVector(this.body.X);
+        // console.log(`AFTER F=>${this.force.F}`);
+        return this.$forces;
+    }
+    disconnect(): void {
+        // Do nothing.
+    }
+    potentialEnergy(): Geometric2 {
+        return new Geometric2();
+    }
+}
 
 describe("engine", function () {
     describe("static", function () {
@@ -792,6 +853,43 @@ describe("engine", function () {
 
             sim.addBody(blockA);
             sim.advance(Δt.a, Δt.uom);
+            expect(true).toBe(true);
+        });
+        xit("Motion on a Circle (Engine1)", function () {
+            const sim = new Engine1();
+            const Δt = 0.001;
+
+            const bead = new Particle1(Geometric1.scalar(1), new Geometric1([0, 0]));
+
+            const forceLaw = new MyForceLaw1(bead);
+
+            sim.addBody(bead);
+            sim.addForceLaw(forceLaw);
+
+            for (let i = 0; i < 10; i++) {
+                // console.log(`bead.X=>${bead.X}`);
+                sim.advance(Δt);
+            }
+
+            expect(true).toBe(true);
+        });
+        it("Motion on a Circle (Engine2)", function () {
+            const sim = new Engine2();
+            const Δt = 0.001;
+
+            const bead = new Particle2(Geometric2.scalar(1), new Geometric2([0, 0, 0, 0]));
+
+            const forceLaw = new MyForceLaw2(bead);
+
+            sim.addBody(bead);
+            sim.addForceLaw(forceLaw);
+
+            for (let i = 0; i < 10; i++) {
+                // console.log(`bead.X=>${bead.X}`);
+                // console.log(`bead.P=>${bead.P}`);
+                sim.advance(Δt);
+            }
+
             expect(true).toBe(true);
         });
     });

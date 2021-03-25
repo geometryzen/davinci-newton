@@ -137,7 +137,7 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * Do not call this constructor. Use the static construction methods instead.
      * The multivector is constructed in the unlocked (mutable) state.
      */
-    constructor(coords?: number[], uom?: Unit);
+    constructor(coords?: [number, number, number, number], uom?: Unit);
     adj(): Geometric2;
     isScalar(): boolean;
     scale(α: number): Geometric2;

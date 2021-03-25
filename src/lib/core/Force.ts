@@ -33,8 +33,13 @@ export abstract class Force<T> extends AbstractSimObject {
     constructor(private readonly body: ForceBody<T>) {
         super();
         const metric = body.metric;
+
         this.location = metric.zero();
+        this.locationCoordType = WORLD;
+
         this.vector = metric.zero();
+        this.vectorCoordType = WORLD;
+
         this.$temp1 = metric.zero();
         this.$temp2 = metric.zero();
     }
@@ -65,6 +70,9 @@ export abstract class Force<T> extends AbstractSimObject {
                 metric.copyVector(this.vector, this.$temp2);
                 metric.writeVector(this.$temp2, force);
                 break;
+            }
+            default: {
+                throw new Error(`Force.vectorCoordType must be LOCAL (0) or WORLD (1).`);
             }
         }
     }
@@ -105,6 +113,9 @@ export abstract class Force<T> extends AbstractSimObject {
                 metric.copyVector(this.location, this.$temp1);
                 metric.writeVector(this.$temp1, position);
                 break;
+            }
+            default: {
+                throw new Error(`Force.locationCoordType must be LOCAL (0) or WORLD (1).`);
             }
         }
     }

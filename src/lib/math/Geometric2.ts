@@ -50,14 +50,14 @@ BASIS_LABELS[COORD_B] = 'e12';
 /**
  * @hidden
  */
-const zero = function zero(): number[] {
+const zero = function zero(): [number, number, number, number] {
     return [0, 0, 0, 0];
 };
 
 /**
  * @hidden
  */
-const scalar = function scalar(a: number): number[] {
+const scalar = function scalar(a: number): [number, number, number, number] {
     const coords = zero();
     coords[COORD_A] = a;
     return coords;
@@ -66,7 +66,7 @@ const scalar = function scalar(a: number): number[] {
 /**
  * @hidden
  */
-const vector = function vector(x: number, y: number): number[] {
+const vector = function vector(x: number, y: number): [number, number, number, number] {
     const coords = zero();
     coords[COORD_X] = x;
     coords[COORD_Y] = y;
@@ -76,7 +76,7 @@ const vector = function vector(x: number, y: number): number[] {
 /**
  * @hidden
  */
-const bivector = function bivector(b: number): number[] {
+const bivector = function bivector(b: number): [number, number, number, number] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
@@ -85,7 +85,7 @@ const bivector = function bivector(b: number): number[] {
 /**
  * @hidden
  */
-const pseudo = function pseudo(b: number): number[] {
+const pseudo = function pseudo(b: number): [number, number, number, number] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
@@ -94,7 +94,7 @@ const pseudo = function pseudo(b: number): number[] {
 /**
  * @hidden
  */
-const spinor = function spinor(a: number, b: number): number[] {
+const spinor = function spinor(a: number, b: number): [number, number, number, number] {
     const coords = zero();
     coords[COORD_A] = a;
     coords[COORD_B] = b;
@@ -105,7 +105,7 @@ const spinor = function spinor(a: number, b: number): number[] {
  * Coordinates corresponding to basis labels.
  * @hidden
  */
-const coordinates = function coordinates(m: Geometric): number[] {
+const coordinates = function coordinates(m: Geometric): [number, number, number, number] {
     const coords = zero();
     coords[COORD_A] = m.a;
     coords[COORD_X] = m.x;
@@ -325,7 +325,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * Do not call this constructor. Use the static construction methods instead.
      * The multivector is constructed in the unlocked (mutable) state.
      */
-    constructor(coords: number[] = zero(), uom?: Unit) {
+    constructor(coords: [number, number, number, number] = zero(), uom?: Unit) {
         if (coords.length !== 4) {
             throw new Error("coords.length must be 4");
         }

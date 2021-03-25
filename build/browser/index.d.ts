@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.72
+// Type definitions for davinci-newton 1.0.73
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -597,6 +597,22 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
 }
 
 export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geometric1, SpinorE1, VectorE1> {
+
+    /**
+     * Constructs a new scalar from a number and a unit of measure.
+     * The multivector (scalar) is mutable (unlocked).
+     * @param a The coordinate corresponding to the scalar component of the multivector. 
+     * @param uom The optional unit of measure.
+     */
+    static scalar(a: number, uom?: Unit): Geometric1;
+
+    /**
+     * Constructs a new vector from Cartesian coordinates and a unit of measure.
+     * The multivector (vector) is mutable (unlocked).
+     * @param x The coordinate corresponding to the e1 basis vector.
+     * @param uom The optional unit of measure.
+     */
+    static vector(x: number, uom?: Unit): Geometric1;
 
     /**
      * Standard Basis vector corresponding to the x coordinate.

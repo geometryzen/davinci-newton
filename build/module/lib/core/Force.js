@@ -14,7 +14,9 @@ var Force = /** @class */ (function (_super) {
         _this.body = body;
         var metric = body.metric;
         _this.location = metric.zero();
+        _this.locationCoordType = WORLD;
         _this.vector = metric.zero();
+        _this.vectorCoordType = WORLD;
         _this.$temp1 = metric.zero();
         _this.$temp2 = metric.zero();
         return _this;
@@ -44,6 +46,9 @@ var Force = /** @class */ (function (_super) {
                 metric.copyVector(this.vector, this.$temp2);
                 metric.writeVector(this.$temp2, force);
                 break;
+            }
+            default: {
+                throw new Error("Force.vectorCoordType must be LOCAL (0) or WORLD (1).");
             }
         }
     };
@@ -90,6 +95,9 @@ var Force = /** @class */ (function (_super) {
                 metric.copyVector(this.location, this.$temp1);
                 metric.writeVector(this.$temp1, position);
                 break;
+            }
+            default: {
+                throw new Error("Force.locationCoordType must be LOCAL (0) or WORLD (1).");
             }
         }
     };
