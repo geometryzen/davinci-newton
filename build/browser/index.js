@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-03-25';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.76';
+            this.VERSION = '1.0.77';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5544,7 +5544,11 @@
                 return this.$centerOfMassLocal.get();
             },
             set: function (centerOfMassLocal) {
-                mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+                var metric = this.metric;
+                if (!metric.isVector(centerOfMassLocal)) {
+                    throw new Error("measure must be a vector in assignment to property centerOfMassLocal, but was " + centerOfMassLocal + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, metric);
                 this.$centerOfMassLocal.set(centerOfMassLocal);
             },
             enumerable: false,
@@ -5560,7 +5564,11 @@
                 return this.$mass.get();
             },
             set: function (M) {
-                mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
+                var metric = this.metric;
+                if (!metric.isScalar(M)) {
+                    throw new Error("measure must be a scalar in assignment to property M (mass), but was " + M + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, metric);
                 this.$mass.set(M);
                 this.updateInertiaTensor();
             },
@@ -5577,7 +5585,11 @@
                 return this.$charge.get();
             },
             set: function (Q) {
-                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
+                var metric = this.metric;
+                if (!metric.isScalar(Q)) {
+                    throw new Error("measure must be a scalar in assignment to property Q (electric charge), but was " + Q + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, metric);
                 this.$charge.set(Q);
             },
             enumerable: false,
@@ -5655,6 +5667,9 @@
             },
             set: function (position) {
                 var metric = this.metric;
+                if (!metric.isVector(position)) {
+                    throw new Error("measure must be a vector in assignment to property X (position), but was " + position + ".");
+                }
                 mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
                 metric.copy(position, this.$X);
             },
@@ -5671,8 +5686,12 @@
                 return this.$R;
             },
             set: function (attitude) {
-                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-                this.metric.copy(attitude, this.$R);
+                var metric = this.metric;
+                if (!metric.isSpinor(attitude)) {
+                    throw new Error("measure must be a spinor in assignment to property R (attitude), but was " + attitude + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, metric);
+                metric.copy(attitude, this.$R);
             },
             enumerable: false,
             configurable: true
@@ -5686,9 +5705,13 @@
             get: function () {
                 return this.$P;
             },
-            set: function (momentum) {
-                mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-                this.metric.copy(momentum, this.$P);
+            set: function (linearMomentum) {
+                var metric = this.metric;
+                if (!metric.isVector(linearMomentum)) {
+                    throw new Error("measure must be a vector in assignment to property P (linear momentum), but was " + linearMomentum + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('linearMomentum', linearMomentum, Unit.KILOGRAM_METER_PER_SECOND, metric);
+                metric.copy(linearMomentum, this.$P);
             },
             enumerable: false,
             configurable: true
@@ -5703,8 +5726,12 @@
                 return this.$L;
             },
             set: function (angularMomentum) {
-                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-                this.metric.copy(angularMomentum, this.$L);
+                var metric = this.metric;
+                if (!metric.isBivector(angularMomentum)) {
+                    throw new Error("measure must be a bivector in assignment to property L (angular momentum), but was " + angularMomentum + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, metric);
+                metric.copy(angularMomentum, this.$L);
             },
             enumerable: false,
             configurable: true
@@ -5720,8 +5747,12 @@
                 return this.$Ω;
             },
             set: function (angularVelocity) {
-                mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-                this.metric.copy(angularVelocity, this.$Ω);
+                var metric = this.metric;
+                if (!metric.isBivector(angularVelocity)) {
+                    throw new Error("measure must be a bivector in assignment to property \u03A9 (angular velocity), but was " + angularVelocity + ".");
+                }
+                mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, metric);
+                metric.copy(angularVelocity, this.$Ω);
             },
             enumerable: false,
             configurable: true
@@ -6647,11 +6678,25 @@
                 return this;
             }
         };
+        Geometric1.prototype.isBivector = function () {
+            return this.coords[COORD_A$1] === 0 && this.coords[COORD_X$4] === 0;
+        };
+        Geometric1.prototype.isOne = function () {
+            return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.unit);
+        };
         Geometric1.prototype.isScalar = function () {
-            return isScalar$1(this);
+            return this.coords[COORD_X$4] === 0;
         };
         Geometric1.prototype.isSpinor = function () {
-            return this.x === 0;
+            if (Unit.isOne(this.unit)) {
+                return this.coords[COORD_X$4] === 0;
+            }
+            else {
+                return false;
+            }
+        };
+        Geometric1.prototype.isVector = function () {
+            return this.coords[COORD_A$1] === 0;
         };
         Geometric1.prototype.log = function () {
             if (this.lock_ !== UNLOCKED$2) {
@@ -7371,9 +7416,6 @@
                 return this;
             }
         };
-        Geometric1.prototype.isOne = function () {
-            return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.unit);
-        };
         Object.defineProperty(Geometric1.prototype, "a", {
             get: function () {
                 return this.coords[COORD_A$1];
@@ -7844,8 +7886,20 @@
         Euclidean1.prototype.invertMatrix = function (m) {
             return new Matrix0(new Float32Array([]), Unit.div(Unit.ONE, m.uom));
         };
+        Euclidean1.prototype.isBivector = function (mv) {
+            return mv.isBivector();
+        };
+        Euclidean1.prototype.isScalar = function (mv) {
+            return mv.isScalar();
+        };
+        Euclidean1.prototype.isSpinor = function (mv) {
+            return mv.isSpinor();
+        };
+        Euclidean1.prototype.isVector = function (mv) {
+            return mv.isVector();
+        };
         Euclidean1.prototype.isZero = function (mv) {
-            return mv.a === 0 && mv.x === 0;
+            return mv.isZero();
         };
         Euclidean1.prototype.lock = function (mv) {
             return mv.lock();
@@ -8784,9 +8838,6 @@
         Geometric2.prototype.adj = function () {
             throw new Error(notImplemented('adj').message);
         };
-        Geometric2.prototype.isScalar = function () {
-            return isScalar(this);
-        };
         Geometric2.prototype.scale = function (α) {
             return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
         };
@@ -9283,17 +9334,6 @@
                 }
                 return this;
             }
-        };
-        Geometric2.prototype.isOne = function () {
-            if (Unit.isOne(this.uom)) {
-                return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
-            }
-            else {
-                return false;
-            }
-        };
-        Geometric2.prototype.isSpinor = function () {
-            return this.x === 0 && this.y === 0;
         };
         Geometric2.prototype.I = function () {
             this.a = 0;
@@ -10000,6 +10040,31 @@
                 return this;
             }
         };
+        Geometric2.prototype.isBivector = function () {
+            return this.a === 0 && this.x === 0 && this.y === 0;
+        };
+        Geometric2.prototype.isOne = function () {
+            if (Unit.isOne(this.uom)) {
+                return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
+            }
+            else {
+                return false;
+            }
+        };
+        Geometric2.prototype.isScalar = function () {
+            return isScalar(this);
+        };
+        Geometric2.prototype.isSpinor = function () {
+            if (Unit.isOne(this.uom)) {
+                return this.x === 0 && this.y === 0;
+            }
+            else {
+                return false;
+            }
+        };
+        Geometric2.prototype.isVector = function () {
+            return this.a === 0 && this.b === 0;
+        };
         /**
          * Determines whether this multivector is exactly 0 (zero).
          */
@@ -10634,6 +10699,18 @@
                 throw new Error("matrix dimensions must be 1.");
             }
             return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
+        };
+        Euclidean2.prototype.isBivector = function (mv) {
+            return mv.isBivector();
+        };
+        Euclidean2.prototype.isScalar = function (mv) {
+            return mv.isScalar();
+        };
+        Euclidean2.prototype.isSpinor = function (mv) {
+            return mv.isSpinor();
+        };
+        Euclidean2.prototype.isVector = function (mv) {
+            return mv.isVector();
         };
         Euclidean2.prototype.isZero = function (mv) {
             return mv.isZero();
@@ -11356,7 +11433,7 @@
      */
     function mustBeAtLeastThreePoints(xs) {
         var N = xs.length;
-        if (N > 3) ;
+        if (N >= 3) ;
         else {
             throw new Error("must be at least 3 points.");
         }
@@ -12612,9 +12689,6 @@
         Geometric3.prototype.adj = function () {
             throw new Error('Method not implemented.');
         };
-        Geometric3.prototype.isScalar = function () {
-            throw new Error('Method not implemented.');
-        };
         Geometric3.prototype.scale = function (α) {
             throw new Error('Method not implemented.');
         };
@@ -13459,6 +13533,9 @@
                 return this;
             }
         };
+        Geometric3.prototype.isBivector = function () {
+            return this.a === 0 && this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+        };
         /**
          * Determines whether this multivector is exactly 1 (one).
          */
@@ -13469,6 +13546,20 @@
             else {
                 return false;
             }
+        };
+        Geometric3.prototype.isScalar = function () {
+            return this.x === 0 && this.y === 0 && this.z === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
+        };
+        Geometric3.prototype.isSpinor = function () {
+            if (Unit.isOne(this.uom)) {
+                return this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+            }
+            else {
+                return false;
+            }
+        };
+        Geometric3.prototype.isVector = function () {
+            return this.a === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
         };
         /**
          * Determines whether this multivector is exactly 0 (zero).
@@ -15251,6 +15342,18 @@
         Euclidean3.prototype.invertMatrix = function (m) {
             var I = Matrix3.zero().copy(m).inv();
             return new Mat3(I);
+        };
+        Euclidean3.prototype.isBivector = function (mv) {
+            return mv.isBivector();
+        };
+        Euclidean3.prototype.isScalar = function (mv) {
+            return mv.isScalar();
+        };
+        Euclidean3.prototype.isSpinor = function (mv) {
+            return mv.isSpinor();
+        };
+        Euclidean3.prototype.isVector = function (mv) {
+            return mv.isVector();
         };
         Euclidean3.prototype.isZero = function (mv) {
             return mv.isZero();

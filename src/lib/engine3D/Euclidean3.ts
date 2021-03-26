@@ -65,6 +65,18 @@ export class Euclidean3 implements Metric<Geometric3> {
         const I = Matrix3.zero().copy(m).inv();
         return new Mat3(I);
     }
+    isBivector(mv: Geometric3): boolean {
+        return mv.isBivector();
+    }
+    isScalar(mv: Geometric3): boolean {
+        return mv.isScalar();
+    }
+    isSpinor(mv: Geometric3): boolean {
+        return mv.isSpinor();
+    }
+    isVector(mv: Geometric3): boolean {
+        return mv.isVector();
+    }
     isZero(mv: Geometric3): boolean {
         return mv.isZero();
     }

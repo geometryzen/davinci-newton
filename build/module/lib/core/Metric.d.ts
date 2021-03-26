@@ -49,6 +49,10 @@ export interface Metric<T> {
      * @returns A new matrix which is the inverse of the specified matrix.
      */
     invertMatrix(matrix: MatrixLike): MatrixLike;
+    isBivector(mv: T): boolean;
+    isScalar(mv: T): boolean;
+    isSpinor(mv: T): boolean;
+    isVector(mv: T): boolean;
     isZero(mv: T): boolean;
     /**
      * Used to change the mutability of the multivector from mutable to immutable.

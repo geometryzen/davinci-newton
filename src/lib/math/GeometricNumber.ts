@@ -71,9 +71,24 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     isOne(): boolean;
 
     /**
-     *
+     * A multivector is considered to be a scalar if all coordinates with grade other than zero are zero.
      */
     isScalar(): boolean;
+
+    /**
+     * A multivector is considered to be a spinor if all coordinates with grade other than 0 and 2 are zero.
+     */
+    isSpinor(): boolean;
+
+    /**
+     * A multivector is considered to be a vector if all coordinates with grade other than 1 are zero.
+     */
+    isVector(): boolean;
+
+    /**
+     * A multivector is considered to be a bivector if all coordinates with grade other than 2 are zero.
+     */
+    isBivector(): boolean;
 
     /**
      *

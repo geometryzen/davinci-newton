@@ -262,9 +262,6 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
     adj(): Geometric3 {
         throw new Error('Method not implemented.');
     }
-    isScalar(): boolean {
-        throw new Error('Method not implemented.');
-    }
     scale(α: number): Geometric3 {
         throw new Error('Method not implemented.');
     }
@@ -1126,6 +1123,10 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
         }
     }
 
+    isBivector(): boolean {
+        return this.a === 0 && this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+    }
+
     /**
      * Determines whether this multivector is exactly 1 (one).
      */
@@ -1136,6 +1137,22 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
         else {
             return false;
         }
+    }
+
+    isScalar(): boolean {
+        return this.x === 0 && this.y === 0 && this.z === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
+    }
+
+    isSpinor(): boolean {
+        if (Unit.isOne(this.uom)) {
+            return this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+        } else {
+            return false;
+        }
+    }
+
+    isVector(): boolean {
+        return this.a === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
     }
 
     /**

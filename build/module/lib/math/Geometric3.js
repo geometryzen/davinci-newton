@@ -227,9 +227,6 @@ var Geometric3 = /** @class */ (function () {
     Geometric3.prototype.adj = function () {
         throw new Error('Method not implemented.');
     };
-    Geometric3.prototype.isScalar = function () {
-        throw new Error('Method not implemented.');
-    };
     Geometric3.prototype.scale = function (α) {
         throw new Error('Method not implemented.');
     };
@@ -1074,6 +1071,9 @@ var Geometric3 = /** @class */ (function () {
             return this;
         }
     };
+    Geometric3.prototype.isBivector = function () {
+        return this.a === 0 && this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+    };
     /**
      * Determines whether this multivector is exactly 1 (one).
      */
@@ -1084,6 +1084,20 @@ var Geometric3 = /** @class */ (function () {
         else {
             return false;
         }
+    };
+    Geometric3.prototype.isScalar = function () {
+        return this.x === 0 && this.y === 0 && this.z === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
+    };
+    Geometric3.prototype.isSpinor = function () {
+        if (Unit.isOne(this.uom)) {
+            return this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
+        }
+        else {
+            return false;
+        }
+    };
+    Geometric3.prototype.isVector = function () {
+        return this.a === 0 && this.xy === 0 && this.yz === 0 && this.zx === 0 && this.b === 0;
     };
     /**
      * Determines whether this multivector is exactly 0 (zero).

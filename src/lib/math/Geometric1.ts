@@ -351,11 +351,24 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
+    isBivector(): boolean {
+        return this.coords[COORD_A] === 0 && this.coords[COORD_X] === 0;
+    }
+    isOne(): boolean {
+        return this.coords[COORD_A] === 1 && this.coords[COORD_X] === 0 && Unit.isOne(this.unit);
+    }
     isScalar(): boolean {
-        return isScalar(this);
+        return this.coords[COORD_X] === 0;
     }
     isSpinor(): boolean {
-        return this.x === 0;
+        if (Unit.isOne(this.unit)) {
+            return this.coords[COORD_X] === 0;
+        } else {
+            return false;
+        }
+    }
+    isVector(): boolean {
+        return this.coords[COORD_A] === 0;
     }
     log(): Geometric1 {
         if (this.lock_ !== UNLOCKED) {
@@ -1075,9 +1088,6 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
             this.uom = Unit.mul(this.uom, uom);
             return this;
         }
-    }
-    isOne(): boolean {
-        return this.coords[COORD_A] === 1 && this.coords[COORD_X] === 0 && Unit.isOne(this.unit);
     }
 
     get a(): number {

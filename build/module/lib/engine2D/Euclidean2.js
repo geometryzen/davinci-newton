@@ -65,6 +65,18 @@ var Euclidean2 = /** @class */ (function () {
         }
         return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
     };
+    Euclidean2.prototype.isBivector = function (mv) {
+        return mv.isBivector();
+    };
+    Euclidean2.prototype.isScalar = function (mv) {
+        return mv.isScalar();
+    };
+    Euclidean2.prototype.isSpinor = function (mv) {
+        return mv.isSpinor();
+    };
+    Euclidean2.prototype.isVector = function (mv) {
+        return mv.isVector();
+    };
     Euclidean2.prototype.isZero = function (mv) {
         return mv.isZero();
     };

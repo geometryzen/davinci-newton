@@ -46,7 +46,11 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$centerOfMassLocal.get();
         },
         set: function (centerOfMassLocal) {
-            mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+            var metric = this.metric;
+            if (!metric.isVector(centerOfMassLocal)) {
+                throw new Error("measure must be a vector in assignment to property centerOfMassLocal, but was " + centerOfMassLocal + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, metric);
             this.$centerOfMassLocal.set(centerOfMassLocal);
         },
         enumerable: false,
@@ -62,7 +66,11 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$mass.get();
         },
         set: function (M) {
-            mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
+            var metric = this.metric;
+            if (!metric.isScalar(M)) {
+                throw new Error("measure must be a scalar in assignment to property M (mass), but was " + M + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, metric);
             this.$mass.set(M);
             this.updateInertiaTensor();
         },
@@ -79,7 +87,11 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$charge.get();
         },
         set: function (Q) {
-            mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
+            var metric = this.metric;
+            if (!metric.isScalar(Q)) {
+                throw new Error("measure must be a scalar in assignment to property Q (electric charge), but was " + Q + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, metric);
             this.$charge.set(Q);
         },
         enumerable: false,
@@ -157,6 +169,9 @@ var RigidBody = /** @class */ (function (_super) {
         },
         set: function (position) {
             var metric = this.metric;
+            if (!metric.isVector(position)) {
+                throw new Error("measure must be a vector in assignment to property X (position), but was " + position + ".");
+            }
             mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
             metric.copy(position, this.$X);
         },
@@ -173,8 +188,12 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$R;
         },
         set: function (attitude) {
-            mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-            this.metric.copy(attitude, this.$R);
+            var metric = this.metric;
+            if (!metric.isSpinor(attitude)) {
+                throw new Error("measure must be a spinor in assignment to property R (attitude), but was " + attitude + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, metric);
+            metric.copy(attitude, this.$R);
         },
         enumerable: false,
         configurable: true
@@ -188,9 +207,13 @@ var RigidBody = /** @class */ (function (_super) {
         get: function () {
             return this.$P;
         },
-        set: function (momentum) {
-            mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-            this.metric.copy(momentum, this.$P);
+        set: function (linearMomentum) {
+            var metric = this.metric;
+            if (!metric.isVector(linearMomentum)) {
+                throw new Error("measure must be a vector in assignment to property P (linear momentum), but was " + linearMomentum + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('linearMomentum', linearMomentum, Unit.KILOGRAM_METER_PER_SECOND, metric);
+            metric.copy(linearMomentum, this.$P);
         },
         enumerable: false,
         configurable: true
@@ -205,8 +228,12 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$L;
         },
         set: function (angularMomentum) {
-            mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-            this.metric.copy(angularMomentum, this.$L);
+            var metric = this.metric;
+            if (!metric.isBivector(angularMomentum)) {
+                throw new Error("measure must be a bivector in assignment to property L (angular momentum), but was " + angularMomentum + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, metric);
+            metric.copy(angularMomentum, this.$L);
         },
         enumerable: false,
         configurable: true
@@ -222,8 +249,12 @@ var RigidBody = /** @class */ (function (_super) {
             return this.$Ω;
         },
         set: function (angularVelocity) {
-            mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-            this.metric.copy(angularVelocity, this.$Ω);
+            var metric = this.metric;
+            if (!metric.isBivector(angularVelocity)) {
+                throw new Error("measure must be a bivector in assignment to property \u03A9 (angular velocity), but was " + angularVelocity + ".");
+            }
+            mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, metric);
+            metric.copy(angularVelocity, this.$Ω);
         },
         enumerable: false,
         configurable: true

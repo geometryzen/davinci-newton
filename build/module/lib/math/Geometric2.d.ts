@@ -139,7 +139,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     constructor(coords?: [number, number, number, number], uom?: Unit);
     adj(): Geometric2;
-    isScalar(): boolean;
     scale(α: number): Geometric2;
     slerp(target: Geometric2, α: number): Geometric2;
     stress(σ: Vector): Geometric2;
@@ -207,8 +206,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     ext2(lhs: Geometric, rhs: Geometric): this;
     grade(n: number): Geometric2;
-    isOne(): boolean;
-    isSpinor(): boolean;
     I(): Geometric2;
     lco(rhs: Geometric): Geometric2;
     /**
@@ -426,6 +423,11 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @returns inverse(this)
      */
     inv(): Geometric2;
+    isBivector(): boolean;
+    isOne(): boolean;
+    isScalar(): boolean;
+    isSpinor(): boolean;
+    isVector(): boolean;
     /**
      * Determines whether this multivector is exactly 0 (zero).
      */

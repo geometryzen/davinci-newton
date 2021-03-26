@@ -66,6 +66,14 @@ export interface Metric<T> {
      */
     invertMatrix(matrix: MatrixLike): MatrixLike;
 
+    isBivector(mv: T): boolean;
+
+    isScalar(mv: T): boolean;
+
+    isSpinor(mv: T): boolean;
+
+    isVector(mv: T): boolean;
+
     isZero(mv: T): boolean;
 
     /**

@@ -25,6 +25,10 @@ export declare class Euclidean2 implements Metric<Geometric2> {
     divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2;
     identityMatrix(): MatrixLike;
     invertMatrix(m: MatrixLike): MatrixLike;
+    isBivector(mv: Geometric2): boolean;
+    isScalar(mv: Geometric2): boolean;
+    isSpinor(mv: Geometric2): boolean;
+    isVector(mv: Geometric2): boolean;
     isZero(mv: Geometric2): boolean;
     lock(mv: Geometric2): number;
     norm(mv: Geometric2): Geometric2;

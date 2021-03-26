@@ -111,8 +111,8 @@ function centerOfMass(xs: Geometric2[]) {
  */
 function mustBeAtLeastThreePoints(xs: Geometric2[]): void {
     const N = xs.length;
-    if (N > 3) {
-        // Test for non-collinear.
+    if (N >= 3) {
+        // Test for non-collinear?
     } else {
         throw new Error("must be at least 3 points.");
     }

@@ -61,6 +61,18 @@ var Euclidean3 = /** @class */ (function () {
         var I = Matrix3.zero().copy(m).inv();
         return new Mat3(I);
     };
+    Euclidean3.prototype.isBivector = function (mv) {
+        return mv.isBivector();
+    };
+    Euclidean3.prototype.isScalar = function (mv) {
+        return mv.isScalar();
+    };
+    Euclidean3.prototype.isSpinor = function (mv) {
+        return mv.isSpinor();
+    };
+    Euclidean3.prototype.isVector = function (mv) {
+        return mv.isVector();
+    };
     Euclidean3.prototype.isZero = function (mv) {
         return mv.isZero();
     };

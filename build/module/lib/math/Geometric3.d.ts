@@ -36,7 +36,6 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
     __le__(rhs: number | Geometric3 | Unit): boolean;
     __lt__(rhs: number | Geometric3 | Unit): boolean;
     adj(): Geometric3;
-    isScalar(): boolean;
     scale(α: number): Geometric3;
     slerp(target: Geometric3, α: number): Geometric3;
     /**
@@ -275,10 +274,14 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * @returns inverse(this)
      */
     inv(): Geometric3;
+    isBivector(): boolean;
     /**
      * Determines whether this multivector is exactly 1 (one).
      */
     isOne(): boolean;
+    isScalar(): boolean;
+    isSpinor(): boolean;
+    isVector(): boolean;
     /**
      * Determines whether this multivector is exactly 0 (zero).
      */

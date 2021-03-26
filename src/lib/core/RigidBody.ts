@@ -119,7 +119,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$centerOfMassLocal.get();
     }
     set centerOfMassLocal(centerOfMassLocal: T) {
-        mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, this.metric);
+        const metric = this.metric;
+        if (!metric.isVector(centerOfMassLocal)) {
+            throw new Error(`measure must be a vector in assignment to property centerOfMassLocal, but was ${centerOfMassLocal}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('centerOfMassLocal', centerOfMassLocal, Unit.METER, metric);
         this.$centerOfMassLocal.set(centerOfMassLocal);
     }
 
@@ -132,7 +136,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$mass.get();
     }
     set M(M: T) {
-        mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, this.metric);
+        const metric = this.metric;
+        if (!metric.isScalar(M)) {
+            throw new Error(`measure must be a scalar in assignment to property M (mass), but was ${M}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('M', M, Unit.KILOGRAM, metric);
         this.$mass.set(M);
         this.updateInertiaTensor();
     }
@@ -146,7 +154,11 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$charge.get();
     }
     set Q(Q: T) {
-        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, this.metric);
+        const metric = this.metric;
+        if (!metric.isScalar(Q)) {
+            throw new Error(`measure must be a scalar in assignment to property Q (electric charge), but was ${Q}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('Q', Q, Unit.COULOMB, metric);
         this.$charge.set(Q);
     }
 
@@ -217,6 +229,9 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     }
     set X(position: T) {
         const metric = this.metric;
+        if (!metric.isVector(position)) {
+            throw new Error(`measure must be a vector in assignment to property X (position), but was ${position}.`);
+        }
         mustBeDimensionlessOrCorrectUnits('position', position, Unit.METER, metric);
         metric.copy(position, this.$X);
     }
@@ -230,8 +245,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$R;
     }
     set R(attitude: T) {
-        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, this.metric);
-        this.metric.copy(attitude, this.$R);
+        const metric = this.metric;
+        if (!metric.isSpinor(attitude)) {
+            throw new Error(`measure must be a spinor in assignment to property R (attitude), but was ${attitude}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('attitude', attitude, Unit.ONE, metric);
+        metric.copy(attitude, this.$R);
     }
 
     /**
@@ -242,9 +261,13 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     get P(): T {
         return this.$P;
     }
-    set P(momentum: T) {
-        mustBeDimensionlessOrCorrectUnits('momentum', momentum, Unit.KILOGRAM_METER_PER_SECOND, this.metric);
-        this.metric.copy(momentum, this.$P);
+    set P(linearMomentum: T) {
+        const metric = this.metric;
+        if (!metric.isVector(linearMomentum)) {
+            throw new Error(`measure must be a vector in assignment to property P (linear momentum), but was ${linearMomentum}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('linearMomentum', linearMomentum, Unit.KILOGRAM_METER_PER_SECOND, metric);
+        metric.copy(linearMomentum, this.$P);
     }
 
     /**
@@ -256,8 +279,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$L;
     }
     set L(angularMomentum: T) {
-        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, this.metric);
-        this.metric.copy(angularMomentum, this.$L);
+        const metric = this.metric;
+        if (!metric.isBivector(angularMomentum)) {
+            throw new Error(`measure must be a bivector in assignment to property L (angular momentum), but was ${angularMomentum}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('angularMomentum', angularMomentum, Unit.JOULE_SECOND, metric);
+        metric.copy(angularMomentum, this.$L);
     }
 
     /**
@@ -270,8 +297,12 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         return this.$Ω;
     }
     set Ω(angularVelocity: T) {
-        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, this.metric);
-        this.metric.copy(angularVelocity, this.$Ω);
+        const metric = this.metric;
+        if (!metric.isBivector(angularVelocity)) {
+            throw new Error(`measure must be a bivector in assignment to property Ω (angular velocity), but was ${angularVelocity}.`);
+        }
+        mustBeDimensionlessOrCorrectUnits('angularVelocity', angularVelocity, Unit.INV_SECOND, metric);
+        metric.copy(angularVelocity, this.$Ω);
     }
 
     /**

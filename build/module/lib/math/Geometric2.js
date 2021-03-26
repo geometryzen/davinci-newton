@@ -199,9 +199,6 @@ var Geometric2 = /** @class */ (function () {
     Geometric2.prototype.adj = function () {
         throw new Error(notImplemented('adj').message);
     };
-    Geometric2.prototype.isScalar = function () {
-        return isScalar(this);
-    };
     Geometric2.prototype.scale = function (α) {
         return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
     };
@@ -698,17 +695,6 @@ var Geometric2 = /** @class */ (function () {
             }
             return this;
         }
-    };
-    Geometric2.prototype.isOne = function () {
-        if (Unit.isOne(this.uom)) {
-            return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
-        }
-        else {
-            return false;
-        }
-    };
-    Geometric2.prototype.isSpinor = function () {
-        return this.x === 0 && this.y === 0;
     };
     Geometric2.prototype.I = function () {
         this.a = 0;
@@ -1416,6 +1402,31 @@ var Geometric2 = /** @class */ (function () {
             this.uom = Unit.inv(this.uom);
             return this;
         }
+    };
+    Geometric2.prototype.isBivector = function () {
+        return this.a === 0 && this.x === 0 && this.y === 0;
+    };
+    Geometric2.prototype.isOne = function () {
+        if (Unit.isOne(this.uom)) {
+            return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
+        }
+        else {
+            return false;
+        }
+    };
+    Geometric2.prototype.isScalar = function () {
+        return isScalar(this);
+    };
+    Geometric2.prototype.isSpinor = function () {
+        if (Unit.isOne(this.uom)) {
+            return this.x === 0 && this.y === 0;
+        }
+        else {
+            return false;
+        }
+    };
+    Geometric2.prototype.isVector = function () {
+        return this.a === 0 && this.b === 0;
     };
     /**
      * Determines whether this multivector is exactly 0 (zero).

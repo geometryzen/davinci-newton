@@ -335,9 +335,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     adj(): Geometric2 {
         throw new Error(notImplemented('adj').message);
     }
-    isScalar(): boolean {
-        return isScalar(this);
-    }
     scale(α: number): Geometric2 {
         return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
     }
@@ -834,17 +831,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             }
             return this;
         }
-    }
-    isOne(): boolean {
-        if (Unit.isOne(this.uom)) {
-            return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
-        }
-        else {
-            return false;
-        }
-    }
-    isSpinor(): boolean {
-        return this.x === 0 && this.y === 0;
     }
     I(): Geometric2 {
         this.a = 0;
@@ -1553,6 +1539,35 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
 
             return this;
         }
+    }
+
+    isBivector(): boolean {
+        return this.a === 0 && this.x === 0 && this.y === 0;
+    }
+
+    isOne(): boolean {
+        if (Unit.isOne(this.uom)) {
+            return this.a === 1 && this.x === 0 && this.y === 0 && this.b === 0;
+        }
+        else {
+            return false;
+        }
+    }
+
+    isScalar(): boolean {
+        return isScalar(this);
+    }
+
+    isSpinor(): boolean {
+        if (Unit.isOne(this.uom)) {
+            return this.x === 0 && this.y === 0;
+        } else {
+            return false;
+        }
+    }
+
+    isVector(): boolean {
+        return this.a === 0 && this.b === 0;
     }
 
     /**

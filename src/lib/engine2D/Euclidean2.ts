@@ -69,6 +69,18 @@ export class Euclidean2 implements Metric<Geometric2> {
         }
         return new Matrix1(new Float32Array([1 / m.getElement(0, 0)]), Unit.div(Unit.ONE, m.uom));
     }
+    isBivector(mv: Geometric2): boolean {
+        return mv.isBivector();
+    }
+    isScalar(mv: Geometric2): boolean {
+        return mv.isScalar();
+    }
+    isSpinor(mv: Geometric2): boolean {
+        return mv.isSpinor();
+    }
+    isVector(mv: Geometric2): boolean {
+        return mv.isVector();
+    }
     isZero(mv: Geometric2): boolean {
         return mv.isZero();
     }

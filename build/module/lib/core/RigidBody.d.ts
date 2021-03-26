@@ -142,7 +142,7 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
      * P is mutable with copy-on-set.
      */
     get P(): T;
-    set P(momentum: T);
+    set P(linearMomentum: T);
     /**
      * Angular momentum (bivector) in world coordinates.
      * If dimensioned units are used, they must be compatible with the unit of angular momentum.

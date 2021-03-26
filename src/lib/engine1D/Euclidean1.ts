@@ -154,8 +154,20 @@ export class Euclidean1 implements Metric<Geometric1> {
     invertMatrix(m: MatrixLike): MatrixLike {
         return new Matrix0(new Float32Array([]), Unit.div(Unit.ONE, m.uom));
     }
+    isBivector(mv: Geometric1): boolean {
+        return mv.isBivector();
+    }
+    isScalar(mv: Geometric1): boolean {
+        return mv.isScalar();
+    }
+    isSpinor(mv: Geometric1): boolean {
+        return mv.isSpinor();
+    }
+    isVector(mv: Geometric1): boolean {
+        return mv.isVector();
+    }
     isZero(mv: Geometric1): boolean {
-        return mv.a === 0 && mv.x === 0;
+        return mv.isZero();
     }
     lock(mv: Geometric1): number {
         return mv.lock();

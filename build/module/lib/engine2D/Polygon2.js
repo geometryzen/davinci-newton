@@ -109,8 +109,8 @@ function centerOfMass(xs) {
  */
 function mustBeAtLeastThreePoints(xs) {
     var N = xs.length;
-    if (N > 3) {
-        // Test for non-collinear.
+    if (N >= 3) {
+        // Test for non-collinear?
     }
     else {
         throw new Error("must be at least 3 points.");

@@ -1,5 +1,9 @@
+import { Euclidean1 } from '../engine1D/Euclidean1';
+import { Euclidean2 } from '../engine2D/Euclidean2';
 import { Block3 } from '../engine3D/Block3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
+import { Geometric1 } from '../math/Geometric1';
+import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { RigidBody } from './RigidBody';
@@ -174,6 +178,214 @@ describe("RigidBody", function () {
                 expect(uom.dimensions.Q.numer).toBe(0);
                 expect(uom.dimensions.Q.denom).toBe(1);
             });
+        });
+    });
+    describe("M", function () {
+        it("(in 1D) must be a scalar", function () {
+            const metric = new Euclidean1();
+            const e1 = Geometric1.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.M = e1;
+            }).toThrowError("measure must be a scalar in assignment to property M (mass), but was e1.");
+        });
+        it("(in 2D) must be a scalar", function () {
+            const metric = new Euclidean2();
+            const e1 = Geometric2.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.M = e1;
+            }).toThrowError("measure must be a scalar in assignment to property M (mass), but was e1.");
+        });
+        it("(in 3D) must be a scalar", function () {
+            const metric = new Euclidean3();
+            const e1 = Geometric3.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.M = e1;
+            }).toThrowError("measure must be a scalar in assignment to property M (mass), but was e1.");
+        });
+    });
+    describe("Q", function () {
+        it("(in 1D) must be a scalar", function () {
+            const metric = new Euclidean1();
+            const e1 = Geometric1.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Q = e1;
+            }).toThrowError("measure must be a scalar in assignment to property Q (electric charge), but was e1.");
+        });
+        it("(in 2D) must be a scalar", function () {
+            const metric = new Euclidean2();
+            const e1 = Geometric2.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Q = e1;
+            }).toThrowError("measure must be a scalar in assignment to property Q (electric charge), but was e1.");
+        });
+        it("(in 3D) must be a scalar", function () {
+            const metric = new Euclidean3();
+            const e1 = Geometric3.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Q = e1;
+            }).toThrowError("measure must be a scalar in assignment to property Q (electric charge), but was e1.");
+        });
+    });
+    describe("X", function () {
+        it("(in 1D) must be a vector", function () {
+            const metric = new Euclidean1();
+            const one = Geometric1.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.X = one;
+            }).toThrowError("measure must be a vector in assignment to property X (position), but was 1.");
+        });
+        it("(in 2D) must be a vector", function () {
+            const metric = new Euclidean2();
+            const one = Geometric2.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.X = one;
+            }).toThrowError("measure must be a vector in assignment to property X (position), but was 1.");
+        });
+        it("(in 3D) must be a vector", function () {
+            const metric = new Euclidean3();
+            const one = Geometric3.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.X = one;
+            }).toThrowError("measure must be a vector in assignment to property X (position), but was 1.");
+        });
+    });
+    describe("R", function () {
+        it("(in 1D) must be a spinor", function () {
+            const metric = new Euclidean1();
+            const e1 = Geometric1.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.R = e1;
+            }).toThrowError("measure must be a spinor in assignment to property R (attitude), but was e1.");
+        });
+        it("(in 2D) must be a spinor", function () {
+            const metric = new Euclidean2();
+            const e1 = Geometric2.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.R = e1;
+            }).toThrowError("measure must be a spinor in assignment to property R (attitude), but was e1.");
+        });
+        it("(in 3D) must be a spinor", function () {
+            const metric = new Euclidean3();
+            const e1 = Geometric3.e1;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.R = e1;
+            }).toThrowError("measure must be a spinor in assignment to property R (attitude), but was e1.");
+        });
+    });
+    describe("P", function () {
+        it("(in 1D) must be a vector", function () {
+            const metric = new Euclidean1();
+            const one = Geometric1.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.P = one;
+            }).toThrowError("measure must be a vector in assignment to property P (linear momentum), but was 1.");
+        });
+        it("(in 2D) must be a vector", function () {
+            const metric = new Euclidean2();
+            const one = Geometric2.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.P = one;
+            }).toThrowError("measure must be a vector in assignment to property P (linear momentum), but was 1.");
+        });
+        it("(in 3D) must be a vector", function () {
+            const metric = new Euclidean3();
+            const one = Geometric3.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.P = one;
+            }).toThrowError("measure must be a vector in assignment to property P (linear momentum), but was 1.");
+        });
+    });
+    describe("L", function () {
+        it("(in 1D) must be a bivector", function () {
+            const metric = new Euclidean1();
+            const one = Geometric1.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.L = one;
+            }).toThrowError("measure must be a bivector in assignment to property L (angular momentum), but was 1.");
+        });
+        it("(in 2D) must be a bivector", function () {
+            const metric = new Euclidean2();
+            const one = Geometric2.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.L = one;
+            }).toThrowError("measure must be a bivector in assignment to property L (angular momentum), but was 1.");
+        });
+        it("(in 3D) must be a bivector", function () {
+            const metric = new Euclidean3();
+            const one = Geometric3.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.L = one;
+            }).toThrowError("measure must be a bivector in assignment to property L (angular momentum), but was 1.");
+        });
+    });
+    describe("Ω", function () {
+        it("(in 1D) must be a bivector", function () {
+            const metric = new Euclidean1();
+            const one = Geometric1.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Ω = one;
+            }).toThrowError("measure must be a bivector in assignment to property Ω (angular velocity), but was 1.");
+        });
+        it("(in 2D) must be a bivector", function () {
+            const metric = new Euclidean2();
+            const one = Geometric2.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Ω = one;
+            }).toThrowError("measure must be a bivector in assignment to property Ω (angular velocity), but was 1.");
+        });
+        it("(in 3D) must be a bivector", function () {
+            const metric = new Euclidean3();
+            const one = Geometric3.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.Ω = one;
+            }).toThrowError("measure must be a bivector in assignment to property Ω (angular velocity), but was 1.");
+        });
+    });
+    describe("centerOfMassLocal", function () {
+        it("(in 1D) must be a vector", function () {
+            const metric = new Euclidean1();
+            const one = Geometric1.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.centerOfMassLocal = one;
+            }).toThrowError("measure must be a vector in assignment to property centerOfMassLocal, but was 1.");
+        });
+        it("(in 2D) must be a vector", function () {
+            const metric = new Euclidean2();
+            const one = Geometric2.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.centerOfMassLocal = one;
+            }).toThrowError("measure must be a vector in assignment to property centerOfMassLocal, but was 1.");
+        });
+        it("(in 3D) must be a vector", function () {
+            const metric = new Euclidean3();
+            const one = Geometric3.one;
+            const body = new RigidBody(metric);
+            expect(function () {
+                body.centerOfMassLocal = one;
+            }).toThrowError("measure must be a vector in assignment to property centerOfMassLocal, but was 1.");
         });
     });
 });
