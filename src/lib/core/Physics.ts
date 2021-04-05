@@ -142,10 +142,6 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     addBody(body: ForceBody<T>): void {
         mustBeNonNullObject('body', body);
         if (!contains(this.$bodies, body)) {
-            // const X = body.X;
-            // const R = body.R;
-            // const P = body.P;
-            // const L = body.L;
             const dynamics = this.dynamics;
             // create variables in vars array for this body
             const names = [];
@@ -163,7 +159,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             this.$simList.add(body);
         }
         this.updateVarsFromBody(body);
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**
@@ -177,7 +173,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
             body.varsIndex = -1;
         }
         this.$simList.remove(body);
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**
@@ -188,7 +184,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (!contains(this.$forceLaws, forceLaw)) {
             this.$forceLaws.push(forceLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**
@@ -197,7 +193,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     removeForceLaw(forceLaw: ForceLaw<T>): void {
         mustBeNonNullObject('forceLaw', forceLaw);
         forceLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$forceLaws, forceLaw);
     }
 
@@ -209,7 +205,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (!contains(this.$torqueLaws, torqueLaw)) {
             this.$torqueLaws.push(torqueLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**
@@ -218,13 +214,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void {
         mustBeNonNullObject('torqueLaw', torqueLaw);
         torqueLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$torqueLaws, torqueLaw);
     }
 
     /**
-     * 
-     * @param geometry 
+     *
      */
     addConstraint(geometry: GeometricConstraint<T>): void {
         mustBeNonNullObject('geometry', geometry);
@@ -233,6 +228,10 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
+    /**
+     * 
+     * @param geometry 
+     */
     removeConstraint(geometry: GeometricConstraint<T>): void {
         mustBeNonNullObject('geometry', geometry);
         remove(this.$constraints, geometry);
@@ -246,7 +245,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         if (!contains(this.$driftLaws, driftLaw)) {
             this.$driftLaws.push(driftLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**
@@ -255,12 +254,12 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     removeDriftLaw(driftLaw: ForceLaw<T>): void {
         mustBeNonNullObject('driftLaw', driftLaw);
         driftLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$driftLaws, driftLaw);
     }
 
 
-    private discontinuosChangeToEnergy(): void {
+    private discontinuousChangeToEnergy(): void {
         const dynamics = this.dynamics;
         this.$varsList.incrSequence(...dynamics.discontinuousEnergyVars());
     }
@@ -600,7 +599,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         for (let i = 0; i < N; i++) {
             this.updateVarsFromBody(bodies[i]);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     }
 
     /**

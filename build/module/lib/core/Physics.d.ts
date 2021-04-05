@@ -116,9 +116,12 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
     /**
      *
-     * @param geometry
      */
     addConstraint(geometry: GeometricConstraint<T>): void;
+    /**
+     *
+     * @param geometry
+     */
     removeConstraint(geometry: GeometricConstraint<T>): void;
     /**
      *
@@ -128,7 +131,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
      *
      */
     removeDriftLaw(driftLaw: ForceLaw<T>): void;
-    private discontinuosChangeToEnergy;
+    private discontinuousChangeToEnergy;
     /**
      * Transfer state vector back to the rigid bodies.
      * Also takes care of updating auxiliary variables, which are also mutable.

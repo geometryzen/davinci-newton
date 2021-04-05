@@ -96,8 +96,6 @@ export class RungeKutta implements DiffEqSolver {
                     if (k1vals[i] !== 0) {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
                     } else {
-                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}`);
-                        // inuoms[i] = stateUoms[i];
                         inuoms[i] = uom;
                     }
                 } catch (e) {
@@ -123,8 +121,6 @@ export class RungeKutta implements DiffEqSolver {
                     if (k2vals[i] !== 0) {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
                     } else {
-                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}`);
-                        // inuoms[i] = stateUoms[i];
                         inuoms[i] = uom;
                     }
                 } catch (e) {

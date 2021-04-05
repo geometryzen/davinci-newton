@@ -90,8 +90,6 @@ var RungeKutta = /** @class */ (function () {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
                     }
                     else {
-                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}`);
-                        // inuoms[i] = stateUoms[i];
                         inuoms[i] = uom;
                     }
                 }
@@ -119,8 +117,6 @@ var RungeKutta = /** @class */ (function () {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
                     }
                     else {
-                        // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}`);
-                        // inuoms[i] = stateUoms[i];
                         inuoms[i] = uom;
                     }
                 }

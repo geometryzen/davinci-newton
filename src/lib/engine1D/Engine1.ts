@@ -4,7 +4,7 @@ import { Dynamics1 } from "./Dynamics1";
 import { Euclidean1 } from "./Euclidean1";
 
 /**
- *
+ * The Physics Engine specialized to 1 dimension with a Euclidean metric.
  */
 export class Engine1 extends Engine<Geometric1> {
     constructor(options?: EngineOptions) {

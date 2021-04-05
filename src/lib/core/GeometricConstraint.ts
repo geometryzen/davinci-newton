@@ -1,9 +1,12 @@
 import { ForceBody } from "./ForceBody";
 
 /**
- * @hidden
+ *
  */
 export interface GeometricConstraint<T> {
+    /**
+     * 
+     */
     getBody(): ForceBody<T>;
     /**
      * Computes the radius of the curve.
@@ -27,5 +30,9 @@ export interface GeometricConstraint<T> {
      * @param tangent (output) The tangent (vector).
      */
     computeTangent(x: T, tangent: T): void;
+    /**
+     * 
+     * @param N 
+     */
     setForce(N: T): void;
 }

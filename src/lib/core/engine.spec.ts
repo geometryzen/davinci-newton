@@ -30,6 +30,9 @@ import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
 import { Spring } from './Spring';
 
+/**
+ * @hidden
+ */
 class MyForceLaw1 implements ForceLaw<Geometric1> {
     expireTime: number;
     private readonly force: Force1;
@@ -55,26 +58,29 @@ class MyForceLaw1 implements ForceLaw<Geometric1> {
     }
 }
 
+/**
+ * @hidden
+ */
 class MyForceLaw2 implements ForceLaw<Geometric2> {
     expireTime: number;
     private readonly force: Force2;
     private readonly $forces: [Force2];
     constructor(private readonly body: Particle2) {
         this.force = new Force2(body);
-        console.log(this.force.locationCoordType);
-        console.log(this.force.vectorCoordType);
+        // console.lg(this.force.locationCoordType);
+        // console.lg(this.force.vectorCoordType);
         this.$forces = [this.force];
     }
     get forces(): Force<Geometric2>[] {
         return this.$forces;
     }
     updateForces(): Force<Geometric2>[] {
-        // console.log(`BEFORE F=>${this.force.F}`);
+        // console.lg(`BEFORE F=>${this.force.F}`);
         const Θ = this.body.X.x;
         const cosΘ = Math.cos(Θ);
         this.force.vector.zero().addVector({ x: cosΘ, y: 0 }).neg();
         this.force.location.copyVector(this.body.X);
-        // console.log(`AFTER F=>${this.force.F}`);
+        // console.lg(`AFTER F=>${this.force.F}`);
         return this.$forces;
     }
     disconnect(): void {

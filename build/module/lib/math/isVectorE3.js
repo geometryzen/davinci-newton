@@ -7,6 +7,7 @@ import isObject from '../checks/isObject';
  * @hidden
  */
 export default function isVectorE3(v) {
+    // console.lg(`isVectorE3(${v})`);
     if (isObject(v) && !isNull(v)) {
         return isNumber(v.x) && isNumber(v.y) && isNumber(v.z);
     }

@@ -3,7 +3,7 @@ import { Engine } from "../core/Engine";
 import { Dynamics2 } from "./Dynamics2";
 import { Euclidean2 } from "./Euclidean2";
 /**
- *
+ * The Physics Engine specialized to 2 dimensions with a Euclidean metric.
  */
 var Engine2 = /** @class */ (function (_super) {
     __extends(Engine2, _super);

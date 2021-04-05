@@ -13,53 +13,6 @@ import { GenericEvent } from '../util/GenericEvent';
 import { toName } from '../util/toName';
 import { validName } from '../util/validName';
 
-/**
- * @hidden
- * A set of Variables.
- * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
- * 
- * VarsList is a `Subject` and each Variable is a `Parameter` of the VarsList.
- * 
- * Unlike other Subject classes, VarsList does not broadcast each Variable whenever the
- * Variable changes. And VarsList prohibits adding general Parameters in its
- * `addParameter` method, because it can only contain Variables.
- * 
- * As a Subject, the VarsList will broadcast the `VARS_MODIFIED` event to its
- * Observers whenever Variables are added or removed.
- * 
- * ### Continuous vs. Discontinuous Changes
- * 
- * A change to a variable is either continuous or discontinuous. This affects how a line
- * graph of the variable is drawn: `DisplayGraph` doesn't draw a line at a point of discontinuity.
- * A discontinuity is indicated by incrementing the sequence number.
- * 
- * It is important to note that `setValue` and `setValues` have an optional
- * parameter `continuous` which determines whether the change of variable is continuous or
- * discontinuous.
- * 
- * Here are some guidelines about when a change in a variable should be marked as being
- * discontinuous by incrementing the sequence number:
- * 
- * 1. When a change increments only a few variables, be sure to increment any variables
- * that are **dependent** on those variables. For example, if velocity of an object is
- * discontinuously changed, then the kinetic, potential and total energy should all be
- * marked as discontinuous.
- * 
- * 2. When **dragging** an object, don't increment variables of other objects.
- * 
- * 3. When some **parameter** such as gravity or mass changes, increment any derived
- * variables (like energy) that depend on that parameter.
- * 
- * ## Deleted Variables
- * 
- * When a variable is no longer used it has the reserved name 'DELETED'. Any such variable
- * should be ignored.  This allows variables to be added or removed without affecting the
- * index of other existing variables.
- * 
- * ### Events Broadcast
- * 
- * + GenericEvent name `VARS_MODIFIED`
- */
 export class VarsList extends AbstractSubject implements GraphVarsList {
     /**
      * This name cannot be used as a variable name.

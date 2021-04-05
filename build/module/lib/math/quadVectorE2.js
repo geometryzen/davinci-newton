@@ -4,7 +4,7 @@ import isNumber from '../checks/isNumber';
 /**
  * @hidden
  * @param vector
- * @returns
+ * @returns |vector|^2
  */
 export function quadVectorE2(vector) {
     if (isDefined(vector)) {

@@ -83,11 +83,11 @@ export class Dynamics1 implements Dynamics<Geometric1> {
         const uom = Unit.mul(Ω.uom, R.uom);
         if (Unit.isOne(uomTime)) {
             if (!Unit.isOne(uom)) {
-                console.log(`Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
+                throw new Error(`Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
             }
         } else {
             if (!Unit.isCompatible(uom, Unit.INV_SECOND)) {
-                console.log(`Ω unit of measure should be ${Unit.div(Unit.ONE, uomTime)}. L.uom=${L.uom}, Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
+                throw new Error(`Ω unit of measure should be ${Unit.div(Unit.ONE, uomTime)}. L.uom=${L.uom}, Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
             }
         }
         // Fix it up for now...

@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-03-25';
+            this.LAST_MODIFIED = '2021-04-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.77';
+            this.VERSION = '1.0.78';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -2854,8 +2854,6 @@
                             inuoms[i] = Unit.compatible(stateUoms[i], uom);
                         }
                         else {
-                            // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}`);
-                            // inuoms[i] = stateUoms[i];
                             inuoms[i] = uom;
                         }
                     }
@@ -2883,8 +2881,6 @@
                             inuoms[i] = Unit.compatible(stateUoms[i], uom);
                         }
                         else {
-                            // console.log(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}`);
-                            // inuoms[i] = stateUoms[i];
                             inuoms[i] = uom;
                         }
                     }
@@ -3714,53 +3710,6 @@
         }
     }
 
-    /**
-     * @hidden
-     * A set of Variables.
-     * Variables are numbered from `0` to `n-1` where `n` is the number of Variables.
-     *
-     * VarsList is a `Subject` and each Variable is a `Parameter` of the VarsList.
-     *
-     * Unlike other Subject classes, VarsList does not broadcast each Variable whenever the
-     * Variable changes. And VarsList prohibits adding general Parameters in its
-     * `addParameter` method, because it can only contain Variables.
-     *
-     * As a Subject, the VarsList will broadcast the `VARS_MODIFIED` event to its
-     * Observers whenever Variables are added or removed.
-     *
-     * ### Continuous vs. Discontinuous Changes
-     *
-     * A change to a variable is either continuous or discontinuous. This affects how a line
-     * graph of the variable is drawn: `DisplayGraph` doesn't draw a line at a point of discontinuity.
-     * A discontinuity is indicated by incrementing the sequence number.
-     *
-     * It is important to note that `setValue` and `setValues` have an optional
-     * parameter `continuous` which determines whether the change of variable is continuous or
-     * discontinuous.
-     *
-     * Here are some guidelines about when a change in a variable should be marked as being
-     * discontinuous by incrementing the sequence number:
-     *
-     * 1. When a change increments only a few variables, be sure to increment any variables
-     * that are **dependent** on those variables. For example, if velocity of an object is
-     * discontinuously changed, then the kinetic, potential and total energy should all be
-     * marked as discontinuous.
-     *
-     * 2. When **dragging** an object, don't increment variables of other objects.
-     *
-     * 3. When some **parameter** such as gravity or mass changes, increment any derived
-     * variables (like energy) that depend on that parameter.
-     *
-     * ## Deleted Variables
-     *
-     * When a variable is no longer used it has the reserved name 'DELETED'. Any such variable
-     * should be ignored.  This allows variables to be added or removed without affecting the
-     * index of other existing variables.
-     *
-     * ### Events Broadcast
-     *
-     * + GenericEvent name `VARS_MODIFIED`
-     */
     var VarsList = /** @class */ (function (_super) {
         __extends(VarsList, _super);
         /**
@@ -4458,10 +4407,6 @@
         Physics.prototype.addBody = function (body) {
             mustBeNonNullObject('body', body);
             if (!contains(this.$bodies, body)) {
-                // const X = body.X;
-                // const R = body.R;
-                // const P = body.P;
-                // const L = body.L;
                 var dynamics = this.dynamics;
                 // create variables in vars array for this body
                 var names = [];
@@ -4480,7 +4425,7 @@
                 this.$simList.add(body);
             }
             this.updateVarsFromBody(body);
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4493,7 +4438,7 @@
                 body.varsIndex = -1;
             }
             this.$simList.remove(body);
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4503,7 +4448,7 @@
             if (!contains(this.$forceLaws, forceLaw)) {
                 this.$forceLaws.push(forceLaw);
             }
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4511,7 +4456,7 @@
         Physics.prototype.removeForceLaw = function (forceLaw) {
             mustBeNonNullObject('forceLaw', forceLaw);
             forceLaw.disconnect();
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
             remove(this.$forceLaws, forceLaw);
         };
         /**
@@ -4522,7 +4467,7 @@
             if (!contains(this.$torqueLaws, torqueLaw)) {
                 this.$torqueLaws.push(torqueLaw);
             }
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4530,12 +4475,11 @@
         Physics.prototype.removeTorqueLaw = function (torqueLaw) {
             mustBeNonNullObject('torqueLaw', torqueLaw);
             torqueLaw.disconnect();
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
             remove(this.$torqueLaws, torqueLaw);
         };
         /**
          *
-         * @param geometry
          */
         Physics.prototype.addConstraint = function (geometry) {
             mustBeNonNullObject('geometry', geometry);
@@ -4543,6 +4487,10 @@
                 this.$constraints.push(geometry);
             }
         };
+        /**
+         *
+         * @param geometry
+         */
         Physics.prototype.removeConstraint = function (geometry) {
             mustBeNonNullObject('geometry', geometry);
             remove(this.$constraints, geometry);
@@ -4555,7 +4503,7 @@
             if (!contains(this.$driftLaws, driftLaw)) {
                 this.$driftLaws.push(driftLaw);
             }
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4563,10 +4511,10 @@
         Physics.prototype.removeDriftLaw = function (driftLaw) {
             mustBeNonNullObject('driftLaw', driftLaw);
             driftLaw.disconnect();
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
             remove(this.$driftLaws, driftLaw);
         };
-        Physics.prototype.discontinuosChangeToEnergy = function () {
+        Physics.prototype.discontinuousChangeToEnergy = function () {
             var _a;
             var dynamics = this.dynamics;
             (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVars());
@@ -4877,7 +4825,7 @@
             for (var i = 0; i < N; i++) {
                 this.updateVarsFromBody(bodies[i]);
             }
-            this.discontinuosChangeToEnergy();
+            this.discontinuousChangeToEnergy();
         };
         /**
          *
@@ -4966,16 +4914,24 @@
      */
     var contextBuilderAdvance = function () { return "Engine.advance(Δt: number, uomTime?: Unit): void"; };
     /**
-     * An example of how to wire together the various components.
-     * @hidden
+     * A generic Physics Engine that may be specialized to a metric.
      */
     var Engine = /** @class */ (function () {
+        /**
+         *
+         * @param metric
+         * @param dynamics
+         * @param options
+         */
         function Engine(metric, dynamics, options) {
             this.physics = new Physics(metric, dynamics);
             var rk4 = new RungeKutta(this.physics);
             this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
         }
         Object.defineProperty(Engine.prototype, "varsList", {
+            /**
+             * Returns the state variables of the system.
+             */
             get: function () {
                 return this.physics.varsList;
             },
@@ -4983,8 +4939,10 @@
             configurable: true
         });
         /**
-         *
-         * @param body
+         * Adds a body to the system.
+         * The state variables of the body will become part of the state vector of the system.
+         * The state variables of the body will be updated each time the system is advanced in time.
+         * @param body The body to be added to the system
          */
         Engine.prototype.addBody = function (body) {
             var contextBuilder = function () { return "Engine.addBody(body: ForceBody): void"; };
@@ -4992,27 +4950,35 @@
             this.physics.addBody(body);
         };
         /**
-         *
-         * @param body
+         * Removes a body from the system.
+         * @param body The body to be removed from the system.
          */
         Engine.prototype.removeBody = function (body) {
             var contextBuilder = function () { return "Engine.removeBody(body: ForceBody): void"; };
             mustBeNonNullObject('body', body, contextBuilder);
             this.physics.removeBody(body);
         };
+        /**
+         * Adds a force law to the system.
+         * @param forceLaw The force law to be added to the system.
+         */
         Engine.prototype.addForceLaw = function (forceLaw) {
             var contextBuilder = function () { return "Engine.addForceLaw(forceLaw: ForceLaw): void"; };
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
             this.physics.addForceLaw(forceLaw);
         };
+        /**
+         * Removes a force law from the system.
+         * @param forceLaw The force law to be removed.
+         */
         Engine.prototype.removeForceLaw = function (forceLaw) {
             var contextBuilder = function () { return "Engine.removeForceLaw(forceLaw: ForceLaw): void"; };
             mustBeNonNullObject('forceLaw', forceLaw, contextBuilder);
             this.physics.removeForceLaw(forceLaw);
         };
         /**
-         *
-         * @param torqueLaw
+         * Adds a torque law to the system.
+         * @param torqueLaw The torque law to be added to the system.
          */
         Engine.prototype.addTorqueLaw = function (torqueLaw) {
             var contextBuilder = function () { return "Engine.addTorqueLaw(torqueLaw: TorqueLaw): void"; };
@@ -5020,29 +4986,48 @@
             this.physics.addTorqueLaw(torqueLaw);
         };
         /**
-         *
-         * @param torqueLaw
+         * Removes a torque law from the system.
+         * @param torqueLaw The torque law to be removed from the system.
          */
         Engine.prototype.removeTorqueLaw = function (torqueLaw) {
             var contextBuilder = function () { return "Engine.removeTorqueLaw(torqueLaw: TorqueLaw): void"; };
             mustBeNonNullObject('torqueLaw', torqueLaw, contextBuilder);
             this.physics.removeTorqueLaw(torqueLaw);
         };
+        /**
+         * Adds a geometric constraint to the system.
+         * Geometric constraints are applied after the force and torques have been computed and before drift forces and torques.
+         * @param geometry The geometric constraint to be added to the system.
+         */
         Engine.prototype.addConstraint = function (geometry) {
             var contextBuilder = function () { return "Engine.addGeometricConstraint(geometry: GeometricConstraint): void"; };
             mustBeNonNullObject('geometry', geometry, contextBuilder);
             this.physics.addConstraint(geometry);
         };
+        /**
+         * Removes a geometric constraint from the system.
+         * @param geometry The geometric constraint to be removed from the system.
+         */
         Engine.prototype.removeConstraint = function (geometry) {
             var contextBuilder = function () { return "Engine.removeGeometricConstraint(geometry: GeometricConstraint): void"; };
             mustBeNonNullObject('geometry', geometry, contextBuilder);
             this.physics.removeConstraint(geometry);
         };
+        /**
+         * Adds a force law that is designed to compensate for numerical drift in the system.
+         * A drift law is usually small and may take the form of a spring and/or damping force.
+         * The drift laws are applied after any geometric constraints have been applied.
+         * @param driftLaw The drift force law to be applied.
+         */
         Engine.prototype.addDriftLaw = function (driftLaw) {
             var contextBuilder = function () { return "Engine.addDriftLaw(driftLaw: ForceLaw): void"; };
             mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
             this.physics.addDriftLaw(driftLaw);
         };
+        /**
+         * Removes a force law that is designed to compensate for numerical drift in the system.
+         * @param driftLaw The drift force law to be removed.
+         */
         Engine.prototype.removeDriftLaw = function (driftLaw) {
             var contextBuilder = function () { return "Engine.removeDriftLaw(driftLaw: ForceLaw): void"; };
             mustBeNonNullObject('driftLaw', driftLaw, contextBuilder);
@@ -5058,11 +5043,17 @@
             this.strategy.advance(Δt, uomTime);
         };
         /**
-         *
+         * Updates the state vector of the simulation from the states of the bodies in the system.
+         * It is necessary to call this method after an intervention which changes the state of
+         * a body in the system.
          */
         Engine.prototype.updateFromBodies = function () {
             this.physics.updateFromBodies();
         };
+        /**
+         *
+         * @returns The total energy (kinetic and potential) of the system.
+         */
         Engine.prototype.totalEnergy = function () {
             return this.physics.totalEnergy();
         };
@@ -6293,6 +6284,7 @@
 
     /**
      * @hidden
+     * @returns `typeof arg !== 'undefined'`
      */
     function isDefined(arg) {
         return (typeof arg !== 'undefined');
@@ -8263,12 +8255,12 @@
             var uom = Unit.mul(Ω.uom, R.uom);
             if (Unit.isOne(uomTime)) {
                 if (!Unit.isOne(uom)) {
-                    console.log("\u03A9.uom=" + Ω.uom + ", R.uom=" + R.uom + ", uomTime=" + uomTime);
+                    throw new Error("\u03A9.uom=" + Ω.uom + ", R.uom=" + R.uom + ", uomTime=" + uomTime);
                 }
             }
             else {
                 if (!Unit.isCompatible(uom, Unit.INV_SECOND)) {
-                    console.log("\u03A9 unit of measure should be " + Unit.div(Unit.ONE, uomTime) + ". L.uom=" + L.uom + ", \u03A9.uom=" + Ω.uom + ", R.uom=" + R.uom + ", uomTime=" + uomTime);
+                    throw new Error("\u03A9 unit of measure should be " + Unit.div(Unit.ONE, uomTime) + ". L.uom=" + L.uom + ", \u03A9.uom=" + Ω.uom + ", R.uom=" + R.uom + ", uomTime=" + uomTime);
                 }
             }
             // Fix it up for now...
@@ -8448,7 +8440,7 @@
     }());
 
     /**
-     *
+     * The Physics Engine specialized to 1 dimension with a Euclidean metric.
      */
     var Engine1 = /** @class */ (function (_super) {
         __extends(Engine1, _super);
@@ -8595,7 +8587,7 @@
     /**
      * @hidden
      * @param vector
-     * @returns
+     * @returns |vector|^2
      */
     function quadVectorE2(vector) {
         if (isDefined(vector)) {
@@ -11280,7 +11272,7 @@
     }());
 
     /**
-     *
+     * The Physics Engine specialized to 2 dimensions with a Euclidean metric.
      */
     var Engine2 = /** @class */ (function (_super) {
         __extends(Engine2, _super);
@@ -11807,6 +11799,7 @@
      * @hidden
      */
     function isVectorE3(v) {
+        // console.lg(`isVectorE3(${v})`);
         if (isObject(v) && !isNull(v)) {
             return isNumber(v.x) && isNumber(v.y) && isNumber(v.z);
         }
@@ -16023,7 +16016,7 @@
     }());
 
     /**
-     *
+     * The Physics Engine specialized to 3 dimensions with a Euclidean metric.
      */
     var Engine3 = /** @class */ (function (_super) {
         __extends(Engine3, _super);

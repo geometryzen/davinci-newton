@@ -113,10 +113,6 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.addBody = function (body) {
         mustBeNonNullObject('body', body);
         if (!contains(this.$bodies, body)) {
-            // const X = body.X;
-            // const R = body.R;
-            // const P = body.P;
-            // const L = body.L;
             var dynamics = this.dynamics;
             // create variables in vars array for this body
             var names = [];
@@ -135,7 +131,7 @@ var Physics = /** @class */ (function (_super) {
             this.$simList.add(body);
         }
         this.updateVarsFromBody(body);
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *
@@ -148,7 +144,7 @@ var Physics = /** @class */ (function (_super) {
             body.varsIndex = -1;
         }
         this.$simList.remove(body);
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *
@@ -158,7 +154,7 @@ var Physics = /** @class */ (function (_super) {
         if (!contains(this.$forceLaws, forceLaw)) {
             this.$forceLaws.push(forceLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *
@@ -166,7 +162,7 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.removeForceLaw = function (forceLaw) {
         mustBeNonNullObject('forceLaw', forceLaw);
         forceLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$forceLaws, forceLaw);
     };
     /**
@@ -177,7 +173,7 @@ var Physics = /** @class */ (function (_super) {
         if (!contains(this.$torqueLaws, torqueLaw)) {
             this.$torqueLaws.push(torqueLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *
@@ -185,12 +181,11 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.removeTorqueLaw = function (torqueLaw) {
         mustBeNonNullObject('torqueLaw', torqueLaw);
         torqueLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$torqueLaws, torqueLaw);
     };
     /**
      *
-     * @param geometry
      */
     Physics.prototype.addConstraint = function (geometry) {
         mustBeNonNullObject('geometry', geometry);
@@ -198,6 +193,10 @@ var Physics = /** @class */ (function (_super) {
             this.$constraints.push(geometry);
         }
     };
+    /**
+     *
+     * @param geometry
+     */
     Physics.prototype.removeConstraint = function (geometry) {
         mustBeNonNullObject('geometry', geometry);
         remove(this.$constraints, geometry);
@@ -210,7 +209,7 @@ var Physics = /** @class */ (function (_super) {
         if (!contains(this.$driftLaws, driftLaw)) {
             this.$driftLaws.push(driftLaw);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *
@@ -218,10 +217,10 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.removeDriftLaw = function (driftLaw) {
         mustBeNonNullObject('driftLaw', driftLaw);
         driftLaw.disconnect();
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
         remove(this.$driftLaws, driftLaw);
     };
-    Physics.prototype.discontinuosChangeToEnergy = function () {
+    Physics.prototype.discontinuousChangeToEnergy = function () {
         var _a;
         var dynamics = this.dynamics;
         (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVars());
@@ -532,7 +531,7 @@ var Physics = /** @class */ (function (_super) {
         for (var i = 0; i < N; i++) {
             this.updateVarsFromBody(bodies[i]);
         }
-        this.discontinuosChangeToEnergy();
+        this.discontinuousChangeToEnergy();
     };
     /**
      *

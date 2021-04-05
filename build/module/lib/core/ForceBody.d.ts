@@ -1,7 +1,7 @@
 import { SimObject } from './SimObject';
 import { Metric } from './Metric';
 /**
- * @hidden
+ *
  */
 export interface ForceBody<T> extends SimObject {
     /**

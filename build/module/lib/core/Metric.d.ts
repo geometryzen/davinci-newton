@@ -4,7 +4,8 @@ import { Force } from "./Force";
 import { ForceBody } from "./ForceBody";
 import { Torque } from "./Torque";
 /**
- * @hidden
+ * A handle-body pattern abstraction of the multivector used by the Physics Engine.
+ * The multivector encodes the metric in the multiplication of its basis vectors.
  */
 export interface Metric<T> {
     /**
@@ -36,8 +37,14 @@ export interface Metric<T> {
      * Create a non-generic instance derived from Force; Force is to be considered an abstract base type.
      * This will make it easier for clients; after instanceof Force2 or Force3, the properties of the
      * force application (F, and x) will have non-generic types.
+     *
+     * @param body The body that the force will be applied to.
      */
     createForce(body: ForceBody<T>): Force<T>;
+    /**
+     *
+     * @param body The body that the torque will be applied to.
+     */
     createTorque(body: ForceBody<T>): Torque<T>;
     direction(mv: T): T;
     divByScalar(lhs: T, a: number, uom: Unit): T;

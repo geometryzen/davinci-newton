@@ -8,7 +8,8 @@ import { VectorE3 } from './VectorE3';
  * The argument must be a non-null object and must support the x, y, and z numeric properties.
  * @hidden
  */
-export default function isVectorE3(v: any): v is VectorE3 {
+export default function isVectorE3(v: unknown): v is VectorE3 {
+    // console.lg(`isVectorE3(${v})`);
     if (isObject(v) && !isNull(v)) {
         return isNumber((<VectorE3>v).x) && isNumber((<VectorE3>v).y) && isNumber((<VectorE3>v).z);
     }

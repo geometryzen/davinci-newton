@@ -27,7 +27,7 @@ export declare const INDEX_TOTAL_ENERGY = 4;
  */
 export declare const INDEX_RESERVED_LAST = 4;
 /**
- * @hidden
+ * A handle-body pattern abstraction of the conversion of the multivector to the system state vector.
  * An implementation of this interface provides the mapping from a specific multivector implementation to a vector of state variables.
  * Each state variable is a pair consisting of (number, Unit). This decomposition allows the solvers (integrators) to treat the whole
  * system as a single particle in a large vector space.

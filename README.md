@@ -1,15 +1,9 @@
 # davinci-newton
-2D and 3D Physics Engine using Geometric Algebra, and Units of Measure.
+A 1D, 2D, and 3D Physics Engine using Geometric Algebra, and Units of Measure.
 
 # Getting Started
 
-The following code illustrates the basic flow. For a working example see [STEMCstudio](https://www.stemcstudio.com).
-
-## Constructing the core simulation using the `Physics2` engine.
-
-```typescript
-
-```
+The following code illustrates the basic flow. For working examples see [STEMCstudio](https://www.stemcstudio.com/examples).
 
 ## Constructing the core simulation using the `Physics3` engine.
 
