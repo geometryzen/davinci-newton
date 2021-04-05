@@ -325,6 +325,9 @@ export class Euclidean1 implements Metric<Geometric1> {
         target.x = 0;
         target.uom = source.uom;
     }
+    one(): Geometric1 {
+        return Geometric1.scalar(1);
+    }
     zero(): Geometric1 {
         return new Geometric1();
     }

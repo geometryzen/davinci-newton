@@ -152,6 +152,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     writeBivector(source: Geometric2, target: Geometric2): void {
         source.writeBivector(target);
     }
+    one(): Geometric2 {
+        return Geometric2.scalar(1);
+    }
     zero(): Geometric2 {
         return Geometric2.zero.clone();
     }

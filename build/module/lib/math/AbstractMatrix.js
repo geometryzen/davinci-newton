@@ -1,4 +1,4 @@
-import mustBeDefined from '../checks/mustBeDefined';
+import { mustBeDefined } from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import { Unit } from './Unit';
 /**

@@ -11,7 +11,7 @@ function beDefined() {
 /**
  * @hidden
  */
-export default function mustBeDefined(name: string, value: any, contextBuilder?: () => string): any {
+export function mustBeDefined(name: string, value: any, contextBuilder?: () => string): any {
     mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
     return value;
 }

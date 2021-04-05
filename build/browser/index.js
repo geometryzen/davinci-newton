@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.78';
+            this.VERSION = '1.0.79';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5830,13 +5830,14 @@
     var Particle = /** @class */ (function (_super) {
         __extends(Particle, _super);
         /**
-         * @param mass The mass of the particle.
-         * @param charge The electric charge of the particle.
+         * @param M The mass of the particle. The mass is copied into the `M` property. Default is 1 (dimensionless).
+         * @param Q The electric charge of the particle. The charge is copied into the `Q` property. Default is 1 (dimensionless).
          */
-        function Particle(mass, charge, metric) {
+        function Particle(M, Q, metric) {
             var _this = _super.call(this, metric) || this;
-            _this.M = mass;
-            _this.Q = charge;
+            metric.zero;
+            _this.M = M ? M : metric.one();
+            _this.Q = Q ? Q : metric.one();
             return _this;
         }
         /**
@@ -8060,6 +8061,9 @@
             target.x = 0;
             target.uom = source.uom;
         };
+        Euclidean1.prototype.one = function () {
+            return Geometric1.scalar(1);
+        };
         Euclidean1.prototype.zero = function () {
             return new Geometric1();
         };
@@ -8463,8 +8467,13 @@
 
     var Particle1 = /** @class */ (function (_super) {
         __extends(Particle1, _super);
-        function Particle1(mass, charge) {
-            return _super.call(this, mass, charge, new Euclidean1()) || this;
+        /**
+         * Constructs a particle in 1 Euclidean dimension.
+         * @param M The mass of the particle. Default is 1 (dimensionless).
+         * @param Q The charge of the particle. Default is 1 (dimensionless).
+         */
+        function Particle1(M, Q) {
+            return _super.call(this, M ? M : Geometric1.one, Q ? Q : Geometric1.one, new Euclidean1()) || this;
         }
         return Particle1;
     }(Particle));
@@ -10775,6 +10784,9 @@
         Euclidean2.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
         };
+        Euclidean2.prototype.one = function () {
+            return Geometric2.scalar(1);
+        };
         Euclidean2.prototype.zero = function () {
             return Geometric2.zero.clone();
         };
@@ -11303,8 +11315,13 @@
 
     var Particle2 = /** @class */ (function (_super) {
         __extends(Particle2, _super);
-        function Particle2(mass, charge) {
-            return _super.call(this, mass, charge, new Euclidean2()) || this;
+        /**
+         * Constructs a particle in 2 Euclidean dimensions.
+         * @param M The mass of the particle. Default is 1 (dimensionless).
+         * @param Q The charge of the particle. Default is 1 (dimensionless).
+         */
+        function Particle2(M, Q) {
+            return _super.call(this, M, Q, new Euclidean2()) || this;
         }
         return Particle2;
     }(Particle));
@@ -15420,6 +15437,9 @@
         Euclidean3.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
         };
+        Euclidean3.prototype.one = function () {
+            return Geometric3.scalar(1);
+        };
         Euclidean3.prototype.zero = function () {
             return Geometric3.zero.clone();
         };
@@ -16047,8 +16067,13 @@
 
     var Particle3 = /** @class */ (function (_super) {
         __extends(Particle3, _super);
-        function Particle3(mass, charge) {
-            return _super.call(this, mass, charge, new Euclidean3()) || this;
+        /**
+         * Constructs a particle in 2 Euclidean dimensions.
+         * @param M The mass of the particle. Default is 1 (dimensionless).
+         * @param Q The charge of the particle. Default is 1 (dimensionless).
+         */
+        function Particle3(M, Q) {
+            return _super.call(this, M, Q, new Euclidean3()) || this;
         }
         return Particle3;
     }(Particle));

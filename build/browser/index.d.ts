@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.78
+// Type definitions for davinci-newton 1.0.79
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -2841,28 +2841,40 @@ export class Particle<T> extends RigidBody<T> {
     constructor(mass: T, charge: T, metric: Metric<T>);
 }
 
+/**
+ * An physical object with no internal structure living in 1 Euclidean dimension.
+ */
 export class Particle1 extends Particle<Geometric1> {
     /**
-     * M is the mass of the particle. Defaults to 1.
-     * Q is the electric charge of the particle. Defaults to 0.
+     * Constructs a particle living in 1 Euclidean dimension.
+     * @param M the mass of the particle. Defaults to 1 (dimensionless).
+     * @param Q the electric charge of the particle. Defaults to 1 (dimensionless).
      */
-    constructor(mass: Geometric1, charge: Geometric1);
+    constructor(M?: Geometric1, Q?: Geometric1);
 }
 
+/**
+ * An physical object with no internal structure living in 2 Euclidean dimensions.
+ */
 export class Particle2 extends Particle<Geometric2> {
     /**
-     * M is the mass of the particle. Defaults to 1.
-     * Q is the electric charge of the particle. Defaults to 0.
+     * Constructs a particle living in 2 Euclidean dimensions.
+     * @param M the mass of the particle. Defaults to 1 (dimensionless).
+     * @param Q the electric charge of the particle. Defaults to 1 (dimensionless).
      */
-    constructor(mass: Geometric2, charge: Geometric2);
+    constructor(M?: Geometric2, Q?: Geometric2);
 }
 
+/**
+ * An physical object with no internal structure living in 3 Euclidean dimensions.
+ */
 export class Particle3 extends Particle<Geometric3> {
     /**
-     * M is the mass of the particle. Defaults to 1.
-     * Q is the electric charge of the particle. Defaults to 0.
+     * Constructs a particle living in 3 Euclidean dimensions.
+     * @param M the mass of the particle. Defaults to 1 (dimensionless).
+     * @param Q the electric charge of the particle. Defaults to 1 (dimensionless).
      */
-    constructor(mass: Geometric3, charge: Geometric3);
+    constructor(M?: Geometric3, Q?: Geometric3);
 }
 
 /**
@@ -3237,15 +3249,36 @@ export class Engine<T> {
     updateFromBodies(): void;
 }
 
+/**
+ * The Physics Engine specialized to 1 dimension with a Euclidean metric.
+ */
 export class Engine1 extends Engine<Geometric1> {
+    /**
+     * Constructs and instance of Engine using the Geometric1 multivector.
+     * @param options Specify the integration algorithm, and adaptive step sizing.
+     */
     constructor(options?: Partial<EngineOptions>);
 }
 
+/**
+ * The Physics Engine specialized to 2 dimensions with a Euclidean metric.
+ */
 export class Engine2 extends Engine<Geometric2> {
+    /**
+     * Constructs and instance of Engine using the Geometric2 multivector.
+     * @param options Specify the integration algorithm, and adaptive step sizing.
+     */
     constructor(options?: Partial<EngineOptions>);
 }
 
+/**
+ * The Physics Engine specialized to 3 dimensions with a Euclidean metric.
+ */
 export class Engine3 extends Engine<Geometric3> {
+    /**
+     * Constructs and instance of Engine using the Geometric3 multivector.
+     * @param options Specify the integration algorithm, and adaptive step sizing.
+     */
     constructor(options?: Partial<EngineOptions>);
 }
 

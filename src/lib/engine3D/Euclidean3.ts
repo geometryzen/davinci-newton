@@ -149,6 +149,9 @@ export class Euclidean3 implements Metric<Geometric3> {
     writeBivector(source: Geometric3, target: Geometric3): void {
         source.writeBivector(target);
     }
+    one(): Geometric3 {
+        return Geometric3.scalar(1);
+    }
     zero(): Geometric3 {
         return Geometric3.zero.clone();
     }

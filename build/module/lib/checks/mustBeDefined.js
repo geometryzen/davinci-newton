@@ -9,7 +9,7 @@ function beDefined() {
 /**
  * @hidden
  */
-export default function mustBeDefined(name, value, contextBuilder) {
+export function mustBeDefined(name, value, contextBuilder) {
     mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
     return value;
 }

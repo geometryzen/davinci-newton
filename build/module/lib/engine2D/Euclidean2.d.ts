@@ -52,5 +52,6 @@ export declare class Euclidean2 implements Metric<Geometric2> {
     write(source: Geometric2, target: Geometric2): void;
     writeVector(source: Geometric2, target: Geometric2): void;
     writeBivector(source: Geometric2, target: Geometric2): void;
+    one(): Geometric2;
     zero(): Geometric2;
 }

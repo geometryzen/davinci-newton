@@ -104,6 +104,12 @@ export interface Metric<T> {
 
     neg(mv: T): T;
 
+    /**
+     * Constructs a multivector representing the number one (1).
+     * The returned multivector is mutable.
+     */
+    one(): T;
+
     quad(mv: T): T;
 
     rev(mv: T): T;
@@ -143,7 +149,7 @@ export interface Metric<T> {
 
     writeBivector(source: T, target: T): void;
     /**
-     * Constructs a multivector representing the number zero.
+     * Constructs a multivector representing the number zero (0).
      * The returned multivector is mutable.
      */
     zero(): T;

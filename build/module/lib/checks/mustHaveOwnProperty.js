@@ -1,5 +1,5 @@
 import isDefined from '../checks/isDefined';
-import mustBeDefined from '../checks/mustBeDefined';
+import { mustBeDefined } from '../checks/mustBeDefined';
 import mustSatisfy from '../checks/mustSatisfy';
 /**
  * @hidden

@@ -1,4 +1,4 @@
-import mustBeDefined from '../checks/mustBeDefined';
+import { mustBeDefined } from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';

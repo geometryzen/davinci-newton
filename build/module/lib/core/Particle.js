@@ -8,13 +8,14 @@ import { RigidBody } from './RigidBody';
 var Particle = /** @class */ (function (_super) {
     __extends(Particle, _super);
     /**
-     * @param mass The mass of the particle.
-     * @param charge The electric charge of the particle.
+     * @param M The mass of the particle. The mass is copied into the `M` property. Default is 1 (dimensionless).
+     * @param Q The electric charge of the particle. The charge is copied into the `Q` property. Default is 1 (dimensionless).
      */
-    function Particle(mass, charge, metric) {
+    function Particle(M, Q, metric) {
         var _this = _super.call(this, metric) || this;
-        _this.M = mass;
-        _this.Q = charge;
+        metric.zero;
+        _this.M = M ? M : metric.one();
+        _this.Q = Q ? Q : metric.one();
         return _this;
     }
     /**

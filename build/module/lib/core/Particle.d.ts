@@ -6,10 +6,10 @@ import { RigidBody } from './RigidBody';
  */
 export declare class Particle<T> extends RigidBody<T> {
     /**
-     * @param mass The mass of the particle.
-     * @param charge The electric charge of the particle.
+     * @param M The mass of the particle. The mass is copied into the `M` property. Default is 1 (dimensionless).
+     * @param Q The electric charge of the particle. The charge is copied into the `Q` property. Default is 1 (dimensionless).
      */
-    constructor(mass: T, charge: T, metric: Metric<T>);
+    constructor(M: T | undefined, Q: T | undefined, metric: Metric<T>);
     /**
      *
      */

@@ -148,6 +148,9 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.writeBivector = function (source, target) {
         source.writeBivector(target);
     };
+    Euclidean2.prototype.one = function () {
+        return Geometric2.scalar(1);
+    };
     Euclidean2.prototype.zero = function () {
         return Geometric2.zero.clone();
     };
