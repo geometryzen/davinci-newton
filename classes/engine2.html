@@ -2776,11 +2776,18 @@ img {
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
+		<section class="tsd-panel tsd-comment">
+			<div class="tsd-comment tsd-typography">
+				<div class="lead">
+					<p>The Physics Engine specialized to 2 dimensions with a Euclidean metric.</p>
+				</div>
+			</div>
+		</section>
 		<section class="tsd-panel tsd-hierarchy">
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="tsd-signature-type">Engine</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>
+					<a href="engine.html" class="tsd-signature-type">Engine</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>
 					<ul class="tsd-hierarchy">
 						<li>
 							<span class="target">Engine2</span>
@@ -2837,9 +2844,9 @@ img {
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Overrides Engine.__constructor</p>
+							<p>Overrides <a href="engine.html">Engine</a>.<a href="engine.html#constructor">constructor</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/engine2D/Engine2.ts#L9">lib/engine2D/Engine2.ts:9</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/engine2D/Engine2.ts#L9">lib/engine2D/Engine2.ts:9</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2859,17 +2866,22 @@ img {
 				<a name="varslist" class="tsd-anchor"></a>
 				<h3>vars<wbr>List</h3>
 				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> varsList<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VarsList</span></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> varsList<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="varslist.html" class="tsd-signature-type">VarsList</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.varsList</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#varslist">varsList</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L42">lib/core/Engine.ts:42</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L50">lib/core/Engine.ts:50</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">VarsList</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Returns the state variables of the system.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <a href="varslist.html" class="tsd-signature-type">VarsList</a></h4>
 					</li>
 				</ul>
 			</section>
@@ -2880,23 +2892,29 @@ img {
 				<a name="addbody" class="tsd-anchor"></a>
 				<h3>add<wbr>Body</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcebody.html" class="tsd-signature-type">ForceBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.addBody</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#addbody">addBody</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L50">lib/core/Engine.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L60">lib/core/Engine.ts:60</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Adds a body to the system.
+									The state variables of the body will become part of the state vector of the system.
+								The state variables of the body will be updated each time the system is advanced in time.</p>
+							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>body: <a href="../interfaces/forcebody.html" class="tsd-signature-type">ForceBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								<div class="tsd-comment tsd-typography">
+									<p>The body to be added to the system</p>
 								</div>
 							</li>
 						</ul>
@@ -2908,20 +2926,29 @@ img {
 				<a name="addconstraint" class="tsd-anchor"></a>
 				<h3>add<wbr>Constraint</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GeometricConstraint</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="../interfaces/geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.addConstraint</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#addconstraint">addConstraint</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L96">lib/core/Engine.ts:96</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L120">lib/core/Engine.ts:120</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Adds a geometric constraint to the system.
+								Geometric constraints are applied after the force and torques have been computed and before drift forces and torques.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>geometry: <span class="tsd-signature-type">GeometricConstraint</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>geometry: <a href="../interfaces/geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The geometric constraint to be added to the system.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2932,20 +2959,30 @@ img {
 				<a name="adddriftlaw" class="tsd-anchor"></a>
 				<h3>add<wbr>Drift<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Drift<wbr>Law<span class="tsd-signature-symbol">(</span>driftLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Drift<wbr>Law<span class="tsd-signature-symbol">(</span>driftLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.addDriftLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#adddriftlaw">addDriftLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L108">lib/core/Engine.ts:108</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L142">lib/core/Engine.ts:142</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Adds a force law that is designed to compensate for numerical drift in the system.
+									A drift law is usually small and may take the form of a spring and/or damping force.
+								The drift laws are applied after any geometric constraints have been applied.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>driftLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>driftLaw: <a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The drift force law to be applied.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2956,20 +2993,28 @@ img {
 				<a name="addforcelaw" class="tsd-anchor"></a>
 				<h3>add<wbr>Force<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.addForceLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#addforcelaw">addForceLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L65">lib/core/Engine.ts:65</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L80">lib/core/Engine.ts:80</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Adds a force law to the system.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>forceLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>forceLaw: <a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The force law to be added to the system.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2980,23 +3025,27 @@ img {
 				<a name="addtorquelaw" class="tsd-anchor"></a>
 				<h3>add<wbr>Torque<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Torque<wbr>Law<span class="tsd-signature-symbol">(</span>torqueLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TorqueLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Torque<wbr>Law<span class="tsd-signature-symbol">(</span>torqueLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/torquelaw.html" class="tsd-signature-type">TorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.addTorqueLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#addtorquelaw">addTorqueLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L81">lib/core/Engine.ts:81</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L100">lib/core/Engine.ts:100</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Adds a torque law to the system.</p>
+							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>torqueLaw: <span class="tsd-signature-type">TorqueLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>torqueLaw: <a href="../interfaces/torquelaw.html" class="tsd-signature-type">TorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								<div class="tsd-comment tsd-typography">
+									<p>The torque law to be added to the system.</p>
 								</div>
 							</li>
 						</ul>
@@ -3013,9 +3062,9 @@ img {
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.advance</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#advance">advance</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L125">lib/core/Engine.ts:125</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L163">lib/core/Engine.ts:163</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3046,23 +3095,27 @@ img {
 				<a name="removebody" class="tsd-anchor"></a>
 				<h3>remove<wbr>Body</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">remove<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcebody.html" class="tsd-signature-type">ForceBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.removeBody</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#removebody">removeBody</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L59">lib/core/Engine.ts:59</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L70">lib/core/Engine.ts:70</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes a body from the system.</p>
+							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>body: <a href="../interfaces/forcebody.html" class="tsd-signature-type">ForceBody</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								<div class="tsd-comment tsd-typography">
+									<p>The body to be removed from the system.</p>
 								</div>
 							</li>
 						</ul>
@@ -3074,20 +3127,28 @@ img {
 				<a name="removeconstraint" class="tsd-anchor"></a>
 				<h3>remove<wbr>Constraint</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">remove<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GeometricConstraint</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Constraint<span class="tsd-signature-symbol">(</span>geometry<span class="tsd-signature-symbol">: </span><a href="../interfaces/geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.removeConstraint</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#removeconstraint">removeConstraint</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L102">lib/core/Engine.ts:102</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L130">lib/core/Engine.ts:130</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes a geometric constraint from the system.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>geometry: <span class="tsd-signature-type">GeometricConstraint</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>geometry: <a href="../interfaces/geometricconstraint.html" class="tsd-signature-type">GeometricConstraint</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The geometric constraint to be removed from the system.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3098,20 +3159,28 @@ img {
 				<a name="removedriftlaw" class="tsd-anchor"></a>
 				<h3>remove<wbr>Drift<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">remove<wbr>Drift<wbr>Law<span class="tsd-signature-symbol">(</span>driftLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Drift<wbr>Law<span class="tsd-signature-symbol">(</span>driftLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.removeDriftLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#removedriftlaw">removeDriftLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L114">lib/core/Engine.ts:114</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L152">lib/core/Engine.ts:152</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes a force law that is designed to compensate for numerical drift in the system.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>driftLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>driftLaw: <a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The drift force law to be removed.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3122,20 +3191,28 @@ img {
 				<a name="removeforcelaw" class="tsd-anchor"></a>
 				<h3>remove<wbr>Force<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">remove<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Force<wbr>Law<span class="tsd-signature-symbol">(</span>forceLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.removeForceLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#removeforcelaw">removeForceLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L71">lib/core/Engine.ts:71</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L90">lib/core/Engine.ts:90</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes a force law from the system.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>forceLaw: <span class="tsd-signature-type">ForceLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>forceLaw: <a href="../interfaces/forcelaw.html" class="tsd-signature-type">ForceLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The force law to be removed.</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3146,23 +3223,27 @@ img {
 				<a name="removetorquelaw" class="tsd-anchor"></a>
 				<h3>remove<wbr>Torque<wbr>Law</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">remove<wbr>Torque<wbr>Law<span class="tsd-signature-symbol">(</span>torqueLaw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TorqueLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Torque<wbr>Law<span class="tsd-signature-symbol">(</span>torqueLaw<span class="tsd-signature-symbol">: </span><a href="../interfaces/torquelaw.html" class="tsd-signature-type">TorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.removeTorqueLaw</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#removetorquelaw">removeTorqueLaw</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L90">lib/core/Engine.ts:90</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L109">lib/core/Engine.ts:109</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Removes a torque law from the system.</p>
+							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>torqueLaw: <span class="tsd-signature-type">TorqueLaw</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>torqueLaw: <a href="../interfaces/torquelaw.html" class="tsd-signature-type">TorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								<div class="tsd-comment tsd-typography">
+									<p>The torque law to be removed from the system.</p>
 								</div>
 							</li>
 						</ul>
@@ -3179,12 +3260,15 @@ img {
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.totalEnergy</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#totalenergy">totalEnergy</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L136">lib/core/Engine.ts:136</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L181">lib/core/Engine.ts:181</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
 						<h4 class="tsd-returns-title">Returns <a href="geometric2.html" class="tsd-signature-type">Geometric2</a></h4>
+						<p>The total energy (kinetic and potential) of the system.</p>
 					</li>
 				</ul>
 			</section>
@@ -3197,11 +3281,18 @@ img {
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Engine.updateFromBodies</p>
+							<p>Inherited from <a href="engine.html">Engine</a>.<a href="engine.html#updatefrombodies">updateFromBodies</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/c0b415f/src/lib/core/Engine.ts#L132">lib/core/Engine.ts:132</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b5bcbc4/src/lib/core/Engine.ts#L173">lib/core/Engine.ts:173</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Updates the state vector of the simulation from the states of the bodies in the system.
+									It is necessary to call this method after an intervention which changes the state of
+								a body in the system.</p>
+							</div>
+						</div>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
@@ -3223,11 +3314,12 @@ img {
 						<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
 					</ul>
 					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
