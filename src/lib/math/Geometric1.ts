@@ -13,14 +13,14 @@ import { VectorE1 as Vector } from "./VectorE1";
 /**
  * @hidden
  */
-const zero = function (): [number, number] {
+const zero = function (): [a: number, x: number] {
     return [0, 0];
 };
 
 /**
  * @hidden
  */
-const scalar = function scalar(a: number): [number, number] {
+const scalar = function scalar(a: number): [a: number, x: number] {
     const coords = zero();
     coords[COORD_A] = a;
     return coords;
@@ -29,7 +29,7 @@ const scalar = function scalar(a: number): [number, number] {
 /**
  * @hidden
  */
-const vector = function vector(x: number): [number, number] {
+const vector = function vector(x: number): [a: number, x: number] {
     const coords = zero();
     coords[COORD_X] = x;
     return coords;
@@ -54,7 +54,7 @@ export function lock(mv: Geometric1): Geometric1 {
  * Coordinates corresponding to basis labels.
  * @hidden
  */
-const coordinates = function coordinates(m: Geometric): number[] {
+const coordinates = function coordinates(m: Geometric): [a: number, x: number] {
     const coords = zero();
     coords[COORD_A] = m.a;
     coords[COORD_X] = m.x;
@@ -80,7 +80,7 @@ const COORD_X = 1;
 /**
  * @hidden
  */
-const BASIS_LABELS = ["1", "e1"];
+const BASIS_LABELS: [string, string] = ["1", "e1"];
 BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 
@@ -91,6 +91,9 @@ BASIS_LABELS[COORD_X] = 'e1';
  */
 const UNLOCKED = -1 * Math.random();
 
+/**
+ * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
+ */
 export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector>, GeometricOperators<Geometric1> {
     static scalar(a: number, uom?: Unit): Geometric1 {
         return new Geometric1([a, 0], uom);
@@ -178,7 +181,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
      */
     static readonly joule = lock(new Geometric1(scalar(1), Unit.JOULE));
 
-    private readonly coords: number[];
+    private readonly coords: [a: number, x: number];
     private unit: Unit;
 
     /**
@@ -187,41 +190,66 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
     private lock_ = UNLOCKED;
 
     /**
-     * 
-     * @param coords 
-     * @param uom 
+     * Constructs a mutable instance of Geometric1 from coordinates and an optional unit of measure.
+     * @param coords The 2 coordinates are in the order [a, x]. 
+     * @param uom The optional unit of measure.
      */
-    constructor(coords: [number, number] = zero(), uom?: Unit) {
+    constructor(coords: [a: number, x: number] = zero(), uom?: Unit) {
         if (coords.length !== 2) {
             throw new Error("coords.length must be 2.");
         }
         this.coords = coords;
         this.unit = uom;
     }
-    grades: number;
+    /**
+     * A bitmask describing the non-zero grades that are present in this multivector.
+     * 
+     * 0x1 = scalar
+     * 0x2 = vector
+     */
+    get grades(): number {
+        const coords = this.coords;
+        const a = coords[COORD_A];
+        const x = coords[COORD_X];
+        let mask = 0x0;
+        if (a !== 0) {
+            mask += 0x1;
+        }
+        if (x !== 0) {
+            mask += 0x2;
+        }
+        return mask;
+    }
     clone(): Geometric1 {
         return copy(this);
     }
+
+    /**
+     * Adds a multiple of a scalar to this multivector.
+     * @param a The scalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be added. Default is 1.
+     * @returns this + (a * uom) * α
+     */
     addScalar(a: number, uom?: Unit, α = 1): Geometric1 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(copy(this).addScalar(a, uom, α));
+        if (this.isLocked()) {
+            return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = a * α;
                 this.uom = uom;
+                return this;
             }
-            else if (α === 0) {
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
+                this.a += a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a += a * α;
-            return this;
         }
-    }
-    adj(): Geometric1 {
-        throw new Error("adj Method not implemented.");
     }
     angle(): Geometric1 {
         return this.log().grade(2);
@@ -472,8 +500,16 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
         const x = this.x;
         return a * a + x * x;
     }
+
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     subScalar(a: number, uom?: Unit, α = 1): Geometric1 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subScalar(a, uom, α));
         }
         else {
@@ -481,7 +517,7 @@ export class Geometric1 implements GradeMasked, Geometric, GeometricNumber<Geome
                 this.a = - a * α;
                 this.uom = uom;
                 return this;
-            } else if (a === 0) {
+            } else if (a === 0 || α === 0) {
                 return this;
             }
             else {

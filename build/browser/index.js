@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-05';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.79';
+            this.VERSION = '1.0.80';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -5835,7 +5835,6 @@
          */
         function Particle(M, Q, metric) {
             var _this = _super.call(this, metric) || this;
-            metric.zero;
             _this.M = M ? M : metric.one();
             _this.Q = Q ? Q : metric.one();
             return _this;
@@ -6495,11 +6494,14 @@
      * @hidden
      */
     var UNLOCKED$2 = -1 * Math.random();
+    /**
+     * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
+     */
     var Geometric1 = /** @class */ (function () {
         /**
-         *
-         * @param coords
-         * @param uom
+         * Constructs a mutable instance of Geometric1 from coordinates and an optional unit of measure.
+         * @param coords The 2 coordinates are in the order [a, x].
+         * @param uom The optional unit of measure.
          */
         function Geometric1(coords, uom) {
             if (coords === void 0) { coords = zero$2(); }
@@ -6519,30 +6521,59 @@
         Geometric1.vector = function (x, uom) {
             return new Geometric1([0, x], uom);
         };
+        Object.defineProperty(Geometric1.prototype, "grades", {
+            /**
+             * A bitmask describing the non-zero grades that are present in this multivector.
+             *
+             * 0x1 = scalar
+             * 0x2 = vector
+             */
+            get: function () {
+                var coords = this.coords;
+                var a = coords[COORD_A$1];
+                var x = coords[COORD_X$4];
+                var mask = 0x0;
+                if (a !== 0) {
+                    mask += 0x1;
+                }
+                if (x !== 0) {
+                    mask += 0x2;
+                }
+                return mask;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Geometric1.prototype.clone = function () {
             return copy$1(this);
         };
+        /**
+         * Adds a multiple of a scalar to this multivector.
+         * @param a The scalar value to be added to this multivector.
+         * @param uom The optional unit of measure.
+         * @param α The fraction of (a * uom) to be added. Default is 1.
+         * @returns this + (a * uom) * α
+         */
         Geometric1.prototype.addScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
-                return lock$3(copy$1(this).addScalar(a, uom, α));
+            if (this.isLocked()) {
+                return lock$3(this.clone().addScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
+                    this.a = a * α;
                     this.uom = uom;
+                    return this;
                 }
-                else if (α === 0) {
+                else if (a === 0 || α === 0) {
                     return this;
                 }
                 else {
+                    this.a += a * α;
                     this.uom = Unit.compatible(this.uom, uom);
+                    return this;
                 }
-                this.a += a * α;
-                return this;
             }
-        };
-        Geometric1.prototype.adj = function () {
-            throw new Error("adj Method not implemented.");
         };
         Geometric1.prototype.angle = function () {
             return this.log().grade(2);
@@ -6796,9 +6827,16 @@
             var x = this.x;
             return a * a + x * x;
         };
+        /**
+         * Subtracts a multiple of a scalar from this multivector.
+         * @param a The scalar value to be subtracted from this multivector.
+         * @param uom The optional unit of measure.
+         * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+         * @returns this - (a * uom) * α
+         */
         Geometric1.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().subScalar(a, uom, α));
             }
             else {
@@ -6807,7 +6845,7 @@
                     this.uom = uom;
                     return this;
                 }
-                else if (a === 0) {
+                else if (a === 0 || α === 0) {
                     return this;
                 }
                 else {
@@ -8679,7 +8717,7 @@
     /**
      * @hidden
      */
-    var zero$1 = function zero() {
+    var zero$1 = function () {
         return [0, 0, 0, 0];
     };
     /**
@@ -8758,10 +8796,14 @@
      * @hidden
      */
     var UNLOCKED$1 = -1 * Math.random();
+    /**
+     * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
+     */
     var Geometric2 = /** @class */ (function () {
         /**
-         * Do not call this constructor. Use the static construction methods instead.
-         * The multivector is constructed in the unlocked (mutable) state.
+         * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+         * @param coords The 4 coordinates are in the order [a, x, y, b].
+         * @param uom The optional unit of measure.
          */
         function Geometric2(coords, uom) {
             if (coords === void 0) { coords = zero$1(); }
@@ -8835,9 +8877,6 @@
         };
         Geometric2.rotorFromVectorToVector = function (a, b) {
             return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
-        };
-        Geometric2.prototype.adj = function () {
-            throw new Error(notImplemented('adj').message);
         };
         Geometric2.prototype.scale = function (α) {
             return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
@@ -9132,22 +9171,32 @@
                 return this;
             }
         };
+        /**
+         * Adds a multiple of a scalar to this multivector.
+         * @param a The scalar value to be added to this multivector.
+         * @param uom The optional unit of measure.
+         * @param α The fraction of (a * uom) to be added. Default is 1.
+         * @returns this + (a * uom) * α
+         */
         Geometric2.prototype.addScalar = function (a, uom, α) {
-            if (this.lock_ !== UNLOCKED$1) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
                 return lock$1(this.clone().addScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
+                    this.a = a * α;
                     this.uom = uom;
+                    return this;
                 }
-                else if (α === 0) {
+                else if (a === 0 || α === 0) {
                     return this;
                 }
                 else {
+                    this.a += a * α;
                     this.uom = Unit.compatible(this.uom, uom);
+                    return this;
                 }
-                this.a += a * α;
-                return this;
             }
         };
         Geometric2.prototype.angle = function () {
@@ -10358,20 +10407,32 @@
                 return this;
             }
         };
+        /**
+         * Subtracts a multiple of a scalar from this multivector.
+         * @param a The scalar value to be subtracted from this multivector.
+         * @param uom The optional unit of measure.
+         * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+         * @returns this - (a * uom) * α
+         */
         Geometric2.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$1) {
+            if (this.isLocked()) {
                 return lock$1(this.clone().subScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
+                    this.a = -a * α;
                     this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
                 }
                 else {
+                    this.a -= a * α;
                     this.uom = Unit.compatible(this.uom, uom);
+                    return this;
                 }
-                this.a -= a * α;
-                return this;
             }
         };
         /**
@@ -12529,7 +12590,6 @@
      * @hidden
      */
     var COORD_PSEUDO = 7;
-    // FIXME: Change to Canonical ordering.
     /**
      * @hidden
      */
@@ -12659,12 +12719,13 @@
      */
     var UNLOCKED = -1 * Math.random();
     /**
-     * A multivector with a Euclidean metric and Cartesian coordinates.
+     * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
      */
     var Geometric3 = /** @class */ (function () {
         /**
-         * Do not call this constructor. Use the static construction methods instead.
-         * The multivector is constructed in the unlocked (mutable) state.
+         * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+         * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b].
+         * @param uom The optional unit of measure.
          */
         function Geometric3(coords, uom) {
             if (coords === void 0) { coords = zero(); }
@@ -12694,9 +12755,6 @@
             throw new Error('Method not implemented.');
         };
         Geometric3.prototype.__lt__ = function (rhs) {
-            throw new Error('Method not implemented.');
-        };
-        Geometric3.prototype.adj = function () {
             throw new Error('Method not implemented.');
         };
         Geometric3.prototype.scale = function (α) {
@@ -13024,22 +13082,25 @@
          * @param uom The optional unit of measure.
          * @returns this + (α * uom)
          */
-        Geometric3.prototype.addScalar = function (α, uom) {
-            if (this.lock_ !== UNLOCKED) {
-                return lock(this.clone().addScalar(α, uom));
+        Geometric3.prototype.addScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return lock(this.clone().addScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
+                    this.a = a * α;
                     this.uom = uom;
+                    return this;
                 }
-                else if (α === 0) {
+                else if (a === 0 || α === 0) {
                     return this;
                 }
                 else {
+                    this.a += a * α;
                     this.uom = Unit.compatible(this.uom, uom);
+                    return this;
                 }
-                this.a += α;
-                return this;
             }
         };
         /**
@@ -13067,6 +13128,25 @@
                 this.z += v.z * α;
                 return this;
             }
+        };
+        /**
+         * Pre-multiplies the column vector corresponding to this vector by the matrix.
+         * The result is applied to this vector.
+         *
+         * @param σ The 3x3 matrix that pre-multiplies this column vector.
+         */
+        Geometric3.prototype.applyMatrix = function (σ) {
+            var x = this.x;
+            var y = this.y;
+            var z = this.z;
+            var n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
+            var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
+            var n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
+            this.x = n11 * x + n12 * y + n13 * z;
+            this.y = n21 * x + n22 * y + n23 * z;
+            this.z = n31 * x + n32 * y + n33 * z;
+            this.uom = Unit.mul(this.uom, σ.uom);
+            return this;
         };
         /**
          * Sets this multivector to the angle, defined as the bivector part of the logarithm.
@@ -14298,20 +14378,32 @@
                 return this;
             }
         };
+        /**
+         * Subtracts a multiple of a scalar from this multivector.
+         * @param a The scalar value to be subtracted from this multivector.
+         * @param uom The optional unit of measure.
+         * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+         * @returns this - (a * uom) * α
+         */
         Geometric3.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED) {
+            if (this.isLocked()) {
                 return lock(this.clone().subScalar(a, uom, α));
             }
             else {
                 if (this.isZero()) {
+                    this.a = -a * α;
                     this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
                 }
                 else {
+                    this.a -= a * α;
                     this.uom = Unit.compatible(this.uom, uom);
+                    return this;
                 }
-                this.a -= a * α;
-                return this;
             }
         };
         /**

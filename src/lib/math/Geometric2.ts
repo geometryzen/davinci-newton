@@ -11,7 +11,6 @@ import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from "./GradeMasked";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
-// import { maskG2 as mask } from './maskG2';
 import { QQ } from "./QQ";
 import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirectionsE2';
 import { Scalar } from "./Scalar";
@@ -50,14 +49,14 @@ BASIS_LABELS[COORD_B] = 'e12';
 /**
  * @hidden
  */
-const zero = function zero(): [number, number, number, number] {
+const zero = function (): [a: number, x: number, y: number, b: number] {
     return [0, 0, 0, 0];
 };
 
 /**
  * @hidden
  */
-const scalar = function scalar(a: number): [number, number, number, number] {
+const scalar = function scalar(a: number): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_A] = a;
     return coords;
@@ -66,7 +65,7 @@ const scalar = function scalar(a: number): [number, number, number, number] {
 /**
  * @hidden
  */
-const vector = function vector(x: number, y: number): [number, number, number, number] {
+const vector = function vector(x: number, y: number): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_X] = x;
     coords[COORD_Y] = y;
@@ -76,7 +75,7 @@ const vector = function vector(x: number, y: number): [number, number, number, n
 /**
  * @hidden
  */
-const bivector = function bivector(b: number): [number, number, number, number] {
+const bivector = function bivector(b: number): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
@@ -85,7 +84,7 @@ const bivector = function bivector(b: number): [number, number, number, number] 
 /**
  * @hidden
  */
-const pseudo = function pseudo(b: number): [number, number, number, number] {
+const pseudo = function pseudo(b: number): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_B] = b;
     return coords;
@@ -94,7 +93,7 @@ const pseudo = function pseudo(b: number): [number, number, number, number] {
 /**
  * @hidden
  */
-const spinor = function spinor(a: number, b: number): [number, number, number, number] {
+const spinor = function spinor(a: number, b: number): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_A] = a;
     coords[COORD_B] = b;
@@ -105,7 +104,7 @@ const spinor = function spinor(a: number, b: number): [number, number, number, n
  * Coordinates corresponding to basis labels.
  * @hidden
  */
-const coordinates = function coordinates(m: Geometric): [number, number, number, number] {
+const coordinates = function coordinates(m: Geometric): [a: number, x: number, y: number, b: number] {
     const coords = zero();
     coords[COORD_A] = m.a;
     coords[COORD_X] = m.x;
@@ -139,6 +138,9 @@ function lock(m: Geometric2): Geometric2 {
  */
 const UNLOCKED = -1 * Math.random();
 
+/**
+ * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
+ */
 export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
 
     /**
@@ -322,18 +324,16 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     private lock_ = UNLOCKED;
 
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+     * @param coords The 4 coordinates are in the order [a, x, y, b]. 
+     * @param uom The optional unit of measure.
      */
-    constructor(coords: [number, number, number, number] = zero(), uom?: Unit) {
+    constructor(coords: [a: number, x: number, y: number, b: number] = zero(), uom?: Unit) {
         if (coords.length !== 4) {
             throw new Error("coords.length must be 4");
         }
         this.coords_ = coords;
         this.uom_ = uom;
-    }
-    adj(): Geometric2 {
-        throw new Error(notImplemented('adj').message);
     }
     scale(α: number): Geometric2 {
         return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
@@ -626,22 +626,31 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return this;
         }
     }
-    addScalar(a: number, uom: Unit, α: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+    /**
+     * Adds a multiple of a scalar to this multivector.
+     * @param a The scalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be added. Default is 1.
+     * @returns this + (a * uom) * α
+     */
+    addScalar(a: number, uom?: Unit, α = 1): Geometric2 {
+        if (this.isLocked()) {
             return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = a * α;
                 this.uom = uom;
+                return this;
             }
-            else if (α === 0) {
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
+                this.a += a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a += a * α;
-            return this;
         }
     }
     angle(): Geometric2 {
@@ -1889,19 +1898,30 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
 
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     subScalar(a: number, uom?: Unit, α = 1): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = - a * α;
                 this.uom = uom;
+                return this;
+            } else if (a === 0 || α === 0) {
+                return this;
             }
             else {
+                this.a -= a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a -= a * α;
-            return this;
         }
     }
 

@@ -14,7 +14,6 @@ export class Particle<T> extends RigidBody<T> {
      */
     constructor(M: T | undefined, Q: T | undefined, metric: Metric<T>) {
         super(metric);
-        metric.zero
         this.M = M ? M : metric.one();
         this.Q = Q ? Q : metric.one();
     }

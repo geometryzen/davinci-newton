@@ -3,12 +3,13 @@ import { GeometricE3 } from './GeometricE3';
 import { GeometricNumber } from './GeometricNumber';
 import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from './GradeMasked';
+import { MatrixLike } from './MatrixLike';
 import { Scalar } from './Scalar';
 import { SpinorE3 as Spinor, SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 import { VectorE3 as Vector, VectorE3 } from './VectorE3';
 /**
- * A multivector with a Euclidean metric and Cartesian coordinates.
+ * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
 export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
     /**
@@ -25,8 +26,9 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      */
     private lock_;
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+     * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b].
+     * @param uom The optional unit of measure.
      */
     constructor(coords?: number[], uom?: Unit);
     __eq__(rhs: number | Geometric3 | Unit): boolean;
@@ -35,7 +37,6 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
     __gt__(rhs: number | Geometric3 | Unit): boolean;
     __le__(rhs: number | Geometric3 | Unit): boolean;
     __lt__(rhs: number | Geometric3 | Unit): boolean;
-    adj(): Geometric3;
     scale(α: number): Geometric3;
     slerp(target: Geometric3, α: number): Geometric3;
     /**
@@ -147,13 +148,20 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * @param uom The optional unit of measure.
      * @returns this + (α * uom)
      */
-    addScalar(α: number, uom?: Unit): Geometric3;
+    addScalar(a: number, uom?: Unit, α?: number): Geometric3;
     /**
      * @param v The vector to be added to this multivector.
      * @param α An optional scale factor that multiplies the vector argument.
      * @returns this + v * α
      */
     addVector(v: VectorE3, α?: number): Geometric3;
+    /**
+     * Pre-multiplies the column vector corresponding to this vector by the matrix.
+     * The result is applied to this vector.
+     *
+     * @param σ The 3x3 matrix that pre-multiplies this column vector.
+     */
+    applyMatrix(σ: MatrixLike): this;
     /**
      * Sets this multivector to the angle, defined as the bivector part of the logarithm.
      * @returns grade(log(this), 2)
@@ -503,6 +511,13 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * @returns this - M * α
      */
     sub(M: GeometricE3, α?: number): Geometric3;
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     subScalar(a: number, uom?: Unit, α?: number): Geometric3;
     /**
      * @param v The vector to subtract from this multivector.

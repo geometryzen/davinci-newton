@@ -2,7 +2,6 @@ import { Physics } from './Physics';
 import { Bivector3 } from '../math/Bivector3';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
-import { Vector3 } from '../math/Vector3';
 import { Block3 } from '../engine3D/Block3';
 import { Dynamics3 } from '../engine3D/Dynamics3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
@@ -28,7 +27,7 @@ describe("Physics", function () {
             /**
              * Rotor from world coordinates to local coordinates.
              */
-            const ω = new Vector3(body.L.yz, body.L.zx, body.L.xy, body.L.uom);
+            const ω = Geometric3.vector(body.L.yz, body.L.zx, body.L.xy, body.L.uom);
             ω.rotate(body.R.rev());
             ω.applyMatrix(body.Iinv);
             ω.rotate(body.R.rev());

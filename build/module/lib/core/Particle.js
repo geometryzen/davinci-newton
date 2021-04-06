@@ -13,7 +13,6 @@ var Particle = /** @class */ (function (_super) {
      */
     function Particle(M, Q, metric) {
         var _this = _super.call(this, metric) || this;
-        metric.zero;
         _this.M = M ? M : metric.one();
         _this.Q = Q ? Q : metric.one();
         return _this;

@@ -17,6 +17,7 @@ import isZeroGeometricE3 from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
 import { maskG3 } from './maskG3';
+import { MatrixLike } from './MatrixLike';
 import mulE3 from './mulE3';
 import { QQ } from './QQ';
 import randomRange from './randomRange';
@@ -67,7 +68,6 @@ const COORD_ZX = 6;
  */
 const COORD_PSEUDO = 7;
 
-// FIXME: Change to Canonical ordering.
 /**
  * @hidden
  */
@@ -80,14 +80,14 @@ BASIS_LABELS[COORD_Z] = 'e3';
 /**
  * @hidden
  */
-const zero = function zero(): number[] {
+const zero = function zero(): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     return [0, 0, 0, 0, 0, 0, 0, 0];
 };
 
 /**
  * @hidden
  */
-const scalar = function scalar(a: number): number[] {
+const scalar = function scalar(a: number): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
     return coords;
@@ -96,7 +96,7 @@ const scalar = function scalar(a: number): number[] {
 /**
  * @hidden
  */
-const vector = function vector(x: number, y: number, z: number): number[] {
+const vector = function vector(x: number, y: number, z: number): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     const coords = zero();
     coords[COORD_X] = x;
     coords[COORD_Y] = y;
@@ -107,7 +107,7 @@ const vector = function vector(x: number, y: number, z: number): number[] {
 /**
  * @hidden
  */
-const bivector = function bivector(yz: number, zx: number, xy: number): number[] {
+const bivector = function bivector(yz: number, zx: number, xy: number): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     const coords = zero();
     coords[COORD_YZ] = yz;
     coords[COORD_ZX] = zx;
@@ -118,7 +118,7 @@ const bivector = function bivector(yz: number, zx: number, xy: number): number[]
 /**
  * @hidden
  */
-const spinor = function spinor(a: number, yz: number, zx: number, xy: number): number[] {
+const spinor = function spinor(a: number, yz: number, zx: number, xy: number): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
     coords[COORD_YZ] = yz;
@@ -130,7 +130,7 @@ const spinor = function spinor(a: number, yz: number, zx: number, xy: number): n
 /**
  * @hidden
  */
-const multivector = function multivector(a: number, x: number, y: number, z: number, yz: number, zx: number, xy: number, b: number): number[] {
+const multivector = function multivector(a: number, x: number, y: number, z: number, yz: number, zx: number, xy: number, b: number): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     const coords = zero();
     coords[COORD_SCALAR] = a;
     coords[COORD_X] = x;
@@ -210,7 +210,7 @@ const cosines: number[] = [];
 const UNLOCKED = -1 * Math.random();
 
 /**
- * A multivector with a Euclidean metric and Cartesian coordinates.
+ * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
 export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
 
@@ -231,8 +231,9 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
     private lock_ = UNLOCKED;
 
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+     * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b]. 
+     * @param uom The optional unit of measure.
      */
     constructor(coords: number[] = zero(), uom?: Unit) {
         if (coords.length !== 8) {
@@ -257,9 +258,6 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
         throw new Error('Method not implemented.');
     }
     __lt__(rhs: number | Geometric3 | Unit): boolean {
-        throw new Error('Method not implemented.');
-    }
-    adj(): Geometric3 {
         throw new Error('Method not implemented.');
     }
     scale(α: number): Geometric3 {
@@ -564,22 +562,24 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
      * @param uom The optional unit of measure.
      * @returns this + (α * uom)
      */
-    addScalar(α: number, uom?: Unit): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().addScalar(α, uom));
+    addScalar(a: number, uom?: Unit, α = 1): Geometric3 {
+        if (this.isLocked()) {
+            return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = a * α;
                 this.uom = uom;
+                return this;
             }
-            else if (α === 0) {
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
+                this.a += a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a += α;
-            return this;
         }
     }
 
@@ -607,6 +607,29 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
             this.z += v.z * α;
             return this;
         }
+    }
+
+    /**
+     * Pre-multiplies the column vector corresponding to this vector by the matrix.
+     * The result is applied to this vector.
+     *
+     * @param σ The 3x3 matrix that pre-multiplies this column vector.
+     */
+    applyMatrix(σ: MatrixLike): this {
+        const x = this.x;
+        const y = this.y;
+        const z = this.z;
+
+        const n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
+        const n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
+        const n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
+
+        this.x = n11 * x + n12 * y + n13 * z;
+        this.y = n21 * x + n22 * y + n23 * z;
+        this.z = n31 * x + n32 * y + n33 * z;
+
+        this.uom = Unit.mul(this.uom, σ.uom);
+        return this;
     }
 
     /**
@@ -1942,19 +1965,30 @@ export class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geo
         }
     }
 
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     subScalar(a: number, uom?: Unit, α = 1): Geometric3 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = - a * α;
                 this.uom = uom;
+                return this;
+            } else if (a === 0 || α === 0) {
+                return this;
             }
             else {
+                this.a -= a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a -= a * α;
-            return this;
         }
     }
 

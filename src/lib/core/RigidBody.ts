@@ -388,7 +388,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /*
     worldVelocityOfBodyPoint(bodyPoint: VectorE3): Vector {
         // r = R(t) * [bodyPoint relative to body center of mass]
-        const s = new Vector3().copy(bodyPoint).subtract(this.cm_body_).rotate(this.R);
+        const s = new Geometric3().copy(bodyPoint).subtract(this.cm_body_).rotate(this.R);
         const r = Vector.fromVector(bodyPoint).subtract(this.cm_body_).rotate(this.R);
         // ω x r => r << Ω
         // dx/dt = r << Ω + dX/dt

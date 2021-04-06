@@ -6,7 +6,6 @@ import { arraysEQ } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
-// import { maskG2 as mask } from './maskG2';
 import { QQ } from "./QQ";
 import { rotorFromDirectionsE2 as rotorFromDirections } from './rotorFromDirectionsE2';
 import { stringFromCoordinates } from "./stringFromCoordinates";
@@ -39,7 +38,7 @@ BASIS_LABELS[COORD_B] = 'e12';
 /**
  * @hidden
  */
-var zero = function zero() {
+var zero = function () {
     return [0, 0, 0, 0];
 };
 /**
@@ -118,10 +117,14 @@ function lock(m) {
  * @hidden
  */
 var UNLOCKED = -1 * Math.random();
+/**
+ * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
+ */
 var Geometric2 = /** @class */ (function () {
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+     * @param coords The 4 coordinates are in the order [a, x, y, b].
+     * @param uom The optional unit of measure.
      */
     function Geometric2(coords, uom) {
         if (coords === void 0) { coords = zero(); }
@@ -195,9 +198,6 @@ var Geometric2 = /** @class */ (function () {
     };
     Geometric2.rotorFromVectorToVector = function (a, b) {
         return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
-    };
-    Geometric2.prototype.adj = function () {
-        throw new Error(notImplemented('adj').message);
     };
     Geometric2.prototype.scale = function (α) {
         return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
@@ -492,22 +492,32 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
     };
+    /**
+     * Adds a multiple of a scalar to this multivector.
+     * @param a The scalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be added. Default is 1.
+     * @returns this + (a * uom) * α
+     */
     Geometric2.prototype.addScalar = function (a, uom, α) {
-        if (this.lock_ !== UNLOCKED) {
+        if (α === void 0) { α = 1; }
+        if (this.isLocked()) {
             return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = a * α;
                 this.uom = uom;
+                return this;
             }
-            else if (α === 0) {
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
+                this.a += a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a += a * α;
-            return this;
         }
     };
     Geometric2.prototype.angle = function () {
@@ -1720,20 +1730,32 @@ var Geometric2 = /** @class */ (function () {
             return this;
         }
     };
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     Geometric2.prototype.subScalar = function (a, uom, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = -a * α;
                 this.uom = uom;
+                return this;
+            }
+            else if (a === 0 || α === 0) {
+                return this;
             }
             else {
+                this.a -= a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a -= a * α;
-            return this;
         }
     };
     /**

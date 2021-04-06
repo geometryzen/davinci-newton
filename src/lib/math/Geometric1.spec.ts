@@ -54,6 +54,47 @@ describe("Geometric1", function () {
             }).toThrowError("Property `a` is readonly.");
         });
     });
+    describe("x", function () {
+        it("should support getter and setter.", function () {
+            const m = new Geometric1();
+            const a = Math.random();
+            const x = Math.random();
+            m.a = a;
+            m.x = x;
+            expect(m.x).toBe(x);
+        });
+        it("should prevent mutation when locked", function () {
+            expect(function () {
+                const m = new Geometric1();
+                m.lock();
+                const x = Math.random();
+                m.x = x;
+            }).toThrowError("Property `x` is readonly.");
+        });
+    });
+    describe("uom", function () {
+        it("should support getter and setter.", function () {
+            const m = new Geometric1();
+            m.uom = Unit.KELVIN;
+            expect(m.uom).toBe(Unit.KELVIN);
+        });
+        it("should prevent mutation when locked", function () {
+            expect(function () {
+                const m = new Geometric1();
+                m.lock();
+                m.uom = Unit.MOLE;
+            }).toThrowError("Property `uom` is readonly.");
+        });
+    });
+    describe("grades", function () {
+        it("", function () {
+            expect(Geometric1.scalar(0).grades).toBe(0x0);
+            expect(Geometric1.scalar(1).grades).toBe(0x1);
+            expect(Geometric1.vector(0).grades).toBe(0x0);
+            expect(Geometric1.vector(1).grades).toBe(0x2);
+            expect(new Geometric1([1, 1]).grades).toBe(0x3);
+        });
+    });
     describe("add", function () {
         it("lhs.isMutable, alpha=undefined", function () {
             const La = Math.random();
@@ -119,6 +160,61 @@ describe("Geometric1", function () {
             checkEQ(sum, comp);
         });
     });
+    describe("addScalar", function () {
+        it("lhs.isMutable, alpha=undefined", function () {
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.CANDELA);
+            const sum = lhs.addScalar(Ra, Unit.CANDELA);
+            const comp = new Geometric1([La + Ra, Lx], Unit.CANDELA);
+            checkEQ(sum, comp);
+        });
+        it("lhs.isMutable, alpha=0.5", function () {
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.CANDELA);
+            const sum = lhs.addScalar(Ra, Unit.CANDELA, 0.5);
+            const comp = new Geometric1([La + 0.5 * Ra, Lx], Unit.CANDELA);
+            checkEQ(sum, comp);
+        });
+        it("lhs.isLocked, alpha=0.5", function () {
+            const La = Math.random();
+            const Lx = Math.random();
+            const Ra = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.CANDELA);
+            lhs.lock();
+            const sum = lhs.addScalar(Ra, Unit.CANDELA, 0.5);
+            const comp = new Geometric1([La + 0.5 * Ra, Lx], Unit.CANDELA);
+            comp.lock();
+            checkEQ(sum, comp);
+        });
+        it("lhs.isZero, alpha=0.5", function () {
+            const La = 0;
+            const Lx = 0;
+            const Ra = Math.random();
+            const lhs = new Geometric1([La, Lx], Unit.MOLE);
+            lhs.lock();
+            const sum = lhs.addScalar(Ra, Unit.CANDELA, 0.5);
+            const comp = new Geometric1([La + 0.5 * Ra, Lx], Unit.CANDELA);
+            comp.lock();
+            checkEQ(sum, comp);
+        });
+        it("lhs.isLocked, alpha=0.5", function () {
+            const La = Math.random();
+            const Lx = Math.random();
+            const Lu = Unit.MOLE;
+            const Ra = 0;
+            const Ru = Unit.CANDELA;
+            const lhs = new Geometric1([La, Lx], Lu);
+            lhs.lock();
+            const sum = lhs.addScalar(Ra, Ru, 0.5);
+            const comp = new Geometric1([La + 0.5 * Ra, Lx], Lu);
+            comp.lock();
+            checkEQ(sum, comp);
+        });
+    });
     describe("clone", function () {
         it("should copy a", function () {
             const a = Math.random();
@@ -162,38 +258,6 @@ describe("Geometric1", function () {
             const mv = new Geometric1([a, x], Unit.KELVIN);
             const clone = mv.clone();
             expect(clone === mv).toBe(false);
-        });
-    });
-    describe("x", function () {
-        it("should support getter and setter.", function () {
-            const m = new Geometric1();
-            const a = Math.random();
-            const x = Math.random();
-            m.a = a;
-            m.x = x;
-            expect(m.x).toBe(x);
-        });
-        it("should prevent mutation when locked", function () {
-            expect(function () {
-                const m = new Geometric1();
-                m.lock();
-                const x = Math.random();
-                m.x = x;
-            }).toThrowError("Property `x` is readonly.");
-        });
-    });
-    describe("uom", function () {
-        it("should support getter and setter.", function () {
-            const m = new Geometric1();
-            m.uom = Unit.KELVIN;
-            expect(m.uom).toBe(Unit.KELVIN);
-        });
-        it("should prevent mutation when locked", function () {
-            expect(function () {
-                const m = new Geometric1();
-                m.lock();
-                m.uom = Unit.MOLE;
-            }).toThrowError("Property `uom` is readonly.");
         });
     });
     describe("isLocked", function () {

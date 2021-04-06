@@ -57,7 +57,6 @@ var COORD_ZX = 6;
  * @hidden
  */
 var COORD_PSEUDO = 7;
-// FIXME: Change to Canonical ordering.
 /**
  * @hidden
  */
@@ -187,12 +186,13 @@ var cosines = [];
  */
 var UNLOCKED = -1 * Math.random();
 /**
- * A multivector with a Euclidean metric and Cartesian coordinates.
+ * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
 var Geometric3 = /** @class */ (function () {
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+     * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b].
+     * @param uom The optional unit of measure.
      */
     function Geometric3(coords, uom) {
         if (coords === void 0) { coords = zero(); }
@@ -222,9 +222,6 @@ var Geometric3 = /** @class */ (function () {
         throw new Error('Method not implemented.');
     };
     Geometric3.prototype.__lt__ = function (rhs) {
-        throw new Error('Method not implemented.');
-    };
-    Geometric3.prototype.adj = function () {
         throw new Error('Method not implemented.');
     };
     Geometric3.prototype.scale = function (α) {
@@ -552,22 +549,25 @@ var Geometric3 = /** @class */ (function () {
      * @param uom The optional unit of measure.
      * @returns this + (α * uom)
      */
-    Geometric3.prototype.addScalar = function (α, uom) {
-        if (this.lock_ !== UNLOCKED) {
-            return lock(this.clone().addScalar(α, uom));
+    Geometric3.prototype.addScalar = function (a, uom, α) {
+        if (α === void 0) { α = 1; }
+        if (this.isLocked()) {
+            return lock(this.clone().addScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = a * α;
                 this.uom = uom;
+                return this;
             }
-            else if (α === 0) {
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
+                this.a += a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a += α;
-            return this;
         }
     };
     /**
@@ -595,6 +595,25 @@ var Geometric3 = /** @class */ (function () {
             this.z += v.z * α;
             return this;
         }
+    };
+    /**
+     * Pre-multiplies the column vector corresponding to this vector by the matrix.
+     * The result is applied to this vector.
+     *
+     * @param σ The 3x3 matrix that pre-multiplies this column vector.
+     */
+    Geometric3.prototype.applyMatrix = function (σ) {
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        var n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
+        var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
+        var n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
+        this.x = n11 * x + n12 * y + n13 * z;
+        this.y = n21 * x + n22 * y + n23 * z;
+        this.z = n31 * x + n32 * y + n33 * z;
+        this.uom = Unit.mul(this.uom, σ.uom);
+        return this;
     };
     /**
      * Sets this multivector to the angle, defined as the bivector part of the logarithm.
@@ -1828,20 +1847,32 @@ var Geometric3 = /** @class */ (function () {
             return this;
         }
     };
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     Geometric3.prototype.subScalar = function (a, uom, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subScalar(a, uom, α));
         }
         else {
             if (this.isZero()) {
+                this.a = -a * α;
                 this.uom = uom;
+                return this;
+            }
+            else if (a === 0 || α === 0) {
+                return this;
             }
             else {
+                this.a -= a * α;
                 this.uom = Unit.compatible(this.uom, uom);
+                return this;
             }
-            this.a -= a * α;
-            return this;
         }
     };
     /**

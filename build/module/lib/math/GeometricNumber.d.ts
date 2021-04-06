@@ -16,10 +16,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      */
     addScalar(a: number, uom?: Unit, α?: number): M;
     /**
-     * conjugate multiplied by norm (similar to inv)
-     */
-    adj(): M;
-    /**
      * Assumes a spinor as the multivector.
      * angle(M) = log(M).grade(2)
      * In other words, throw away the scalar part of the result which is the scaling.

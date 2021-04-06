@@ -1,4 +1,4 @@
-// Type definitions for davinci-newton 1.0.79
+// Type definitions for davinci-newton 1.0.80
 // Project: https://github.com/geometryzen/davinci-newton
 // Definitions by: David Geo Holmes david.geo.holmes@gmail.com https://www.stemcstudio.com
 //
@@ -497,11 +497,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     addScalar(a: number, uom?: Unit, α?: number): M;
 
     /**
-     * conjugate multiplied by norm (similar to inv)
-     */
-    adj(): M;
-
-    /**
      * Assumes a spinor as the multivector.
      * angle(M) = log(M).grade(2)
      * In other words, throw away the scalar part of the result which is the scaling.
@@ -606,6 +601,9 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     scp(rhs: I): M;
 }
 
+/**
+ * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
+ */
 export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geometric1, SpinorE1, VectorE1> {
 
     /**
@@ -722,15 +720,33 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      */
     static readonly joule: Geometric1;
 
+    /**
+     * The scalar coordinate of this multivector.
+     */
     a: number;
+    /**
+     * The vector coordinate of this multivector corresponding to the e1 standard basis vector.
+     */
     x: number;
+    /**
+     * The optional unit of measure of this multivector. If undefined then it is equivalent to one.
+     */
     uom?: Unit;
+    /**
+     * The grades that are present in this multivector.
+     * This is a bitmask describing the grades that are non-zero in this multivector.
+     * 0x1 = scalar, 0x2 = vector.
+     */
     readonly grades: number;
-    constructor(coords?: [number, number], uom?: Unit);
+    /**
+     * Constructs a mutable instance of Geometric1 from coordinates and an optional unit of measure.
+     * @param coords The 2 coordinates are in the order [a, x]. 
+     * @param uom The optional unit of measure.
+     */
+    constructor(coords?: [a: number, x: number], uom?: Unit);
     add(rhs: Geometric1, α?: number): Geometric1;
     addScalar(a: number, uom?: Unit, α?: number): Geometric1;
     addVector(v: VectorE1, α?: number): Geometric1;
-    adj(): Geometric1;
     angle(): Geometric1;
     clone(): Geometric1;
     conj(): Geometric1;
@@ -794,7 +810,7 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
 }
 
 /**
- * A mutable multivector in 3D with a Euclidean metric and optional unit of measure.
+ * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
 export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geometric2, SpinorE2, VectorE2> {
     /**
@@ -828,10 +844,11 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     uom?: Unit;
 
     /**
-     * Do not call this constructor. Use the static construction methods instead.
+     * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+     * @param coords The 4 coordinates are in the order [a, x, y, b]. 
+     * @param uom The optional unit of measure.
      */
-    constructor(coords?: [number, number, number, number], uom?: Unit, code?: number);
-    adj(): Geometric2;
+    constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     isScalar(): boolean;
     scale(α: number): Geometric2;
     slerp(target: GeometricE2, α: number): Geometric2;
@@ -1559,7 +1576,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
 }
 
 /**
- * A mutable multivector in 3D with a Euclidean metric and optional unit of measure.
+ * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
 export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geometric3, SpinorE3, VectorE3> {
     /**
@@ -1608,10 +1625,11 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     uom?: Unit;
 
     /**
-     * Do not call this constructor. Use the static construction methods instead.
+     * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+     * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b]. 
+     * @param uom The optional unit of measure.
      */
-    constructor(coords?: [number, number, number, number, number, number, number, number], uom?: Unit, code?: number);
-    adj(): Geometric3;
+    constructor(coords?: [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number], uom?: Unit);
     isScalar(): boolean;
     subScalar(a: number, uom?: Unit, α?: number): Geometric3;
     scale(α: number): Geometric3;

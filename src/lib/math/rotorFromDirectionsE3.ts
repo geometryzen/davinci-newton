@@ -26,7 +26,7 @@ const sinPIdiv4 = Math.sin(Math.PI / 4);
  */
 interface MutableSpinor extends Spinor {
     /**
-     * Sets this Spinor3 to the geometric product, a * b, of the vector arguments.
+     * Sets this spinor to the geometric product, a * b, of the vector arguments.
      */
     versor(a: Vector, b: Vector): MutableSpinor;
     addScalar(α: number, uom?: Unit): MutableSpinor;

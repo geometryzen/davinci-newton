@@ -7,6 +7,9 @@ import { Scalar } from "./Scalar";
 import { SpinorE2 as Spinor } from "./SpinorE2";
 import { Unit } from "./Unit";
 import { VectorE2 as Vector } from "./VectorE2";
+/**
+ * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
+ */
 export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -134,11 +137,11 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     private lock_;
     /**
-     * Do not call this constructor. Use the static construction methods instead.
-     * The multivector is constructed in the unlocked (mutable) state.
+     * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+     * @param coords The 4 coordinates are in the order [a, x, y, b].
+     * @param uom The optional unit of measure.
      */
-    constructor(coords?: [number, number, number, number], uom?: Unit);
-    adj(): Geometric2;
+    constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     scale(α: number): Geometric2;
     slerp(target: Geometric2, α: number): Geometric2;
     stress(σ: Vector): Geometric2;
@@ -170,7 +173,14 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     __rmul__(lhs: any): Geometric2;
     add2(a: Geometric, b: Geometric): Geometric2;
     addPseudo(β: number, uom?: Unit): Geometric2;
-    addScalar(a: number, uom: Unit, α: number): Geometric2;
+    /**
+     * Adds a multiple of a scalar to this multivector.
+     * @param a The scalar value to be added to this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be added. Default is 1.
+     * @returns this + (a * uom) * α
+     */
+    addScalar(a: number, uom?: Unit, α?: number): Geometric2;
     angle(): Geometric2;
     approx(n: number): Geometric2;
     conj(): Geometric2;
@@ -511,6 +521,13 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * @returns this - M * α
      */
     sub(M: Geometric, α?: number): Geometric2;
+    /**
+     * Subtracts a multiple of a scalar from this multivector.
+     * @param a The scalar value to be subtracted from this multivector.
+     * @param uom The optional unit of measure.
+     * @param α The fraction of (a * uom) to be subtracted. Default is 1.
+     * @returns this - (a * uom) * α
+     */
     subScalar(a: number, uom?: Unit, α?: number): Geometric2;
     /**
      * @param v The vector to subtract from this multivector.

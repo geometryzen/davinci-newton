@@ -7,7 +7,7 @@ import { VectorE3 as Vector } from './VectorE3';
  */
 interface MutableSpinor extends Spinor {
     /**
-     * Sets this Spinor3 to the geometric product, a * b, of the vector arguments.
+     * Sets this spinor to the geometric product, a * b, of the vector arguments.
      */
     versor(a: Vector, b: Vector): MutableSpinor;
     addScalar(α: number, uom?: Unit): MutableSpinor;

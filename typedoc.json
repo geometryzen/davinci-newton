@@ -1,7 +1,8 @@
 {
-    "mode": "file",
+    "entryPoints": [
+        "./src/index.ts"
+    ],
     "out": "docs",
-    "excludeNotExported": true,
     "excludePrivate": true,
     "theme": "minimal"
 }

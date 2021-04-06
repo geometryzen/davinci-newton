@@ -1,7 +1,6 @@
 import { BivectorE3 } from './BivectorE3';
 import { Geometric3 } from './Geometric3';
 import { Unit } from './Unit';
-import { Vector3 } from './Vector3';
 import { VectorE3 } from './VectorE3';
 
 /**
@@ -1065,7 +1064,7 @@ describe("Geometric3", function () {
     });
 
     describe("reflect", function () {
-        const n = Vector3.vector(1, 0, 0);
+        const n = Geometric3.vector(1, 0, 0);
         const a = Geometric3.vector(2, 3, 0, Unit.METER);
         const chain = a.reflect(n);
 
@@ -1134,11 +1133,11 @@ describe("Geometric3", function () {
     });
 
     describe("stress", function () {
-        const stress = Vector3.vector(7, 11, 13);
+        const stress = Geometric3.vector(7, 11, 13);
         const position = Geometric3.vector(2, 3, 5, Unit.METER);
         const chain = position.stress(stress);
 
-        it("should piece-wise multiply grde 1 components", function () {
+        it("should piece-wise multiply grade 1 components", function () {
             expect(position.x).toBe(14);
             expect(position.y).toBe(33);
             expect(position.z).toBe(65);
