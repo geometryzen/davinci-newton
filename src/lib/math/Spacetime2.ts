@@ -78,6 +78,15 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     static readonly γ1γ2 = new Spacetime2(0, 0, 0, 0, 0, 0, 1).permlock();
     static readonly I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
     /**
+     * Creates a grade 0 (scalar) multivector with value `a * uom`.
+     * The scalar returned is in the unlocked (mutable) state.
+     * @param a The scaling factor for the unit of measure.
+     * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+     */
+    static scalar(a: number, uom?: Unit): Spacetime2 {
+        return new Spacetime2(a, 0, 0, 0, 0, 0, 0, 0, uom);
+    }
+    /**
      * a
      */
     private $M000: number;
@@ -249,8 +258,25 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
-    addScalar(a: number, uom?: Unit, α?: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+    addScalar(a: number, uom?: Unit, α = 1): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().addScalar(a, uom, α).permlock();
+        }
+        else {
+            if (this.isZero()) {
+                this.a = a * α;
+                this.uom = uom;
+                return this;
+            }
+            else if (a === 0 || α === 0) {
+                return this;
+            }
+            else {
+                this.a += a * α;
+                this.uom = Unit.compatible(this.uom, uom);
+                return this;
+            }
+        }
     }
     angle(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -262,6 +288,12 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     div(rhs: Spacetime2): Spacetime2 {
+        throw new Error("Method not implemented.");
+    }
+    divByScalar(α: number, uom: Unit): Spacetime2 {
+        throw new Error("Method not implemented.");
+    }
+    divByNumber(a: number): Spacetime2 {
         throw new Error("Method not implemented.");
     }
     exp(): Spacetime2 {
@@ -301,26 +333,80 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    grade(grade: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+    grade(n: number): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().grade(n).permlock();
+        }
+        else {
+            // There is no change to the unit of measure.
+            switch (n) {
+                case 0: {
+                    this.t = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.tx = 0;
+                    this.ty = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 1: {
+                    this.a = 0;
+                    this.tx = 0;
+                    this.ty = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 2: {
+                    this.a = 0;
+                    this.t = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.b = 0;
+                    break;
+                }
+                case 3: {
+                    this.a = 0;
+                    this.t = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.tx = 0;
+                    this.ty = 0;
+                    this.xy = 0;
+                    break;
+                }
+                default: {
+                    this.a = 0;
+                    this.t = 0;
+                    this.x = 0;
+                    this.y = 0;
+                    this.tx = 0;
+                    this.ty = 0;
+                    this.xy = 0;
+                    this.b = 0;
+                }
+            }
+            return this;
+        }
     }
     inv(): Spacetime2 {
         throw new Error("Method not implemented.");
+    }
+    isBivector(): boolean {
+        return this.a === 0 && this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
     }
     isOne(): boolean {
         return this.a === 1 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0 && Unit.isOne(this.uom);
     }
     isScalar(): boolean {
-        throw new Error("Method not implemented.");
+        return this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
     }
     isSpinor(): boolean {
-        throw new Error("Method not implemented.");
+        return this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
     }
     isVector(): boolean {
-        throw new Error("Method not implemented.");
-    }
-    isBivector(): boolean {
-        throw new Error("Method not implemented.");
+        return this.a === 0 && this.tx === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
     }
     isZero(): boolean {
         return this.a === 0 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
@@ -362,6 +448,12 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     log(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
+    magnitude(): Spacetime2 {
+        throw new Error("Method not implemented.");
+    }
+    magnitudeNoUnits(): number {
+        throw new Error("Method not implemented.");
+    }
     mul(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().mul(rhs).permlock();
@@ -396,10 +488,10 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    magnitude(): Spacetime2 {
+    mulByNumber(a: number): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    magnitudeNoUnits(): number {
+    mulByScalar(α: number, uom: Unit): Spacetime2 {
         throw new Error("Method not implemented.");
     }
     quaditude(): Spacetime2 {
@@ -445,8 +537,24 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     rev(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    subScalar(a: number, uom?: Unit, α?: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+    subScalar(a: number, uom?: Unit, α = 1): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().subScalar(a, uom, α).permlock();
+        }
+        else {
+            if (this.isZero()) {
+                this.a = - a * α;
+                this.uom = uom;
+                return this;
+            } else if (a === 0 || α === 0) {
+                return this;
+            }
+            else {
+                this.a -= a * α;
+                this.uom = Unit.compatible(this.uom, uom);
+                return this;
+            }
+        }
     }
     scp(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
@@ -482,14 +590,23 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    divByScalar(α: number, uom: Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
     lerp(target: Spacetime2, α: number): Spacetime2 {
         throw new Error("Method not implemented.");
     }
     scale(α: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().scale(α).permlock();
+        } else {
+            this.$M000 = this.$M000 * α;
+            this.$M001 = this.$M001 * α;
+            this.$M010 = this.$M010 * α;
+            this.$M011 = this.$M011 * α;
+            this.$M100 = this.$M100 * α;
+            this.$M101 = this.$M101 * α;
+            this.$M110 = this.$M110 * α;
+            this.$M111 = this.$M111 * α;
+            return this;
+        }
     }
     neg(): Spacetime2 {
         if (this.isLocked()) {
@@ -571,67 +688,152 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
      * @hidden
      */
     __div__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().div(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().divByNumber(rhs).permlock();
+        }
+        else if (rhs instanceof Unit) {
+            return this.clone().divByScalar(1, rhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rdiv__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().div(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).div(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __vbar__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().scp(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().scp(Spacetime2.scalar(rhs)).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rvbar__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().scp(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).scp(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __wedge__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().ext(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            // The outer product with a scalar is scalar multiplication.
+            return this.clone().mulByNumber(rhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rwedge__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().ext(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            // The outer product with a scalar is scalar multiplication, and commutes.
+            return this.clone().mulByNumber(lhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __lshift__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().lco(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().lco(Spacetime2.scalar(rhs)).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rlshift__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().lco(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).lco(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rshift__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().rco(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().rco(Spacetime2.scalar(rhs)).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rrshift__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().rco(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).rco(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __bang__(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.clone().inv().permlock();
     }
     /**
      * @hidden
@@ -673,54 +875,117 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
      * @hidden
      */
     __tilde__(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.clone().rev().permlock();
     }
     /**
      * @hidden
      */
-    __add__(other: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+    __add__(rhs: number | Spacetime2 | Unit): Spacetime2 {
+        if (rhs instanceof Spacetime2) {
+            return this.clone().add(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().addScalar(rhs).permlock();
+        }
+        else if (rhs instanceof Unit) {
+            return this.clone().addScalar(1, rhs, 1).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
-    __radd__(other: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+    __radd__(lhs: number | Spacetime2 | Unit): Spacetime2 {
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().add(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).add(this).permlock();
+        }
+        else if (lhs instanceof Unit) {
+            return Spacetime2.scalar(1, lhs).add(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
-    __sub__(other: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+    __sub__(rhs: number | Spacetime2 | Unit): Spacetime2 {
+        if (rhs instanceof Spacetime2) {
+            return this.clone().sub(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().subScalar(rhs).permlock();
+        }
+        else if (rhs instanceof Unit) {
+            return this.clone().subScalar(1, rhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
-    __rsub__(other: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+    __rsub__(lhs: number | Spacetime2 | Unit): Spacetime2 {
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().sub(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return Spacetime2.scalar(lhs).sub(this).permlock();
+        }
+        else if (lhs instanceof Unit) {
+            return Spacetime2.scalar(1, lhs).sub(this).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __pos__(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.clone().permlock();
     }
     /**
      * @hidden
      */
     __neg__(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.clone().neg().permlock();
     }
     /**
      * @hidden
      */
     __mul__(rhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime2) {
+            return this.clone().mul(rhs).permlock();
+        }
+        else if (typeof rhs === 'number') {
+            return this.clone().mulByNumber(rhs).permlock();
+        }
+        else if (rhs instanceof Unit) {
+            return this.clone().mulByScalar(1, rhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
     /**
      * @hidden
      */
     __rmul__(lhs: number | Spacetime2 | Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (lhs instanceof Spacetime2) {
+            return lhs.clone().mul(this).permlock();
+        }
+        else if (typeof lhs === 'number') {
+            return this.clone().mulByNumber(lhs).permlock();
+        }
+        else {
+            return void 0;
+        }
     }
 }

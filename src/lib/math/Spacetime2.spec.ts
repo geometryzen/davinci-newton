@@ -291,6 +291,38 @@ describe("Spacetime2", function () {
             expect(m.grades).toBe(0xF);
         });
     });
+    describe("grade", function () {
+        const GRADE0 = zero.add(one);
+        const GRADE1 = zero.add(γ0).add(γ1).add(γ2);
+        const GRADE2 = zero.add(γ0γ1).add(γ0γ2).add(γ1γ2);
+        const GRADE3 = zero.add(I);
+        const ALL = GRADE0.add(GRADE1).add(GRADE2).add(GRADE3);
+        it("sanity check", function () {
+            expect(ALL.a).toBe(1);
+            expect(ALL.t).toBe(1);
+            expect(ALL.x).toBe(1);
+            expect(ALL.tx).toBe(1);
+            expect(ALL.y).toBe(1);
+            expect(ALL.ty).toBe(1);
+            expect(ALL.xy).toBe(1);
+            expect(ALL.b).toBe(1);
+        });
+        it("0", function () {
+            checkEQ(ALL.grade(0), GRADE0);
+        });
+        it("1", function () {
+            checkEQ(ALL.grade(1), GRADE1);
+        });
+        it("2", function () {
+            checkEQ(ALL.grade(2), GRADE2);
+        });
+        it("3", function () {
+            checkEQ(ALL.grade(3), GRADE3);
+        });
+        it("otherwise", function () {
+            checkEQ(ALL.grade(9.5), zero);
+        });
+    });
     describe("isZero", function () {
         it("0", function () {
             const m = new Spacetime2();
@@ -649,54 +681,90 @@ describe("Spacetime2", function () {
             expect(zero.isOne()).toBeFalse();
             expect(Unit.isOne(zero.uom)).toBeTrue();
             expect(zero.toString()).toBe("0");
+            expect(zero.isScalar()).toBeTrue();
+            expect(zero.isSpinor()).toBeTrue();
+            expect(zero.isVector()).toBeTrue();
+            expect(zero.isBivector()).toBeTrue();
         });
         it("one", function () {
             expect(one.isZero()).toBeFalse();
             expect(one.isOne()).toBeTrue();
             expect(Unit.isOne(one.uom)).toBeTrue();
             expect(one.toString()).toBe("1");
+            expect(one.isScalar()).toBeTrue();
+            expect(one.isSpinor()).toBeTrue();
+            expect(one.isVector()).toBeFalse();
+            expect(one.isBivector()).toBeFalse();
         });
         it("γ0", function () {
             expect(γ0.isZero()).toBeFalse();
             expect(γ0.isOne()).toBeFalse();
             expect(Unit.isOne(γ0.uom)).toBeTrue();
             expect(γ0.toString()).toBe("γ0");
+            expect(γ0.isScalar()).toBeFalse();
+            expect(γ0.isSpinor()).toBeFalse();
+            expect(γ0.isVector()).toBeTrue();
+            expect(γ0.isBivector()).toBeFalse();
         });
         it("γ1", function () {
             expect(γ1.isZero()).toBeFalse();
             expect(γ1.isOne()).toBeFalse();
             expect(Unit.isOne(γ1.uom)).toBeTrue();
             expect(γ1.toString()).toBe("γ1");
+            expect(γ1.isScalar()).toBeFalse();
+            expect(γ1.isSpinor()).toBeFalse();
+            expect(γ1.isVector()).toBeTrue();
+            expect(γ1.isBivector()).toBeFalse();
         });
         it("γ0γ1", function () {
             expect(γ0γ1.isZero()).toBeFalse();
             expect(γ0γ1.isOne()).toBeFalse();
             expect(Unit.isOne(γ0γ1.uom)).toBeTrue();
             expect(γ0γ1.toString()).toBe("γ0γ1");
+            expect(γ0γ1.isScalar()).toBeFalse();
+            expect(γ0γ1.isSpinor()).toBeTrue();
+            expect(γ0γ1.isVector()).toBeFalse();
+            expect(γ0γ1.isBivector()).toBeTrue();
         });
         it("γ2", function () {
             expect(γ2.isZero()).toBeFalse();
             expect(γ2.isOne()).toBeFalse();
             expect(Unit.isOne(γ2.uom)).toBeTrue();
             expect(γ2.toString()).toBe("γ2");
+            expect(γ2.isScalar()).toBeFalse();
+            expect(γ2.isSpinor()).toBeFalse();
+            expect(γ2.isVector()).toBeTrue();
+            expect(γ2.isBivector()).toBeFalse();
         });
         it("γ0γ2", function () {
             expect(γ0γ2.isZero()).toBeFalse();
             expect(γ0γ2.isOne()).toBeFalse();
             expect(Unit.isOne(γ0γ2.uom)).toBeTrue();
             expect(γ0γ2.toString()).toBe("γ0γ2");
+            expect(γ0γ2.isScalar()).toBeFalse();
+            expect(γ0γ2.isSpinor()).toBeTrue();
+            expect(γ0γ2.isVector()).toBeFalse();
+            expect(γ0γ2.isBivector()).toBeTrue();
         });
         it("γ1γ2", function () {
             expect(γ1γ2.isZero()).toBeFalse();
             expect(γ1γ2.isOne()).toBeFalse();
             expect(Unit.isOne(γ1γ2.uom)).toBeTrue();
             expect(γ1γ2.toString()).toBe("γ1γ2");
+            expect(γ1γ2.isScalar()).toBeFalse();
+            expect(γ1γ2.isSpinor()).toBeTrue();
+            expect(γ1γ2.isVector()).toBeFalse();
+            expect(γ1γ2.isBivector()).toBeTrue();
         });
         it("I", function () {
             expect(I.isZero()).toBeFalse();
             expect(I.isOne()).toBeFalse();
             expect(Unit.isOne(I.uom)).toBeTrue();
             expect(I.toString()).toBe("I");
+            expect(I.isScalar()).toBeFalse();
+            expect(I.isSpinor()).toBeFalse();
+            expect(I.isVector()).toBeFalse();
+            expect(I.isBivector()).toBeFalse();
         });
     });
     describe("mul", function () {
@@ -1747,6 +1815,116 @@ describe("Spacetime2", function () {
             it("I", function () {
                 checkEQ(I.scp(I), one.neg());
             });
+        });
+    });
+    describe("scale", function () {
+        it("zero", function () {
+            const α = Math.random();
+            const m = zero.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("one", function () {
+            const α = Math.random();
+            const m = one.scale(α);
+            expect(m.a).toBe(α);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ0", function () {
+            const α = Math.random();
+            const m = γ0.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(α);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ1", function () {
+            const α = Math.random();
+            const m = γ1.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(α);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ2", function () {
+            const α = Math.random();
+            const m = γ2.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(α);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ0γ1", function () {
+            const α = Math.random();
+            const m = γ0γ1.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(α);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ0γ2", function () {
+            const α = Math.random();
+            const m = γ0γ2.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(α);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("γ1γ2", function () {
+            const α = Math.random();
+            const m = γ1γ2.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(α);
+            expect(m.b).toBe(0);
+        });
+        it("I", function () {
+            const α = Math.random();
+            const m = I.scale(α);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(α);
         });
     });
 });
