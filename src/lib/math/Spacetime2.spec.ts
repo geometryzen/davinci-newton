@@ -41,14 +41,14 @@ const I = Spacetime2.I;
  * @hidden
  */
 function checkEQ(result: Spacetime2, comp: Spacetime2): void {
-    expect(result.a).toBe(comp.a, `a: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.t).toBe(comp.t, `t: result.t=${result.t}, comp.t=${comp.t}`);
-    expect(result.x).toBe(comp.x, `x: result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.tx).toBe(comp.tx, `tx: result.tx=${result.tx}, comp.tx=${comp.tx}`);
-    expect(result.y).toBe(comp.y, `y: result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.ty).toBe(comp.ty, `ty: result.ty=${result.ty}, comp.ty=${comp.ty}`);
-    expect(result.xy).toBe(comp.xy, `xy: result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.b).toBe(comp.b, `b: result.b=${result.b}, comp.b=${comp.b}`);
+    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
+    expect(result.t).toBe(comp.t, `001 γ0: result.t=${result.t}, comp.t=${comp.t}`);
+    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.tx).toBe(comp.tx, `011 γ0γ1: result.tx=${result.tx}, comp.tx=${comp.tx}`);
+    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.ty).toBe(comp.ty, `101 γ0γ2: result.ty=${result.ty}, comp.ty=${comp.ty}`);
+    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
     expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
     expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
     expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
@@ -702,71 +702,45 @@ describe("Spacetime2", function () {
     describe("mul", function () {
         describe("one", function () {
             it("one", function () {
-                const result = one.mul(one);
-                const comp = one;
-                checkEQ(result, comp);
+                checkEQ(one.mul(one), one);
             });
             it("γ0", function () {
-                const result = one.mul(γ0);
-                const comp = γ0;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ0), γ0);
             });
             it("γ1", function () {
-                const result = one.mul(γ1);
-                const comp = γ1;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ1), γ1);
             });
             it("γ0γ1", function () {
-                const result = one.mul(γ0γ1);
-                const comp = γ0γ1;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ0γ1), γ0γ1);
             });
             it("γ2", function () {
-                const result = one.mul(γ2);
-                const comp = γ2;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ2), γ2);
             });
             it("γ0γ2", function () {
-                const result = one.mul(γ0γ2);
-                const comp = γ0γ2;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ0γ2), γ0γ2);
             });
             it("γ1γ2", function () {
-                const result = one.mul(γ1γ2);
-                const comp = γ1γ2;
-                checkEQ(result, comp);
+                checkEQ(one.mul(γ1γ2), γ1γ2);
             });
             it("I", function () {
-                const result = one.mul(I);
-                const comp = I;
-                checkEQ(result, comp);
+                checkEQ(one.mul(I), I);
             });
         });
         describe("γ0", function () {
             it("one", function () {
-                const result = γ0.mul(one);
-                const comp = γ0;
-                checkEQ(result, comp);
+                checkEQ(γ0.mul(one), γ0);
             });
             it("γ0", function () {
-                const result = γ0.mul(γ0);
-                const comp = one;
-                checkEQ(result, comp);
+                checkEQ(γ0.mul(γ0), one);
             });
             it("γ1", function () {
-                const result = γ0.mul(γ1);
-                const comp = γ0γ1;
-                checkEQ(result, comp);
+                checkEQ(γ0.mul(γ1), γ0γ1);
             });
             it("γ0γ1", function () {
-                const result = γ0.mul(γ0γ1);
-                const comp = γ1;
-                checkEQ(result, comp);
+                checkEQ(γ0.mul(γ0γ1), γ1);
             });
             it("γ2", function () {
-                const result = γ0.mul(γ2);
-                const comp = γ0γ2;
-                checkEQ(result, comp);
+                checkEQ(γ0.mul(γ2), γ0γ2);
             });
             it("γ0γ2", function () {
                 checkEQ(γ0.mul(γ0γ2), γ2);
@@ -932,6 +906,846 @@ describe("Spacetime2", function () {
             });
             it("I", function () {
                 checkEQ(I.mul(I), one.neg());
+            });
+        });
+    });
+    describe("ext", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.ext(one), one);
+            });
+            it("γ0", function () {
+                checkEQ(one.ext(γ0), γ0);
+            });
+            it("γ1", function () {
+                checkEQ(one.ext(γ1), γ1);
+            });
+            it("γ0γ1", function () {
+                checkEQ(one.ext(γ0γ1), γ0γ1);
+            });
+            it("γ2", function () {
+                checkEQ(one.ext(γ2), γ2);
+            });
+            it("γ0γ2", function () {
+                checkEQ(one.ext(γ0γ2), γ0γ2);
+            });
+            it("γ1γ2", function () {
+                checkEQ(one.ext(γ1γ2), γ1γ2);
+            });
+            it("I", function () {
+                checkEQ(one.ext(I), I);
+            });
+        });
+        describe("γ0", function () {
+            it("one", function () {
+                checkEQ(γ0.ext(one), γ0);
+            });
+            it("γ0", function () {
+                checkEQ(γ0.ext(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0.ext(γ1), γ0γ1);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0.ext(γ2), γ0γ2);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0.ext(γ1γ2), I);
+            });
+            it("I", function () {
+                checkEQ(γ0.ext(I), zero);
+            });
+        });
+        describe("γ1", function () {
+            it("one", function () {
+                checkEQ(γ1.ext(one), γ1);
+            });
+            it("γ0", function () {
+                checkEQ(γ1.ext(γ0), γ0γ1.neg());
+            });
+            it("γ1", function () {
+                checkEQ(γ1.ext(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1.ext(γ2), γ1γ2);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1.ext(γ0γ2), I.neg());
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ1.ext(I), zero);
+            });
+        });
+        describe("γ0γ1", function () {
+            it("one", function () {
+                checkEQ(γ0γ1.ext(one), γ0γ1);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ1.ext(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ1.ext(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ1.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ1.ext(γ2), I);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ1.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ1.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ1.ext(I), zero);
+            });
+        });
+        describe("γ2", function () {
+            it("one", function () {
+                checkEQ(γ2.ext(one), γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ2.ext(γ0), γ0γ2.neg());
+            });
+            it("γ1", function () {
+                checkEQ(γ2.ext(γ1), γ1γ2.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ2.ext(γ0γ1), I);
+            });
+            it("γ2", function () {
+                checkEQ(γ2.ext(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ2.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ2.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ2.ext(I), zero);
+            });
+        });
+        describe("γ0γ2", function () {
+            it("one", function () {
+                checkEQ(γ0γ2.ext(one), γ0γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ2.ext(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ2.ext(γ1), I.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ2.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ2.ext(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ2.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ2.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ2.ext(I), zero);
+            });
+        });
+        describe("γ1γ2", function () {
+            it("one", function () {
+                checkEQ(γ1γ2.ext(one), γ1γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ1γ2.ext(γ0), I);
+            });
+            it("γ1", function () {
+                checkEQ(γ1γ2.ext(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1γ2.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1γ2.ext(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1γ2.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1γ2.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ1γ2.ext(I), zero);
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.ext(one), I);
+            });
+            it("γ0", function () {
+                checkEQ(I.ext(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(I.ext(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(I.ext(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(I.ext(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(I.ext(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(I.ext(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(I.ext(I), zero);
+            });
+        });
+    });
+    describe("lco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.lco(one), one);
+            });
+            it("γ0", function () {
+                checkEQ(one.lco(γ0), γ0);
+            });
+            it("γ1", function () {
+                checkEQ(one.lco(γ1), γ1);
+            });
+            it("γ0γ1", function () {
+                checkEQ(one.lco(γ0γ1), γ0γ1);
+            });
+            it("γ2", function () {
+                checkEQ(one.lco(γ2), γ2);
+            });
+            it("γ0γ2", function () {
+                checkEQ(one.lco(γ0γ2), γ0γ2);
+            });
+            it("γ1γ2", function () {
+                checkEQ(one.lco(γ1γ2), γ1γ2);
+            });
+            it("I", function () {
+                checkEQ(one.lco(I), I);
+            });
+        });
+        describe("γ0", function () {
+            it("one", function () {
+                checkEQ(γ0.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0.lco(γ0), one);
+            });
+            it("γ1", function () {
+                checkEQ(γ0.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0.lco(γ0γ1), γ1);
+            });
+            it("γ2", function () {
+                checkEQ(γ0.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0.lco(γ0γ2), γ2);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0.lco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0.lco(I), γ1γ2);
+            });
+        });
+        describe("γ1", function () {
+            it("one", function () {
+                checkEQ(γ1.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ1.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1.lco(γ1), one.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1.lco(γ0γ1), γ0);
+            });
+            it("γ2", function () {
+                checkEQ(γ1.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1.lco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1.lco(γ1γ2), γ2.neg());
+            });
+            it("I", function () {
+                checkEQ(γ1.lco(I), γ0γ2);
+            });
+        });
+        describe("γ0γ1", function () {
+            it("one", function () {
+                checkEQ(γ0γ1.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ1.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ1.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ1.lco(γ0γ1), one);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ1.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ1.lco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ1.lco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ1.lco(I), γ2);
+            });
+        });
+        describe("γ2", function () {
+            it("one", function () {
+                checkEQ(γ2.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ2.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ2.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ2.lco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ2.lco(γ2), one.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ2.lco(γ0γ2), γ0);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ2.lco(γ1γ2), γ1);
+            });
+            it("I", function () {
+                checkEQ(γ2.lco(I), γ0γ1.neg());
+            });
+        });
+        describe("γ0γ2", function () {
+            it("one", function () {
+                checkEQ(γ0γ2.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ2.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ2.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ2.lco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ2.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ2.lco(γ0γ2), one);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ2.lco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ2.lco(I), γ1.neg());
+            });
+        });
+        describe("γ1γ2", function () {
+            it("one", function () {
+                checkEQ(γ1γ2.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ1γ2.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1γ2.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1γ2.lco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1γ2.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1γ2.lco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1γ2.lco(γ1γ2), one.neg());
+            });
+            it("I", function () {
+                checkEQ(γ1γ2.lco(I), γ0.neg());
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.lco(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(I.lco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(I.lco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(I.lco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(I.lco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(I.lco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(I.lco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(I.lco(I), one.neg());
+            });
+        });
+    });
+    describe("rco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.rco(one), one);
+            });
+            it("γ0", function () {
+                checkEQ(one.rco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(one.rco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(one.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(one.rco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(one.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(one.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(one.rco(I), zero);
+            });
+        });
+        describe("γ0", function () {
+            it("one", function () {
+                checkEQ(γ0.rco(one), γ0);
+            });
+            it("γ0", function () {
+                checkEQ(γ0.rco(γ0), one);
+            });
+            it("γ1", function () {
+                checkEQ(γ0.rco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0.rco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0.rco(I), zero);
+            });
+        });
+        describe("γ1", function () {
+            it("one", function () {
+                checkEQ(γ1.rco(one), γ1);
+            });
+            it("γ0", function () {
+                checkEQ(γ1.rco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1.rco(γ1), one.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1.rco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ1.rco(I), zero);
+            });
+        });
+        describe("γ0γ1", function () {
+            it("one", function () {
+                checkEQ(γ0γ1.rco(one), γ0γ1);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ1.rco(γ0), γ1.neg());
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ1.rco(γ1), γ0.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ1.rco(γ0γ1), one);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ1.rco(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ1.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ1.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ1.rco(I), zero);
+            });
+        });
+        describe("γ2", function () {
+            it("one", function () {
+                checkEQ(γ2.rco(one), γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ2.rco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ2.rco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ2.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ2.rco(γ2), one.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ2.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ2.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ2.rco(I), zero);
+            });
+        });
+        describe("γ0γ2", function () {
+            it("one", function () {
+                checkEQ(γ0γ2.rco(one), γ0γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ2.rco(γ0), γ2.neg());
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ2.rco(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ2.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ2.rco(γ2), γ0.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ2.rco(γ0γ2), one);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ2.rco(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ2.rco(I), zero);
+            });
+        });
+        describe("γ1γ2", function () {
+            it("one", function () {
+                checkEQ(γ1γ2.rco(one), γ1γ2);
+            });
+            it("γ0", function () {
+                checkEQ(γ1γ2.rco(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1γ2.rco(γ1), γ2);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1γ2.rco(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1γ2.rco(γ2), γ1.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1γ2.rco(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1γ2.rco(γ1γ2), one.neg());
+            });
+            it("I", function () {
+                checkEQ(γ1γ2.rco(I), zero);
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.rco(one), I);
+            });
+            it("γ0", function () {
+                checkEQ(I.rco(γ0), γ1γ2);
+            });
+            it("γ1", function () {
+                checkEQ(I.rco(γ1), γ0γ2);
+            });
+            it("γ0γ1", function () {
+                checkEQ(I.rco(γ0γ1), γ2);
+            });
+            it("γ2", function () {
+                checkEQ(I.rco(γ2), γ0γ1.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(I.rco(γ0γ2), γ1.neg());
+            });
+            it("γ1γ2", function () {
+                checkEQ(I.rco(γ1γ2), γ0.neg());
+            });
+            it("I", function () {
+                checkEQ(I.rco(I), one.neg());
+            });
+        });
+    });
+    describe("scp", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.scp(one), one);
+            });
+            it("γ0", function () {
+                checkEQ(one.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(one.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(one.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(one.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(one.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(one.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(one.scp(I), zero);
+            });
+        });
+        describe("γ0", function () {
+            it("one", function () {
+                checkEQ(γ0.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0.scp(γ0), one);
+            });
+            it("γ1", function () {
+                checkEQ(γ0.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0.scp(I), zero);
+            });
+        });
+        describe("γ1", function () {
+            it("one", function () {
+                checkEQ(γ1.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ1.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1.scp(γ1), one.neg());
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ1.scp(I), zero);
+            });
+        });
+        describe("γ0γ1", function () {
+            it("one", function () {
+                checkEQ(γ0γ1.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ1.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ1.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ1.scp(γ0γ1), one);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ1.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ1.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ1.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ1.scp(I), zero);
+            });
+        });
+        describe("γ2", function () {
+            it("one", function () {
+                checkEQ(γ2.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ2.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ2.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ2.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ2.scp(γ2), one.neg());
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ2.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ2.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ2.scp(I), zero);
+            });
+        });
+        describe("γ0γ2", function () {
+            it("one", function () {
+                checkEQ(γ0γ2.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ0γ2.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ0γ2.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ0γ2.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ0γ2.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ0γ2.scp(γ0γ2), one);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ0γ2.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(γ0γ2.scp(I), zero);
+            });
+        });
+        describe("γ1γ2", function () {
+            it("one", function () {
+                checkEQ(γ1γ2.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(γ1γ2.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(γ1γ2.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(γ1γ2.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(γ1γ2.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(γ1γ2.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(γ1γ2.scp(γ1γ2), one.neg());
+            });
+            it("I", function () {
+                checkEQ(γ1γ2.scp(I), zero);
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.scp(one), zero);
+            });
+            it("γ0", function () {
+                checkEQ(I.scp(γ0), zero);
+            });
+            it("γ1", function () {
+                checkEQ(I.scp(γ1), zero);
+            });
+            it("γ0γ1", function () {
+                checkEQ(I.scp(γ0γ1), zero);
+            });
+            it("γ2", function () {
+                checkEQ(I.scp(γ2), zero);
+            });
+            it("γ0γ2", function () {
+                checkEQ(I.scp(γ0γ2), zero);
+            });
+            it("γ1γ2", function () {
+                checkEQ(I.scp(γ1γ2), zero);
+            });
+            it("I", function () {
+                checkEQ(I.scp(I), one.neg());
             });
         });
     });

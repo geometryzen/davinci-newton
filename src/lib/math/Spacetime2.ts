@@ -77,13 +77,37 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     static readonly γ0γ2 = new Spacetime2(0, 0, 0, 0, 0, 1).permlock();
     static readonly γ1γ2 = new Spacetime2(0, 0, 0, 0, 0, 0, 1).permlock();
     static readonly I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
+    /**
+     * a
+     */
     private $M000: number;
+    /**
+     * t
+     */
     private $M001: number;
+    /**
+     * x
+     */
     private $M010: number;
+    /**
+     * tx
+     */
     private $M011: number;
+    /**
+     * y
+     */
     private $M100: number;
+    /**
+     * ty
+     */
     private $M101: number;
+    /**
+     * xy
+     */
     private $M110: number;
+    /**
+     * b
+     */
     private $M111: number;
     constructor(a = 0, t = 0, x = 0, tx = 0, y = 0, ty = 0, xy = 0, b = 0, uom?: Unit) {
         super(uom);
@@ -178,7 +202,7 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     }
     get grades(): number {
         let mask = 0x0;
-        if (this.a !== 0) {
+        if (this.$M000 !== 0) {
             mask += 0x1;
         }
         if (this.t !== 0 || this.x !== 0 || this.y !== 0) {
@@ -195,8 +219,7 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     add(rhs: Spacetime2, α = 1): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().add(rhs, α).permlock();
-        }
-        else {
+        } else {
             if (this.isZero()) {
                 this.a = rhs.a * α;
                 this.t = rhs.t * α;
@@ -238,9 +261,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     conj(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    lco(rhs: Spacetime2): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
     div(rhs: Spacetime2): Spacetime2 {
         throw new Error("Method not implemented.");
     }
@@ -248,7 +268,38 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     ext(rhs: Spacetime2): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().ext(rhs).permlock();
+        } else {
+            const L000 = this.$M000;
+            const L001 = this.$M001;
+            const L010 = this.$M010;
+            const L011 = this.$M011;
+            const L100 = this.$M100;
+            const L101 = this.$M101;
+            const L110 = this.$M110;
+            const L111 = this.$M111;
+
+            const R000 = rhs.$M000;
+            const R001 = rhs.$M001;
+            const R010 = rhs.$M010;
+            const R011 = rhs.$M011;
+            const R100 = rhs.$M100;
+            const R101 = rhs.$M101;
+            const R110 = rhs.$M110;
+            const R111 = rhs.$M111;
+
+            this.$M000 = L000 * R000;
+            this.$M001 = L000 * R001 + L001 * R000;
+            this.$M010 = L000 * R010 + L010 * R000;
+            this.$M011 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
+            this.$M100 = L000 * R100 + L100 * R000;
+            this.$M101 = L000 * R101 + L001 * R100 - L100 * R001 + L101 * R000;
+            this.$M110 = L000 * R110 + L010 * R100 - L100 * R010 + L110 * R000;
+            this.$M111 = L000 * R111 + L001 * R110 - L010 * R101 + L011 * R100 + L100 * R011 - L101 * R010 + L110 * R001 + L111 * R000;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        }
     }
     grade(grade: number): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -273,6 +324,40 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     }
     isZero(): boolean {
         return this.a === 0 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
+    }
+    lco(rhs: Spacetime2): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().lco(rhs).permlock();
+        } else {
+            const L000 = this.$M000;
+            const L001 = this.$M001;
+            const L010 = this.$M010;
+            const L011 = this.$M011;
+            const L100 = this.$M100;
+            const L101 = this.$M101;
+            const L110 = this.$M110;
+            const L111 = this.$M111;
+
+            const R000 = rhs.$M000;
+            const R001 = rhs.$M001;
+            const R010 = rhs.$M010;
+            const R011 = rhs.$M011;
+            const R100 = rhs.$M100;
+            const R101 = rhs.$M101;
+            const R110 = rhs.$M110;
+            const R111 = rhs.$M111;
+
+            this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+            this.$M001 = L000 * R001 + L010 * R011 + L100 * R101 - L110 * R111;
+            this.$M010 = L000 * R010 + L001 * R011 + L100 * R110 - L101 * R111;
+            this.$M011 = L000 * R011 - L100 * R111;
+            this.$M100 = L000 * R100 + L001 * R101 - L010 * R110 + L011 * R111;
+            this.$M101 = L000 * R101 + L010 * R111;
+            this.$M110 = L000 * R110 + L001 * R111;
+            this.$M111 = L000 * R111;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        }
     }
     log(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -299,7 +384,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             const R110 = rhs.$M110;
             const R111 = rhs.$M111;
 
-            // TODO: L100 is suspect (+ and - are not balanced)
             this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
             this.$M001 = L000 * R001 + L001 * R000 + L010 * R011 - L011 * R010 + L100 * R101 - L101 * R100 - L110 * R111 - L111 * R110;
             this.$M010 = L000 * R010 + L010 * R000 + L001 * R011 - L011 * R001 + L100 * R110 - L101 * R111 - L110 * R100 - L111 * R101;
@@ -325,7 +409,38 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     rco(rhs: Spacetime2): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().rco(rhs).permlock();
+        } else {
+            const L000 = this.$M000;
+            const L001 = this.$M001;
+            const L010 = this.$M010;
+            const L011 = this.$M011;
+            const L100 = this.$M100;
+            const L101 = this.$M101;
+            const L110 = this.$M110;
+            const L111 = this.$M111;
+
+            const R000 = rhs.$M000;
+            const R001 = rhs.$M001;
+            const R010 = rhs.$M010;
+            const R011 = rhs.$M011;
+            const R100 = rhs.$M100;
+            const R101 = rhs.$M101;
+            const R110 = rhs.$M110;
+            const R111 = rhs.$M111;
+
+            this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+            this.$M001 = L001 * R000 - L011 * R010 - L101 * R100 - L111 * R110;
+            this.$M010 = L010 * R000 - L011 * R001 - L110 * R100 - L111 * R101;
+            this.$M011 = L011 * R000 - L111 * R100;
+            this.$M100 = L100 * R000 - L101 * R001 + L110 * R010 + L111 * R011;
+            this.$M101 = L101 * R000 + L111 * R010;
+            this.$M110 = L110 * R000 + L111 * R001;
+            this.$M111 = L111 * R000;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        }
     }
     rev(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -334,7 +449,38 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     scp(rhs: Spacetime2): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().scp(rhs).permlock();
+        } else {
+            const L000 = this.$M000;
+            const L001 = this.$M001;
+            const L010 = this.$M010;
+            const L011 = this.$M011;
+            const L100 = this.$M100;
+            const L101 = this.$M101;
+            const L110 = this.$M110;
+            const L111 = this.$M111;
+
+            const R000 = rhs.$M000;
+            const R001 = rhs.$M001;
+            const R010 = rhs.$M010;
+            const R011 = rhs.$M011;
+            const R100 = rhs.$M100;
+            const R101 = rhs.$M101;
+            const R110 = rhs.$M110;
+            const R111 = rhs.$M111;
+
+            this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+            this.$M001 = 0;
+            this.$M010 = 0;
+            this.$M011 = 0;
+            this.$M100 = 0;
+            this.$M101 = 0;
+            this.$M110 = 0;
+            this.$M111 = 0;
+            this.uom = Unit.mul(this.uom, rhs.uom);
+            return this;
+        }
     }
     divByScalar(α: number, uom: Unit): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -375,8 +521,7 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     sub(rhs: Spacetime2, α = 1): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().sub(rhs, α).permlock();
-        }
-        else {
+        } else {
             if (this.isZero()) {
                 this.a = -rhs.a * α;
                 this.t = -rhs.t * α;
