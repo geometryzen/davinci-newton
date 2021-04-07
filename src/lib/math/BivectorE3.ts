@@ -1,9 +1,11 @@
-import { BivectorE2 } from './BivectorE2';
+import { Unit } from './Unit';
 
 /**
  * @hidden
  */
-export interface BivectorE3 extends BivectorE2 {
+export interface BivectorE3 {
+    xy: number;
     yz: number;
     zx: number;
+    uom?: Unit;
 }

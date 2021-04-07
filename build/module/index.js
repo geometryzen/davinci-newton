@@ -68,6 +68,7 @@ export { Dimensions, setDimensionsChecking } from './lib/math/Dimensions';
 export { Geometric1 } from './lib/math/Geometric1';
 export { Geometric2 } from './lib/math/Geometric2';
 export { Geometric3 } from './lib/math/Geometric3';
+export { Spacetime2 } from './lib/math/Spacetime2';
 export { Matrix1 } from './lib/math/Matrix1';
 export { Matrix3 } from './lib/math/Matrix3';
 export { QQ } from './lib/math/QQ';

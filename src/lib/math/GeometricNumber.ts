@@ -26,6 +26,12 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     angle(): M;
 
     /**
+     * Makes a copy of this multivector.
+     * The resulting multivector is mutable (unlocked).
+     */
+    clone(): M;
+
+    /**
      * Conjugate
      */
     conj(): M;

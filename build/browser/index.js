@@ -6187,6 +6187,85 @@
     }
 
     /**
+     * Sentinel value to indicate that the Geometric is not locked.
+     * UNLOCKED is in the range -1 to 0.
+     * @hidden
+     */
+    var UNLOCKED$2 = -1 * Math.random();
+    var AbstractGeometric = /** @class */ (function () {
+        /**
+         *
+         * @param uom
+         */
+        function AbstractGeometric(uom) {
+            /**
+             *
+             */
+            this.lock_ = UNLOCKED$2;
+            this.$unit = uom;
+        }
+        Object.defineProperty(AbstractGeometric.prototype, "uom", {
+            get: function () {
+                return this.$unit;
+            },
+            set: function (uom) {
+                if (this.isMutable()) {
+                    this.$unit = uom;
+                }
+                else {
+                    throw new Error(readOnly('uom').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Determines whether this multivector is locked.
+         * If the multivector is in the unlocked state then it is mutable.
+         * If the multivector is in the locked state then it is immutable.
+         */
+        AbstractGeometric.prototype.isLocked = function () {
+            return this.lock_ !== UNLOCKED$2;
+        };
+        AbstractGeometric.prototype.isMutable = function () {
+            return this.lock_ === UNLOCKED$2;
+        };
+        /**
+         * Locks this multivector (preventing any further mutation),
+         * and returns a token that may be used to unlock it.
+         */
+        AbstractGeometric.prototype.lock = function () {
+            if (this.lock_ !== UNLOCKED$2) {
+                throw new Error("already locked");
+            }
+            else {
+                this.lock_ = Math.random();
+                return this.lock_;
+            }
+        };
+        /**
+         * Unlocks this multivector (allowing mutation),
+         * using a token that was obtained from a preceding lock method call.
+         */
+        AbstractGeometric.prototype.unlock = function (token) {
+            if (this.lock_ === UNLOCKED$2) {
+                throw new Error("not locked");
+            }
+            else if (this.lock_ === token) {
+                this.lock_ = UNLOCKED$2;
+            }
+            else {
+                throw new Error("unlock denied");
+            }
+        };
+        AbstractGeometric.prototype.permlock = function () {
+            this.lock();
+            return this;
+        };
+        return AbstractGeometric;
+    }());
+
+    /**
      * @hidden
      */
     var abs = Math.abs;
@@ -6462,7 +6541,7 @@
      * Coordinates corresponding to basis labels.
      * @hidden
      */
-    var coordinates$2 = function coordinates(m) {
+    var coordinates$3 = function coordinates(m) {
         var coords = zero$2();
         coords[COORD_A$1] = m.a;
         coords[COORD_X$4] = m.x;
@@ -6485,19 +6564,14 @@
     /**
      * @hidden
      */
-    var BASIS_LABELS$2 = ["1", "e1"];
-    BASIS_LABELS$2[COORD_A$1] = '1';
-    BASIS_LABELS$2[COORD_X$4] = 'e1';
-    /**
-     * Sentinel value to indicate that the Geometric1 is not locked.
-     * UNLOCKED is in the range -1 to 0.
-     * @hidden
-     */
-    var UNLOCKED$2 = -1 * Math.random();
+    var BASIS_LABELS$3 = ["1", "e1"];
+    BASIS_LABELS$3[COORD_A$1] = '1';
+    BASIS_LABELS$3[COORD_X$4] = 'e1';
     /**
      * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
      */
-    var Geometric1 = /** @class */ (function () {
+    var Geometric1 = /** @class */ (function (_super) {
+        __extends(Geometric1, _super);
         /**
          * Constructs a mutable instance of Geometric1 from coordinates and an optional unit of measure.
          * @param coords The 2 coordinates are in the order [a, x].
@@ -6505,15 +6579,12 @@
          */
         function Geometric1(coords, uom) {
             if (coords === void 0) { coords = zero$2(); }
-            /**
-             *
-             */
-            this.lock_ = UNLOCKED$2;
+            var _this = _super.call(this, uom) || this;
             if (coords.length !== 2) {
                 throw new Error("coords.length must be 2.");
             }
-            this.coords = coords;
-            this.unit = uom;
+            _this.coords = coords;
+            return _this;
         }
         Geometric1.scalar = function (a, uom) {
             return new Geometric1([a, 0], uom);
@@ -6579,7 +6650,7 @@
             return this.log().grade(2);
         };
         Geometric1.prototype.conj = function () {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().conj());
             }
             else {
@@ -6605,7 +6676,7 @@
             return this;
         };
         Geometric1.prototype.lco = function (rhs) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().lco(rhs));
             }
             else {
@@ -6623,7 +6694,7 @@
             return this;
         };
         Geometric1.prototype.div = function (rhs) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().div(rhs));
             }
             else {
@@ -6636,7 +6707,7 @@
             }
         };
         Geometric1.prototype.exp = function () {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().exp());
             }
             else {
@@ -6660,7 +6731,7 @@
             }
         };
         Geometric1.prototype.ext = function (m) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().ext(m));
             }
             else {
@@ -6675,7 +6746,7 @@
             }
         };
         Geometric1.prototype.grade = function (n) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().grade(n));
             }
             else {
@@ -6706,13 +6777,13 @@
             return this.coords[COORD_A$1] === 0 && this.coords[COORD_X$4] === 0;
         };
         Geometric1.prototype.isOne = function () {
-            return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.unit);
+            return this.coords[COORD_A$1] === 1 && this.coords[COORD_X$4] === 0 && Unit.isOne(this.uom);
         };
         Geometric1.prototype.isScalar = function () {
             return this.coords[COORD_X$4] === 0;
         };
         Geometric1.prototype.isSpinor = function () {
-            if (Unit.isOne(this.unit)) {
+            if (Unit.isOne(this.uom)) {
                 return this.coords[COORD_X$4] === 0;
             }
             else {
@@ -6723,7 +6794,7 @@
             return this.coords[COORD_A$1] === 0;
         };
         Geometric1.prototype.log = function () {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().log());
             }
             else {
@@ -6739,7 +6810,7 @@
             }
         };
         Geometric1.prototype.mul = function (rhs) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().mul(rhs));
             }
             else {
@@ -6757,7 +6828,7 @@
             return this;
         };
         Geometric1.prototype.mulByNumber = function (α) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().mulByNumber(α));
             }
             else {
@@ -6782,7 +6853,7 @@
             return Math.sqrt(this.quaditudeNoUnits());
         };
         Geometric1.prototype.rco = function (m) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().rco(m));
             }
             else {
@@ -6856,7 +6927,7 @@
             }
         };
         Geometric1.prototype.scp = function (m) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().scp(m));
             }
             else {
@@ -6876,7 +6947,7 @@
         };
         Geometric1.prototype.add = function (M, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().add(M, α));
             }
             else {
@@ -6900,7 +6971,7 @@
         };
         Geometric1.prototype.addVector = function (v, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().addVector(v, α));
             }
             else {
@@ -6920,7 +6991,7 @@
         };
         Geometric1.prototype.subVector = function (v, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().subVector(v, α));
             }
             else {
@@ -6939,7 +7010,7 @@
             }
         };
         Geometric1.prototype.divByScalar = function (α, uom) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().divByScalar(α, uom));
             }
             else {
@@ -6950,7 +7021,7 @@
             }
         };
         Geometric1.prototype.lerp = function (target, α) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().lerp(target, α));
             }
             else {
@@ -6977,7 +7048,7 @@
             }
         };
         Geometric1.prototype.reflect = function (n) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().reflect(n));
             }
             else {
@@ -6998,7 +7069,7 @@
             }
         };
         Geometric1.prototype.rotate = function (spinor) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().rotate(spinor));
             }
             else {
@@ -7019,7 +7090,7 @@
             throw new Error(notImplemented('slerp').message);
         };
         Geometric1.prototype.stress = function (σ) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().stress(σ));
             }
             else {
@@ -7031,7 +7102,7 @@
         };
         Geometric1.prototype.sub = function (M, α) {
             if (α === void 0) { α = 1; }
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().sub(M, α));
             }
             else {
@@ -7053,19 +7124,19 @@
         };
         Geometric1.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
         };
         Geometric1.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
         };
         Geometric1.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
         };
         Geometric1.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
         };
         Geometric1.prototype.zero = function () {
             if (this.isMutable()) {
@@ -7096,7 +7167,7 @@
             }
         };
         Geometric1.prototype.divByNumber = function (α) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().divByNumber(α));
             }
             else {
@@ -7240,7 +7311,7 @@
             return lock$3(copy$1(this).inv());
         };
         Geometric1.prototype.inv = function () {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().inv());
             }
             else {
@@ -7391,7 +7462,7 @@
             return lock$3(copy$1(this).neg());
         };
         Geometric1.prototype.neg = function () {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().neg());
             }
             else {
@@ -7437,7 +7508,7 @@
             }
         };
         Geometric1.prototype.mulByScalar = function (α, uom) {
-            if (this.lock_ !== UNLOCKED$2) {
+            if (this.isLocked()) {
                 return lock$3(this.clone().mulByScalar(α, uom));
             }
             else {
@@ -7477,60 +7548,6 @@
             enumerable: false,
             configurable: true
         });
-        Object.defineProperty(Geometric1.prototype, "uom", {
-            get: function () {
-                return this.unit;
-            },
-            set: function (uom) {
-                if (this.isMutable()) {
-                    this.unit = uom;
-                }
-                else {
-                    throw new Error(readOnly('uom').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * Determines whether this multivector is locked.
-         * If the multivector is in the unlocked state then it is mutable.
-         * If the multivector is in the locked state then it is immutable.
-         */
-        Geometric1.prototype.isLocked = function () {
-            return this.lock_ !== UNLOCKED$2;
-        };
-        Geometric1.prototype.isMutable = function () {
-            return this.lock_ === UNLOCKED$2;
-        };
-        /**
-         * Locks this multivector (preventing any further mutation),
-         * and returns a token that may be used to unlock it.
-         */
-        Geometric1.prototype.lock = function () {
-            if (this.lock_ !== UNLOCKED$2) {
-                throw new Error("already locked");
-            }
-            else {
-                this.lock_ = Math.random();
-                return this.lock_;
-            }
-        };
-        /**
-         * Unlocks this multivector (allowing mutation),
-         * using a token that was obtained from a preceding lock method call.
-         */
-        Geometric1.prototype.unlock = function (token) {
-            if (this.lock_ === UNLOCKED$2) {
-                throw new Error("not locked");
-            }
-            else if (this.lock_ === token) {
-                this.lock_ = UNLOCKED$2;
-            }
-            else {
-                throw new Error("unlock denied");
-            }
-        };
         /**
          * Constructs a Geometric1 representing the number zero.
          * The identity element for addition, <b>0</b>.
@@ -7598,7 +7615,7 @@
          */
         Geometric1.joule = lock$3(new Geometric1(scalar$2(1), Unit.JOULE));
         return Geometric1;
-    }());
+    }(AbstractGeometric));
 
     /**
      * @hidden
@@ -8709,11 +8726,11 @@
     /**
      * @hidden
      */
-    var BASIS_LABELS$1 = ["1", "e1", "e2", "e12"];
-    BASIS_LABELS$1[COORD_A] = '1';
-    BASIS_LABELS$1[COORD_X$3] = 'e1';
-    BASIS_LABELS$1[COORD_Y$3] = 'e2';
-    BASIS_LABELS$1[COORD_B] = 'e12';
+    var BASIS_LABELS$2 = ["1", "e1", "e2", "e12"];
+    BASIS_LABELS$2[COORD_A] = '1';
+    BASIS_LABELS$2[COORD_X$3] = 'e1';
+    BASIS_LABELS$2[COORD_Y$3] = 'e2';
+    BASIS_LABELS$2[COORD_B] = 'e12';
     /**
      * @hidden
      */
@@ -8766,7 +8783,7 @@
      * Coordinates corresponding to basis labels.
      * @hidden
      */
-    var coordinates$1 = function coordinates(m) {
+    var coordinates$2 = function coordinates(m) {
         var coords = zero$1();
         coords[COORD_A] = m.a;
         coords[COORD_X$3] = m.x;
@@ -8858,7 +8875,7 @@
             return new Geometric2(vector$1(x, y), uom);
         };
         Geometric2.copy = function (mv) {
-            return new Geometric2(coordinates$1(mv), mv.uom);
+            return new Geometric2(coordinates$2(mv), mv.uom);
         };
         Geometric2.fromBivector = function (B) {
             return new Geometric2(bivector$1(B.xy), B.uom);
@@ -10468,7 +10485,7 @@
          */
         Geometric2.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * Returns a string representing the number in fixed-point notation.
@@ -10478,7 +10495,7 @@
          */
         Geometric2.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * @param precision
@@ -10486,7 +10503,7 @@
          */
         Geometric2.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * Returns a string representation of the number.
@@ -10496,7 +10513,7 @@
          */
         Geometric2.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric2.prototype.write = function (mv) {
             mv.a = this.a;
@@ -12593,11 +12610,11 @@
     /**
      * @hidden
      */
-    var BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
-    BASIS_LABELS[COORD_SCALAR] = '1';
-    BASIS_LABELS[COORD_X] = 'e1';
-    BASIS_LABELS[COORD_Y] = 'e2';
-    BASIS_LABELS[COORD_Z] = 'e3';
+    var BASIS_LABELS$1 = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
+    BASIS_LABELS$1[COORD_SCALAR] = '1';
+    BASIS_LABELS$1[COORD_X] = 'e1';
+    BASIS_LABELS$1[COORD_Y] = 'e2';
+    BASIS_LABELS$1[COORD_Z] = 'e3';
     /**
      * @hidden
      */
@@ -12670,7 +12687,7 @@
      * Coordinates corresponding to basis labels.
      * @hidden
      */
-    var coordinates = function coordinates(m) {
+    var coordinates$1 = function coordinates(m) {
         var coords = zero();
         coords[COORD_SCALAR] = m.a;
         coords[COORD_X] = m.x;
@@ -14484,7 +14501,7 @@
          */
         Geometric3.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
         };
         /**
          * Returns a string representing the number in fixed-point notation.
@@ -14494,7 +14511,7 @@
          */
         Geometric3.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
         };
         /**
          * @param precision
@@ -14502,7 +14519,7 @@
          */
         Geometric3.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
         };
         /**
          * Returns a string representation of the number.
@@ -14512,7 +14529,7 @@
          */
         Geometric3.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
         };
         /**
          * Sets this multivector to the result of keeping only the specified grade.
@@ -14879,7 +14896,7 @@
          * @param mv The multivector to be copied.
          */
         Geometric3.copy = function (mv) {
-            return new Geometric3(coordinates(mv), mv.uom);
+            return new Geometric3(coordinates$1(mv), mv.uom);
         };
         Geometric3.dual = function (m) {
             return new Geometric3(zero(), m.uom).dual(m);
@@ -20589,6 +20606,535 @@
     /**
      * @hidden
      */
+    var COORD_0_A = 0;
+    /**
+     * @hidden
+     */
+    var COORD_1_T = 1;
+    /**
+     * @hidden
+     */
+    var COORD_2_X = 2;
+    /**
+     * @hidden
+     */
+    var COORD_3_TX = 3;
+    /**
+     * @hidden
+     */
+    var COORD_4_Y = 4;
+    /**
+     * @hidden
+     */
+    var COORD_5_TY = 5;
+    /**
+     * @hidden
+     */
+    var COORD_6_XY = 6;
+    /**
+     * @hidden
+     */
+    var COORD_7_B = 7;
+    /**
+     * Coordinates corresponding to basis labels.
+     * @hidden
+     */
+    var coordinates = function (m) {
+        var coords = [0, 0, 0, 0, 0, 0, 0, 0];
+        coords[COORD_0_A] = m.a;
+        coords[COORD_1_T] = m.t;
+        coords[COORD_2_X] = m.x;
+        coords[COORD_3_TX] = m.tx;
+        coords[COORD_4_Y] = m.y;
+        coords[COORD_5_TY] = m.ty;
+        coords[COORD_6_XY] = m.xy;
+        coords[COORD_7_B] = m.b;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS = ["1", "γ0", "γ1", "γ0γ1", "γ2", "γ0γ2", "γ1γ2", "I"];
+    var Spacetime2 = /** @class */ (function (_super) {
+        __extends(Spacetime2, _super);
+        function Spacetime2(a, t, x, tx, y, ty, xy, b, uom) {
+            if (a === void 0) { a = 0; }
+            if (t === void 0) { t = 0; }
+            if (x === void 0) { x = 0; }
+            if (tx === void 0) { tx = 0; }
+            if (y === void 0) { y = 0; }
+            if (ty === void 0) { ty = 0; }
+            if (xy === void 0) { xy = 0; }
+            if (b === void 0) { b = 0; }
+            var _this = _super.call(this, uom) || this;
+            _this.a = a;
+            _this.t = t;
+            _this.x = x;
+            _this.tx = tx;
+            _this.y = y;
+            _this.ty = ty;
+            _this.xy = xy;
+            _this.b = b;
+            return _this;
+        }
+        Object.defineProperty(Spacetime2.prototype, "a", {
+            get: function () {
+                return this.$a;
+            },
+            set: function (a) {
+                if (this.isMutable()) {
+                    this.$a = a;
+                }
+                else {
+                    throw new Error(readOnly('a').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "t", {
+            get: function () {
+                return this.$t;
+            },
+            set: function (t) {
+                if (this.isMutable()) {
+                    this.$t = t;
+                }
+                else {
+                    throw new Error(readOnly('t').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "x", {
+            get: function () {
+                return this.$x;
+            },
+            set: function (x) {
+                if (this.isMutable()) {
+                    this.$x = x;
+                }
+                else {
+                    throw new Error(readOnly('x').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "tx", {
+            get: function () {
+                return this.$tx;
+            },
+            set: function (tx) {
+                if (this.isMutable()) {
+                    this.$tx = tx;
+                }
+                else {
+                    throw new Error(readOnly('tx').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "y", {
+            get: function () {
+                return this.$y;
+            },
+            set: function (y) {
+                if (this.isMutable()) {
+                    this.$y = y;
+                }
+                else {
+                    throw new Error(readOnly('y').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "ty", {
+            get: function () {
+                return this.$ty;
+            },
+            set: function (ty) {
+                if (this.isMutable()) {
+                    this.$ty = ty;
+                }
+                else {
+                    throw new Error(readOnly('ty').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "xy", {
+            get: function () {
+                return this.$xy;
+            },
+            set: function (xy) {
+                if (this.isMutable()) {
+                    this.$xy = xy;
+                }
+                else {
+                    throw new Error(readOnly('xy').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "b", {
+            get: function () {
+                return this.$b;
+            },
+            set: function (b) {
+                if (this.isMutable()) {
+                    this.$b = b;
+                }
+                else {
+                    throw new Error(readOnly('b').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "grades", {
+            get: function () {
+                var mask = 0x0;
+                if (this.a !== 0) {
+                    mask += 0x1;
+                }
+                if (this.t !== 0 || this.x !== 0 || this.y !== 0) {
+                    mask += 0x2;
+                }
+                if (this.tx !== 0 || this.ty !== 0 || this.xy !== 0) {
+                    mask += 0x4;
+                }
+                if (this.b !== 0) {
+                    mask += 0x8;
+                }
+                return mask;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Spacetime2.prototype.addScalar = function (a, uom, α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.angle = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.clone = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.conj = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.lco = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.div = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.exp = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.ext = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.grade = function (grade) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.inv = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isOne = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isScalar = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isSpinor = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isVector = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isBivector = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.isZero = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.log = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.mul = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.magnitude = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.magnitudeNoUnits = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.quaditude = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.quaditudeNoUnits = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.rco = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.rev = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.subScalar = function (a, uom, α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.scp = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.add = function (rhs, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().add(rhs, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = rhs.a * α;
+                    this.t = rhs.t * α;
+                    this.x = rhs.x * α;
+                    this.tx = rhs.tx * α;
+                    this.y = rhs.y * α;
+                    this.ty = rhs.ty * α;
+                    this.xy = rhs.xy * α;
+                    this.b = rhs.b * α;
+                    this.uom = rhs.uom;
+                    return this;
+                }
+                else if (rhs.isZero() || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a += rhs.a * α;
+                    this.t += rhs.t * α;
+                    this.x += rhs.x * α;
+                    this.tx += rhs.tx * α;
+                    this.y += rhs.y * α;
+                    this.ty += rhs.ty * α;
+                    this.xy += rhs.xy * α;
+                    this.b += rhs.b * α;
+                    this.uom = Unit.compatible(this.uom, rhs.uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime2.prototype.divByScalar = function (α, uom) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.lerp = function (target, α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.scale = function (α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.neg = function () {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.reflect = function (n) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.rotate = function (rotor) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.slerp = function (target, α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.stress = function (σ) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.sub = function (rhs, α) {
+            throw new Error("Method not implemented.");
+        };
+        Spacetime2.prototype.toExponential = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Spacetime2.prototype.toFixed = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Spacetime2.prototype.toPrecision = function (precision) {
+            var coordToString = function (coord) { return coord.toPrecision(precision); };
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Spacetime2.prototype.toString = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__div__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rdiv__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__vbar__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rvbar__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__wedge__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rwedge__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__lshift__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rlshift__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rshift__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rrshift__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__bang__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__eq__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__ne__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__ge__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__gt__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__le__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__lt__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__tilde__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__add__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__radd__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__sub__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rsub__ = function (other) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__pos__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__neg__ = function () {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__mul__ = function (rhs) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rmul__ = function (lhs) {
+            throw new Error("Method not implemented.");
+        };
+        return Spacetime2;
+    }(AbstractGeometric));
+
+    /**
+     * @hidden
+     */
     var AdaptiveStepSolver = /** @class */ (function () {
         function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
             this.energySystem = energySystem;
@@ -21036,6 +21582,7 @@
     exports.Rod2 = Rod2;
     exports.RungeKutta = RungeKutta;
     exports.SimView = SimView;
+    exports.Spacetime2 = Spacetime2;
     exports.Sphere3 = Sphere3;
     exports.Spring = Spring;
     exports.Spring1 = Spring1;

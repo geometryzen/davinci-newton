@@ -1,10 +1,11 @@
 import { Unit } from './Unit';
+
 /**
  * @hidden
  */
-export interface BivectorE3 {
+export interface BivectorM21 {
+    tx: number;
+    ty: number;
     xy: number;
-    yz: number;
-    zx: number;
     uom?: Unit;
 }

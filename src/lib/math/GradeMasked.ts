@@ -9,9 +9,9 @@
  */
 export interface GradeMasked {
   /**
-   * A bitmask describing the grades.
+   * A bitmask describing the presence of non-zero grades.
    *
-   * 0x0 = zero
+   * 0x0 = none
    * 0x1 = scalar
    * 0x2 = vector
    * 0x4 = bivector
