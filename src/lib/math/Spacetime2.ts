@@ -1,5 +1,6 @@
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from "./AbstractGeometric";
+import { gauss } from "./gauss";
 import { GeometricM21 } from "./GeometricM21";
 import { GeometricNumber } from "./GeometricNumber";
 import { GeometricOperators } from "./GeometricOperators";
@@ -291,10 +292,37 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     divByScalar(α: number, uom: Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().divByScalar(α, uom).permlock();
+        }
+        else {
+            this.$M000 /= α;
+            this.$M001 /= α;
+            this.$M010 /= α;
+            this.$M011 /= α;
+            this.$M100 /= α;
+            this.$M101 /= α;
+            this.$M110 /= α;
+            this.$M111 /= α;
+            this.uom = Unit.div(this.uom, uom);
+            return this;
+        }
     }
-    divByNumber(a: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+    divByNumber(α: number): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().divByNumber(α).permlock();
+        }
+        else {
+            this.$M000 /= α;
+            this.$M001 /= α;
+            this.$M010 /= α;
+            this.$M011 /= α;
+            this.$M100 /= α;
+            this.$M101 /= α;
+            this.$M110 /= α;
+            this.$M111 /= α;
+            return this;
+        }
     }
     exp(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -391,7 +419,47 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     inv(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().inv().permlock();
+        }
+        else {
+            const M000 = this.$M000;
+            const M001 = this.$M001;
+            const M010 = this.$M010;
+            const M011 = this.$M011;
+            const M100 = this.$M100;
+            const M101 = this.$M101;
+            const M110 = this.$M110;
+            const M111 = this.$M111;
+
+            const A = [
+                [+M000, +M010, +M100, +M001, -M110, +M101, -M011, -M111],
+                [+M010, +M000, +M110, -M011, -M100, -M111, +M001, +M101],
+                [+M100, -M110, +M000, -M101, +M010, -M001, -M111, -M011],
+                [+M001, +M011, +M101, +M000, -M111, +M100, -M010, -M110],
+                [+M110, -M100, +M010, +M111, +M000, +M011, +M101, +M001],
+                [-M101, +M111, -M001, +M100, -M011, +M000, +M110, +M010],
+                [+M011, +M001, +M111, -M010, -M101, -M110, +M000, +M100],
+                [+M111, -M101, +M011, +M110, +M001, +M010, +M100, +M000]
+            ];
+
+            const b = [1, 0, 0, 0, 0, 0, 0, 0];
+
+            const X = gauss(A, b);
+
+            this.a = X[0];
+            this.x = X[1];
+            this.y = X[2];
+            this.t = X[3];
+            this.xy = X[4];
+            this.ty = -X[5];
+            this.tx = X[6];
+            this.b = X[7];
+
+            this.uom = Unit.inv(this.uom);
+
+            return this;
+        }
     }
     isBivector(): boolean {
         return this.a === 0 && this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
