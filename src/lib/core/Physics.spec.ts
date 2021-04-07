@@ -1,10 +1,9 @@
-import { Physics } from './Physics';
-import { Bivector3 } from '../math/Bivector3';
-import { Geometric3 } from '../math/Geometric3';
-import { Unit } from '../math/Unit';
 import { Block3 } from '../engine3D/Block3';
 import { Dynamics3 } from '../engine3D/Dynamics3';
 import { Euclidean3 } from '../engine3D/Euclidean3';
+import { Geometric3 } from '../math/Geometric3';
+import { Unit } from '../math/Unit';
+import { Physics } from './Physics';
 
 describe("Physics", function () {
     describe("Ω calculation", function () {
@@ -38,8 +37,7 @@ describe("Physics", function () {
             // Just to make the sim be used.
             sim.addBody(body);
 
-            // const Ω = new Bivector3().copy(body.L).applyMatrix(Tmat).applyMatrix(body.Iinv).applyMatrix(Rmat);
-            const Ω = new Bivector3(0, 0, 0, Unit.inv(Unit.SECOND)).copy(body.L).rotate(body.R.rev()).applyMatrix(body.Iinv).rotate(body.R.rev());
+            const Ω = Geometric3.bivector(0, 0, 0, Unit.inv(Unit.SECOND)).copy(body.L).rotate(body.R.rev()).applyMatrix(body.Iinv).rotate(body.R.rev());
 
             expect(body.Ω.xy).toBeCloseTo(Ω.xy, 15);
             expect(body.Ω.yz).toBeCloseTo(Ω.yz, 15);

@@ -6,6 +6,10 @@ import { VectorE3 } from './VectorE3';
 /**
  * @hidden
  */
+const zero = Geometric3.zero;
+/**
+ * @hidden
+ */
 const one = Geometric3.one;
 /**
  * @hidden
@@ -27,6 +31,10 @@ const e23 = e2.mul(e3);
  * @hidden
  */
 const e31 = e3.mul(e1);
+/**
+ * @hidden
+ */
+const e13 = e1.mul(e3);
 /**
  * @hidden
  */
@@ -109,6 +117,23 @@ function reflectSpec(M: Geometric3, n: VectorE3) {
  * @hidden
  */
 const PRECISION = 12;
+
+/**
+ * @hidden
+ */
+function checkEQ(result: Geometric3, comp: Geometric3): void {
+    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
+    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.z).toBe(comp.z, `001 γ0: result.z=${result.z}, comp.t=${comp.z}`);
+    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.yz).toBe(comp.yz, `011 γ0γ1: result.yz=${result.yz}, comp.yz=${comp.yz}`);
+    expect(result.zx).toBe(comp.zx, `101 γ0γ2: result.zx=${result.zx}, comp.zx=${comp.zx}`);
+    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
+    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
+    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+}
 
 describe("Geometric3", function () {
 
@@ -457,6 +482,217 @@ describe("Geometric3", function () {
         });
     });
 
+    describe("lco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.lco(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.lco(e1), e1);
+            });
+            it("e2", function () {
+                checkEQ(one.lco(e2), e2);
+            });
+            it("e12", function () {
+                checkEQ(one.lco(e12), e12);
+            });
+            it("e3", function () {
+                checkEQ(one.lco(e3), e3);
+            });
+            it("e13", function () {
+                checkEQ(one.lco(e13), e13);
+            });
+            it("e23", function () {
+                checkEQ(one.lco(e23), e23);
+            });
+            it("I", function () {
+                checkEQ(one.lco(I), I);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e1.lco(e1), one);
+            });
+            it("e2", function () {
+                checkEQ(e1.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e1.lco(e12), e2);
+            });
+            it("e3", function () {
+                checkEQ(e1.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e1.lco(e13), e3);
+            });
+            it("e23", function () {
+                checkEQ(e1.lco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e1.lco(I), e23);
+            });
+        });
+        describe("e2", function () {
+            it("one", function () {
+                checkEQ(e2.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e2.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e2.lco(e2), one);
+            });
+            it("e12", function () {
+                checkEQ(e2.lco(e12), e1.neg());
+            });
+            it("e3", function () {
+                checkEQ(e2.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e2.lco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e2.lco(e23), e3);
+            });
+            it("I", function () {
+                checkEQ(e2.lco(I), e13.neg());
+            });
+        });
+        describe("e12", function () {
+            it("one", function () {
+                checkEQ(e12.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e12.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e12.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e12.lco(e12), one.neg());
+            });
+            it("e3", function () {
+                checkEQ(e12.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e12.lco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e12.lco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e12.lco(I), e3.neg());
+            });
+        });
+        describe("e3", function () {
+            it("one", function () {
+                checkEQ(e3.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e3.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e3.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e3.lco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e3.lco(e3), one);
+            });
+            it("e13", function () {
+                checkEQ(e3.lco(e13), e1.neg());
+            });
+            it("e23", function () {
+                checkEQ(e3.lco(e23), e2.neg());
+            });
+            it("I", function () {
+                checkEQ(e3.lco(I), e12);
+            });
+        });
+        describe("e13", function () {
+            it("one", function () {
+                checkEQ(e13.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e13.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e13.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e13.lco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e13.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e13.lco(e13), one.neg());
+            });
+            it("e23", function () {
+                checkEQ(e13.lco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e13.lco(I), e2);
+            });
+        });
+        describe("e23", function () {
+            it("one", function () {
+                checkEQ(e23.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e23.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e23.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e23.lco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e23.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e23.lco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e23.lco(e23), one.neg());
+            });
+            it("I", function () {
+                checkEQ(e23.lco(I), e1.neg());
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(I.lco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(I.lco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(I.lco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(I.lco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(I.lco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(I.lco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(I.lco(I), one.neg());
+            });
+        });
+    });
+
     describe("mulByBivector", function () {
         it("(vector, bivector) should be same as vector.mul(bivector)", function () {
             const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
@@ -544,6 +780,217 @@ describe("Geometric3", function () {
             expect(actualOut.yz).toBe(expectOut.yz);
             expect(actualOut.zx).toBe(expectOut.zx);
             expect(actualOut.b).toBe(expectOut.b);
+        });
+    });
+
+    describe("mul", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.mul(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.mul(e1), e1);
+            });
+            it("e2", function () {
+                checkEQ(one.mul(e2), e2);
+            });
+            it("e12", function () {
+                checkEQ(one.mul(e12), e12);
+            });
+            it("e3", function () {
+                checkEQ(one.mul(e3), e3);
+            });
+            it("e13", function () {
+                checkEQ(one.mul(e13), e13);
+            });
+            it("e23", function () {
+                checkEQ(one.mul(e23), e23);
+            });
+            it("I", function () {
+                checkEQ(one.mul(I), I);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.mul(one), e1);
+            });
+            it("e1", function () {
+                checkEQ(e1.mul(e1), one);
+            });
+            it("e2", function () {
+                checkEQ(e1.mul(e2), e12);
+            });
+            it("e12", function () {
+                checkEQ(e1.mul(e12), e2);
+            });
+            it("e3", function () {
+                checkEQ(e1.mul(e3), e13);
+            });
+            it("e13", function () {
+                checkEQ(e1.mul(e13), e3);
+            });
+            it("e23", function () {
+                checkEQ(e1.mul(e23), I);
+            });
+            it("I", function () {
+                checkEQ(e1.mul(I), e23);
+            });
+        });
+        describe("e2", function () {
+            it("one", function () {
+                checkEQ(e2.mul(one), e2);
+            });
+            it("e1", function () {
+                checkEQ(e2.mul(e1), e12.neg());
+            });
+            it("e2", function () {
+                checkEQ(e2.mul(e2), one);
+            });
+            it("e12", function () {
+                checkEQ(e2.mul(e12), e1.neg());
+            });
+            it("e3", function () {
+                checkEQ(e2.mul(e3), e23);
+            });
+            it("e13", function () {
+                checkEQ(e2.mul(e13), I.neg());
+            });
+            it("e23", function () {
+                checkEQ(e2.mul(e23), e3);
+            });
+            it("I", function () {
+                checkEQ(e2.mul(I), e13.neg());
+            });
+        });
+        describe("e12", function () {
+            it("one", function () {
+                checkEQ(e12.mul(one), e12);
+            });
+            it("e1", function () {
+                checkEQ(e12.mul(e1), e2.neg());
+            });
+            it("e2", function () {
+                checkEQ(e12.mul(e2), e1);
+            });
+            it("e12", function () {
+                checkEQ(e12.mul(e12), one.neg());
+            });
+            it("e3", function () {
+                checkEQ(e12.mul(e3), I);
+            });
+            it("e13", function () {
+                checkEQ(e12.mul(e13), e23.neg());
+            });
+            it("e23", function () {
+                checkEQ(e12.mul(e23), e13);
+            });
+            it("I", function () {
+                checkEQ(e12.mul(I), e3.neg());
+            });
+        });
+        describe("e3", function () {
+            it("one", function () {
+                checkEQ(e3.mul(one), e3);
+            });
+            it("e1", function () {
+                checkEQ(e3.mul(e1), e31);
+            });
+            it("e2", function () {
+                checkEQ(e3.mul(e2), e23.neg());
+            });
+            it("e12", function () {
+                checkEQ(e3.mul(e12), I);
+            });
+            it("e3", function () {
+                checkEQ(e3.mul(e3), one);
+            });
+            it("e13", function () {
+                checkEQ(e3.mul(e13), e1.neg());
+            });
+            it("e23", function () {
+                checkEQ(e3.mul(e23), e2.neg());
+            });
+            it("I", function () {
+                checkEQ(e3.mul(I), e12);
+            });
+        });
+        describe("e13", function () {
+            it("one", function () {
+                checkEQ(e13.mul(one), e13);
+            });
+            it("e1", function () {
+                checkEQ(e13.mul(e1), e3.neg());
+            });
+            it("e2", function () {
+                checkEQ(e13.mul(e2), I.neg());
+            });
+            it("e12", function () {
+                checkEQ(e13.mul(e12), e23);
+            });
+            it("e3", function () {
+                checkEQ(e13.mul(e3), e1);
+            });
+            it("e13", function () {
+                checkEQ(e13.mul(e13), one.neg());
+            });
+            it("e23", function () {
+                checkEQ(e13.mul(e23), e12.neg());
+            });
+            it("I", function () {
+                checkEQ(e13.mul(I), e2);
+            });
+        });
+        describe("e23", function () {
+            it("one", function () {
+                checkEQ(e23.mul(one), e23);
+            });
+            it("e1", function () {
+                checkEQ(e23.mul(e1), I);
+            });
+            it("e2", function () {
+                checkEQ(e23.mul(e2), e3.neg());
+            });
+            it("e12", function () {
+                checkEQ(e23.mul(e12), e31);
+            });
+            it("e3", function () {
+                checkEQ(e23.mul(e3), e2);
+            });
+            it("e13", function () {
+                checkEQ(e23.mul(e13), e12);
+            });
+            it("e23", function () {
+                checkEQ(e23.mul(e23), one.neg());
+            });
+            it("I", function () {
+                checkEQ(e23.mul(I), e1.neg());
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.mul(one), I);
+            });
+            it("e1", function () {
+                checkEQ(I.mul(e1), e23);
+            });
+            it("e2", function () {
+                checkEQ(I.mul(e2), e13.neg());
+            });
+            it("e12", function () {
+                checkEQ(I.mul(e12), e3.neg());
+            });
+            it("e3", function () {
+                checkEQ(I.mul(e3), e12);
+            });
+            it("e13", function () {
+                checkEQ(I.mul(e13), e2);
+            });
+            it("e23", function () {
+                checkEQ(I.mul(e23), e1.neg());
+            });
+            it("I", function () {
+                checkEQ(I.mul(I), one.neg());
+            });
         });
     });
 
@@ -727,6 +1174,286 @@ describe("Geometric3", function () {
             const minusHalfI = I.clone().neg().mulByNumber(0.5);
             expect(inv.equals(minusHalfI)).toBe(true);
         });
+    });
+
+    describe("rco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.rco(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.rco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(one.rco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(one.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(one.rco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(one.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(one.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(one.rco(I), zero);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.rco(one), e1);
+            });
+            it("e1", function () {
+                checkEQ(e1.rco(e1), one);
+            });
+            it("e2", function () {
+                checkEQ(e1.rco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e1.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e1.rco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e1.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e1.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e1.rco(I), zero);
+            });
+        });
+        describe("e2", function () {
+            it("one", function () {
+                checkEQ(e2.rco(one), e2);
+            });
+            it("e1", function () {
+                checkEQ(e2.rco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e2.rco(e2), one);
+            });
+            it("e12", function () {
+                checkEQ(e2.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e2.rco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e2.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e2.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e2.rco(I), zero);
+            });
+        });
+        describe("e12", function () {
+            it("one", function () {
+                checkEQ(e12.rco(one), e12);
+            });
+            it("e1", function () {
+                checkEQ(e12.rco(e1), e2.neg());
+            });
+            it("e2", function () {
+                checkEQ(e12.rco(e2), e1);
+            });
+            it("e12", function () {
+                checkEQ(e12.rco(e12), one.neg());
+            });
+            it("e3", function () {
+                checkEQ(e12.rco(e3), zero);
+            });
+            it("e13", function () {
+                checkEQ(e12.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e12.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e12.rco(I), zero);
+            });
+        });
+        describe("e3", function () {
+            it("one", function () {
+                checkEQ(e3.rco(one), e3);
+            });
+            it("e1", function () {
+                checkEQ(e3.rco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e3.rco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e3.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e3.rco(e3), one);
+            });
+            it("e13", function () {
+                checkEQ(e3.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e3.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e3.rco(I), zero);
+            });
+        });
+        describe("e13", function () {
+            it("one", function () {
+                checkEQ(e13.rco(one), e13);
+            });
+            it("e1", function () {
+                checkEQ(e13.rco(e1), e3.neg());
+            });
+            it("e2", function () {
+                checkEQ(e13.rco(e2), zero);
+            });
+            it("e12", function () {
+                checkEQ(e13.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e13.rco(e3), e1);
+            });
+            it("e13", function () {
+                checkEQ(e13.rco(e13), one.neg());
+            });
+            it("e23", function () {
+                checkEQ(e13.rco(e23), zero);
+            });
+            it("I", function () {
+                checkEQ(e13.rco(I), zero);
+            });
+        });
+        describe("e23", function () {
+            it("one", function () {
+                checkEQ(e23.rco(one), e23);
+            });
+            it("e1", function () {
+                checkEQ(e23.rco(e1), zero);
+            });
+            it("e2", function () {
+                checkEQ(e23.rco(e2), e3.neg());
+            });
+            it("e12", function () {
+                checkEQ(e23.rco(e12), zero);
+            });
+            it("e3", function () {
+                checkEQ(e23.rco(e3), e2);
+            });
+            it("e13", function () {
+                checkEQ(e23.rco(e13), zero);
+            });
+            it("e23", function () {
+                checkEQ(e23.rco(e23), one.neg());
+            });
+            it("I", function () {
+                checkEQ(e23.rco(I), zero);
+            });
+        });
+        describe("I", function () {
+            it("one", function () {
+                checkEQ(I.rco(one), I);
+            });
+            it("e1", function () {
+                checkEQ(I.rco(e1), e23);
+            });
+            it("e2", function () {
+                checkEQ(I.rco(e2), e13.neg());
+            });
+            it("e12", function () {
+                checkEQ(I.rco(e12), e3.neg());
+            });
+            it("e3", function () {
+                checkEQ(I.rco(e3), e12);
+            });
+            it("e13", function () {
+                checkEQ(I.rco(e13), e2);
+            });
+            it("e23", function () {
+                checkEQ(I.rco(e23), e1.neg());
+            });
+            it("I", function () {
+                checkEQ(I.rco(I), one.neg());
+            });
+        });
+    });
+
+    describe("reflect", function () {
+        const n = Geometric3.vector(1, 0, 0);
+        const a = Geometric3.vector(2, 3, 0, Unit.METER);
+        const chain = a.reflect(n);
+
+        it("should reflect (2,3)", function () {
+            expect(a.x).toBe(-2);
+            expect(a.y).toBe(+3);
+            expect(a.z).toBe(0);
+        });
+        it("should be chainable", function () {
+            expect(chain === a).toBe(true);
+        });
+        describe("(n)", function () {
+            const S = Geometric3.random();
+            const n = Geometric3.random().grade(1).direction();
+            /**
+             * The 'Test' result using the specialized method.
+             */
+            const T = S.clone().reflect(n);
+            /**
+             * The 'Control' value computed explicitly as C = -n * S * n
+             */
+            const C = n.clone().mul(S).mul(n).mulByNumber(-1);
+
+            it("should be -n * M * n", function () {
+                expect(T.a).toBeCloseTo(C.a, PRECISION);
+                expect(T.x).toBeCloseTo(C.x, PRECISION);
+                expect(T.y).toBeCloseTo(C.y, PRECISION);
+                expect(T.z).toBeCloseTo(C.z, PRECISION);
+                expect(T.yz).toBeCloseTo(C.yz, PRECISION);
+                expect(T.zx).toBeCloseTo(C.zx, PRECISION);
+                expect(T.xy).toBeCloseTo(C.xy, PRECISION);
+                expect(T.b).toBeCloseTo(C.b, PRECISION);
+            });
+        });
+        describe("one reflected in e1", reflectSpec(one, e1));
+        describe("one reflected in e2", reflectSpec(one, e2));
+        describe("one reflected in e3", reflectSpec(one, e3));
+
+        describe("e1 reflected in e1", reflectSpec(e1, e1));
+        describe("e1 reflected in e2", reflectSpec(e1, e2));
+        describe("e1 reflected in e3", reflectSpec(e1, e3));
+
+        describe("e2 reflected in e1", reflectSpec(e2, e1));
+        describe("e2 reflected in e2", reflectSpec(e2, e2));
+        describe("e2 reflected in e3", reflectSpec(e2, e3));
+
+        describe("e3 reflected in e1", reflectSpec(e3, e1));
+        describe("e3 reflected in e2", reflectSpec(e3, e2));
+        describe("e3 reflected in e3", reflectSpec(e3, e3));
+
+        describe("e12 reflected in e1", reflectSpec(e12, e1));
+        describe("e12 reflected in e2", reflectSpec(e12, e2));
+        describe("e12 reflected in e3", reflectSpec(e12, e3));
+
+        describe("e23 reflected in e1", reflectSpec(e23, e1));
+        describe("e23 reflected in e2", reflectSpec(e23, e2));
+        describe("e23 reflected in e3", reflectSpec(e23, e3));
+
+        describe("e31 reflected in e1", reflectSpec(e31, e1));
+        describe("e31 reflected in e2", reflectSpec(e31, e2));
+        describe("e31 reflected in e3", reflectSpec(e31, e3));
+
+        describe("I reflected in e1", reflectSpec(I, e1));
+        describe("I reflected in e2", reflectSpec(I, e2));
+        describe("I reflected in e3", reflectSpec(I, e3));
     });
 
     describe("rotorFromAxisAngle", function () {
@@ -1063,75 +1790,6 @@ describe("Geometric3", function () {
         });
     });
 
-    describe("reflect", function () {
-        const n = Geometric3.vector(1, 0, 0);
-        const a = Geometric3.vector(2, 3, 0, Unit.METER);
-        const chain = a.reflect(n);
-
-        it("should reflect (2,3)", function () {
-            expect(a.x).toBe(-2);
-            expect(a.y).toBe(+3);
-            expect(a.z).toBe(0);
-        });
-        it("should be chainable", function () {
-            expect(chain === a).toBe(true);
-        });
-        describe("(n)", function () {
-            const S = Geometric3.random();
-            const n = Geometric3.random().grade(1).direction();
-            /**
-             * The 'Test' result using the specialized method.
-             */
-            const T = S.clone().reflect(n);
-            /**
-             * The 'Control' value computed explicitly as C = -n * S * n
-             */
-            const C = n.clone().mul(S).mul(n).mulByNumber(-1);
-
-            it("should be -n * M * n", function () {
-                expect(T.a).toBeCloseTo(C.a, PRECISION);
-                expect(T.x).toBeCloseTo(C.x, PRECISION);
-                expect(T.y).toBeCloseTo(C.y, PRECISION);
-                expect(T.z).toBeCloseTo(C.z, PRECISION);
-                expect(T.yz).toBeCloseTo(C.yz, PRECISION);
-                expect(T.zx).toBeCloseTo(C.zx, PRECISION);
-                expect(T.xy).toBeCloseTo(C.xy, PRECISION);
-                expect(T.b).toBeCloseTo(C.b, PRECISION);
-            });
-        });
-        describe("one reflected in e1", reflectSpec(one, e1));
-        describe("one reflected in e2", reflectSpec(one, e2));
-        describe("one reflected in e3", reflectSpec(one, e3));
-
-        describe("e1 reflected in e1", reflectSpec(e1, e1));
-        describe("e1 reflected in e2", reflectSpec(e1, e2));
-        describe("e1 reflected in e3", reflectSpec(e1, e3));
-
-        describe("e2 reflected in e1", reflectSpec(e2, e1));
-        describe("e2 reflected in e2", reflectSpec(e2, e2));
-        describe("e2 reflected in e3", reflectSpec(e2, e3));
-
-        describe("e3 reflected in e1", reflectSpec(e3, e1));
-        describe("e3 reflected in e2", reflectSpec(e3, e2));
-        describe("e3 reflected in e3", reflectSpec(e3, e3));
-
-        describe("e12 reflected in e1", reflectSpec(e12, e1));
-        describe("e12 reflected in e2", reflectSpec(e12, e2));
-        describe("e12 reflected in e3", reflectSpec(e12, e3));
-
-        describe("e23 reflected in e1", reflectSpec(e23, e1));
-        describe("e23 reflected in e2", reflectSpec(e23, e2));
-        describe("e23 reflected in e3", reflectSpec(e23, e3));
-
-        describe("e31 reflected in e1", reflectSpec(e31, e1));
-        describe("e31 reflected in e2", reflectSpec(e31, e2));
-        describe("e31 reflected in e3", reflectSpec(e31, e3));
-
-        describe("I reflected in e1", reflectSpec(I, e1));
-        describe("I reflected in e2", reflectSpec(I, e2));
-        describe("I reflected in e3", reflectSpec(I, e3));
-    });
-
     describe("stress", function () {
         const stress = Geometric3.vector(7, 11, 13);
         const position = Geometric3.vector(2, 3, 5, Unit.METER);
@@ -1148,7 +1806,7 @@ describe("Geometric3", function () {
     });
 
     describe("__add__", function () {
-        describe("(Geometrc3, Geometric3)", function () {
+        describe("(Geometric3, Geometric3)", function () {
             const l = Geometric3.random();
             const lhG = l.clone();
             const r = Geometric3.random();
@@ -1181,7 +1839,7 @@ describe("Geometric3", function () {
             });
         });
 
-        describe("(Geoetric3, number)", function () {
+        describe("(Geometric3, number)", function () {
             const l = Geometric3.random();
             const lhG = l.clone();
             const r = Math.random();

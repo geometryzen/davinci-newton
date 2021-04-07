@@ -12,7 +12,7 @@ import isZeroGeometricE3 from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
 import { maskG3 } from './maskG3';
-import mulE3 from './mulE3';
+import { mulE3 } from './mulE3';
 import { QQ } from './QQ';
 import randomRange from './randomRange';
 import rcoG3 from './rcoG3';
@@ -606,12 +606,18 @@ var Geometric3 = /** @class */ (function () {
         var x = this.x;
         var y = this.y;
         var z = this.z;
+        var yz = this.yz;
+        var zx = this.zx;
+        var xy = this.xy;
         var n11 = σ.getElement(0, 0), n12 = σ.getElement(0, 1), n13 = σ.getElement(0, 2);
         var n21 = σ.getElement(1, 0), n22 = σ.getElement(1, 1), n23 = σ.getElement(1, 2);
         var n31 = σ.getElement(2, 0), n32 = σ.getElement(2, 1), n33 = σ.getElement(2, 2);
         this.x = n11 * x + n12 * y + n13 * z;
         this.y = n21 * x + n22 * y + n23 * z;
         this.z = n31 * x + n32 * y + n33 * z;
+        this.yz = n11 * yz + n12 * zx + n13 * xy;
+        this.zx = n21 * yz + n22 * zx + n23 * xy;
+        this.xy = n31 * yz + n32 * zx + n33 * xy;
         this.uom = Unit.mul(this.uom, σ.uom);
         return this;
     };
@@ -1528,21 +1534,36 @@ var Geometric3 = /** @class */ (function () {
             // We are assuming that R is dimensionless.
             Unit.assertDimensionless(R.uom);
             // FIXME: This only rotates the vector components.
-            var x = this.x;
-            var y = this.y;
-            var z = this.z;
-            var a = R.xy;
-            var b = R.yz;
-            var c = R.zx;
-            var α = R.a;
-            var ix = α * x - c * z + a * y;
-            var iy = α * y - a * x + b * z;
-            var iz = α * z - b * y + c * x;
-            var iα = b * x + c * y + a * z;
-            this.x = ix * α + iα * b + iy * a - iz * c;
-            this.y = iy * α + iα * c + iz * b - ix * a;
-            this.z = iz * α + iα * a + ix * c - iy * b;
-            return this;
+            if (R.a === 1 && R.xy === 0 && R.yz === 0 && R.zx === 0) {
+                return this;
+            }
+            else {
+                var x = this.x;
+                var y = this.y;
+                var z = this.z;
+                var yz = this.yz;
+                var zx = this.zx;
+                var xy = this.xy;
+                var Rxy = R.xy;
+                var Ryz = R.yz;
+                var Rzx = R.zx;
+                var Ra = R.a;
+                var ix = Ra * x - Rzx * z + Rxy * y;
+                var iy = Ra * y - Rxy * x + Ryz * z;
+                var iz = Ra * z - Ryz * y + Rzx * x;
+                var iα = Ryz * x + Rzx * y + Rxy * z;
+                var Syz = Ra * yz - Rzx * xy + Rxy * zx;
+                var Szx = Ra * zx - Rxy * yz + Ryz * xy;
+                var Sxy = Ra * xy - Ryz * zx + Rzx * yz;
+                var Sa = Ryz * yz + Rzx * zx + Rxy * xy;
+                this.x = ix * Ra + iα * Ryz + iy * Rxy - iz * Rzx;
+                this.y = iy * Ra + iα * Rzx + iz * Ryz - ix * Rxy;
+                this.z = iz * Ra + iα * Rxy + ix * Rzx - iy * Ryz;
+                this.yz = Syz * Ra + Sa * Ryz + Szx * Rxy - Sxy * Rzx;
+                this.zx = Szx * Ra + Sa * Rzx + Sxy * Ryz - Syz * Rxy;
+                this.xy = Sxy * Ra + Sa * Rxy + Syz * Rzx - Szx * Ryz;
+                return this;
+            }
         }
     };
     /**

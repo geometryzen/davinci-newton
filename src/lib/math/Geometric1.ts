@@ -458,7 +458,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
         const b0 = rhs.a;
         const b1 = rhs.x;
         this.a = a0 * b0 + a1 * b1;
-        this.x = - a1 * b0;
+        this.x = a1 * b0;
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }

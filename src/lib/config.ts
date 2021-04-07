@@ -24,9 +24,9 @@ class Newton {
      */
     constructor() {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-        this.LAST_MODIFIED = '2021-04-05';
+        this.LAST_MODIFIED = '2021-04-07';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.80';
+        this.VERSION = '1.0.81';
     }
 
     log(message?: any, ...optionalParams: any[]): void {

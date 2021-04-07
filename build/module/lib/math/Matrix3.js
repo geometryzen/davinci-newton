@@ -1,7 +1,7 @@
 import { __extends } from "tslib";
 import { AbstractMatrix } from './AbstractMatrix';
 import inv3x3 from './inv3x3';
-import mul3x3 from './mul3x3';
+import { mul3x3 } from './mul3x3';
 import { Unit } from './Unit';
 /**
  *
@@ -9,7 +9,7 @@ import { Unit } from './Unit';
 var Matrix3 = /** @class */ (function (_super) {
     __extends(Matrix3, _super);
     /**
-     * @param elements
+     * @param elements The matrix elements in column-major order. i.e. [m00, m10, m20, m01, m11, m21,,m02, m12, m22]
      * @param uom The optional unit of measure.
      */
     function Matrix3(elements /* = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])*/, uom) {
@@ -34,6 +34,7 @@ var Matrix3 = /** @class */ (function (_super) {
      */
     Matrix3.prototype.rmul = function (lhs) {
         mul3x3(lhs.elements, this.elements, this.elements);
+        this.uom = Unit.mul(lhs.uom, this.uom);
         return this;
     };
     /**
@@ -42,6 +43,7 @@ var Matrix3 = /** @class */ (function (_super) {
      */
     Matrix3.prototype.mul2 = function (a, b) {
         mul3x3(a.elements, b.elements, this.elements);
+        this.uom = Unit.mul(a.uom, b.uom);
         return this;
     };
     /**

@@ -1,6 +1,6 @@
 import { AbstractMatrix } from './AbstractMatrix';
 import inv3x3 from './inv3x3';
-import mul3x3 from './mul3x3';
+import { mul3x3 } from './mul3x3';
 import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 
@@ -9,7 +9,7 @@ import { Unit } from './Unit';
  */
 export class Matrix3 extends AbstractMatrix<Matrix3> {
     /**
-     * @param elements
+     * @param elements The matrix elements in column-major order. i.e. [m00, m10, m20, m01, m11, m21,,m02, m12, m22]
      * @param uom The optional unit of measure.
      */
     constructor(elements: Float32Array/* = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1])*/, uom?: Unit) {
@@ -37,6 +37,7 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
      */
     rmul(lhs: Matrix3): this {
         mul3x3(lhs.elements, this.elements, this.elements);
+        this.uom = Unit.mul(lhs.uom, this.uom);
         return this;
     }
 
@@ -46,6 +47,7 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
      */
     mul2(a: Matrix3, b: Matrix3): this {
         mul3x3(a.elements, b.elements, this.elements);
+        this.uom = Unit.mul(a.uom, b.uom);
         return this;
     }
 

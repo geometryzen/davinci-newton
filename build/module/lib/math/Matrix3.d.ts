@@ -6,7 +6,7 @@ import { Unit } from './Unit';
  */
 export declare class Matrix3 extends AbstractMatrix<Matrix3> {
     /**
-     * @param elements
+     * @param elements The matrix elements in column-major order. i.e. [m00, m10, m20, m01, m11, m21,,m02, m12, m22]
      * @param uom The optional unit of measure.
      */
     constructor(elements: Float32Array, uom?: Unit);

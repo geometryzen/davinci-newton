@@ -1,7 +1,7 @@
 import get from './compG3Get';
 import set from './compG3Set';
 import { GeometricE3 } from './GeometricE3';
-import lcoE3 from './lcoE3';
+import { lcoE3 } from './lcoE3';
 import { Unit } from './Unit';
 
 /**

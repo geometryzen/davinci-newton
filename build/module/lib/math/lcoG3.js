@@ -1,6 +1,6 @@
 import get from './compG3Get';
 import set from './compG3Set';
-import lcoE3 from './lcoE3';
+import { lcoE3 } from './lcoE3';
 import { Unit } from './Unit';
 /**
  * @hidden

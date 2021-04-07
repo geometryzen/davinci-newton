@@ -4,6 +4,19 @@ import { Unit } from "./Unit";
 /**
  * @hidden
  */
+const zero = Geometric1.zero;
+/**
+ * @hidden
+ */
+const one = Geometric1.one;
+/**
+ * @hidden
+ */
+const e1 = Geometric1.e1;
+
+/**
+ * @hidden
+ */
 function checkEQ(result: Geometric1, comp: Geometric1): void {
     expect(result.a).toBe(comp.a, `a, result=${result.a}, comp=${comp.a}`);
     expect(result.x).toBe(comp.x, `x, result=${result.x}, comp=${comp.x}`);
@@ -215,6 +228,14 @@ describe("Geometric1", function () {
             checkEQ(sum, comp);
         });
     });
+    describe("angle", function () {
+        it("should be zero.", function () {
+            const angle = one.angle();
+            expect(angle.a).toBe(0);
+            expect(angle.x).toBe(0);
+            expect(Unit.isOne(angle.uom)).toBeTrue();
+        });
+    });
     describe("clone", function () {
         it("should copy a", function () {
             const a = Math.random();
@@ -272,6 +293,24 @@ describe("Geometric1", function () {
             expect(m.isMutable()).toBe(true);
         });
     });
+    describe("lco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.lco(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.lco(e1), e1);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.lco(one), zero);
+            });
+            it("e1", function () {
+                checkEQ(e1.lco(e1), one);
+            });
+        });
+    });
     describe("lock/unlock", function () {
         it("should be mutable using constructor.", function () {
             const m = new Geometric1();
@@ -291,6 +330,24 @@ describe("Geometric1", function () {
                 m.lock();
                 fail();
             }).toThrowError("already locked");
+        });
+    });
+    describe("mul", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.mul(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.mul(e1), e1);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.mul(one), e1);
+            });
+            it("e1", function () {
+                checkEQ(e1.mul(e1), one);
+            });
         });
     });
     describe("unlock() applied to an unlocked", function () {
@@ -396,6 +453,24 @@ describe("Geometric1", function () {
             expect(M.a).toBe(a);
             expect(M.x).toBe(x);
             expect(M.uom).toBe(Unit.METER);
+        });
+    });
+    describe("rco", function () {
+        describe("one", function () {
+            it("one", function () {
+                checkEQ(one.rco(one), one);
+            });
+            it("e1", function () {
+                checkEQ(one.rco(e1), zero);
+            });
+        });
+        describe("e1", function () {
+            it("one", function () {
+                checkEQ(e1.rco(one), e1);
+            });
+            it("e1", function () {
+                checkEQ(e1.rco(e1), one);
+            });
         });
     });
     describe("scale", function () {

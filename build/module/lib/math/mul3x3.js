@@ -5,7 +5,7 @@
  * @param c
  * @returns
  */
-export default function mul3x3(a, b, c) {
+export function mul3x3(a, b, c) {
     var a11 = a[0x0], a12 = a[0x3], a13 = a[0x6];
     var a21 = a[0x1], a22 = a[0x4], a23 = a[0x7];
     var a31 = a[0x2], a32 = a[0x5], a33 = a[0x8];

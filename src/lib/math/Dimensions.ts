@@ -573,8 +573,9 @@ export class Dimensions {
             case DimensionsSummary.TIME_SQUARED: return Dimensions.TIME_SQUARED;
             case DimensionsSummary.VELOCITY: return Dimensions.VELOCITY;
             case DimensionsSummary.VELOCITY_SQUARED: return Dimensions.VELOCITY_SQUARED;
+            case DimensionsSummary.VOLUME: return Dimensions.VOLUME;
             default: {
-                // console.warn(`Dimensions.valueOf(${M},${L},${T},${Q},${temperature},${amount},${intensity}) is not cached.`);
+                // console.warn(`Dimensions.valueOf(M=${M}, L=${L}, T=${T}, Q=${Q}, temperature=${temperature}, amount=${amount}, intensity=${intensity}) is not cached.`);
                 return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
             }
         }
