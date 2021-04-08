@@ -7,16 +7,18 @@ const two = Geometric2.one.mulByNumber(2);
 const e1 = Geometric2.e1;
 const e2 = Geometric2.e2;
 const e12 = Geometric2.e1.mul(Geometric2.e2);
+const I = e12;
+const elements = [one, e1, e2, e12];
 
 /**
  * @hidden
  */
 function checkEQ(result: Geometric2, comp: Geometric2): void {
-    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
+    expect(result.a).toBe(comp.a, `result.a=${result.a}, comp.a=${comp.a}`);
+    expect(result.x).toBe(comp.x, `result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.y).toBe(comp.y, `result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.xy).toBe(comp.xy, `result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.b).toBe(comp.b, `result.b=${result.b}, comp.b=${comp.b}`);
     expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
     expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
     expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
@@ -557,6 +559,22 @@ describe("Geometric2", function () {
             expect(rhs.b).toBe(8);
         });
     });
+
+    describe("dual", function () {
+        it("", function () {
+            checkEQ(one.dual(), I.neg());
+            checkEQ(e1.dual(), e2.neg());
+            checkEQ(e2.dual(), e1);
+            checkEQ(I.dual(), one);
+        });
+        it("dual(Ak) = Ak << inv(I)", function () {
+            for (const element of elements) {
+                checkEQ(element.dual(), element.lco(I.rev()));
+                checkEQ(element.dual(), element.lco(I.inv()));
+            }
+        });
+    });
+
     describe("div", function () {
         it("scalar/scalar", function () {
             const result = one.__div__(one);

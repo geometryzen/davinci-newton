@@ -291,7 +291,23 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     div(rhs: Spacetime2): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    divByScalar(α: number, uom: Unit): Spacetime2 {
+    divByNumber(α: number): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().divByNumber(α).permlock();
+        }
+        else {
+            this.$M000 /= α;
+            this.$M001 /= α;
+            this.$M010 /= α;
+            this.$M011 /= α;
+            this.$M100 /= α;
+            this.$M101 /= α;
+            this.$M110 /= α;
+            this.$M111 /= α;
+            return this;
+        }
+    }
+    divByScalar(α: number, uom?: Unit): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().divByScalar(α, uom).permlock();
         }
@@ -308,21 +324,11 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    divByNumber(α: number): Spacetime2 {
-        if (this.isLocked()) {
-            return this.clone().divByNumber(α).permlock();
-        }
-        else {
-            this.$M000 /= α;
-            this.$M001 /= α;
-            this.$M010 /= α;
-            this.$M011 /= α;
-            this.$M100 /= α;
-            this.$M101 /= α;
-            this.$M110 /= α;
-            this.$M111 /= α;
-            return this;
-        }
+    divByVector(rhs: Vector): Spacetime2 {
+        throw new Error("Method not implemented.");
+    }
+    dual(): Spacetime2 {
+        throw new Error("Method not implemented.");
     }
     exp(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -658,9 +664,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    lerp(target: Spacetime2, α: number): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
     scale(α: number): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().scale(α).permlock();
@@ -675,6 +678,9 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             this.$M111 = this.$M111 * α;
             return this;
         }
+    }
+    squaredNorm(): Spacetime2 {
+        throw new Error("Method not implemented.");
     }
     neg(): Spacetime2 {
         if (this.isLocked()) {
@@ -695,12 +701,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         throw new Error("Method not implemented.");
     }
     rotate(rotor: Spinor): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
-    slerp(target: Spacetime2, α: number): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
-    stress(σ: Vector): Spacetime2 {
         throw new Error("Method not implemented.");
     }
     sub(rhs: Spacetime2, α = 1): Spacetime2 {

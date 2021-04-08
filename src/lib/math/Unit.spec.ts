@@ -282,7 +282,7 @@ describe("Unit", function () {
     it("electric permeability", function () {
         expect(HENRY.div(METER).toString(10, true)).toBe("H/m");
     });
-    it("pressure, stress", function () {
+    it("pressure", function () {
         expect(PASCAL.toString(10, true)).toBe("Pa or N/m**2 or J/m**3");
     });
     it("angular momentum", function () {

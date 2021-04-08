@@ -101,8 +101,8 @@ var Euclidean2 = /** @class */ (function () {
     Euclidean2.prototype.neg = function (mv) {
         return mv.neg();
     };
-    Euclidean2.prototype.quad = function (mv) {
-        return mv.quaditude();
+    Euclidean2.prototype.squaredNorm = function (mv) {
+        return mv.squaredNorm();
     };
     Euclidean2.prototype.rev = function (mv) {
         return mv.rev();

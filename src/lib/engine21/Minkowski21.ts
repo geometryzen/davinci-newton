@@ -53,7 +53,7 @@ export class Minkowski21 implements Metric<Spacetime2> {
     direction(mv: Spacetime2): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    divByScalar(lhs: Spacetime2, a: number, uom: Unit): Spacetime2 {
+    divByScalar(lhs: Spacetime2, a: number, uom?: Unit): Spacetime2 {
         throw new Error("Method not implemented.");
     }
     ext(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
@@ -104,8 +104,8 @@ export class Minkowski21 implements Metric<Spacetime2> {
     one(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    quad(mv: Spacetime2): Spacetime2 {
-        return mv.quaditude();
+    squaredNorm(mv: Spacetime2): Spacetime2 {
+        return mv.squaredNorm();
     }
     rev(mv: Spacetime2): Spacetime2 {
         return mv.rev();

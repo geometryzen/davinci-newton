@@ -26,7 +26,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
     __eq__(rhs: Geometric3 | number): boolean;
     __ne__(rhs: number | Geometric3): boolean;
     scale(α: number): Geometric3;
-    slerp(target: Geometric3, α: number): Geometric3;
     /**
      * Consistently set a coordinate value in the most optimized way.
      * Permits mutation only when the lock status is UNLOCKED.
@@ -209,7 +208,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param α The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom: Unit): Geometric3;
+    divByScalar(α: number, uom?: Unit): Geometric3;
     divByVector(v: VectorE3): Geometric3;
     /**
      * <p>
@@ -221,11 +220,11 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     div2(a: SpinorE3, b: SpinorE3): this;
     /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
+     * dualization: dual(Ak) = Ak << inv(I)
      *
-     * @returns dual(m) or dual(this) if m is undefined.
+     * In an n-dimensional Euclidean space, the inverse is the reverse.
      */
-    dual(m?: GeometricE3): Geometric3;
+    dual(): Geometric3;
     /**
      * @param other
      * @returns
@@ -268,22 +267,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param b
      */
     lco2(a: GeometricE3, b: GeometricE3): this;
-    /**
-     * @param target
-     * @param α
-     * @returns this + α * (target - this)
-     */
-    lerp(target: GeometricE3, α: number): Geometric3;
-    /**
-     * <p>
-     * <code>this ⟼ a + α * (b - a)</code>
-     * </p>
-     *
-     * @param a
-     * @param b
-     * @param α
-     */
-    lerp2(a: GeometricE3, b: GeometricE3, α: number): this;
     /**
      * <p>
      * <code>this ⟼ log(this)</code>
@@ -445,13 +428,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param uom
      * @returns this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit): Geometric3;
-    /**
-     * Applies the diagonal elements of a scaling matrix to this multivector.
-     *
-     * @param σ
-     */
-    stress(σ: VectorE3): Geometric3;
+    mulByScalar(α: number, uom?: Unit): Geometric3;
     /**
      * <p>
      * <code>this ⟼ a * b</code>
@@ -737,13 +714,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @returns
      */
     static fromVector(v: VectorE3): Geometric3;
-    /**
-     * @param A
-     * @param B
-     * @param α
-     * @returns <code>A + α * (B - A)</code>
-     */
-    static lerp(A: GeometricE3, B: GeometricE3, α: number): Geometric3;
     static pseudo(b: number, uom?: Unit): Geometric3;
     /**
      * <p>

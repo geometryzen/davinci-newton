@@ -69,7 +69,7 @@ export class CoulombLaw<T> extends AbstractSimObject implements ForceLaw<T> {
         metric.subVector(numer, this.body2_.X);
 
         metric.copyVector(numer, denom);
-        metric.quad(denom);
+        metric.squaredNorm(denom);
 
         metric.direction(numer);
         metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));

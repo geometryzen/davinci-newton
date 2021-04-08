@@ -48,6 +48,10 @@ const e12 = e1.mul(e2);
  */
 const I = Geometric3.I;
 /**
+ * 
+ */
+const elements: Geometric3[] = [one, e1, e2, e12, e3, e13, e23, I];
+/**
  * @hidden
  */
 const meter = Geometric3.meter;
@@ -126,14 +130,14 @@ const PRECISION = 12;
  * @hidden
  */
 function checkEQ(result: Geometric3, comp: Geometric3): void {
-    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.z).toBe(comp.z, `001 γ0: result.z=${result.z}, comp.t=${comp.z}`);
-    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.yz).toBe(comp.yz, `011 γ0γ1: result.yz=${result.yz}, comp.yz=${comp.yz}`);
-    expect(result.zx).toBe(comp.zx, `101 γ0γ2: result.zx=${result.zx}, comp.zx=${comp.zx}`);
-    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
+    expect(result.a).toBe(comp.a, `result.a=${result.a}, comp.a=${comp.a}`);
+    expect(result.x).toBe(comp.x, `result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.y).toBe(comp.y, `result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.z).toBe(comp.z, `result.z=${result.z}, comp.t=${comp.z}`);
+    expect(result.xy).toBe(comp.xy, `result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.yz).toBe(comp.yz, `result.yz=${result.yz}, comp.yz=${comp.yz}`);
+    expect(result.zx).toBe(comp.zx, `result.zx=${result.zx}, comp.zx=${comp.zx}`);
+    expect(result.b).toBe(comp.b, `result.b=${result.b}, comp.b=${comp.b}`);
     expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
     expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
     expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
@@ -141,7 +145,28 @@ function checkEQ(result: Geometric3, comp: Geometric3): void {
 
 describe("Geometric3", function () {
 
-    describe("Properties", function () {
+    describe("constructor", function () {
+        it("should be zero when no arguments given.", function () {
+            const mv = new Geometric3();
+            expect(mv.a).toBe(0);
+            expect(mv.x).toBe(0);
+            expect(mv.y).toBe(0);
+            expect(mv.z).toBe(0);
+            expect(mv.xy).toBe(0);
+            expect(mv.yz).toBe(0);
+            expect(mv.zx).toBe(0);
+            expect(mv.b).toBe(0);
+            expect(Unit.isOne(mv.uom)).toBe(true);
+        });
+        it("should throw Error when coords length is not 8.", function () {
+            expect(function () {
+                const mv = new Geometric3([]);
+                mv.toString();
+            }).toThrowError("coords.length must be 8");
+        });
+    });
+
+    describe("constants", function () {
         it("I", function () {
             const m = Geometric3.I;
             expect(m.a).toBe(0);
@@ -449,11 +474,140 @@ describe("Geometric3", function () {
         });
     });
 
+    describe("locking", function () {
+        it("a", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.a = 1;
+            }).toThrowError("Property `a` is readonly.");
+        });
+        it("x", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.x = 1;
+            }).toThrowError("Property `x` is readonly.");
+        });
+        it("y", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.y = 1;
+            }).toThrowError("Property `y` is readonly.");
+        });
+        it("z", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.z = 1;
+            }).toThrowError("Property `z` is readonly.");
+        });
+        it("xy", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.xy = 1;
+            }).toThrowError("Property `xy` is readonly.");
+        });
+        it("yz", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.yz = 1;
+            }).toThrowError("Property `yz` is readonly.");
+        });
+        it("zx", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.zx = 1;
+            }).toThrowError("Property `zx` is readonly.");
+        });
+        it("b", function () {
+            expect(function () {
+                const mv = new Geometric3().permlock();
+                mv.b = 1;
+            }).toThrowError("Property `b` is readonly.");
+        });
+    });
+
+    describe("conj", function () {
+        it("should have pattern +--++--+ on grades (-1)^[a(a+1)/2]", function () {
+            for (const element of elements) {
+                switch (element.grades) {
+                    case 0x1: {
+                        checkEQ(element.conj(), element);
+                        break;
+                    }
+                    case 0x2: {
+                        checkEQ(element.conj(), element.neg());
+                        break;
+                    }
+                    case 0x4: {
+                        checkEQ(element.conj(), element.neg());
+                        break;
+                    }
+                    case 0x8: {
+                        checkEQ(element.conj(), element);
+                        break;
+                    }
+                }
+            }
+        });
+    });
+
     describe("cross", function () {
         it("should work for vectors", function () {
             checkEQ(e1.cross(e2), e3);
             checkEQ(e2.cross(e3), e1);
             checkEQ(e3.cross(e1), e2);
+        });
+    });
+
+    describe("direction", function () {
+        it("should be the identity operation for elements.", function () {
+            for (const element of elements) {
+                checkEQ(element.direction(), element);
+            }
+        });
+    });
+
+    describe("divByNumber", function () {
+        it("should be a shortcut for div.", function () {
+            for (const element of elements) {
+                checkEQ(element.divByNumber(2), element.div(two));
+            }
+        });
+    });
+
+    describe("divByScalar", function () {
+        it("should be a shortcut for div.", function () {
+            for (const element of elements) {
+                checkEQ(element.divByScalar(2, Unit.METER), element.div(two).div(Geometric3.meter));
+                checkEQ(element.divByScalar(2), element.div(two));
+            }
+        });
+    });
+
+    describe("divByVector", function () {
+        it("should be a shortcut for div.", function () {
+            for (const element of elements) {
+                checkEQ(element.divByVector(e1), element.div(e1));
+                checkEQ(element.divByVector(e2), element.div(e2));
+                checkEQ(element.divByVector(e3), element.div(e3));
+            }
+        });
+    });
+
+    describe("dual", function () {
+        it("", function () {
+            checkEQ(one.dual(), I.neg());
+            checkEQ(e1.dual(), e23.neg());
+            checkEQ(e2.dual(), e13);
+            checkEQ(e3.dual(), e12.neg());
+            checkEQ(e12.dual(), e3);
+            checkEQ(e23.dual(), e1);
+            checkEQ(e31.dual(), e2);
+            checkEQ(I.dual(), one);
+        });
+        it("dual(Ak) = Ak << inv(I)", function () {
+            for (const element of elements) {
+                checkEQ(element.dual(), element.lco(I.inv()));
+            }
         });
     });
 
@@ -738,93 +892,11 @@ describe("Geometric3", function () {
         });
     });
 
-    describe("mulByBivector", function () {
-        it("(vector, bivector) should be same as vector.mul(bivector)", function () {
-            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
-            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByBivector(B);
-            const expectOut = lhs.clone().mul(B);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
-        });
-        it("(spinor, bivector) should be same as spinor.mul(bivector)", function () {
-            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
-            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByBivector(B);
-            const expectOut = lhs.clone().mul(B);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
-        });
-        it("(pseudo, bivector) should be same as pseudo.mul(bivector)", function () {
-            const lhs = Geometric3.pseudo(Math.random());
-            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByBivector(B);
-            const expectOut = lhs.clone().mul(B);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
-        });
-    });
-
-    describe("mulByVector", function () {
-        it("(vector, vector) should be same as vector.mul(vector)", function () {
-            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
-            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByVector(rhs);
-            const expectOut = lhs.clone().mul(rhs);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
-        });
-        it("(spinor, vector) should be same as spinor.mul(vector)", function () {
-            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
-            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByVector(rhs);
-            const expectOut = lhs.clone().mul(rhs);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
-        });
-        it("(pseudo, vector) should be same as pseudo.mul(vector)", function () {
-            const lhs = Geometric3.pseudo(Math.random());
-            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
-            const actualOut = lhs.clone().mulByVector(rhs);
-            const expectOut = lhs.clone().mul(rhs);
-            expect(actualOut.a).toBe(expectOut.a);
-            expect(actualOut.x).toBe(expectOut.x);
-            expect(actualOut.y).toBe(expectOut.y);
-            expect(actualOut.z).toBe(expectOut.z);
-            expect(actualOut.xy).toBe(expectOut.xy);
-            expect(actualOut.yz).toBe(expectOut.yz);
-            expect(actualOut.zx).toBe(expectOut.zx);
-            expect(actualOut.b).toBe(expectOut.b);
+    describe("magnitude", function () {
+        it("should be one for all elements", function () {
+            for (const element of elements) {
+                checkEQ(element.magnitude(), one);
+            }
         });
     });
 
@@ -1039,6 +1111,105 @@ describe("Geometric3", function () {
         });
     });
 
+    describe("mulByBivector", function () {
+        it("(vector, bivector) should be same as vector.mul(bivector)", function () {
+            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(spinor, bivector) should be same as spinor.mul(bivector)", function () {
+            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(pseudo, bivector) should be same as pseudo.mul(bivector)", function () {
+            const lhs = Geometric3.pseudo(Math.random());
+            const B = Geometric3.bivector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByBivector(B);
+            const expectOut = lhs.clone().mul(B);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+    });
+
+    describe("mulByScalar", function () {
+        it("should be a shortcut for mul.", function () {
+            for (const element of elements) {
+                checkEQ(element.mulByScalar(2, Unit.METER), element.mul(two).mul(Geometric3.meter));
+                checkEQ(element.mulByScalar(2), element.mul(two));
+            }
+        });
+    });
+
+    describe("mulByVector", function () {
+        it("(vector, vector) should be same as vector.mul(vector)", function () {
+            const lhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(spinor, vector) should be same as spinor.mul(vector)", function () {
+            const lhs = Geometric3.spinor(Math.random(), Math.random(), Math.random(), Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+        it("(pseudo, vector) should be same as pseudo.mul(vector)", function () {
+            const lhs = Geometric3.pseudo(Math.random());
+            const rhs = Geometric3.vector(Math.random(), Math.random(), Math.random());
+            const actualOut = lhs.clone().mulByVector(rhs);
+            const expectOut = lhs.clone().mul(rhs);
+            expect(actualOut.a).toBe(expectOut.a);
+            expect(actualOut.x).toBe(expectOut.x);
+            expect(actualOut.y).toBe(expectOut.y);
+            expect(actualOut.z).toBe(expectOut.z);
+            expect(actualOut.xy).toBe(expectOut.xy);
+            expect(actualOut.yz).toBe(expectOut.yz);
+            expect(actualOut.zx).toBe(expectOut.zx);
+            expect(actualOut.b).toBe(expectOut.b);
+        });
+    });
+
     describe("div", function () {
         it("1 / 1 should be 1", function () {
             const numer: Geometric3 = one.clone();
@@ -1218,6 +1389,14 @@ describe("Geometric3", function () {
             const inv = I.clone().mulByNumber(2).inv();
             const minusHalfI = I.clone().neg().mulByNumber(0.5);
             expect(inv.equals(minusHalfI)).toBe(true);
+        });
+    });
+
+    describe("quaditude", function () {
+        it("should be one for all elements", function () {
+            for (const element of elements) {
+                checkEQ(element.quaditude(), one);
+            }
         });
     });
 
@@ -1499,6 +1678,35 @@ describe("Geometric3", function () {
         describe("I reflected in e1", reflectSpec(I, e1));
         describe("I reflected in e2", reflectSpec(I, e2));
         describe("I reflected in e3", reflectSpec(I, e3));
+    });
+
+    describe("rev and __tilde__", function () {
+        it("should have pattern ++--++-- on grades (-1)^[a(a-1)/2]", function () {
+            for (const element of elements) {
+                switch (element.grades) {
+                    case 0x1: {
+                        checkEQ(element.rev(), element);
+                        checkEQ(element.__tilde__(), element);
+                        break;
+                    }
+                    case 0x2: {
+                        checkEQ(element.rev(), element);
+                        checkEQ(element.__tilde__(), element);
+                        break;
+                    }
+                    case 0x4: {
+                        checkEQ(element.rev(), element.neg());
+                        checkEQ(element.__tilde__(), element.neg());
+                        break;
+                    }
+                    case 0x8: {
+                        checkEQ(element.rev(), element.neg());
+                        checkEQ(element.__tilde__(), element.neg());
+                        break;
+                    }
+                }
+            }
+        });
     });
 
     describe("rotorFromAxisAngle", function () {
@@ -1814,7 +2022,7 @@ describe("Geometric3", function () {
         });
     });
 
-    describe("rotorFrmGeneratorAngle", function () {
+    describe("rotorFromGeneratorAngle", function () {
         describe("(e1 ^ e2, PI)", function () {
             const B: BivectorE3 = e1.clone().ext(e2);
             const R = Geometric3.random();
@@ -1849,18 +2057,37 @@ describe("Geometric3", function () {
         });
     });
 
-    describe("stress", function () {
-        const stress = Geometric3.vector(7, 11, 13);
-        const position = Geometric3.vector(2, 3, 5, Unit.METER);
-        const chain = position.stress(stress);
-
-        it("should piece-wise multiply grade 1 components", function () {
-            expect(position.x).toBe(14);
-            expect(position.y).toBe(33);
-            expect(position.z).toBe(65);
+    describe("sub", function () {
+        it("zero should be the rhs identity.", function () {
+            for (const element of elements) {
+                checkEQ(element.sub(zero), element);
+                checkEQ(zero.sub(element), element.neg());
+            }
         });
-        it("shold be chainable", function () {
-            expect(chain === position).toBe(true);
+    });
+
+    describe("subScalar", function () {
+        it("should be a shortcut for sub.", function () {
+            checkEQ(zero.subScalar(2), two.neg());
+            checkEQ(two.subScalar(0), two);
+            for (const element of elements) {
+                checkEQ(element.subScalar(2), element.sub(two));
+            }
+        });
+    });
+
+    describe("subVector", function () {
+        it("should be a shortcut for sub.", function () {
+            for (const element of elements) {
+                if (element.isVector()) {
+                    checkEQ(zero.subVector(element), element.neg());
+                }
+            }
+            for (const element of elements) {
+                checkEQ(element.subVector(e1), element.sub(e1));
+                checkEQ(element.subVector(e2), element.sub(e2));
+                checkEQ(element.subVector(e3), element.sub(e3));
+            }
         });
     });
 
@@ -2060,13 +2287,25 @@ describe("Geometric3", function () {
     });
     describe("__rwedge__", function () {
         it("(Geometric)", function () {
-            checkEQ(e1.__rwedge__(e2), e2.ext(e1));
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__rwedge__(rhs), rhs.ext(lhs));
+                }
+            }
         });
         it("(number)", function () {
             checkEQ(one.__rwedge__(2), two.ext(one));
         });
         it("otherwise", function () {
             expect(one.__rwedge__("" as unknown as Geometric3)).toBeUndefined();
+        });
+    });
+
+    describe("__tilde__", function () {
+        it("should be the operator overload of reversion", function () {
+            for (const element of elements) {
+                checkEQ(element.__tilde__(), element.rev());
+            }
         });
     });
 

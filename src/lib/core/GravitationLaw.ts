@@ -69,7 +69,7 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
         metric.subVector(numer, this.body1_.X);
 
         metric.copyVector(numer, denom);
-        metric.quad(denom);
+        metric.squaredNorm(denom);
 
         metric.direction(numer);
         metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));

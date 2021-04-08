@@ -267,6 +267,19 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
         this.uom = vector.uom;
         return this;
     }
+    dual(): Geometric1 {
+        if (this.isLocked()) {
+            return this.clone().dual().permlock();
+        }
+        else {
+            const a = this.b;
+            const b = this.a;
+
+            this.a = a;
+            this.b = b;
+            return this;
+        }
+    }
     lco(rhs: Geometric1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().lco(rhs));
@@ -296,6 +309,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
                 return this.mul(copy(rhs).inv());
             }
         }
+    }
+    divByVector(rhs: Vector): Geometric1 {
+        throw new Error("Method not implemented.");
     }
     exp(): Geometric1 {
         if (this.isLocked()) {
@@ -538,6 +554,16 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
 
         return this;
     }
+    squaredNorm(): Geometric1 {
+        if (this.isMutable()) {
+            this.a = this.quaditudeNoUnits();
+            this.x = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
+            return this;
+        } else {
+            return lock(this.clone().quaditude());
+        }
+    }
     add(M: Geometric1, α = 1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().add(M, α));
@@ -599,7 +625,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    divByScalar(α: number, uom: Unit): Geometric1 {
+    divByScalar(α: number, uom?: Unit): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().divByScalar(α, uom));
         }
@@ -607,25 +633,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             this.uom = Unit.div(this.uom, uom);
             this.a /= α;
             this.x /= α;
-            return this;
-        }
-    }
-    lerp(target: Geometric1, α: number): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().lerp(target, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = target.uom;
-            }
-            else if (target.isZero()) {
-                // Fall through.
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, target.uom);
-            }
-            this.a += (target.a - this.a) * α;
-            this.x += (target.x - this.x) * α;
             return this;
         }
     }
@@ -676,20 +683,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             const s = α2;
             this.a = s * a;
             this.x = p * x;
-            return this;
-        }
-    }
-    slerp(target: Geometric1, α: number): Geometric1 {
-        throw new Error(notImplemented('slerp').message);
-    }
-    stress(σ: Vector): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().stress(σ));
-        }
-        else {
-            this.x *= σ.x;
-            this.uom = Unit.mul(σ.uom, this.uom);
-            // TODO: Action on other components TBD.
             return this;
         }
     }
@@ -1122,6 +1115,17 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
         }
         else {
             throw new Error(readOnly('x').message);
+        }
+    }
+    get b(): number {
+        return this.coords[COORD_X];
+    }
+    set b(b: number) {
+        if (this.isMutable()) {
+            this.coords[COORD_X] = b;
+        }
+        else {
+            throw new Error(readOnly('b').message);
         }
     }
 }

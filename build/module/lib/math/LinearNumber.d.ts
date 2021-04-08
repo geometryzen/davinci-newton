@@ -13,14 +13,12 @@ import { Unit } from "./Unit";
  */
 export interface LinearNumber<I, M, S, V> {
     add(rhs: I, α?: number): M;
-    divByScalar(α: number, uom: Unit): M;
-    lerp(target: I, α: number): M;
+    divByScalar(α: number, uom?: Unit): M;
     scale(α: number): M;
+    mulByScalar(α: number, uom?: Unit): M;
     neg(): M;
     reflect(n: V): M;
     rotate(rotor: S): M;
-    slerp(target: I, α: number): M;
-    stress(σ: V): M;
     sub(rhs: I, α?: number): M;
     toExponential(fractionDigits?: number): string;
     toFixed(fractionDigits?: number): string;

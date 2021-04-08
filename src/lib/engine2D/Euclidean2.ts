@@ -57,7 +57,7 @@ export class Euclidean2 implements Metric<Geometric2> {
     direction(mv: Geometric2): Geometric2 {
         return mv.direction();
     }
-    divByScalar(lhs: Geometric2, a: number, uom: Unit): Geometric2 {
+    divByScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2 {
         return lhs.divByScalar(a, uom);
     }
     identityMatrix(): MatrixLike {
@@ -105,8 +105,8 @@ export class Euclidean2 implements Metric<Geometric2> {
     neg(mv: Geometric2): Geometric2 {
         return mv.neg();
     }
-    quad(mv: Geometric2): Geometric2 {
-        return mv.quaditude();
+    squaredNorm(mv: Geometric2): Geometric2 {
+        return mv.squaredNorm();
     }
     rev(mv: Geometric2): Geometric2 {
         return mv.rev();

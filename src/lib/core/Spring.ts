@@ -259,7 +259,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         assertConsistentUnits('length', this.potentialEnergy_, 'restLength', this.restLength, this.metric);
         metric.sub(this.potentialEnergy_, this.restLength);
         // 3. Square it.
-        metric.quad(this.potentialEnergy_);
+        metric.squaredNorm(this.potentialEnergy_);
         // 4. Multiply by the stiffness.
         metric.mulByScalar(this.potentialEnergy_, metric.a(this.stiffness), metric.uom(this.stiffness));
         // 5. Multiply by the 0.5 factor.

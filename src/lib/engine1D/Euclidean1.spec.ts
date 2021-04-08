@@ -412,11 +412,11 @@ describe("Euclidean1", function () {
             expect(result instanceof Geometric1).toBe(true);
         });
     });
-    describe("quaditude", function () {
+    describe("squaredNorm", function () {
         it("should be defined.", function () {
             const metric = new Euclidean1();
             const mv = new Geometric1();
-            const result = metric.quad(mv);
+            const result = metric.squaredNorm(mv);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
         });

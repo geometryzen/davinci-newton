@@ -196,21 +196,6 @@ var Geometric2 = /** @class */ (function (_super) {
     Geometric2.prototype.scale = function (α) {
         return this.mulByNumber(α);
     };
-    Geometric2.prototype.slerp = function (target, α) {
-        throw new Error(notImplemented('slerp').message);
-    };
-    Geometric2.prototype.stress = function (σ) {
-        if (this.isLocked()) {
-            return lock(this.clone().stress(σ));
-        }
-        else {
-            this.x *= σ.x;
-            this.y *= σ.y;
-            this.uom = Unit.mul(σ.uom, this.uom);
-            // TODO: Action on other components TBD.
-            return this;
-        }
-    };
     Geometric2.prototype.__div__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().div(rhs));
@@ -599,18 +584,24 @@ var Geometric2 = /** @class */ (function (_super) {
         else {
             var x = v.x;
             var y = v.y;
-            var uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
-            var squaredNorm = x * x + y * y;
-            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+            return this.mulByVector(v).divByScalar(x * x + y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
         }
     };
-    /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
-     *
-     * @returns dual(m) or dual(this) if m is undefined.
-     */
-    Geometric2.prototype.dual = function (m) {
-        throw new Error(notImplemented('dual').message);
+    Geometric2.prototype.dual = function () {
+        if (this.isLocked()) {
+            return this.clone().dual().permlock();
+        }
+        else {
+            var a = this.b;
+            var y = -this.x;
+            var x = this.y;
+            var b = -this.a;
+            this.a = a;
+            this.x = x;
+            this.y = y;
+            this.b = b;
+            return this;
+        }
     };
     Geometric2.prototype.equals = function (other) {
         if (other instanceof Geometric2) {
@@ -743,31 +734,6 @@ var Geometric2 = /** @class */ (function (_super) {
         this.y = a0 * b2 + a1 * b3;
         this.b = a0 * b3;
         this.uom = Unit.mul(this.uom, rhs.uom);
-        return this;
-    };
-    Geometric2.prototype.lerp = function (target, α) {
-        if (this.isLocked()) {
-            return lock(this.clone().lerp(target, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = target.uom;
-            }
-            else if (isZeroGeometric(target)) {
-                // Fall through.
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, target.uom);
-            }
-            this.a += (target.a - this.a) * α;
-            this.x += (target.x - this.x) * α;
-            this.y += (target.y - this.y) * α;
-            this.b += (target.b - this.b) * α;
-            return this;
-        }
-    };
-    Geometric2.prototype.lerp2 = function (a, b, α) {
-        this.copy(a).lerp(b, α);
         return this;
     };
     Geometric2.prototype.log = function () {

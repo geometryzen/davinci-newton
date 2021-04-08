@@ -45,6 +45,21 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      * divide really only applies to division algebras, may not be defined.
      */
     div(rhs: I): M;
+    /**
+     *
+     */
+    divByVector(rhs: V): M;
+
+    /**
+     * dualization: dual(Ak) = Ak << inv(I)
+     * 
+     * For a Euclidean space inv(I) = + rev(I)
+     * 
+     * For a Minkowski space inv(I) = - rev(I)
+     * 
+     * See Geometric Algebra for Computer Science, p80. 
+     */
+    dual(): M;
 
     /**
      * Exponential
@@ -136,10 +151,15 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      */
     rev(): M;
 
-    subScalar(a: number, uom?: Unit, α?: number): M;
-
     /**
      * Scalar Product
      */
     scp(rhs: I): M;
+
+    subScalar(a: number, uom?: Unit, α?: number): M;
+
+    /**
+     * squared norm, scp(x, rev(x))
+     */
+    squaredNorm(): M;
 }

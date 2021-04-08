@@ -124,7 +124,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             return this.direction(copy(mv));
         }
     }
-    divByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1 {
+    divByScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1 {
         if (lhs.isMutable()) {
             lhs.a = lhs.a / a;
             lhs.x = lhs.x / a;
@@ -204,7 +204,7 @@ export class Euclidean1 implements Metric<Geometric1> {
             return lock(this.mulByNumber(copy(lhs), alpha));
         }
     }
-    mulByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1 {
+    mulByScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1 {
         if (lhs.isMutable()) {
             lhs.a = lhs.a * a;
             lhs.x = lhs.x * a;
@@ -235,8 +235,8 @@ export class Euclidean1 implements Metric<Geometric1> {
             throw new Error('Method not implemented.');
         }
     }
-    quad(mv: Geometric1): Geometric1 {
-        return mv.quaditude();
+    squaredNorm(mv: Geometric1): Geometric1 {
+        return mv.squaredNorm();
     }
     rev(mv: Geometric1): Geometric1 {
         if (mv.isMutable()) {

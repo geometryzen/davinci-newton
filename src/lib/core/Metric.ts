@@ -60,7 +60,7 @@ export interface Metric<T> {
 
     direction(mv: T): T;
 
-    divByScalar(lhs: T, a: number, uom: Unit): T;
+    divByScalar(lhs: T, a: number, uom?: Unit): T;
 
     ext(lhs: T, rhs: T): T;
 
@@ -98,7 +98,7 @@ export interface Metric<T> {
 
     mulByNumber(lhs: T, alpha: number): T;
 
-    mulByScalar(lhs: T, a: number, uom: Unit): T;
+    mulByScalar(lhs: T, a: number, uom?: Unit): T;
 
     mulByVector(lhs: T, rhs: T): T;
 
@@ -110,7 +110,10 @@ export interface Metric<T> {
      */
     one(): T;
 
-    quad(mv: T): T;
+    /**
+     * squared norm: |A| * |A| = A * rev(A)
+     */
+    squaredNorm(A: T): T;
 
     rev(mv: T): T;
 

@@ -47,7 +47,7 @@ export interface Metric<T> {
      */
     createTorque(body: ForceBody<T>): Torque<T>;
     direction(mv: T): T;
-    divByScalar(lhs: T, a: number, uom: Unit): T;
+    divByScalar(lhs: T, a: number, uom?: Unit): T;
     ext(lhs: T, rhs: T): T;
     identityMatrix(): MatrixLike;
     /**
@@ -72,7 +72,7 @@ export interface Metric<T> {
     norm(mv: T): T;
     mul(lhs: T, rhs: T): T;
     mulByNumber(lhs: T, alpha: number): T;
-    mulByScalar(lhs: T, a: number, uom: Unit): T;
+    mulByScalar(lhs: T, a: number, uom?: Unit): T;
     mulByVector(lhs: T, rhs: T): T;
     neg(mv: T): T;
     /**
@@ -80,7 +80,10 @@ export interface Metric<T> {
      * The returned multivector is mutable.
      */
     one(): T;
-    quad(mv: T): T;
+    /**
+     * squared norm: |A| * |A| = A * rev(A)
+     */
+    squaredNorm(A: T): T;
     rev(mv: T): T;
     rotate(mv: T, spinor: T): T;
     /**

@@ -1,4 +1,3 @@
-import isDefined from '../checks/isDefined';
 import { readOnly } from '../i18n/readOnly';
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
@@ -13,7 +12,7 @@ import { GeometricOperators } from './GeometricOperators';
 import { GradeMasked } from './GradeMasked';
 import isScalarG3 from './isScalarG3';
 import isVectorG3 from './isVectorG3';
-import isZeroGeometricE3 from './isZeroGeometricE3';
+import { isZeroGeometricE3 } from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
 import { maskG3 } from './maskG3';
@@ -250,9 +249,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
     scale(α: number): Geometric3 {
         return this.mulByNumber(α);
-    }
-    slerp(target: Geometric3, α: number): Geometric3 {
-        throw new Error('Method not implemented.');
     }
 
     /**
@@ -723,9 +719,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().cross(m));
         }
         else {
-            this.ext(m);
-            this.dual(this).neg();
-            return this;
+            return this.ext(m).dual();
         }
     }
 
@@ -861,7 +855,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      * @param α The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom: Unit): Geometric3 {
+    divByScalar(α: number, uom?: Unit): Geometric3 {
         if (this.isLocked()) {
             return lock(this.clone().divByScalar(α, uom));
         }
@@ -887,9 +881,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
             const x = v.x;
             const y = v.y;
             const z = v.z;
-            const uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
-            const squaredNorm = x * x + y * y + z * z;
-            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+            return this.mulByVector(v).divByScalar(x * x + y * y + z * z, Unit.pow(v.uom, QQ.valueOf(2, 1)));
         }
     }
 
@@ -923,39 +915,33 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
-     *
-     * @returns dual(m) or dual(this) if m is undefined.
+     * dualization: dual(Ak) = Ak << inv(I)
+     * 
+     * In an n-dimensional Euclidean space, the inverse is the reverse.
      */
-    dual(m?: GeometricE3): Geometric3 {
+    dual(): Geometric3 {
         if (this.isLocked()) {
-            return lock(this.clone().dual(m));
+            return this.clone().dual().permlock();
         }
         else {
-            if (isDefined(m)) {
-                const w = -m.b;
-                const x = -m.yz;
-                const y = -m.zx;
-                const z = -m.xy;
-                const yz = m.x;
-                const zx = m.y;
-                const xy = m.z;
-                const β = m.a;
+            const a = this.b;
+            const x = +this.yz;
+            const y = +this.zx;
+            const z = +this.xy;
+            const yz = -this.x;
+            const zx = -this.y;
+            const xy = -this.z;
+            const b = -this.a;
 
-                this.a = w;
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.yz = yz;
-                this.zx = zx;
-                this.xy = xy;
-                this.b = β;
-                this.uom = m.uom;
-                return this;
-            }
-            else {
-                return this.dual(this);
-            }
+            this.a = a;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yz = yz;
+            this.zx = zx;
+            this.xy = xy;
+            this.b = b;
+            return this;
         }
     }
 
@@ -1126,51 +1112,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      */
     lco2(a: GeometricE3, b: GeometricE3): this {
         return lcoG3(a, b, this);
-    }
-
-    /**
-     * @param target
-     * @param α
-     * @returns this + α * (target - this)
-     */
-    lerp(target: GeometricE3, α: number): Geometric3 {
-        if (this.isLocked()) {
-            return lock(this.clone().lerp(target, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = target.uom;
-            }
-            else if (isZeroGeometricE3(target)) {
-                // Fall through.
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, target.uom);
-            }
-            this.a += (target.a - this.a) * α;
-            this.x += (target.x - this.x) * α;
-            this.y += (target.y - this.y) * α;
-            this.z += (target.z - this.z) * α;
-            this.yz += (target.yz - this.yz) * α;
-            this.zx += (target.zx - this.zx) * α;
-            this.xy += (target.xy - this.xy) * α;
-            this.b += (target.b - this.b) * α;
-            return this;
-        }
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ a + α * (b - a)</code>
-     * </p>
-     *
-     * @param a
-     * @param b
-     * @param α
-     */
-    lerp2(a: GeometricE3, b: GeometricE3, α: number): this {
-        this.copy(a).lerp(b, α);
-        return this;
     }
 
     /**
@@ -1775,7 +1716,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      * @param uom
      * @returns this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit): Geometric3 {
+    mulByScalar(α: number, uom?: Unit): Geometric3 {
         if (this.isLocked()) {
             return lock(this.clone().mulByScalar(α, uom));
         }
@@ -1789,25 +1730,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
             this.xy *= α;
             this.b *= α;
             this.uom = Unit.mul(this.uom, uom);
-            return this;
-        }
-    }
-
-    /**
-     * Applies the diagonal elements of a scaling matrix to this multivector.
-     *
-     * @param σ
-     */
-    stress(σ: VectorE3): Geometric3 {
-        if (this.isLocked()) {
-            return lock(this.clone().stress(σ));
-        }
-        else {
-            this.x *= σ.x;
-            this.y *= σ.y;
-            this.z *= σ.z;
-            this.uom = Unit.mul(σ.uom, this.uom);
-            // TODO: Action on other components TBD.
             return this;
         }
     }
@@ -2530,7 +2452,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     static dual(m: Geometric3): Geometric3 {
-        return new Geometric3(zero(), m.uom).dual(m);
+        return Geometric3.copy(m).dual();
     }
 
     static dualOfBivector(B: BivectorE3): Geometric3 {
@@ -2565,16 +2487,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      */
     static fromVector(v: VectorE3): Geometric3 {
         return new Geometric3(vector(v.x, v.y, v.z), v.uom);
-    }
-
-    /**
-     * @param A
-     * @param B
-     * @param α
-     * @returns <code>A + α * (B - A)</code>
-     */
-    static lerp(A: GeometricE3, B: GeometricE3, α: number): Geometric3 {
-        return Geometric3.copy(A).lerp(B, α);
     }
 
     static pseudo(b: number, uom?: Unit): Geometric3 {

@@ -21,7 +21,7 @@ export declare class Euclidean3 implements Metric<Geometric3> {
     createForce(body: ForceBody<Geometric3>): Force<Geometric3>;
     createTorque(body: ForceBody<Geometric3>): Torque<Geometric3>;
     direction(mv: Geometric3): Geometric3;
-    divByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
+    divByScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3;
     identityMatrix(): MatrixLike;
     invertMatrix(m: MatrixLike): MatrixLike;
     isBivector(mv: Geometric3): boolean;
@@ -36,7 +36,7 @@ export declare class Euclidean3 implements Metric<Geometric3> {
     mulByScalar(lhs: Geometric3, a: number, uom: Unit): Geometric3;
     mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
     neg(mv: Geometric3): Geometric3;
-    quad(mv: Geometric3): Geometric3;
+    squaredNorm(mv: Geometric3): Geometric3;
     rev(mv: Geometric3): Geometric3;
     rotate(mv: Geometric3, spinor: Geometric3): Geometric3;
     scalar(a: number, uom?: Unit): Geometric3;

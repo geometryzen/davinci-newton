@@ -474,14 +474,11 @@ export interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 
 export interface LinearNumber<I, M, S, V> {
     add(rhs: I, α?: number): M;
-    divByScalar(α: number, uom: Unit): M;
-    lerp(target: I, α: number): M;
+    divByScalar(α: number, uom?: Unit): M;
     scale(α: number): M;
     neg(): M;
     reflect(n: V): M;
     rotate(rotor: S): M;
-    slerp(target: I, α: number): M;
-    stress(σ: V): M;
     sub(rhs: I, α?: number): M;
     toExponential(fractionDigits?: number): string;
     toFixed(fractionDigits?: number): string;
@@ -593,12 +590,17 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      */
     rev(): M;
 
-    subScalar(a: number, uom?: Unit, α?: number): M;
-
     /**
      * Scalar Product
      */
     scp(rhs: I): M;
+
+    /**
+     * squared norm, scp(x, rev(x))
+     */
+    squaredNorm(): M;
+
+    subScalar(a: number, uom?: Unit, α?: number): M;
 }
 
 /**
@@ -770,14 +772,12 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
     quaditudeNoUnits(): number;
     rco(rhs: Geometric1): Geometric1;
     rev(): Geometric1;
-    subScalar(a: number, uom?: Unit, α?: number): Geometric1;
-    scp(rhs: Geometric1): Geometric1;
-    lerp(target: Geometric1, α: number): Geometric1;
     scale(α: number): Geometric1;
+    scp(rhs: Geometric1): Geometric1;
+    squaredNorm(): Geometric1;
+    subScalar(a: number, uom?: Unit, α?: number): Geometric1;
     reflect(n: Geometric1): Geometric1;
     rotate(rotor: Geometric1): Geometric1;
-    slerp(target: Geometric1, α: number): Geometric1;
-    stress(σ: Geometric1): Geometric1;
     sub(rhs: Geometric1, α?: number): Geometric1;
     subScalar(a: number, uom?: Unit, α?: number): Geometric1;
     subVector(v: VectorE1, α?: number): Geometric1;
@@ -851,8 +851,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     isScalar(): boolean;
     scale(α: number): Geometric2;
-    slerp(target: GeometricE2, α: number): Geometric2;
-    stress(σ: VectorE2): Geometric2;
 
     /**
      * Adds M * α to this multivector.
@@ -978,7 +976,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * this ⟼ this / (α * uom)
      * 
      */
-    divByScalar(α: number, uom: Unit | undefined): Geometric2;
+    divByScalar(α: number, uom?: Unit): Geometric2;
 
     /**
      * 
@@ -988,7 +986,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     /**
      * 
      */
-    dual(m?: GeometricE2): Geometric2;
+    dual(): Geometric2;
 
     /**
      * 
@@ -1066,25 +1064,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
 
     /**
      * 
-     * this ⟼ this + α * (target - this)
-     * 
-     * target
-     * α
-     */
-    lerp(target: GeometricE2, α: number): Geometric2;
-
-    /**
-     * 
-     * this ⟼ a + α * (b - a)
-     * 
-     * a {GeometricE3}
-     * b {GeometricE3}
-     * α {number}
-     */
-    lerp2(a: GeometricE2, b: GeometricE2, α: number): Geometric2;
-
-    /**
-     * 
      */
     lock(): number;
 
@@ -1120,7 +1099,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     /**
      * this ⟼ this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit | undefined): Geometric2;
+    mulByScalar(α: number, uom?: Unit): Geometric2;
 
     /**
      * Computes this * v.
@@ -1286,6 +1265,8 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * Currently limited to taking the square root of a positive scalar quantity.
      */
     sqrt(): Geometric2;
+
+    squaredNorm(): Geometric2;
 
     /**
      * 
@@ -1633,8 +1614,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     isScalar(): boolean;
     subScalar(a: number, uom?: Unit, α?: number): Geometric3;
     scale(α: number): Geometric3;
-    slerp(target: GeometricE3, α: number): Geometric3;
-    stress(σ: VectorE3): Geometric3;
 
     /**
      * Adds M * α to this multivector.
@@ -1762,7 +1741,7 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
      * this ⟼ this / (α * uom)
      * 
      */
-    divByScalar(α: number, uom: Unit | undefined): Geometric3;
+    divByScalar(α: number, uom?: Unit): Geometric3;
 
     /**
      * 
@@ -1850,25 +1829,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
 
     /**
      * 
-     * this ⟼ this + α * (target - this)
-     * 
-     * target
-     * α
-     */
-    lerp(target: GeometricE3, α: number): Geometric3;
-
-    /**
-     * 
-     * this ⟼ a + α * (b - a)
-     * 
-     * a {GeometricE3}
-     * b {GeometricE3}
-     * α {number}
-     */
-    lerp2(a: GeometricE3, b: GeometricE3, α: number): Geometric3;
-
-    /**
-     * 
      */
     lock(): number;
 
@@ -1909,7 +1869,7 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     /**
      * this ⟼ this * (α * uom)
      */
-    mulByScalar(α: number, uom: Unit | undefined): Geometric3;
+    mulByScalar(α: number, uom?: Unit): Geometric3;
 
     /**
      * 
@@ -2046,6 +2006,8 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
      * b
      */
     scp2(a: GeometricE3, b: GeometricE3): Geometric3;
+
+    squaredNorm(): Geometric3;
 
     /**
      * Currently limited to taking the square root of a positive scalar quantity.
@@ -2394,7 +2356,7 @@ export interface Metric<T> {
 
     direction(mv: T): T;
 
-    divByScalar(lhs: T, a: number, uom: Unit | undefined): T;
+    divByScalar(lhs: T, a: number, uom?: Unit): T;
 
     ext(lhs: T, rhs: T): T;
 
@@ -2406,7 +2368,7 @@ export interface Metric<T> {
 
     mulByNumber(lhs: T, alpha: number): T;
 
-    mulByScalar(lhs: T, a: number, uom: Unit | undefined): T;
+    mulByScalar(lhs: T, a: number, uom?: Unit): T;
 
     mulByVector(lhs: T, rhs: T): T;
 
@@ -2457,7 +2419,7 @@ export class Euclidean1 implements Metric<Geometric1> {
     copyScalar(a: number, uom: Unit, target: Geometric1): Geometric1;
     copyVector(source: Geometric1, target: Geometric1): Geometric1;
     direction(mv: Geometric1): Geometric1;
-    divByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
+    divByScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1;
     ext(lhs: Geometric1, rhs: Geometric1): Geometric1;
     isZero(mv: Geometric1): boolean;
     lock(mv: Geometric1): number;
@@ -2492,13 +2454,13 @@ export class Euclidean2 implements Metric<Geometric2> {
     copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
     copyVector(source: Geometric2, target: Geometric2): Geometric2;
     direction(mv: Geometric2): Geometric2;
-    divByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
+    divByScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2;
     ext(lhs: Geometric2, rhs: Geometric2): Geometric2;
     isZero(mv: Geometric2): boolean;
     lock(mv: Geometric2): number;
     magnitude(mv: Geometric2): Geometric2;
     mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
-    mulByScalar(lhs: Geometric2, a: number, uom: Unit | undefined): Geometric2;
+    mulByScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2;
     mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
     neg(mv: Geometric2): Geometric2;
     quaditude(mv: Geometric2): Geometric2;
@@ -2527,13 +2489,13 @@ export class Euclidean3 implements Metric<Geometric3> {
     copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
     copyVector(source: Geometric3, target: Geometric3): Geometric3;
     direction(mv: Geometric3): Geometric3;
-    divByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
+    divByScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3;
     ext(lhs: Geometric3, rhs: Geometric3): Geometric3;
     isZero(mv: Geometric3): boolean;
     lock(mv: Geometric3): number;
     magnitude(mv: Geometric3): Geometric3;
     mulByNumber(lhs: Geometric3, alpha: number): Geometric3;
-    mulByScalar(lhs: Geometric3, a: number, uom: Unit | undefined): Geometric3;
+    mulByScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3;
     mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
     neg(mv: Geometric3): Geometric3;
     quaditude(mv: Geometric3): Geometric3;

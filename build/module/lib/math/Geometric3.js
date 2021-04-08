@@ -1,5 +1,4 @@
 import { __extends } from "tslib";
-import isDefined from '../checks/isDefined';
 import { readOnly } from '../i18n/readOnly';
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
@@ -9,7 +8,7 @@ import extG3 from './extG3';
 import { gauss } from './gauss';
 import isScalarG3 from './isScalarG3';
 import isVectorG3 from './isVectorG3';
-import isZeroGeometricE3 from './isZeroGeometricE3';
+import { isZeroGeometricE3 } from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
 import lcoG3 from './lcoG3';
 import { maskG3 } from './maskG3';
@@ -227,9 +226,6 @@ var Geometric3 = /** @class */ (function (_super) {
     };
     Geometric3.prototype.scale = function (α) {
         return this.mulByNumber(α);
-    };
-    Geometric3.prototype.slerp = function (target, α) {
-        throw new Error('Method not implemented.');
     };
     /**
      * Consistently set a coordinate value in the most optimized way.
@@ -710,9 +706,7 @@ var Geometric3 = /** @class */ (function (_super) {
             return lock(this.clone().cross(m));
         }
         else {
-            this.ext(m);
-            this.dual(this).neg();
-            return this;
+            return this.ext(m).dual();
         }
     };
     /**
@@ -861,9 +855,7 @@ var Geometric3 = /** @class */ (function (_super) {
             var x = v.x;
             var y = v.y;
             var z = v.z;
-            var uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
-            var squaredNorm = x * x + y * y + z * z;
-            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+            return this.mulByVector(v).divByScalar(x * x + y * y + z * z, Unit.pow(v.uom, QQ.valueOf(2, 1)));
         }
     };
     /**
@@ -895,38 +887,32 @@ var Geometric3 = /** @class */ (function (_super) {
         return this;
     };
     /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
+     * dualization: dual(Ak) = Ak << inv(I)
      *
-     * @returns dual(m) or dual(this) if m is undefined.
+     * In an n-dimensional Euclidean space, the inverse is the reverse.
      */
-    Geometric3.prototype.dual = function (m) {
+    Geometric3.prototype.dual = function () {
         if (this.isLocked()) {
-            return lock(this.clone().dual(m));
+            return this.clone().dual().permlock();
         }
         else {
-            if (isDefined(m)) {
-                var w = -m.b;
-                var x = -m.yz;
-                var y = -m.zx;
-                var z = -m.xy;
-                var yz = m.x;
-                var zx = m.y;
-                var xy = m.z;
-                var β = m.a;
-                this.a = w;
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.yz = yz;
-                this.zx = zx;
-                this.xy = xy;
-                this.b = β;
-                this.uom = m.uom;
-                return this;
-            }
-            else {
-                return this.dual(this);
-            }
+            var a = this.b;
+            var x = +this.yz;
+            var y = +this.zx;
+            var z = +this.xy;
+            var yz = -this.x;
+            var zx = -this.y;
+            var xy = -this.z;
+            var b = -this.a;
+            this.a = a;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yz = yz;
+            this.zx = zx;
+            this.xy = xy;
+            this.b = b;
+            return this;
         }
     };
     /**
@@ -1078,49 +1064,6 @@ var Geometric3 = /** @class */ (function (_super) {
      */
     Geometric3.prototype.lco2 = function (a, b) {
         return lcoG3(a, b, this);
-    };
-    /**
-     * @param target
-     * @param α
-     * @returns this + α * (target - this)
-     */
-    Geometric3.prototype.lerp = function (target, α) {
-        if (this.isLocked()) {
-            return lock(this.clone().lerp(target, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = target.uom;
-            }
-            else if (isZeroGeometricE3(target)) {
-                // Fall through.
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, target.uom);
-            }
-            this.a += (target.a - this.a) * α;
-            this.x += (target.x - this.x) * α;
-            this.y += (target.y - this.y) * α;
-            this.z += (target.z - this.z) * α;
-            this.yz += (target.yz - this.yz) * α;
-            this.zx += (target.zx - this.zx) * α;
-            this.xy += (target.xy - this.xy) * α;
-            this.b += (target.b - this.b) * α;
-            return this;
-        }
-    };
-    /**
-     * <p>
-     * <code>this ⟼ a + α * (b - a)</code>
-     * </p>
-     *
-     * @param a
-     * @param b
-     * @param α
-     */
-    Geometric3.prototype.lerp2 = function (a, b, α) {
-        this.copy(a).lerp(b, α);
-        return this;
     };
     /**
      * <p>
@@ -1694,24 +1637,6 @@ var Geometric3 = /** @class */ (function (_super) {
             this.xy *= α;
             this.b *= α;
             this.uom = Unit.mul(this.uom, uom);
-            return this;
-        }
-    };
-    /**
-     * Applies the diagonal elements of a scaling matrix to this multivector.
-     *
-     * @param σ
-     */
-    Geometric3.prototype.stress = function (σ) {
-        if (this.isLocked()) {
-            return lock(this.clone().stress(σ));
-        }
-        else {
-            this.x *= σ.x;
-            this.y *= σ.y;
-            this.z *= σ.z;
-            this.uom = Unit.mul(σ.uom, this.uom);
-            // TODO: Action on other components TBD.
             return this;
         }
     };
@@ -2299,7 +2224,7 @@ var Geometric3 = /** @class */ (function (_super) {
         return new Geometric3(coordinates(mv), mv.uom);
     };
     Geometric3.dual = function (m) {
-        return new Geometric3(zero(), m.uom).dual(m);
+        return Geometric3.copy(m).dual();
     };
     Geometric3.dualOfBivector = function (B) {
         return new Geometric3(vector(-B.yz, -B.zx, -B.xy), B.uom);
@@ -2328,15 +2253,6 @@ var Geometric3 = /** @class */ (function (_super) {
      */
     Geometric3.fromVector = function (v) {
         return new Geometric3(vector(v.x, v.y, v.z), v.uom);
-    };
-    /**
-     * @param A
-     * @param B
-     * @param α
-     * @returns <code>A + α * (B - A)</code>
-     */
-    Geometric3.lerp = function (A, B, α) {
-        return Geometric3.copy(A).lerp(B, α);
     };
     Geometric3.pseudo = function (b, uom) {
         return new Geometric3(pseudo(b), uom);

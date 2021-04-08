@@ -321,21 +321,6 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     scale(α: number): Geometric2 {
         return this.mulByNumber(α);
     }
-    slerp(target: Geometric2, α: number): Geometric2 {
-        throw new Error(notImplemented('slerp').message);
-    }
-    stress(σ: Vector): Geometric2 {
-        if (this.isLocked()) {
-            return lock(this.clone().stress(σ));
-        }
-        else {
-            this.x *= σ.x;
-            this.y *= σ.y;
-            this.uom = Unit.mul(σ.uom, this.uom);
-            // TODO: Action on other components TBD.
-            return this;
-        }
-    }
     __div__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().div(rhs));
@@ -718,18 +703,25 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
         else {
             const x = v.x;
             const y = v.y;
-            const uom2 = Unit.pow(v.uom, QQ.valueOf(2, 1));
-            const squaredNorm = x * x + y * y;
-            return this.mulByVector(v).divByScalar(squaredNorm, uom2);
+            return this.mulByVector(v).divByScalar(x * x + y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
         }
     }
-    /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
-     *
-     * @returns dual(m) or dual(this) if m is undefined.
-     */
-    dual(m?: Geometric): Geometric2 {
-        throw new Error(notImplemented('dual').message);
+    dual(): Geometric2 {
+        if (this.isLocked()) {
+            return this.clone().dual().permlock();
+        }
+        else {
+            const a = this.b;
+            const y = -this.x;
+            const x = this.y;
+            const b = -this.a;
+
+            this.a = a;
+            this.x = x;
+            this.y = y;
+            this.b = b;
+            return this;
+        }
     }
     equals(other: unknown): boolean {
         if (other instanceof Geometric2) {
@@ -865,31 +857,6 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
         this.y = a0 * b2 + a1 * b3;
         this.b = a0 * b3;
         this.uom = Unit.mul(this.uom, rhs.uom);
-        return this;
-    }
-    lerp(target: Geometric, α: number): Geometric2 {
-        if (this.isLocked()) {
-            return lock(this.clone().lerp(target, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = target.uom;
-            }
-            else if (isZeroGeometric(target)) {
-                // Fall through.
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, target.uom);
-            }
-            this.a += (target.a - this.a) * α;
-            this.x += (target.x - this.x) * α;
-            this.y += (target.y - this.y) * α;
-            this.b += (target.b - this.b) * α;
-            return this;
-        }
-    }
-    lerp2(a: Geometric, b: Geometric, α: number): Geometric2 {
-        this.copy(a).lerp(b, α);
         return this;
     }
     log(): Geometric2 {

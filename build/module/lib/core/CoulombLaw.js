@@ -49,7 +49,7 @@ var CoulombLaw = /** @class */ (function (_super) {
         metric.copyVector(this.body1_.X, numer);
         metric.subVector(numer, this.body2_.X);
         metric.copyVector(numer, denom);
-        metric.quad(denom);
+        metric.squaredNorm(denom);
         metric.direction(numer);
         metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
         metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));

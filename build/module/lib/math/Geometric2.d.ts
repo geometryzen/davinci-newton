@@ -135,8 +135,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     scale(α: number): Geometric2;
-    slerp(target: Geometric2, α: number): Geometric2;
-    stress(σ: Vector): Geometric2;
     __div__(rhs: Geometric2 | number | Unit): Geometric2;
     __rdiv__(lhs: number | Geometric2): Geometric2;
     __vbar__(rhs: number | Geometric2): Geometric2;
@@ -189,12 +187,7 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
     div2(a: Spinor, b: Spinor): Geometric2;
     divByNumber(α: number): Geometric2;
     divByVector(v: Vector): Geometric2;
-    /**
-     * dual(m) = I<sub>n</sub> * m = m / I<sub>n</sub>
-     *
-     * @returns dual(m) or dual(this) if m is undefined.
-     */
-    dual(m?: Geometric): Geometric2;
+    dual(): Geometric2;
     equals(other: unknown): boolean;
     exp(): Geometric2;
     /**
@@ -215,8 +208,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * @param b
      */
     lco2(lhs: Geometric, rhs: Geometric): this;
-    lerp(target: Geometric, α: number): Geometric2;
-    lerp2(a: Geometric, b: Geometric, α: number): Geometric2;
     log(): Geometric2;
     one(): Geometric2;
     rco(m: Geometric): Geometric2;

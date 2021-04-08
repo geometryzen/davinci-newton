@@ -17,6 +17,14 @@ const two = Geometric1.one.mulByNumber(2);
  * @hidden
  */
 const e1 = Geometric1.e1;
+/**
+ * @hidden
+ */
+const I = e1;
+/**
+ * @hidden
+ */
+const elements = [one, e1];
 
 /**
  * @hidden
@@ -301,6 +309,18 @@ describe("Geometric1", function () {
             const mv = new Geometric1([a, x], Unit.KELVIN);
             const clone = mv.clone();
             expect(clone === mv).toBe(false);
+        });
+    });
+    describe("dual", function () {
+        it("", function () {
+            checkEQ(one.dual(), e1);
+            checkEQ(e1.dual(), one);
+        });
+        it("dual(Ak) = Ak << inv(I)", function () {
+            for (const element of elements) {
+                checkEQ(element.dual(), element.lco(I.rev()));
+                checkEQ(element.dual(), element.lco(I.inv()));
+            }
         });
     });
     describe("isLocked", function () {
