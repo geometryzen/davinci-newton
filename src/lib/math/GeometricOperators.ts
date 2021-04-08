@@ -34,8 +34,4 @@ export interface GeometricOperators<T> extends LinearOperators<T>, RingOperators
 
     __eq__(rhs: T | Unit | number): boolean;
     __ne__(rhs: T | Unit | number): boolean;
-    __ge__(rhs: T | Unit | number): boolean;
-    __gt__(rhs: T | Unit | number): boolean;
-    __le__(rhs: T | Unit | number): boolean;
-    __lt__(rhs: T | Unit | number): boolean;
 }

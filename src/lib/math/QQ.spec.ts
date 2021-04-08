@@ -95,26 +95,109 @@ describe("QQ", function () {
             const x = QQ.valueOf(1, 2);
             expect("" + x).toBe("1/2");
         });
-        describe("valueOf", function () {
-            it("should return an equivalent number", function () {
-                for (let n = -10; n < 10; n++) {
-                    for (let d = -10; d < 10; d++) {
-                        if (d !== 0) {
-                            const x = QQ.valueOf(n, d);
-                            expect(x.numer * d).toBe(x.denom * n);
-                            if (n === 0) {
-                                expect(x).toEqual(QQ.valueOf(0, 1));
-                            }
-                            else if (n === +d) {
-                                expect(x).toEqual(QQ.valueOf(+1, 1));
-                            }
-                            else if (n === -d) {
-                                expect(x).toEqual(QQ.valueOf(-1, 1));
-                            }
-                        }
-                    }
-                }
-            });
+    });
+    describe("__add__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = lhs.__add__(rhs);
+            expect(sum.numer).toBe(7);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__radd__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = rhs.__radd__(lhs);
+            expect(sum.numer).toBe(7);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__sub__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = lhs.__sub__(rhs);
+            expect(sum.numer).toBe(-5);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__rsub__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = rhs.__rsub__(lhs);
+            expect(sum.numer).toBe(-5);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__mul__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = lhs.__mul__(rhs);
+            expect(sum.numer).toBe(2);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__rmul__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(1, 3);
+            const rhs = QQ.valueOf(2, 1);
+            const sum = rhs.__rmul__(lhs);
+            expect(sum.numer).toBe(2);
+            expect(sum.denom).toBe(3);
+            expect(lhs.numer).toBe(1);
+            expect(lhs.denom).toBe(3);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__div__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(0, 1);
+            const rhs = QQ.valueOf(2, 1);
+            const q = lhs.__div__(rhs);
+            expect(q.numer).toBe(0);
+            expect(q.denom).toBe(1);
+            expect(lhs.numer).toBe(0);
+            expect(lhs.denom).toBe(1);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
+        });
+    });
+    describe("__rdiv__", function () {
+        it("QQ", function () {
+            const lhs = QQ.valueOf(0, 1);
+            const rhs = QQ.valueOf(2, 1);
+            const q = rhs.__rdiv__(lhs);
+            expect(q.numer).toBe(0);
+            expect(q.denom).toBe(1);
+            expect(lhs.numer).toBe(0);
+            expect(lhs.denom).toBe(1);
+            expect(rhs.numer).toBe(2);
+            expect(rhs.denom).toBe(1);
         });
     });
 });

@@ -1,3 +1,6 @@
+import { reduceToLowestForm } from "./reduceToLowestForm";
+var tempND = [0, 0];
+var entries = [];
 /**
  * The QQ class represents a rational number, ℚ.
  *
@@ -282,118 +285,27 @@ var QQ = /** @class */ (function () {
      * @returns The rational number numer / denom reduced to its lowest form.
      */
     QQ.valueOf = function (n, d) {
-        if (n === 0) {
-            if (d !== 0) {
-                return QQ.ZERO;
-            }
-            else {
-                // This is the undefined case, 0/0.
-            }
-        }
-        else if (d === 0) {
-            // Fall through
-        }
-        else if (n === d) {
-            return QQ.ONE;
-        }
-        else if (n === 1) {
-            if (d === 2) {
-                return QQ.POS_01_02;
-            }
-            else if (d === 3) {
-                return QQ.POS_01_03;
-            }
-            else if (d === 4) {
-                return QQ.POS_01_04;
-            }
-            else if (d === 5) {
-                return QQ.POS_01_05;
-            }
-            else if (d === -3) {
-                return QQ.NEG_01_03;
-            }
-        }
-        else if (n === -1) {
-            if (d === 1) {
-                return QQ.NEG_01_01;
-            }
-            else if (d === 3) {
-                return QQ.NEG_01_03;
-            }
-        }
-        else if (n === 2) {
-            if (d === 1) {
-                return QQ.POS_02_01;
-            }
-            else if (d === 3) {
-                return QQ.POS_02_03;
-            }
-        }
-        else if (n === -2) {
-            if (d === 1) {
-                return QQ.NEG_02_01;
-            }
-        }
-        else if (n === 3) {
-            if (d === 1) {
-                return QQ.POS_03_01;
-            }
-        }
-        else if (n === -3) {
-            if (d === 1) {
-                return QQ.NEG_03_01;
-            }
-        }
-        else if (n === 4) {
-            if (d === 1) {
-                return QQ.POS_04_01;
-            }
-        }
-        else if (n === 5) {
-            if (d === 1) {
-                return QQ.POS_05_01;
-            }
-        }
-        else if (n === 6) {
-            if (d === 1) {
-                return QQ.POS_06_01;
-            }
-        }
-        else if (n === 7) {
-            if (d === 1) {
-                return QQ.POS_07_01;
-            }
-        }
-        else if (n === 8) {
-            if (d === 1) {
-                return QQ.POS_08_01;
+        reduceToLowestForm(n, d, tempND);
+        n = tempND[0];
+        d = tempND[1];
+        for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+            var entry_1 = entries_1[_i];
+            if (entry_1.n === n && entry_1.d === d) {
+                return entry_1.value;
             }
         }
         // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
-        return new QQ(n, d);
+        var value = new QQ(n, d);
+        var entry = { n: n, d: d, value: value };
+        entries.push(entry);
+        // console.warn(`QQ cache size = ${entries.length}`);
+        return value;
     };
     //
     // Immutable constants allow us to avoid creating
     // temporary QQ instances for the common values.
     //
-    QQ.POS_08_01 = new QQ(8, 1);
-    QQ.POS_07_01 = new QQ(7, 1);
-    QQ.POS_06_01 = new QQ(6, 1);
-    QQ.POS_05_01 = new QQ(5, 1);
-    QQ.POS_04_01 = new QQ(4, 1);
-    QQ.POS_03_01 = new QQ(3, 1);
-    QQ.POS_02_01 = new QQ(2, 1);
-    QQ.ONE = new QQ(1, 1);
-    QQ.POS_01_02 = new QQ(1, 2);
-    QQ.POS_01_03 = new QQ(1, 3);
-    QQ.POS_01_04 = new QQ(1, 4);
-    QQ.POS_01_05 = new QQ(1, 5);
     QQ.ZERO = new QQ(0, 1);
-    QQ.NEG_01_03 = new QQ(-1, 3);
-    QQ.NEG_01_01 = new QQ(-1, 1);
-    QQ.NEG_02_01 = new QQ(-2, 1);
-    QQ.NEG_03_01 = new QQ(-3, 1);
-    QQ.POS_02_03 = new QQ(2, 3);
     return QQ;
 }());
 export { QQ };

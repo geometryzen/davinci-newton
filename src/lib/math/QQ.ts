@@ -1,3 +1,13 @@
+import { reduceToLowestForm } from "./reduceToLowestForm";
+
+interface CacheEntry {
+  n: number;
+  d: number;
+  value: QQ;
+}
+
+const tempND: [numer: number, denom: number] = [0, 0];
+const entries: CacheEntry[] = [];
 /**
  * The QQ class represents a rational number, ℚ.
  *
@@ -308,25 +318,7 @@ export class QQ {
   // Immutable constants allow us to avoid creating
   // temporary QQ instances for the common values.
   //
-  private static readonly POS_08_01: QQ = new QQ(8, 1);
-  private static readonly POS_07_01: QQ = new QQ(7, 1);
-  private static readonly POS_06_01: QQ = new QQ(6, 1);
-  private static readonly POS_05_01: QQ = new QQ(5, 1);
-  private static readonly POS_04_01: QQ = new QQ(4, 1);
-  private static readonly POS_03_01: QQ = new QQ(3, 1);
-  private static readonly POS_02_01: QQ = new QQ(2, 1);
-  private static readonly ONE: QQ = new QQ(1, 1);
-  private static readonly POS_01_02: QQ = new QQ(1, 2);
-  private static readonly POS_01_03: QQ = new QQ(1, 3);
-  private static readonly POS_01_04: QQ = new QQ(1, 4);
-  private static readonly POS_01_05: QQ = new QQ(1, 5);
   private static readonly ZERO: QQ = new QQ(0, 1);
-  private static readonly NEG_01_03: QQ = new QQ(-1, 3);
-  private static readonly NEG_01_01: QQ = new QQ(-1, 1);
-  private static readonly NEG_02_01: QQ = new QQ(-2, 1);
-  private static readonly NEG_03_01: QQ = new QQ(-3, 1);
-
-  private static readonly POS_02_03: QQ = new QQ(2, 3);
 
   /**
    * @param numer The numerator of the rational number.
@@ -334,94 +326,19 @@ export class QQ {
    * @returns The rational number numer / denom reduced to its lowest form.
    */
   static valueOf(n: number, d: number): QQ {
-    if (n === 0) {
-      if (d !== 0) {
-        return QQ.ZERO;
-      }
-      else {
-        // This is the undefined case, 0/0.
-      }
-    }
-    else if (d === 0) {
-      // Fall through
-    }
-    else if (n === d) {
-      return QQ.ONE;
-    }
-    else if (n === 1) {
-      if (d === 2) {
-        return QQ.POS_01_02;
-      }
-      else if (d === 3) {
-        return QQ.POS_01_03;
-      }
-      else if (d === 4) {
-        return QQ.POS_01_04;
-      }
-      else if (d === 5) {
-        return QQ.POS_01_05;
-      }
-      else if (d === -3) {
-        return QQ.NEG_01_03;
-      }
-    }
-    else if (n === -1) {
-      if (d === 1) {
-        return QQ.NEG_01_01;
-      }
-      else if (d === 3) {
-        return QQ.NEG_01_03;
-      }
-    }
-    else if (n === 2) {
-      if (d === 1) {
-        return QQ.POS_02_01;
-      }
-      else if (d === 3) {
-        return QQ.POS_02_03;
-      }
-    }
-    else if (n === -2) {
-      if (d === 1) {
-        return QQ.NEG_02_01;
-      }
-    }
-    else if (n === 3) {
-      if (d === 1) {
-        return QQ.POS_03_01;
-      }
-    }
-    else if (n === -3) {
-      if (d === 1) {
-        return QQ.NEG_03_01;
-      }
-    }
-    else if (n === 4) {
-      if (d === 1) {
-        return QQ.POS_04_01;
-      }
-    }
-    else if (n === 5) {
-      if (d === 1) {
-        return QQ.POS_05_01;
-      }
-    }
-    else if (n === 6) {
-      if (d === 1) {
-        return QQ.POS_06_01;
-      }
-    }
-    else if (n === 7) {
-      if (d === 1) {
-        return QQ.POS_07_01;
-      }
-    }
-    else if (n === 8) {
-      if (d === 1) {
-        return QQ.POS_08_01;
+    reduceToLowestForm(n, d, tempND);
+    n = tempND[0];
+    d = tempND[1];
+    for (const entry of entries) {
+      if (entry.n === n && entry.d === d) {
+        return entry.value;
       }
     }
     // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
-    return new QQ(n, d);
+    const value = new QQ(n, d);
+    const entry: CacheEntry = { n, d, value };
+    entries.push(entry);
+    // console.warn(`QQ cache size = ${entries.length}`);
+    return value;
   }
 }

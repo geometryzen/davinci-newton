@@ -1,6 +1,7 @@
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
+import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from "./approx";
 import { arraysEQ } from "./arraysEQ";
 import { BivectorE2 as Bivector } from "./BivectorE2";
@@ -132,16 +133,9 @@ function lock(m: Geometric2): Geometric2 {
 }
 
 /**
- * Sentinel value to indicate that the Geometric2 is not locked.
- * UNLOCKED is in the range -1 to 0.
- * @hidden
- */
-const UNLOCKED = -1 * Math.random();
-
-/**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
+export class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -313,36 +307,25 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     private readonly coords_: number[];
 
     /**
-     * The unit of measure.
-     * This property should only be changed through the accessors.
-     */
-    private uom_: Unit;
-
-    /**
-     * 
-     */
-    private lock_ = UNLOCKED;
-
-    /**
      * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
      * @param coords The 4 coordinates are in the order [a, x, y, b]. 
      * @param uom The optional unit of measure.
      */
     constructor(coords: [a: number, x: number, y: number, b: number] = zero(), uom?: Unit) {
+        super(uom);
         if (coords.length !== 4) {
             throw new Error("coords.length must be 4");
         }
         this.coords_ = coords;
-        this.uom_ = uom;
     }
     scale(α: number): Geometric2 {
-        return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
+        return this.mulByNumber(α);
     }
     slerp(target: Geometric2, α: number): Geometric2 {
         throw new Error(notImplemented('slerp').message);
     }
     stress(σ: Vector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().stress(σ));
         }
         else {
@@ -471,12 +454,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     __bang__(): Geometric2 {
         return lock(Geometric2.copy(this).inv());
     }
-    __eq__(rhs: number | Geometric2): boolean {
+    __eq__(rhs: Geometric2 | number): boolean {
+        const a0 = this.a;
+        const a1 = this.x;
+        const a2 = this.y;
+        const a3 = this.b;
         if (rhs instanceof Geometric2) {
-            const a0 = this.a;
-            const a1 = this.x;
-            const a2 = this.y;
-            const a3 = this.b;
             const b0 = rhs.a;
             const b1 = rhs.x;
             const b2 = rhs.y;
@@ -484,25 +467,28 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             // TODO: Should be equals on Unit, but this is close.
             return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit.isCompatible(this.uom, rhs.uom);
         } else if (typeof rhs === 'number') {
-            return false;
+            return a0 === rhs && a1 === 0 && a2 === 0 && a3 === 0 && Unit.isOne(this.uom);
         } else {
-            return false;
+            return void 0;
         }
     }
-    __ne__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__ne_').message);
-    }
-    __ge__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__ge_').message);
-    }
-    __gt__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__gt_').message);
-    }
-    __le__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__le_').message);
-    }
-    __lt__(rhs: Geometric2): boolean {
-        throw new Error(notImplemented('__lt_').message);
+    __ne__(rhs: Geometric2 | number): boolean {
+        const a0 = this.a;
+        const a1 = this.x;
+        const a2 = this.y;
+        const a3 = this.b;
+        if (rhs instanceof Geometric2) {
+            const b0 = rhs.a;
+            const b1 = rhs.x;
+            const b2 = rhs.y;
+            const b3 = rhs.b;
+            // TODO: Should be equals on Unit, but this is close.
+            return a0 !== b0 || a1 !== b1 || a2 !== b2 || a3 !== b3 || !Unit.isCompatible(this.uom, rhs.uom);
+        } else if (typeof rhs === 'number') {
+            return a0 !== rhs || a1 !== 0 || a2 !== 0 || a3 !== 0 || !Unit.isOne(this.uom);
+        } else {
+            return void 0;
+        }
     }
     __tilde__(): Geometric2 {
         return lock(Geometric2.copy(this).rev());
@@ -535,7 +521,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
-    __sub__(rhs: Geometric2 | Unit): Geometric2 {
+    __sub__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().sub(rhs));
         }
@@ -550,7 +536,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
             return void 0;
         }
     }
-    __rsub__(lhs: Geometric2 | Unit): Geometric2 {
+    __rsub__(lhs: Geometric2 | number): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).sub(this));
         }
@@ -609,7 +595,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     addPseudo(β: number, uom?: Unit): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().addPseudo(β, uom));
         }
         else {
@@ -657,7 +643,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this.log().grade(2);
     }
     approx(n: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().approx(n));
         }
         else {
@@ -666,7 +652,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     conj(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().conj());
         }
         else {
@@ -691,7 +677,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this / m;
      */
     div(rhs: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().div(rhs));
         }
         else {
@@ -714,7 +700,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         throw new Error(notImplemented('div2').message);
     }
     divByNumber(α: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
         }
         else {
@@ -726,7 +712,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     divByVector(v: Vector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByVector(v));
         }
         else {
@@ -755,7 +741,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     exp(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().exp());
         }
         else {
@@ -808,7 +794,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     grade(n: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().grade(n));
         }
         else {
@@ -850,7 +836,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     lco(rhs: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().lco(rhs));
         }
         else {
@@ -882,7 +868,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     lerp(target: Geometric, α: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().lerp(target, α));
         }
         else {
@@ -907,7 +893,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     log(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().log());
         }
         else {
@@ -932,7 +918,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         return this;
     }
     rco(m: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rco(m));
         }
         else {
@@ -983,7 +969,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @param n The unit vector that defines the reflection plane.
      */
     reflect(n: Readonly<Vector>): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().reflect(n));
         }
         else {
@@ -1026,7 +1012,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns The rotor representing a rotation from a to b.
      */
     rotorFromDirections(a: Vector, b: Vector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotorFromDirections(a, b));
         }
         else {
@@ -1054,7 +1040,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * The result is depends  on the magnitudes of a and b. 
      */
     rotorFromVectorToVector(a: Vector, b: Vector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotorFromVectorToVector(a, b));
         }
         else {
@@ -1089,7 +1075,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
         }
     }
     sqrt(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().sqrt());
         }
         else {
@@ -1144,55 +1130,12 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * Determines whether this multivector is locked.
-     * If the multivector is in the unlocked state then it is mutable.
-     * If the multivector is in the locked state then it is immutable.
-     */
-    isLocked(): boolean {
-        return this.lock_ !== UNLOCKED;
-    }
-
-    isMutable(): boolean {
-        return this.lock_ === UNLOCKED;
-    }
-
-    /**
-     * Locks this multivector (preventing any further mutation),
-     * and returns a token that may be used to unlock it.
-     */
-    lock(): number {
-        if (this.lock_ !== UNLOCKED) {
-            throw new Error("already locked");
-        }
-        else {
-            this.lock_ = Math.random();
-            return this.lock_;
-        }
-    }
-
-    /**
-     * Unlocks this multivector (allowing mutation),
-     * using a token that was obtained from a preceding lock method call.
-     */
-    unlock(token: number): void {
-        if (this.lock_ === UNLOCKED) {
-            throw new Error("not locked");
-        }
-        else if (this.lock_ === token) {
-            this.lock_ = UNLOCKED;
-        }
-        else {
-            throw new Error("unlock denied");
-        }
-    }
-
-    /**
      * Consistently set a coordinate value in the most optimized way.
      * Permits mutation only when the lock status is UNLOCKED.
      * It is safe to use this as an alternative to the named property accessors.
      */
     private setCoordinate(index: number, newValue: number, name: string) {
-        if (this.lock_ === UNLOCKED) {
+        if (this.isMutable()) {
             const coords = this.coords_;
             const previous = coords[index];
             if (newValue !== previous) {
@@ -1259,23 +1202,6 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     /**
-     * The optional unit of measure.
-     */
-    get uom(): Unit {
-        return this.uom_;
-    }
-    set uom(uom: Unit) {
-        if (this.lock_ === UNLOCKED) {
-            // This is the only place where we should check the unit of measure.
-            // It also should be the only place where we access the private member.
-            this.uom_ = Unit.mustBeUnit('uom', uom);
-        }
-        else {
-            throw new Error(readOnly('uom').message);
-        }
-    }
-
-    /**
      * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
      */
     get x(): number {
@@ -1303,7 +1229,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this + M * α
      */
     add(M: Geometric, α = 1): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().add(M, α));
         }
         else {
@@ -1336,7 +1262,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this + v * α
      */
     addVector(v: Vector, α = 1): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().addVector(v, α));
         }
         else {
@@ -1474,7 +1400,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @param uom The unit of measure.
      */
     divByScalar(α: number, uom: Unit): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByScalar(α, uom));
         }
         else {
@@ -1492,7 +1418,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this ^ m
      */
     ext(m: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().ext(m));
         }
         else {
@@ -1519,7 +1445,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns inverse(this)
      */
     inv(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().inv());
         }
         else {
@@ -1615,7 +1541,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this * m
      */
     mul(rhs: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mul(rhs));
         }
         else {
@@ -1649,7 +1575,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     mulByBivector(B: Bivector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByBivector(B));
         }
         else {
@@ -1676,7 +1602,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this * α
      */
     mulByNumber(α: number): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByNumber(α));
         }
         else {
@@ -1695,7 +1621,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this * (α * uom)
      */
     mulByScalar(α: number, uom: Unit): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByScalar(α, uom));
         }
         else {
@@ -1709,7 +1635,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
     }
 
     mulByVector(v: Vector): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByVector(v));
         }
         else {
@@ -1736,7 +1662,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this * -1
      */
     neg(): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().neg());
         }
         else {
@@ -1795,7 +1721,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns R * this * reverse(R)
      */
     rotate(spinor: Spinor): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotate(spinor));
         }
         else {
@@ -1825,7 +1751,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this | m
      */
     scp(m: Geometric): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().scp(m));
         }
         else {
@@ -1877,7 +1803,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this - M * α
      */
     sub(M: Geometric, α = 1): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().sub(M, α));
         }
         else {
@@ -1931,7 +1857,7 @@ export class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geome
      * @returns this - v * α
      */
     subVector(v: Vector, α = 1): Geometric2 {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subVector(v, α));
         }
         else {

@@ -1,3 +1,4 @@
+import { AbstractGeometric } from './AbstractGeometric';
 import { BivectorE2 as Bivector } from "./BivectorE2";
 import { GeometricE2 as Geometric } from "./GeometricE2";
 import { GeometricNumber } from './GeometricNumber';
@@ -10,7 +11,7 @@ import { VectorE2 as Vector } from "./VectorE2";
 /**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
+export declare class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
      * The scalar returned is in the unlocked (mutable) state.
@@ -128,15 +129,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     private readonly coords_;
     /**
-     * The unit of measure.
-     * This property should only be changed through the accessors.
-     */
-    private uom_;
-    /**
-     *
-     */
-    private lock_;
-    /**
      * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
      * @param coords The 4 coordinates are in the order [a, x, y, b].
      * @param uom The optional unit of measure.
@@ -156,17 +148,13 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
     __rshift__(rhs: number | Geometric2): Geometric2;
     __rrshift__(lhs: number | Geometric2): Geometric2;
     __bang__(): Geometric2;
-    __eq__(rhs: number | Geometric2): boolean;
-    __ne__(rhs: Geometric2): boolean;
-    __ge__(rhs: Geometric2): boolean;
-    __gt__(rhs: Geometric2): boolean;
-    __le__(rhs: Geometric2): boolean;
-    __lt__(rhs: Geometric2): boolean;
+    __eq__(rhs: Geometric2 | number): boolean;
+    __ne__(rhs: Geometric2 | number): boolean;
     __tilde__(): Geometric2;
     __add__(rhs: Geometric2 | number | Unit): Geometric2;
     __radd__(lhs: Geometric2 | number | Unit): Geometric2;
-    __sub__(rhs: Geometric2 | Unit): Geometric2;
-    __rsub__(lhs: Geometric2 | Unit): Geometric2;
+    __sub__(rhs: Geometric2 | number | Unit): Geometric2;
+    __rsub__(lhs: Geometric2 | number): Geometric2;
     __pos__(): Geometric2;
     __neg__(): Geometric2;
     __mul__(rhs: Geometric2 | number | Unit): Geometric2;
@@ -300,23 +288,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      */
     versor(a: Vector, b: Vector): this;
     /**
-     * Determines whether this multivector is locked.
-     * If the multivector is in the unlocked state then it is mutable.
-     * If the multivector is in the locked state then it is immutable.
-     */
-    isLocked(): boolean;
-    isMutable(): boolean;
-    /**
-     * Locks this multivector (preventing any further mutation),
-     * and returns a token that may be used to unlock it.
-     */
-    lock(): number;
-    /**
-     * Unlocks this multivector (allowing mutation),
-     * using a token that was obtained from a preceding lock method call.
-     */
-    unlock(token: number): void;
-    /**
      * Consistently set a coordinate value in the most optimized way.
      * Permits mutation only when the lock status is UNLOCKED.
      * It is safe to use this as an alternative to the named property accessors.
@@ -344,11 +315,6 @@ export declare class Geometric2 implements GradeMasked, Geometric, GeometricNumb
      * 0x8 = pseudoscalar
      */
     get grades(): number;
-    /**
-     * The optional unit of measure.
-     */
-    get uom(): Unit;
-    set uom(uom: Unit);
     /**
      * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
      */

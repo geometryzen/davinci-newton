@@ -1,6 +1,8 @@
+import { __extends } from "tslib";
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
+import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from "./approx";
 import { arraysEQ } from "./arraysEQ";
 import { gauss } from "./gauss";
@@ -112,15 +114,10 @@ function lock(m) {
     return m;
 }
 /**
- * Sentinel value to indicate that the Geometric2 is not locked.
- * UNLOCKED is in the range -1 to 0.
- * @hidden
- */
-var UNLOCKED = -1 * Math.random();
-/**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-var Geometric2 = /** @class */ (function () {
+var Geometric2 = /** @class */ (function (_super) {
+    __extends(Geometric2, _super);
     /**
      * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
      * @param coords The 4 coordinates are in the order [a, x, y, b].
@@ -128,15 +125,12 @@ var Geometric2 = /** @class */ (function () {
      */
     function Geometric2(coords, uom) {
         if (coords === void 0) { coords = zero(); }
-        /**
-         *
-         */
-        this.lock_ = UNLOCKED;
+        var _this = _super.call(this, uom) || this;
         if (coords.length !== 4) {
             throw new Error("coords.length must be 4");
         }
-        this.coords_ = coords;
-        this.uom_ = uom;
+        _this.coords_ = coords;
+        return _this;
     }
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -200,13 +194,13 @@ var Geometric2 = /** @class */ (function () {
         return new Geometric2([0, 0, 0, 0]).rotorFromVectorToVector(a, b);
     };
     Geometric2.prototype.scale = function (α) {
-        return new Geometric2([this.a * α, this.x * α, this.y * α, this.b * α], this.uom);
+        return this.mulByNumber(α);
     };
     Geometric2.prototype.slerp = function (target, α) {
         throw new Error(notImplemented('slerp').message);
     };
     Geometric2.prototype.stress = function (σ) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().stress(σ));
         }
         else {
@@ -336,11 +330,11 @@ var Geometric2 = /** @class */ (function () {
         return lock(Geometric2.copy(this).inv());
     };
     Geometric2.prototype.__eq__ = function (rhs) {
+        var a0 = this.a;
+        var a1 = this.x;
+        var a2 = this.y;
+        var a3 = this.b;
         if (rhs instanceof Geometric2) {
-            var a0 = this.a;
-            var a1 = this.x;
-            var a2 = this.y;
-            var a3 = this.b;
             var b0 = rhs.a;
             var b1 = rhs.x;
             var b2 = rhs.y;
@@ -349,26 +343,31 @@ var Geometric2 = /** @class */ (function () {
             return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit.isCompatible(this.uom, rhs.uom);
         }
         else if (typeof rhs === 'number') {
-            return false;
+            return a0 === rhs && a1 === 0 && a2 === 0 && a3 === 0 && Unit.isOne(this.uom);
         }
         else {
-            return false;
+            return void 0;
         }
     };
     Geometric2.prototype.__ne__ = function (rhs) {
-        throw new Error(notImplemented('__ne_').message);
-    };
-    Geometric2.prototype.__ge__ = function (rhs) {
-        throw new Error(notImplemented('__ge_').message);
-    };
-    Geometric2.prototype.__gt__ = function (rhs) {
-        throw new Error(notImplemented('__gt_').message);
-    };
-    Geometric2.prototype.__le__ = function (rhs) {
-        throw new Error(notImplemented('__le_').message);
-    };
-    Geometric2.prototype.__lt__ = function (rhs) {
-        throw new Error(notImplemented('__lt_').message);
+        var a0 = this.a;
+        var a1 = this.x;
+        var a2 = this.y;
+        var a3 = this.b;
+        if (rhs instanceof Geometric2) {
+            var b0 = rhs.a;
+            var b1 = rhs.x;
+            var b2 = rhs.y;
+            var b3 = rhs.b;
+            // TODO: Should be equals on Unit, but this is close.
+            return a0 !== b0 || a1 !== b1 || a2 !== b2 || a3 !== b3 || !Unit.isCompatible(this.uom, rhs.uom);
+        }
+        else if (typeof rhs === 'number') {
+            return a0 !== rhs || a1 !== 0 || a2 !== 0 || a3 !== 0 || !Unit.isOne(this.uom);
+        }
+        else {
+            return void 0;
+        }
     };
     Geometric2.prototype.__tilde__ = function () {
         return lock(Geometric2.copy(this).rev());
@@ -475,7 +474,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.addPseudo = function (β, uom) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().addPseudo(β, uom));
         }
         else {
@@ -524,7 +523,7 @@ var Geometric2 = /** @class */ (function () {
         return this.log().grade(2);
     };
     Geometric2.prototype.approx = function (n) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().approx(n));
         }
         else {
@@ -533,7 +532,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.conj = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().conj());
         }
         else {
@@ -558,7 +557,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this / m;
      */
     Geometric2.prototype.div = function (rhs) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().div(rhs));
         }
         else {
@@ -582,7 +581,7 @@ var Geometric2 = /** @class */ (function () {
         throw new Error(notImplemented('div2').message);
     };
     Geometric2.prototype.divByNumber = function (α) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
         }
         else {
@@ -594,7 +593,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.divByVector = function (v) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByVector(v));
         }
         else {
@@ -623,7 +622,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.exp = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().exp());
         }
         else {
@@ -673,7 +672,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.grade = function (n) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().grade(n));
         }
         else {
@@ -715,7 +714,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.lco = function (rhs) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().lco(rhs));
         }
         else {
@@ -747,7 +746,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.lerp = function (target, α) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().lerp(target, α));
         }
         else {
@@ -772,7 +771,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.log = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().log());
         }
         else {
@@ -798,7 +797,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.rco = function (m) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rco(m));
         }
         else {
@@ -848,7 +847,7 @@ var Geometric2 = /** @class */ (function () {
      * @param n The unit vector that defines the reflection plane.
      */
     Geometric2.prototype.reflect = function (n) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().reflect(n));
         }
         else {
@@ -889,7 +888,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns The rotor representing a rotation from a to b.
      */
     Geometric2.prototype.rotorFromDirections = function (a, b) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotorFromDirections(a, b));
         }
         else {
@@ -917,7 +916,7 @@ var Geometric2 = /** @class */ (function () {
      * The result is depends  on the magnitudes of a and b.
      */
     Geometric2.prototype.rotorFromVectorToVector = function (a, b) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotorFromVectorToVector(a, b));
         }
         else {
@@ -950,7 +949,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.sqrt = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().sqrt());
         }
         else {
@@ -1004,51 +1003,12 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     /**
-     * Determines whether this multivector is locked.
-     * If the multivector is in the unlocked state then it is mutable.
-     * If the multivector is in the locked state then it is immutable.
-     */
-    Geometric2.prototype.isLocked = function () {
-        return this.lock_ !== UNLOCKED;
-    };
-    Geometric2.prototype.isMutable = function () {
-        return this.lock_ === UNLOCKED;
-    };
-    /**
-     * Locks this multivector (preventing any further mutation),
-     * and returns a token that may be used to unlock it.
-     */
-    Geometric2.prototype.lock = function () {
-        if (this.lock_ !== UNLOCKED) {
-            throw new Error("already locked");
-        }
-        else {
-            this.lock_ = Math.random();
-            return this.lock_;
-        }
-    };
-    /**
-     * Unlocks this multivector (allowing mutation),
-     * using a token that was obtained from a preceding lock method call.
-     */
-    Geometric2.prototype.unlock = function (token) {
-        if (this.lock_ === UNLOCKED) {
-            throw new Error("not locked");
-        }
-        else if (this.lock_ === token) {
-            this.lock_ = UNLOCKED;
-        }
-        else {
-            throw new Error("unlock denied");
-        }
-    };
-    /**
      * Consistently set a coordinate value in the most optimized way.
      * Permits mutation only when the lock status is UNLOCKED.
      * It is safe to use this as an alternative to the named property accessors.
      */
     Geometric2.prototype.setCoordinate = function (index, newValue, name) {
-        if (this.lock_ === UNLOCKED) {
+        if (this.isMutable()) {
             var coords = this.coords_;
             var previous = coords[index];
             if (newValue !== previous) {
@@ -1126,26 +1086,6 @@ var Geometric2 = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(Geometric2.prototype, "uom", {
-        /**
-         * The optional unit of measure.
-         */
-        get: function () {
-            return this.uom_;
-        },
-        set: function (uom) {
-            if (this.lock_ === UNLOCKED) {
-                // This is the only place where we should check the unit of measure.
-                // It also should be the only place where we access the private member.
-                this.uom_ = Unit.mustBeUnit('uom', uom);
-            }
-            else {
-                throw new Error(readOnly('uom').message);
-            }
-        },
-        enumerable: false,
-        configurable: true
-    });
     Object.defineProperty(Geometric2.prototype, "x", {
         /**
          * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
@@ -1181,7 +1121,7 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.prototype.add = function (M, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().add(M, α));
         }
         else {
@@ -1214,7 +1154,7 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.prototype.addVector = function (v, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().addVector(v, α));
         }
         else {
@@ -1346,7 +1286,7 @@ var Geometric2 = /** @class */ (function () {
      * @param uom The unit of measure.
      */
     Geometric2.prototype.divByScalar = function (α, uom) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().divByScalar(α, uom));
         }
         else {
@@ -1363,7 +1303,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this ^ m
      */
     Geometric2.prototype.ext = function (m) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().ext(m));
         }
         else {
@@ -1389,7 +1329,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns inverse(this)
      */
     Geometric2.prototype.inv = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().inv());
         }
         else {
@@ -1471,7 +1411,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this * m
      */
     Geometric2.prototype.mul = function (rhs) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mul(rhs));
         }
         else {
@@ -1503,7 +1443,7 @@ var Geometric2 = /** @class */ (function () {
         return this;
     };
     Geometric2.prototype.mulByBivector = function (B) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByBivector(B));
         }
         else {
@@ -1525,7 +1465,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this * α
      */
     Geometric2.prototype.mulByNumber = function (α) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByNumber(α));
         }
         else {
@@ -1543,7 +1483,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this * (α * uom)
      */
     Geometric2.prototype.mulByScalar = function (α, uom) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByScalar(α, uom));
         }
         else {
@@ -1556,7 +1496,7 @@ var Geometric2 = /** @class */ (function () {
         }
     };
     Geometric2.prototype.mulByVector = function (v) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().mulByVector(v));
         }
         else {
@@ -1578,7 +1518,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this * -1
      */
     Geometric2.prototype.neg = function () {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().neg());
         }
         else {
@@ -1635,7 +1575,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns R * this * reverse(R)
      */
     Geometric2.prototype.rotate = function (spinor) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().rotate(spinor));
         }
         else {
@@ -1664,7 +1604,7 @@ var Geometric2 = /** @class */ (function () {
      * @returns this | m
      */
     Geometric2.prototype.scp = function (m) {
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().scp(m));
         }
         else {
@@ -1710,7 +1650,7 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.prototype.sub = function (M, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().sub(M, α));
         }
         else {
@@ -1765,7 +1705,7 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.prototype.subVector = function (v, α) {
         if (α === void 0) { α = 1; }
-        if (this.lock_ !== UNLOCKED) {
+        if (this.isLocked()) {
             return lock(this.clone().subVector(v, α));
         }
         else {
@@ -1956,5 +1896,5 @@ var Geometric2 = /** @class */ (function () {
      */
     Geometric2.joule = lock(new Geometric2(scalar(1), Unit.JOULE));
     return Geometric2;
-}());
+}(AbstractGeometric));
 export { Geometric2 };

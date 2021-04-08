@@ -1,3 +1,4 @@
+import { AbstractGeometric } from './AbstractGeometric';
 import { BivectorE3 } from './BivectorE3';
 import { GeometricE3 } from './GeometricE3';
 import { GeometricNumber } from './GeometricNumber';
@@ -11,51 +12,21 @@ import { VectorE3 as Vector, VectorE3 } from './VectorE3';
 /**
  * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
-export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
+export declare class Geometric3 extends AbstractGeometric implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector>, GeometricOperators<Geometric3> {
     /**
      *
      */
     private readonly coords_;
-    /**
-     * The unit of measure.
-     * This property should only be changed through the accessors.
-     */
-    private uom_;
-    /**
-     *
-     */
-    private lock_;
     /**
      * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
      * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b].
      * @param uom The optional unit of measure.
      */
     constructor(coords?: number[], uom?: Unit);
-    __eq__(rhs: number | Geometric3 | Unit): boolean;
-    __ne__(rhs: number | Geometric3 | Unit): boolean;
-    __ge__(rhs: number | Geometric3 | Unit): boolean;
-    __gt__(rhs: number | Geometric3 | Unit): boolean;
-    __le__(rhs: number | Geometric3 | Unit): boolean;
-    __lt__(rhs: number | Geometric3 | Unit): boolean;
+    __eq__(rhs: Geometric3 | number): boolean;
+    __ne__(rhs: number | Geometric3): boolean;
     scale(α: number): Geometric3;
     slerp(target: Geometric3, α: number): Geometric3;
-    /**
-     * Determines whether this multivector is locked.
-     * If the multivector is in the unlocked state then it is mutable.
-     * If the multivector is in the locked state then it is immutable.
-     */
-    isLocked(): boolean;
-    isMutable(): boolean;
-    /**
-     * Locks this multivector (preventing any further mutation),
-     * and returns a token that may be used to unlock it.
-     */
-    lock(): number;
-    /**
-     * Unlocks this multivector (allowing mutation),
-     * using a token that was obtained from a preceding lock method call.
-     */
-    unlock(token: number): void;
     /**
      * Consistently set a coordinate value in the most optimized way.
      * Permits mutation only when the lock status is UNLOCKED.
@@ -82,11 +53,6 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * 0x8 = pseudoscalar
      */
     get grades(): number;
-    /**
-     * The optional unit of measure.
-     */
-    get uom(): Unit;
-    set uom(uom: Unit);
     /**
      * The coordinate corresponding to the <b>e</b><sub>1</sub> standard basis vector.
      */
@@ -181,12 +147,6 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
      * Clifford conjugation
      */
     conj(): Geometric3;
-    /**
-     * Copies the coordinate values into this <code>Geometric3</code>.
-     *
-     * @param coordinates The coordinates in order a, x, y, z, yz, zx, xy, b.
-     */
-    copyCoordinates(coordinates: number[]): this;
     /**
      * <p>
      * <code>this ⟼ copy(M)</code>
@@ -589,7 +549,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
     /**
      * Implements `this + rhs`.
      */
-    __add__(rhs: number | Geometric3): Geometric3;
+    __add__(rhs: Geometric3 | number | Unit): Geometric3;
     /**
      * Implements `this / rhs`.
      */
@@ -609,7 +569,7 @@ export declare class Geometric3 implements GradeMasked, GeometricE3, GeometricNu
     /**
      * Implements `lhs + this`.
      */
-    __radd__(lhs: number | Geometric3): Geometric3;
+    __radd__(lhs: Geometric3 | number | Unit): Geometric3;
     /**
      * Implements `this - rhs`.
      */

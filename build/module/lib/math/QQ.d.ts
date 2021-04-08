@@ -122,24 +122,7 @@ export declare class QQ {
      * @returns -this
      */
     __neg__(): QQ;
-    private static readonly POS_08_01;
-    private static readonly POS_07_01;
-    private static readonly POS_06_01;
-    private static readonly POS_05_01;
-    private static readonly POS_04_01;
-    private static readonly POS_03_01;
-    private static readonly POS_02_01;
-    private static readonly ONE;
-    private static readonly POS_01_02;
-    private static readonly POS_01_03;
-    private static readonly POS_01_04;
-    private static readonly POS_01_05;
     private static readonly ZERO;
-    private static readonly NEG_01_03;
-    private static readonly NEG_01_01;
-    private static readonly NEG_02_01;
-    private static readonly NEG_03_01;
-    private static readonly POS_02_03;
     /**
      * @param numer The numerator of the rational number.
      * @param denom The denominator of the rational number.

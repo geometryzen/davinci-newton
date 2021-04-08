@@ -1,9 +1,26 @@
 import { Geometric2 } from "./Geometric2";
 import { Unit } from "./Unit";
 
+const zero = Geometric2.zero;
 const one = Geometric2.one;
+const two = Geometric2.one.mulByNumber(2);
 const e1 = Geometric2.e1;
 const e2 = Geometric2.e2;
+const e12 = Geometric2.e1.mul(Geometric2.e2);
+
+/**
+ * @hidden
+ */
+function checkEQ(result: Geometric2, comp: Geometric2): void {
+    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
+    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
+    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
+    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+}
 
 describe("Geometric2", function () {
     describe("constructor", function () {
@@ -442,6 +459,33 @@ describe("Geometric2", function () {
             expect(new Geometric2([1, 2, 3, 4]).grades).toBe(7);
         });
     });
+
+    describe("grade", function () {
+        const GRADE0 = zero.add(one);
+        const GRADE1 = zero.add(e1).add(e2);
+        const GRADE2 = zero.add(e12);
+        const ALL = GRADE0.add(GRADE1).add(GRADE2);
+        it("sanity check", function () {
+            expect(ALL.a).toBe(1);
+            expect(ALL.x).toBe(1);
+            expect(ALL.y).toBe(1);
+            expect(ALL.xy).toBe(1);
+            expect(ALL.b).toBe(1);
+        });
+        it("0", function () {
+            checkEQ(ALL.grade(0), GRADE0);
+        });
+        it("1", function () {
+            checkEQ(ALL.grade(1), GRADE1);
+        });
+        it("2", function () {
+            checkEQ(ALL.grade(2), GRADE2);
+        });
+        it("otherwise", function () {
+            checkEQ(ALL.grade(9.5), zero);
+        });
+    });
+
     describe("add", function () {
         it("LHS is zero.", function () {
             const lhs = new Geometric2([0, 0, 0, 0]);
@@ -623,6 +667,17 @@ describe("Geometric2", function () {
             M.y = 0;
             M.b = b;
             expect(M.isScalar()).toBe(false);
+        });
+    });
+    describe("isSpinor", function () {
+        it("should only be true if all other components are zero.", function () {
+            expect(zero.isSpinor()).toBe(true);
+            expect(one.isSpinor()).toBe(true);
+            expect(Geometric2.meter.isSpinor()).toBe(false);
+            expect(two.isSpinor()).toBe(true);
+            expect(e1.isSpinor()).toBe(false);
+            expect(e2.isSpinor()).toBe(false);
+            expect(e12.isSpinor()).toBe(true);
         });
     });
     describe("norm", function () {
@@ -822,7 +877,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(-0.7071067811865475);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("(e1, e1)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -831,7 +886,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("(e2, e2)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -840,7 +895,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("on locked should not mutate and should return the rotor.", function () {
             const a = Math.random();
@@ -859,7 +914,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
         });
         it("static", function () {
             const R = Geometric2.rotorFromDirections(e1, e2);
@@ -867,7 +922,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
         });
         it("result should be independent of |b| and |a|.", function () {
             const R = Geometric2.rotorFromDirections(e1.mulByNumber(0.5), e2.mulByNumber(2));
@@ -875,7 +930,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
         });
     });
     describe("rotorFromVectorToVector", function () {
@@ -886,7 +941,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(-0.7071067811865475);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("(e1, e1)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -895,7 +950,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("(e2, e2)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -904,7 +959,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(m.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(m.uom)).toBeTrue();
         });
         it("on locked should not mutate and should return the rotor.", function () {
             const a = Math.random();
@@ -923,7 +978,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
         });
         it("static", function () {
             const R = Geometric2.rotorFromVectorToVector(e1, e2);
@@ -931,7 +986,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
         });
         it("scaling", function () {
             const R = Geometric2.rotorFromVectorToVector(e1.mulByNumber(0.5), e2.mulByNumber(2));
@@ -939,10 +994,97 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-1.414213562373095);
-            expect(R.uom).toBe(Unit.ONE);
+            expect(Unit.isOne(R.uom)).toBeTrue();
             const rotated = e1.rotate(R);
             expect(rotated.x).toBe(0);
             expect(rotated.y).toBe(3.999999999999999);
+        });
+    });
+    describe("scale", function () {
+        it("is a shortcut for full scalar multiplication", function () {
+            const x = Math.random();
+            checkEQ(one.scale(x), one.mul(Geometric2.scalar(x)));
+            checkEQ(e1.scale(x), e1.mul(Geometric2.scalar(x)));
+            checkEQ(e2.scale(x), e2.mul(Geometric2.scalar(x)));
+            checkEQ(e12.scale(x), e12.mul(Geometric2.scalar(x)));
+        });
+    });
+    describe("toExponential", function () {
+        it("zero is scalar(0)", function () {
+            const M = Geometric2.zero;
+            expect(M.toExponential()).toBe("0");
+        });
+        it("one", function () {
+            const M = Geometric2.one;
+            expect(M.toExponential()).toBe("1");
+        });
+        it("e1", function () {
+            const M = Geometric2.e1;
+            expect(M.toExponential()).toBe("e1");
+        });
+        it("e2", function () {
+            const M = Geometric2.e2;
+            expect(M.toExponential()).toBe("e2");
+        });
+        it("I is e12", function () {
+            const M = Geometric2.I;
+            expect(M.toExponential()).toBe("e12");
+        });
+        it("10", function () {
+            const M = Geometric2.one.mulByNumber(10);
+            expect(M.toExponential()).toBe("1e+1");
+            expect(M.toExponential(10)).toBe("1.0000000000e+1");
+        });
+        it("kilogram", function () {
+            const M = Geometric2.kilogram;
+            expect(M.toExponential()).toBe("1 kg");
+        });
+        it("meter", function () {
+            const M = Geometric2.meter;
+            expect(M.toExponential()).toBe("1 m");
+        });
+        it("second", function () {
+            const M = Geometric2.second;
+            expect(M.toExponential()).toBe("1 s");
+        });
+    });
+    describe("toFixed", function () {
+        it("zero is scalar(0)", function () {
+            const M = Geometric2.zero;
+            expect(M.toFixed()).toBe("0");
+        });
+        it("one", function () {
+            const M = Geometric2.one;
+            expect(M.toFixed()).toBe("1");
+        });
+        it("e1", function () {
+            const M = Geometric2.e1;
+            expect(M.toFixed()).toBe("e1");
+        });
+        it("e2", function () {
+            const M = Geometric2.e2;
+            expect(M.toFixed()).toBe("e2");
+        });
+        it("I is e12", function () {
+            const M = Geometric2.I;
+            expect(M.toFixed()).toBe("e12");
+        });
+        it("10", function () {
+            const M = Geometric2.one.mulByNumber(10);
+            expect(M.toFixed()).toBe("10");
+            expect(M.toFixed(10)).toBe("10.0000000000");
+        });
+        it("kilogram", function () {
+            const M = Geometric2.kilogram;
+            expect(M.toFixed()).toBe("1 kg");
+        });
+        it("meter", function () {
+            const M = Geometric2.meter;
+            expect(M.toFixed()).toBe("1 m");
+        });
+        it("second", function () {
+            const M = Geometric2.second;
+            expect(M.toFixed()).toBe("1 s");
         });
     });
     describe("toString", function () {
@@ -1060,6 +1202,211 @@ describe("Geometric2", function () {
             expect(sum.x).toBe(0);
             expect(sum.y).toBe(0);
             expect(sum.b).toBe(1);
+        });
+    });
+    describe("__eq__", function () {
+        it("(Geometric)", function () {
+            expect(one.__eq__(one)).toBeTrue();
+            expect(one.__eq__(two)).toBeFalse();
+        });
+        it("(number)", function () {
+            expect(one.__eq__(1)).toBeTrue();
+            expect(one.__eq__(2)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.__eq__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__ne__", function () {
+        it("(Geometric)", function () {
+            expect(one.__ne__(one)).toBeFalse();
+            expect(one.__ne__(two)).toBeTrue();
+        });
+        it("(number)", function () {
+            expect(one.__ne__(1)).toBeFalse();
+            expect(one.__ne__(2)).toBeTrue();
+        });
+        it("otherwise", function () {
+            expect(one.__ne__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__add__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__add__(two), one.add(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__add__(2), one.add(two));
+        });
+        it("otherwise", function () {
+            expect(one.__add__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__radd__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__radd__(one), one.add(one));
+        });
+        it("(number)", function () {
+            checkEQ(one.__radd__(1), one.add(one));
+        });
+        it("(Unit)", function () {
+            checkEQ(one.__radd__(Unit.ONE), one.add(one));
+        });
+        it("otherwise", function () {
+            expect(one.__radd__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__sub__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__sub__(two), one.sub(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__sub__(2), one.sub(two));
+        });
+        it("otherwise", function () {
+            expect(one.__sub__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rsub__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rsub__(e2), e2.sub(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rsub__(2), two.sub(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rsub__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__mul__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__mul__(e2), e1.mul(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__mul__(2), one.mul(two));
+        });
+        it("otherwise", function () {
+            expect(one.__mul__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rmul__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rmul__(e2), e2.mul(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rmul__(2), two.mul(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rmul__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__div__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__div__(e2), e1.div(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__div__(2), one.div(two));
+        });
+        it("otherwise", function () {
+            expect(one.__div__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rdiv__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rdiv__(e2), e2.div(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rdiv__(2), two.div(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rdiv__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__lshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__lshift__(e2), e1.lco(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__lshift__(2), one.lco(two));
+        });
+        it("otherwise", function () {
+            expect(one.__lshift__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rlshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rlshift__(e2), e2.lco(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rlshift__(2), two.lco(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rlshift__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rshift__(e2), e1.rco(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rshift__(2), one.rco(two));
+        });
+        it("otherwise", function () {
+            expect(one.__rshift__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rrshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rrshift__(e2), e2.rco(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rrshift__(2), two.rco(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rrshift__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__vbar__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__vbar__(e2), e1.scp(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__vbar__(2), one.scp(two));
+        });
+        it("otherwise", function () {
+            expect(one.__vbar__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rvbar__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rvbar__(e2), e1.scp(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rvbar__(2), one.scp(two));
+        });
+        it("otherwise", function () {
+            expect(one.__rvbar__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__wedge__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__wedge__(e2), e1.ext(e2));
+        });
+        it("(number)", function () {
+            checkEQ(one.__wedge__(2), one.ext(two));
+        });
+        it("otherwise", function () {
+            expect(one.__wedge__("" as unknown as Geometric2)).toBeUndefined();
+        });
+    });
+    describe("__rwedge__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rwedge__(e2), e2.ext(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rwedge__(2), two.ext(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rwedge__("" as unknown as Geometric2)).toBeUndefined();
         });
     });
 });

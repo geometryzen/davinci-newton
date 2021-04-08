@@ -930,48 +930,35 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
      * @hidden 
      */
     __eq__(rhs: number | Geometric1): boolean {
+        const a0 = this.a;
+        const a1 = this.x;
         if (rhs instanceof Geometric1) {
-            const a0 = this.a;
-            const a1 = this.x;
             const b0 = rhs.a;
             const b1 = rhs.x;
             // TODO: Should be equals on Unit, but this is close.
             return a0 === b0 && a1 === b1 && Unit.isCompatible(this.uom, rhs.uom);
         } else if (typeof rhs === 'number') {
-            return false;
+            return a0 === rhs && a1 === 0 && Unit.isOne(this.uom);
         } else {
-            return false;
+            return void 0;
         }
     }
     /**
      * @hidden 
      */
-    __ne__(rhs: Geometric1): boolean {
-        throw new Error(notImplemented('__ne_').message);
-    }
-    /**
-     * @hidden 
-     */
-    __ge__(rhs: Geometric1): boolean {
-        throw new Error(notImplemented('__ge_').message);
-    }
-    /**
-     * @hidden 
-     */
-    __gt__(rhs: Geometric1): boolean {
-        throw new Error(notImplemented('__gt_').message);
-    }
-    /**
-     * @hidden 
-     */
-    __le__(rhs: Geometric1): boolean {
-        throw new Error(notImplemented('__le_').message);
-    }
-    /**
-     * @hidden 
-     */
-    __lt__(rhs: Geometric1): boolean {
-        throw new Error(notImplemented('__lt_').message);
+    __ne__(rhs: Geometric1 | number): boolean {
+        const a0 = this.a;
+        const a1 = this.x;
+        if (rhs instanceof Geometric1) {
+            const b0 = rhs.a;
+            const b1 = rhs.x;
+            // TODO: Should be equals on Unit, but this is close.
+            return a0 !== b0 || a1 !== b1 || !Unit.isCompatible(this.uom, rhs.uom);
+        } else if (typeof rhs === 'number') {
+            return a0 !== rhs || a1 !== 0 || !Unit.isOne(this.uom);
+        } else {
+            return void 0;
+        }
     }
     /**
      * @hidden 
@@ -982,7 +969,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __add__(rhs: Unit | Geometric1): Geometric1 {
+    __add__(rhs: Geometric1 | number | Unit): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().add(rhs));
         }
@@ -999,7 +986,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __radd__(lhs: Unit | Geometric1): Geometric1 {
+    __radd__(lhs: Geometric1 | number | Unit): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).add(this));
         }
@@ -1016,7 +1003,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __sub__(rhs: Unit | Geometric1): Geometric1 {
+    __sub__(rhs: Geometric1 | number | Unit): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().sub(rhs));
         }
@@ -1034,7 +1021,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __rsub__(lhs: Unit | Geometric1): Geometric1 {
+    __rsub__(lhs: Geometric1 | number | Unit): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).sub(this));
         }
@@ -1074,7 +1061,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __mul__(rhs: any): Geometric1 {
+    __mul__(rhs: Geometric1 | number | Unit): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().mul(rhs));
         } else if (typeof rhs === 'number') {
@@ -1090,7 +1077,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __rmul__(lhs: any): Geometric1 {
+    __rmul__(lhs: Geometric1 | number | Unit): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).mul(this));
         }

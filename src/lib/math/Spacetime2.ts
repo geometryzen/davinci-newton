@@ -918,30 +918,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden
      */
-    __ge__(rhs: number | Spacetime2 | Unit): boolean {
-        throw new Error("Method not implemented.");
-    }
-    /**
-     * @hidden
-     */
-    __gt__(rhs: number | Spacetime2 | Unit): boolean {
-        throw new Error("Method not implemented.");
-    }
-    /**
-     * @hidden
-     */
-    __le__(rhs: number | Spacetime2 | Unit): boolean {
-        throw new Error("Method not implemented.");
-    }
-    /**
-     * @hidden
-     */
-    __lt__(rhs: number | Spacetime2 | Unit): boolean {
-        throw new Error("Method not implemented.");
-    }
-    /**
-     * @hidden
-     */
     __tilde__(): Spacetime2 {
         return this.clone().rev().permlock();
     }

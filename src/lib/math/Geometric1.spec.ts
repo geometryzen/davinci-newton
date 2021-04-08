@@ -12,6 +12,10 @@ const one = Geometric1.one;
 /**
  * @hidden
  */
+const two = Geometric1.one.mulByNumber(2);
+/**
+ * @hidden
+ */
 const e1 = Geometric1.e1;
 
 /**
@@ -106,6 +110,24 @@ describe("Geometric1", function () {
             expect(Geometric1.vector(0).grades).toBe(0x0);
             expect(Geometric1.vector(1).grades).toBe(0x2);
             expect(new Geometric1([1, 1]).grades).toBe(0x3);
+        });
+    });
+    describe("grade", function () {
+        const GRADE0 = zero.add(one);
+        const GRADE1 = zero.add(e1);
+        const ALL = GRADE0.add(GRADE1);
+        it("sanity check", function () {
+            expect(ALL.a).toBe(1);
+            expect(ALL.x).toBe(1);
+        });
+        it("0", function () {
+            checkEQ(ALL.grade(0), GRADE0);
+        });
+        it("1", function () {
+            checkEQ(ALL.grade(1), GRADE1);
+        });
+        it("otherwise", function () {
+            checkEQ(ALL.grade(9.5), zero);
         });
     });
     describe("add", function () {
@@ -497,6 +519,13 @@ describe("Geometric1", function () {
             expect(M.uom).toBe(Unit.METER);
         });
     });
+    describe("scale", function () {
+        it("is a shortcut for full scalar multiplication", function () {
+            const x = Math.random();
+            checkEQ(one.scale(x), one.mul(Geometric1.scalar(x)));
+            checkEQ(e1.scale(x), e1.mul(Geometric1.scalar(x)));
+        });
+    });
     describe("sub", function () {
         it("lhs.isMutable, alpha=undefined", function () {
             const La = Math.random();
@@ -668,4 +697,210 @@ describe("Geometric1", function () {
             checkEQ(d, lock(Geometric1.scalar(2, Unit.METER)));
         });
     });
+    describe("__eq__", function () {
+        it("(Geometric)", function () {
+            expect(one.__eq__(one)).toBeTrue();
+            expect(one.__eq__(two)).toBeFalse();
+        });
+        it("(number)", function () {
+            expect(one.__eq__(1)).toBeTrue();
+            expect(one.__eq__(2)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.__eq__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__ne__", function () {
+        it("(Geometric)", function () {
+            expect(one.__ne__(one)).toBeFalse();
+            expect(one.__ne__(two)).toBeTrue();
+        });
+        it("(number)", function () {
+            expect(one.__ne__(1)).toBeFalse();
+            expect(one.__ne__(2)).toBeTrue();
+        });
+        it("otherwise", function () {
+            expect(one.__ne__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__add__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__add__(two), one.add(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__add__(2), one.add(two));
+        });
+        it("otherwise", function () {
+            expect(one.__add__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__radd__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__radd__(one), one.add(one));
+        });
+        it("(number)", function () {
+            checkEQ(one.__radd__(1), one.add(one));
+        });
+        it("(Unit)", function () {
+            checkEQ(one.__radd__(Unit.ONE), one.add(one));
+        });
+        it("otherwise", function () {
+            expect(one.__radd__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__sub__", function () {
+        it("(Geometric)", function () {
+            checkEQ(one.__sub__(two), one.sub(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__sub__(2), one.sub(two));
+        });
+        it("otherwise", function () {
+            expect(one.__sub__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rsub__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rsub__(one), one.sub(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rsub__(2), two.sub(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rsub__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__mul__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__mul__(one), e1.mul(one));
+        });
+        it("(number)", function () {
+            checkEQ(one.__mul__(2), one.mul(two));
+        });
+        it("otherwise", function () {
+            expect(one.__mul__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rmul__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rmul__(two), two.mul(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rmul__(2), two.mul(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rmul__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__div__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__div__(two), e1.div(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__div__(2), one.div(two));
+        });
+        it("otherwise", function () {
+            expect(one.__div__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rdiv__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rdiv__(two), two.div(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rdiv__(2), two.div(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rdiv__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__lshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__lshift__(two), e1.lco(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__lshift__(2), one.lco(two));
+        });
+        it("otherwise", function () {
+            expect(one.__lshift__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rlshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rlshift__(two), two.lco(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rlshift__(2), two.lco(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rlshift__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rshift__(two), e1.rco(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rshift__(2), one.rco(two));
+        });
+        it("otherwise", function () {
+            expect(one.__rshift__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rrshift__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rrshift__(two), two.rco(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rrshift__(2), two.rco(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rrshift__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__vbar__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__vbar__(two), e1.scp(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__vbar__(2), one.scp(two));
+        });
+        it("otherwise", function () {
+            expect(one.__vbar__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rvbar__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rvbar__(two), e1.scp(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rvbar__(2), one.scp(two));
+        });
+        it("otherwise", function () {
+            expect(one.__rvbar__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__wedge__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__wedge__(two), e1.ext(two));
+        });
+        it("(number)", function () {
+            checkEQ(one.__wedge__(2), one.ext(two));
+        });
+        it("otherwise", function () {
+            expect(one.__wedge__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+    describe("__rwedge__", function () {
+        it("(Geometric)", function () {
+            checkEQ(e1.__rwedge__(two), two.ext(e1));
+        });
+        it("(number)", function () {
+            checkEQ(one.__rwedge__(2), two.ext(one));
+        });
+        it("otherwise", function () {
+            expect(one.__rwedge__("" as unknown as Geometric1)).toBeUndefined();
+        });
+    });
+
 });

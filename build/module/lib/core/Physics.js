@@ -493,7 +493,7 @@ var Physics = /** @class */ (function (_super) {
         constraint.computeTangent(X, eΘ);
         metric.copyVector(eΘ, FnewR); // FnewR = eΘ
         metric.mul(FnewR, B); // FnewR = eΘ * B = -er
-        metric.neg(FnewR); // FnewR = er (approx)
+        metric.neg(FnewR); // FnewR = er
         metric.direction(FnewR); // FnewR = er 
         metric.mulByVector(FnewR, P); // FnewR = er * P
         metric.mulByVector(FnewR, P); // FnewR = er * P * P = (P * P) er
