@@ -1,6 +1,6 @@
 import { BivectorE3 as Bivector } from './BivectorE3';
-import dot from './dotVectorE3';
-import quad from './quadVectorE3';
+import { dotVectorE3 as dot } from './dotVectorE3';
+import { quadVectorE3 as quad } from './quadVectorE3';
 import { SpinorE3 as Spinor } from './SpinorE3';
 import { Unit } from './Unit';
 import { VectorE3 as Vector } from './VectorE3';

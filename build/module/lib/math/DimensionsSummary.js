@@ -1,5 +1,6 @@
 /**
  * A summary of all the exponents in physical dimensions.
+ * This is used to improve the performance of comparing units of measure.
  * @hidden
  */
 export var DimensionsSummary;
@@ -26,18 +27,18 @@ export var DimensionsSummary;
     DimensionsSummary[DimensionsSummary["ENERGY_OR_TORQUE"] = 7] = "ENERGY_OR_TORQUE";
     DimensionsSummary[DimensionsSummary["FORCE"] = 8] = "FORCE";
     DimensionsSummary[DimensionsSummary["FRICTION_COEFFICIENT"] = 9] = "FRICTION_COEFFICIENT";
-    /**
-     * The `liminous intensity` base quantity.
-     */
-    DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 10] = "LUMINOUS_INTENSITY";
-    DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 11] = "INV_LENGTH";
+    DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 10] = "INV_LENGTH";
+    DimensionsSummary[DimensionsSummary["INV_MASS"] = 11] = "INV_MASS";
     DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 12] = "INV_MOMENT_OF_INERTIA";
-    DimensionsSummary[DimensionsSummary["INV_MASS"] = 13] = "INV_MASS";
-    DimensionsSummary[DimensionsSummary["INV_TIME"] = 14] = "INV_TIME";
+    DimensionsSummary[DimensionsSummary["INV_TIME"] = 13] = "INV_TIME";
     /**
      * The `length` base qiantity.
      */
-    DimensionsSummary[DimensionsSummary["LENGTH"] = 15] = "LENGTH";
+    DimensionsSummary[DimensionsSummary["LENGTH"] = 14] = "LENGTH";
+    /**
+     * The `liminous intensity` base quantity.
+     */
+    DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 15] = "LUMINOUS_INTENSITY";
     /**
      * The `mass` base quantity.
      */
@@ -49,14 +50,14 @@ export var DimensionsSummary;
     DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 21] = "RATE_OF_CHANGE_OF_AREA";
     DimensionsSummary[DimensionsSummary["STIFFNESS"] = 22] = "STIFFNESS";
     /**
-     * The `time` base quantity.
-     */
-    DimensionsSummary[DimensionsSummary["TIME"] = 23] = "TIME";
-    DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 24] = "TIME_SQUARED";
-    /**
      * The `thermodynamic temperature` base quantity.
      */
-    DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 25] = "THERMODYNAMIC_TEMPERATURE";
+    DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 23] = "THERMODYNAMIC_TEMPERATURE";
+    /**
+     * The `time` base quantity.
+     */
+    DimensionsSummary[DimensionsSummary["TIME"] = 24] = "TIME";
+    DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 25] = "TIME_SQUARED";
     DimensionsSummary[DimensionsSummary["VELOCITY"] = 26] = "VELOCITY";
     DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 27] = "VELOCITY_SQUARED";
     /**

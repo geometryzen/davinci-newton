@@ -3,7 +3,7 @@ import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
 import { arraysEQ } from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
-import dotVector from './dotVectorE3';
+import { dotVectorE3 as dotVector } from './dotVectorE3';
 import extG3 from './extG3';
 import { gauss } from './gauss';
 import { GeometricE3 } from './GeometricE3';
@@ -925,9 +925,9 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
         }
         else {
             const a = this.b;
-            const x = +this.yz;
-            const y = +this.zx;
-            const z = +this.xy;
+            const x = this.yz;
+            const y = this.zx;
+            const z = this.xy;
             const yz = -this.x;
             const zx = -this.y;
             const xy = -this.z;

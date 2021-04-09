@@ -1,5 +1,6 @@
 /**
  * A summary of all the exponents in physical dimensions.
+ * This is used to improve the performance of comparing units of measure.
  * @hidden
  */
 export enum DimensionsSummary {
@@ -25,18 +26,18 @@ export enum DimensionsSummary {
     ENERGY_OR_TORQUE = 7,
     FORCE = 8,
     FRICTION_COEFFICIENT = 9,
-    /**
-     * The `liminous intensity` base quantity.
-     */
-    LUMINOUS_INTENSITY = 10,
-    INV_LENGTH = 11,
+    INV_LENGTH = 10,
+    INV_MASS = 11,
     INV_MOMENT_OF_INERTIA = 12,
-    INV_MASS = 13,
-    INV_TIME = 14,
+    INV_TIME = 13,
     /**
      * The `length` base qiantity.
      */
-    LENGTH = 15,
+    LENGTH = 14,
+    /**
+     * The `liminous intensity` base quantity.
+     */
+    LUMINOUS_INTENSITY = 15,
     /**
      * The `mass` base quantity.
      */
@@ -48,14 +49,14 @@ export enum DimensionsSummary {
     RATE_OF_CHANGE_OF_AREA = 21,
     STIFFNESS = 22,
     /**
-     * The `time` base quantity.
-     */
-    TIME = 23,
-    TIME_SQUARED = 24,
-    /**
      * The `thermodynamic temperature` base quantity.
      */
-    THERMODYNAMIC_TEMPERATURE = 25,
+    THERMODYNAMIC_TEMPERATURE = 23,
+    /**
+     * The `time` base quantity.
+     */
+    TIME = 24,
+    TIME_SQUARED = 25,
     VELOCITY = 26,
     VELOCITY_SQUARED = 27,
     /**

@@ -1,10 +1,9 @@
 /**
  * @hidden
- * @param vector
- * @returns
+ * @returns x^2 + y^2 + z^2
  */
-export default function quadVectorE3(vector: {
+export declare function quadVectorE3(vector: Readonly<{
     x: number;
     y: number;
     z: number;
-}): number;
+}>): number;

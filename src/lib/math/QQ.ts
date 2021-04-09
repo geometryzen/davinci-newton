@@ -1,13 +1,7 @@
 import { reduceToLowestForm } from "./reduceToLowestForm";
 
-interface CacheEntry {
-  n: number;
-  d: number;
-  value: QQ;
-}
-
 const tempND: [numer: number, denom: number] = [0, 0];
-const entries: CacheEntry[] = [];
+const entries: QQ[] = [];
 /**
  * The QQ class represents a rational number, ℚ.
  *
@@ -330,14 +324,13 @@ export class QQ {
     n = tempND[0];
     d = tempND[1];
     for (const entry of entries) {
-      if (entry.n === n && entry.d === d) {
-        return entry.value;
+      if (entry.numer_ === n && entry.denom_ === d) {
+        return entry;
       }
     }
     // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
     const value = new QQ(n, d);
-    const entry: CacheEntry = { n, d, value };
-    entries.push(entry);
+    entries.push(value);
     // console.warn(`QQ cache size = ${entries.length}`);
     return value;
   }

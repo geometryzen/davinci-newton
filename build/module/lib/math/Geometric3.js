@@ -3,7 +3,7 @@ import { readOnly } from '../i18n/readOnly';
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
 import { arraysEQ } from './arraysEQ';
-import dotVector from './dotVectorE3';
+import { dotVectorE3 as dotVector } from './dotVectorE3';
 import extG3 from './extG3';
 import { gauss } from './gauss';
 import isScalarG3 from './isScalarG3';
@@ -897,9 +897,9 @@ var Geometric3 = /** @class */ (function (_super) {
         }
         else {
             var a = this.b;
-            var x = +this.yz;
-            var y = +this.zx;
-            var z = +this.xy;
+            var x = this.yz;
+            var y = this.zx;
+            var z = this.xy;
             var yz = -this.x;
             var zx = -this.y;
             var xy = -this.z;

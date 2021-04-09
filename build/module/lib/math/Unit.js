@@ -1,6 +1,7 @@
 import isUndefined from '../checks/isUndefined';
 import { Dimensions } from '../math/Dimensions';
 import { DimensionsSummary } from '../math/DimensionsSummary';
+var entries = [];
 // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
 /**
  * @hidden
@@ -607,12 +608,13 @@ var Unit = /** @class */ (function () {
                 case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
                 case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
                 case DimensionsSummary.FORCE: return Unit.NEWTON;
-                case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
+                case DimensionsSummary.FRICTION_COEFFICIENT: return Unit.FRICTION_COEFFICIENT;
                 case DimensionsSummary.INV_LENGTH: return Unit.INV_METER;
                 case DimensionsSummary.INV_MASS: return Unit.INV_KILOGRAM;
                 case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
                 case DimensionsSummary.INV_TIME: return Unit.INV_SECOND;
                 case DimensionsSummary.LENGTH: return Unit.METER;
+                case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
                 case DimensionsSummary.MASS: return Unit.KILOGRAM;
                 case DimensionsSummary.MOMENT_OF_INERTIA: return Unit.KILOGRAM_METER_SQUARED;
                 case DimensionsSummary.MOMENTUM: return Unit.KILOGRAM_METER_PER_SECOND;
@@ -632,7 +634,17 @@ var Unit = /** @class */ (function () {
             }
         }
         // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
-        return new Unit(multiplier, dimensions, labels);
+        for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+            var entry = entries_1[_i];
+            if (entry.multiplier === multiplier && entry.dimensions.equals(dimensions)) {
+                return entry;
+            }
+        }
+        // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
+        var value = new Unit(multiplier, dimensions, labels);
+        entries.push(value);
+        // console.warn(`Unit cache size = ${entries.length}`);
+        return value;
     };
     /**
      * Internal symbolic constant to improve code readability.

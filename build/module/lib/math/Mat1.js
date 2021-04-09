@@ -17,7 +17,7 @@ var Mat1 = /** @class */ (function () {
             return this.value;
         }
         else {
-            throw new Error('row and column must both b zero.');
+            throw new Error('row and column must both be zero.');
         }
     };
     return Mat1;

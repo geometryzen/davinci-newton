@@ -1,9 +1,8 @@
 /**
  * @hidden
- * @param vector 
- * @returns 
+ * @returns x^2 + y^2 + z^2
  */
-export default function quadVectorE3(vector: { x: number; y: number; z: number }): number {
+export function quadVectorE3(vector: Readonly<{ x: number; y: number; z: number }>): number {
     const x = vector.x;
     const y = vector.y;
     const z = vector.z;

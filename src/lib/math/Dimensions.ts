@@ -2,6 +2,8 @@ import { QQ } from '../math/QQ';
 import detectDimensions from './detectDimensions';
 import { DimensionsSummary } from './DimensionsSummary';
 
+const entries: Dimensions[] = [];
+
 /**
  * @hidden
  */
@@ -576,7 +578,15 @@ export class Dimensions {
             case DimensionsSummary.VOLUME: return Dimensions.VOLUME;
             default: {
                 // console.warn(`Dimensions.valueOf(M=${M}, L=${L}, T=${T}, Q=${Q}, temperature=${temperature}, amount=${amount}, intensity=${intensity}) is not cached.`);
-                return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+                for (const entry of entries) {
+                    if (entry.M.equals(M) && entry.L.equals(L) && entry.T.equals(T) && entry.Q.equals(Q) && entry.temperature.equals(temperature) && entry.amount.equals(amount) && entry.intensity.equals(intensity)) {
+                        return entry;
+                    }
+                }
+                const value = new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+                entries.push(value);
+                // console.warn(`Dimensions cache size = ${entries.length}`);
+                return value;
             }
         }
     }

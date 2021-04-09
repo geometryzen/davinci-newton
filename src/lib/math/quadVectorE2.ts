@@ -1,25 +1,10 @@
-import { dotVectorE2 as dot } from './dotVectorE2';
-import isDefined from '../checks/isDefined';
-import isNumber from '../checks/isNumber';
-import { VectorE2 } from '../math/VectorE2';
-
 /**
  * @hidden
  * @param vector 
  * @returns |vector|^2 
  */
-export function quadVectorE2(vector: Readonly<VectorE2>): number {
-    if (isDefined(vector)) {
-        const x = vector.x;
-        const y = vector.y;
-        if (isNumber(x) && isNumber(y)) {
-            return dot(vector, vector);
-        }
-        else {
-            return void 0;
-        }
-    }
-    else {
-        return void 0;
-    }
+export function quadVectorE2(vector: Readonly<{ x: number; y: number }>): number {
+    const x = vector.x;
+    const y = vector.y;
+    return x * x + y * y;
 }

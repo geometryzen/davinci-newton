@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-04-07';
+            this.LAST_MODIFIED = '2021-04-08';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.83';
+            this.VERSION = '1.0.84';
         }
         Newton.prototype.log = function (message) {
             var optionalParams = [];
@@ -503,7 +503,7 @@
     }
 
     var tempND = [0, 0];
-    var entries = [];
+    var entries$2 = [];
     /**
      * The QQ class represents a rational number, ℚ.
      *
@@ -791,16 +791,15 @@
             reduceToLowestForm(n, d, tempND);
             n = tempND[0];
             d = tempND[1];
-            for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-                var entry_1 = entries_1[_i];
-                if (entry_1.n === n && entry_1.d === d) {
-                    return entry_1.value;
+            for (var _i = 0, entries_1 = entries$2; _i < entries_1.length; _i++) {
+                var entry = entries_1[_i];
+                if (entry.numer_ === n && entry.denom_ === d) {
+                    return entry;
                 }
             }
             // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
             var value = new QQ(n, d);
-            var entry = { n: n, d: d, value: value };
-            entries.push(entry);
+            entries$2.push(value);
             // console.warn(`QQ cache size = ${entries.length}`);
             return value;
         };
@@ -814,6 +813,7 @@
 
     /**
      * A summary of all the exponents in physical dimensions.
+     * This is used to improve the performance of comparing units of measure.
      * @hidden
      */
     var DimensionsSummary;
@@ -840,18 +840,18 @@
         DimensionsSummary[DimensionsSummary["ENERGY_OR_TORQUE"] = 7] = "ENERGY_OR_TORQUE";
         DimensionsSummary[DimensionsSummary["FORCE"] = 8] = "FORCE";
         DimensionsSummary[DimensionsSummary["FRICTION_COEFFICIENT"] = 9] = "FRICTION_COEFFICIENT";
-        /**
-         * The `liminous intensity` base quantity.
-         */
-        DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 10] = "LUMINOUS_INTENSITY";
-        DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 11] = "INV_LENGTH";
+        DimensionsSummary[DimensionsSummary["INV_LENGTH"] = 10] = "INV_LENGTH";
+        DimensionsSummary[DimensionsSummary["INV_MASS"] = 11] = "INV_MASS";
         DimensionsSummary[DimensionsSummary["INV_MOMENT_OF_INERTIA"] = 12] = "INV_MOMENT_OF_INERTIA";
-        DimensionsSummary[DimensionsSummary["INV_MASS"] = 13] = "INV_MASS";
-        DimensionsSummary[DimensionsSummary["INV_TIME"] = 14] = "INV_TIME";
+        DimensionsSummary[DimensionsSummary["INV_TIME"] = 13] = "INV_TIME";
         /**
          * The `length` base qiantity.
          */
-        DimensionsSummary[DimensionsSummary["LENGTH"] = 15] = "LENGTH";
+        DimensionsSummary[DimensionsSummary["LENGTH"] = 14] = "LENGTH";
+        /**
+         * The `liminous intensity` base quantity.
+         */
+        DimensionsSummary[DimensionsSummary["LUMINOUS_INTENSITY"] = 15] = "LUMINOUS_INTENSITY";
         /**
          * The `mass` base quantity.
          */
@@ -863,14 +863,14 @@
         DimensionsSummary[DimensionsSummary["RATE_OF_CHANGE_OF_AREA"] = 21] = "RATE_OF_CHANGE_OF_AREA";
         DimensionsSummary[DimensionsSummary["STIFFNESS"] = 22] = "STIFFNESS";
         /**
-         * The `time` base quantity.
-         */
-        DimensionsSummary[DimensionsSummary["TIME"] = 23] = "TIME";
-        DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 24] = "TIME_SQUARED";
-        /**
          * The `thermodynamic temperature` base quantity.
          */
-        DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 25] = "THERMODYNAMIC_TEMPERATURE";
+        DimensionsSummary[DimensionsSummary["THERMODYNAMIC_TEMPERATURE"] = 23] = "THERMODYNAMIC_TEMPERATURE";
+        /**
+         * The `time` base quantity.
+         */
+        DimensionsSummary[DimensionsSummary["TIME"] = 24] = "TIME";
+        DimensionsSummary[DimensionsSummary["TIME_SQUARED"] = 25] = "TIME_SQUARED";
         DimensionsSummary[DimensionsSummary["VELOCITY"] = 26] = "VELOCITY";
         DimensionsSummary[DimensionsSummary["VELOCITY_SQUARED"] = 27] = "VELOCITY_SQUARED";
         /**
@@ -1490,6 +1490,7 @@
         return void 0;
     }
 
+    var entries$1 = [];
     /**
      * @hidden
      */
@@ -1880,7 +1881,16 @@
                 case DimensionsSummary.VOLUME: return Dimensions.VOLUME;
                 default: {
                     // console.warn(`Dimensions.valueOf(M=${M}, L=${L}, T=${T}, Q=${Q}, temperature=${temperature}, amount=${amount}, intensity=${intensity}) is not cached.`);
-                    return new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+                    for (var _i = 0, entries_1 = entries$1; _i < entries_1.length; _i++) {
+                        var entry = entries_1[_i];
+                        if (entry.M.equals(M) && entry.L.equals(L) && entry.T.equals(T) && entry.Q.equals(Q) && entry.temperature.equals(temperature) && entry.amount.equals(amount) && entry.intensity.equals(intensity)) {
+                            return entry;
+                        }
+                    }
+                    var value = new Dimensions(M, L, T, Q, temperature, amount, intensity, summary);
+                    entries$1.push(value);
+                    // console.warn(`Dimensions cache size = ${entries.length}`);
+                    return value;
                 }
             }
         };
@@ -2003,6 +2013,7 @@
         return Dimensions;
     }());
 
+    var entries = [];
     // const NAMES_SI = ['kilogram', 'meter', 'second', 'coulomb', 'kelvin', 'mole', 'candela'];
     /**
      * @hidden
@@ -2609,12 +2620,13 @@
                     case DimensionsSummary.ELECTRIC_PERMITTIVITY_TIMES_AREA: return Unit.COULOMB_SQUARED_PER_NEWTON;
                     case DimensionsSummary.ENERGY_OR_TORQUE: return Unit.JOULE;
                     case DimensionsSummary.FORCE: return Unit.NEWTON;
-                    case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
+                    case DimensionsSummary.FRICTION_COEFFICIENT: return Unit.FRICTION_COEFFICIENT;
                     case DimensionsSummary.INV_LENGTH: return Unit.INV_METER;
                     case DimensionsSummary.INV_MASS: return Unit.INV_KILOGRAM;
                     case DimensionsSummary.INV_MOMENT_OF_INERTIA: return Unit.INV_KILOGRAM_METER_SQUARED;
                     case DimensionsSummary.INV_TIME: return Unit.INV_SECOND;
                     case DimensionsSummary.LENGTH: return Unit.METER;
+                    case DimensionsSummary.LUMINOUS_INTENSITY: return Unit.CANDELA;
                     case DimensionsSummary.MASS: return Unit.KILOGRAM;
                     case DimensionsSummary.MOMENT_OF_INERTIA: return Unit.KILOGRAM_METER_SQUARED;
                     case DimensionsSummary.MOMENTUM: return Unit.KILOGRAM_METER_PER_SECOND;
@@ -2631,7 +2643,17 @@
                 }
             }
             // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
-            return new Unit(multiplier, dimensions, labels);
+            for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
+                var entry = entries_1[_i];
+                if (entry.multiplier === multiplier && entry.dimensions.equals(dimensions)) {
+                    return entry;
+                }
+            }
+            // console.warn(`Unit.valueOf(${multiplier},${dimensions}) is not cached.`);
+            var value = new Unit(multiplier, dimensions, labels);
+            entries.push(value);
+            // console.warn(`Unit cache size = ${entries.length}`);
+            return value;
         };
         /**
          * Internal symbolic constant to improve code readability.
@@ -8619,19 +8641,9 @@
      * @returns |vector|^2
      */
     function quadVectorE2(vector) {
-        if (isDefined(vector)) {
-            var x = vector.x;
-            var y = vector.y;
-            if (isNumber(x) && isNumber(y)) {
-                return dotVectorE2(vector, vector);
-            }
-            else {
-                return void 0;
-            }
-        }
-        else {
-            return void 0;
-        }
+        var x = vector.x;
+        var y = vector.y;
+        return x * x + y * y;
     }
 
     /**
@@ -10561,7 +10573,7 @@
                 return this.value;
             }
             else {
-                throw new Error('row and column must both b zero.');
+                throw new Error('row and column must both be zero.');
             }
         };
         return Mat1;
@@ -12143,8 +12155,7 @@
 
     /**
      * @hidden
-     * @param vector
-     * @returns
+     * @returns x^2 + y^2 + z^2
      */
     function quadVectorE3(vector) {
         var x = vector.x;
@@ -13303,9 +13314,9 @@
             }
             else {
                 var a = this.b;
-                var x = +this.yz;
-                var y = +this.zx;
-                var z = +this.xy;
+                var x = this.yz;
+                var y = this.zx;
+                var z = this.xy;
                 var yz = -this.x;
                 var zx = -this.y;
                 var xy = -this.z;

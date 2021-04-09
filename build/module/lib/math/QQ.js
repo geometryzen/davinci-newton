@@ -289,15 +289,14 @@ var QQ = /** @class */ (function () {
         n = tempND[0];
         d = tempND[1];
         for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-            var entry_1 = entries_1[_i];
-            if (entry_1.n === n && entry_1.d === d) {
-                return entry_1.value;
+            var entry = entries_1[_i];
+            if (entry.numer_ === n && entry.denom_ === d) {
+                return entry;
             }
         }
         // console.warn(`QQ.valueOf(${n},${d}) is not cached.`);
         var value = new QQ(n, d);
-        var entry = { n: n, d: d, value: value };
-        entries.push(entry);
+        entries.push(value);
         // console.warn(`QQ cache size = ${entries.length}`);
         return value;
     };
