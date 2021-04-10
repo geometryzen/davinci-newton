@@ -87,23 +87,23 @@ const candela = Geometric3.candela;
  * @returns 
  */
 function reflectSpec(M: Geometric3, n: VectorE3) {
-    const spec = function () {
+    return function () {
         /**
          * We want to verify that coefficients are carried through.
          */
-        const S = M.clone().mulByNumber(2);
+        const S = M.clone().mulByNumber(2).permlock();
         /**
          * We want the reflect method to work even when n is not a unit vector.
          */
-        const N = Geometric3.fromVector(n).mulByNumber(3);
+        const N = Geometric3.fromVector(n).mulByNumber(3).permlock();
         /**
          * The 'Test' result using the specialized method.
          */
-        const T = S.clone().reflect(N);
+        const T = S.reflect(N);
         /**
          * The 'Control' value computed explicitly as C = -n * S * n
          */
-        const C = N.clone().mul(S).mul(N).mulByNumber(-1);
+        const C = N.mul(S).mul(N).mulByNumber(-1);
 
         it("should be -n * M * n", function () {
             expect(T.a).toBe(C.a);
@@ -116,7 +116,6 @@ function reflectSpec(M: Geometric3, n: VectorE3) {
             expect(T.b).toBe(C.b);
         });
     };
-    return spec;
 }
 
 /**

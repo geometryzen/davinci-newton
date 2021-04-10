@@ -291,7 +291,7 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     angle(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.log().grade(2);
     }
     clone(): Spacetime2 {
         return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
@@ -360,7 +360,29 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     dual(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().dual().permlock();
+        }
+        else {
+            const M000 = this.$M000;
+            const M001 = this.$M001;
+            const M010 = this.$M010;
+            const M011 = this.$M011;
+            const M100 = this.$M100;
+            const M101 = this.$M101;
+            const M110 = this.$M110;
+            const M111 = this.$M111;
+
+            this.$M000 = M111;
+            this.$M001 = M110;
+            this.$M010 = M101;
+            this.$M011 = M100;
+            this.$M100 = -M011;
+            this.$M101 = -M010;
+            this.$M110 = -M001;
+            this.$M111 = -M000;
+            return this;
+        }
     }
     exp(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -486,12 +508,12 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             const X = gauss(A, b);
 
             this.a = X[0];
-            this.x = X[1];
-            this.y = X[2];
+            this.x = -X[1];
+            this.y = -X[2];
             this.t = X[3];
             this.xy = X[4];
-            this.ty = -X[5];
-            this.tx = X[6];
+            this.ty = X[5];
+            this.tx = -X[6];
             this.b = X[7];
 
             this.uom = Unit.inv(this.uom);

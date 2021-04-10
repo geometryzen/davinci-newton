@@ -48,7 +48,7 @@ const meter = Spacetime2.meter;
 /**
  * @hidden
  */
-const elements = [one, γ0, γ1, γ0γ1, γ2, γ0γ2, γ1γ2, I];
+const blades = [one, γ0, γ1, γ0γ1, γ2, γ0γ2, γ1γ2, I];
 /**
  * @hidden
  */
@@ -218,44 +218,26 @@ describe("Spacetime2", function () {
             }).toThrowError("Property `uom` is readonly.");
         });
     });
+    describe("toExponential", function () {
+        it("should use scientific notation", function () {
+            const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
+            expect(m.toExponential(1)).toBe("2.0e+0+3.0e+0*γ0+5.0e+0*γ1+7.0e+0*γ0γ1+1.1e+1*γ2+1.3e+1*γ0γ2+1.7e+1*γ1γ2+1.9e+1*I");
+        });
+    });
+    describe("toFixed", function () {
+        it("should use toFixed", function () {
+            const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
+            expect(m.toFixed(1)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*γ0γ1+11.0*γ2+13.0*γ0γ2+17.0*γ1γ2+19.0*I");
+        });
+    });
+    describe("toPrecision", function () {
+        it("should use toPrecision", function () {
+            const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
+            expect(m.toPrecision(2)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*γ0γ1+11*γ2+13*γ0γ2+17*γ1γ2+19*I");
+        });
+    });
     describe("toString", function () {
-        it("0", function () {
-            const m = new Spacetime2();
-            expect(m.toString()).toBe("0");
-        });
-        it("a", function () {
-            const m = new Spacetime2(1);
-            expect(m.toString()).toBe("1");
-        });
-        it("t", function () {
-            const m = new Spacetime2(0, 1);
-            expect(m.toString()).toBe("γ0");
-        });
-        it("x", function () {
-            const m = new Spacetime2(0, 0, 1);
-            expect(m.toString()).toBe("γ1");
-        });
-        it("tx", function () {
-            const m = new Spacetime2(0, 0, 0, 1);
-            expect(m.toString()).toBe("γ0γ1");
-        });
-        it("y", function () {
-            const m = new Spacetime2(0, 0, 0, 0, 1);
-            expect(m.toString()).toBe("γ2");
-        });
-        it("ty", function () {
-            const m = new Spacetime2(0, 0, 0, 0, 0, 1);
-            expect(m.toString()).toBe("γ0γ2");
-        });
-        it("xy", function () {
-            const m = new Spacetime2(0, 0, 0, 0, 0, 0, 1);
-            expect(m.toString()).toBe("γ1γ2");
-        });
-        it("b", function () {
-            const m = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1);
-            expect(m.toString()).toBe("I");
-        });
-        it("ALL", function () {
+        it("should use toString", function () {
             const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
             expect(m.toString()).toBe("2+3*γ0+5*γ1+7*γ0γ1+11*γ2+13*γ0γ2+17*γ1γ2+19*I");
         });
@@ -535,34 +517,60 @@ describe("Spacetime2", function () {
     describe("addScalar", function () {
         it("", function () {
             checkEQ(zero.addScalar(one.a, one.uom), zero.add(one));
-            for (const element of elements) {
-                checkEQ(element.addScalar(one.a, one.uom), element.add(one));
-                checkEQ(element.addScalar(zero.a, zero.uom), element.add(zero));
-                checkEQ(element.addScalar(one.a, one.uom, 0.5), element.add(one.mulByNumber(0.5)));
+            for (const blade of blades) {
+                checkEQ(blade.addScalar(one.a, one.uom), blade.add(one));
+                checkEQ(blade.addScalar(zero.a, zero.uom), blade.add(zero));
+                checkEQ(blade.addScalar(one.a, one.uom, 0.5), blade.add(one.mulByNumber(0.5)));
             }
         });
     });
     describe("divByNumber", function () {
         it("", function () {
-            for (const element of elements) {
-                checkEQ(element.mulByNumber(2).divByNumber(2), element);
+            for (const blade of blades) {
+                checkEQ(blade.mulByNumber(2).divByNumber(2), blade);
             }
         });
     });
     describe("divByScalar", function () {
         it("", function () {
-            for (const element of elements) {
-                checkEQ(element.mul(meter).divByScalar(meter.a, meter.uom), element);
+            for (const blade of blades) {
+                checkEQ(blade.mul(meter).divByScalar(meter.a, meter.uom), blade);
             }
         });
     });
     describe("divByVector", function () {
         it("", function () {
-            for (const element of elements) {
-                checkEQ(element.mul(γ0).divByVector(γ0), element);
-                checkEQ(element.mul(γ1).divByVector(γ1), element);
-                checkEQ(element.mul(γ2).divByVector(γ2), element);
+            for (const blade of blades) {
+                checkEQ(blade.mul(γ0).divByVector(γ0), blade);
+                checkEQ(blade.mul(γ1).divByVector(γ1), blade);
+                checkEQ(blade.mul(γ2).divByVector(γ2), blade);
             }
+        });
+    });
+    describe("dual", function () {
+        it("one", function () {
+            checkEQ(one.dual(), one.lco(I.inv()));
+        });
+        it("γ0", function () {
+            checkEQ(γ0.dual(), γ0.lco(I.inv()));
+        });
+        it("γ1", function () {
+            checkEQ(γ1.dual(), γ1.lco(I.inv()));
+        });
+        it("γ2", function () {
+            checkEQ(γ2.dual(), γ2.lco(I.inv()));
+        });
+        it("γ0γ1", function () {
+            checkEQ(γ0γ1.dual(), γ0γ1.lco(I.inv()));
+        });
+        it("γ0γ2", function () {
+            checkEQ(γ0γ2.dual(), γ0γ2.lco(I.inv()));
+        });
+        it("γ1γ2", function () {
+            checkEQ(γ1γ2.dual(), γ1γ2.lco(I.inv()));
+        });
+        it("I", function () {
+            checkEQ(I.dual(), I.lco(I.inv()));
         });
     });
     describe("conj", function () {
@@ -576,171 +584,6 @@ describe("Spacetime2", function () {
             checkEQ(γ1γ2.conj(), γ1γ2.neg());
             checkEQ(I.conj(), I);
             checkEQ(meter.conj(), meter);
-        });
-    });
-    describe("sub", function () {
-        it("lhs non-zero", function () {
-            const La = Math.random();
-            const Lt = Math.random();
-            const Lx = Math.random();
-            const Ltx = Math.random();
-            const Ly = Math.random();
-            const Lty = Math.random();
-            const Lxy = Math.random();
-            const Lb = Math.random();
-            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
-            const Ra = Math.random();
-            const Rt = Math.random();
-            const Rx = Math.random();
-            const Rtx = Math.random();
-            const Ry = Math.random();
-            const Rty = Math.random();
-            const Rxy = Math.random();
-            const Rb = Math.random();
-            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
-            const sum = lhs.sub(rhs);
-            // sum should be correct.
-            expect(sum.a).toBe(La - Ra, "a");
-            expect(sum.t).toBe(Lt - Rt, "t");
-            expect(sum.x).toBe(Lx - Rx, "x");
-            expect(sum.tx).toBe(Ltx - Rtx, "tx");
-            expect(sum.y).toBe(Ly - Ry, "y");
-            expect(sum.ty).toBe(Lty - Rty, "ty");
-            expect(sum.xy).toBe(Lxy - Rxy, "xy");
-            expect(sum.b).toBe(Lb - Rb, "b");
-            // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
-            // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
-        });
-        it("lhs zero", function () {
-            const lhs = new Spacetime2();
-            const Ra = Math.random();
-            const Rt = Math.random();
-            const Rx = Math.random();
-            const Rtx = Math.random();
-            const Ry = Math.random();
-            const Rty = Math.random();
-            const Rxy = Math.random();
-            const Rb = Math.random();
-            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
-            const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(-Ra, "a");
-            expect(sum.t).toBe(-Rt, "t");
-            expect(sum.x).toBe(-Rx, "x");
-            expect(sum.tx).toBe(-Rtx, "tx");
-            expect(sum.y).toBe(-Ry, "y");
-            expect(sum.ty).toBe(-Rty, "ty");
-            expect(sum.xy).toBe(-Rxy, "xy");
-            expect(sum.b).toBe(-Rb, "b");
-            // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
-            // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
-        });
-        it("rhs zero", function () {
-            const La = Math.random();
-            const Lt = Math.random();
-            const Lx = Math.random();
-            const Ltx = Math.random();
-            const Ly = Math.random();
-            const Lty = Math.random();
-            const Lxy = Math.random();
-            const Lb = Math.random();
-            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
-            const rhs = new Spacetime2();
-            const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(La, "a");
-            expect(sum.t).toBe(Lt, "t");
-            expect(sum.x).toBe(Lx, "x");
-            expect(sum.tx).toBe(Ltx, "tx");
-            expect(sum.y).toBe(Ly, "y");
-            expect(sum.ty).toBe(Lty, "ty");
-            expect(sum.xy).toBe(Lxy, "xy");
-            expect(sum.b).toBe(Lb, "b");
-            // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
-            // rhs should not be modified.
-            expect(rhs.a).toBe(0, "a");
-            expect(rhs.t).toBe(0, "t");
-            expect(rhs.x).toBe(0, "x");
-            expect(rhs.tx).toBe(0, "tx");
-            expect(rhs.y).toBe(0, "y");
-            expect(rhs.ty).toBe(0, "ty");
-            expect(rhs.xy).toBe(0, "xy");
-            expect(rhs.b).toBe(0, "b");
-        });
-        it("lhs locked", function () {
-            const La = Math.random();
-            const Lt = Math.random();
-            const Lx = Math.random();
-            const Ltx = Math.random();
-            const Ly = Math.random();
-            const Lty = Math.random();
-            const Lxy = Math.random();
-            const Lb = Math.random();
-            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb).permlock();
-            const Ra = Math.random();
-            const Rt = Math.random();
-            const Rx = Math.random();
-            const Rtx = Math.random();
-            const Ry = Math.random();
-            const Rty = Math.random();
-            const Rxy = Math.random();
-            const Rb = Math.random();
-            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
-            const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(La - Ra, "a");
-            expect(sum.t).toBe(Lt - Rt, "t");
-            expect(sum.x).toBe(Lx - Rx, "x");
-            expect(sum.tx).toBe(Ltx - Rtx, "tx");
-            expect(sum.y).toBe(Ly - Ry, "y");
-            expect(sum.ty).toBe(Lty - Rty, "ty");
-            expect(sum.xy).toBe(Lxy - Rxy, "xy");
-            expect(sum.b).toBe(Lb - Rb, "b");
-            expect(sum === lhs).toBeFalse();
-            // lhs should not be modified.
-            expect(lhs.a).toBe(La, "a");
-            expect(lhs.t).toBe(Lt, "t");
-            expect(lhs.x).toBe(Lx, "x");
-            expect(lhs.tx).toBe(Ltx, "tx");
-            expect(lhs.y).toBe(Ly, "y");
-            expect(lhs.ty).toBe(Lty, "ty");
-            expect(lhs.xy).toBe(Lxy, "xy");
-            expect(lhs.b).toBe(Lb, "b");
-            // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
-        });
-    });
-    describe("subScalar", function () {
-        it("", function () {
-            checkEQ(zero.subScalar(one.a, one.uom), zero.sub(one));
-            for (const element of elements) {
-                checkEQ(element.subScalar(one.a, one.uom), element.sub(one));
-                checkEQ(element.subScalar(zero.a, zero.uom), element.sub(zero));
-                checkEQ(element.subScalar(one.a, one.uom, 0.5), element.sub(one.mulByNumber(0.5)));
-            }
         });
     });
     describe("constants", function () {
@@ -1048,19 +891,19 @@ describe("Spacetime2", function () {
     describe("mulByScalar", function () {
         it("", function () {
             checkEQ(zero.mulByScalar(two.a, two.uom), zero.mul(one));
-            for (const element of elements) {
-                checkEQ(element.mulByScalar(two.a, two.uom), element.mul(two));
-                checkEQ(element.mulByScalar(zero.a, zero.uom), element.mul(zero));
-                checkEQ(element.mulByScalar(meter.a, meter.uom), element.mul(meter));
+            for (const blade of blades) {
+                checkEQ(blade.mulByScalar(two.a, two.uom), blade.mul(two));
+                checkEQ(blade.mulByScalar(zero.a, zero.uom), blade.mul(zero));
+                checkEQ(blade.mulByScalar(meter.a, meter.uom), blade.mul(meter));
             }
         });
     });
     describe("mulByVector", function () {
         it("", function () {
-            for (const element of elements) {
-                checkEQ(element.mulByVector(γ0), element.mul(γ0));
-                checkEQ(element.mulByVector(γ1), element.mul(γ1));
-                checkEQ(element.mulByVector(γ2), element.mul(γ2));
+            for (const blade of blades) {
+                checkEQ(blade.mulByVector(γ0), blade.mul(γ0));
+                checkEQ(blade.mulByVector(γ1), blade.mul(γ1));
+                checkEQ(blade.mulByVector(γ2), blade.mul(γ2));
             }
         });
     });
@@ -1272,6 +1115,37 @@ describe("Spacetime2", function () {
             it("I", function () {
                 checkEQ(I.ext(I), zero);
             });
+        });
+    });
+    describe("inv", function () {
+        it("one", function () {
+            checkEQ(one.inv(), one);
+        });
+        it("γ0", function () {
+            checkEQ(γ0.inv(), γ0);
+        });
+        it("γ1", function () {
+            checkEQ(γ1.inv(), γ1.neg());
+        });
+        it("γ2", function () {
+            checkEQ(γ2.inv(), γ2.neg());
+        });
+        it("γ0γ1", function () {
+            checkEQ(γ0γ1.inv(), γ0γ1);
+        });
+        it("γ0γ2", function () {
+            checkEQ(γ0γ2.inv(), γ0γ2);
+        });
+        it("γ1γ2", function () {
+            checkEQ(γ1γ2.inv(), γ1γ2.neg());
+        });
+        it("I", function () {
+            checkEQ(I.inv(), I.neg());
+        });
+        it("", function () {
+            for (const blade of blades) {
+                checkEQ(blade.mul(blade.inv()), one);
+            }
         });
     });
     describe("lco", function () {
@@ -1486,20 +1360,20 @@ describe("Spacetime2", function () {
     });
     describe("quaditude", function () {
         it("should be an alias for squaredNorm", function () {
-            for (const element of elements) {
-                checkEQ(element.mul(two).quaditude(), element.mul(two).squaredNorm());
+            for (const blade of blades) {
+                checkEQ(blade.mul(two).quaditude(), blade.mul(two).squaredNorm());
             }
         });
     });
     describe("quaditudeNoUnit", function () {
         it("should be an alias for squaredNorm", function () {
-            for (const element of elements) {
-                expect(element.mul(two).quaditudeNoUnits()).toBe(element.mul(two).squaredNorm().a);
+            for (const blade of blades) {
+                expect(blade.mul(two).quaditudeNoUnits()).toBe(blade.mul(two).squaredNorm().a);
             }
         });
         it("should be an alias for squaredNorm", function () {
-            for (const element of elements) {
-                expect(element.mul(two).quaditudeNoUnits()).toBe(element.mul(two).squaredNorm().a);
+            for (const blade of blades) {
+                expect(blade.mul(two).quaditudeNoUnits()).toBe(blade.mul(two).squaredNorm().a);
             }
         });
     });
@@ -1781,8 +1655,8 @@ describe("Spacetime2", function () {
             checkEQ(I.reflect(γ2), I);
         });
         it("scaling", function () {
-            for (const element of elements) {
-                checkEQ(element.mul(two).reflect(γ0), element.reflect(γ0).mul(two));
+            for (const blade of blades) {
+                checkEQ(blade.mul(two).reflect(γ0), blade.reflect(γ0).mul(two));
             }
         });
     });
@@ -2141,8 +2015,173 @@ describe("Spacetime2", function () {
             checkEQ(I.squaredNorm(), one);
         });
         it("scaling", function () {
-            for (const element of elements) {
-                checkEQ(element.mul(two).squaredNorm(), element.mul(element.rev()).mul(two).mul(two));
+            for (const blade of blades) {
+                checkEQ(blade.mul(two).squaredNorm(), blade.mul(blade.rev()).mul(two).mul(two));
+            }
+        });
+    });
+    describe("sub", function () {
+        it("lhs non-zero", function () {
+            const La = Math.random();
+            const Lt = Math.random();
+            const Lx = Math.random();
+            const Ltx = Math.random();
+            const Ly = Math.random();
+            const Lty = Math.random();
+            const Lxy = Math.random();
+            const Lb = Math.random();
+            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
+            const Ra = Math.random();
+            const Rt = Math.random();
+            const Rx = Math.random();
+            const Rtx = Math.random();
+            const Ry = Math.random();
+            const Rty = Math.random();
+            const Rxy = Math.random();
+            const Rb = Math.random();
+            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
+            const sum = lhs.sub(rhs);
+            // sum should be correct.
+            expect(sum.a).toBe(La - Ra, "a");
+            expect(sum.t).toBe(Lt - Rt, "t");
+            expect(sum.x).toBe(Lx - Rx, "x");
+            expect(sum.tx).toBe(Ltx - Rtx, "tx");
+            expect(sum.y).toBe(Ly - Ry, "y");
+            expect(sum.ty).toBe(Lty - Rty, "ty");
+            expect(sum.xy).toBe(Lxy - Rxy, "xy");
+            expect(sum.b).toBe(Lb - Rb, "b");
+            // sum should be same as lhs.
+            expect(sum === lhs).toBeTrue();
+            // rhs should not be modified.
+            expect(rhs.a).toBe(Ra, "a");
+            expect(rhs.t).toBe(Rt, "t");
+            expect(rhs.x).toBe(Rx, "x");
+            expect(rhs.tx).toBe(Rtx, "tx");
+            expect(rhs.y).toBe(Ry, "y");
+            expect(rhs.ty).toBe(Rty, "ty");
+            expect(rhs.xy).toBe(Rxy, "xy");
+            expect(rhs.b).toBe(Rb, "b");
+        });
+        it("lhs zero", function () {
+            const lhs = new Spacetime2();
+            const Ra = Math.random();
+            const Rt = Math.random();
+            const Rx = Math.random();
+            const Rtx = Math.random();
+            const Ry = Math.random();
+            const Rty = Math.random();
+            const Rxy = Math.random();
+            const Rb = Math.random();
+            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
+            const sum = lhs.sub(rhs);
+            expect(sum.a).toBe(-Ra, "a");
+            expect(sum.t).toBe(-Rt, "t");
+            expect(sum.x).toBe(-Rx, "x");
+            expect(sum.tx).toBe(-Rtx, "tx");
+            expect(sum.y).toBe(-Ry, "y");
+            expect(sum.ty).toBe(-Rty, "ty");
+            expect(sum.xy).toBe(-Rxy, "xy");
+            expect(sum.b).toBe(-Rb, "b");
+            // sum should be same as lhs.
+            expect(sum === lhs).toBeTrue();
+            // rhs should not be modified.
+            expect(rhs.a).toBe(Ra, "a");
+            expect(rhs.t).toBe(Rt, "t");
+            expect(rhs.x).toBe(Rx, "x");
+            expect(rhs.tx).toBe(Rtx, "tx");
+            expect(rhs.y).toBe(Ry, "y");
+            expect(rhs.ty).toBe(Rty, "ty");
+            expect(rhs.xy).toBe(Rxy, "xy");
+            expect(rhs.b).toBe(Rb, "b");
+        });
+        it("rhs zero", function () {
+            const La = Math.random();
+            const Lt = Math.random();
+            const Lx = Math.random();
+            const Ltx = Math.random();
+            const Ly = Math.random();
+            const Lty = Math.random();
+            const Lxy = Math.random();
+            const Lb = Math.random();
+            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
+            const rhs = new Spacetime2();
+            const sum = lhs.sub(rhs);
+            expect(sum.a).toBe(La, "a");
+            expect(sum.t).toBe(Lt, "t");
+            expect(sum.x).toBe(Lx, "x");
+            expect(sum.tx).toBe(Ltx, "tx");
+            expect(sum.y).toBe(Ly, "y");
+            expect(sum.ty).toBe(Lty, "ty");
+            expect(sum.xy).toBe(Lxy, "xy");
+            expect(sum.b).toBe(Lb, "b");
+            // sum should be same as lhs.
+            expect(sum === lhs).toBeTrue();
+            // rhs should not be modified.
+            expect(rhs.a).toBe(0, "a");
+            expect(rhs.t).toBe(0, "t");
+            expect(rhs.x).toBe(0, "x");
+            expect(rhs.tx).toBe(0, "tx");
+            expect(rhs.y).toBe(0, "y");
+            expect(rhs.ty).toBe(0, "ty");
+            expect(rhs.xy).toBe(0, "xy");
+            expect(rhs.b).toBe(0, "b");
+        });
+        it("lhs locked", function () {
+            const La = Math.random();
+            const Lt = Math.random();
+            const Lx = Math.random();
+            const Ltx = Math.random();
+            const Ly = Math.random();
+            const Lty = Math.random();
+            const Lxy = Math.random();
+            const Lb = Math.random();
+            const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb).permlock();
+            const Ra = Math.random();
+            const Rt = Math.random();
+            const Rx = Math.random();
+            const Rtx = Math.random();
+            const Ry = Math.random();
+            const Rty = Math.random();
+            const Rxy = Math.random();
+            const Rb = Math.random();
+            const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
+            const sum = lhs.sub(rhs);
+            expect(sum.a).toBe(La - Ra, "a");
+            expect(sum.t).toBe(Lt - Rt, "t");
+            expect(sum.x).toBe(Lx - Rx, "x");
+            expect(sum.tx).toBe(Ltx - Rtx, "tx");
+            expect(sum.y).toBe(Ly - Ry, "y");
+            expect(sum.ty).toBe(Lty - Rty, "ty");
+            expect(sum.xy).toBe(Lxy - Rxy, "xy");
+            expect(sum.b).toBe(Lb - Rb, "b");
+            expect(sum === lhs).toBeFalse();
+            // lhs should not be modified.
+            expect(lhs.a).toBe(La, "a");
+            expect(lhs.t).toBe(Lt, "t");
+            expect(lhs.x).toBe(Lx, "x");
+            expect(lhs.tx).toBe(Ltx, "tx");
+            expect(lhs.y).toBe(Ly, "y");
+            expect(lhs.ty).toBe(Lty, "ty");
+            expect(lhs.xy).toBe(Lxy, "xy");
+            expect(lhs.b).toBe(Lb, "b");
+            // rhs should not be modified.
+            expect(rhs.a).toBe(Ra, "a");
+            expect(rhs.t).toBe(Rt, "t");
+            expect(rhs.x).toBe(Rx, "x");
+            expect(rhs.tx).toBe(Rtx, "tx");
+            expect(rhs.y).toBe(Ry, "y");
+            expect(rhs.ty).toBe(Rty, "ty");
+            expect(rhs.xy).toBe(Rxy, "xy");
+            expect(rhs.b).toBe(Rb, "b");
+        });
+    });
+    describe("subScalar", function () {
+        it("", function () {
+            checkEQ(zero.subScalar(one.a, one.uom), zero.sub(one));
+            for (const blade of blades) {
+                checkEQ(blade.subScalar(one.a, one.uom), blade.sub(one));
+                checkEQ(blade.subScalar(zero.a, zero.uom), blade.sub(zero));
+                checkEQ(blade.subScalar(one.a, one.uom, 0.5), blade.sub(one.mulByNumber(0.5)));
             }
         });
     });
@@ -2180,14 +2219,14 @@ describe("Spacetime2", function () {
     });
     describe("__add__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__add__(rhs), lhs.add(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__add__(2), lhs.add(two));
             }
         });
@@ -2195,21 +2234,21 @@ describe("Spacetime2", function () {
             checkEQ(meter.__add__(Unit.METER), meter.add(meter));
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__add__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__radd__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__radd__(lhs), lhs.add(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__radd__(2), two.add(rhs));
             }
         });
@@ -2222,14 +2261,14 @@ describe("Spacetime2", function () {
     });
     describe("__sub__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__sub__(rhs), lhs.sub(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__sub__(2), lhs.sub(two));
             }
         });
@@ -2237,21 +2276,21 @@ describe("Spacetime2", function () {
             checkEQ(meter.__sub__(Unit.METER), meter.sub(meter));
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__sub__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rsub__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rsub__(lhs), lhs.sub(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rsub__(2), two.sub(rhs));
             }
         });
@@ -2264,43 +2303,43 @@ describe("Spacetime2", function () {
     });
     describe("__mul__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__mul__(rhs), lhs.mul(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__mul__(2), lhs.mul(two));
             }
         });
         it("(Unit)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__mul__(Unit.METER), lhs.mul(meter));
             }
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__mul__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rmul__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rmul__(lhs), lhs.mul(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rmul__(2), two.mul(rhs));
             }
         });
         it("(Unit)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rmul__(Unit.METER), meter.mul(rhs));
             }
         });
@@ -2310,33 +2349,33 @@ describe("Spacetime2", function () {
     });
     describe("__vbar__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__vbar__(rhs), lhs.scp(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__vbar__(2), lhs.scp(two));
             }
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__vbar__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rvbar__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rvbar__(lhs), lhs.scp(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rvbar__(2), two.scp(rhs));
             }
         });
@@ -2346,33 +2385,33 @@ describe("Spacetime2", function () {
     });
     describe("__wedge__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__wedge__(rhs), lhs.ext(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__wedge__(2), lhs.ext(two));
             }
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__wedge__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rwedge__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rwedge__(lhs), lhs.ext(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rwedge__(2), two.ext(rhs));
             }
         });
@@ -2382,33 +2421,33 @@ describe("Spacetime2", function () {
     });
     describe("__lshift__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__lshift__(rhs), lhs.lco(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__lshift__(2), lhs.lco(two));
             }
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__lshift__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rlshift__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rlshift__(lhs), lhs.lco(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rlshift__(2), two.lco(rhs));
             }
         });
@@ -2418,33 +2457,33 @@ describe("Spacetime2", function () {
     });
     describe("__rshift__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__rshift__(rhs), lhs.rco(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 checkEQ(lhs.__rshift__(2), lhs.rco(two));
             }
         });
         it("otherwise", function () {
-            for (const lhs of elements) {
+            for (const lhs of blades) {
                 expect(lhs.__rshift__("" as unknown as Spacetime2)).toBeUndefined();
             }
         });
     });
     describe("__rrshift__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(rhs.__rrshift__(lhs), lhs.rco(rhs));
                 }
             }
         });
         it("(number)", function () {
-            for (const rhs of elements) {
+            for (const rhs of blades) {
                 checkEQ(rhs.__rrshift__(2), two.rco(rhs));
             }
         });
@@ -2454,22 +2493,29 @@ describe("Spacetime2", function () {
     });
     describe("__tilde__", function () {
         it("should be the operator overload of reversion", function () {
-            for (const element of elements) {
-                checkEQ(element.__tilde__(), element.rev());
+            for (const blade of blades) {
+                checkEQ(blade.__tilde__(), blade.rev());
             }
         });
     });
     describe("__pos__", function () {
         it("should be the operator overload of identity", function () {
-            for (const element of elements) {
-                checkEQ(element.__pos__(), element);
+            for (const blade of blades) {
+                checkEQ(blade.__pos__(), blade);
             }
         });
     });
     describe("__neg__", function () {
         it("should be the operator overload of negation", function () {
-            for (const element of elements) {
-                checkEQ(element.__neg__(), element.neg());
+            for (const blade of blades) {
+                checkEQ(blade.__neg__(), blade.neg());
+            }
+        });
+    });
+    describe("__bang__", function () {
+        it("should be the operator overload of inverse", function () {
+            for (const blade of blades) {
+                checkEQ(blade.__bang__(), blade.inv());
             }
         });
     });

@@ -2267,6 +2267,85 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     static wedge(a: Geometric3, b: Geometric3): Geometric3;
 }
 
+export declare class Spacetime2 {
+    static readonly zero: Spacetime2;
+    static readonly one: Spacetime2;
+    static readonly γ0: Spacetime2;
+    static readonly γ1: Spacetime2;
+    static readonly γ0γ1: Spacetime2;
+    static readonly γ2: Spacetime2;
+    static readonly γ0γ2: Spacetime2;
+    static readonly γ1γ2: Spacetime2;
+    static readonly I: Spacetime2;
+    static readonly kilogram: Spacetime2;
+    static readonly meter: Spacetime2;
+    static readonly second: Spacetime2;
+    static readonly ampere: Spacetime2;
+    static readonly kelvin: Spacetime2;
+    static readonly mole: Spacetime2;
+    static readonly candela: Spacetime2;
+    /**
+     * Creates a grade 0 (scalar) multivector with value `a * uom`.
+     * The scalar returned is in the unlocked (mutable) state.
+     * @param a The scaling factor for the unit of measure.
+     * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+     */
+    static scalar(a: number, uom?: Unit): Spacetime2;
+    static vector(t: number, x: number, y: number, uom?: Unit): Spacetime2;
+    constructor(a?: number, t?: number, x?: number, tx?: number, y?: number, ty?: number, xy?: number, b?: number, uom?: Unit);
+    a: number;
+    t: number;
+    x: number;
+    y: number;
+    tx: number;
+    ty: number;
+    xy: number;
+    b: number;
+    readonly grades: number;
+    add(rhs: Spacetime2, α?: number): Spacetime2;
+    addScalar(a: number, uom?: Unit, α?: number): Spacetime2;
+    angle(): Spacetime2;
+    clone(): Spacetime2;
+    conj(): Spacetime2;
+    div(rhs: Spacetime2): Spacetime2;
+    divByNumber(α: number): Spacetime2;
+    divByScalar(α: number, uom?: Unit): Spacetime2;
+    divByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    dual(): Spacetime2;
+    exp(): Spacetime2;
+    ext(rhs: Spacetime2): Spacetime2;
+    grade(n: number): Spacetime2;
+    inv(): Spacetime2;
+    isBivector(): boolean;
+    isOne(): boolean;
+    isScalar(): boolean;
+    isSpinor(): boolean;
+    isVector(): boolean;
+    isZero(): boolean;
+    lco(rhs: Spacetime2): Spacetime2;
+    log(): Spacetime2;
+    mul(rhs: Spacetime2): Spacetime2;
+    mulByNumber(a: number): Spacetime2;
+    mulByScalar(a: number, uom: Unit): Spacetime2;
+    mulByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    neg(): Spacetime2;
+    quaditude(): Spacetime2;
+    quaditudeNoUnits(): number;
+    rco(rhs: Spacetime2): Spacetime2;
+    reflect(n: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    rev(): Spacetime2;
+    rotate(rotor: { a: number; tx: number; ty: number; xy: number; uom?: Unit; }): Spacetime2;
+    scale(α: number): Spacetime2;
+    scp(rhs: Spacetime2): Spacetime2;
+    squaredNorm(): Spacetime2;
+    sub(rhs: Spacetime2, α?: number): Spacetime2;
+    subScalar(a: number, uom?: Unit, α?: number): Spacetime2;
+    toExponential(fractionDigits?: number): string;
+    toFixed(fractionDigits?: number): string;
+    toPrecision(precision?: number): string;
+    toString(radix?: number): string;
+}
+
 /**
  *
  */
