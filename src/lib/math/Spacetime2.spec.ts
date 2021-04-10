@@ -12,6 +12,10 @@ const one = Spacetime2.one;
 /**
  * @hidden
  */
+const two = one.add(one);
+/**
+ * @hidden
+ */
 const γ0 = Spacetime2.γ0;
 /**
  * @hidden
@@ -37,6 +41,14 @@ const γ1γ2 = Spacetime2.γ1γ2;
  * @hidden
  */
 const I = Spacetime2.I;
+/**
+ * @hidden
+ */
+const meter = Spacetime2.meter;
+/**
+ * @hidden
+ */
+const elements = [one, γ0, γ1, γ0γ1, γ2, γ0γ2, γ1γ2, I];
 /**
  * @hidden
  */
@@ -520,6 +532,39 @@ describe("Spacetime2", function () {
             expect(rhs.b).toBe(Rb, "b");
         });
     });
+    describe("addScalar", function () {
+        it("", function () {
+            checkEQ(zero.addScalar(one.a, one.uom), zero.add(one));
+            for (const element of elements) {
+                checkEQ(element.addScalar(one.a, one.uom), element.add(one));
+                checkEQ(element.addScalar(zero.a, zero.uom), element.add(zero));
+                checkEQ(element.addScalar(one.a, one.uom, 0.5), element.add(one.mulByNumber(0.5)));
+            }
+        });
+    });
+    describe("divByNumber", function () {
+        it("", function () {
+            for (const element of elements) {
+                checkEQ(element.mulByNumber(2).divByNumber(2), element);
+            }
+        });
+    });
+    describe("divByScalar", function () {
+        it("", function () {
+            for (const element of elements) {
+                checkEQ(element.mul(meter).divByScalar(meter.a, meter.uom), element);
+            }
+        });
+    });
+    describe("divByVector", function () {
+        it("", function () {
+            for (const element of elements) {
+                checkEQ(element.mul(γ0).divByVector(γ0), element);
+                checkEQ(element.mul(γ1).divByVector(γ1), element);
+                checkEQ(element.mul(γ2).divByVector(γ2), element);
+            }
+        });
+    });
     describe("sub", function () {
         it("lhs non-zero", function () {
             const La = Math.random();
@@ -673,6 +718,16 @@ describe("Spacetime2", function () {
             expect(rhs.ty).toBe(Rty, "ty");
             expect(rhs.xy).toBe(Rxy, "xy");
             expect(rhs.b).toBe(Rb, "b");
+        });
+    });
+    describe("subScalar", function () {
+        it("", function () {
+            checkEQ(zero.subScalar(one.a, one.uom), zero.sub(one));
+            for (const element of elements) {
+                checkEQ(element.subScalar(one.a, one.uom), element.sub(one));
+                checkEQ(element.subScalar(zero.a, zero.uom), element.sub(zero));
+                checkEQ(element.subScalar(one.a, one.uom, 0.5), element.sub(one.mulByNumber(0.5)));
+            }
         });
     });
     describe("constants", function () {
@@ -975,6 +1030,16 @@ describe("Spacetime2", function () {
             it("I", function () {
                 checkEQ(I.mul(I), one.neg());
             });
+        });
+    });
+    describe("mulByScalar", function () {
+        it("", function () {
+            checkEQ(zero.mulByScalar(two.a, two.uom), zero.mul(one));
+            for (const element of elements) {
+                checkEQ(element.mulByScalar(two.a, two.uom), element.mul(two));
+                checkEQ(element.mulByScalar(zero.a, zero.uom), element.mul(zero));
+                checkEQ(element.mulByScalar(meter.a, meter.uom), element.mul(meter));
+            }
         });
     });
     describe("ext", function () {
@@ -1607,6 +1672,19 @@ describe("Spacetime2", function () {
             });
         });
     });
+    describe("rev", function () {
+        it("", function () {
+            checkEQ(one.rev(), one);
+            checkEQ(γ0.rev(), γ0);
+            checkEQ(γ1.rev(), γ1);
+            checkEQ(γ2.rev(), γ2);
+            checkEQ(γ0γ1.rev(), γ0γ1.neg());
+            checkEQ(γ0γ2.rev(), γ0γ2.neg());
+            checkEQ(γ1γ2.rev(), γ1γ2.neg());
+            checkEQ(I.rev(), I.neg());
+            checkEQ(meter.rev(), meter);
+        });
+    });
     describe("scp", function () {
         describe("one", function () {
             it("one", function () {
@@ -1925,6 +2003,333 @@ describe("Spacetime2", function () {
             expect(m.ty).toBe(0);
             expect(m.xy).toBe(0);
             expect(m.b).toBe(α);
+        });
+    });
+    describe("statics", function () {
+        describe("scalar", function () {
+            it("should initialize accessors.", function () {
+                const a = Math.random();
+                const s = Spacetime2.scalar(a, Unit.SECOND);
+                expect(s.a).toBe(a);
+                expect(s.t).toBe(0);
+                expect(s.x).toBe(0);
+                expect(s.y).toBe(0);
+                expect(s.tx).toBe(0);
+                expect(s.ty).toBe(0);
+                expect(s.xy).toBe(0);
+                expect(s.b).toBe(0);
+                expect(s.uom).toBe(Unit.SECOND);
+            });
+            it("should initialize accessors.", function () {
+                const t = Math.random();
+                const x = Math.random();
+                const y = Math.random();
+                const s = Spacetime2.vector(t, x, y, Unit.SECOND);
+                expect(s.a).toBe(0);
+                expect(s.t).toBe(t);
+                expect(s.x).toBe(x);
+                expect(s.y).toBe(y);
+                expect(s.tx).toBe(0);
+                expect(s.ty).toBe(0);
+                expect(s.xy).toBe(0);
+                expect(s.b).toBe(0);
+                expect(s.uom).toBe(Unit.SECOND);
+            });
+        });
+    });
+    describe("__add__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__add__(rhs), lhs.add(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__add__(2), lhs.add(two));
+            }
+        });
+        it("(Unit)", function () {
+            checkEQ(meter.__add__(Unit.METER), meter.add(meter));
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__add__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__radd__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__radd__(lhs), lhs.add(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__radd__(2), two.add(rhs));
+            }
+        });
+        it("(Unit)", function () {
+            checkEQ(meter.__radd__(Unit.METER), meter.add(meter));
+        });
+        it("otherwise", function () {
+            expect(one.__radd__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__sub__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__sub__(rhs), lhs.sub(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__sub__(2), lhs.sub(two));
+            }
+        });
+        it("(Unit)", function () {
+            checkEQ(meter.__sub__(Unit.METER), meter.sub(meter));
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__sub__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rsub__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rsub__(lhs), lhs.sub(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rsub__(2), two.sub(rhs));
+            }
+        });
+        it("(Unit)", function () {
+            checkEQ(meter.__rsub__(Unit.METER), meter.sub(meter));
+        });
+        it("otherwise", function () {
+            expect(one.__rsub__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__mul__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__mul__(rhs), lhs.mul(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__mul__(2), lhs.mul(two));
+            }
+        });
+        it("(Unit)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__mul__(Unit.METER), lhs.mul(meter));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__mul__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rmul__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rmul__(lhs), lhs.mul(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rmul__(2), two.mul(rhs));
+            }
+        });
+        it("(Unit)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rmul__(Unit.METER), meter.mul(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rmul__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__vbar__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__vbar__(rhs), lhs.scp(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__vbar__(2), lhs.scp(two));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__vbar__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rvbar__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rvbar__(lhs), lhs.scp(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rvbar__(2), two.scp(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rvbar__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__wedge__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__wedge__(rhs), lhs.ext(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__wedge__(2), lhs.ext(two));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__wedge__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rwedge__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rwedge__(lhs), lhs.ext(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rwedge__(2), two.ext(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rwedge__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__lshift__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__lshift__(rhs), lhs.lco(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__lshift__(2), lhs.lco(two));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__lshift__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rlshift__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rlshift__(lhs), lhs.lco(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rlshift__(2), two.lco(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rlshift__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__rshift__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(lhs.__rshift__(rhs), lhs.rco(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of elements) {
+                checkEQ(lhs.__rshift__(2), lhs.rco(two));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of elements) {
+                expect(lhs.__rshift__("" as unknown as Spacetime2)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rrshift__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of elements) {
+                for (const rhs of elements) {
+                    checkEQ(rhs.__rrshift__(lhs), lhs.rco(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of elements) {
+                checkEQ(rhs.__rrshift__(2), two.rco(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rrshift__("" as unknown as Spacetime2)).toBeUndefined();
+        });
+    });
+    describe("__tilde__", function () {
+        it("should be the operator overload of reversion", function () {
+            for (const element of elements) {
+                checkEQ(element.__tilde__(), element.rev());
+            }
+        });
+    });
+    describe("__pos__", function () {
+        it("should be the operator overload of identity", function () {
+            for (const element of elements) {
+                checkEQ(element.__pos__(), element);
+            }
+        });
+    });
+    describe("__neg__", function () {
+        it("should be the operator overload of negation", function () {
+            for (const element of elements) {
+                checkEQ(element.__neg__(), element.neg());
+            }
         });
     });
 });

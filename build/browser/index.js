@@ -6841,6 +6841,20 @@
                 return this;
             }
         };
+        Geometric1.prototype.mulByVector = function (v) {
+            if (this.isLocked()) {
+                return lock$3(this.clone().mulByVector(v));
+            }
+            else {
+                var a0 = this.a;
+                var a1 = this.x;
+                var b1 = v.x;
+                this.a = a1 * b1;
+                this.x = a0 * b1;
+                this.uom = Unit.mul(this.uom, v.uom);
+                return this;
+            }
+        };
         Geometric1.prototype.magnitude = function () {
             if (this.isMutable()) {
                 this.a = this.magnitudeNoUnits();
@@ -20424,6 +20438,9 @@
         Spacetime2.scalar = function (a, uom) {
             return new Spacetime2(a, 0, 0, 0, 0, 0, 0, 0, uom);
         };
+        Spacetime2.vector = function (t, x, y, uom) {
+            return new Spacetime2(0, t, x, 0, y, 0, 0, 0, uom);
+        };
         Object.defineProperty(Spacetime2.prototype, "a", {
             get: function () {
                 return this.$M000;
@@ -20665,8 +20682,16 @@
                 return this;
             }
         };
-        Spacetime2.prototype.divByVector = function (rhs) {
-            throw new Error("Method not implemented.");
+        Spacetime2.prototype.divByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().divByVector(v).permlock();
+            }
+            else {
+                var t = v.t;
+                var x = v.x;
+                var y = v.y;
+                return this.mulByVector(v).divByScalar(t * t - x * x - y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
+            }
         };
         Spacetime2.prototype.dual = function () {
             throw new Error("Method not implemented.");
@@ -20895,10 +20920,65 @@
             }
         };
         Spacetime2.prototype.mulByNumber = function (a) {
-            throw new Error("Method not implemented.");
+            if (this.isLocked()) {
+                return this.clone().mulByNumber(a).permlock();
+            }
+            else {
+                this.$M000 *= a;
+                this.$M001 *= a;
+                this.$M010 *= a;
+                this.$M011 *= a;
+                this.$M100 *= a;
+                this.$M101 *= a;
+                this.$M110 *= a;
+                this.$M111 *= a;
+                return this;
+            }
         };
-        Spacetime2.prototype.mulByScalar = function (α, uom) {
-            throw new Error("Method not implemented.");
+        Spacetime2.prototype.mulByScalar = function (a, uom) {
+            if (this.isLocked()) {
+                return this.clone().mulByScalar(a, uom).permlock();
+            }
+            else {
+                this.$M000 *= a;
+                this.$M001 *= a;
+                this.$M010 *= a;
+                this.$M011 *= a;
+                this.$M100 *= a;
+                this.$M101 *= a;
+                this.$M110 *= a;
+                this.$M111 *= a;
+                this.uom = Unit.mul(this.uom, uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.mulByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().mulByVector(v).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R001 = v.t;
+                var R010 = v.x;
+                var R100 = v.y;
+                this.$M000 = L001 * R001 - L010 * R010 - L100 * R100;
+                this.$M001 = L000 * R001 - L011 * R010 - L101 * R100;
+                this.$M010 = L000 * R010 - L011 * R001 - L110 * R100;
+                this.$M011 = L001 * R010 - L010 * R001 - L111 * R100;
+                this.$M100 = L000 * R100 - L101 * R001 + L110 * R010;
+                this.$M101 = L001 * R100 - L100 * R001 + L111 * R010;
+                this.$M110 = L010 * R100 - L100 * R010 + L111 * R001;
+                this.$M111 = L011 * R100 - L101 * R010 + L110 * R001;
+                this.uom = Unit.mul(this.uom, v.uom);
+                return this;
+            }
         };
         Spacetime2.prototype.quaditude = function () {
             throw new Error("Method not implemented.");
@@ -20940,7 +21020,20 @@
             }
         };
         Spacetime2.prototype.rev = function () {
-            throw new Error("Method not implemented.");
+            if (this.isLocked()) {
+                return this.clone().rev().permlock();
+            }
+            else {
+                this.$M000 = this.$M000;
+                this.$M001 = this.$M001;
+                this.$M010 = this.$M010;
+                this.$M100 = this.$M100;
+                this.$M011 = -this.$M011;
+                this.$M101 = -this.$M101;
+                this.$M110 = -this.$M110;
+                this.$M111 = -this.$M111;
+                return this;
+            }
         };
         Spacetime2.prototype.subScalar = function (a, uom, α) {
             if (α === void 0) { α = 1; }
@@ -21364,19 +21457,29 @@
             else if (typeof lhs === 'number') {
                 return this.clone().mulByNumber(lhs).permlock();
             }
+            else if (lhs instanceof Unit) {
+                return this.clone().mulByScalar(1, lhs).permlock();
+            }
             else {
                 return void 0;
             }
         };
-        Spacetime2.zero = new Spacetime2().permlock();
-        Spacetime2.one = new Spacetime2(1).permlock();
-        Spacetime2.γ0 = new Spacetime2(0, 1).permlock();
-        Spacetime2.γ1 = new Spacetime2(0, 0, 1).permlock();
+        Spacetime2.zero = Spacetime2.scalar(0).permlock();
+        Spacetime2.one = Spacetime2.scalar(1).permlock();
+        Spacetime2.γ0 = Spacetime2.vector(1, 0, 0).permlock();
+        Spacetime2.γ1 = Spacetime2.vector(0, 1, 0).permlock();
         Spacetime2.γ0γ1 = new Spacetime2(0, 0, 0, 1).permlock();
-        Spacetime2.γ2 = new Spacetime2(0, 0, 0, 0, 1).permlock();
+        Spacetime2.γ2 = Spacetime2.vector(0, 0, 1).permlock();
         Spacetime2.γ0γ2 = new Spacetime2(0, 0, 0, 0, 0, 1).permlock();
         Spacetime2.γ1γ2 = new Spacetime2(0, 0, 0, 0, 0, 0, 1).permlock();
         Spacetime2.I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
+        Spacetime2.kilogram = Spacetime2.scalar(1, Unit.KILOGRAM).permlock();
+        Spacetime2.meter = Spacetime2.scalar(1, Unit.METER).permlock();
+        Spacetime2.second = Spacetime2.scalar(1, Unit.SECOND).permlock();
+        Spacetime2.ampere = Spacetime2.scalar(1, Unit.AMPERE).permlock();
+        Spacetime2.kelvin = Spacetime2.scalar(1, Unit.KELVIN).permlock();
+        Spacetime2.mole = Spacetime2.scalar(1, Unit.MOLE).permlock();
+        Spacetime2.candela = Spacetime2.scalar(1, Unit.CANDELA).permlock();
         return Spacetime2;
     }(AbstractGeometric));
 

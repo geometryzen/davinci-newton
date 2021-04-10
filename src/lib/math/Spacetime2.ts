@@ -5,6 +5,7 @@ import { GeometricM21 } from "./GeometricM21";
 import { GeometricNumber } from "./GeometricNumber";
 import { GeometricOperators } from "./GeometricOperators";
 import { GradeMasked } from "./GradeMasked";
+import { QQ } from "./QQ";
 import { SpinorM21 as Spinor } from './SpinorM21';
 import { stringFromCoordinates } from "./stringFromCoordinates";
 import { Unit } from "./Unit";
@@ -69,15 +70,22 @@ const BASIS_LABELS: ['1', 'γ0', 'γ1', 'γ0γ1', 'γ2', 'γ0γ2', 'γ1γ2', 'I'
  * diag(+--)
  */
 export class Spacetime2 extends AbstractGeometric implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector>, GeometricOperators<Spacetime2> {
-    static readonly zero = new Spacetime2().permlock();
-    static readonly one = new Spacetime2(1).permlock();
-    static readonly γ0 = new Spacetime2(0, 1).permlock();
-    static readonly γ1 = new Spacetime2(0, 0, 1).permlock();
+    static readonly zero = Spacetime2.scalar(0).permlock();
+    static readonly one = Spacetime2.scalar(1).permlock();
+    static readonly γ0 = Spacetime2.vector(1, 0, 0).permlock();
+    static readonly γ1 = Spacetime2.vector(0, 1, 0).permlock();
     static readonly γ0γ1 = new Spacetime2(0, 0, 0, 1).permlock();
-    static readonly γ2 = new Spacetime2(0, 0, 0, 0, 1).permlock();
+    static readonly γ2 = Spacetime2.vector(0, 0, 1).permlock();
     static readonly γ0γ2 = new Spacetime2(0, 0, 0, 0, 0, 1).permlock();
     static readonly γ1γ2 = new Spacetime2(0, 0, 0, 0, 0, 0, 1).permlock();
     static readonly I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
+    static readonly kilogram = Spacetime2.scalar(1, Unit.KILOGRAM).permlock();
+    static readonly meter = Spacetime2.scalar(1, Unit.METER).permlock();
+    static readonly second = Spacetime2.scalar(1, Unit.SECOND).permlock();
+    static readonly ampere = Spacetime2.scalar(1, Unit.AMPERE).permlock();
+    static readonly kelvin = Spacetime2.scalar(1, Unit.KELVIN).permlock();
+    static readonly mole = Spacetime2.scalar(1, Unit.MOLE).permlock();
+    static readonly candela = Spacetime2.scalar(1, Unit.CANDELA).permlock();
     /**
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.
@@ -86,6 +94,9 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
      */
     static scalar(a: number, uom?: Unit): Spacetime2 {
         return new Spacetime2(a, 0, 0, 0, 0, 0, 0, 0, uom);
+    }
+    static vector(t: number, x: number, y: number, uom?: Unit): Spacetime2 {
+        return new Spacetime2(0, t, x, 0, y, 0, 0, 0, uom);
     }
     /**
      * a
@@ -324,8 +335,16 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    divByVector(rhs: Vector): Spacetime2 {
-        throw new Error("Method not implemented.");
+    divByVector(v: Vector): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().divByVector(v).permlock();
+        }
+        else {
+            const t = v.t;
+            const x = v.x;
+            const y = v.y;
+            return this.mulByVector(v).divByScalar(t * t - x * x - y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
+        }
     }
     dual(): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -563,11 +582,69 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     mulByNumber(a: number): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().mulByNumber(a).permlock();
+        }
+        else {
+            this.$M000 *= a;
+            this.$M001 *= a;
+            this.$M010 *= a;
+            this.$M011 *= a;
+            this.$M100 *= a;
+            this.$M101 *= a;
+            this.$M110 *= a;
+            this.$M111 *= a;
+            return this;
+        }
     }
-    mulByScalar(α: number, uom: Unit): Spacetime2 {
-        throw new Error("Method not implemented.");
+    mulByScalar(a: number, uom: Unit): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().mulByScalar(a, uom).permlock();
+        }
+        else {
+            this.$M000 *= a;
+            this.$M001 *= a;
+            this.$M010 *= a;
+            this.$M011 *= a;
+            this.$M100 *= a;
+            this.$M101 *= a;
+            this.$M110 *= a;
+            this.$M111 *= a;
+            this.uom = Unit.mul(this.uom, uom);
+            return this;
+        }
     }
+    mulByVector(v: Vector): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().mulByVector(v).permlock();
+        }
+        else {
+            const L000 = this.$M000;
+            const L001 = this.$M001;
+            const L010 = this.$M010;
+            const L011 = this.$M011;
+            const L100 = this.$M100;
+            const L101 = this.$M101;
+            const L110 = this.$M110;
+            const L111 = this.$M111;
+
+            const R001 = v.t;
+            const R010 = v.x;
+            const R100 = v.y;
+
+            this.$M000 = L001 * R001 - L010 * R010 - L100 * R100;
+            this.$M001 = L000 * R001 - L011 * R010 - L101 * R100;
+            this.$M010 = L000 * R010 - L011 * R001 - L110 * R100;
+            this.$M011 = L001 * R010 - L010 * R001 - L111 * R100;
+            this.$M100 = L000 * R100 - L101 * R001 + L110 * R010;
+            this.$M101 = L001 * R100 - L100 * R001 + L111 * R010;
+            this.$M110 = L010 * R100 - L100 * R010 + L111 * R001;
+            this.$M111 = L011 * R100 - L101 * R010 + L110 * R001;
+            this.uom = Unit.mul(this.uom, v.uom);
+            return this;
+        }
+    }
+
     quaditude(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
@@ -609,7 +686,20 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     rev(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().rev().permlock();
+        }
+        else {
+            this.$M000 = this.$M000;
+            this.$M001 = this.$M001;
+            this.$M010 = this.$M010;
+            this.$M100 = this.$M100;
+            this.$M011 = -this.$M011;
+            this.$M101 = -this.$M101;
+            this.$M110 = -this.$M110;
+            this.$M111 = -this.$M111;
+            return this;
+        }
     }
     subScalar(a: number, uom?: Unit, α = 1): Spacetime2 {
         if (this.isLocked()) {
@@ -1027,6 +1117,9 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
         else if (typeof lhs === 'number') {
             return this.clone().mulByNumber(lhs).permlock();
+        }
+        else if (lhs instanceof Unit) {
+            return this.clone().mulByScalar(1, lhs).permlock();
         }
         else {
             return void 0;

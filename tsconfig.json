@@ -3,6 +3,7 @@
         "target": "es5",
         "rootDir": "src",
         "moduleResolution": "node",
+        "allowUnreachableCode": false,
         "declaration": false,
         "importHelpers": true,
         "inlineSourceMap": false,
@@ -26,7 +27,8 @@
         ]
     },
     "include": [
-        "src/**/*.ts"
-, "src/lib/solvers/ModifiedEuler.spec.ts"    ],
+        "src/**/*.ts",
+        "src/lib/solvers/ModifiedEuler.spec.ts"
+    ],
     "compileOnSave": false
 }

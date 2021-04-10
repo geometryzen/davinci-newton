@@ -446,6 +446,20 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+    mulByVector(v: Vector): Geometric1 {
+        if (this.isLocked()) {
+            return lock(this.clone().mulByVector(v));
+        }
+        else {
+            const a0 = this.a;
+            const a1 = this.x;
+            const b1 = v.x;
+            this.a = a1 * b1;
+            this.x = a0 * b1;
+            this.uom = Unit.mul(this.uom, v.uom);
+            return this;
+        }
+    }
     magnitude(): Geometric1 {
         if (this.isMutable()) {
             this.a = this.magnitudeNoUnits();

@@ -101,6 +101,11 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      */
     mul(rhs: I): M;
     /**
+     *
+     * @param rhs
+     */
+    mulByVector(rhs: V): M;
+    /**
      * norm, ||x|| = sqrt(scp(x, rev(x)))
      */
     magnitude(): M;
