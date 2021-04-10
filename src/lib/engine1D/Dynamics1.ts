@@ -143,7 +143,7 @@ export class Dynamics1 implements Dynamics<Geometric1> {
         checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_A], uomTime);
         body.R.uom = units[idx + OFFSET_ATTITUDE_A];
 
-        // Keep the magnitude of the attitude as close to 1 as possible.
+        // Keep the attitude as close to 1 as possible.
         const R = body.R;
         const magR = Math.sqrt(R.a * R.a);
         body.R.a = body.R.a / magR;

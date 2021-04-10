@@ -297,7 +297,20 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
     }
     conj(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().conj().permlock();
+        }
+        else {
+            this.$M000 = this.$M000;
+            this.$M001 = -this.$M001;
+            this.$M010 = -this.$M010;
+            this.$M100 = -this.$M100;
+            this.$M011 = -this.$M011;
+            this.$M101 = -this.$M101;
+            this.$M110 = -this.$M110;
+            this.$M111 = this.$M111;
+            return this;
+        }
     }
     div(rhs: Spacetime2): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -541,12 +554,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     log(): Spacetime2 {
         throw new Error("Method not implemented.");
     }
-    magnitude(): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
-    magnitudeNoUnits(): number {
-        throw new Error("Method not implemented.");
-    }
     mul(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().mul(rhs).permlock();
@@ -644,12 +651,34 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-
+    neg(): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().neg().permlock();
+        } else {
+            this.a = -this.a;
+            this.t = -this.t;
+            this.x = -this.x;
+            this.tx = -this.tx;
+            this.y = -this.y;
+            this.ty = -this.ty;
+            this.xy = -this.xy;
+            this.b = -this.b;
+            return this;
+        }
+    }
     quaditude(): Spacetime2 {
-        throw new Error("Method not implemented.");
+        return this.squaredNorm();
     }
     quaditudeNoUnits(): number {
-        throw new Error("Method not implemented.");
+        const a = this.$M000;
+        const t = this.$M001;
+        const x = this.$M010;
+        const y = this.$M100;
+        const tx = this.$M011;
+        const ty = this.$M101;
+        const xy = this.$M110;
+        const b = this.$M111;
+        return a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
     }
     rco(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
@@ -685,6 +714,27 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+    reflect(n: Vector): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().reflect(n).permlock();
+        } else {
+            const t = n.t;
+            const t2 = t * t;
+            const x = n.x;
+            const x2 = x * x;
+            const y = n.y;
+            const y2 = y * y;
+            this.$M000 = this.$M000 * (x2 + y2 - t2);
+            this.$M001 = -this.$M001 * (t2 + x2 + y2);
+            this.$M010 = this.$M010 * (t2 + x2 - y2);
+            this.$M100 = this.$M100 * (t2 - x2 + y2);
+            this.$M011 = -this.$M011 * (t2 + x2 - y2);
+            this.$M101 = -this.$M101 * (t2 - x2 + y2);
+            this.$M110 = +this.$M110 * (t2 - x2 - y2);
+            this.$M111 = this.$M111 * (x2 + y2 - t2);
+            return this;
+        }
+    }
     rev(): Spacetime2 {
         if (this.isLocked()) {
             return this.clone().rev().permlock();
@@ -701,23 +751,22 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    subScalar(a: number, uom?: Unit, α = 1): Spacetime2 {
+    rotate(rotor: Spinor): Spacetime2 {
+        throw new Error("Method not implemented.");
+    }
+    scale(α: number): Spacetime2 {
         if (this.isLocked()) {
-            return this.clone().subScalar(a, uom, α).permlock();
-        }
-        else {
-            if (this.isZero()) {
-                this.a = - a * α;
-                this.uom = uom;
-                return this;
-            } else if (a === 0 || α === 0) {
-                return this;
-            }
-            else {
-                this.a -= a * α;
-                this.uom = Unit.compatible(this.uom, uom);
-                return this;
-            }
+            return this.clone().scale(α).permlock();
+        } else {
+            this.$M000 = this.$M000 * α;
+            this.$M001 = this.$M001 * α;
+            this.$M010 = this.$M010 * α;
+            this.$M011 = this.$M011 * α;
+            this.$M100 = this.$M100 * α;
+            this.$M101 = this.$M101 * α;
+            this.$M110 = this.$M110 * α;
+            this.$M111 = this.$M111 * α;
+            return this;
         }
     }
     scp(rhs: Spacetime2): Spacetime2 {
@@ -754,44 +803,29 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    scale(α: number): Spacetime2 {
-        if (this.isLocked()) {
-            return this.clone().scale(α).permlock();
-        } else {
-            this.$M000 = this.$M000 * α;
-            this.$M001 = this.$M001 * α;
-            this.$M010 = this.$M010 * α;
-            this.$M011 = this.$M011 * α;
-            this.$M100 = this.$M100 * α;
-            this.$M101 = this.$M101 * α;
-            this.$M110 = this.$M110 * α;
-            this.$M111 = this.$M111 * α;
-            return this;
-        }
-    }
     squaredNorm(): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
-    neg(): Spacetime2 {
         if (this.isLocked()) {
-            return this.clone().neg().permlock();
+            return this.clone().squaredNorm().permlock();
         } else {
-            this.a = -this.a;
-            this.t = -this.t;
-            this.x = -this.x;
-            this.tx = -this.tx;
-            this.y = -this.y;
-            this.ty = -this.ty;
-            this.xy = -this.xy;
-            this.b = -this.b;
+            const a = this.$M000;
+            const t = this.$M001;
+            const x = this.$M010;
+            const y = this.$M100;
+            const tx = this.$M011;
+            const ty = this.$M101;
+            const xy = this.$M110;
+            const b = this.$M111;
+            this.$M000 = a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
+            this.$M001 = 0;
+            this.$M010 = 0;
+            this.$M011 = 0;
+            this.$M100 = 0;
+            this.$M101 = 0;
+            this.$M110 = 0;
+            this.$M111 = 0;
+            this.uom = Unit.mul(this.uom, this.uom);
             return this;
         }
-    }
-    reflect(n: Vector): Spacetime2 {
-        throw new Error("Method not implemented.");
-    }
-    rotate(rotor: Spinor): Spacetime2 {
-        throw new Error("Method not implemented.");
     }
     sub(rhs: Spacetime2, α = 1): Spacetime2 {
         if (this.isLocked()) {
@@ -822,6 +856,25 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
                 this.xy -= rhs.xy * α;
                 this.b -= rhs.b * α;
                 this.uom = Unit.compatible(this.uom, rhs.uom);
+                return this;
+            }
+        }
+    }
+    subScalar(a: number, uom?: Unit, α = 1): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().subScalar(a, uom, α).permlock();
+        }
+        else {
+            if (this.isZero()) {
+                this.a = - a * α;
+                this.uom = uom;
+                return this;
+            } else if (a === 0 || α === 0) {
+                return this;
+            }
+            else {
+                this.a -= a * α;
+                this.uom = Unit.compatible(this.uom, uom);
                 return this;
             }
         }

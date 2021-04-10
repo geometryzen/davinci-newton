@@ -84,7 +84,7 @@ export class Minkowski21 implements Metric<Spacetime2> {
         return mv.lock();
     }
     norm(mv: Spacetime2): Spacetime2 {
-        return mv.magnitude();
+        throw new Error("Method not implemented.");
     }
     mul(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
         return lhs.mul(rhs);

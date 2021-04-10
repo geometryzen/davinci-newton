@@ -8376,7 +8376,7 @@
             body.R.x = 0;
             checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_A$2], uomTime);
             body.R.uom = units[idx + OFFSET_ATTITUDE_A$2];
-            // Keep the magnitude of the attitude as close to 1 as possible.
+            // Keep the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a);
             body.R.a = body.R.a / magR;
@@ -11172,7 +11172,7 @@
             body.R.b = vars[idx + OFFSET_ATTITUDE_XY$1];
             checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY$1], uomTime);
             body.R.uom = units[idx + OFFSET_ATTITUDE_XY$1];
-            // Keep the magnitude of the attitude as close to 1 as possible.
+            // Keep the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a + R.b * R.b);
             body.R.a = body.R.a / magR;
@@ -15823,7 +15823,7 @@
             checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_YZ], uomTime);
             checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_ZX], uomTime);
             body.R.uom = units[idx + OFFSET_ATTITUDE_A];
-            // Keep the magnitude of the attitude as close to 1 as possible.
+            // Keep the attitude as close to 1 as possible.
             var R = body.R;
             var magR = Math.sqrt(R.a * R.a + R.xy * R.xy + R.yz * R.yz + R.zx * R.zx);
             body.R.a = body.R.a / magR;
@@ -20880,12 +20880,6 @@
         Spacetime2.prototype.log = function () {
             throw new Error("Method not implemented.");
         };
-        Spacetime2.prototype.magnitude = function () {
-            throw new Error("Method not implemented.");
-        };
-        Spacetime2.prototype.magnitudeNoUnits = function () {
-            throw new Error("Method not implemented.");
-        };
         Spacetime2.prototype.mul = function (rhs) {
             if (this.isLocked()) {
                 return this.clone().mul(rhs).permlock();
@@ -20981,7 +20975,7 @@
             }
         };
         Spacetime2.prototype.quaditude = function () {
-            throw new Error("Method not implemented.");
+            return this.squaredNorm();
         };
         Spacetime2.prototype.quaditudeNoUnits = function () {
             throw new Error("Method not implemented.");
@@ -21106,7 +21100,29 @@
             }
         };
         Spacetime2.prototype.squaredNorm = function () {
-            throw new Error("Method not implemented.");
+            if (this.isLocked()) {
+                return this.clone().squaredNorm().permlock();
+            }
+            else {
+                var a = this.$M000;
+                var t = this.$M001;
+                var x = this.$M010;
+                var y = this.$M100;
+                var tx = this.$M011;
+                var ty = this.$M101;
+                var xy = this.$M110;
+                var b = this.$M111;
+                this.$M000 = a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
+                this.$M001 = 0;
+                this.$M010 = 0;
+                this.$M011 = 0;
+                this.$M100 = 0;
+                this.$M101 = 0;
+                this.$M110 = 0;
+                this.$M111 = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
+            }
         };
         Spacetime2.prototype.neg = function () {
             if (this.isLocked()) {

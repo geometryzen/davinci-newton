@@ -106,14 +106,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      */
     mulByVector(rhs: V): M;
     /**
-     * norm, ||x|| = sqrt(scp(x, rev(x)))
-     */
-    magnitude(): M;
-    /**
-     * norm, ||x|| = sqrt(scp(x, rev(x)))
-     */
-    magnitudeNoUnits(): number;
-    /**
      * squared norm, scp(x, rev(x))
      */
     quaditude(): M;

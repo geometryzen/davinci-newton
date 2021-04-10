@@ -27,7 +27,7 @@ function slice<T>(xs: any, start: number, opt_end?: number) {
  * @returns 
  */
 function splice<T>(xs: T[], index: number, howMany: number, var_args: any) {
-    return Array.prototype.splice.apply(xs, slice(arguments, 1));
+    return Array.prototype.splice.apply(xs, slice(arguments, 1) as any);
 }
 
 /**

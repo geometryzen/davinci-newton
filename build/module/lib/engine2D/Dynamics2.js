@@ -206,7 +206,7 @@ var Dynamics2 = /** @class */ (function () {
         body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
         checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
         body.R.uom = units[idx + OFFSET_ATTITUDE_XY];
-        // Keep the magnitude of the attitude as close to 1 as possible.
+        // Keep the attitude as close to 1 as possible.
         var R = body.R;
         var magR = Math.sqrt(R.a * R.a + R.b * R.b);
         body.R.a = body.R.a / magR;

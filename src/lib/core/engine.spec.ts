@@ -585,12 +585,9 @@ describe("engine", function () {
             engine.addBody(bead);
             engine.addForceLaw(F);
             engine.addConstraint(S);
-            // engine.removeConstraint(S);
 
             for (let i = 0; i < 10; i++) {
                 engine.advance(0.001, s);
-                // console.lg(`X=>${bead.X}`);
-                // console.lg(`|X|=>${bead.X.magnitude(false)}`);
             }
             expect(true).toBe(true);
         });
