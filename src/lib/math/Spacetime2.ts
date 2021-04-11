@@ -67,15 +67,15 @@ const coordinates = function (m: GeometricM21): [a: number, t: number, x: number
 const BASIS_LABELS: ['1', 'γ0', 'γ1', 'γ0γ1', 'γ2', 'γ0γ2', 'γ1γ2', 'I'] = ["1", "γ0", "γ1", "γ0γ1", "γ2", "γ0γ2", "γ1γ2", "I"];
 
 /**
- * diag(+--)
+ *
  */
-export class Spacetime2 extends AbstractGeometric implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector>, GeometricOperators<Spacetime2> {
+export class Spacetime2 extends AbstractGeometric implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector, number>, GeometricOperators<Spacetime2> {
     static readonly zero = Spacetime2.scalar(0).permlock();
     static readonly one = Spacetime2.scalar(1).permlock();
     static readonly γ0 = Spacetime2.vector(1, 0, 0).permlock();
     static readonly γ1 = Spacetime2.vector(0, 1, 0).permlock();
-    static readonly γ0γ1 = new Spacetime2(0, 0, 0, 1).permlock();
     static readonly γ2 = Spacetime2.vector(0, 0, 1).permlock();
+    static readonly γ0γ1 = new Spacetime2(0, 0, 0, 1).permlock();
     static readonly γ0γ2 = new Spacetime2(0, 0, 0, 0, 0, 1).permlock();
     static readonly γ1γ2 = new Spacetime2(0, 0, 0, 0, 0, 0, 1).permlock();
     static readonly I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();

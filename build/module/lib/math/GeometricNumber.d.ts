@@ -9,12 +9,13 @@ import { Unit } from './Unit';
  * M: The concrete class
  * S: The lightweight interface form of the spinor.
  * V: The lightweight interface form of the vector.
+ * F: The field over which the LinearNumber is defined.
  */
-export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
+export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V, F> {
     /**
      * Addition of a scalar.
      */
-    addScalar(a: number, uom?: Unit, α?: number): M;
+    addScalar(a: F, uom?: Unit, α?: number): M;
     /**
      * Assumes a spinor as the multivector.
      * angle(M) = log(M).grade(2)
@@ -112,7 +113,7 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     /**
      * squared norm, scp(x, rev(x))
      */
-    quaditudeNoUnits(): number;
+    quaditudeNoUnits(): F;
     /**
      * Right contraction
      */
@@ -125,7 +126,7 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      * Scalar Product
      */
     scp(rhs: I): M;
-    subScalar(a: number, uom?: Unit, α?: number): M;
+    subScalar(a: F, uom?: Unit, α?: number): M;
     /**
      * squared norm, scp(x, rev(x))
      */

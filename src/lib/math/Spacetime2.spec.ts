@@ -76,8 +76,8 @@ describe("Spacetime2", function () {
             expect(m.x).toBe(0);
             expect(m.tx).toBe(0);
             expect(m.y).toBe(0);
-            expect(m.tx).toBe(0);
             expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
         it("a", function () {

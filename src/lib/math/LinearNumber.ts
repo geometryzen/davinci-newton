@@ -1,7 +1,7 @@
 /**
  * This interface is provided to ensure consistency.
  * It is not part of the documented API.
- * Notice that the effect on the target depends upon whether the target class in mutable.
+ * Notice that the effect on the target depends upon whether the target class is mutable.
  * MAGNITUDE is the chosen type for the magnitude method and scaling.
  * For dimensionless quantities without units, use number.
  * For linear quantities with units, you may use Unit.
@@ -12,16 +12,21 @@ import { Unit } from "./Unit";
 
 /**
  * @hidden
+ * I: The lightweight interface form of the concreate class, usually just coordinates.
+ * M: The concrete class
+ * S: The lightweight interface form of the spinor.
+ * V: The lightweight interface form of the vector.
+ * F: The field over which the LinearNumber is defined.
  */
-export interface LinearNumber<I, M, S, V> {
-  add(rhs: I, α?: number): M;
-  divByScalar(α: number, uom?: Unit): M;
-  scale(α: number): M;
-  mulByScalar(α: number, uom?: Unit): M;
+export interface LinearNumber<I, M, S, V, F> {
+  add(rhs: I, α?: F): M;
+  divByScalar(α: F, uom?: Unit): M;
+  scale(α: F): M;
+  mulByScalar(α: F, uom?: Unit): M;
   neg(): M;
   reflect(n: V): M;
   rotate(rotor: S): M;
-  sub(rhs: I, α?: number): M;
+  sub(rhs: I, α?: F): M;
   toExponential(fractionDigits?: number): string;
   toFixed(fractionDigits?: number): string;
   toPrecision(precision?: number): string;

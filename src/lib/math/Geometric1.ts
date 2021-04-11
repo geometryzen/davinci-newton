@@ -88,7 +88,7 @@ BASIS_LABELS[COORD_X] = 'e1';
 /**
  * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric1 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector>, GeometricOperators<Geometric1> {
+export class Geometric1 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector, number>, GeometricOperators<Geometric1> {
     static scalar(a: number, uom?: Unit): Geometric1 {
         return new Geometric1([a, 0], uom);
     }

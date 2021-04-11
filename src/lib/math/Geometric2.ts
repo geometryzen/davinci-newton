@@ -135,7 +135,7 @@ function lock(m: Geometric2): Geometric2 {
 /**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector>, GeometricOperators<Geometric2> {
+export class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, number>, GeometricOperators<Geometric2> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
