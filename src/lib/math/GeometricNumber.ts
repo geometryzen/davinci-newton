@@ -20,13 +20,6 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
     addScalar(a: F, uom?: Unit, α?: number): M;
 
     /**
-     * Assumes a spinor as the multivector.
-     * angle(M) = log(M).grade(2)
-     * In other words, throw away the scalar part of the result which is the scaling.
-     */
-    angle(): M;
-
-    /**
      * Makes a copy of this multivector.
      * The resulting multivector is mutable (unlocked).
      */
@@ -61,11 +54,6 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
      * See Geometric Algebra for Computer Science, p80. 
      */
     dual(): M;
-
-    /**
-     * Exponential
-     */
-    exp(): M;
 
     /**
      * Exterior or Outer Product.
@@ -111,11 +99,6 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
      *
      */
     isZero(): boolean;
-
-    /**
-     * Natural logarithm.
-     */
-    log(): M;
 
     /**
      * Multiplication.

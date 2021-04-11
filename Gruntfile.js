@@ -300,7 +300,6 @@ module.exports = function (grunt) {
                 done(true);
             })
             .catch(function (err) {
-                console.log(err);
                 done(false);
             });
     });

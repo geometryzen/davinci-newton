@@ -128,11 +128,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     applyMatrix(σ: MatrixLike): this;
     /**
-     * Sets this multivector to the angle, defined as the bivector part of the logarithm.
-     * @returns grade(log(this), 2)
-     */
-    angle(): Geometric3;
-    /**
      * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
      * @param n
      * @returns approx(this, n)
@@ -231,12 +226,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     equals(other: any): boolean;
     /**
-     * <p>
-     * <code>this ⟼ e<sup>this</sup></code>
-     * </p>
-     */
-    exp(): Geometric3;
-    /**
      * Computes the inverse of this multivector.
      * @returns inverse(this)
      */
@@ -267,12 +256,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param b
      */
     lco2(a: GeometricE3, b: GeometricE3): this;
-    /**
-     * <p>
-     * <code>this ⟼ log(this)</code>
-     * </p>
-     */
-    log(): Geometric3;
     /**
      * <p>
      * Computes the <em>square root</em> of the <em>squared norm</em>.
@@ -387,8 +370,6 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
     rotorFromFrameToFrame(es: VectorE3[], fs: VectorE3[]): this;
     /**
      * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-     *
-     * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
      *
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R

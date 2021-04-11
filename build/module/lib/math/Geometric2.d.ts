@@ -167,7 +167,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * @returns this + (a * uom) * α
      */
     addScalar(a: number, uom?: Unit, α?: number): Geometric2;
-    angle(): Geometric2;
     approx(n: number): Geometric2;
     conj(): Geometric2;
     copySpinor(spinor: Spinor): Geometric2;
@@ -189,7 +188,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
     divByVector(v: Vector): Geometric2;
     dual(): Geometric2;
     equals(other: unknown): boolean;
-    exp(): Geometric2;
     /**
      * <p>
      * <code>this ⟼ lhs ^ rhs</code>
@@ -208,7 +206,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * @param b
      */
     lco2(lhs: Geometric, rhs: Geometric): this;
-    log(): Geometric2;
     one(): Geometric2;
     rco(m: Geometric): Geometric2;
     /**
@@ -255,8 +252,6 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
     rotorFromFrameToFrame(es: Vector[], fs: Vector[]): Geometric2;
     /**
      * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-     *
-     * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
      *
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R

@@ -24,29 +24,9 @@ class Newton {
      */
     constructor() {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-        this.LAST_MODIFIED = '2021-04-10';
+        this.LAST_MODIFIED = '2021-04-11';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.86';
-    }
-
-    log(message?: any, ...optionalParams: any[]): void {
-        // This should allow us to unit test and run in environments without a console.
-        console.log(message);
-    }
-
-    info(message?: any, ...optionalParams: any[]): void {
-        // This should allow us to unit test and run in environments without a console.
-        console.log(message);
-    }
-
-    warn(message?: any, ...optionalParams: any[]): void {
-        // This should allow us to unit test and run in environments without a console.
-        console.warn(message);
-    }
-
-    error(message?: any, ...optionalParams: any[]): void {
-        // This should allow us to unit test and run in environments without a console.
-        console.error(message);
+        this.VERSION = '1.0.87';
     }
 }
 

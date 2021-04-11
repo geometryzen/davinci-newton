@@ -564,14 +564,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Sets this multivector to the angle, defined as the bivector part of the logarithm.
-     * @returns grade(log(this), 2)
-     */
-    angle(): Geometric3 {
-        return this.log().grade(2);
-    }
-
-    /**
      * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
      * @param n
      * @returns approx(this, n)
@@ -960,48 +952,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ e<sup>this</sup></code>
-     * </p>
-     */
-    exp(): Geometric3 {
-        if (this.isLocked()) {
-            return lock(this.clone().exp());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            // It's always the case that the scalar commutes with every other
-            // grade of the multivector, so we can pull it out the front.
-            const expW = Math.exp(this.a);
-
-            // In Geometric3 we have the special case that the pseudoscalar also commutes.
-            // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-            // let cosβ = cos(this.b)
-            // let sinβ = sin(this.b)
-
-            // We are left with the vector and bivector components.
-            // For a bivector (usual case), let B = I * φ, where φ is a vector.
-            // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-            const yz = this.yz;
-            const zx = this.zx;
-            const xy = this.xy;
-            // φ is actually the absolute value of one half the rotation angle.
-            // The orientation of the rotation gets carried in the bivector components.
-            const φ = Math.sqrt(yz * yz + zx * zx + xy * xy);
-            const s = φ !== 0 ? Math.sin(φ) / φ : 1;
-            const cosφ = Math.cos(φ);
-
-            // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-            // The mixture of vector and bivector parts is more complex!
-            this.a = cosφ;
-            this.yz = yz * s;
-            this.zx = zx * s;
-            this.xy = xy * s;
-            return this.mulByNumber(expW);
-        }
-    }
-
-    /**
      * Computes the inverse of this multivector. 
      * @returns inverse(this)
      */
@@ -1112,32 +1062,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      */
     lco2(a: GeometricE3, b: GeometricE3): this {
         return lcoG3(a, b, this);
-    }
-
-    /**
-     * <p>
-     * <code>this ⟼ log(this)</code>
-     * </p>
-     */
-    log(): Geometric3 {
-        if (this.isLocked()) {
-            return lock(this.clone().log());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            const α = this.a;
-            const x = this.yz;
-            const y = this.zx;
-            const z = this.xy;
-            const BB = x * x + y * y + z * z;
-            const B = Math.sqrt(BB);
-            const f = Math.atan2(B, α) / B;
-            this.a = Math.log(Math.sqrt(α * α + BB));
-            this.yz = x * f;
-            this.zx = y * f;
-            this.xy = z * f;
-            return this;
-        }
     }
 
     /**
@@ -1606,8 +1530,6 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
 
     /**
      * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-     *
-     * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
      *
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R

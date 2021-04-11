@@ -258,14 +258,6 @@ describe("Geometric1", function () {
             checkEQ(sum, comp);
         });
     });
-    describe("angle", function () {
-        it("should be zero.", function () {
-            const angle = one.angle();
-            expect(angle.a).toBe(0);
-            expect(angle.x).toBe(0);
-            expect(Unit.isOne(angle.uom)).toBeTrue();
-        });
-    });
     describe("clone", function () {
         it("should copy a", function () {
             const a = Math.random();

@@ -334,6 +334,25 @@ describe("Spacetime1", function () {
             }
         });
     });
+    describe("div", function () {
+        it("", function () {
+            checkEQ(one.div(one), one);
+            checkEQ(one.div(γ0), γ0);
+            checkEQ(one.div(γ1), γ1.neg());
+        });
+        it("", function () {
+            for (const blade of blades) {
+                checkEQ(one.div(blade), blade.rev().div(blade.squaredNorm()));
+            }
+        });
+        it("", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    checkEQ(lhs.div(rhs), lhs.mul(rhs.rev().div(rhs.squaredNorm())));
+                }
+            }
+        });
+    });
     describe("divByNumber", function () {
         it("", function () {
             for (const blade of blades) {
@@ -1136,6 +1155,52 @@ describe("Spacetime1", function () {
         });
         it("otherwise", function () {
             expect(one.__rmul__("" as unknown as Spacetime1)).toBeUndefined();
+        });
+    });
+    describe("__div__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    checkEQ(lhs.__div__(rhs), lhs.div(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const lhs of blades) {
+                checkEQ(lhs.__div__(2), lhs.div(two));
+            }
+        });
+        it("(Unit)", function () {
+            for (const lhs of blades) {
+                checkEQ(lhs.__div__(Unit.METER), lhs.div(meter));
+            }
+        });
+        it("otherwise", function () {
+            for (const lhs of blades) {
+                expect(lhs.__div__("" as unknown as Spacetime1)).toBeUndefined();
+            }
+        });
+    });
+    describe("__rdiv__", function () {
+        it("(Geometric)", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    checkEQ(rhs.__rdiv__(lhs), lhs.div(rhs));
+                }
+            }
+        });
+        it("(number)", function () {
+            for (const rhs of blades) {
+                checkEQ(rhs.__rdiv__(2), two.div(rhs));
+            }
+        });
+        it("(Unit)", function () {
+            for (const rhs of blades) {
+                checkEQ(rhs.__rdiv__(Unit.METER), meter.div(rhs));
+            }
+        });
+        it("otherwise", function () {
+            expect(one.__rdiv__("" as unknown as Spacetime1)).toBeUndefined();
         });
     });
     describe("__vbar__", function () {

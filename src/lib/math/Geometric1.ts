@@ -1,4 +1,3 @@
-import { notImplemented } from "../i18n/notImplemented";
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from "./AbstractGeometric";
 import { gauss } from "./gauss";
@@ -239,9 +238,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
-    angle(): Geometric1 {
-        return this.log().grade(2);
-    }
     conj(): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().conj());
@@ -313,33 +309,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     divByVector(rhs: Vector): Geometric1 {
         throw new Error("Method not implemented.");
     }
-    exp(): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().exp());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            // It's always the case that the scalar commutes with every other
-            // grade of the multivector, so we can pull it out the front.
-            const expW = Math.exp(this.a);
-
-            // In Geometric1 we have the special case that the pseudoscalar also commutes.
-            // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-            // let cosβ = cos(this.b)
-            // let sinβ = sin(this.b)
-
-            // We are left with the vector and bivector components.
-            // For a bivector (usual case), let B = I * φ, where φ is a vector.
-            // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-            // φ is actually the absolute value of one half the rotation angle.
-            // The orientation of the rotation gets carried in the bivector components.
-
-            // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-            // The mixture of vector and bivector parts is more complex!
-            this.a = 1;
-            return this.mulByNumber(expW);
-        }
-    }
     ext(m: Geometric1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().ext(m));
@@ -401,21 +370,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     }
     isVector(): boolean {
         return this.coords[COORD_A] === 0;
-    }
-    log(): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().log());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            if (this.isSpinor()) {
-                const α = this.a;
-                this.a = Math.log(Math.sqrt(α * α));
-                return this;
-            } else {
-                throw new Error(notImplemented(`log(${this.toString()})`).message);
-            }
-        }
     }
     mul(rhs: Geometric1): Geometric1 {
         if (this.isLocked()) {

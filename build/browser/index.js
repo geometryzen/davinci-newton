@@ -13,42 +13,10 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-04-10';
+            this.LAST_MODIFIED = '2021-04-11';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.86';
+            this.VERSION = '1.0.87';
         }
-        Newton.prototype.log = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            // This should allow us to unit test and run in environments without a console.
-            console.log(message);
-        };
-        Newton.prototype.info = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            // This should allow us to unit test and run in environments without a console.
-            console.log(message);
-        };
-        Newton.prototype.warn = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            // This should allow us to unit test and run in environments without a console.
-            console.warn(message);
-        };
-        Newton.prototype.error = function (message) {
-            var optionalParams = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                optionalParams[_i - 1] = arguments[_i];
-            }
-            // This should allow us to unit test and run in environments without a console.
-            console.error(message);
-        };
         return Newton;
     }());
     /**
@@ -6149,21 +6117,6 @@
      * @param name
      * @returns
      */
-    function notImplemented(name) {
-        mustBeString('name', name);
-        var message = {
-            get message() {
-                return "'" + name + "' method is not yet implemented.";
-            }
-        };
-        return message;
-    }
-
-    /**
-     * @hidden
-     * @param name
-     * @returns
-     */
     function readOnly(name) {
         mustBeString('name', name);
         var message = {
@@ -6634,9 +6587,6 @@
                 }
             }
         };
-        Geometric1.prototype.angle = function () {
-            return this.log().grade(2);
-        };
         Geometric1.prototype.conj = function () {
             if (this.isLocked()) {
                 return lock$3(this.clone().conj());
@@ -6709,30 +6659,6 @@
         Geometric1.prototype.divByVector = function (rhs) {
             throw new Error("Method not implemented.");
         };
-        Geometric1.prototype.exp = function () {
-            if (this.isLocked()) {
-                return lock$3(this.clone().exp());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                // It's always the case that the scalar commutes with every other
-                // grade of the multivector, so we can pull it out the front.
-                var expW = Math.exp(this.a);
-                // In Geometric1 we have the special case that the pseudoscalar also commutes.
-                // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-                // let cosβ = cos(this.b)
-                // let sinβ = sin(this.b)
-                // We are left with the vector and bivector components.
-                // For a bivector (usual case), let B = I * φ, where φ is a vector.
-                // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-                // φ is actually the absolute value of one half the rotation angle.
-                // The orientation of the rotation gets carried in the bivector components.
-                // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-                // The mixture of vector and bivector parts is more complex!
-                this.a = 1;
-                return this.mulByNumber(expW);
-            }
-        };
         Geometric1.prototype.ext = function (m) {
             if (this.isLocked()) {
                 return lock$3(this.clone().ext(m));
@@ -6795,22 +6721,6 @@
         };
         Geometric1.prototype.isVector = function () {
             return this.coords[COORD_A$1] === 0;
-        };
-        Geometric1.prototype.log = function () {
-            if (this.isLocked()) {
-                return lock$3(this.clone().log());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                if (this.isSpinor()) {
-                    var α = this.a;
-                    this.a = Math.log(Math.sqrt(α * α));
-                    return this;
-                }
-                else {
-                    throw new Error(notImplemented("log(" + this.toString() + ")").message);
-                }
-            }
         };
         Geometric1.prototype.mul = function (rhs) {
             if (this.isLocked()) {
@@ -8558,6 +8468,21 @@
 
     /**
      * @hidden
+     * @param name
+     * @returns
+     */
+    function notImplemented(name) {
+        mustBeString('name', name);
+        var message = {
+            get message() {
+                return "'" + name + "' method is not yet implemented.";
+            }
+        };
+        return message;
+    }
+
+    /**
+     * @hidden
      * @param coords
      * @param n
      */
@@ -9189,9 +9114,6 @@
                 }
             }
         };
-        Geometric2.prototype.angle = function () {
-            return this.log().grade(2);
-        };
         Geometric2.prototype.approx = function (n) {
             if (this.isLocked()) {
                 return lock$1(this.clone().approx(n));
@@ -9297,35 +9219,6 @@
                 return false;
             }
         };
-        Geometric2.prototype.exp = function () {
-            if (this.isLocked()) {
-                return lock$1(this.clone().exp());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                // It's always the case that the scalar commutes with every other
-                // grade of the multivector, so we can pull it out the front.
-                var expW = Math.exp(this.a);
-                // In Geometric2 we have the special case that the pseudoscalar also commutes.
-                // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-                // let cosβ = cos(this.b)
-                // let sinβ = sin(this.b)
-                // We are left with the vector and bivector components.
-                // For a bivector (usual case), let B = I * φ, where φ is a vector.
-                // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-                var xy = this.xy;
-                // φ is actually the absolute value of one half the rotation angle.
-                // The orientation of the rotation gets carried in the bivector components.
-                var φ = Math.sqrt(xy * xy);
-                var s = φ !== 0 ? Math.sin(φ) / φ : 1;
-                var cosφ = Math.cos(φ);
-                // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-                // The mixture of vector and bivector parts is more complex!
-                this.a = cosφ;
-                this.xy = xy * s;
-                return this.mulByNumber(expW);
-            }
-        };
         /**
          * <p>
          * <code>this ⟼ lhs ^ rhs</code>
@@ -9420,24 +9313,6 @@
             this.b = a0 * b3;
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
-        };
-        Geometric2.prototype.log = function () {
-            if (this.isLocked()) {
-                return lock$1(this.clone().log());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                if (this.isSpinor()) {
-                    var α = this.a;
-                    var β = this.b;
-                    this.a = Math.log(Math.sqrt(α * α + β * β));
-                    this.b = Math.atan2(β, α);
-                    return this;
-                }
-                else {
-                    throw new Error(notImplemented("log(" + this.toString() + ")").message);
-                }
-            }
         };
         Geometric2.prototype.one = function () {
             this.a = 1;
@@ -9552,8 +9427,6 @@
         };
         /**
          * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-         *
-         * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
          *
          * @param B The (unit) bivector generating the rotation.
          * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R
@@ -12991,13 +12864,6 @@
             return this;
         };
         /**
-         * Sets this multivector to the angle, defined as the bivector part of the logarithm.
-         * @returns grade(log(this), 2)
-         */
-        Geometric3.prototype.angle = function () {
-            return this.log().grade(2);
-        };
-        /**
          * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
          * @param n
          * @returns approx(this, n)
@@ -13360,44 +13226,6 @@
             }
         };
         /**
-         * <p>
-         * <code>this ⟼ e<sup>this</sup></code>
-         * </p>
-         */
-        Geometric3.prototype.exp = function () {
-            if (this.isLocked()) {
-                return lock(this.clone().exp());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                // It's always the case that the scalar commutes with every other
-                // grade of the multivector, so we can pull it out the front.
-                var expW = Math.exp(this.a);
-                // In Geometric3 we have the special case that the pseudoscalar also commutes.
-                // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-                // let cosβ = cos(this.b)
-                // let sinβ = sin(this.b)
-                // We are left with the vector and bivector components.
-                // For a bivector (usual case), let B = I * φ, where φ is a vector.
-                // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-                var yz = this.yz;
-                var zx = this.zx;
-                var xy = this.xy;
-                // φ is actually the absolute value of one half the rotation angle.
-                // The orientation of the rotation gets carried in the bivector components.
-                var φ = Math.sqrt(yz * yz + zx * zx + xy * xy);
-                var s = φ !== 0 ? Math.sin(φ) / φ : 1;
-                var cosφ = Math.cos(φ);
-                // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-                // The mixture of vector and bivector parts is more complex!
-                this.a = cosφ;
-                this.yz = yz * s;
-                this.zx = zx * s;
-                this.xy = xy * s;
-                return this.mulByNumber(expW);
-            }
-        };
-        /**
          * Computes the inverse of this multivector.
          * @returns inverse(this)
          */
@@ -13495,31 +13323,6 @@
          */
         Geometric3.prototype.lco2 = function (a, b) {
             return lcoG3(a, b, this);
-        };
-        /**
-         * <p>
-         * <code>this ⟼ log(this)</code>
-         * </p>
-         */
-        Geometric3.prototype.log = function () {
-            if (this.isLocked()) {
-                return lock(this.clone().log());
-            }
-            else {
-                Unit.assertDimensionless(this.uom);
-                var α = this.a;
-                var x = this.yz;
-                var y = this.zx;
-                var z = this.xy;
-                var BB = x * x + y * y + z * z;
-                var B = Math.sqrt(BB);
-                var f = Math.atan2(B, α) / B;
-                this.a = Math.log(Math.sqrt(α * α + BB));
-                this.yz = x * f;
-                this.zx = y * f;
-                this.xy = z * f;
-                return this;
-            }
         };
         /**
          * <p>
@@ -13951,8 +13754,6 @@
         };
         /**
          * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-         *
-         * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
          *
          * @param B The (unit) bivector generating the rotation.
          * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R
@@ -20546,9 +20347,6 @@
                 }
             }
         };
-        Spacetime1.prototype.angle = function () {
-            return this.log().grade(2);
-        };
         Spacetime1.prototype.clone = function () {
             return new Spacetime1(this.a, this.t, this.x, this.b, this.uom);
         };
@@ -20565,7 +20363,12 @@
             }
         };
         Spacetime1.prototype.div = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (this.isLocked()) {
+                return this.clone().div(rhs).permlock();
+            }
+            else {
+                return this.mul(rhs.clone().inv().permlock());
+            }
         };
         Spacetime1.prototype.divByNumber = function (α) {
             if (this.isLocked()) {
@@ -20617,9 +20420,6 @@
                 this.$M11 = M000;
                 return this;
             }
-        };
-        Spacetime1.prototype.exp = function () {
-            throw new Error("Method not implemented.");
         };
         Spacetime1.prototype.ext = function (rhs) {
             if (this.isLocked()) {
@@ -20739,9 +20539,6 @@
                 this.uom = Unit.mul(this.uom, rhs.uom);
                 return this;
             }
-        };
-        Spacetime1.prototype.log = function () {
-            throw new Error("Method not implemented.");
         };
         Spacetime1.prototype.mul = function (rhs) {
             if (this.isLocked()) {
@@ -21022,6 +20819,9 @@
             }
             else if (typeof lhs === 'number') {
                 return Spacetime1.scalar(lhs).div(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime1.scalar(1, lhs).div(this).permlock();
             }
             else {
                 return void 0;
@@ -21579,9 +21379,6 @@
                 }
             }
         };
-        Spacetime2.prototype.angle = function () {
-            return this.log().grade(2);
-        };
         Spacetime2.prototype.clone = function () {
             return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
         };
@@ -21602,7 +21399,12 @@
             }
         };
         Spacetime2.prototype.div = function (rhs) {
-            throw new Error("Method not implemented.");
+            if (this.isLocked()) {
+                return this.clone().div(rhs).permlock();
+            }
+            else {
+                return this.mul(rhs.clone().inv().permlock());
+            }
         };
         Spacetime2.prototype.divByNumber = function (α) {
             if (this.isLocked()) {
@@ -21671,9 +21473,6 @@
                 this.$M111 = -M000;
                 return this;
             }
-        };
-        Spacetime2.prototype.exp = function () {
-            throw new Error("Method not implemented.");
         };
         Spacetime2.prototype.ext = function (rhs) {
             if (this.isLocked()) {
@@ -21852,9 +21651,6 @@
                 this.uom = Unit.mul(this.uom, rhs.uom);
                 return this;
             }
-        };
-        Spacetime2.prototype.log = function () {
-            throw new Error("Method not implemented.");
         };
         Spacetime2.prototype.mul = function (rhs) {
             if (this.isLocked()) {
@@ -22226,6 +22022,9 @@
             }
             else if (typeof lhs === 'number') {
                 return Spacetime2.scalar(lhs).div(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime2.scalar(1, lhs).div(this).permlock();
             }
             else {
                 return void 0;

@@ -504,9 +504,6 @@ var Geometric2 = /** @class */ (function (_super) {
             }
         }
     };
-    Geometric2.prototype.angle = function () {
-        return this.log().grade(2);
-    };
     Geometric2.prototype.approx = function (n) {
         if (this.isLocked()) {
             return lock(this.clone().approx(n));
@@ -612,35 +609,6 @@ var Geometric2 = /** @class */ (function (_super) {
             return false;
         }
     };
-    Geometric2.prototype.exp = function () {
-        if (this.isLocked()) {
-            return lock(this.clone().exp());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            // It's always the case that the scalar commutes with every other
-            // grade of the multivector, so we can pull it out the front.
-            var expW = Math.exp(this.a);
-            // In Geometric2 we have the special case that the pseudoscalar also commutes.
-            // And since it squares to -1, we get a exp(Iβ) = cos(β) + I * sin(β) factor.
-            // let cosβ = cos(this.b)
-            // let sinβ = sin(this.b)
-            // We are left with the vector and bivector components.
-            // For a bivector (usual case), let B = I * φ, where φ is a vector.
-            // We would get cos(φ) + I * n * sin(φ), where φ = |φ|n and n is a unit vector.
-            var xy = this.xy;
-            // φ is actually the absolute value of one half the rotation angle.
-            // The orientation of the rotation gets carried in the bivector components.
-            var φ = Math.sqrt(xy * xy);
-            var s = φ !== 0 ? Math.sin(φ) / φ : 1;
-            var cosφ = Math.cos(φ);
-            // For a vector a, we use exp(a) = cosh(a) + n * sinh(a)
-            // The mixture of vector and bivector parts is more complex!
-            this.a = cosφ;
-            this.xy = xy * s;
-            return this.mulByNumber(expW);
-        }
-    };
     /**
      * <p>
      * <code>this ⟼ lhs ^ rhs</code>
@@ -735,24 +703,6 @@ var Geometric2 = /** @class */ (function (_super) {
         this.b = a0 * b3;
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
-    };
-    Geometric2.prototype.log = function () {
-        if (this.isLocked()) {
-            return lock(this.clone().log());
-        }
-        else {
-            Unit.assertDimensionless(this.uom);
-            if (this.isSpinor()) {
-                var α = this.a;
-                var β = this.b;
-                this.a = Math.log(Math.sqrt(α * α + β * β));
-                this.b = Math.atan2(β, α);
-                return this;
-            }
-            else {
-                throw new Error(notImplemented("log(" + this.toString() + ")").message);
-            }
-        }
     };
     Geometric2.prototype.one = function () {
         this.a = 1;
@@ -867,8 +817,6 @@ var Geometric2 = /** @class */ (function (_super) {
     };
     /**
      * Sets this multivector to a rotor that rotates through angle θ in the oriented plane defined by B.
-     *
-     * this ⟼ exp(- B * θ / 2) = cos(|B| * θ / 2) - B * sin(|B| * θ / 2) / |B|
      *
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R

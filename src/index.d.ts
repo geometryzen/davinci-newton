@@ -494,13 +494,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
     addScalar(a: number, uom?: Unit, α?: number): M;
 
     /**
-     * Assumes a spinor as the multivector.
-     * angle(M) = log(M).grade(2)
-     * In other words, throw away the scalar part of the result which is the scaling.
-     */
-    angle(): M;
-
-    /**
      * Conjugate
      */
     conj(): M;
@@ -514,11 +507,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      * divide really only applies to division algebras, may not be defined.
      */
     div(rhs: I): M;
-
-    /**
-     * Exponential
-     */
-    exp(): M;
 
     /**
      * Exterior or Outer Product.
@@ -549,11 +537,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      *
      */
     isZero(): boolean;
-
-    /**
-     * Natural logarithm.
-     */
-    log(): M;
 
     /**
      * Multiplication.
@@ -739,7 +722,6 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
     add(rhs: Geometric1, α?: number): Geometric1;
     addScalar(a: number, uom?: Unit, α?: number): Geometric1;
     addVector(v: VectorE1, α?: number): Geometric1;
-    angle(): Geometric1;
     clone(): Geometric1;
     conj(): Geometric1;
     copy(source: Geometric1): Geometric1;
@@ -748,11 +730,9 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
     div(rhs: Geometric1): Geometric1;
     divByNumber(α: number): Geometric1;
     divByScalar(α: number, uom?: Unit): Geometric1;
-    exp(): Geometric1;
     ext(rhs: Geometric1): Geometric1;
     grade(grade: number): Geometric1;
     isScalar(): boolean;
-    log(): Geometric1;
     mul(rhs: Geometric1): Geometric1;
     mulByNumber(α: number): Geometric1;
     mulByScalar(α: number, uom?: Unit): Geometric1;
@@ -878,11 +858,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     addVector(v: VectorE2, α?: number): Geometric2;
 
     /**
-     * The bivector whose area (magnitude) is θ/2, where θ is the radian measure. 
-     */
-    angle(): Geometric2;
-
-    /**
      * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
      */
     approx(n: number): Geometric2;
@@ -985,13 +960,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
 
     /**
      * 
-     * this ⟼ e<sup>this</sup>
-     * 
-     */
-    exp(): Geometric2;
-
-    /**
-     * 
      * this ⟼ this ^ m
      * 
      * m
@@ -1056,13 +1024,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * 
      */
     lock(): number;
-
-    /**
-     * 
-     * this ⟼ log(this)
-     * 
-     */
-    log(): Geometric2;
 
     /**
      * 
@@ -1214,7 +1175,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
 
     /**
      * Sets this multivector to a rotor represented by the plane B and angle θ.
-     * this = ⟼ R = exp(- B * θ / 2)
      *
      * B is the (unit) bivector generating the rotation, B * B = -1.
      * θ The rotation angle in radians.
@@ -1637,11 +1597,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     addVector(v: VectorE3, α?: number): Geometric3;
 
     /**
-     * The bivector whose area (magnitude) is θ/2, where θ is the radian measure. 
-     */
-    angle(): Geometric3;
-
-    /**
      * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
      */
     approx(n: number): Geometric3;
@@ -1750,13 +1705,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
 
     /**
      * 
-     * this ⟼ e<sup>this</sup>
-     * 
-     */
-    exp(): Geometric3;
-
-    /**
-     * 
      * this ⟼ this ^ m
      * 
      * m
@@ -1821,13 +1769,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
      * 
      */
     lock(): number;
-
-    /**
-     * 
-     * this ⟼ log(this)
-     * 
-     */
-    log(): Geometric3;
 
     /**
      * Computes the <em>square root</em> of the <em>squared norm</em>.
@@ -1966,7 +1907,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
 
     /**
      * Sets this multivector to a rotor represented by the plane B and angle θ.
-     * this = ⟼ R = exp(- B * θ / 2)
      *
      * B is the (unit) bivector generating the rotation, B * B = -1.
      * θ The rotation angle in radians.
@@ -2304,7 +2244,6 @@ export declare class Spacetime1 {
     readonly grades;
     add(rhs: Spacetime1, α?: number): Spacetime1;
     addScalar(a: number, uom?: Unit, α?: number): Spacetime1;
-    angle(): Spacetime1;
     clone(): Spacetime1;
     conj(): Spacetime1;
     div(rhs: Spacetime1): Spacetime1;
@@ -2312,7 +2251,6 @@ export declare class Spacetime1 {
     divByScalar(α: number, uom?: Unit): Spacetime1;
     divByVector(v: { t: number; x: number; uom?: Unit; }): Spacetime1;
     dual(): Spacetime1;
-    exp(): Spacetime1;
     ext(rhs: Spacetime1): Spacetime1;
     grade(n: number): Spacetime1;
     inv(): Spacetime1;
@@ -2323,7 +2261,6 @@ export declare class Spacetime1 {
     isVector(): boolean;
     isZero(): boolean;
     lco(rhs: Spacetime1): Spacetime1;
-    log(): Spacetime1;
     mul(rhs: Spacetime1): Spacetime1;
     mulByNumber(a: number): Spacetime1;
     mulByScalar(a: number, uom: Unit): Spacetime1;
@@ -2383,7 +2320,6 @@ export declare class Spacetime2 {
     readonly grades: number;
     add(rhs: Spacetime2, α?: number): Spacetime2;
     addScalar(a: number, uom?: Unit, α?: number): Spacetime2;
-    angle(): Spacetime2;
     clone(): Spacetime2;
     conj(): Spacetime2;
     div(rhs: Spacetime2): Spacetime2;
@@ -2391,7 +2327,6 @@ export declare class Spacetime2 {
     divByScalar(α: number, uom?: Unit): Spacetime2;
     divByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
     dual(): Spacetime2;
-    exp(): Spacetime2;
     ext(rhs: Spacetime2): Spacetime2;
     grade(n: number): Spacetime2;
     inv(): Spacetime2;
@@ -2402,7 +2337,6 @@ export declare class Spacetime2 {
     isVector(): boolean;
     isZero(): boolean;
     lco(rhs: Spacetime2): Spacetime2;
-    log(): Spacetime2;
     mul(rhs: Spacetime2): Spacetime2;
     mulByNumber(a: number): Spacetime2;
     mulByScalar(a: number, uom: Unit): Spacetime2;

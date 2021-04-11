@@ -290,9 +290,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
-    angle(): Spacetime2 {
-        return this.log().grade(2);
-    }
     clone(): Spacetime2 {
         return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
     }
@@ -313,7 +310,11 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     div(rhs: Spacetime2): Spacetime2 {
-        throw new Error("Method not implemented.");
+        if (this.isLocked()) {
+            return this.clone().div(rhs).permlock();
+        } else {
+            return this.mul(rhs.clone().inv().permlock());
+        }
     }
     divByNumber(α: number): Spacetime2 {
         if (this.isLocked()) {
@@ -383,9 +384,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             this.$M111 = -M000;
             return this;
         }
-    }
-    exp(): Spacetime2 {
-        throw new Error("Method not implemented.");
     }
     ext(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
@@ -572,9 +570,6 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
         }
-    }
-    log(): Spacetime2 {
-        throw new Error("Method not implemented.");
     }
     mul(rhs: Spacetime2): Spacetime2 {
         if (this.isLocked()) {
@@ -943,6 +938,9 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
         }
         else if (typeof lhs === 'number') {
             return Spacetime2.scalar(lhs).div(this).permlock();
+        }
+        else if (lhs instanceof Unit) {
+            return Spacetime2.scalar(1, lhs).div(this).permlock();
         }
         else {
             return void 0;
