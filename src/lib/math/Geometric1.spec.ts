@@ -24,7 +24,15 @@ const I = e1;
 /**
  * @hidden
  */
-const elements = [one, e1];
+const blades = [one, e1];
+/**
+ * @hidden
+ */
+const kilogram = Geometric1.kilogram;
+/**
+ * @hidden
+ */
+const meter = Geometric1.meter;
 
 /**
  * @hidden
@@ -303,16 +311,63 @@ describe("Geometric1", function () {
             expect(clone === mv).toBe(false);
         });
     });
+    describe("conj", function () {
+        it("one", function () {
+            checkEQ(one.conj(), one);
+        });
+        it("e1", function () {
+            checkEQ(e1.conj(), e1.neg());
+        });
+    });
+    describe("copy", function () {
+        it("", function () {
+            const a = Math.random();
+            const x = Math.random();
+            const original = new Geometric1([a, x], Unit.METER).permlock();
+            const target = new Geometric1().permlock();
+            const copied = target.copy(original);
+            checkEQ(copied, original);
+        });
+    });
+    describe("copyVector", function () {
+        it("", function () {
+            const x = Math.random();
+            const original = new Geometric1([0, x], Unit.METER).permlock();
+            const target = new Geometric1([1, 2]).permlock();
+            const copied = target.copyVector(original);
+            checkEQ(copied, original);
+        });
+    });
     describe("dual", function () {
         it("", function () {
             checkEQ(one.dual(), e1);
             checkEQ(e1.dual(), one);
         });
         it("dual(Ak) = Ak << inv(I)", function () {
-            for (const element of elements) {
-                checkEQ(element.dual(), element.lco(I.rev()));
-                checkEQ(element.dual(), element.lco(I.inv()));
+            for (const blade of blades) {
+                checkEQ(blade.dual(), blade.lco(I.rev()));
+                checkEQ(blade.dual(), blade.lco(I.inv()));
             }
+        });
+    });
+    describe("equals", function () {
+        it("blades", function () {
+            for (const blade of blades) {
+                expect(blade.equals(blade)).toBeTrue();
+            }
+        });
+        it("units", function () {
+            expect(meter.equals(meter)).toBeTrue();
+            expect(kilogram.equals(kilogram)).toBeTrue();
+            expect(meter.equals(kilogram)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.equals(0)).toBeFalse();
+            expect(one.equals("0")).toBeFalse();
+            expect(one.equals(false)).toBeFalse();
+            expect(one.equals(1)).toBeFalse();
+            expect(one.equals("1")).toBeFalse();
+            expect(one.equals(true)).toBeFalse();
         });
     });
     describe("isLocked", function () {
@@ -709,32 +764,6 @@ describe("Geometric1", function () {
             checkEQ(d, lock(Geometric1.scalar(2, Unit.METER)));
         });
     });
-    describe("__eq__", function () {
-        it("(Geometric)", function () {
-            expect(one.__eq__(one)).toBeTrue();
-            expect(one.__eq__(two)).toBeFalse();
-        });
-        it("(number)", function () {
-            expect(one.__eq__(1)).toBeTrue();
-            expect(one.__eq__(2)).toBeFalse();
-        });
-        it("otherwise", function () {
-            expect(one.__eq__("" as unknown as Geometric1)).toBeUndefined();
-        });
-    });
-    describe("__ne__", function () {
-        it("(Geometric)", function () {
-            expect(one.__ne__(one)).toBeFalse();
-            expect(one.__ne__(two)).toBeTrue();
-        });
-        it("(number)", function () {
-            expect(one.__ne__(1)).toBeFalse();
-            expect(one.__ne__(2)).toBeTrue();
-        });
-        it("otherwise", function () {
-            expect(one.__ne__("" as unknown as Geometric1)).toBeUndefined();
-        });
-    });
     describe("__add__", function () {
         it("(Geometric)", function () {
             checkEQ(one.__add__(two), one.add(two));
@@ -914,5 +943,36 @@ describe("Geometric1", function () {
             expect(one.__rwedge__("" as unknown as Geometric1)).toBeUndefined();
         });
     });
-
+    describe("__eq__", function () {
+        it("should be the operator overload of equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__eq__(rhs)).toBe(lhs.equals(rhs));
+                }
+                expect(lhs.__eq__(1)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
+                expect(lhs.__eq__("1" as any)).toBe(false);
+            }
+        });
+        it("", function () {
+            expect(one.__eq__(Unit.ONE)).toBe(true);
+            expect(meter.__eq__(Unit.METER)).toBe(true);
+            expect(one.__eq__(Unit.METER)).toBe(false);
+            expect(meter.__eq__(Unit.ONE)).toBe(false);
+        });
+    });
+    describe("__ne__", function () {
+        it("should be the operator overload of !equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__ne__(rhs)).toBe(!lhs.equals(rhs));
+                }
+                expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
+                expect(lhs.__ne__("1" as any)).toBe(true);
+            }
+        });
+    });
 });

@@ -223,30 +223,43 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
         }
         this.coords_ = coords;
     }
-    __eq__(rhs: Geometric3 | number): boolean {
+
+    /**
+     * @hidden
+     */
+    __eq__(rhs: Geometric3 | number | Unit): boolean {
         if (rhs instanceof Geometric3) {
-            const La = this.a;
-            const Ra = rhs.a;
-            return La === Ra;
-        } else if (typeof rhs === 'number') {
-            return this.a === rhs;
+            return this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return this.equals(Geometric3.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Geometric3.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return false;
         }
     }
-    __ne__(rhs: number | Geometric3): boolean {
+
+    /**
+     * @hidden
+     */
+    __ne__(rhs: Geometric3 | number | Unit): boolean {
         if (rhs instanceof Geometric3) {
-            const La = this.a;
-            const Ra = rhs.a;
-            return La !== Ra;
-        } else if (typeof rhs === 'number') {
-            return this.a !== rhs;
+            return !this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return !this.equals(Geometric3.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Geometric3.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return true;
         }
     }
+
     scale(α: number): Geometric3 {
         return this.mulByNumber(α);
     }
@@ -427,11 +440,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * this ⟼ a + b
-     *
-     * @param a
-     * @param b
-     * @returns this multivector
+     * @hidden
      */
     add2(a: GeometricE3, b: GeometricE3): this {
         if (isZeroGeometricE3(a)) {
@@ -509,6 +518,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
+     * @hidden
      * @param v The vector to be added to this multivector.
      * @param α An optional scale factor that multiplies the vector argument.
      * @returns this + v * α
@@ -535,6 +545,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
+     * @hidden
      * Pre-multiplies the column vector corresponding to this vector by the matrix.
      * The result is applied to this vector.
      *
@@ -564,9 +575,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
-     * @param n
-     * @returns approx(this, n)
+     * @hidden
      */
     approx(n: number): Geometric3 {
         if (this.isLocked()) {
@@ -822,6 +831,9 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
 
+    /**
+     * @hidden
+     */
     divByNumber(α: number): Geometric3 {
         if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
@@ -878,12 +890,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     div2(a: SpinorE3, b: SpinorE3): this {
         this.uom = Unit.div(a.uom, b.uom);
@@ -942,9 +949,11 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
      * @returns
      */
     equals(other: any): boolean {
-        if (other instanceof Geometric3) {
-            // TODO: Check units of measure.
-            return arraysEQ(this.coords_, other.coords_);
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Geometric3) {
+            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;
@@ -960,24 +969,24 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().inv());
         }
         else {
-            const α = this.a;
-            const x = this.x;
-            const y = this.y;
-            const z = this.z;
-            const xy = this.xy;
-            const yz = this.yz;
-            const zx = this.zx;
-            const β = this.b;
+            const x0 = this.a;
+            const x1 = this.x;
+            const x2 = this.y;
+            const x3 = this.z;
+            const x4 = this.xy;
+            const x5 = this.yz;
+            const x6 = this.zx;
+            const x7 = this.b;
 
             const A = [
-                [α, x, y, z, -xy, -yz, -zx, -β],
-                [x, α, xy, -zx, -y, -β, z, -yz],
-                [y, -xy, α, yz, x, -z, -β, -zx],
-                [z, zx, -yz, α, -β, y, -x, -xy],
-                [xy, -y, x, β, α, zx, -yz, z],
-                [yz, β, -z, y, -zx, α, xy, x],
-                [zx, z, β, -x, yz, -xy, α, y],
-                [β, yz, zx, xy, z, x, y, α]
+                [+x0, +x1, +x2, +x3, -x4, -x5, -x6, -x7],
+                [+x1, +x0, -x4, +x6, +x2, -x7, -x3, -x5],
+                [+x2, +x4, +x0, -x5, -x1, +x3, -x7, -x6],
+                [+x3, -x6, +x5, +x0, -x7, -x2, +x1, -x4],
+                [+x4, +x2, -x1, +x7, +x0, -x6, +x5, +x3],
+                [+x5, +x7, +x3, -x2, +x6, +x0, -x4, +x1],
+                [+x6, -x3, +x7, +x1, -x5, +x4, +x0, +x2],
+                [+x7, +x5, +x6, +x4, +x3, +x1, +x2, +x0]
             ];
 
             const b = [1, 0, 0, 0, 0, 0, 0, 0];
@@ -1053,12 +1062,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a << b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     lco2(a: GeometricE3, b: GeometricE3): this {
         return lcoG3(a, b, this);
@@ -1087,6 +1091,9 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
 
+    /**
+     * @hidden
+     */
     magnitudeNoUnits(): number {
         return Math.sqrt(this.quaditudeNoUnits());
     }
@@ -1172,12 +1179,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     mul2(a: GeometricE3, b: GeometricE3): this {
         if (this.isLocked()) {
@@ -1253,6 +1255,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
+     * @hidden
      * The quaditude of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -1289,12 +1292,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a >> b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     rco2(a: GeometricE3, b: GeometricE3): this {
         return rcoG3(a, b, this);
@@ -1309,6 +1307,9 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
         return this.quaditude();
     }
 
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number {
         return squaredNormG3(this);
     }
@@ -1579,12 +1580,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     scp2(a: GeometricE3, b: GeometricE3): this {
         return scpG3(a, b, this);
@@ -1612,8 +1608,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * @param α
-     * @returns this * α
+     * @hidden
      */
     mulByNumber(α: number): Geometric3 {
         if (this.isLocked()) {
@@ -1769,6 +1764,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
+     * @hidden
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
      * @returns this - v * α
@@ -1795,12 +1791,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a - b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     sub2(a: GeometricE3, b: GeometricE3): this {
         if (isZeroGeometricE3(a)) {
@@ -1960,12 +1951,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a ^ b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     ext2(a: GeometricE3, b: GeometricE3): this {
         return extG3(a, b, this);
@@ -1988,7 +1974,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this + rhs`.
+     * @hidden
      */
     __add__(rhs: Geometric3 | number | Unit): Geometric3 {
         if (rhs instanceof Geometric3) {
@@ -2006,7 +1992,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this / rhs`.
+     * @hidden
      */
     __div__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
@@ -2019,7 +2005,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs / this`.
+     * @hidden
      */
     __rdiv__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2034,7 +2020,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this * rhs`.
+     * @hidden
      */
     __mul__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
@@ -2047,7 +2033,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs * this`.
+     * @hidden
      */
     __rmul__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2062,7 +2048,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs + this`.
+     * @hidden
      */
     __radd__(lhs: Geometric3 | number | Unit) {
         if (lhs instanceof Geometric3) {
@@ -2080,7 +2066,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this - rhs`.
+     * @hidden
      */
     __sub__(rhs: number | Geometric3) {
         const duckR = maskG3(rhs);
@@ -2093,7 +2079,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs - rhs`.
+     * @hidden
      */
     __rsub__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2108,14 +2094,14 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `~this`.
+     * @hidden
      */
     __tilde__(): Geometric3 {
         return lock(Geometric3.copy(this).rev());
     }
 
     /**
-     * Implements `this ^ rhs`.
+     * @hidden
      */
     __wedge__(rhs: number | Geometric3) {
         if (rhs instanceof Geometric3) {
@@ -2131,7 +2117,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs ^ this`.
+     * @hidden
      */
     __rwedge__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2147,7 +2133,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this << rhs`.
+     * @hidden
      */
     __lshift__(rhs: number | Geometric3) {
         if (rhs instanceof Geometric3) {
@@ -2162,7 +2148,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs << this`.
+     * @hidden
      */
     __rlshift__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2177,7 +2163,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this >> rhs`.
+     * @hidden
      */
     __rshift__(rhs: number | Geometric3) {
         if (rhs instanceof Geometric3) {
@@ -2192,7 +2178,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs >> rhs`.
+     * @hidden
      */
     __rrshift__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2207,7 +2193,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `this | rhs`.
+     * @hidden
      */
     __vbar__(rhs: number | Geometric3) {
         if (rhs instanceof Geometric3) {
@@ -2222,7 +2208,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `lhs | this`.
+     * @hidden
      */
     __rvbar__(lhs: number | Geometric3) {
         if (lhs instanceof Geometric3) {
@@ -2237,21 +2223,21 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Implements `!this`.
+     * @hidden
      */
     __bang__(): Geometric3 {
         return lock(Geometric3.copy(this).inv());
     }
 
     /**
-     * Implements `+this`.
+     * @hidden
      */
     __pos__(): Geometric3 {
         return lock(Geometric3.copy(this));
     }
 
     /**
-     * Implements `-this`.
+     * @hidden
      */
     __neg__(): Geometric3 {
         return lock(Geometric3.copy(this).neg());

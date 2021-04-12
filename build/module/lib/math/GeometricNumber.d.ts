@@ -22,7 +22,11 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
      */
     clone(): M;
     /**
-     * Conjugate
+     * Clifford Conjugation.
+     *
+     * The multiplier for grade a is (-1)^(a(a+1)/2).
+     *
+     * This gives the pattern + - - + + - - +
      */
     conj(): M;
     /**

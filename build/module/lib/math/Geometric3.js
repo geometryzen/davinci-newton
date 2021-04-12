@@ -198,30 +198,38 @@ var Geometric3 = /** @class */ (function (_super) {
         _this.coords_ = coords;
         return _this;
     }
+    /**
+     * @hidden
+     */
     Geometric3.prototype.__eq__ = function (rhs) {
         if (rhs instanceof Geometric3) {
-            var La = this.a;
-            var Ra = rhs.a;
-            return La === Ra;
+            return this.equals(rhs);
         }
         else if (typeof rhs === 'number') {
-            return this.a === rhs;
+            return this.equals(Geometric3.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Geometric3.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return false;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric3.prototype.__ne__ = function (rhs) {
         if (rhs instanceof Geometric3) {
-            var La = this.a;
-            var Ra = rhs.a;
-            return La !== Ra;
+            return !this.equals(rhs);
         }
         else if (typeof rhs === 'number') {
-            return this.a !== rhs;
+            return !this.equals(Geometric3.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Geometric3.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return true;
         }
     };
     Geometric3.prototype.scale = function (α) {
@@ -429,11 +437,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * this ⟼ a + b
-     *
-     * @param a
-     * @param b
-     * @returns this multivector
+     * @hidden
      */
     Geometric3.prototype.add2 = function (a, b) {
         if (isZeroGeometricE3(a)) {
@@ -509,6 +513,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
+     * @hidden
      * @param v The vector to be added to this multivector.
      * @param α An optional scale factor that multiplies the vector argument.
      * @returns this + v * α
@@ -535,6 +540,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
+     * @hidden
      * Pre-multiplies the column vector corresponding to this vector by the matrix.
      * The result is applied to this vector.
      *
@@ -560,9 +566,7 @@ var Geometric3 = /** @class */ (function (_super) {
         return this;
     };
     /**
-     * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
-     * @param n
-     * @returns approx(this, n)
+     * @hidden
      */
     Geometric3.prototype.approx = function (n) {
         if (this.isLocked()) {
@@ -799,6 +803,9 @@ var Geometric3 = /** @class */ (function (_super) {
             return this;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric3.prototype.divByNumber = function (α) {
         if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
@@ -852,12 +859,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     Geometric3.prototype.div2 = function (a, b) {
         this.uom = Unit.div(a.uom, b.uom);
@@ -913,9 +915,11 @@ var Geometric3 = /** @class */ (function (_super) {
      * @returns
      */
     Geometric3.prototype.equals = function (other) {
-        if (other instanceof Geometric3) {
-            // TODO: Check units of measure.
-            return arraysEQ(this.coords_, other.coords_);
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Geometric3) {
+            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;
@@ -930,23 +934,23 @@ var Geometric3 = /** @class */ (function (_super) {
             return lock(this.clone().inv());
         }
         else {
-            var α = this.a;
-            var x = this.x;
-            var y = this.y;
-            var z = this.z;
-            var xy = this.xy;
-            var yz = this.yz;
-            var zx = this.zx;
-            var β = this.b;
+            var x0 = this.a;
+            var x1 = this.x;
+            var x2 = this.y;
+            var x3 = this.z;
+            var x4 = this.xy;
+            var x5 = this.yz;
+            var x6 = this.zx;
+            var x7 = this.b;
             var A = [
-                [α, x, y, z, -xy, -yz, -zx, -β],
-                [x, α, xy, -zx, -y, -β, z, -yz],
-                [y, -xy, α, yz, x, -z, -β, -zx],
-                [z, zx, -yz, α, -β, y, -x, -xy],
-                [xy, -y, x, β, α, zx, -yz, z],
-                [yz, β, -z, y, -zx, α, xy, x],
-                [zx, z, β, -x, yz, -xy, α, y],
-                [β, yz, zx, xy, z, x, y, α]
+                [+x0, +x1, +x2, +x3, -x4, -x5, -x6, -x7],
+                [+x1, +x0, -x4, +x6, +x2, -x7, -x3, -x5],
+                [+x2, +x4, +x0, -x5, -x1, +x3, -x7, -x6],
+                [+x3, -x6, +x5, +x0, -x7, -x2, +x1, -x4],
+                [+x4, +x2, -x1, +x7, +x0, -x6, +x5, +x3],
+                [+x5, +x7, +x3, -x2, +x6, +x0, -x4, +x1],
+                [+x6, -x3, +x7, +x1, -x5, +x4, +x0, +x2],
+                [+x7, +x5, +x6, +x4, +x3, +x1, +x2, +x0]
             ];
             var b = [1, 0, 0, 0, 0, 0, 0, 0];
             var X = gauss(A, b);
@@ -1010,12 +1014,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a << b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.lco2 = function (a, b) {
         return lcoG3(a, b, this);
@@ -1042,6 +1041,9 @@ var Geometric3 = /** @class */ (function (_super) {
             return lock(this.clone().magnitude());
         }
     };
+    /**
+     * @hidden
+     */
     Geometric3.prototype.magnitudeNoUnits = function () {
         return Math.sqrt(this.quaditudeNoUnits());
     };
@@ -1115,12 +1117,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.mul2 = function (a, b) {
         if (this.isLocked()) {
@@ -1189,6 +1186,7 @@ var Geometric3 = /** @class */ (function (_super) {
         return this;
     };
     /**
+     * @hidden
      * The quaditude of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -1223,12 +1221,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a >> b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.rco2 = function (a, b) {
         return rcoG3(a, b, this);
@@ -1241,6 +1234,9 @@ var Geometric3 = /** @class */ (function (_super) {
     Geometric3.prototype.squaredNorm = function () {
         return this.quaditude();
     };
+    /**
+     * @hidden
+     */
     Geometric3.prototype.quaditudeNoUnits = function () {
         return squaredNormG3(this);
     };
@@ -1495,12 +1491,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.scp2 = function (a, b) {
         return scpG3(a, b, this);
@@ -1526,8 +1517,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * @param α
-     * @returns this * α
+     * @hidden
      */
     Geometric3.prototype.mulByNumber = function (α) {
         if (this.isLocked()) {
@@ -1675,6 +1665,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
+     * @hidden
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
      * @returns this - v * α
@@ -1701,12 +1692,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a - b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.sub2 = function (a, b) {
         if (isZeroGeometricE3(a)) {
@@ -1859,12 +1845,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a ^ b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric3.prototype.ext2 = function (a, b) {
         return extG3(a, b, this);
@@ -1885,7 +1866,7 @@ var Geometric3 = /** @class */ (function (_super) {
         return this;
     };
     /**
-     * Implements `this + rhs`.
+     * @hidden
      */
     Geometric3.prototype.__add__ = function (rhs) {
         if (rhs instanceof Geometric3) {
@@ -1902,7 +1883,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this / rhs`.
+     * @hidden
      */
     Geometric3.prototype.__div__ = function (rhs) {
         var duckR = maskG3(rhs);
@@ -1914,7 +1895,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs / this`.
+     * @hidden
      */
     Geometric3.prototype.__rdiv__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -1928,7 +1909,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this * rhs`.
+     * @hidden
      */
     Geometric3.prototype.__mul__ = function (rhs) {
         var duckR = maskG3(rhs);
@@ -1940,7 +1921,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs * this`.
+     * @hidden
      */
     Geometric3.prototype.__rmul__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -1954,7 +1935,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs + this`.
+     * @hidden
      */
     Geometric3.prototype.__radd__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -1971,7 +1952,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this - rhs`.
+     * @hidden
      */
     Geometric3.prototype.__sub__ = function (rhs) {
         var duckR = maskG3(rhs);
@@ -1983,7 +1964,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs - rhs`.
+     * @hidden
      */
     Geometric3.prototype.__rsub__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -1997,13 +1978,13 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `~this`.
+     * @hidden
      */
     Geometric3.prototype.__tilde__ = function () {
         return lock(Geometric3.copy(this).rev());
     };
     /**
-     * Implements `this ^ rhs`.
+     * @hidden
      */
     Geometric3.prototype.__wedge__ = function (rhs) {
         if (rhs instanceof Geometric3) {
@@ -2018,7 +1999,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs ^ this`.
+     * @hidden
      */
     Geometric3.prototype.__rwedge__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -2033,7 +2014,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this << rhs`.
+     * @hidden
      */
     Geometric3.prototype.__lshift__ = function (rhs) {
         if (rhs instanceof Geometric3) {
@@ -2047,7 +2028,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs << this`.
+     * @hidden
      */
     Geometric3.prototype.__rlshift__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -2061,7 +2042,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this >> rhs`.
+     * @hidden
      */
     Geometric3.prototype.__rshift__ = function (rhs) {
         if (rhs instanceof Geometric3) {
@@ -2075,7 +2056,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs >> rhs`.
+     * @hidden
      */
     Geometric3.prototype.__rrshift__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -2089,7 +2070,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `this | rhs`.
+     * @hidden
      */
     Geometric3.prototype.__vbar__ = function (rhs) {
         if (rhs instanceof Geometric3) {
@@ -2103,7 +2084,7 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `lhs | this`.
+     * @hidden
      */
     Geometric3.prototype.__rvbar__ = function (lhs) {
         if (lhs instanceof Geometric3) {
@@ -2117,19 +2098,19 @@ var Geometric3 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Implements `!this`.
+     * @hidden
      */
     Geometric3.prototype.__bang__ = function () {
         return lock(Geometric3.copy(this).inv());
     };
     /**
-     * Implements `+this`.
+     * @hidden
      */
     Geometric3.prototype.__pos__ = function () {
         return lock(Geometric3.copy(this));
     };
     /**
-     * Implements `-this`.
+     * @hidden
      */
     Geometric3.prototype.__neg__ = function () {
         return lock(Geometric3.copy(this).neg());

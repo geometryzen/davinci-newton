@@ -19,6 +19,15 @@ describe("gauss", function () {
         expect(result[1]).toBe(4);
     });
 
+    /**
+     * x = 1
+     * y = 2
+     * z = 3
+     * 
+     * x + y + z   = 1 + 2 + 3 = 6
+     * 2x + y + 2z = 2 + 2 + 6 = 10
+     * x + 2y + 3z = 1 + 4 + 9 = 14
+     */
     it("x + y + z = 6, 2x + y + 2z = 10, x + 2y + 3z = 14", function () {
         const A = [[1, 1, 1], [2, 1, 2], [1, 2, 3]];
         const b = [6, 10, 14];

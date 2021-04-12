@@ -196,6 +196,9 @@ var Geometric2 = /** @class */ (function (_super) {
     Geometric2.prototype.scale = function (α) {
         return this.mulByNumber(α);
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__div__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().div(rhs));
@@ -210,6 +213,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rdiv__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).div(this));
@@ -221,6 +227,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__vbar__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).scp(rhs));
@@ -232,6 +241,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rvbar__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).scp(this));
@@ -243,6 +255,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__wedge__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).ext(rhs));
@@ -255,6 +270,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rwedge__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).ext(this));
@@ -267,6 +285,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__lshift__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).lco(rhs));
@@ -278,6 +299,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rlshift__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).lco(this));
@@ -289,6 +313,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rshift__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).rco(rhs));
@@ -300,6 +327,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rrshift__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).rco(this));
@@ -311,52 +341,55 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__bang__ = function () {
         return lock(Geometric2.copy(this).inv());
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__eq__ = function (rhs) {
-        var a0 = this.a;
-        var a1 = this.x;
-        var a2 = this.y;
-        var a3 = this.b;
         if (rhs instanceof Geometric2) {
-            var b0 = rhs.a;
-            var b1 = rhs.x;
-            var b2 = rhs.y;
-            var b3 = rhs.b;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit.isCompatible(this.uom, rhs.uom);
+            return this.equals(rhs);
         }
         else if (typeof rhs === 'number') {
-            return a0 === rhs && a1 === 0 && a2 === 0 && a3 === 0 && Unit.isOne(this.uom);
+            return this.equals(Geometric2.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Geometric2.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return false;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__ne__ = function (rhs) {
-        var a0 = this.a;
-        var a1 = this.x;
-        var a2 = this.y;
-        var a3 = this.b;
         if (rhs instanceof Geometric2) {
-            var b0 = rhs.a;
-            var b1 = rhs.x;
-            var b2 = rhs.y;
-            var b3 = rhs.b;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 !== b0 || a1 !== b1 || a2 !== b2 || a3 !== b3 || !Unit.isCompatible(this.uom, rhs.uom);
+            return !this.equals(rhs);
         }
         else if (typeof rhs === 'number') {
-            return a0 !== rhs || a1 !== 0 || a2 !== 0 || a3 !== 0 || !Unit.isOne(this.uom);
+            return !this.equals(Geometric2.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Geometric2.scalar(1, rhs));
         }
         else {
-            return void 0;
+            return true;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__tilde__ = function () {
         return lock(Geometric2.copy(this).rev());
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__add__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().add(rhs));
@@ -371,6 +404,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__radd__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).add(this));
@@ -385,6 +421,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__sub__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().sub(rhs));
@@ -399,6 +438,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rsub__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).sub(this));
@@ -410,12 +452,21 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__pos__ = function () {
         return lock(Geometric2.copy(this));
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__neg__ = function () {
         return lock(Geometric2.copy(this).neg());
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__mul__ = function (rhs) {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().mul(rhs));
@@ -430,6 +481,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.__rmul__ = function (lhs) {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).mul(this));
@@ -442,6 +496,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return void 0;
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.add2 = function (a, b) {
         if (isZeroGeometric(a)) {
             this.uom = b.uom;
@@ -504,6 +561,9 @@ var Geometric2 = /** @class */ (function (_super) {
             }
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.approx = function (n) {
         if (this.isLocked()) {
             return lock(this.clone().approx(n));
@@ -552,12 +612,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     Geometric2.prototype.div2 = function (a, b) {
         throw new Error(notImplemented('div2').message);
@@ -601,18 +656,18 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     Geometric2.prototype.equals = function (other) {
-        if (other instanceof Geometric2) {
-            // TODO: Check units of measure.
-            return arraysEQ(this.coords_, other.coords_);
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Geometric2) {
+            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ lhs ^ rhs</code>
-     * </p>
+     * @hidden
      */
     Geometric2.prototype.ext2 = function (lhs, rhs) {
         var a0 = lhs.a;
@@ -681,12 +736,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ lhs << rhs</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric2.prototype.lco2 = function (lhs, rhs) {
         var a0 = lhs.a;
@@ -721,9 +771,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ lhs >> rhs</code>
-     * </p>
+     * @hidden
      */
     Geometric2.prototype.rco2 = function (lhs, rhs) {
         var a0 = lhs.a;
@@ -878,6 +926,9 @@ var Geometric2 = /** @class */ (function (_super) {
     Geometric2.prototype.squaredNorm = function () {
         return this.quaditude();
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.sub2 = function (a, b) {
         if (isZeroGeometric(a)) {
             this.a = -b.a;
@@ -1238,8 +1289,8 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * Computes the inverse of this multivector.
-     * TODO: Define what inverse means.
+     * Computes the right inverse of this multivector.
+     * inv(X) satisfies X * inv(X) = 1.
      * @returns inverse(this)
      */
     Geometric2.prototype.inv = function () {
@@ -1247,15 +1298,15 @@ var Geometric2 = /** @class */ (function (_super) {
             return lock(this.clone().inv());
         }
         else {
-            var α = this.a;
-            var x = this.x;
-            var y = this.y;
-            var β = this.b;
+            var x0 = this.a;
+            var x1 = this.x;
+            var x2 = this.y;
+            var x3 = this.b;
             var A = [
-                [α, x, y, -β],
-                [x, α, β, -y],
-                [y, -β, α, x],
-                [β, -y, x, α]
+                [+x0, +x1, +x2, -x3],
+                [+x1, +x0, -x3, +x2],
+                [+x2, +x3, +x0, -x1],
+                [+x3, +x2, -x1, +x0]
             ];
             var b = [1, 0, 0, 0];
             var X = gauss(A, b);
@@ -1317,6 +1368,9 @@ var Geometric2 = /** @class */ (function (_super) {
             return lock(this.clone().magnitude());
         }
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.magnitudeNoUnits = function () {
         return Math.sqrt(this.quaditudeNoUnits());
     };
@@ -1333,12 +1387,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric2.prototype.mul2 = function (lhs, rhs) {
         var a0 = lhs.a;
@@ -1445,6 +1494,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
+     * @hidden
      * The quad of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -1526,12 +1576,7 @@ var Geometric2 = /** @class */ (function (_super) {
         }
     };
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     Geometric2.prototype.scp2 = function (a, b) {
         var a0 = a.a;
@@ -1550,6 +1595,9 @@ var Geometric2 = /** @class */ (function (_super) {
         this.uom = Unit.mul(a.uom, b.uom);
         return this;
     };
+    /**
+     * @hidden
+     */
     Geometric2.prototype.quaditudeNoUnits = function () {
         var a = this.a;
         var x = this.x;

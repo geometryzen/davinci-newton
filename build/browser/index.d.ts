@@ -475,6 +475,7 @@ export interface GeometricE3 extends Pseudo, Scalar, SpinorE3, VectorE3 {
 export interface LinearNumber<I, M, S, V> {
     add(rhs: I, α?: number): M;
     divByScalar(α: number, uom?: Unit): M;
+    equals(other: unknown): boolean;
     scale(α: number): M;
     neg(): M;
     reflect(n: V): M;
@@ -542,16 +543,6 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
      * Multiplication.
      */
     mul(rhs: I): M;
-
-    /**
-     * squared norm, scp(x, rev(x))
-     */
-    quaditude(): M;
-
-    /**
-     * squared norm, scp(x, rev(x))
-     */
-    quaditudeNoUnits(): number;
 
     /**
      * Right contraction
@@ -726,20 +717,27 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
     conj(): Geometric1;
     copy(source: Geometric1): Geometric1;
     copyVector(vector: Geometric1): Geometric1;
-    lco(rhs: Geometric1): Geometric1;
     div(rhs: Geometric1): Geometric1;
     divByNumber(α: number): Geometric1;
     divByScalar(α: number, uom?: Unit): Geometric1;
+    equals(other: unknown): boolean;
     ext(rhs: Geometric1): Geometric1;
     grade(grade: number): Geometric1;
+    /**
+     * Determines whether this multivector is locked.
+     * If the multivector is in the unlocked state then it is mutable.
+     * If the multivector is in the locked state then it is immutable.
+     */
+    isLocked(): boolean;
+    isMutable(): boolean;
+    isOne(): boolean;
     isScalar(): boolean;
+    isZero(): boolean;
+    lco(rhs: Geometric1): Geometric1;
     mul(rhs: Geometric1): Geometric1;
     mulByNumber(α: number): Geometric1;
     mulByScalar(α: number, uom?: Unit): Geometric1;
     magnitude(): Geometric1;
-    magnitudeNoUnits(): number;
-    quaditude(): Geometric1;
-    quaditudeNoUnits(): number;
     rco(rhs: Geometric1): Geometric1;
     rev(): Geometric1;
     scale(α: number): Geometric1;
@@ -758,15 +756,6 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
     zero(): Geometric1;
     inv(): Geometric1;
     neg(): Geometric1;
-    isZero(): boolean;
-    isOne(): boolean;
-    /**
-     * Determines whether this multivector is locked.
-     * If the multivector is in the unlocked state then it is mutable.
-     * If the multivector is in the locked state then it is immutable.
-     */
-    isLocked(): boolean;
-    isMutable(): boolean;
     /**
      * Locks this multivector (preventing any further mutation),
      * and returns a token that may be used to unlock it.
@@ -856,11 +845,6 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * this ⟼ this + v * α
      */
     addVector(v: VectorE2, α?: number): Geometric2;
-
-    /**
-     * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
-     */
-    approx(n: number): Geometric2;
 
     /**
      * Returns a clone of this multivector.
@@ -956,7 +940,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     /**
      * 
      */
-    equals(other: any): boolean;
+    equals(other: unknown): boolean;
 
     /**
      * 
@@ -1073,27 +1057,11 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * 
      */
     magnitude(): Geometric2;
-    /**
-     * 
-     */
-    magnitudeNoUnits(): number;
 
     /**
      * Sets this multivector to the identity element for multiplication, 1.
      */
     one(): Geometric2;
-
-    /**
-     * 
-     * this ⟼ this | ~this = scp(this, rev(this))
-     * 
-     */
-    quaditude(): Geometric2;
-
-    /**
-     * 
-     */
-    quaditudeNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.
@@ -1597,11 +1565,6 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     addVector(v: VectorE3, α?: number): Geometric3;
 
     /**
-     * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
-     */
-    approx(n: number): Geometric3;
-
-    /**
      * Returns a clone of this multivector.
      */
     clone(): Geometric3;
@@ -1701,7 +1664,7 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     /**
      * 
      */
-    equals(other: any): boolean;
+    equals(other: unknown): boolean;
 
     /**
      * 
@@ -1817,26 +1780,9 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     magnitude(): Geometric3;
 
     /**
-     * 
-     */
-    magnitudeNoUnits(): number;
-
-    /**
      * Sets this multivector to the identity element for multiplication, 1.
      */
     one(): Geometric3;
-
-    /**
-     * 
-     * this ⟼ this | ~this = scp(this, rev(this))
-     * 
-     */
-    quaditude(): Geometric3;
-
-    /**
-     * 
-     */
-    quaditudeNoUnits(): number;
 
     /**
      * Sets this multivector to the right contraction with another multivector.
@@ -2210,8 +2156,8 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
 export declare class Spacetime1 {
     static readonly zero: Spacetime1;
     static readonly one: Spacetime1;
-    static readonly γ0: Spacetime1;
-    static readonly γ1: Spacetime1;
+    static readonly e0: Spacetime1;
+    static readonly e1: Spacetime1;
     static readonly I: Spacetime1;
     static readonly kilogram: Spacetime1;
     static readonly meter: Spacetime1;
@@ -2251,6 +2197,7 @@ export declare class Spacetime1 {
     divByScalar(α: number, uom?: Unit): Spacetime1;
     divByVector(v: { t: number; x: number; uom?: Unit; }): Spacetime1;
     dual(): Spacetime1;
+    equals(other: unknown): boolean;
     ext(rhs: Spacetime1): Spacetime1;
     grade(n: number): Spacetime1;
     inv(): Spacetime1;
@@ -2266,8 +2213,6 @@ export declare class Spacetime1 {
     mulByScalar(a: number, uom: Unit): Spacetime1;
     mulByVector(v: { t: number; x: number; uom?: Unit; }): Spacetime1;
     neg(): Spacetime1;
-    quaditude(): Spacetime1;
-    quaditudeNoUnits(): number;
     rco(rhs: Spacetime1): Spacetime1;
     reflect(n: { t: number; x: number; uom?: Unit; }): Spacetime1;
     rev(): Spacetime1;
@@ -2286,12 +2231,9 @@ export declare class Spacetime1 {
 export declare class Spacetime2 {
     static readonly zero: Spacetime2;
     static readonly one: Spacetime2;
-    static readonly γ0: Spacetime2;
-    static readonly γ1: Spacetime2;
-    static readonly γ0γ1: Spacetime2;
-    static readonly γ2: Spacetime2;
-    static readonly γ0γ2: Spacetime2;
-    static readonly γ1γ2: Spacetime2;
+    static readonly e0: Spacetime2;
+    static readonly e1: Spacetime2;
+    static readonly e2: Spacetime2;
     static readonly I: Spacetime2;
     static readonly kilogram: Spacetime2;
     static readonly meter: Spacetime2;
@@ -2327,6 +2269,7 @@ export declare class Spacetime2 {
     divByScalar(α: number, uom?: Unit): Spacetime2;
     divByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
     dual(): Spacetime2;
+    equals(other: unknown): boolean;
     ext(rhs: Spacetime2): Spacetime2;
     grade(n: number): Spacetime2;
     inv(): Spacetime2;
@@ -2342,8 +2285,6 @@ export declare class Spacetime2 {
     mulByScalar(a: number, uom: Unit): Spacetime2;
     mulByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
     neg(): Spacetime2;
-    quaditude(): Spacetime2;
-    quaditudeNoUnits(): number;
     rco(rhs: Spacetime2): Spacetime2;
     reflect(n: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
     rev(): Spacetime2;

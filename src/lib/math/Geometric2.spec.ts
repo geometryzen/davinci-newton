@@ -8,7 +8,9 @@ const e1 = Geometric2.e1;
 const e2 = Geometric2.e2;
 const e12 = Geometric2.e1.mul(Geometric2.e2);
 const I = e12;
-const elements = [one, e1, e2, e12];
+const blades = [one, e1, e2, e12];
+const meter = Geometric2.meter;
+const kilogram = Geometric2.kilogram;
 
 /**
  * @hidden
@@ -568,7 +570,7 @@ describe("Geometric2", function () {
             checkEQ(I.dual(), one);
         });
         it("dual(Ak) = Ak << inv(I)", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.dual(), element.lco(I.rev()));
                 checkEQ(element.dual(), element.lco(I.inv()));
             }
@@ -623,6 +625,28 @@ describe("Geometric2", function () {
             expect(M.b).toBe(0);
         });
     });
+
+    describe("equals", function () {
+        it("blades", function () {
+            for (const blade of blades) {
+                expect(blade.equals(blade)).toBeTrue();
+            }
+        });
+        it("units", function () {
+            expect(meter.equals(meter)).toBeTrue();
+            expect(kilogram.equals(kilogram)).toBeTrue();
+            expect(meter.equals(kilogram)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.equals(0)).toBeFalse();
+            expect(one.equals("0")).toBeFalse();
+            expect(one.equals(false)).toBeFalse();
+            expect(one.equals(1)).toBeFalse();
+            expect(one.equals("1")).toBeFalse();
+            expect(one.equals(true)).toBeFalse();
+        });
+    });
+
     describe("inv", function () {
         it("scalar(2) should be 0.5", function () {
             const M = Geometric2.scalar(2, Unit.METER);
@@ -659,6 +683,33 @@ describe("Geometric2", function () {
             expect(inverse.y).toBe(0);
             expect(inverse.b).toBe(-0.5);
             expect(inverse.uom).toBe(Unit.ONE.div(Unit.METER));
+        });
+        it("", function () {
+            checkEQ(one.inv(), one);
+            checkEQ(e1.inv(), e1);
+            checkEQ(e2.inv(), e2);
+            checkEQ(e12.inv(), e12.neg());
+        });
+        it("1+I should be (1-I)/2", function () {
+            checkEQ(one.add(I).inv(), one.sub(I).divByNumber(2));
+        });
+        it("e1-e2 should be (e1-e2)/2", function () {
+            checkEQ(e1.sub(e2).inv(), e1.sub(e2).divByNumber(2));
+        });
+        it("2+e1 should be (2-e1)/3", function () {
+            checkEQ(two.add(e1).inv(), two.sub(e1).divByNumber(3));
+        });
+        it("2+e2 should be (2-e2)/3", function () {
+            checkEQ(two.add(e2).inv(), two.sub(e2).divByNumber(3));
+        });
+        it("2*e2+I should be (2*e2+I)/3", function () {
+            checkEQ(e2.scale(2).add(I).inv(), e2.scale(2).add(I).divByNumber(3));
+        });
+        it("2*e1-I should be (2*e1-I)/3", function () {
+            checkEQ(e1.scale(2).sub(I).inv(), e1.scale(2).sub(I).divByNumber(3));
+        });
+        it("2*e1+I should be (2*e1+I)/3", function () {
+            checkEQ(e1.scale(2).add(I).inv(), e1.scale(2).add(I).divByNumber(3));
         });
     });
     describe("isScalar", function () {
@@ -1223,29 +1274,35 @@ describe("Geometric2", function () {
         });
     });
     describe("__eq__", function () {
-        it("(Geometric)", function () {
-            expect(one.__eq__(one)).toBeTrue();
-            expect(one.__eq__(two)).toBeFalse();
+        it("should be the operator overload of equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__eq__(rhs)).toBe(lhs.equals(rhs));
+                }
+                expect(lhs.__eq__(1)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
+                expect(lhs.__eq__("1" as any)).toBe(false);
+            }
         });
-        it("(number)", function () {
-            expect(one.__eq__(1)).toBeTrue();
-            expect(one.__eq__(2)).toBeFalse();
-        });
-        it("otherwise", function () {
-            expect(one.__eq__("" as unknown as Geometric2)).toBeUndefined();
+        it("", function () {
+            expect(one.__eq__(Unit.ONE)).toBe(true);
+            expect(meter.__eq__(Unit.METER)).toBe(true);
+            expect(one.__eq__(Unit.METER)).toBe(false);
+            expect(meter.__eq__(Unit.ONE)).toBe(false);
         });
     });
     describe("__ne__", function () {
-        it("(Geometric)", function () {
-            expect(one.__ne__(one)).toBeFalse();
-            expect(one.__ne__(two)).toBeTrue();
-        });
-        it("(number)", function () {
-            expect(one.__ne__(1)).toBeFalse();
-            expect(one.__ne__(2)).toBeTrue();
-        });
-        it("otherwise", function () {
-            expect(one.__ne__("" as unknown as Geometric2)).toBeUndefined();
+        it("should be the operator overload of !equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__ne__(rhs)).toBe(!lhs.equals(rhs));
+                }
+                expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
+                expect(lhs.__ne__("1" as any)).toBe(true);
+            }
         });
     });
     describe("__add__", function () {

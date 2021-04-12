@@ -321,6 +321,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     scale(α: number): Geometric2 {
         return this.mulByNumber(α);
     }
+    /**
+     * @hidden
+     */
     __div__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().div(rhs));
@@ -335,6 +338,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rdiv__(lhs: number | Geometric2): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).div(this));
@@ -346,6 +352,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __vbar__(rhs: number | Geometric2): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).scp(rhs));
@@ -357,6 +366,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rvbar__(lhs: number | Geometric2): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).scp(this));
@@ -368,6 +380,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __wedge__(rhs: number | Geometric2): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).ext(rhs));
@@ -380,6 +395,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rwedge__(lhs: number | Geometric2): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).ext(this));
@@ -392,6 +410,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __lshift__(rhs: number | Geometric2): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).lco(rhs));
@@ -403,6 +424,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rlshift__(lhs: number | Geometric2): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).lco(this));
@@ -414,6 +438,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rshift__(rhs: number | Geometric2): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(Geometric2.copy(this).rco(rhs));
@@ -425,6 +452,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rrshift__(lhs: number | Geometric2): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).rco(this));
@@ -436,48 +466,55 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __bang__(): Geometric2 {
         return lock(Geometric2.copy(this).inv());
     }
-    __eq__(rhs: Geometric2 | number): boolean {
-        const a0 = this.a;
-        const a1 = this.x;
-        const a2 = this.y;
-        const a3 = this.b;
+    /**
+     * @hidden
+     */
+    __eq__(rhs: Geometric2 | number | Unit): boolean {
         if (rhs instanceof Geometric2) {
-            const b0 = rhs.a;
-            const b1 = rhs.x;
-            const b2 = rhs.y;
-            const b3 = rhs.b;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 === b0 && a1 === b1 && a2 === b2 && a3 === b3 && Unit.isCompatible(this.uom, rhs.uom);
-        } else if (typeof rhs === 'number') {
-            return a0 === rhs && a1 === 0 && a2 === 0 && a3 === 0 && Unit.isOne(this.uom);
-        } else {
-            return void 0;
+            return this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return this.equals(Geometric2.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Geometric2.scalar(1, rhs));
+        }
+        else {
+            return false;
         }
     }
-    __ne__(rhs: Geometric2 | number): boolean {
-        const a0 = this.a;
-        const a1 = this.x;
-        const a2 = this.y;
-        const a3 = this.b;
+    /**
+     * @hidden
+     */
+    __ne__(rhs: Geometric2 | number | Unit): boolean {
         if (rhs instanceof Geometric2) {
-            const b0 = rhs.a;
-            const b1 = rhs.x;
-            const b2 = rhs.y;
-            const b3 = rhs.b;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 !== b0 || a1 !== b1 || a2 !== b2 || a3 !== b3 || !Unit.isCompatible(this.uom, rhs.uom);
-        } else if (typeof rhs === 'number') {
-            return a0 !== rhs || a1 !== 0 || a2 !== 0 || a3 !== 0 || !Unit.isOne(this.uom);
-        } else {
-            return void 0;
+            return !this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return !this.equals(Geometric2.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Geometric2.scalar(1, rhs));
+        }
+        else {
+            return true;
         }
     }
+    /**
+     * @hidden
+     */
     __tilde__(): Geometric2 {
         return lock(Geometric2.copy(this).rev());
     }
+    /**
+     * @hidden
+     */
     __add__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().add(rhs));
@@ -492,6 +529,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __radd__(lhs: Geometric2 | number | Unit): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).add(this));
@@ -506,6 +546,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __sub__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().sub(rhs));
@@ -521,6 +564,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rsub__(lhs: Geometric2 | number): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).sub(this));
@@ -532,12 +578,21 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __pos__(): Geometric2 {
         return lock(Geometric2.copy(this));
     }
+    /**
+     * @hidden
+     */
     __neg__(): Geometric2 {
         return lock(Geometric2.copy(this).neg());
     }
+    /**
+     * @hidden
+     */
     __mul__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().mul(rhs));
@@ -551,6 +606,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     __rmul__(lhs: any): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).mul(this));
@@ -563,6 +621,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+    /**
+     * @hidden
+     */
     add2(a: Geometric, b: Geometric): Geometric2 {
         if (isZeroGeometric(a)) {
             this.uom = b.uom;
@@ -624,6 +685,10 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+
+    /**
+     * @hidden
+     */
     approx(n: number): Geometric2 {
         if (this.isLocked()) {
             return lock(this.clone().approx(n));
@@ -670,17 +735,14 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     div2(a: Spinor, b: Spinor): Geometric2 {
         throw new Error(notImplemented('div2').message);
     }
+
     divByNumber(α: number): Geometric2 {
         if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
@@ -721,18 +783,19 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
     equals(other: unknown): boolean {
-        if (other instanceof Geometric2) {
-            // TODO: Check units of measure.
-            return arraysEQ(this.coords_, other.coords_);
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Geometric2) {
+            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;
         }
     }
+
     /**
-     * <p>
-     * <code>this ⟼ lhs ^ rhs</code>
-     * </p>
+     * @hidden
      */
     ext2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
@@ -800,13 +863,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return this.lco2(this, rhs);
         }
     }
+
     /**
-     * <p>
-     * <code>this ⟼ lhs << rhs</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     lco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
@@ -840,10 +899,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return this.rco2(this, m);
         }
     }
+
     /**
-     * <p>
-     * <code>this ⟼ lhs >> rhs</code>
-     * </p>
+     * @hidden
      */
     rco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
@@ -1003,6 +1061,10 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     squaredNorm(): Geometric2 {
         return this.quaditude();
     }
+
+    /**
+     * @hidden
+     */
     sub2(a: Geometric, b: Geometric): Geometric2 {
         if (isZeroGeometric(a)) {
             this.a = -b.a;
@@ -1353,8 +1415,8 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * Computes the inverse of this multivector.
-     * TODO: Define what inverse means. 
+     * Computes the right inverse of this multivector.
+     * inv(X) satisfies X * inv(X) = 1.
      * @returns inverse(this)
      */
     inv(): Geometric2 {
@@ -1362,16 +1424,16 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().inv());
         }
         else {
-            const α = this.a;
-            const x = this.x;
-            const y = this.y;
-            const β = this.b;
+            const x0 = this.a;
+            const x1 = this.x;
+            const x2 = this.y;
+            const x3 = this.b;
 
             const A = [
-                [α, x, y, -β],
-                [x, α, β, -y],
-                [y, -β, α, x],
-                [β, -y, x, α]
+                [+x0, +x1, +x2, -x3],
+                [+x1, +x0, -x3, +x2],
+                [+x2, +x3, +x0, -x1],
+                [+x3, +x2, -x1, +x0]
             ];
 
             const b = [1, 0, 0, 0];
@@ -1445,6 +1507,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
         }
     }
 
+    /**
+     * @hidden
+     */
     magnitudeNoUnits(): number {
         return Math.sqrt(this.quaditudeNoUnits());
     }
@@ -1463,12 +1528,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     mul2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
@@ -1589,6 +1649,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
+     * @hidden
      * The quad of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -1673,12 +1734,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     }
 
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     scp2(a: Geometric, b: Geometric): this {
         const a0 = a.a;
@@ -1702,6 +1758,9 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
         return this;
     }
 
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number {
         const a = this.a;
         const x = this.x;

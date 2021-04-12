@@ -1,5 +1,6 @@
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from "./AbstractGeometric";
+import { arraysEQ } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { GeometricE1 as Geometric } from "./GeometricE1";
 import { GeometricNumber } from "./GeometricNumber";
@@ -257,11 +258,16 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(copy(this).copy(rhs));
         }
     }
-    copyVector(vector: Vector): this {
-        this.a = 0;
-        this.x = vector.x;
-        this.uom = vector.uom;
-        return this;
+    copyVector(vector: Vector): Geometric1 {
+        if (this.isMutable()) {
+            this.a = 0;
+            this.x = vector.x;
+            this.uom = vector.uom;
+            return this;
+        }
+        else {
+            return this.clone().copyVector(vector).permlock();
+        }
     }
     dual(): Geometric1 {
         if (this.isLocked()) {
@@ -276,6 +282,17 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+    equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Geometric1) {
+            return arraysEQ(this.coords, other.coords) && Unit.isCompatible(this.uom, other.uom);
+        }
+        else {
+            return false;
+        }
+    }
     lco(rhs: Geometric1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().lco(rhs));
@@ -284,6 +301,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.lco2(this, rhs);
         }
     }
+    /**
+     * @hidden
+     */
     lco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
@@ -339,11 +359,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
                     this.a = 0;
                     break;
                 }
-                case 2: {
-                    this.a = 0;
-                    this.x = 0;
-                    break;
-                }
                 default: {
                     this.a = 0;
                     this.x = 0;
@@ -371,6 +386,20 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     isVector(): boolean {
         return this.coords[COORD_A] === 0;
     }
+    magnitude(): Geometric1 {
+        if (this.isMutable()) {
+            this.a = this.magnitudeNoUnits();
+            this.x = 0;
+            // There is no change to the unit of measure.
+            return this;
+        }
+        else {
+            return lock(this.clone().magnitude());
+        }
+    }
+    magnitudeNoUnits(): number {
+        return Math.sqrt(this.quaditudeNoUnits());
+    }
     mul(rhs: Geometric1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().mul(rhs));
@@ -379,6 +408,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.mul2(this, rhs);
         }
     }
+    /**
+     * @hidden
+     */
     mul2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
@@ -389,6 +421,10 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
+
+    /**
+     * @hidden
+     */
     mulByNumber(α: number): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().mulByNumber(α));
@@ -414,20 +450,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    magnitude(): Geometric1 {
-        if (this.isMutable()) {
-            this.a = this.magnitudeNoUnits();
-            this.x = 0;
-            // There is no change to the unit of measure.
-            return this;
-        }
-        else {
-            return lock(this.clone().magnitude());
-        }
-    }
-    magnitudeNoUnits(): number {
-        return Math.sqrt(this.quaditudeNoUnits());
-    }
     rco(m: Geometric1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().rco(m));
@@ -436,6 +458,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.rco2(this, m);
         }
     }
+    /**
+     * @hidden
+     */
     rco2(lhs: Geometric, rhs: Geometric): this {
         const a0 = lhs.a;
         const a1 = lhs.x;
@@ -457,6 +482,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().rev());
         }
     }
+    /**
+     * @hidden
+     */
     quaditude(): Geometric1 {
         if (this.isMutable()) {
             this.a = this.quaditudeNoUnits();
@@ -467,6 +495,10 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().quaditude());
         }
     }
+
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number {
         const a = this.a;
         const x = this.x;
@@ -507,6 +539,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.scp2(this, m);
         }
     }
+    /**
+     * @hidden
+     */
     scp2(a: Geometric, b: Geometric): this {
         const a0 = a.a;
         const a1 = a.x;
@@ -555,6 +590,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    /**
+     * @hidden 
+     */
     addVector(v: Vector, α = 1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().addVector(v, α));
@@ -574,6 +612,9 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+    /**
+     * @hidden
+     */
     subVector(v: Vector, α = 1): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().subVector(v, α));
@@ -718,6 +759,10 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return void 0;
         }
     }
+
+    /**
+     * @hidden
+     */
     divByNumber(α: number): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().divByNumber(α));
@@ -867,12 +912,12 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return lock(this.clone().inv());
         }
         else {
-            const α = this.a;
-            const x = this.x;
+            const x0 = this.a;
+            const x1 = this.x;
 
             const A = [
-                [α, x],
-                [x, α]
+                [x0, x1],
+                [x1, x0]
             ];
 
             const b = [1, 0];
@@ -890,35 +935,35 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden 
      */
-    __eq__(rhs: number | Geometric1): boolean {
-        const a0 = this.a;
-        const a1 = this.x;
+    __eq__(rhs: Geometric1 | number | Unit): boolean {
         if (rhs instanceof Geometric1) {
-            const b0 = rhs.a;
-            const b1 = rhs.x;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 === b0 && a1 === b1 && Unit.isCompatible(this.uom, rhs.uom);
-        } else if (typeof rhs === 'number') {
-            return a0 === rhs && a1 === 0 && Unit.isOne(this.uom);
-        } else {
-            return void 0;
+            return this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return this.equals(Geometric1.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Geometric1.scalar(1, rhs));
+        }
+        else {
+            return false;
         }
     }
     /**
      * @hidden 
      */
-    __ne__(rhs: Geometric1 | number): boolean {
-        const a0 = this.a;
-        const a1 = this.x;
+    __ne__(rhs: Geometric1 | number | Unit): boolean {
         if (rhs instanceof Geometric1) {
-            const b0 = rhs.a;
-            const b1 = rhs.x;
-            // TODO: Should be equals on Unit, but this is close.
-            return a0 !== b0 || a1 !== b1 || !Unit.isCompatible(this.uom, rhs.uom);
-        } else if (typeof rhs === 'number') {
-            return a0 !== rhs || a1 !== 0 || !Unit.isOne(this.uom);
-        } else {
-            return void 0;
+            return !this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return !this.equals(Geometric1.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Geometric1.scalar(1, rhs));
+        }
+        else {
+            return true;
         }
     }
     /**

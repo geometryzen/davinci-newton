@@ -135,28 +135,97 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     scale(α: number): Geometric2;
+    /**
+     * @hidden
+     */
     __div__(rhs: Geometric2 | number | Unit): Geometric2;
+    /**
+     * @hidden
+     */
     __rdiv__(lhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __vbar__(rhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __rvbar__(lhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __wedge__(rhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __rwedge__(lhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __lshift__(rhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __rlshift__(lhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __rshift__(rhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __rrshift__(lhs: number | Geometric2): Geometric2;
+    /**
+     * @hidden
+     */
     __bang__(): Geometric2;
-    __eq__(rhs: Geometric2 | number): boolean;
-    __ne__(rhs: Geometric2 | number): boolean;
+    /**
+     * @hidden
+     */
+    __eq__(rhs: Geometric2 | number | Unit): boolean;
+    /**
+     * @hidden
+     */
+    __ne__(rhs: Geometric2 | number | Unit): boolean;
+    /**
+     * @hidden
+     */
     __tilde__(): Geometric2;
+    /**
+     * @hidden
+     */
     __add__(rhs: Geometric2 | number | Unit): Geometric2;
+    /**
+     * @hidden
+     */
     __radd__(lhs: Geometric2 | number | Unit): Geometric2;
+    /**
+     * @hidden
+     */
     __sub__(rhs: Geometric2 | number | Unit): Geometric2;
+    /**
+     * @hidden
+     */
     __rsub__(lhs: Geometric2 | number): Geometric2;
+    /**
+     * @hidden
+     */
     __pos__(): Geometric2;
+    /**
+     * @hidden
+     */
     __neg__(): Geometric2;
+    /**
+     * @hidden
+     */
     __mul__(rhs: Geometric2 | number | Unit): Geometric2;
+    /**
+     * @hidden
+     */
     __rmul__(lhs: any): Geometric2;
+    /**
+     * @hidden
+     */
     add2(a: Geometric, b: Geometric): Geometric2;
     addPseudo(β: number, uom?: Unit): Geometric2;
     /**
@@ -167,6 +236,9 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * @returns this + (a * uom) * α
      */
     addScalar(a: number, uom?: Unit, α?: number): Geometric2;
+    /**
+     * @hidden
+     */
     approx(n: number): Geometric2;
     conj(): Geometric2;
     copySpinor(spinor: Spinor): Geometric2;
@@ -176,12 +248,7 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     div(rhs: Geometric): Geometric2;
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     div2(a: Spinor, b: Spinor): Geometric2;
     divByNumber(α: number): Geometric2;
@@ -189,29 +256,20 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
     dual(): Geometric2;
     equals(other: unknown): boolean;
     /**
-     * <p>
-     * <code>this ⟼ lhs ^ rhs</code>
-     * </p>
+     * @hidden
      */
     ext2(lhs: Geometric, rhs: Geometric): this;
     grade(n: number): Geometric2;
     I(): Geometric2;
     lco(rhs: Geometric): Geometric2;
     /**
-     * <p>
-     * <code>this ⟼ lhs << rhs</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     lco2(lhs: Geometric, rhs: Geometric): this;
     one(): Geometric2;
     rco(m: Geometric): Geometric2;
     /**
-     * <p>
-     * <code>this ⟼ lhs >> rhs</code>
-     * </p>
+     * @hidden
      */
     rco2(lhs: Geometric, rhs: Geometric): this;
     /**
@@ -265,6 +323,9 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
     rotorFromVectorToVector(a: Vector, b: Vector): Geometric2;
     sqrt(): Geometric2;
     squaredNorm(): Geometric2;
+    /**
+     * @hidden
+     */
     sub2(a: Geometric, b: Geometric): Geometric2;
     /**
      * <p>
@@ -380,8 +441,8 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     ext(m: Geometric): Geometric2;
     /**
-     * Computes the inverse of this multivector.
-     * TODO: Define what inverse means.
+     * Computes the right inverse of this multivector.
+     * inv(X) satisfies X * inv(X) = 1.
      * @returns inverse(this)
      */
     inv(): Geometric2;
@@ -400,6 +461,9 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * </p>
      */
     magnitude(): Geometric2;
+    /**
+     * @hidden
+     */
     magnitudeNoUnits(): number;
     /**
      * @param rhs
@@ -407,12 +471,7 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     mul(rhs: Geometric): Geometric2;
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     mul2(lhs: Geometric, rhs: Geometric): this;
     mulByBivector(B: Bivector): Geometric2;
@@ -433,6 +492,7 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     neg(): Geometric2;
     /**
+     * @hidden
      * The quad of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -458,14 +518,12 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      */
     scp(m: Geometric): Geometric2;
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     scp2(a: Geometric, b: Geometric): this;
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number;
     /**
      * @param M

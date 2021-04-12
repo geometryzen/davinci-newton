@@ -57,7 +57,7 @@ interface GeometricM11 extends Vector, Spinor {
 /**
  * @hidden
  */
-const BASIS_LABELS: ['1', 'γ0', 'γ1', 'I'] = ["1", "γ0", "γ1", "I"];
+const BASIS_LABELS: ['1', 'e0', 'e1', 'I'] = ["1", "e0", "e1", "I"];
 
 /**
  *
@@ -65,8 +65,8 @@ const BASIS_LABELS: ['1', 'γ0', 'γ1', 'I'] = ["1", "γ0", "γ1", "I"];
 export class Spacetime1 extends AbstractGeometric implements GradeMasked, GeometricM11, GeometricNumber<Spacetime1, Spacetime1, Spinor, Vector, number>, GeometricOperators<Spacetime1> {
     static readonly zero = Spacetime1.scalar(0).permlock();
     static readonly one = Spacetime1.scalar(1).permlock();
-    static readonly γ0 = Spacetime1.vector(1, 0).permlock();
-    static readonly γ1 = Spacetime1.vector(0, 1).permlock();
+    static readonly e0 = Spacetime1.vector(1, 0).permlock();
+    static readonly e1 = Spacetime1.vector(0, 1).permlock();
     static readonly I = new Spacetime1(0, 0, 0, 1).permlock();
     static readonly kilogram = Spacetime1.scalar(1, Unit.KILOGRAM).permlock();
     static readonly meter = Spacetime1.scalar(1, Unit.METER).permlock();
@@ -196,6 +196,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    /**
+     * @hidden
+     */
     addScalar(a: number, uom?: Unit, α = 1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().addScalar(a, uom, α).permlock();
@@ -238,6 +241,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.mul(rhs.clone().inv().permlock());
         }
     }
+    /**
+     * @hidden
+     */
     divByNumber(α: number): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().divByNumber(α).permlock();
@@ -288,6 +294,21 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             this.$M10 = M001;
             this.$M11 = M000;
             return this;
+        }
+    }
+    equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        }
+        else if (other instanceof Spacetime1) {
+            return Unit.isCompatible(this.uom, other.uom) &&
+                this.a === other.a &&
+                this.t === other.t &&
+                this.x === other.x &&
+                this.b === other.b;
+        }
+        else {
+            return false;
         }
     }
     ext(rhs: Spacetime1): Spacetime1 {
@@ -351,16 +372,16 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             return this.clone().inv().permlock();
         }
         else {
-            const M000 = this.$M00;
-            const M001 = this.$M01;
-            const M010 = this.$M10;
-            const M011 = this.$M11;
+            const x0 = this.$M00;
+            const x1 = this.$M01;
+            const x2 = this.$M10;
+            const x3 = this.$M11;
 
             const A = [
-                [+M000, +M010, +M001, -M011],
-                [+M010, +M000, -M011, +M001],
-                [+M001, +M011, +M000, -M010],
-                [+M011, +M001, -M010, +M000],
+                [+x0, +x1, -x2, +x3],
+                [+x1, +x0, +x3, -x2],
+                [+x2, +x3, +x0, -x1],
+                [+x3, +x2, -x1, +x0],
             ];
 
             const b = [1, 0, 0, 0];
@@ -368,9 +389,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             const X = gauss(A, b);
 
             this.a = X[0];
-            this.x = -X[1];
-            this.t = X[2];
-            this.b = -X[3];
+            this.t = X[1];
+            this.x = X[2];
+            this.b = X[3];
 
             this.uom = Unit.inv(this.uom);
 
@@ -439,6 +460,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+    /**
+     * @hidden
+     */
     mulByNumber(a: number): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().mulByNumber(a).permlock();
@@ -496,9 +520,17 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+
+    /**
+     * @hidden
+     */
     quaditude(): Spacetime1 {
         return this.squaredNorm();
     }
+
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number {
         const a = this.$M00;
         const t = this.$M01;
@@ -558,6 +590,10 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
     rotate(rotor: Spinor): Spacetime1 {
         throw new Error("Method not implemented.");
     }
+
+    /**
+     * @hidden
+     */
     scale(α: number): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().scale(α).permlock();
@@ -632,6 +668,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    /**
+     * @hidden
+     */
     subScalar(a: number, uom?: Unit, α = 1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().subScalar(a, uom, α).permlock();
@@ -825,13 +864,35 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
      * @hidden
      */
     __eq__(rhs: number | Spacetime1 | Unit): boolean {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime1) {
+            return this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return this.equals(Spacetime1.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return this.equals(Spacetime1.scalar(1, rhs));
+        }
+        else {
+            return false;
+        }
     }
     /**
      * @hidden
      */
     __ne__(rhs: number | Spacetime1 | Unit): boolean {
-        throw new Error("Method not implemented.");
+        if (rhs instanceof Spacetime1) {
+            return !this.equals(rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return !this.equals(Spacetime1.scalar(rhs));
+        }
+        else if (rhs instanceof Unit) {
+            return !this.equals(Spacetime1.scalar(1, rhs));
+        }
+        else {
+            return true;
+        }
     }
     /**
      * @hidden

@@ -50,7 +50,7 @@ const I = Geometric3.I;
 /**
  * 
  */
-const elements: Geometric3[] = [one, e1, e2, e12, e3, e13, e23, I];
+const blades: Geometric3[] = [one, e1, e2, e12, e3, e13, e23, I];
 /**
  * @hidden
  */
@@ -526,7 +526,7 @@ describe("Geometric3", function () {
 
     describe("conj", function () {
         it("should have pattern +--++--+ on grades (-1)^[a(a+1)/2]", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 switch (element.grades) {
                     case 0x1: {
                         checkEQ(element.conj(), element);
@@ -559,7 +559,7 @@ describe("Geometric3", function () {
 
     describe("direction", function () {
         it("should be the identity operation for elements.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.direction(), element);
             }
         });
@@ -567,7 +567,7 @@ describe("Geometric3", function () {
 
     describe("divByNumber", function () {
         it("should be a shortcut for div.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.divByNumber(2), element.div(two));
             }
         });
@@ -575,7 +575,7 @@ describe("Geometric3", function () {
 
     describe("divByScalar", function () {
         it("should be a shortcut for div.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.divByScalar(2, Unit.METER), element.div(two).div(Geometric3.meter));
                 checkEQ(element.divByScalar(2), element.div(two));
             }
@@ -584,7 +584,7 @@ describe("Geometric3", function () {
 
     describe("divByVector", function () {
         it("should be a shortcut for div.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.divByVector(e1), element.div(e1));
                 checkEQ(element.divByVector(e2), element.div(e2));
                 checkEQ(element.divByVector(e3), element.div(e3));
@@ -604,9 +604,30 @@ describe("Geometric3", function () {
             checkEQ(I.dual(), one);
         });
         it("dual(Ak) = Ak << inv(I)", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.dual(), element.lco(I.inv()));
             }
+        });
+    });
+
+    describe("equals", function () {
+        it("blades", function () {
+            for (const blade of blades) {
+                expect(blade.equals(blade)).toBeTrue();
+            }
+        });
+        it("units", function () {
+            expect(meter.equals(meter)).toBeTrue();
+            expect(kilogram.equals(kilogram)).toBeTrue();
+            expect(meter.equals(kilogram)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.equals(0)).toBeFalse();
+            expect(one.equals("0")).toBeFalse();
+            expect(one.equals(false)).toBeFalse();
+            expect(one.equals(1)).toBeFalse();
+            expect(one.equals("1")).toBeFalse();
+            expect(one.equals(true)).toBeFalse();
         });
     });
 
@@ -893,7 +914,7 @@ describe("Geometric3", function () {
 
     describe("magnitude", function () {
         it("should be one for all elements", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.magnitude(), one);
             }
         });
@@ -1157,7 +1178,7 @@ describe("Geometric3", function () {
 
     describe("mulByScalar", function () {
         it("should be a shortcut for mul.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.mulByScalar(2, Unit.METER), element.mul(two).mul(Geometric3.meter));
                 checkEQ(element.mulByScalar(2), element.mul(two));
             }
@@ -1393,7 +1414,7 @@ describe("Geometric3", function () {
 
     describe("quaditude", function () {
         it("should be one for all elements", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.quaditude(), one);
             }
         });
@@ -1681,7 +1702,7 @@ describe("Geometric3", function () {
 
     describe("rev and __tilde__", function () {
         it("should have pattern ++--++-- on grades (-1)^[a(a-1)/2]", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 switch (element.grades) {
                     case 0x1: {
                         checkEQ(element.rev(), element);
@@ -2058,7 +2079,7 @@ describe("Geometric3", function () {
 
     describe("sub", function () {
         it("zero should be the rhs identity.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.sub(zero), element);
                 checkEQ(zero.sub(element), element.neg());
             }
@@ -2069,7 +2090,7 @@ describe("Geometric3", function () {
         it("should be a shortcut for sub.", function () {
             checkEQ(zero.subScalar(2), two.neg());
             checkEQ(two.subScalar(0), two);
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.subScalar(2), element.sub(two));
             }
         });
@@ -2077,43 +2098,48 @@ describe("Geometric3", function () {
 
     describe("subVector", function () {
         it("should be a shortcut for sub.", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 if (element.isVector()) {
                     checkEQ(zero.subVector(element), element.neg());
                 }
             }
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.subVector(e1), element.sub(e1));
                 checkEQ(element.subVector(e2), element.sub(e2));
                 checkEQ(element.subVector(e3), element.sub(e3));
             }
         });
     });
-
     describe("__eq__", function () {
-        it("(Geometric)", function () {
-            expect(one.__eq__(one)).toBeTrue();
-            expect(one.__eq__(two)).toBeFalse();
+        it("should be the operator overload of equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__eq__(rhs)).toBe(lhs.equals(rhs));
+                }
+                expect(lhs.__eq__(1)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
+                expect(lhs.__eq__("1" as any)).toBe(false);
+            }
         });
-        it("(number)", function () {
-            expect(one.__eq__(1)).toBeTrue();
-            expect(one.__eq__(2)).toBeFalse();
-        });
-        it("otherwise", function () {
-            expect(one.__eq__("" as unknown as Geometric3)).toBeUndefined();
+        it("", function () {
+            expect(one.__eq__(Unit.ONE)).toBe(true);
+            expect(meter.__eq__(Unit.METER)).toBe(true);
+            expect(one.__eq__(Unit.METER)).toBe(false);
+            expect(meter.__eq__(Unit.ONE)).toBe(false);
         });
     });
     describe("__ne__", function () {
-        it("(Geometric)", function () {
-            expect(one.__ne__(one)).toBeFalse();
-            expect(one.__ne__(two)).toBeTrue();
-        });
-        it("(number)", function () {
-            expect(one.__ne__(1)).toBeFalse();
-            expect(one.__ne__(2)).toBeTrue();
-        });
-        it("otherwise", function () {
-            expect(one.__ne__("" as unknown as Geometric3)).toBeUndefined();
+        it("should be the operator overload of !equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__ne__(rhs)).toBe(!lhs.equals(rhs));
+                }
+                expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
+                expect(lhs.__ne__("1" as any)).toBe(true);
+            }
         });
     });
     describe("__add__", function () {
@@ -2286,8 +2312,8 @@ describe("Geometric3", function () {
     });
     describe("__rwedge__", function () {
         it("(Geometric)", function () {
-            for (const lhs of elements) {
-                for (const rhs of elements) {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
                     checkEQ(lhs.__rwedge__(rhs), rhs.ext(lhs));
                 }
             }
@@ -2302,7 +2328,7 @@ describe("Geometric3", function () {
 
     describe("__tilde__", function () {
         it("should be the operator overload of reversion", function () {
-            for (const element of elements) {
+            for (const element of blades) {
                 checkEQ(element.__tilde__(), element.rev());
             }
         });

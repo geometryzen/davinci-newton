@@ -23,8 +23,14 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param uom The optional unit of measure.
      */
     constructor(coords?: number[], uom?: Unit);
-    __eq__(rhs: Geometric3 | number): boolean;
-    __ne__(rhs: number | Geometric3): boolean;
+    /**
+     * @hidden
+     */
+    __eq__(rhs: Geometric3 | number | Unit): boolean;
+    /**
+     * @hidden
+     */
+    __ne__(rhs: Geometric3 | number | Unit): boolean;
     scale(α: number): Geometric3;
     /**
      * Consistently set a coordinate value in the most optimized way.
@@ -91,11 +97,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     add(M: GeometricE3, α?: number): Geometric3;
     /**
-     * this ⟼ a + b
-     *
-     * @param a
-     * @param b
-     * @returns this multivector
+     * @hidden
      */
     add2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -115,12 +117,14 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     addScalar(a: number, uom?: Unit, α?: number): Geometric3;
     /**
+     * @hidden
      * @param v The vector to be added to this multivector.
      * @param α An optional scale factor that multiplies the vector argument.
      * @returns this + v * α
      */
     addVector(v: VectorE3, α?: number): Geometric3;
     /**
+     * @hidden
      * Pre-multiplies the column vector corresponding to this vector by the matrix.
      * The result is applied to this vector.
      *
@@ -128,9 +132,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     applyMatrix(σ: MatrixLike): this;
     /**
-     * Sets any coordinate whose absolute value is less than pow(10, -n) times the absolute value of the largest coordinate.
-     * @param n
-     * @returns approx(this, n)
+     * @hidden
      */
     approx(n: number): Geometric3;
     /**
@@ -194,6 +196,9 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @returns this / m;
      */
     div(m: GeometricE3): Geometric3;
+    /**
+     * @hidden
+     */
     divByNumber(α: number): Geometric3;
     /**
      * <p>
@@ -206,12 +211,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
     divByScalar(α: number, uom?: Unit): Geometric3;
     divByVector(v: VectorE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a / b</code>
-     * </p>
-     *
-     * @param a The numerator.
-     * @param b The denominator.
+     * @hidden
      */
     div2(a: SpinorE3, b: SpinorE3): this;
     /**
@@ -248,12 +248,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     lco(m: GeometricE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a << b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     lco2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -262,6 +257,9 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * </p>
      */
     magnitude(): Geometric3;
+    /**
+     * @hidden
+     */
     magnitudeNoUnits(): number;
     /**
      * Returns the geometric product of this multivector with the rhs multivector.
@@ -272,12 +270,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
     mulByBivector(B: BivectorE3): Geometric3;
     mulByVector(v: VectorE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a * b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     mul2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -289,6 +282,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     one(): this;
     /**
+     * @hidden
      * The quaditude of a multivector is defined in terms of the scalar products
      * of its blades.
      * this ⟼ scp(this, rev(this)) = this | ~this
@@ -300,12 +294,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     rco(m: GeometricE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a >> b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     rco2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -314,6 +303,9 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * This is an alias for the `quaditude` method.
      */
     squaredNorm(): Geometric3;
+    /**
+     * @hidden
+     */
     quaditudeNoUnits(): number;
     /**
      * Sets this multivector to its reflection in the plane orthogonal to vector n.
@@ -387,12 +379,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     scp(m: GeometricE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ scp(a, b) = a | b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     scp2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -400,8 +387,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     sqrt(): Geometric3;
     /**
-     * @param α
-     * @returns this * α
+     * @hidden
      */
     mulByNumber(α: number): Geometric3;
     /**
@@ -438,18 +424,14 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     subScalar(a: number, uom?: Unit, α?: number): Geometric3;
     /**
+     * @hidden
      * @param v The vector to subtract from this multivector.
      * @param α The multiplier for the amount of the vector to subtract.
      * @returns this - v * α
      */
     subVector(v: VectorE3, α?: number): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a - b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     sub2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -492,12 +474,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     ext(m: GeometricE3): Geometric3;
     /**
-     * <p>
-     * <code>this ⟼ a ^ b</code>
-     * </p>
-     *
-     * @param a
-     * @param b
+     * @hidden
      */
     ext2(a: GeometricE3, b: GeometricE3): this;
     /**
@@ -505,83 +482,83 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      */
     zero(): this;
     /**
-     * Implements `this + rhs`.
+     * @hidden
      */
     __add__(rhs: Geometric3 | number | Unit): Geometric3;
     /**
-     * Implements `this / rhs`.
+     * @hidden
      */
     __div__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs / this`.
+     * @hidden
      */
     __rdiv__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `this * rhs`.
+     * @hidden
      */
     __mul__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs * this`.
+     * @hidden
      */
     __rmul__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs + this`.
+     * @hidden
      */
     __radd__(lhs: Geometric3 | number | Unit): Geometric3;
     /**
-     * Implements `this - rhs`.
+     * @hidden
      */
     __sub__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs - rhs`.
+     * @hidden
      */
     __rsub__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `~this`.
+     * @hidden
      */
     __tilde__(): Geometric3;
     /**
-     * Implements `this ^ rhs`.
+     * @hidden
      */
     __wedge__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs ^ this`.
+     * @hidden
      */
     __rwedge__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `this << rhs`.
+     * @hidden
      */
     __lshift__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs << this`.
+     * @hidden
      */
     __rlshift__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `this >> rhs`.
+     * @hidden
      */
     __rshift__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs >> rhs`.
+     * @hidden
      */
     __rrshift__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `this | rhs`.
+     * @hidden
      */
     __vbar__(rhs: number | Geometric3): Geometric3;
     /**
-     * Implements `lhs | this`.
+     * @hidden
      */
     __rvbar__(lhs: number | Geometric3): Geometric3;
     /**
-     * Implements `!this`.
+     * @hidden
      */
     __bang__(): Geometric3;
     /**
-     * Implements `+this`.
+     * @hidden
      */
     __pos__(): Geometric3;
     /**
-     * Implements `-this`.
+     * @hidden
      */
     __neg__(): Geometric3;
     /**

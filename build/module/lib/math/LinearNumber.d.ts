@@ -19,6 +19,10 @@ import { Unit } from "./Unit";
 export interface LinearNumber<I, M, S, V, F> {
     add(rhs: I, α?: F): M;
     divByScalar(α: F, uom?: Unit): M;
+    /**
+     * Determines whether two number are equal.
+     */
+    equals(other: unknown): boolean;
     scale(α: F): M;
     mulByScalar(α: F, uom?: Unit): M;
     neg(): M;

@@ -16,11 +16,11 @@ const two = one.add(one);
 /**
  * @hidden
  */
-const γ0 = Spacetime1.γ0;
+const e0 = Spacetime1.e0;
 /**
  * @hidden
  */
-const γ1 = Spacetime1.γ1;
+const e1 = Spacetime1.e1;
 /**
  * @hidden
  */
@@ -32,14 +32,18 @@ const meter = Spacetime1.meter;
 /**
  * @hidden
  */
-const blades = [one, γ0, γ1, I];
+const kilogram = Spacetime1.kilogram;
+/**
+ * @hidden
+ */
+const blades = [one, e0, e1, I];
 /**
  * @hidden
  */
 function checkEQ(result: Spacetime1, comp: Spacetime1): void {
     expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.t).toBe(comp.t, `001 γ0: result.t=${result.t}, comp.t=${comp.t}`);
-    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.t).toBe(comp.t, `001 e0: result.t=${result.t}, comp.t=${comp.t}`);
+    expect(result.x).toBe(comp.x, `010 e1: result.x=${result.x}, comp.x=${comp.x}`);
     expect(result.b).toBe(comp.b, `011 I: result.tx=${result.b}, comp.tx=${comp.b}`);
     expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
     expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
@@ -132,25 +136,25 @@ describe("Spacetime1", function () {
     describe("toExponential", function () {
         it("should use scientific notation", function () {
             const m = new Spacetime1(2, 3, 5, 7);
-            expect(m.toExponential(1)).toBe("2.0e+0+3.0e+0*γ0+5.0e+0*γ1+7.0e+0*I");
+            expect(m.toExponential(1)).toBe("2.0e+0+3.0e+0*e0+5.0e+0*e1+7.0e+0*I");
         });
     });
     describe("toFixed", function () {
         it("should use toFixed", function () {
             const m = new Spacetime1(2, 3, 5, 7);
-            expect(m.toFixed(1)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*I");
+            expect(m.toFixed(1)).toBe("2.0+3.0*e0+5.0*e1+7.0*I");
         });
     });
     describe("toPrecision", function () {
         it("should use toPrecision", function () {
             const m = new Spacetime1(2, 3, 5, 7);
-            expect(m.toPrecision(2)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*I");
+            expect(m.toPrecision(2)).toBe("2.0+3.0*e0+5.0*e1+7.0*I");
         });
     });
     describe("toString", function () {
         it("should use toString", function () {
             const m = new Spacetime1(2, 3, 5, 7);
-            expect(m.toString()).toBe("2+3*γ0+5*γ1+7*I");
+            expect(m.toString()).toBe("2+3*e0+5*e1+7*I");
         });
     });
     describe("grades", function () {
@@ -181,7 +185,7 @@ describe("Spacetime1", function () {
     });
     describe("grade", function () {
         const GRADE0 = zero.add(one);
-        const GRADE1 = zero.add(γ0).add(γ1);
+        const GRADE1 = zero.add(e0).add(e1);
         const GRADE2 = zero.add(I);
         const ALL = GRADE0.add(GRADE1).add(GRADE2);
         it("sanity check", function () {
@@ -337,8 +341,8 @@ describe("Spacetime1", function () {
     describe("div", function () {
         it("", function () {
             checkEQ(one.div(one), one);
-            checkEQ(one.div(γ0), γ0);
-            checkEQ(one.div(γ1), γ1.neg());
+            checkEQ(one.div(e0), e0);
+            checkEQ(one.div(e1), e1.neg());
         });
         it("", function () {
             for (const blade of blades) {
@@ -370,8 +374,8 @@ describe("Spacetime1", function () {
     describe("divByVector", function () {
         it("", function () {
             for (const blade of blades) {
-                checkEQ(blade.mul(γ0).divByVector(γ0), blade);
-                checkEQ(blade.mul(γ1).divByVector(γ1), blade);
+                checkEQ(blade.mul(e0).divByVector(e0), blade);
+                checkEQ(blade.mul(e1).divByVector(e1), blade);
             }
         });
     });
@@ -379,11 +383,11 @@ describe("Spacetime1", function () {
         it("one", function () {
             checkEQ(one.dual(), one.lco(I.inv()));
         });
-        it("γ0", function () {
-            checkEQ(γ0.dual(), γ0.lco(I.inv()));
+        it("e0", function () {
+            checkEQ(e0.dual(), e0.lco(I.inv()));
         });
-        it("γ1", function () {
-            checkEQ(γ1.dual(), γ1.lco(I.inv()));
+        it("e1", function () {
+            checkEQ(e1.dual(), e1.lco(I.inv()));
         });
         it("I", function () {
             checkEQ(I.dual(), I.lco(I.inv()));
@@ -392,8 +396,8 @@ describe("Spacetime1", function () {
     describe("conj", function () {
         it("", function () {
             checkEQ(one.conj(), one);
-            checkEQ(γ0.conj(), γ0.neg());
-            checkEQ(γ1.conj(), γ1.neg());
+            checkEQ(e0.conj(), e0.neg());
+            checkEQ(e1.conj(), e1.neg());
             checkEQ(I.conj(), I.neg());
             checkEQ(meter.conj(), meter);
         });
@@ -419,25 +423,25 @@ describe("Spacetime1", function () {
             expect(one.isVector()).toBeFalse();
             expect(one.isBivector()).toBeFalse();
         });
-        it("γ0", function () {
-            expect(γ0.isZero()).toBeFalse();
-            expect(γ0.isOne()).toBeFalse();
-            expect(Unit.isOne(γ0.uom)).toBeTrue();
-            expect(γ0.toString()).toBe("γ0");
-            expect(γ0.isScalar()).toBeFalse();
-            expect(γ0.isSpinor()).toBeFalse();
-            expect(γ0.isVector()).toBeTrue();
-            expect(γ0.isBivector()).toBeFalse();
+        it("e0", function () {
+            expect(e0.isZero()).toBeFalse();
+            expect(e0.isOne()).toBeFalse();
+            expect(Unit.isOne(e0.uom)).toBeTrue();
+            expect(e0.toString()).toBe("e0");
+            expect(e0.isScalar()).toBeFalse();
+            expect(e0.isSpinor()).toBeFalse();
+            expect(e0.isVector()).toBeTrue();
+            expect(e0.isBivector()).toBeFalse();
         });
-        it("γ1", function () {
-            expect(γ1.isZero()).toBeFalse();
-            expect(γ1.isOne()).toBeFalse();
-            expect(Unit.isOne(γ1.uom)).toBeTrue();
-            expect(γ1.toString()).toBe("γ1");
-            expect(γ1.isScalar()).toBeFalse();
-            expect(γ1.isSpinor()).toBeFalse();
-            expect(γ1.isVector()).toBeTrue();
-            expect(γ1.isBivector()).toBeFalse();
+        it("e1", function () {
+            expect(e1.isZero()).toBeFalse();
+            expect(e1.isOne()).toBeFalse();
+            expect(Unit.isOne(e1.uom)).toBeTrue();
+            expect(e1.toString()).toBe("e1");
+            expect(e1.isScalar()).toBeFalse();
+            expect(e1.isSpinor()).toBeFalse();
+            expect(e1.isVector()).toBeTrue();
+            expect(e1.isBivector()).toBeFalse();
         });
         it("I", function () {
             expect(I.isZero()).toBeFalse();
@@ -450,58 +454,90 @@ describe("Spacetime1", function () {
             expect(I.isBivector()).toBeTrue();
         });
     });
+
+    describe("equals", function () {
+        it("identity", function () {
+            for (const blade of blades) {
+                expect(blade.equals(blade)).toBeTrue();
+                expect(blade.clone().equals(blade)).toBeTrue();
+            }
+        });
+        it("coords", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    if (lhs.scp(rhs).isZero()) {
+                        expect(lhs.equals(rhs)).toBeFalse();
+                    }
+                }
+            }
+        });
+        it("units", function () {
+            expect(meter.equals(meter)).toBeTrue();
+            expect(kilogram.equals(kilogram)).toBeTrue();
+            expect(meter.equals(kilogram)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.equals(0)).toBeFalse();
+            expect(one.equals("0")).toBeFalse();
+            expect(one.equals(false)).toBeFalse();
+            expect(one.equals(1)).toBeFalse();
+            expect(one.equals("1")).toBeFalse();
+            expect(one.equals(true)).toBeFalse();
+        });
+    });
+
     describe("mul", function () {
         describe("one", function () {
             it("one", function () {
                 checkEQ(one.mul(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.mul(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.mul(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.mul(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.mul(e1), e1);
             });
             it("I", function () {
                 checkEQ(one.mul(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.mul(one), γ0);
+                checkEQ(e0.mul(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.mul(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.mul(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.mul(γ1), I);
+            it("e1", function () {
+                checkEQ(e0.mul(e1), I);
             });
             it("I", function () {
-                checkEQ(γ0.mul(I), γ1);
+                checkEQ(e0.mul(I), e1);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.mul(one), γ1);
+                checkEQ(e1.mul(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.mul(γ0), I.neg());
+            it("e0", function () {
+                checkEQ(e1.mul(e0), I.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ1.mul(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.mul(e1), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1.mul(I), γ0);
+                checkEQ(e1.mul(I), e0);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.mul(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.mul(γ0), γ1.neg());
+            it("e0", function () {
+                checkEQ(I.mul(e0), e1.neg());
             });
-            it("γ1", function () {
-                checkEQ(I.mul(γ1), γ0.neg());
+            it("e1", function () {
+                checkEQ(I.mul(e1), e0.neg());
             });
             it("I", function () {
                 checkEQ(I.mul(I), one);
@@ -521,8 +557,8 @@ describe("Spacetime1", function () {
     describe("mulByVector", function () {
         it("", function () {
             for (const blade of blades) {
-                checkEQ(blade.mulByVector(γ0), blade.mul(γ0));
-                checkEQ(blade.mulByVector(γ1), blade.mul(γ1));
+                checkEQ(blade.mulByVector(e0), blade.mul(e0));
+                checkEQ(blade.mulByVector(e1), blade.mul(e1));
             }
         });
     });
@@ -531,53 +567,53 @@ describe("Spacetime1", function () {
             it("one", function () {
                 checkEQ(one.ext(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.ext(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.ext(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.ext(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.ext(e1), e1);
             });
             it("I", function () {
                 checkEQ(one.ext(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.ext(one), γ0);
+                checkEQ(e0.ext(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(e0.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0.ext(γ1), I);
+            it("e1", function () {
+                checkEQ(e0.ext(e1), I);
             });
             it("I", function () {
-                checkEQ(γ0.ext(I), zero);
+                checkEQ(e0.ext(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.ext(one), γ1);
+                checkEQ(e1.ext(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.ext(γ0), I.neg());
+            it("e0", function () {
+                checkEQ(e1.ext(e0), I.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ1.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(e1.ext(e1), zero);
             });
             it("I", function () {
-                checkEQ(γ1.ext(I), zero);
+                checkEQ(e1.ext(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.ext(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.ext(e1), zero);
             });
             it("I", function () {
                 checkEQ(I.ext(I), zero);
@@ -588,11 +624,11 @@ describe("Spacetime1", function () {
         it("one", function () {
             checkEQ(one.inv(), one);
         });
-        it("γ0", function () {
-            checkEQ(γ0.inv(), γ0);
+        it("e0", function () {
+            checkEQ(e0.inv(), e0);
         });
-        it("γ1", function () {
-            checkEQ(γ1.inv(), γ1.neg());
+        it("e1", function () {
+            checkEQ(e1.inv(), e1.neg());
         });
         it("I", function () {
             checkEQ(I.inv(), I);
@@ -602,59 +638,68 @@ describe("Spacetime1", function () {
                 checkEQ(blade.mul(blade.inv()), one);
             }
         });
+        it("n+e0 should be (n-e0)/(n*n-1)", function () {
+            checkEQ(two.add(e0).inv(), two.sub(e0).divByNumber(3));
+        });
+        it("n+e1 should be (n-e1)/(n*n+1)", function () {
+            checkEQ(two.add(e1).inv(), two.sub(e1).divByNumber(5));
+        });
+        it("n+I should be (n-I)/(n*n-1)", function () {
+            checkEQ(two.add(I).inv(), two.sub(I).divByNumber(3));
+        });
     });
     describe("lco", function () {
         describe("one", function () {
             it("one", function () {
                 checkEQ(one.lco(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.lco(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.lco(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.lco(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.lco(e1), e1);
             });
             it("I", function () {
                 checkEQ(one.lco(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.lco(one), zero);
+                checkEQ(e0.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0.lco(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.lco(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.lco(e1), zero);
             });
             it("I", function () {
-                checkEQ(γ0.lco(I), γ1);
+                checkEQ(e0.lco(I), e1);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.lco(one), zero);
+                checkEQ(e1.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.lco(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.lco(e1), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1.lco(I), γ0);
+                checkEQ(e1.lco(I), e0);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(I.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.lco(e1), zero);
             });
             it("I", function () {
                 checkEQ(I.lco(I), one);
@@ -685,53 +730,53 @@ describe("Spacetime1", function () {
             it("one", function () {
                 checkEQ(one.rco(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(one.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(one.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(one.rco(e1), zero);
             });
             it("I", function () {
                 checkEQ(one.rco(I), zero);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.rco(one), γ0);
+                checkEQ(e0.rco(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.rco(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.rco(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.rco(e1), zero);
             });
             it("I", function () {
-                checkEQ(γ0.rco(I), zero);
+                checkEQ(e0.rco(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.rco(one), γ1);
+                checkEQ(e1.rco(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.rco(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.rco(e1), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1.rco(I), zero);
+                checkEQ(e1.rco(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.rco(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.rco(γ0), γ1.neg());
+            it("e0", function () {
+                checkEQ(I.rco(e0), e1.neg());
             });
-            it("γ1", function () {
-                checkEQ(I.rco(γ1), γ0.neg());
+            it("e1", function () {
+                checkEQ(I.rco(e1), e0.neg());
             });
             it("I", function () {
                 checkEQ(I.rco(I), one);
@@ -740,42 +785,42 @@ describe("Spacetime1", function () {
     });
     describe("reflect", function () {
         it("commutes with exterior product", function () {
-            checkEQ(one.reflect(γ0), one.neg());
-            checkEQ(one.reflect(γ1), one);
+            checkEQ(one.reflect(e0), one.neg());
+            checkEQ(one.reflect(e1), one);
 
-            checkEQ(γ0.reflect(γ0), γ0.neg());
-            checkEQ(γ0.reflect(γ1), γ0.neg());
+            checkEQ(e0.reflect(e0), e0.neg());
+            checkEQ(e0.reflect(e1), e0.neg());
 
-            checkEQ(γ1.reflect(γ0), γ1);
-            checkEQ(γ1.reflect(γ1), γ1);
+            checkEQ(e1.reflect(e0), e1);
+            checkEQ(e1.reflect(e1), e1);
 
-            checkEQ(I.reflect(γ0), γ0.reflect(γ0).ext(γ1.reflect(γ0)));
-            checkEQ(I.reflect(γ1), γ0.reflect(γ1).ext(γ1.reflect(γ1)));
+            checkEQ(I.reflect(e0), e0.reflect(e0).ext(e1.reflect(e0)));
+            checkEQ(I.reflect(e1), e0.reflect(e1).ext(e1.reflect(e1)));
         });
         it("summary", function () {
-            checkEQ(one.reflect(γ0), one.neg());
-            checkEQ(one.reflect(γ1), one);
+            checkEQ(one.reflect(e0), one.neg());
+            checkEQ(one.reflect(e1), one);
 
-            checkEQ(γ0.reflect(γ0), γ0.neg());
-            checkEQ(γ0.reflect(γ1), γ0.neg());
+            checkEQ(e0.reflect(e0), e0.neg());
+            checkEQ(e0.reflect(e1), e0.neg());
 
-            checkEQ(γ1.reflect(γ0), γ1);
-            checkEQ(γ1.reflect(γ1), γ1);
+            checkEQ(e1.reflect(e0), e1);
+            checkEQ(e1.reflect(e1), e1);
 
-            checkEQ(I.reflect(γ0), I.neg());
-            checkEQ(I.reflect(γ1), I.neg());
+            checkEQ(I.reflect(e0), I.neg());
+            checkEQ(I.reflect(e1), I.neg());
         });
         it("scaling", function () {
             for (const blade of blades) {
-                checkEQ(blade.mul(two).reflect(γ0), blade.reflect(γ0).mul(two));
+                checkEQ(blade.mul(two).reflect(e0), blade.reflect(e0).mul(two));
             }
         });
     });
     describe("rev", function () {
         it("", function () {
             checkEQ(one.rev(), one);
-            checkEQ(γ0.rev(), γ0);
-            checkEQ(γ1.rev(), γ1);
+            checkEQ(e0.rev(), e0);
+            checkEQ(e1.rev(), e1);
             checkEQ(I.rev(), I.neg());
             checkEQ(meter.rev(), meter);
         });
@@ -785,53 +830,53 @@ describe("Spacetime1", function () {
             it("one", function () {
                 checkEQ(one.scp(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(one.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(one.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(one.scp(e1), zero);
             });
             it("I", function () {
                 checkEQ(one.scp(I), zero);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.scp(one), zero);
+                checkEQ(e0.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0.scp(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.scp(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.scp(e1), zero);
             });
             it("I", function () {
-                checkEQ(γ0.scp(I), zero);
+                checkEQ(e0.scp(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.scp(one), zero);
+                checkEQ(e1.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.scp(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.scp(e1), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1.scp(I), zero);
+                checkEQ(e1.scp(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(I.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.scp(e1), zero);
             });
             it("I", function () {
                 checkEQ(I.scp(I), one);
@@ -855,17 +900,17 @@ describe("Spacetime1", function () {
             expect(m.x).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ0", function () {
+        it("e0", function () {
             const α = Math.random();
-            const m = γ0.scale(α);
+            const m = e0.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(α);
             expect(m.x).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ1", function () {
+        it("e1", function () {
             const α = Math.random();
-            const m = γ1.scale(α);
+            const m = e1.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(α);
@@ -883,14 +928,14 @@ describe("Spacetime1", function () {
     describe("squaredNorm", function () {
         it("definition", function () {
             checkEQ(one.squaredNorm(), one.mul(one.rev()));
-            checkEQ(γ0.squaredNorm(), γ0.mul(γ0.rev()));
-            checkEQ(γ1.squaredNorm(), γ1.mul(γ1.rev()));
+            checkEQ(e0.squaredNorm(), e0.mul(e0.rev()));
+            checkEQ(e1.squaredNorm(), e1.mul(e1.rev()));
             checkEQ(I.squaredNorm(), I.mul(I.rev()));
         });
         it("simplified", function () {
             checkEQ(one.squaredNorm(), one);
-            checkEQ(γ0.squaredNorm(), one);
-            checkEQ(γ1.squaredNorm(), one.neg());
+            checkEQ(e0.squaredNorm(), one);
+            checkEQ(e1.squaredNorm(), one.neg());
             checkEQ(I.squaredNorm(), one.neg());
         });
         it("scaling", function () {
@@ -1372,6 +1417,38 @@ describe("Spacetime1", function () {
         it("should be the operator overload of inverse", function () {
             for (const blade of blades) {
                 checkEQ(blade.__bang__(), blade.inv());
+            }
+        });
+    });
+    describe("__eq__", function () {
+        it("should be the operator overload of equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__eq__(rhs)).toBe(lhs.equals(rhs));
+                }
+                expect(lhs.__eq__(1)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
+                expect(lhs.__eq__("1" as any)).toBe(false);
+            }
+        });
+        it("", function () {
+            expect(one.__eq__(Unit.ONE)).toBe(true);
+            expect(meter.__eq__(Unit.METER)).toBe(true);
+            expect(one.__eq__(Unit.METER)).toBe(false);
+            expect(meter.__eq__(Unit.ONE)).toBe(false);
+        });
+    });
+    describe("__ne__", function () {
+        it("should be the operator overload of !equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__ne__(rhs)).toBe(!lhs.equals(rhs));
+                }
+                expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
+                expect(lhs.__ne__("1" as any)).toBe(true);
             }
         });
     });

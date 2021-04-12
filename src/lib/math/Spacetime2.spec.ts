@@ -16,27 +16,27 @@ const two = one.add(one);
 /**
  * @hidden
  */
-const γ0 = Spacetime2.γ0;
+const e0 = Spacetime2.e0;
 /**
  * @hidden
  */
-const γ1 = Spacetime2.γ1;
+const e1 = Spacetime2.e1;
 /**
  * @hidden
  */
-const γ0γ1 = Spacetime2.γ0γ1;
+const e01 = new Spacetime2(0, 0, 0, 1, 0, 0, 0, 0).permlock();
 /**
  * @hidden
  */
-const γ2 = Spacetime2.γ2;
+const e2 = Spacetime2.e2;
 /**
  * @hidden
  */
-const γ0γ2 = Spacetime2.γ0γ2;
+const e02 = new Spacetime2(0, 0, 0, 0, 0, 1, 0, 0).permlock();
 /**
  * @hidden
  */
-const γ1γ2 = Spacetime2.γ1γ2;
+const e12 = new Spacetime2(0, 0, 0, 0, 0, 0, 1, 0).permlock();
 /**
  * @hidden
  */
@@ -48,18 +48,22 @@ const meter = Spacetime2.meter;
 /**
  * @hidden
  */
-const blades = [one, γ0, γ1, γ0γ1, γ2, γ0γ2, γ1γ2, I];
+const kilogram = Spacetime2.kilogram;
+/**
+ * @hidden 
+ */
+const blades = [one, e0, e1, e01, e2, e02, e12, I];
 /**
  * @hidden
  */
 function checkEQ(result: Spacetime2, comp: Spacetime2): void {
     expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.t).toBe(comp.t, `001 γ0: result.t=${result.t}, comp.t=${comp.t}`);
-    expect(result.x).toBe(comp.x, `010 γ1: result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.tx).toBe(comp.tx, `011 γ0γ1: result.tx=${result.tx}, comp.tx=${comp.tx}`);
-    expect(result.y).toBe(comp.y, `100 γ2: result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.ty).toBe(comp.ty, `101 γ0γ2: result.ty=${result.ty}, comp.ty=${comp.ty}`);
-    expect(result.xy).toBe(comp.xy, `110 γ1γ2: result.xy=${result.xy}, comp.xy=${comp.xy}`);
+    expect(result.t).toBe(comp.t, `001 e0: result.t=${result.t}, comp.t=${comp.t}`);
+    expect(result.x).toBe(comp.x, `010 e1: result.x=${result.x}, comp.x=${comp.x}`);
+    expect(result.tx).toBe(comp.tx, `011 e01: result.tx=${result.tx}, comp.tx=${comp.tx}`);
+    expect(result.y).toBe(comp.y, `100 e2: result.y=${result.y}, comp.y=${comp.y}`);
+    expect(result.ty).toBe(comp.ty, `101 e02: result.ty=${result.ty}, comp.ty=${comp.ty}`);
+    expect(result.xy).toBe(comp.xy, `110 e12: result.xy=${result.xy}, comp.xy=${comp.xy}`);
     expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
     expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
     expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
@@ -221,25 +225,25 @@ describe("Spacetime2", function () {
     describe("toExponential", function () {
         it("should use scientific notation", function () {
             const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
-            expect(m.toExponential(1)).toBe("2.0e+0+3.0e+0*γ0+5.0e+0*γ1+7.0e+0*γ0γ1+1.1e+1*γ2+1.3e+1*γ0γ2+1.7e+1*γ1γ2+1.9e+1*I");
+            expect(m.toExponential(1)).toBe("2.0e+0+3.0e+0*e0+5.0e+0*e1+7.0e+0*e01+1.1e+1*e2+1.3e+1*e02+1.7e+1*e12+1.9e+1*I");
         });
     });
     describe("toFixed", function () {
         it("should use toFixed", function () {
             const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
-            expect(m.toFixed(1)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*γ0γ1+11.0*γ2+13.0*γ0γ2+17.0*γ1γ2+19.0*I");
+            expect(m.toFixed(1)).toBe("2.0+3.0*e0+5.0*e1+7.0*e01+11.0*e2+13.0*e02+17.0*e12+19.0*I");
         });
     });
     describe("toPrecision", function () {
         it("should use toPrecision", function () {
             const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
-            expect(m.toPrecision(2)).toBe("2.0+3.0*γ0+5.0*γ1+7.0*γ0γ1+11*γ2+13*γ0γ2+17*γ1γ2+19*I");
+            expect(m.toPrecision(2)).toBe("2.0+3.0*e0+5.0*e1+7.0*e01+11*e2+13*e02+17*e12+19*I");
         });
     });
     describe("toString", function () {
         it("should use toString", function () {
             const m = new Spacetime2(2, 3, 5, 7, 11, 13, 17, 19);
-            expect(m.toString()).toBe("2+3*γ0+5*γ1+7*γ0γ1+11*γ2+13*γ0γ2+17*γ1γ2+19*I");
+            expect(m.toString()).toBe("2+3*e0+5*e1+7*e01+11*e2+13*e02+17*e12+19*I");
         });
     });
     describe("grades", function () {
@@ -287,8 +291,8 @@ describe("Spacetime2", function () {
     });
     describe("grade", function () {
         const GRADE0 = zero.add(one);
-        const GRADE1 = zero.add(γ0).add(γ1).add(γ2);
-        const GRADE2 = zero.add(γ0γ1).add(γ0γ2).add(γ1γ2);
+        const GRADE1 = zero.add(e0).add(e1).add(e2);
+        const GRADE2 = zero.add(e01).add(e02).add(e12);
         const GRADE3 = zero.add(I);
         const ALL = GRADE0.add(GRADE1).add(GRADE2).add(GRADE3);
         it("sanity check", function () {
@@ -527,9 +531,9 @@ describe("Spacetime2", function () {
     describe("div", function () {
         it("", function () {
             checkEQ(one.div(one), one);
-            checkEQ(one.div(γ0), γ0);
-            checkEQ(one.div(γ1), γ1.neg());
-            checkEQ(one.div(γ2), γ2.neg());
+            checkEQ(one.div(e0), e0);
+            checkEQ(one.div(e1), e1.neg());
+            checkEQ(one.div(e2), e2.neg());
         });
         it("", function () {
             for (const blade of blades) {
@@ -561,33 +565,63 @@ describe("Spacetime2", function () {
     describe("divByVector", function () {
         it("", function () {
             for (const blade of blades) {
-                checkEQ(blade.mul(γ0).divByVector(γ0), blade);
-                checkEQ(blade.mul(γ1).divByVector(γ1), blade);
-                checkEQ(blade.mul(γ2).divByVector(γ2), blade);
+                checkEQ(blade.mul(e0).divByVector(e0), blade);
+                checkEQ(blade.mul(e1).divByVector(e1), blade);
+                checkEQ(blade.mul(e2).divByVector(e2), blade);
             }
+        });
+    });
+    describe("equals", function () {
+        it("identity", function () {
+            for (const blade of blades) {
+                expect(blade.equals(blade)).toBeTrue();
+                expect(blade.clone().equals(blade)).toBeTrue();
+            }
+        });
+        it("coords", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    if (lhs.scp(rhs).isZero()) {
+                        expect(lhs.equals(rhs)).toBeFalse();
+                    }
+                }
+            }
+        });
+        it("units", function () {
+            expect(meter.equals(meter)).toBeTrue();
+            expect(kilogram.equals(kilogram)).toBeTrue();
+            expect(meter.equals(kilogram)).toBeFalse();
+        });
+        it("otherwise", function () {
+            expect(one.equals(0)).toBeFalse();
+            expect(one.equals("0")).toBeFalse();
+            expect(one.equals(false)).toBeFalse();
+            expect(one.equals(1)).toBeFalse();
+            expect(one.equals("1")).toBeFalse();
+            expect(one.equals(true)).toBeFalse();
         });
     });
     describe("dual", function () {
         it("one", function () {
             checkEQ(one.dual(), one.lco(I.inv()));
         });
-        it("γ0", function () {
-            checkEQ(γ0.dual(), γ0.lco(I.inv()));
+        it("e0", function () {
+            checkEQ(e0.dual(), e0.lco(I.inv()));
         });
-        it("γ1", function () {
-            checkEQ(γ1.dual(), γ1.lco(I.inv()));
+        it("e1", function () {
+            checkEQ(e1.dual(), e1.lco(I.inv()));
         });
-        it("γ2", function () {
-            checkEQ(γ2.dual(), γ2.lco(I.inv()));
+        it("e2", function () {
+            checkEQ(e2.dual(), e2.lco(I.inv()));
         });
-        it("γ0γ1", function () {
-            checkEQ(γ0γ1.dual(), γ0γ1.lco(I.inv()));
+        it("e01", function () {
+            checkEQ(e01.dual(), e01.lco(I.inv()));
         });
-        it("γ0γ2", function () {
-            checkEQ(γ0γ2.dual(), γ0γ2.lco(I.inv()));
+        it("e02", function () {
+            checkEQ(e02.dual(), e02.lco(I.inv()));
         });
-        it("γ1γ2", function () {
-            checkEQ(γ1γ2.dual(), γ1γ2.lco(I.inv()));
+        it("e12", function () {
+            checkEQ(e12.dual(), e12.lco(I.inv()));
         });
         it("I", function () {
             checkEQ(I.dual(), I.lco(I.inv()));
@@ -596,12 +630,12 @@ describe("Spacetime2", function () {
     describe("conj", function () {
         it("", function () {
             checkEQ(one.conj(), one);
-            checkEQ(γ0.conj(), γ0.neg());
-            checkEQ(γ1.conj(), γ1.neg());
-            checkEQ(γ2.conj(), γ2.neg());
-            checkEQ(γ0γ1.conj(), γ0γ1.neg());
-            checkEQ(γ0γ2.conj(), γ0γ2.neg());
-            checkEQ(γ1γ2.conj(), γ1γ2.neg());
+            checkEQ(e0.conj(), e0.neg());
+            checkEQ(e1.conj(), e1.neg());
+            checkEQ(e2.conj(), e2.neg());
+            checkEQ(e01.conj(), e01.neg());
+            checkEQ(e02.conj(), e02.neg());
+            checkEQ(e12.conj(), e12.neg());
             checkEQ(I.conj(), I);
             checkEQ(meter.conj(), meter);
         });
@@ -627,65 +661,65 @@ describe("Spacetime2", function () {
             expect(one.isVector()).toBeFalse();
             expect(one.isBivector()).toBeFalse();
         });
-        it("γ0", function () {
-            expect(γ0.isZero()).toBeFalse();
-            expect(γ0.isOne()).toBeFalse();
-            expect(Unit.isOne(γ0.uom)).toBeTrue();
-            expect(γ0.toString()).toBe("γ0");
-            expect(γ0.isScalar()).toBeFalse();
-            expect(γ0.isSpinor()).toBeFalse();
-            expect(γ0.isVector()).toBeTrue();
-            expect(γ0.isBivector()).toBeFalse();
+        it("e0", function () {
+            expect(e0.isZero()).toBeFalse();
+            expect(e0.isOne()).toBeFalse();
+            expect(Unit.isOne(e0.uom)).toBeTrue();
+            expect(e0.toString()).toBe("e0");
+            expect(e0.isScalar()).toBeFalse();
+            expect(e0.isSpinor()).toBeFalse();
+            expect(e0.isVector()).toBeTrue();
+            expect(e0.isBivector()).toBeFalse();
         });
-        it("γ1", function () {
-            expect(γ1.isZero()).toBeFalse();
-            expect(γ1.isOne()).toBeFalse();
-            expect(Unit.isOne(γ1.uom)).toBeTrue();
-            expect(γ1.toString()).toBe("γ1");
-            expect(γ1.isScalar()).toBeFalse();
-            expect(γ1.isSpinor()).toBeFalse();
-            expect(γ1.isVector()).toBeTrue();
-            expect(γ1.isBivector()).toBeFalse();
+        it("e1", function () {
+            expect(e1.isZero()).toBeFalse();
+            expect(e1.isOne()).toBeFalse();
+            expect(Unit.isOne(e1.uom)).toBeTrue();
+            expect(e1.toString()).toBe("e1");
+            expect(e1.isScalar()).toBeFalse();
+            expect(e1.isSpinor()).toBeFalse();
+            expect(e1.isVector()).toBeTrue();
+            expect(e1.isBivector()).toBeFalse();
         });
-        it("γ0γ1", function () {
-            expect(γ0γ1.isZero()).toBeFalse();
-            expect(γ0γ1.isOne()).toBeFalse();
-            expect(Unit.isOne(γ0γ1.uom)).toBeTrue();
-            expect(γ0γ1.toString()).toBe("γ0γ1");
-            expect(γ0γ1.isScalar()).toBeFalse();
-            expect(γ0γ1.isSpinor()).toBeTrue();
-            expect(γ0γ1.isVector()).toBeFalse();
-            expect(γ0γ1.isBivector()).toBeTrue();
+        it("e01", function () {
+            expect(e01.isZero()).toBeFalse();
+            expect(e01.isOne()).toBeFalse();
+            expect(Unit.isOne(e01.uom)).toBeTrue();
+            expect(e01.toString()).toBe("e01");
+            expect(e01.isScalar()).toBeFalse();
+            expect(e01.isSpinor()).toBeTrue();
+            expect(e01.isVector()).toBeFalse();
+            expect(e01.isBivector()).toBeTrue();
         });
-        it("γ2", function () {
-            expect(γ2.isZero()).toBeFalse();
-            expect(γ2.isOne()).toBeFalse();
-            expect(Unit.isOne(γ2.uom)).toBeTrue();
-            expect(γ2.toString()).toBe("γ2");
-            expect(γ2.isScalar()).toBeFalse();
-            expect(γ2.isSpinor()).toBeFalse();
-            expect(γ2.isVector()).toBeTrue();
-            expect(γ2.isBivector()).toBeFalse();
+        it("e2", function () {
+            expect(e2.isZero()).toBeFalse();
+            expect(e2.isOne()).toBeFalse();
+            expect(Unit.isOne(e2.uom)).toBeTrue();
+            expect(e2.toString()).toBe("e2");
+            expect(e2.isScalar()).toBeFalse();
+            expect(e2.isSpinor()).toBeFalse();
+            expect(e2.isVector()).toBeTrue();
+            expect(e2.isBivector()).toBeFalse();
         });
-        it("γ0γ2", function () {
-            expect(γ0γ2.isZero()).toBeFalse();
-            expect(γ0γ2.isOne()).toBeFalse();
-            expect(Unit.isOne(γ0γ2.uom)).toBeTrue();
-            expect(γ0γ2.toString()).toBe("γ0γ2");
-            expect(γ0γ2.isScalar()).toBeFalse();
-            expect(γ0γ2.isSpinor()).toBeTrue();
-            expect(γ0γ2.isVector()).toBeFalse();
-            expect(γ0γ2.isBivector()).toBeTrue();
+        it("e02", function () {
+            expect(e02.isZero()).toBeFalse();
+            expect(e02.isOne()).toBeFalse();
+            expect(Unit.isOne(e02.uom)).toBeTrue();
+            expect(e02.toString()).toBe("e02");
+            expect(e02.isScalar()).toBeFalse();
+            expect(e02.isSpinor()).toBeTrue();
+            expect(e02.isVector()).toBeFalse();
+            expect(e02.isBivector()).toBeTrue();
         });
-        it("γ1γ2", function () {
-            expect(γ1γ2.isZero()).toBeFalse();
-            expect(γ1γ2.isOne()).toBeFalse();
-            expect(Unit.isOne(γ1γ2.uom)).toBeTrue();
-            expect(γ1γ2.toString()).toBe("γ1γ2");
-            expect(γ1γ2.isScalar()).toBeFalse();
-            expect(γ1γ2.isSpinor()).toBeTrue();
-            expect(γ1γ2.isVector()).toBeFalse();
-            expect(γ1γ2.isBivector()).toBeTrue();
+        it("e12", function () {
+            expect(e12.isZero()).toBeFalse();
+            expect(e12.isOne()).toBeFalse();
+            expect(Unit.isOne(e12.uom)).toBeTrue();
+            expect(e12.toString()).toBe("e12");
+            expect(e12.isScalar()).toBeFalse();
+            expect(e12.isSpinor()).toBeTrue();
+            expect(e12.isVector()).toBeFalse();
+            expect(e12.isBivector()).toBeTrue();
         });
         it("I", function () {
             expect(I.isZero()).toBeFalse();
@@ -703,205 +737,205 @@ describe("Spacetime2", function () {
             it("one", function () {
                 checkEQ(one.mul(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.mul(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.mul(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.mul(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.mul(e1), e1);
             });
-            it("γ0γ1", function () {
-                checkEQ(one.mul(γ0γ1), γ0γ1);
+            it("e01", function () {
+                checkEQ(one.mul(e01), e01);
             });
-            it("γ2", function () {
-                checkEQ(one.mul(γ2), γ2);
+            it("e2", function () {
+                checkEQ(one.mul(e2), e2);
             });
-            it("γ0γ2", function () {
-                checkEQ(one.mul(γ0γ2), γ0γ2);
+            it("e02", function () {
+                checkEQ(one.mul(e02), e02);
             });
-            it("γ1γ2", function () {
-                checkEQ(one.mul(γ1γ2), γ1γ2);
+            it("e12", function () {
+                checkEQ(one.mul(e12), e12);
             });
             it("I", function () {
                 checkEQ(one.mul(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.mul(one), γ0);
+                checkEQ(e0.mul(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.mul(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.mul(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.mul(γ1), γ0γ1);
+            it("e1", function () {
+                checkEQ(e0.mul(e1), e01);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0.mul(γ0γ1), γ1);
+            it("e01", function () {
+                checkEQ(e0.mul(e01), e1);
             });
-            it("γ2", function () {
-                checkEQ(γ0.mul(γ2), γ0γ2);
+            it("e2", function () {
+                checkEQ(e0.mul(e2), e02);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0.mul(γ0γ2), γ2);
+            it("e02", function () {
+                checkEQ(e0.mul(e02), e2);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0.mul(γ1γ2), I);
+            it("e12", function () {
+                checkEQ(e0.mul(e12), I);
             });
             it("I", function () {
-                checkEQ(γ0.mul(I), γ1γ2);
+                checkEQ(e0.mul(I), e12);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.mul(one), γ1);
+                checkEQ(e1.mul(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.mul(γ0), γ0γ1.neg());
+            it("e0", function () {
+                checkEQ(e1.mul(e0), e01.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ1.mul(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.mul(e1), one.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1.mul(γ0γ1), γ0);
+            it("e01", function () {
+                checkEQ(e1.mul(e01), e0);
             });
-            it("γ2", function () {
-                checkEQ(γ1.mul(γ2), γ1γ2);
+            it("e2", function () {
+                checkEQ(e1.mul(e2), e12);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1.mul(γ0γ2), I.neg());
+            it("e02", function () {
+                checkEQ(e1.mul(e02), I.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1.mul(γ1γ2), γ2.neg());
+            it("e12", function () {
+                checkEQ(e1.mul(e12), e2.neg());
             });
             it("I", function () {
-                checkEQ(γ1.mul(I), γ0γ2);
+                checkEQ(e1.mul(I), e02);
             });
         });
-        describe("γ0γ1", function () {
+        describe("e01", function () {
             it("one", function () {
-                checkEQ(γ0γ1.mul(one), γ0γ1);
+                checkEQ(e01.mul(one), e01);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ1.mul(γ0), γ1.neg());
+            it("e0", function () {
+                checkEQ(e01.mul(e0), e1.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ0γ1.mul(γ1), γ0.neg());
+            it("e1", function () {
+                checkEQ(e01.mul(e1), e0.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ1.mul(γ0γ1), one);
+            it("e01", function () {
+                checkEQ(e01.mul(e01), one);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ1.mul(γ2), I);
+            it("e2", function () {
+                checkEQ(e01.mul(e2), I);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ1.mul(γ0γ2), γ1γ2.neg());
+            it("e02", function () {
+                checkEQ(e01.mul(e02), e12.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ1.mul(γ1γ2), γ0γ2.neg());
+            it("e12", function () {
+                checkEQ(e01.mul(e12), e02.neg());
             });
             it("I", function () {
-                checkEQ(γ0γ1.mul(I), γ2);
+                checkEQ(e01.mul(I), e2);
             });
         });
-        describe("γ2", function () {
+        describe("e2", function () {
             it("one", function () {
-                checkEQ(γ2.mul(one), γ2);
+                checkEQ(e2.mul(one), e2);
             });
-            it("γ0", function () {
-                checkEQ(γ2.mul(γ0), γ0γ2.neg());
+            it("e0", function () {
+                checkEQ(e2.mul(e0), e02.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ2.mul(γ1), γ1γ2.neg());
+            it("e1", function () {
+                checkEQ(e2.mul(e1), e12.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ2.mul(γ0γ1), I);
+            it("e01", function () {
+                checkEQ(e2.mul(e01), I);
             });
-            it("γ2", function () {
-                checkEQ(γ2.mul(γ2), one.neg());
+            it("e2", function () {
+                checkEQ(e2.mul(e2), one.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ2.mul(γ0γ2), γ0);
+            it("e02", function () {
+                checkEQ(e2.mul(e02), e0);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ2.mul(γ1γ2), γ1);
+            it("e12", function () {
+                checkEQ(e2.mul(e12), e1);
             });
             it("I", function () {
-                checkEQ(γ2.mul(I), γ0γ1.neg());
+                checkEQ(e2.mul(I), e01.neg());
             });
         });
-        describe("γ0γ2", function () {
+        describe("e02", function () {
             it("one", function () {
-                checkEQ(γ0γ2.mul(one), γ0γ2);
+                checkEQ(e02.mul(one), e02);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ2.mul(γ0), γ2.neg());
+            it("e0", function () {
+                checkEQ(e02.mul(e0), e2.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ0γ2.mul(γ1), I.neg());
+            it("e1", function () {
+                checkEQ(e02.mul(e1), I.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ2.mul(γ0γ1), γ1γ2);
+            it("e01", function () {
+                checkEQ(e02.mul(e01), e12);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ2.mul(γ2), γ0.neg());
+            it("e2", function () {
+                checkEQ(e02.mul(e2), e0.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ2.mul(γ0γ2), one);
+            it("e02", function () {
+                checkEQ(e02.mul(e02), one);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ2.mul(γ1γ2), γ0γ1);
+            it("e12", function () {
+                checkEQ(e02.mul(e12), e01);
             });
             it("I", function () {
-                checkEQ(γ0γ2.mul(I), γ1.neg());
+                checkEQ(e02.mul(I), e1.neg());
             });
         });
-        describe("γ1γ2", function () {
+        describe("e12", function () {
             it("one", function () {
-                checkEQ(γ1γ2.mul(one), γ1γ2);
+                checkEQ(e12.mul(one), e12);
             });
-            it("γ0", function () {
-                checkEQ(γ1γ2.mul(γ0), I);
+            it("e0", function () {
+                checkEQ(e12.mul(e0), I);
             });
-            it("γ1", function () {
-                checkEQ(γ1γ2.mul(γ1), γ2);
+            it("e1", function () {
+                checkEQ(e12.mul(e1), e2);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1γ2.mul(γ0γ1), γ0γ2);
+            it("e01", function () {
+                checkEQ(e12.mul(e01), e02);
             });
-            it("γ2", function () {
-                checkEQ(γ1γ2.mul(γ2), γ1.neg());
+            it("e2", function () {
+                checkEQ(e12.mul(e2), e1.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1γ2.mul(γ0γ2), γ0γ1.neg());
+            it("e02", function () {
+                checkEQ(e12.mul(e02), e01.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1γ2.mul(γ1γ2), one.neg());
+            it("e12", function () {
+                checkEQ(e12.mul(e12), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1γ2.mul(I), γ0.neg());
+                checkEQ(e12.mul(I), e0.neg());
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.mul(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.mul(γ0), γ1γ2);
+            it("e0", function () {
+                checkEQ(I.mul(e0), e12);
             });
-            it("γ1", function () {
-                checkEQ(I.mul(γ1), γ0γ2);
+            it("e1", function () {
+                checkEQ(I.mul(e1), e02);
             });
-            it("γ0γ1", function () {
-                checkEQ(I.mul(γ0γ1), γ2);
+            it("e01", function () {
+                checkEQ(I.mul(e01), e2);
             });
-            it("γ2", function () {
-                checkEQ(I.mul(γ2), γ0γ1.neg());
+            it("e2", function () {
+                checkEQ(I.mul(e2), e01.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(I.mul(γ0γ2), γ1.neg());
+            it("e02", function () {
+                checkEQ(I.mul(e02), e1.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(I.mul(γ1γ2), γ0.neg());
+            it("e12", function () {
+                checkEQ(I.mul(e12), e0.neg());
             });
             it("I", function () {
                 checkEQ(I.mul(I), one.neg());
@@ -921,9 +955,9 @@ describe("Spacetime2", function () {
     describe("mulByVector", function () {
         it("", function () {
             for (const blade of blades) {
-                checkEQ(blade.mulByVector(γ0), blade.mul(γ0));
-                checkEQ(blade.mulByVector(γ1), blade.mul(γ1));
-                checkEQ(blade.mulByVector(γ2), blade.mul(γ2));
+                checkEQ(blade.mulByVector(e0), blade.mul(e0));
+                checkEQ(blade.mulByVector(e1), blade.mul(e1));
+                checkEQ(blade.mulByVector(e2), blade.mul(e2));
             }
         });
     });
@@ -932,205 +966,205 @@ describe("Spacetime2", function () {
             it("one", function () {
                 checkEQ(one.ext(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.ext(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.ext(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.ext(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.ext(e1), e1);
             });
-            it("γ0γ1", function () {
-                checkEQ(one.ext(γ0γ1), γ0γ1);
+            it("e01", function () {
+                checkEQ(one.ext(e01), e01);
             });
-            it("γ2", function () {
-                checkEQ(one.ext(γ2), γ2);
+            it("e2", function () {
+                checkEQ(one.ext(e2), e2);
             });
-            it("γ0γ2", function () {
-                checkEQ(one.ext(γ0γ2), γ0γ2);
+            it("e02", function () {
+                checkEQ(one.ext(e02), e02);
             });
-            it("γ1γ2", function () {
-                checkEQ(one.ext(γ1γ2), γ1γ2);
+            it("e12", function () {
+                checkEQ(one.ext(e12), e12);
             });
             it("I", function () {
                 checkEQ(one.ext(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.ext(one), γ0);
+                checkEQ(e0.ext(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(e0.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0.ext(γ1), γ0γ1);
+            it("e1", function () {
+                checkEQ(e0.ext(e1), e01);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e0.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0.ext(γ2), γ0γ2);
+            it("e2", function () {
+                checkEQ(e0.ext(e2), e02);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e0.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0.ext(γ1γ2), I);
+            it("e12", function () {
+                checkEQ(e0.ext(e12), I);
             });
             it("I", function () {
-                checkEQ(γ0.ext(I), zero);
+                checkEQ(e0.ext(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.ext(one), γ1);
+                checkEQ(e1.ext(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.ext(γ0), γ0γ1.neg());
+            it("e0", function () {
+                checkEQ(e1.ext(e0), e01.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ1.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(e1.ext(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e1.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1.ext(γ2), γ1γ2);
+            it("e2", function () {
+                checkEQ(e1.ext(e2), e12);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1.ext(γ0γ2), I.neg());
+            it("e02", function () {
+                checkEQ(e1.ext(e02), I.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e1.ext(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ1.ext(I), zero);
+                checkEQ(e1.ext(I), zero);
             });
         });
-        describe("γ0γ1", function () {
+        describe("e01", function () {
             it("one", function () {
-                checkEQ(γ0γ1.ext(one), γ0γ1);
+                checkEQ(e01.ext(one), e01);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ1.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(e01.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ1.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(e01.ext(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ1.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e01.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ1.ext(γ2), I);
+            it("e2", function () {
+                checkEQ(e01.ext(e2), I);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ1.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e01.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ1.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e01.ext(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ1.ext(I), zero);
+                checkEQ(e01.ext(I), zero);
             });
         });
-        describe("γ2", function () {
+        describe("e2", function () {
             it("one", function () {
-                checkEQ(γ2.ext(one), γ2);
+                checkEQ(e2.ext(one), e2);
             });
-            it("γ0", function () {
-                checkEQ(γ2.ext(γ0), γ0γ2.neg());
+            it("e0", function () {
+                checkEQ(e2.ext(e0), e02.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ2.ext(γ1), γ1γ2.neg());
+            it("e1", function () {
+                checkEQ(e2.ext(e1), e12.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ2.ext(γ0γ1), I);
+            it("e01", function () {
+                checkEQ(e2.ext(e01), I);
             });
-            it("γ2", function () {
-                checkEQ(γ2.ext(γ2), zero);
+            it("e2", function () {
+                checkEQ(e2.ext(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ2.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e2.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ2.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e2.ext(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ2.ext(I), zero);
+                checkEQ(e2.ext(I), zero);
             });
         });
-        describe("γ0γ2", function () {
+        describe("e02", function () {
             it("one", function () {
-                checkEQ(γ0γ2.ext(one), γ0γ2);
+                checkEQ(e02.ext(one), e02);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ2.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(e02.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ2.ext(γ1), I.neg());
+            it("e1", function () {
+                checkEQ(e02.ext(e1), I.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ2.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e02.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ2.ext(γ2), zero);
+            it("e2", function () {
+                checkEQ(e02.ext(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ2.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e02.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ2.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e02.ext(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ2.ext(I), zero);
+                checkEQ(e02.ext(I), zero);
             });
         });
-        describe("γ1γ2", function () {
+        describe("e12", function () {
             it("one", function () {
-                checkEQ(γ1γ2.ext(one), γ1γ2);
+                checkEQ(e12.ext(one), e12);
             });
-            it("γ0", function () {
-                checkEQ(γ1γ2.ext(γ0), I);
+            it("e0", function () {
+                checkEQ(e12.ext(e0), I);
             });
-            it("γ1", function () {
-                checkEQ(γ1γ2.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(e12.ext(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1γ2.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e12.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1γ2.ext(γ2), zero);
+            it("e2", function () {
+                checkEQ(e12.ext(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1γ2.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e12.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1γ2.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e12.ext(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ1γ2.ext(I), zero);
+                checkEQ(e12.ext(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.ext(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.ext(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.ext(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.ext(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.ext(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(I.ext(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(I.ext(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(I.ext(γ2), zero);
+            it("e2", function () {
+                checkEQ(I.ext(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(I.ext(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(I.ext(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(I.ext(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(I.ext(e12), zero);
             });
             it("I", function () {
                 checkEQ(I.ext(I), zero);
@@ -1141,23 +1175,23 @@ describe("Spacetime2", function () {
         it("one", function () {
             checkEQ(one.inv(), one);
         });
-        it("γ0", function () {
-            checkEQ(γ0.inv(), γ0);
+        it("e0", function () {
+            checkEQ(e0.inv(), e0);
         });
-        it("γ1", function () {
-            checkEQ(γ1.inv(), γ1.neg());
+        it("e1", function () {
+            checkEQ(e1.inv(), e1.neg());
         });
-        it("γ2", function () {
-            checkEQ(γ2.inv(), γ2.neg());
+        it("e2", function () {
+            checkEQ(e2.inv(), e2.neg());
         });
-        it("γ0γ1", function () {
-            checkEQ(γ0γ1.inv(), γ0γ1);
+        it("e01", function () {
+            checkEQ(e01.inv(), e01);
         });
-        it("γ0γ2", function () {
-            checkEQ(γ0γ2.inv(), γ0γ2);
+        it("e02", function () {
+            checkEQ(e02.inv(), e02);
         });
-        it("γ1γ2", function () {
-            checkEQ(γ1γ2.inv(), γ1γ2.neg());
+        it("e12", function () {
+            checkEQ(e12.inv(), e12.neg());
         });
         it("I", function () {
             checkEQ(I.inv(), I.neg());
@@ -1173,205 +1207,205 @@ describe("Spacetime2", function () {
             it("one", function () {
                 checkEQ(one.lco(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.lco(γ0), γ0);
+            it("e0", function () {
+                checkEQ(one.lco(e0), e0);
             });
-            it("γ1", function () {
-                checkEQ(one.lco(γ1), γ1);
+            it("e1", function () {
+                checkEQ(one.lco(e1), e1);
             });
-            it("γ0γ1", function () {
-                checkEQ(one.lco(γ0γ1), γ0γ1);
+            it("e01", function () {
+                checkEQ(one.lco(e01), e01);
             });
-            it("γ2", function () {
-                checkEQ(one.lco(γ2), γ2);
+            it("e2", function () {
+                checkEQ(one.lco(e2), e2);
             });
-            it("γ0γ2", function () {
-                checkEQ(one.lco(γ0γ2), γ0γ2);
+            it("e02", function () {
+                checkEQ(one.lco(e02), e02);
             });
-            it("γ1γ2", function () {
-                checkEQ(one.lco(γ1γ2), γ1γ2);
+            it("e12", function () {
+                checkEQ(one.lco(e12), e12);
             });
             it("I", function () {
                 checkEQ(one.lco(I), I);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.lco(one), zero);
+                checkEQ(e0.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0.lco(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.lco(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0.lco(γ0γ1), γ1);
+            it("e01", function () {
+                checkEQ(e0.lco(e01), e1);
             });
-            it("γ2", function () {
-                checkEQ(γ0.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e0.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0.lco(γ0γ2), γ2);
+            it("e02", function () {
+                checkEQ(e0.lco(e02), e2);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0.lco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e0.lco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0.lco(I), γ1γ2);
+                checkEQ(e0.lco(I), e12);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.lco(one), zero);
+                checkEQ(e1.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.lco(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.lco(e1), one.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1.lco(γ0γ1), γ0);
+            it("e01", function () {
+                checkEQ(e1.lco(e01), e0);
             });
-            it("γ2", function () {
-                checkEQ(γ1.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e1.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1.lco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e1.lco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1.lco(γ1γ2), γ2.neg());
+            it("e12", function () {
+                checkEQ(e1.lco(e12), e2.neg());
             });
             it("I", function () {
-                checkEQ(γ1.lco(I), γ0γ2);
+                checkEQ(e1.lco(I), e02);
             });
         });
-        describe("γ0γ1", function () {
+        describe("e01", function () {
             it("one", function () {
-                checkEQ(γ0γ1.lco(one), zero);
+                checkEQ(e01.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ1.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e01.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ1.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e01.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ1.lco(γ0γ1), one);
+            it("e01", function () {
+                checkEQ(e01.lco(e01), one);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ1.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e01.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ1.lco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e01.lco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ1.lco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e01.lco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ1.lco(I), γ2);
+                checkEQ(e01.lco(I), e2);
             });
         });
-        describe("γ2", function () {
+        describe("e2", function () {
             it("one", function () {
-                checkEQ(γ2.lco(one), zero);
+                checkEQ(e2.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ2.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e2.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ2.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e2.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ2.lco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e2.lco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ2.lco(γ2), one.neg());
+            it("e2", function () {
+                checkEQ(e2.lco(e2), one.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ2.lco(γ0γ2), γ0);
+            it("e02", function () {
+                checkEQ(e2.lco(e02), e0);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ2.lco(γ1γ2), γ1);
+            it("e12", function () {
+                checkEQ(e2.lco(e12), e1);
             });
             it("I", function () {
-                checkEQ(γ2.lco(I), γ0γ1.neg());
+                checkEQ(e2.lco(I), e01.neg());
             });
         });
-        describe("γ0γ2", function () {
+        describe("e02", function () {
             it("one", function () {
-                checkEQ(γ0γ2.lco(one), zero);
+                checkEQ(e02.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ2.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e02.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ2.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e02.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ2.lco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e02.lco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ2.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e02.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ2.lco(γ0γ2), one);
+            it("e02", function () {
+                checkEQ(e02.lco(e02), one);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ2.lco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e02.lco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ2.lco(I), γ1.neg());
+                checkEQ(e02.lco(I), e1.neg());
             });
         });
-        describe("γ1γ2", function () {
+        describe("e12", function () {
             it("one", function () {
-                checkEQ(γ1γ2.lco(one), zero);
+                checkEQ(e12.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1γ2.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e12.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1γ2.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e12.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1γ2.lco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e12.lco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1γ2.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e12.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1γ2.lco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e12.lco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1γ2.lco(γ1γ2), one.neg());
+            it("e12", function () {
+                checkEQ(e12.lco(e12), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1γ2.lco(I), γ0.neg());
+                checkEQ(e12.lco(I), e0.neg());
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.lco(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(I.lco(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.lco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.lco(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.lco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(I.lco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(I.lco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(I.lco(γ2), zero);
+            it("e2", function () {
+                checkEQ(I.lco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(I.lco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(I.lco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(I.lco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(I.lco(e12), zero);
             });
             it("I", function () {
                 checkEQ(I.lco(I), one.neg());
@@ -1402,205 +1436,205 @@ describe("Spacetime2", function () {
             it("one", function () {
                 checkEQ(one.rco(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(one.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(one.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(one.rco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(one.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(one.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(one.rco(γ2), zero);
+            it("e2", function () {
+                checkEQ(one.rco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(one.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(one.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(one.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(one.rco(e12), zero);
             });
             it("I", function () {
                 checkEQ(one.rco(I), zero);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.rco(one), γ0);
+                checkEQ(e0.rco(one), e0);
             });
-            it("γ0", function () {
-                checkEQ(γ0.rco(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.rco(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.rco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e0.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0.rco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e0.rco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e0.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e0.rco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0.rco(I), zero);
+                checkEQ(e0.rco(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.rco(one), γ1);
+                checkEQ(e1.rco(one), e1);
             });
-            it("γ0", function () {
-                checkEQ(γ1.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.rco(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.rco(e1), one.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e1.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1.rco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e1.rco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e1.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e1.rco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ1.rco(I), zero);
+                checkEQ(e1.rco(I), zero);
             });
         });
-        describe("γ0γ1", function () {
+        describe("e01", function () {
             it("one", function () {
-                checkEQ(γ0γ1.rco(one), γ0γ1);
+                checkEQ(e01.rco(one), e01);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ1.rco(γ0), γ1.neg());
+            it("e0", function () {
+                checkEQ(e01.rco(e0), e1.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ0γ1.rco(γ1), γ0.neg());
+            it("e1", function () {
+                checkEQ(e01.rco(e1), e0.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ1.rco(γ0γ1), one);
+            it("e01", function () {
+                checkEQ(e01.rco(e01), one);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ1.rco(γ2), zero);
+            it("e2", function () {
+                checkEQ(e01.rco(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ1.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e01.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ1.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e01.rco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ1.rco(I), zero);
+                checkEQ(e01.rco(I), zero);
             });
         });
-        describe("γ2", function () {
+        describe("e2", function () {
             it("one", function () {
-                checkEQ(γ2.rco(one), γ2);
+                checkEQ(e2.rco(one), e2);
             });
-            it("γ0", function () {
-                checkEQ(γ2.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e2.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ2.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e2.rco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ2.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e2.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ2.rco(γ2), one.neg());
+            it("e2", function () {
+                checkEQ(e2.rco(e2), one.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ2.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e2.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ2.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e2.rco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ2.rco(I), zero);
+                checkEQ(e2.rco(I), zero);
             });
         });
-        describe("γ0γ2", function () {
+        describe("e02", function () {
             it("one", function () {
-                checkEQ(γ0γ2.rco(one), γ0γ2);
+                checkEQ(e02.rco(one), e02);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ2.rco(γ0), γ2.neg());
+            it("e0", function () {
+                checkEQ(e02.rco(e0), e2.neg());
             });
-            it("γ1", function () {
-                checkEQ(γ0γ2.rco(γ1), zero);
+            it("e1", function () {
+                checkEQ(e02.rco(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ2.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e02.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ2.rco(γ2), γ0.neg());
+            it("e2", function () {
+                checkEQ(e02.rco(e2), e0.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ2.rco(γ0γ2), one);
+            it("e02", function () {
+                checkEQ(e02.rco(e02), one);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ2.rco(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e02.rco(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ2.rco(I), zero);
+                checkEQ(e02.rco(I), zero);
             });
         });
-        describe("γ1γ2", function () {
+        describe("e12", function () {
             it("one", function () {
-                checkEQ(γ1γ2.rco(one), γ1γ2);
+                checkEQ(e12.rco(one), e12);
             });
-            it("γ0", function () {
-                checkEQ(γ1γ2.rco(γ0), zero);
+            it("e0", function () {
+                checkEQ(e12.rco(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1γ2.rco(γ1), γ2);
+            it("e1", function () {
+                checkEQ(e12.rco(e1), e2);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1γ2.rco(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e12.rco(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1γ2.rco(γ2), γ1.neg());
+            it("e2", function () {
+                checkEQ(e12.rco(e2), e1.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1γ2.rco(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e12.rco(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1γ2.rco(γ1γ2), one.neg());
+            it("e12", function () {
+                checkEQ(e12.rco(e12), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1γ2.rco(I), zero);
+                checkEQ(e12.rco(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.rco(one), I);
             });
-            it("γ0", function () {
-                checkEQ(I.rco(γ0), γ1γ2);
+            it("e0", function () {
+                checkEQ(I.rco(e0), e12);
             });
-            it("γ1", function () {
-                checkEQ(I.rco(γ1), γ0γ2);
+            it("e1", function () {
+                checkEQ(I.rco(e1), e02);
             });
-            it("γ0γ1", function () {
-                checkEQ(I.rco(γ0γ1), γ2);
+            it("e01", function () {
+                checkEQ(I.rco(e01), e2);
             });
-            it("γ2", function () {
-                checkEQ(I.rco(γ2), γ0γ1.neg());
+            it("e2", function () {
+                checkEQ(I.rco(e2), e01.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(I.rco(γ0γ2), γ1.neg());
+            it("e02", function () {
+                checkEQ(I.rco(e02), e1.neg());
             });
-            it("γ1γ2", function () {
-                checkEQ(I.rco(γ1γ2), γ0.neg());
+            it("e12", function () {
+                checkEQ(I.rco(e12), e0.neg());
             });
             it("I", function () {
                 checkEQ(I.rco(I), one.neg());
@@ -1609,86 +1643,86 @@ describe("Spacetime2", function () {
     });
     describe("reflect", function () {
         it("commutes with exterior product", function () {
-            checkEQ(one.reflect(γ0), one.neg());
-            checkEQ(one.reflect(γ1), one);
-            checkEQ(one.reflect(γ2), one);
+            checkEQ(one.reflect(e0), one.neg());
+            checkEQ(one.reflect(e1), one);
+            checkEQ(one.reflect(e2), one);
 
-            checkEQ(γ0.reflect(γ0), γ0.neg());
-            checkEQ(γ0.reflect(γ1), γ0.neg());
-            checkEQ(γ0.reflect(γ2), γ0.neg());
+            checkEQ(e0.reflect(e0), e0.neg());
+            checkEQ(e0.reflect(e1), e0.neg());
+            checkEQ(e0.reflect(e2), e0.neg());
 
-            checkEQ(γ1.reflect(γ0), γ1);
-            checkEQ(γ1.reflect(γ1), γ1);
-            checkEQ(γ1.reflect(γ2), γ1.neg());
+            checkEQ(e1.reflect(e0), e1);
+            checkEQ(e1.reflect(e1), e1);
+            checkEQ(e1.reflect(e2), e1.neg());
 
-            checkEQ(γ2.reflect(γ0), γ2);
-            checkEQ(γ2.reflect(γ1), γ2.neg());
-            checkEQ(γ2.reflect(γ2), γ2);
+            checkEQ(e2.reflect(e0), e2);
+            checkEQ(e2.reflect(e1), e2.neg());
+            checkEQ(e2.reflect(e2), e2);
 
-            checkEQ(γ0γ1.reflect(γ0), γ0.reflect(γ0).ext(γ1.reflect(γ0)));
-            checkEQ(γ0γ1.reflect(γ1), γ0.reflect(γ1).ext(γ1.reflect(γ1)));
-            checkEQ(γ0γ1.reflect(γ2), γ0.reflect(γ2).ext(γ1.reflect(γ2)));
+            checkEQ(e01.reflect(e0), e0.reflect(e0).ext(e1.reflect(e0)));
+            checkEQ(e01.reflect(e1), e0.reflect(e1).ext(e1.reflect(e1)));
+            checkEQ(e01.reflect(e2), e0.reflect(e2).ext(e1.reflect(e2)));
 
-            checkEQ(γ0γ2.reflect(γ0), γ0.reflect(γ0).ext(γ2.reflect(γ0)));
-            checkEQ(γ0γ2.reflect(γ1), γ0.reflect(γ1).ext(γ2.reflect(γ1)));
-            checkEQ(γ0γ2.reflect(γ2), γ0.reflect(γ2).ext(γ2.reflect(γ2)));
+            checkEQ(e02.reflect(e0), e0.reflect(e0).ext(e2.reflect(e0)));
+            checkEQ(e02.reflect(e1), e0.reflect(e1).ext(e2.reflect(e1)));
+            checkEQ(e02.reflect(e2), e0.reflect(e2).ext(e2.reflect(e2)));
 
-            checkEQ(γ1γ2.reflect(γ0), γ1.reflect(γ0).ext(γ2.reflect(γ0)));
-            checkEQ(γ1γ2.reflect(γ1), γ1.reflect(γ1).ext(γ2.reflect(γ1)));
-            checkEQ(γ1γ2.reflect(γ2), γ1.reflect(γ2).ext(γ2.reflect(γ2)));
+            checkEQ(e12.reflect(e0), e1.reflect(e0).ext(e2.reflect(e0)));
+            checkEQ(e12.reflect(e1), e1.reflect(e1).ext(e2.reflect(e1)));
+            checkEQ(e12.reflect(e2), e1.reflect(e2).ext(e2.reflect(e2)));
 
-            checkEQ(I.reflect(γ0), γ0.reflect(γ0).ext(γ1.reflect(γ0).ext(γ2.reflect(γ0))));
-            checkEQ(I.reflect(γ1), γ0.reflect(γ1).ext(γ1.reflect(γ1).ext(γ2.reflect(γ1))));
-            checkEQ(I.reflect(γ2), γ0.reflect(γ2).ext(γ1.reflect(γ2).ext(γ2.reflect(γ2))));
+            checkEQ(I.reflect(e0), e0.reflect(e0).ext(e1.reflect(e0).ext(e2.reflect(e0))));
+            checkEQ(I.reflect(e1), e0.reflect(e1).ext(e1.reflect(e1).ext(e2.reflect(e1))));
+            checkEQ(I.reflect(e2), e0.reflect(e2).ext(e1.reflect(e2).ext(e2.reflect(e2))));
         });
         it("summary", function () {
-            checkEQ(one.reflect(γ0), one.neg());
-            checkEQ(one.reflect(γ1), one);
-            checkEQ(one.reflect(γ2), one);
+            checkEQ(one.reflect(e0), one.neg());
+            checkEQ(one.reflect(e1), one);
+            checkEQ(one.reflect(e2), one);
 
-            checkEQ(γ0.reflect(γ0), γ0.neg());
-            checkEQ(γ0.reflect(γ1), γ0.neg());
-            checkEQ(γ0.reflect(γ2), γ0.neg());
+            checkEQ(e0.reflect(e0), e0.neg());
+            checkEQ(e0.reflect(e1), e0.neg());
+            checkEQ(e0.reflect(e2), e0.neg());
 
-            checkEQ(γ1.reflect(γ0), γ1);
-            checkEQ(γ1.reflect(γ1), γ1);
-            checkEQ(γ1.reflect(γ2), γ1.neg());
+            checkEQ(e1.reflect(e0), e1);
+            checkEQ(e1.reflect(e1), e1);
+            checkEQ(e1.reflect(e2), e1.neg());
 
-            checkEQ(γ2.reflect(γ0), γ2);
-            checkEQ(γ2.reflect(γ1), γ2.neg());
-            checkEQ(γ2.reflect(γ2), γ2);
+            checkEQ(e2.reflect(e0), e2);
+            checkEQ(e2.reflect(e1), e2.neg());
+            checkEQ(e2.reflect(e2), e2);
 
-            checkEQ(γ0γ1.reflect(γ0), γ0γ1.neg());
-            checkEQ(γ0γ1.reflect(γ1), γ0γ1.neg());
-            checkEQ(γ0γ1.reflect(γ2), γ0γ1);
+            checkEQ(e01.reflect(e0), e01.neg());
+            checkEQ(e01.reflect(e1), e01.neg());
+            checkEQ(e01.reflect(e2), e01);
 
-            checkEQ(γ0γ2.reflect(γ0), γ0γ2.neg());
-            checkEQ(γ0γ2.reflect(γ1), γ0γ2);
-            checkEQ(γ0γ2.reflect(γ2), γ0γ2.neg());
+            checkEQ(e02.reflect(e0), e02.neg());
+            checkEQ(e02.reflect(e1), e02);
+            checkEQ(e02.reflect(e2), e02.neg());
 
-            checkEQ(γ1γ2.reflect(γ0), γ1γ2);
-            checkEQ(γ1γ2.reflect(γ1), γ1γ2.neg());
-            checkEQ(γ1γ2.reflect(γ2), γ1γ2.neg());
+            checkEQ(e12.reflect(e0), e12);
+            checkEQ(e12.reflect(e1), e12.neg());
+            checkEQ(e12.reflect(e2), e12.neg());
 
-            checkEQ(I.reflect(γ0), I.neg());
-            checkEQ(I.reflect(γ1), I);
-            checkEQ(I.reflect(γ2), I);
+            checkEQ(I.reflect(e0), I.neg());
+            checkEQ(I.reflect(e1), I);
+            checkEQ(I.reflect(e2), I);
         });
         it("scaling", function () {
             for (const blade of blades) {
-                checkEQ(blade.mul(two).reflect(γ0), blade.reflect(γ0).mul(two));
+                checkEQ(blade.mul(two).reflect(e0), blade.reflect(e0).mul(two));
             }
         });
     });
     describe("rev", function () {
         it("", function () {
             checkEQ(one.rev(), one);
-            checkEQ(γ0.rev(), γ0);
-            checkEQ(γ1.rev(), γ1);
-            checkEQ(γ2.rev(), γ2);
-            checkEQ(γ0γ1.rev(), γ0γ1.neg());
-            checkEQ(γ0γ2.rev(), γ0γ2.neg());
-            checkEQ(γ1γ2.rev(), γ1γ2.neg());
+            checkEQ(e0.rev(), e0);
+            checkEQ(e1.rev(), e1);
+            checkEQ(e2.rev(), e2);
+            checkEQ(e01.rev(), e01.neg());
+            checkEQ(e02.rev(), e02.neg());
+            checkEQ(e12.rev(), e12.neg());
             checkEQ(I.rev(), I.neg());
             checkEQ(meter.rev(), meter);
         });
@@ -1698,205 +1732,205 @@ describe("Spacetime2", function () {
             it("one", function () {
                 checkEQ(one.scp(one), one);
             });
-            it("γ0", function () {
-                checkEQ(one.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(one.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(one.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(one.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(one.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(one.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(one.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(one.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(one.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(one.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(one.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(one.scp(e12), zero);
             });
             it("I", function () {
                 checkEQ(one.scp(I), zero);
             });
         });
-        describe("γ0", function () {
+        describe("e0", function () {
             it("one", function () {
-                checkEQ(γ0.scp(one), zero);
+                checkEQ(e0.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0.scp(γ0), one);
+            it("e0", function () {
+                checkEQ(e0.scp(e0), one);
             });
-            it("γ1", function () {
-                checkEQ(γ0.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e0.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e0.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(e0.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e0.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e0.scp(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0.scp(I), zero);
+                checkEQ(e0.scp(I), zero);
             });
         });
-        describe("γ1", function () {
+        describe("e1", function () {
             it("one", function () {
-                checkEQ(γ1.scp(one), zero);
+                checkEQ(e1.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e1.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1.scp(γ1), one.neg());
+            it("e1", function () {
+                checkEQ(e1.scp(e1), one.neg());
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e1.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(e1.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e1.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e1.scp(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ1.scp(I), zero);
+                checkEQ(e1.scp(I), zero);
             });
         });
-        describe("γ0γ1", function () {
+        describe("e01", function () {
             it("one", function () {
-                checkEQ(γ0γ1.scp(one), zero);
+                checkEQ(e01.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ1.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e01.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ1.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e01.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ1.scp(γ0γ1), one);
+            it("e01", function () {
+                checkEQ(e01.scp(e01), one);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ1.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(e01.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ1.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e01.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ1.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e01.scp(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ1.scp(I), zero);
+                checkEQ(e01.scp(I), zero);
             });
         });
-        describe("γ2", function () {
+        describe("e2", function () {
             it("one", function () {
-                checkEQ(γ2.scp(one), zero);
+                checkEQ(e2.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ2.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e2.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ2.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e2.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ2.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e2.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ2.scp(γ2), one.neg());
+            it("e2", function () {
+                checkEQ(e2.scp(e2), one.neg());
             });
-            it("γ0γ2", function () {
-                checkEQ(γ2.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e2.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ2.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e2.scp(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ2.scp(I), zero);
+                checkEQ(e2.scp(I), zero);
             });
         });
-        describe("γ0γ2", function () {
+        describe("e02", function () {
             it("one", function () {
-                checkEQ(γ0γ2.scp(one), zero);
+                checkEQ(e02.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ0γ2.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e02.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ0γ2.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e02.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ0γ2.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e02.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ0γ2.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(e02.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ0γ2.scp(γ0γ2), one);
+            it("e02", function () {
+                checkEQ(e02.scp(e02), one);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ0γ2.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(e02.scp(e12), zero);
             });
             it("I", function () {
-                checkEQ(γ0γ2.scp(I), zero);
+                checkEQ(e02.scp(I), zero);
             });
         });
-        describe("γ1γ2", function () {
+        describe("e12", function () {
             it("one", function () {
-                checkEQ(γ1γ2.scp(one), zero);
+                checkEQ(e12.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(γ1γ2.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(e12.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(γ1γ2.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(e12.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(γ1γ2.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(e12.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(γ1γ2.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(e12.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(γ1γ2.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(e12.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(γ1γ2.scp(γ1γ2), one.neg());
+            it("e12", function () {
+                checkEQ(e12.scp(e12), one.neg());
             });
             it("I", function () {
-                checkEQ(γ1γ2.scp(I), zero);
+                checkEQ(e12.scp(I), zero);
             });
         });
         describe("I", function () {
             it("one", function () {
                 checkEQ(I.scp(one), zero);
             });
-            it("γ0", function () {
-                checkEQ(I.scp(γ0), zero);
+            it("e0", function () {
+                checkEQ(I.scp(e0), zero);
             });
-            it("γ1", function () {
-                checkEQ(I.scp(γ1), zero);
+            it("e1", function () {
+                checkEQ(I.scp(e1), zero);
             });
-            it("γ0γ1", function () {
-                checkEQ(I.scp(γ0γ1), zero);
+            it("e01", function () {
+                checkEQ(I.scp(e01), zero);
             });
-            it("γ2", function () {
-                checkEQ(I.scp(γ2), zero);
+            it("e2", function () {
+                checkEQ(I.scp(e2), zero);
             });
-            it("γ0γ2", function () {
-                checkEQ(I.scp(γ0γ2), zero);
+            it("e02", function () {
+                checkEQ(I.scp(e02), zero);
             });
-            it("γ1γ2", function () {
-                checkEQ(I.scp(γ1γ2), zero);
+            it("e12", function () {
+                checkEQ(I.scp(e12), zero);
             });
             it("I", function () {
                 checkEQ(I.scp(I), one.neg());
@@ -1928,9 +1962,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ0", function () {
+        it("e0", function () {
             const α = Math.random();
-            const m = γ0.scale(α);
+            const m = e0.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(α);
             expect(m.x).toBe(0);
@@ -1940,9 +1974,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ1", function () {
+        it("e1", function () {
             const α = Math.random();
-            const m = γ1.scale(α);
+            const m = e1.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(α);
@@ -1952,9 +1986,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ2", function () {
+        it("e2", function () {
             const α = Math.random();
-            const m = γ2.scale(α);
+            const m = e2.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(0);
@@ -1964,9 +1998,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ0γ1", function () {
+        it("e01", function () {
             const α = Math.random();
-            const m = γ0γ1.scale(α);
+            const m = e01.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(0);
@@ -1976,9 +2010,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ0γ2", function () {
+        it("e02", function () {
             const α = Math.random();
-            const m = γ0γ2.scale(α);
+            const m = e02.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(0);
@@ -1988,9 +2022,9 @@ describe("Spacetime2", function () {
             expect(m.xy).toBe(0);
             expect(m.b).toBe(0);
         });
-        it("γ1γ2", function () {
+        it("e12", function () {
             const α = Math.random();
-            const m = γ1γ2.scale(α);
+            const m = e12.scale(α);
             expect(m.a).toBe(0);
             expect(m.t).toBe(0);
             expect(m.x).toBe(0);
@@ -2016,22 +2050,22 @@ describe("Spacetime2", function () {
     describe("squaredNorm", function () {
         it("definition", function () {
             checkEQ(one.squaredNorm(), one.mul(one.rev()));
-            checkEQ(γ0.squaredNorm(), γ0.mul(γ0.rev()));
-            checkEQ(γ1.squaredNorm(), γ1.mul(γ1.rev()));
-            checkEQ(γ2.squaredNorm(), γ2.mul(γ2.rev()));
-            checkEQ(γ0γ1.squaredNorm(), γ0γ1.mul(γ0γ1.rev()));
-            checkEQ(γ0γ2.squaredNorm(), γ0γ2.mul(γ0γ2.rev()));
-            checkEQ(γ1γ2.squaredNorm(), γ1γ2.mul(γ1γ2.rev()));
+            checkEQ(e0.squaredNorm(), e0.mul(e0.rev()));
+            checkEQ(e1.squaredNorm(), e1.mul(e1.rev()));
+            checkEQ(e2.squaredNorm(), e2.mul(e2.rev()));
+            checkEQ(e01.squaredNorm(), e01.mul(e01.rev()));
+            checkEQ(e02.squaredNorm(), e02.mul(e02.rev()));
+            checkEQ(e12.squaredNorm(), e12.mul(e12.rev()));
             checkEQ(I.squaredNorm(), I.mul(I.rev()));
         });
         it("simplified", function () {
             checkEQ(one.squaredNorm(), one);
-            checkEQ(γ0.squaredNorm(), one);
-            checkEQ(γ1.squaredNorm(), one.neg());
-            checkEQ(γ2.squaredNorm(), one.neg());
-            checkEQ(γ0γ1.squaredNorm(), one.neg());
-            checkEQ(γ0γ2.squaredNorm(), one.neg());
-            checkEQ(γ1γ2.squaredNorm(), one);
+            checkEQ(e0.squaredNorm(), one);
+            checkEQ(e1.squaredNorm(), one.neg());
+            checkEQ(e2.squaredNorm(), one.neg());
+            checkEQ(e01.squaredNorm(), one.neg());
+            checkEQ(e02.squaredNorm(), one.neg());
+            checkEQ(e12.squaredNorm(), one);
             checkEQ(I.squaredNorm(), one);
         });
         it("scaling", function () {
@@ -2582,6 +2616,38 @@ describe("Spacetime2", function () {
         it("should be the operator overload of inverse", function () {
             for (const blade of blades) {
                 checkEQ(blade.__bang__(), blade.inv());
+            }
+        });
+    });
+    describe("__eq__", function () {
+        it("should be the operator overload of equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__eq__(rhs)).toBe(lhs.equals(rhs));
+                }
+                expect(lhs.__eq__(1)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
+                expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
+                expect(lhs.__eq__("1" as any)).toBe(false);
+            }
+        });
+        it("", function () {
+            expect(one.__eq__(Unit.ONE)).toBe(true);
+            expect(meter.__eq__(Unit.METER)).toBe(true);
+            expect(one.__eq__(Unit.METER)).toBe(false);
+            expect(meter.__eq__(Unit.ONE)).toBe(false);
+        });
+    });
+    describe("__ne__", function () {
+        it("should be the operator overload of !equals", function () {
+            for (const lhs of blades) {
+                for (const rhs of blades) {
+                    expect(lhs.__ne__(rhs)).toBe(!lhs.equals(rhs));
+                }
+                expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
+                expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
+                expect(lhs.__ne__("1" as any)).toBe(true);
             }
         });
     });
