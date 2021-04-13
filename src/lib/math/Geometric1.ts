@@ -1,6 +1,6 @@
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from "./AbstractGeometric";
-import { arraysEQ } from "./arraysEQ";
+import { arraysEQ2 } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { GeometricE1 as Geometric } from "./GeometricE1";
 import { GeometricNumber } from "./GeometricNumber";
@@ -287,7 +287,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return true;
         }
         else if (other instanceof Geometric1) {
-            return arraysEQ(this.coords, other.coords) && Unit.isCompatible(this.uom, other.uom);
+            return arraysEQ2(this.coords, other.coords) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;

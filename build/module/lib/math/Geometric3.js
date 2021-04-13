@@ -2,7 +2,7 @@ import { __extends } from "tslib";
 import { readOnly } from '../i18n/readOnly';
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
-import { arraysEQ } from './arraysEQ';
+import { arraysEQ8 } from './arraysEQ';
 import { dotVectorE3 as dotVector } from './dotVectorE3';
 import extG3 from './extG3';
 import { gauss } from './gauss';
@@ -10,7 +10,7 @@ import isScalarG3 from './isScalarG3';
 import isVectorG3 from './isVectorG3';
 import { isZeroGeometricE3 } from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
-import lcoG3 from './lcoG3';
+import { lcoG3 } from './lcoG3';
 import { maskG3 } from './maskG3';
 import { mulE3 } from './mulE3';
 import { QQ } from './QQ';
@@ -21,9 +21,9 @@ import scpG3 from './scpG3';
 import { squaredNormG3 } from './squaredNormG3';
 import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
-import wedgeXY from './wedgeXY';
-import wedgeYZ from './wedgeYZ';
-import wedgeZX from './wedgeZX';
+import { wedgeXY } from './wedgeXY';
+import { wedgeYZ } from './wedgeYZ';
+import { wedgeZX } from './wedgeZX';
 // Symbolic constants for the coordinate indices into the data array.
 /**
  * @hidden
@@ -919,7 +919,7 @@ var Geometric3 = /** @class */ (function (_super) {
             return true;
         }
         else if (other instanceof Geometric3) {
-            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+            return arraysEQ8(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;

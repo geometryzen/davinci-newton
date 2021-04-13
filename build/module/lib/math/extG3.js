@@ -1,6 +1,6 @@
-import get from './compG3Get';
-import set from './compG3Set';
-import extE3 from './extE3';
+import { compG3Get as get } from './compG3Get';
+import { compG3Set as set } from './compG3Set';
+import { extE3 } from './extE3';
 import { Unit } from './Unit';
 /**
  * @hidden
@@ -27,8 +27,13 @@ export default function extG3(a, b, out) {
     var b5 = get(b, 5);
     var b6 = get(b, 6);
     var b7 = get(b, 7);
-    for (var i = 0; i < 8; i++) {
-        set(out, i, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, i));
-    }
+    set(out, 0, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0));
+    set(out, 1, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1));
+    set(out, 2, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2));
+    set(out, 3, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3));
+    set(out, 4, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4));
+    set(out, 5, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5));
+    set(out, 6, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6));
+    set(out, 7, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7));
     return out;
 }

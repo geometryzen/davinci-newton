@@ -9,7 +9,7 @@ var Newton = /** @class */ (function () {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
         this.LAST_MODIFIED = '2021-04-12';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.88';
+        this.VERSION = '1.0.89';
     }
     return Newton;
 }());

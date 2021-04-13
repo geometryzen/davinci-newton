@@ -1,6 +1,6 @@
-import { Block3 } from '../engine3D/Block3';
-import { Dynamics3 } from '../engine3D/Dynamics3';
-import { Euclidean3 } from '../engine3D/Euclidean3';
+import { Block3 } from '../engineG30/Block3';
+import { Dynamics3 } from '../engineG30/Dynamics3';
+import { Euclidean3 } from '../engineG30/Euclidean3';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { Physics } from './Physics';

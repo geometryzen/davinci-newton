@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.88';
+            this.VERSION = '1.0.89';
         }
         return Newton;
     }());
@@ -143,7 +143,7 @@
             metric.copyVector(value, _this.$force.vector);
             _this.$force.vectorCoordType = valueCoordType;
             _this.$forces = [_this.$force];
-            _this.$potentialEnergy = metric.zero();
+            _this.$potentialEnergy = metric.scalar(0);
             _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
             return _this;
         }
@@ -234,7 +234,7 @@
         ConstantTorqueLaw.prototype.potentialEnergy = function () {
             var metric = this.$body.metric;
             // We don't really want to return a mutable quantity.
-            return metric.zero();
+            return metric.scalar(0);
         };
         return ConstantTorqueLaw;
     }(AbstractSimObject));
@@ -262,7 +262,7 @@
             _this.F2.vectorCoordType = WORLD;
             _this.k = k;
             _this.$forces = [_this.F1, _this.F2];
-            _this.potentialEnergy_ = metric.zero();
+            _this.potentialEnergy_ = metric.scalar(0);
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
             return _this;
         }
@@ -4315,10 +4315,12 @@
                 throw new Error("Dynamics.getVarNames() must contain a time variable.");
             }
             _this.$varsList = new VarsList(varNames);
-            _this.$potentialOffset = metric.zero();
-            _this.$force = metric.zero();
-            _this.$torque = metric.zero();
-            _this.$totalEnergy = metric.zero();
+            _this.$potentialOffset = metric.scalar(0);
+            // Probe to make sure that the multivector we have been given is mutable.
+            metric.setUom(_this.$potentialOffset, void 0);
+            _this.$force = metric.scalar(0);
+            _this.$torque = metric.scalar(0);
+            _this.$totalEnergy = metric.scalar(0);
             _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
             _this.$numVariablesPerBody = dynamics.numVarsPerBody();
             if (_this.$numVariablesPerBody <= 0) {
@@ -4726,14 +4728,14 @@
             var metric = this.metric;
             var dynamics = this.dynamics;
             // TODO: This could be a scratch variable.
-            var F = metric.zero();
-            var r = metric.zero();
-            var B = metric.zero();
-            var eΘ = metric.zero();
-            var Fnew = metric.zero();
-            var FnewR = metric.zero();
-            var FnewΘ = metric.zero();
-            var N = metric.zero();
+            var F = metric.scalar(0);
+            var r = metric.scalar(0);
+            var B = metric.scalar(0);
+            var eΘ = metric.scalar(0);
+            var Fnew = metric.scalar(0);
+            var FnewR = metric.scalar(0);
+            var FnewΘ = metric.scalar(0);
+            var N = metric.scalar(0);
             dynamics.getForce(rateOfChangeVals, rateOfChangeUoms, idx, F);
             var X = body.X;
             var P = body.P;
@@ -4843,7 +4845,7 @@
             var metric = this.metric;
             metric.unlock(this.$totalEnergy, this.$totalEnergyLock);
             // TODO: Could be more efficient...
-            metric.write(metric.zero(), this.$totalEnergy);
+            metric.write(metric.scalar(0), this.$totalEnergy);
             metric.add(this.$totalEnergy, this.$potentialOffset);
             var bs = this.$bodies;
             var Nb = bs.length;
@@ -5028,12 +5030,12 @@
             var _this = _super.call(this) || this;
             _this.body = body;
             var metric = body.metric;
-            _this.location = metric.zero();
+            _this.location = metric.scalar(0);
             _this.$locationCoordType = LOCAL;
-            _this.vector = metric.zero();
+            _this.vector = metric.scalar(0);
             _this.$vectorCoordType = WORLD;
-            _this.$temp1 = metric.zero();
-            _this.$temp2 = metric.zero();
+            _this.$temp1 = metric.scalar(0);
+            _this.$temp2 = metric.scalar(0);
             return _this;
         }
         Object.defineProperty(Force.prototype, "locationCoordType", {
@@ -5171,7 +5173,7 @@
             _this.F2.vectorCoordType = WORLD;
             _this.G = G;
             _this.$forces = [_this.F1, _this.F2];
-            _this.potentialEnergy_ = metric.zero();
+            _this.potentialEnergy_ = metric.scalar(0);
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
             return _this;
         }
@@ -5264,7 +5266,7 @@
             this.metric = metric;
             mustBeNonNullObject('metric', metric);
             mustBeNonNullObject('initialValue', initialValue);
-            this.$value = metric.zero();
+            this.$value = metric.scalar(0);
             metric.copy(initialValue, this.$value);
             this.lock();
         }
@@ -5377,17 +5379,17 @@
             var b = this.$frictionCoefficient.get();
             var x1 = this.body1.X;
             var x2 = this.body2.X;
-            var e = metric.zero();
+            var e = metric.scalar(0);
             metric.addVector(e, x1);
             metric.subVector(e, x2);
             metric.direction(e);
-            var v1 = metric.zero();
+            var v1 = metric.scalar(0);
             metric.copyVector(this.body1.P, v1);
             metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-            var v2 = metric.zero();
+            var v2 = metric.scalar(0);
             metric.copyVector(this.body2.P, v2);
             metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-            var v = metric.zero();
+            var v = metric.scalar(0);
             metric.copyVector(v1, v);
             metric.subVector(v, v2);
             var f1 = this.F1.vector;
@@ -5409,7 +5411,7 @@
         };
         LinearDamper.prototype.potentialEnergy = function () {
             var metric = this.body1.metric;
-            return metric.zero();
+            return metric.scalar(0);
         };
         return LinearDamper;
     }(AbstractSimObject));
@@ -5469,17 +5471,17 @@
             _this.varsIndex_ = -1;
             mustBeNonNullObject('metric', metric);
             _this.$mass = new LockableMeasure(metric, metric.scalar(1));
-            _this.$charge = new LockableMeasure(metric, metric.zero());
-            _this.$X = metric.zero();
+            _this.$charge = new LockableMeasure(metric, metric.scalar(0));
+            _this.$X = metric.scalar(0);
             _this.$R = metric.scalar(1);
-            _this.$P = metric.zero();
-            _this.$L = metric.zero();
-            _this.$Ω = metric.zero();
-            _this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
-            _this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
-            _this.$worldPoint = metric.zero();
-            _this.Ω_scratch = metric.zero();
-            _this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+            _this.$P = metric.scalar(0);
+            _this.$L = metric.scalar(0);
+            _this.$Ω = metric.scalar(0);
+            _this.$rotationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+            _this.$translationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+            _this.$worldPoint = metric.scalar(0);
+            _this.Ω_scratch = metric.scalar(0);
+            _this.$centerOfMassLocal = new LockableMeasure(metric, metric.scalar(0));
             _this.$inertiaTensorInverse = metric.identityMatrix();
             return _this;
         }
@@ -5791,8 +5793,8 @@
          */
         function Particle(M, Q, metric) {
             var _this = _super.call(this, metric) || this;
-            _this.M = M ? M : metric.one();
-            _this.Q = Q ? Q : metric.one();
+            _this.M = M ? M : metric.scalar(1);
+            _this.Q = Q ? Q : metric.scalar(1);
             return _this;
         }
         /**
@@ -5857,13 +5859,13 @@
             _this.$restLength = metric.scalar(1);
             _this.$restLengthLock = metric.lock(_this.$restLength);
             _this.$springConstant = new LockableMeasure(metric, metric.scalar(1));
-            _this.attach1_ = metric.zero();
+            _this.attach1_ = metric.scalar(0);
             _this.attach1Lock = metric.lock(_this.attach1_);
-            _this.attach2_ = metric.zero();
+            _this.attach2_ = metric.scalar(0);
             _this.attach2Lock = metric.lock(_this.attach2_);
-            _this.end1_ = metric.zero();
+            _this.end1_ = metric.scalar(0);
             _this.end1Lock_ = metric.lock(_this.end1_);
-            _this.end2_ = metric.zero();
+            _this.end2_ = metric.scalar(0);
             _this.end2Lock_ = metric.lock(_this.end2_);
             _this.F1 = metric.createForce(_this.body1);
             _this.F1.locationCoordType = WORLD;
@@ -5871,7 +5873,7 @@
             _this.F2 = metric.createForce(_this.body2);
             _this.F2.locationCoordType = WORLD;
             _this.F2.vectorCoordType = WORLD;
-            _this.potentialEnergy_ = metric.zero();
+            _this.potentialEnergy_ = metric.scalar(0);
             _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
             _this.$forces = [_this.F1, _this.F2];
             return _this;
@@ -6065,8 +6067,8 @@
             var _this = _super.call(this) || this;
             _this.body = body;
             var metric = body.metric;
-            _this.bivector = metric.zero();
-            _this.$temp1 = metric.zero();
+            _this.bivector = metric.scalar(0);
+            _this.$temp1 = metric.scalar(0);
             return _this;
         }
         /**
@@ -6206,54 +6208,29 @@
         return AbstractGeometric;
     }());
 
-    /**
-     * @hidden
-     * @returns `typeof arg !== 'undefined'`
-     */
-    function isDefined(arg) {
-        return (typeof arg !== 'undefined');
-    }
-
-    /**
-     * @hidden
-     * @param a
-     * @param b
-     * @returns
-     */
-    function arraysEQ(a, b) {
-        if (isDefined(a)) {
-            if (isDefined(b)) {
-                if (!isNull(a)) {
-                    if (!isNull(b)) {
-                        var aLen = a.length;
-                        var bLen = b.length;
-                        if (aLen === bLen) {
-                            for (var i = 0; i < aLen; i++) {
-                                if (a[i] !== b[i]) {
-                                    return false;
-                                }
-                            }
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                    else {
-                        return false;
-                    }
-                }
-                else {
-                    return isNull(b);
-                }
-            }
-            else {
+    function arraysEQ2(a, b) {
+        for (var i = 0; i < 2; i++) {
+            if (a[i] !== b[i]) {
                 return false;
             }
         }
-        else {
-            return isUndefined(b);
+        return true;
+    }
+    function arraysEQ4(a, b) {
+        for (var i = 0; i < 4; i++) {
+            if (a[i] !== b[i]) {
+                return false;
+            }
         }
+        return true;
+    }
+    function arraysEQ8(a, b) {
+        for (var i = 0; i < 8; i++) {
+            if (a[i] !== b[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -6359,65 +6336,6 @@
     /**
      * @hidden
      */
-    function beAnArray() {
-        return "be an array";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeArray(name, value, contextBuilder) {
-        if (Array.isArray(value)) {
-            return value;
-        }
-        else {
-            doesNotSatisfy(name, beAnArray, contextBuilder);
-        }
-    }
-
-    /**
-     * @hidden
-     */
-    function isLabelOne(label) {
-        if (typeof label === 'string') {
-            return label === "1";
-        }
-        else {
-            var labels = mustBeArray('label', label);
-            if (labels.length === 2) {
-                return isLabelOne(labels[0]) && isLabelOne(labels[1]);
-            }
-            else if (labels.length === 1) {
-                return isLabelOne(labels[0]);
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    /**
-     * @hidden
-     */
-    function appendLabel(coord, label, sb) {
-        if (typeof label === 'string') {
-            sb.push(label);
-        }
-        else {
-            var labels = mustBeArray('label', label);
-            if (labels.length === 2) {
-                sb.push(coord > 0 ? labels[1] : labels[0]);
-            }
-            else if (labels.length === 1) {
-                sb.push(labels[0]);
-            }
-            else if (labels.length === 0) ;
-            else {
-                throw new Error("Unexpected basis label array length: " + labels.length);
-            }
-        }
-    }
-    /**
-     * @hidden
-     */
     function appendCoord(coord, numberToString, label, sb) {
         if (coord !== 0) {
             if (coord >= 0) {
@@ -6426,42 +6344,18 @@
                 }
             }
             else {
-                // The coordinate is negative.
-                if (typeof label === 'string') {
-                    // There's only one label, we must use minus signs.
-                    sb.push("-");
-                }
-                else {
-                    var labels = mustBeArray('label', label);
-                    if (labels.length === 2) {
-                        if (labels[0] !== labels[1]) {
-                            if (sb.length > 0) {
-                                sb.push("+");
-                            }
-                        }
-                        else {
-                            sb.push("-");
-                        }
-                    }
-                    else if (labels.length === 1) {
-                        sb.push("-");
-                    }
-                    else {
-                        // This could be considered an error, but we'll let appendLabel deal with it!
-                        sb.push("-");
-                    }
-                }
+                sb.push("-");
             }
             var n = Math.abs(coord);
             if (n === 1) {
                 // 1 times something is just 1, so we only need the label.
-                appendLabel(coord, label, sb);
+                sb.push(label);
             }
             else {
                 sb.push(numberToString(n));
-                if (!isLabelOne(label)) {
+                if (label !== "1") {
                     sb.push("*");
-                    appendLabel(coord, label, sb);
+                    sb.push(label);
                 }
             }
         }
@@ -6473,13 +6367,7 @@
         var sb = [];
         for (var i = 0, iLength = coordinates.length; i < iLength; i++) {
             var coord = coordinates[i];
-            if (isDefined(coord)) {
-                appendCoord(coord, numberToString, labels[i], sb);
-            }
-            else {
-                // We'll just say that the whole thing is undefined.
-                return void 0;
-            }
+            appendCoord(coord, numberToString, labels[i], sb);
         }
         if (Unit.isOne(uom)) {
             return sb.length > 0 ? sb.join("") : "0";
@@ -6681,7 +6569,7 @@
                 return true;
             }
             else if (other instanceof Geometric1) {
-                return arraysEQ(this.coords, other.coords) && Unit.isCompatible(this.uom, other.uom);
+                return arraysEQ2(this.coords, other.coords) && Unit.isCompatible(this.uom, other.uom);
             }
             else {
                 return false;
@@ -7613,6 +7501,14 @@
 
     /**
      * @hidden
+     * @returns `typeof arg !== 'undefined'`
+     */
+    function isDefined(arg) {
+        return (typeof arg !== 'undefined');
+    }
+
+    /**
+     * @hidden
      */
     function beDefined() {
         return "not be 'undefined'";
@@ -8110,9 +8006,6 @@
             target.x = 0;
             target.uom = source.uom;
         };
-        Euclidean1.prototype.one = function () {
-            return Geometric1.scalar(1);
-        };
         Euclidean1.prototype.zero = function () {
             return new Geometric1();
         };
@@ -8549,6 +8442,1225 @@
         return Spring1;
     }(Spring));
 
+    var DynamicsG11 = /** @class */ (function () {
+        function DynamicsG11() {
+        }
+        DynamicsG11.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.updateBodyFromVars = function (stateVals, stateUoms, idx, body, uomTime) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.updateVarsFromBody = function (body, idx, vars) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.epilog = function (bodies, forceLaws, potentialOffset, vars) {
+            // throw new Error("Method not implemented.");
+        };
+        DynamicsG11.prototype.discontinuousEnergyVars = function () {
+            // throw new Error("Method not implemented.");
+            return [];
+        };
+        DynamicsG11.prototype.getOffsetName = function (offset) {
+            switch (offset) {
+                case 0: {
+                    return "offset-name-" + offset;
+                }
+                default: {
+                    throw new Error("getOffsetName(" + offset + ") not implemented.");
+                }
+            }
+        };
+        DynamicsG11.prototype.getVarNames = function () {
+            return [VarsList.TIME];
+        };
+        DynamicsG11.prototype.numVarsPerBody = function () {
+            return 1;
+        };
+        return DynamicsG11;
+    }());
+
+    /**
+     * @hidden
+     */
+    var COORD_0_A$1 = 0;
+    /**
+     * @hidden
+     */
+    var COORD_1_T$1 = 1;
+    /**
+     * @hidden
+     */
+    var COORD_2_X$1 = 2;
+    /**
+     * @hidden
+     */
+    var COORD_3_TX$1 = 3;
+    /**
+     * Coordinates corresponding to basis labels.
+     * @hidden
+     */
+    var coordinates$3 = function (m) {
+        var coords = [0, 0, 0, 0];
+        coords[COORD_0_A$1] = m.a;
+        coords[COORD_1_T$1] = m.t;
+        coords[COORD_2_X$1] = m.x;
+        coords[COORD_3_TX$1] = m.b;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS$3 = ["1", "e0", "e1", "I"];
+    /**
+     *
+     */
+    var Spacetime1 = /** @class */ (function (_super) {
+        __extends(Spacetime1, _super);
+        /**
+         *
+         * @param a
+         * @param t
+         * @param x
+         * @param b
+         * @param uom
+         */
+        function Spacetime1(a, t, x, b, uom) {
+            if (a === void 0) { a = 0; }
+            if (t === void 0) { t = 0; }
+            if (x === void 0) { x = 0; }
+            if (b === void 0) { b = 0; }
+            var _this = _super.call(this, uom) || this;
+            _this.$M00 = a;
+            _this.$M01 = t;
+            _this.$M10 = x;
+            _this.$M11 = b;
+            return _this;
+        }
+        /**
+         * Creates a grade 0 (scalar) multivector with value `a * uom`.
+         * The scalar returned is in the unlocked (mutable) state.
+         * @param a The scaling factor for the unit of measure.
+         * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+         */
+        Spacetime1.scalar = function (a, uom) {
+            return new Spacetime1(a, 0, 0, 0, uom);
+        };
+        Spacetime1.vector = function (t, x, uom) {
+            return new Spacetime1(0, t, x, 0, uom);
+        };
+        Object.defineProperty(Spacetime1.prototype, "a", {
+            get: function () {
+                return this.$M00;
+            },
+            set: function (a) {
+                if (this.isMutable()) {
+                    this.$M00 = a;
+                }
+                else {
+                    throw new Error(readOnly('a').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime1.prototype, "t", {
+            get: function () {
+                return this.$M01;
+            },
+            set: function (t) {
+                if (this.isMutable()) {
+                    this.$M01 = t;
+                }
+                else {
+                    throw new Error(readOnly('t').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime1.prototype, "x", {
+            get: function () {
+                return this.$M10;
+            },
+            set: function (x) {
+                if (this.isMutable()) {
+                    this.$M10 = x;
+                }
+                else {
+                    throw new Error(readOnly('x').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime1.prototype, "b", {
+            get: function () {
+                return this.$M11;
+            },
+            set: function (b) {
+                if (this.isMutable()) {
+                    this.$M11 = b;
+                }
+                else {
+                    throw new Error(readOnly('b').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime1.prototype, "grades", {
+            get: function () {
+                var mask = 0x0;
+                if (this.$M00 !== 0) {
+                    mask += 0x1;
+                }
+                if (this.t !== 0 || this.x !== 0) {
+                    mask += 0x2;
+                }
+                if (this.b !== 0) {
+                    mask += 0x4;
+                }
+                return mask;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Spacetime1.prototype.add = function (rhs, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().add(rhs, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = rhs.a * α;
+                    this.t = rhs.t * α;
+                    this.x = rhs.x * α;
+                    this.b = rhs.b * α;
+                    this.uom = rhs.uom;
+                    return this;
+                }
+                else if (rhs.isZero() || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a += rhs.a * α;
+                    this.t += rhs.t * α;
+                    this.x += rhs.x * α;
+                    this.b += rhs.b * α;
+                    this.uom = Unit.compatible(this.uom, rhs.uom);
+                    return this;
+                }
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.addScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().addScalar(a, uom, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = a * α;
+                    this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a += a * α;
+                    this.uom = Unit.compatible(this.uom, uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime1.prototype.clone = function () {
+            return new Spacetime1(this.a, this.t, this.x, this.b, this.uom);
+        };
+        Spacetime1.prototype.conj = function () {
+            if (this.isLocked()) {
+                return this.clone().conj().permlock();
+            }
+            else {
+                this.$M00 = this.$M00;
+                this.$M01 = -this.$M01;
+                this.$M10 = -this.$M10;
+                this.$M11 = -this.$M11;
+                return this;
+            }
+        };
+        Spacetime1.prototype.div = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().div(rhs).permlock();
+            }
+            else {
+                return this.mul(rhs.clone().inv().permlock());
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.divByNumber = function (α) {
+            if (this.isLocked()) {
+                return this.clone().divByNumber(α).permlock();
+            }
+            else {
+                this.$M00 /= α;
+                this.$M01 /= α;
+                this.$M10 /= α;
+                this.$M11 /= α;
+                return this;
+            }
+        };
+        Spacetime1.prototype.divByScalar = function (α, uom) {
+            if (this.isLocked()) {
+                return this.clone().divByScalar(α, uom).permlock();
+            }
+            else {
+                this.$M00 /= α;
+                this.$M01 /= α;
+                this.$M10 /= α;
+                this.$M11 /= α;
+                this.uom = Unit.div(this.uom, uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.divByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().divByVector(v).permlock();
+            }
+            else {
+                var t = v.t;
+                var x = v.x;
+                return this.mulByVector(v).divByScalar(t * t - x * x, Unit.pow(v.uom, QQ.valueOf(2, 1)));
+            }
+        };
+        Spacetime1.prototype.dual = function () {
+            if (this.isLocked()) {
+                return this.clone().dual().permlock();
+            }
+            else {
+                var M000 = this.$M00;
+                var M001 = this.$M01;
+                var M010 = this.$M10;
+                var M011 = this.$M11;
+                this.$M00 = M011;
+                this.$M01 = M010;
+                this.$M10 = M001;
+                this.$M11 = M000;
+                return this;
+            }
+        };
+        Spacetime1.prototype.equals = function (other) {
+            if (other === this) {
+                return true;
+            }
+            else if (other instanceof Spacetime1) {
+                return Unit.isCompatible(this.uom, other.uom) &&
+                    this.a === other.a &&
+                    this.t === other.t &&
+                    this.x === other.x &&
+                    this.b === other.b;
+            }
+            else {
+                return false;
+            }
+        };
+        Spacetime1.prototype.ext = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().ext(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R000 = rhs.$M00;
+                var R001 = rhs.$M01;
+                var R010 = rhs.$M10;
+                var R011 = rhs.$M11;
+                this.$M00 = L000 * R000;
+                this.$M01 = L000 * R001 + L001 * R000;
+                this.$M10 = L000 * R010 + L010 * R000;
+                this.$M11 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.grade = function (n) {
+            if (this.isLocked()) {
+                return this.clone().grade(n).permlock();
+            }
+            else {
+                // There is no change to the unit of measure.
+                switch (n) {
+                    case 0: {
+                        this.t = 0;
+                        this.x = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 1: {
+                        this.a = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 2: {
+                        this.a = 0;
+                        this.t = 0;
+                        this.x = 0;
+                        break;
+                    }
+                    default: {
+                        this.a = 0;
+                        this.t = 0;
+                        this.x = 0;
+                        this.b = 0;
+                    }
+                }
+                return this;
+            }
+        };
+        Spacetime1.prototype.inv = function () {
+            if (this.isLocked()) {
+                return this.clone().inv().permlock();
+            }
+            else {
+                var x0 = this.$M00;
+                var x1 = this.$M01;
+                var x2 = this.$M10;
+                var x3 = this.$M11;
+                var A = [
+                    [+x0, +x1, -x2, +x3],
+                    [+x1, +x0, +x3, -x2],
+                    [+x2, +x3, +x0, -x1],
+                    [+x3, +x2, -x1, +x0],
+                ];
+                var b = [1, 0, 0, 0];
+                var X = gauss(A, b);
+                this.a = X[0];
+                this.t = X[1];
+                this.x = X[2];
+                this.b = X[3];
+                this.uom = Unit.inv(this.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.isBivector = function () {
+            return this.a === 0 && this.t === 0 && this.x === 0;
+        };
+        Spacetime1.prototype.isOne = function () {
+            return this.a === 1 && this.t === 0 && this.x === 0 && this.b === 0 && Unit.isOne(this.uom);
+        };
+        Spacetime1.prototype.isScalar = function () {
+            return this.t === 0 && this.x === 0 && this.b === 0;
+        };
+        Spacetime1.prototype.isSpinor = function () {
+            return this.t === 0 && this.x === 0;
+        };
+        Spacetime1.prototype.isVector = function () {
+            return this.a === 0 && this.b === 0;
+        };
+        Spacetime1.prototype.isZero = function () {
+            return this.a === 0 && this.t === 0 && this.x === 0 && this.b === 0;
+        };
+        Spacetime1.prototype.lco = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().lco(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R000 = rhs.$M00;
+                var R001 = rhs.$M01;
+                var R010 = rhs.$M10;
+                var R011 = rhs.$M11;
+                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
+                this.$M01 = L000 * R001 + L010 * R011;
+                this.$M10 = L000 * R010 + L001 * R011;
+                this.$M11 = L000 * R011;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.mul = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().mul(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R000 = rhs.$M00;
+                var R001 = rhs.$M01;
+                var R010 = rhs.$M10;
+                var R011 = rhs.$M11;
+                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
+                this.$M01 = L000 * R001 + L001 * R000 + L010 * R011 - L011 * R010;
+                this.$M10 = L000 * R010 + L010 * R000 + L001 * R011 - L011 * R001;
+                this.$M11 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.mulByNumber = function (a) {
+            if (this.isLocked()) {
+                return this.clone().mulByNumber(a).permlock();
+            }
+            else {
+                this.$M00 *= a;
+                this.$M01 *= a;
+                this.$M10 *= a;
+                this.$M11 *= a;
+                return this;
+            }
+        };
+        Spacetime1.prototype.mulByScalar = function (a, uom) {
+            if (this.isLocked()) {
+                return this.clone().mulByScalar(a, uom).permlock();
+            }
+            else {
+                this.$M00 *= a;
+                this.$M01 *= a;
+                this.$M10 *= a;
+                this.$M11 *= a;
+                this.uom = Unit.mul(this.uom, uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.mulByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().mulByVector(v).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R001 = v.t;
+                var R010 = v.x;
+                this.$M00 = L001 * R001 - L010 * R010;
+                this.$M01 = L000 * R001 - L011 * R010;
+                this.$M10 = L000 * R010 - L011 * R001;
+                this.$M11 = L001 * R010 - L010 * R001;
+                this.uom = Unit.mul(this.uom, v.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.neg = function () {
+            if (this.isLocked()) {
+                return this.clone().neg().permlock();
+            }
+            else {
+                this.a = -this.a;
+                this.t = -this.t;
+                this.x = -this.x;
+                this.b = -this.b;
+                return this;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.quaditude = function () {
+            return this.squaredNorm();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.quaditudeNoUnits = function () {
+            var a = this.$M00;
+            var t = this.$M01;
+            var x = this.$M10;
+            var tx = this.$M11;
+            return a * a + t * t - x * x - tx * tx;
+        };
+        Spacetime1.prototype.rco = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().rco(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R000 = rhs.$M00;
+                var R001 = rhs.$M01;
+                var R010 = rhs.$M10;
+                var R011 = rhs.$M11;
+                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
+                this.$M01 = L001 * R000 - L011 * R010;
+                this.$M10 = L010 * R000 - L011 * R001;
+                this.$M11 = L011 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.reflect = function (n) {
+            if (this.isLocked()) {
+                return this.clone().reflect(n).permlock();
+            }
+            else {
+                var t = n.t;
+                var t2 = t * t;
+                var x = n.x;
+                var x2 = x * x;
+                this.$M00 = this.$M00 * (x2 - t2);
+                this.$M01 = -this.$M01 * (t2 + x2);
+                this.$M10 = this.$M10 * (t2 + x2);
+                this.$M11 = -this.$M11 * (t2 + x2);
+                return this;
+            }
+        };
+        Spacetime1.prototype.rev = function () {
+            if (this.isLocked()) {
+                return this.clone().rev().permlock();
+            }
+            else {
+                this.$M00 = this.$M00;
+                this.$M01 = this.$M01;
+                this.$M10 = this.$M10;
+                this.$M11 = -this.$M11;
+                return this;
+            }
+        };
+        Spacetime1.prototype.rotate = function (spinor) {
+            if (this.isLocked()) {
+                return this.clone().rotate(spinor).permlock();
+            }
+            else {
+                // const Sa = spinor.a;
+                // const Sb = spinor.b;
+                throw new Error("Method not implemented.");
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.scale = function (α) {
+            if (this.isLocked()) {
+                return this.clone().scale(α).permlock();
+            }
+            else {
+                this.$M00 = this.$M00 * α;
+                this.$M01 = this.$M01 * α;
+                this.$M10 = this.$M10 * α;
+                this.$M11 = this.$M11 * α;
+                return this;
+            }
+        };
+        Spacetime1.prototype.scp = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().scp(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M00;
+                var L001 = this.$M01;
+                var L010 = this.$M10;
+                var L011 = this.$M11;
+                var R000 = rhs.$M00;
+                var R001 = rhs.$M01;
+                var R010 = rhs.$M10;
+                var R011 = rhs.$M11;
+                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
+                this.$M01 = 0;
+                this.$M10 = 0;
+                this.$M11 = 0;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.squaredNorm = function () {
+            if (this.isLocked()) {
+                return this.clone().squaredNorm().permlock();
+            }
+            else {
+                var a = this.$M00;
+                var t = this.$M01;
+                var x = this.$M10;
+                var tx = this.$M11;
+                this.$M00 = a * a + t * t - x * x - tx * tx;
+                this.$M01 = 0;
+                this.$M10 = 0;
+                this.$M11 = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
+            }
+        };
+        Spacetime1.prototype.sub = function (rhs, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().sub(rhs, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = -rhs.a * α;
+                    this.t = -rhs.t * α;
+                    this.x = -rhs.x * α;
+                    this.b = -rhs.b * α;
+                    this.uom = rhs.uom;
+                    return this;
+                }
+                else if (rhs.isZero() || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a -= rhs.a * α;
+                    this.t -= rhs.t * α;
+                    this.x -= rhs.x * α;
+                    this.b -= rhs.b * α;
+                    this.uom = Unit.compatible(this.uom, rhs.uom);
+                    return this;
+                }
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.subScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().subScalar(a, uom, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = -a * α;
+                    this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a -= a * α;
+                    this.uom = Unit.compatible(this.uom, uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime1.prototype.toExponential = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+        };
+        Spacetime1.prototype.toFixed = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+        };
+        Spacetime1.prototype.toPrecision = function (precision) {
+            var coordToString = function (coord) { return coord.toPrecision(precision); };
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+        };
+        Spacetime1.prototype.toString = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__div__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().div(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().divByNumber(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().divByScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rdiv__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().div(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).div(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime1.scalar(1, lhs).div(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__vbar__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().scp(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().scp(Spacetime1.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rvbar__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().scp(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).scp(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__wedge__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().ext(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                // The outer product with a scalar is scalar multiplication.
+                return this.clone().mulByNumber(rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rwedge__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().ext(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                // The outer product with a scalar is scalar multiplication, and commutes.
+                return this.clone().mulByNumber(lhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__lshift__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().lco(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().lco(Spacetime1.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rlshift__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().lco(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).lco(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rshift__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().rco(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().rco(Spacetime1.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rrshift__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().rco(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).rco(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__bang__ = function () {
+            return this.clone().inv().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__eq__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.equals(rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return this.equals(Spacetime1.scalar(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return this.equals(Spacetime1.scalar(1, rhs));
+            }
+            else {
+                return false;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__ne__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return !this.equals(rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return !this.equals(Spacetime1.scalar(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return !this.equals(Spacetime1.scalar(1, rhs));
+            }
+            else {
+                return true;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__tilde__ = function () {
+            return this.clone().rev().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__add__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().add(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().addScalar(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().addScalar(1, rhs, 1).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__radd__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().add(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).add(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime1.scalar(1, lhs).add(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__sub__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().sub(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().subScalar(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().subScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rsub__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().sub(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime1.scalar(lhs).sub(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime1.scalar(1, lhs).sub(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__pos__ = function () {
+            return this.clone().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__neg__ = function () {
+            return this.clone().neg().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__mul__ = function (rhs) {
+            if (rhs instanceof Spacetime1) {
+                return this.clone().mul(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().mulByNumber(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().mulByScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime1.prototype.__rmul__ = function (lhs) {
+            if (lhs instanceof Spacetime1) {
+                return lhs.clone().mul(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return this.clone().mulByNumber(lhs).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return this.clone().mulByScalar(1, lhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        Spacetime1.zero = Spacetime1.scalar(0).permlock();
+        Spacetime1.one = Spacetime1.scalar(1).permlock();
+        Spacetime1.e0 = Spacetime1.vector(1, 0).permlock();
+        Spacetime1.e1 = Spacetime1.vector(0, 1).permlock();
+        Spacetime1.I = new Spacetime1(0, 0, 0, 1).permlock();
+        Spacetime1.kilogram = Spacetime1.scalar(1, Unit.KILOGRAM).permlock();
+        Spacetime1.meter = Spacetime1.scalar(1, Unit.METER).permlock();
+        Spacetime1.second = Spacetime1.scalar(1, Unit.SECOND).permlock();
+        Spacetime1.ampere = Spacetime1.scalar(1, Unit.AMPERE).permlock();
+        Spacetime1.kelvin = Spacetime1.scalar(1, Unit.KELVIN).permlock();
+        Spacetime1.mole = Spacetime1.scalar(1, Unit.MOLE).permlock();
+        Spacetime1.candela = Spacetime1.scalar(1, Unit.CANDELA).permlock();
+        return Spacetime1;
+    }(AbstractGeometric));
+
+    var MetricG11 = /** @class */ (function () {
+        function MetricG11() {
+        }
+        MetricG11.prototype.a = function (mv) {
+            return mv.a;
+        };
+        MetricG11.prototype.add = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.addVector = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.applyMatrix = function (mv, matrix) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.clone = function (source) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.copy = function (source, target) {
+            target.a = source.a;
+            target.t = source.t;
+            target.x = source.x;
+            target.b = source.b;
+            target.uom = source.uom;
+            return target;
+        };
+        MetricG11.prototype.copyBivector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.copyMatrix = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.copyScalar = function (a, uom, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.copyVector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.createForce = function (body) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.createTorque = function (body) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.direction = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.divByScalar = function (lhs, a, uom) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.ext = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.identityMatrix = function () {
+            return new Matrix0(new Float32Array([]));
+        };
+        MetricG11.prototype.invertMatrix = function (matrix) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.isBivector = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.isScalar = function (mv) {
+            return mv.isScalar();
+        };
+        MetricG11.prototype.isSpinor = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.isVector = function (mv) {
+            return mv.isVector();
+        };
+        MetricG11.prototype.isZero = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.lock = function (mv) {
+            return mv.lock();
+        };
+        MetricG11.prototype.norm = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.mul = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.mulByNumber = function (lhs, alpha) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.mulByScalar = function (lhs, a, uom) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.mulByVector = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.neg = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.squaredNorm = function (A) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.rev = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.rotate = function (mv, spinor) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.scalar = function (a, uom) {
+            return Spacetime1.scalar(a, uom);
+        };
+        MetricG11.prototype.scp = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.setUom = function (mv, uom) {
+            mv.uom = uom;
+        };
+        MetricG11.prototype.sub = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.subScalar = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.subVector = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.unlock = function (mv, token) {
+            mv.unlock(token);
+        };
+        MetricG11.prototype.uom = function (mv) {
+            return mv.uom;
+        };
+        MetricG11.prototype.write = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.writeVector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.writeBivector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.zero = function () {
+            return Spacetime1.zero.clone();
+        };
+        return MetricG11;
+    }());
+
+    /**
+     * The Physics Engine specialized to 1+1 dimensions with a Spacetime metric.
+     */
+    var EngineG11 = /** @class */ (function (_super) {
+        __extends(EngineG11, _super);
+        function EngineG11(options) {
+            return _super.call(this, new MetricG11(), new DynamicsG11(), options) || this;
+        }
+        return EngineG11;
+    }(Engine));
+
     /**
      * @hidden
      * @param name
@@ -8683,11 +9795,11 @@
     /**
      * @hidden
      */
-    var BASIS_LABELS$3 = ["1", "e1", "e2", "e12"];
-    BASIS_LABELS$3[COORD_A] = '1';
-    BASIS_LABELS$3[COORD_X$3] = 'e1';
-    BASIS_LABELS$3[COORD_Y$3] = 'e2';
-    BASIS_LABELS$3[COORD_B] = 'e12';
+    var BASIS_LABELS$2 = ["1", "e1", "e2", "e12"];
+    BASIS_LABELS$2[COORD_A] = '1';
+    BASIS_LABELS$2[COORD_X$3] = 'e1';
+    BASIS_LABELS$2[COORD_Y$3] = 'e2';
+    BASIS_LABELS$2[COORD_B] = 'e12';
     /**
      * @hidden
      */
@@ -8740,7 +9852,7 @@
      * Coordinates corresponding to basis labels.
      * @hidden
      */
-    var coordinates$3 = function coordinates(m) {
+    var coordinates$2 = function coordinates(m) {
         var coords = zero$1();
         coords[COORD_A] = m.a;
         coords[COORD_X$3] = m.x;
@@ -8824,7 +9936,7 @@
             return new Geometric2(vector$1(x, y), uom);
         };
         Geometric2.copy = function (mv) {
-            return new Geometric2(coordinates$3(mv), mv.uom);
+            return new Geometric2(coordinates$2(mv), mv.uom);
         };
         Geometric2.fromBivector = function (B) {
             return new Geometric2(bivector$1(B.xy), B.uom);
@@ -9311,7 +10423,7 @@
                 return true;
             }
             else if (other instanceof Geometric2) {
-                return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+                return arraysEQ4(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
             }
             else {
                 return false;
@@ -10344,7 +11456,7 @@
          */
         Geometric2.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * Returns a string representing the number in fixed-point notation.
@@ -10354,7 +11466,7 @@
          */
         Geometric2.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * @param precision
@@ -10362,7 +11474,7 @@
          */
         Geometric2.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         /**
          * Returns a string representation of the number.
@@ -10372,7 +11484,7 @@
          */
         Geometric2.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
         };
         Geometric2.prototype.write = function (mv) {
             mv.a = this.a;
@@ -10720,9 +11832,6 @@
         };
         Euclidean2.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
-        };
-        Euclidean2.prototype.one = function () {
-            return Geometric2.scalar(1);
         };
         Euclidean2.prototype.zero = function () {
             return Geometric2.zero.clone();
@@ -11427,7 +12536,7 @@
             this.tangentFn = tangentFn;
             mustBeNonNullObject('body', body);
             var metric = body.metric;
-            this.N = metric.zero();
+            this.N = metric.scalar(0);
         }
         SurfaceConstraint.prototype.getBody = function () {
             return this.body;
@@ -11455,6 +12564,1494 @@
         }
         return SurfaceConstraint2;
     }(SurfaceConstraint));
+
+    var DynamicsG21 = /** @class */ (function () {
+        function DynamicsG21() {
+        }
+        DynamicsG21.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.zeroLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.zeroAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.updateBodyFromVars = function (stateVals, stateUoms, idx, body, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.updateVarsFromBody = function (body, idx, vars) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.addForceToRateOfChangeLinearMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, force, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.epilog = function (bodies, forceLaws, potentialOffset, vars) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.discontinuousEnergyVars = function () {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.getOffsetName = function (offset) {
+            throw new Error("Method not implemented.");
+        };
+        DynamicsG21.prototype.getVarNames = function () {
+            return [VarsList.TIME];
+        };
+        DynamicsG21.prototype.numVarsPerBody = function () {
+            return 1;
+        };
+        return DynamicsG21;
+    }());
+
+    /**
+     * @hidden
+     */
+    var COORD_0_A = 0;
+    /**
+     * @hidden
+     */
+    var COORD_1_T = 1;
+    /**
+     * @hidden
+     */
+    var COORD_2_X = 2;
+    /**
+     * @hidden
+     */
+    var COORD_3_TX = 3;
+    /**
+     * @hidden
+     */
+    var COORD_4_Y = 4;
+    /**
+     * @hidden
+     */
+    var COORD_5_TY = 5;
+    /**
+     * @hidden
+     */
+    var COORD_6_XY = 6;
+    /**
+     * @hidden
+     */
+    var COORD_7_B = 7;
+    /**
+     * Coordinates corresponding to basis labels.
+     * @hidden
+     */
+    var coordinates$1 = function (m) {
+        var coords = [0, 0, 0, 0, 0, 0, 0, 0];
+        coords[COORD_0_A] = m.a;
+        coords[COORD_1_T] = m.t;
+        coords[COORD_2_X] = m.x;
+        coords[COORD_3_TX] = m.tx;
+        coords[COORD_4_Y] = m.y;
+        coords[COORD_5_TY] = m.ty;
+        coords[COORD_6_XY] = m.xy;
+        coords[COORD_7_B] = m.b;
+        return coords;
+    };
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS$1 = ["1", "e0", "e1", "e01", "e2", "e02", "e12", "I"];
+    /**
+     *
+     */
+    var Spacetime2 = /** @class */ (function (_super) {
+        __extends(Spacetime2, _super);
+        function Spacetime2(a, t, x, tx, y, ty, xy, b, uom) {
+            if (a === void 0) { a = 0; }
+            if (t === void 0) { t = 0; }
+            if (x === void 0) { x = 0; }
+            if (tx === void 0) { tx = 0; }
+            if (y === void 0) { y = 0; }
+            if (ty === void 0) { ty = 0; }
+            if (xy === void 0) { xy = 0; }
+            if (b === void 0) { b = 0; }
+            var _this = _super.call(this, uom) || this;
+            _this.$M000 = a;
+            _this.$M001 = t;
+            _this.$M010 = x;
+            _this.$M011 = tx;
+            _this.$M100 = y;
+            _this.$M101 = ty;
+            _this.$M110 = xy;
+            _this.$M111 = b;
+            return _this;
+        }
+        /**
+         * Creates a grade 0 (scalar) multivector with value `a * uom`.
+         * The scalar returned is in the unlocked (mutable) state.
+         * @param a The scaling factor for the unit of measure.
+         * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+         */
+        Spacetime2.scalar = function (a, uom) {
+            return new Spacetime2(a, 0, 0, 0, 0, 0, 0, 0, uom);
+        };
+        Spacetime2.vector = function (t, x, y, uom) {
+            return new Spacetime2(0, t, x, 0, y, 0, 0, 0, uom);
+        };
+        Object.defineProperty(Spacetime2.prototype, "a", {
+            get: function () {
+                return this.$M000;
+            },
+            set: function (a) {
+                if (this.isMutable()) {
+                    this.$M000 = a;
+                }
+                else {
+                    throw new Error(readOnly('a').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "t", {
+            get: function () {
+                return this.$M001;
+            },
+            set: function (t) {
+                if (this.isMutable()) {
+                    this.$M001 = t;
+                }
+                else {
+                    throw new Error(readOnly('t').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "x", {
+            get: function () {
+                return this.$M010;
+            },
+            set: function (x) {
+                if (this.isMutable()) {
+                    this.$M010 = x;
+                }
+                else {
+                    throw new Error(readOnly('x').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "tx", {
+            get: function () {
+                return this.$M011;
+            },
+            set: function (tx) {
+                if (this.isMutable()) {
+                    this.$M011 = tx;
+                }
+                else {
+                    throw new Error(readOnly('tx').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "y", {
+            get: function () {
+                return this.$M100;
+            },
+            set: function (y) {
+                if (this.isMutable()) {
+                    this.$M100 = y;
+                }
+                else {
+                    throw new Error(readOnly('y').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "ty", {
+            get: function () {
+                return this.$M101;
+            },
+            set: function (ty) {
+                if (this.isMutable()) {
+                    this.$M101 = ty;
+                }
+                else {
+                    throw new Error(readOnly('ty').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "xy", {
+            get: function () {
+                return this.$M110;
+            },
+            set: function (xy) {
+                if (this.isMutable()) {
+                    this.$M110 = xy;
+                }
+                else {
+                    throw new Error(readOnly('xy').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "b", {
+            get: function () {
+                return this.$M111;
+            },
+            set: function (b) {
+                if (this.isMutable()) {
+                    this.$M111 = b;
+                }
+                else {
+                    throw new Error(readOnly('b').message);
+                }
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Spacetime2.prototype, "grades", {
+            get: function () {
+                var mask = 0x0;
+                if (this.$M000 !== 0) {
+                    mask += 0x1;
+                }
+                if (this.t !== 0 || this.x !== 0 || this.y !== 0) {
+                    mask += 0x2;
+                }
+                if (this.tx !== 0 || this.ty !== 0 || this.xy !== 0) {
+                    mask += 0x4;
+                }
+                if (this.b !== 0) {
+                    mask += 0x8;
+                }
+                return mask;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Spacetime2.prototype.add = function (rhs, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().add(rhs, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = rhs.a * α;
+                    this.t = rhs.t * α;
+                    this.x = rhs.x * α;
+                    this.tx = rhs.tx * α;
+                    this.y = rhs.y * α;
+                    this.ty = rhs.ty * α;
+                    this.xy = rhs.xy * α;
+                    this.b = rhs.b * α;
+                    this.uom = rhs.uom;
+                    return this;
+                }
+                else if (rhs.isZero() || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a += rhs.a * α;
+                    this.t += rhs.t * α;
+                    this.x += rhs.x * α;
+                    this.tx += rhs.tx * α;
+                    this.y += rhs.y * α;
+                    this.ty += rhs.ty * α;
+                    this.xy += rhs.xy * α;
+                    this.b += rhs.b * α;
+                    this.uom = Unit.compatible(this.uom, rhs.uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime2.prototype.addScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().addScalar(a, uom, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = a * α;
+                    this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a += a * α;
+                    this.uom = Unit.compatible(this.uom, uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime2.prototype.clone = function () {
+            return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
+        };
+        Spacetime2.prototype.conj = function () {
+            if (this.isLocked()) {
+                return this.clone().conj().permlock();
+            }
+            else {
+                this.$M000 = this.$M000;
+                this.$M001 = -this.$M001;
+                this.$M010 = -this.$M010;
+                this.$M100 = -this.$M100;
+                this.$M011 = -this.$M011;
+                this.$M101 = -this.$M101;
+                this.$M110 = -this.$M110;
+                this.$M111 = this.$M111;
+                return this;
+            }
+        };
+        Spacetime2.prototype.div = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().div(rhs).permlock();
+            }
+            else {
+                return this.mul(rhs.clone().inv().permlock());
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.divByNumber = function (α) {
+            if (this.isLocked()) {
+                return this.clone().divByNumber(α).permlock();
+            }
+            else {
+                this.$M000 /= α;
+                this.$M001 /= α;
+                this.$M010 /= α;
+                this.$M011 /= α;
+                this.$M100 /= α;
+                this.$M101 /= α;
+                this.$M110 /= α;
+                this.$M111 /= α;
+                return this;
+            }
+        };
+        Spacetime2.prototype.divByScalar = function (α, uom) {
+            if (this.isLocked()) {
+                return this.clone().divByScalar(α, uom).permlock();
+            }
+            else {
+                this.$M000 /= α;
+                this.$M001 /= α;
+                this.$M010 /= α;
+                this.$M011 /= α;
+                this.$M100 /= α;
+                this.$M101 /= α;
+                this.$M110 /= α;
+                this.$M111 /= α;
+                this.uom = Unit.div(this.uom, uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.divByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().divByVector(v).permlock();
+            }
+            else {
+                var t = v.t;
+                var x = v.x;
+                var y = v.y;
+                return this.mulByVector(v).divByScalar(t * t - x * x - y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
+            }
+        };
+        Spacetime2.prototype.dual = function () {
+            if (this.isLocked()) {
+                return this.clone().dual().permlock();
+            }
+            else {
+                var M000 = this.$M000;
+                var M001 = this.$M001;
+                var M010 = this.$M010;
+                var M011 = this.$M011;
+                var M100 = this.$M100;
+                var M101 = this.$M101;
+                var M110 = this.$M110;
+                var M111 = this.$M111;
+                this.$M000 = M111;
+                this.$M001 = M110;
+                this.$M010 = M101;
+                this.$M011 = M100;
+                this.$M100 = -M011;
+                this.$M101 = -M010;
+                this.$M110 = -M001;
+                this.$M111 = -M000;
+                return this;
+            }
+        };
+        Spacetime2.prototype.equals = function (other) {
+            if (other === this) {
+                return true;
+            }
+            else if (other instanceof Spacetime2) {
+                return Unit.isCompatible(this.uom, other.uom) &&
+                    this.a === other.a &&
+                    this.t === other.t &&
+                    this.x === other.x &&
+                    this.tx === other.tx &&
+                    this.y === other.y &&
+                    this.ty === other.ty &&
+                    this.xy === other.xy &&
+                    this.b === other.b;
+            }
+            else {
+                return false;
+            }
+        };
+        Spacetime2.prototype.ext = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().ext(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R000 = rhs.$M000;
+                var R001 = rhs.$M001;
+                var R010 = rhs.$M010;
+                var R011 = rhs.$M011;
+                var R100 = rhs.$M100;
+                var R101 = rhs.$M101;
+                var R110 = rhs.$M110;
+                var R111 = rhs.$M111;
+                this.$M000 = L000 * R000;
+                this.$M001 = L000 * R001 + L001 * R000;
+                this.$M010 = L000 * R010 + L010 * R000;
+                this.$M011 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
+                this.$M100 = L000 * R100 + L100 * R000;
+                this.$M101 = L000 * R101 + L001 * R100 - L100 * R001 + L101 * R000;
+                this.$M110 = L000 * R110 + L010 * R100 - L100 * R010 + L110 * R000;
+                this.$M111 = L000 * R111 + L001 * R110 - L010 * R101 + L011 * R100 + L100 * R011 - L101 * R010 + L110 * R001 + L111 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.grade = function (n) {
+            if (this.isLocked()) {
+                return this.clone().grade(n).permlock();
+            }
+            else {
+                // There is no change to the unit of measure.
+                switch (n) {
+                    case 0: {
+                        this.t = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        this.tx = 0;
+                        this.ty = 0;
+                        this.xy = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 1: {
+                        this.a = 0;
+                        this.tx = 0;
+                        this.ty = 0;
+                        this.xy = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 2: {
+                        this.a = 0;
+                        this.t = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        this.b = 0;
+                        break;
+                    }
+                    case 3: {
+                        this.a = 0;
+                        this.t = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        this.tx = 0;
+                        this.ty = 0;
+                        this.xy = 0;
+                        break;
+                    }
+                    default: {
+                        this.a = 0;
+                        this.t = 0;
+                        this.x = 0;
+                        this.y = 0;
+                        this.tx = 0;
+                        this.ty = 0;
+                        this.xy = 0;
+                        this.b = 0;
+                    }
+                }
+                return this;
+            }
+        };
+        Spacetime2.prototype.inv = function () {
+            if (this.isLocked()) {
+                return this.clone().inv().permlock();
+            }
+            else {
+                var x0 = this.$M000;
+                var x1 = this.$M001;
+                var x2 = this.$M010;
+                var x3 = this.$M011;
+                var x4 = this.$M100;
+                var x5 = this.$M101;
+                var x6 = this.$M110;
+                var x7 = this.$M111;
+                var A = [
+                    [+x0, +x1, -x2, +x3, -x4, +x5, -x6, -x7],
+                    [+x1, +x0, +x3, -x2, +x5, -x4, -x7, -x6],
+                    [+x2, +x3, +x0, -x1, +x6, -x7, -x4, -x5],
+                    [+x3, +x2, -x1, +x0, -x7, +x6, -x5, -x4],
+                    [+x4, +x5, -x6, +x7, +x0, -x1, +x2, +x3],
+                    [+x5, +x4, +x7, -x6, -x1, +x0, +x3, +x2],
+                    [+x6, +x7, +x4, -x5, -x2, +x3, +x0, +x1],
+                    [+x7, +x6, -x5, +x4, +x3, -x2, +x1, +x0]
+                ];
+                var b = [1, 0, 0, 0, 0, 0, 0, 0];
+                var X = gauss(A, b);
+                this.a = X[0];
+                this.t = X[1];
+                this.x = X[2];
+                this.tx = X[3];
+                this.y = X[4];
+                this.ty = X[5];
+                this.xy = X[6];
+                this.b = X[7];
+                this.uom = Unit.inv(this.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.isBivector = function () {
+            return this.a === 0 && this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
+        };
+        Spacetime2.prototype.isOne = function () {
+            return this.a === 1 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0 && Unit.isOne(this.uom);
+        };
+        Spacetime2.prototype.isScalar = function () {
+            return this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
+        };
+        Spacetime2.prototype.isSpinor = function () {
+            return this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
+        };
+        Spacetime2.prototype.isVector = function () {
+            return this.a === 0 && this.tx === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
+        };
+        Spacetime2.prototype.isZero = function () {
+            return this.a === 0 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
+        };
+        Spacetime2.prototype.lco = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().lco(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R000 = rhs.$M000;
+                var R001 = rhs.$M001;
+                var R010 = rhs.$M010;
+                var R011 = rhs.$M011;
+                var R100 = rhs.$M100;
+                var R101 = rhs.$M101;
+                var R110 = rhs.$M110;
+                var R111 = rhs.$M111;
+                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+                this.$M001 = L000 * R001 + L010 * R011 + L100 * R101 - L110 * R111;
+                this.$M010 = L000 * R010 + L001 * R011 + L100 * R110 - L101 * R111;
+                this.$M011 = L000 * R011 - L100 * R111;
+                this.$M100 = L000 * R100 + L001 * R101 - L010 * R110 + L011 * R111;
+                this.$M101 = L000 * R101 + L010 * R111;
+                this.$M110 = L000 * R110 + L001 * R111;
+                this.$M111 = L000 * R111;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.mul = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().mul(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R000 = rhs.$M000;
+                var R001 = rhs.$M001;
+                var R010 = rhs.$M010;
+                var R011 = rhs.$M011;
+                var R100 = rhs.$M100;
+                var R101 = rhs.$M101;
+                var R110 = rhs.$M110;
+                var R111 = rhs.$M111;
+                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+                this.$M001 = L000 * R001 + L001 * R000 + L010 * R011 - L011 * R010 + L100 * R101 - L101 * R100 - L110 * R111 - L111 * R110;
+                this.$M010 = L000 * R010 + L010 * R000 + L001 * R011 - L011 * R001 + L100 * R110 - L101 * R111 - L110 * R100 - L111 * R101;
+                this.$M011 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000 - L100 * R111 + L101 * R110 - L110 * R101 - L111 * R100;
+                this.$M100 = L000 * R100 + L001 * R101 - L010 * R110 + L011 * R111 + L100 * R000 - L101 * R001 + L110 * R010 + L111 * R011;
+                this.$M101 = L000 * R101 + L001 * R100 + L010 * R111 - L011 * R110 - L100 * R001 + L101 * R000 + L110 * R011 + L111 * R010;
+                this.$M110 = L000 * R110 + L001 * R111 + L010 * R100 - L011 * R101 - L100 * R010 + L101 * R011 + L110 * R000 + L111 * R001;
+                this.$M111 = L000 * R111 + L001 * R110 - L010 * R101 + L011 * R100 + L100 * R011 - L101 * R010 + L110 * R001 + L111 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.mulByNumber = function (a) {
+            if (this.isLocked()) {
+                return this.clone().mulByNumber(a).permlock();
+            }
+            else {
+                this.$M000 *= a;
+                this.$M001 *= a;
+                this.$M010 *= a;
+                this.$M011 *= a;
+                this.$M100 *= a;
+                this.$M101 *= a;
+                this.$M110 *= a;
+                this.$M111 *= a;
+                return this;
+            }
+        };
+        Spacetime2.prototype.mulByScalar = function (a, uom) {
+            if (this.isLocked()) {
+                return this.clone().mulByScalar(a, uom).permlock();
+            }
+            else {
+                this.$M000 *= a;
+                this.$M001 *= a;
+                this.$M010 *= a;
+                this.$M011 *= a;
+                this.$M100 *= a;
+                this.$M101 *= a;
+                this.$M110 *= a;
+                this.$M111 *= a;
+                this.uom = Unit.mul(this.uom, uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.mulByVector = function (v) {
+            if (this.isLocked()) {
+                return this.clone().mulByVector(v).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R001 = v.t;
+                var R010 = v.x;
+                var R100 = v.y;
+                this.$M000 = L001 * R001 - L010 * R010 - L100 * R100;
+                this.$M001 = L000 * R001 - L011 * R010 - L101 * R100;
+                this.$M010 = L000 * R010 - L011 * R001 - L110 * R100;
+                this.$M011 = L001 * R010 - L010 * R001 - L111 * R100;
+                this.$M100 = L000 * R100 - L101 * R001 + L110 * R010;
+                this.$M101 = L001 * R100 - L100 * R001 + L111 * R010;
+                this.$M110 = L010 * R100 - L100 * R010 + L111 * R001;
+                this.$M111 = L011 * R100 - L101 * R010 + L110 * R001;
+                this.uom = Unit.mul(this.uom, v.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.neg = function () {
+            if (this.isLocked()) {
+                return this.clone().neg().permlock();
+            }
+            else {
+                this.a = -this.a;
+                this.t = -this.t;
+                this.x = -this.x;
+                this.tx = -this.tx;
+                this.y = -this.y;
+                this.ty = -this.ty;
+                this.xy = -this.xy;
+                this.b = -this.b;
+                return this;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.quaditude = function () {
+            return this.squaredNorm();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.quaditudeNoUnits = function () {
+            var a = this.$M000;
+            var t = this.$M001;
+            var x = this.$M010;
+            var y = this.$M100;
+            var tx = this.$M011;
+            var ty = this.$M101;
+            var xy = this.$M110;
+            var b = this.$M111;
+            return a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
+        };
+        Spacetime2.prototype.rco = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().rco(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R000 = rhs.$M000;
+                var R001 = rhs.$M001;
+                var R010 = rhs.$M010;
+                var R011 = rhs.$M011;
+                var R100 = rhs.$M100;
+                var R101 = rhs.$M101;
+                var R110 = rhs.$M110;
+                var R111 = rhs.$M111;
+                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+                this.$M001 = L001 * R000 - L011 * R010 - L101 * R100 - L111 * R110;
+                this.$M010 = L010 * R000 - L011 * R001 - L110 * R100 - L111 * R101;
+                this.$M011 = L011 * R000 - L111 * R100;
+                this.$M100 = L100 * R000 - L101 * R001 + L110 * R010 + L111 * R011;
+                this.$M101 = L101 * R000 + L111 * R010;
+                this.$M110 = L110 * R000 + L111 * R001;
+                this.$M111 = L111 * R000;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.reflect = function (n) {
+            if (this.isLocked()) {
+                return this.clone().reflect(n).permlock();
+            }
+            else {
+                var t = n.t;
+                var t2 = t * t;
+                var x = n.x;
+                var x2 = x * x;
+                var y = n.y;
+                var y2 = y * y;
+                this.$M000 = this.$M000 * (x2 + y2 - t2);
+                this.$M001 = -this.$M001 * (t2 + x2 + y2);
+                this.$M010 = this.$M010 * (t2 + x2 - y2);
+                this.$M100 = this.$M100 * (t2 - x2 + y2);
+                this.$M011 = -this.$M011 * (t2 + x2 - y2);
+                this.$M101 = -this.$M101 * (t2 - x2 + y2);
+                this.$M110 = +this.$M110 * (t2 - x2 - y2);
+                this.$M111 = this.$M111 * (x2 + y2 - t2);
+                return this;
+            }
+        };
+        Spacetime2.prototype.rev = function () {
+            if (this.isLocked()) {
+                return this.clone().rev().permlock();
+            }
+            else {
+                this.$M000 = this.$M000;
+                this.$M001 = this.$M001;
+                this.$M010 = this.$M010;
+                this.$M100 = this.$M100;
+                this.$M011 = -this.$M011;
+                this.$M101 = -this.$M101;
+                this.$M110 = -this.$M110;
+                this.$M111 = -this.$M111;
+                return this;
+            }
+        };
+        Spacetime2.prototype.rotate = function (rotor) {
+            throw new Error("Method not implemented.");
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.scale = function (α) {
+            if (this.isLocked()) {
+                return this.clone().scale(α).permlock();
+            }
+            else {
+                this.$M000 = this.$M000 * α;
+                this.$M001 = this.$M001 * α;
+                this.$M010 = this.$M010 * α;
+                this.$M011 = this.$M011 * α;
+                this.$M100 = this.$M100 * α;
+                this.$M101 = this.$M101 * α;
+                this.$M110 = this.$M110 * α;
+                this.$M111 = this.$M111 * α;
+                return this;
+            }
+        };
+        Spacetime2.prototype.scp = function (rhs) {
+            if (this.isLocked()) {
+                return this.clone().scp(rhs).permlock();
+            }
+            else {
+                var L000 = this.$M000;
+                var L001 = this.$M001;
+                var L010 = this.$M010;
+                var L011 = this.$M011;
+                var L100 = this.$M100;
+                var L101 = this.$M101;
+                var L110 = this.$M110;
+                var L111 = this.$M111;
+                var R000 = rhs.$M000;
+                var R001 = rhs.$M001;
+                var R010 = rhs.$M010;
+                var R011 = rhs.$M011;
+                var R100 = rhs.$M100;
+                var R101 = rhs.$M101;
+                var R110 = rhs.$M110;
+                var R111 = rhs.$M111;
+                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
+                this.$M001 = 0;
+                this.$M010 = 0;
+                this.$M011 = 0;
+                this.$M100 = 0;
+                this.$M101 = 0;
+                this.$M110 = 0;
+                this.$M111 = 0;
+                this.uom = Unit.mul(this.uom, rhs.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.squaredNorm = function () {
+            if (this.isLocked()) {
+                return this.clone().squaredNorm().permlock();
+            }
+            else {
+                var a = this.$M000;
+                var t = this.$M001;
+                var x = this.$M010;
+                var y = this.$M100;
+                var tx = this.$M011;
+                var ty = this.$M101;
+                var xy = this.$M110;
+                var b = this.$M111;
+                this.$M000 = a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
+                this.$M001 = 0;
+                this.$M010 = 0;
+                this.$M011 = 0;
+                this.$M100 = 0;
+                this.$M101 = 0;
+                this.$M110 = 0;
+                this.$M111 = 0;
+                this.uom = Unit.mul(this.uom, this.uom);
+                return this;
+            }
+        };
+        Spacetime2.prototype.sub = function (rhs, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().sub(rhs, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = -rhs.a * α;
+                    this.t = -rhs.t * α;
+                    this.x = -rhs.x * α;
+                    this.tx = -rhs.tx * α;
+                    this.y = -rhs.y * α;
+                    this.ty = -rhs.ty * α;
+                    this.xy = -rhs.xy * α;
+                    this.b = -rhs.b * α;
+                    this.uom = rhs.uom;
+                    return this;
+                }
+                else if (rhs.isZero() || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a -= rhs.a * α;
+                    this.t -= rhs.t * α;
+                    this.x -= rhs.x * α;
+                    this.tx -= rhs.tx * α;
+                    this.y -= rhs.y * α;
+                    this.ty -= rhs.ty * α;
+                    this.xy -= rhs.xy * α;
+                    this.b -= rhs.b * α;
+                    this.uom = Unit.compatible(this.uom, rhs.uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime2.prototype.subScalar = function (a, uom, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().subScalar(a, uom, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = -a * α;
+                    this.uom = uom;
+                    return this;
+                }
+                else if (a === 0 || α === 0) {
+                    return this;
+                }
+                else {
+                    this.a -= a * α;
+                    this.uom = Unit.compatible(this.uom, uom);
+                    return this;
+                }
+            }
+        };
+        Spacetime2.prototype.toExponential = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+        };
+        Spacetime2.prototype.toFixed = function (fractionDigits) {
+            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+        };
+        Spacetime2.prototype.toPrecision = function (precision) {
+            var coordToString = function (coord) { return coord.toPrecision(precision); };
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+        };
+        Spacetime2.prototype.toString = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__div__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().div(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().divByNumber(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().divByScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rdiv__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().div(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).div(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime2.scalar(1, lhs).div(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__vbar__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().scp(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().scp(Spacetime2.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rvbar__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().scp(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).scp(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__wedge__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().ext(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                // The outer product with a scalar is scalar multiplication.
+                return this.clone().mulByNumber(rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rwedge__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().ext(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                // The outer product with a scalar is scalar multiplication, and commutes.
+                return this.clone().mulByNumber(lhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__lshift__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().lco(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().lco(Spacetime2.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rlshift__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().lco(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).lco(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rshift__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().rco(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().rco(Spacetime2.scalar(rhs)).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rrshift__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().rco(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).rco(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__bang__ = function () {
+            return this.clone().inv().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__eq__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.equals(rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return this.equals(Spacetime2.scalar(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return this.equals(Spacetime2.scalar(1, rhs));
+            }
+            else {
+                return false;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__ne__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return !this.equals(rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return !this.equals(Spacetime2.scalar(rhs));
+            }
+            else if (rhs instanceof Unit) {
+                return !this.equals(Spacetime2.scalar(1, rhs));
+            }
+            else {
+                return true;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__tilde__ = function () {
+            return this.clone().rev().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__add__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().add(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().addScalar(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().addScalar(1, rhs, 1).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__radd__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().add(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).add(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime2.scalar(1, lhs).add(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__sub__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().sub(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().subScalar(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().subScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rsub__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().sub(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return Spacetime2.scalar(lhs).sub(this).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return Spacetime2.scalar(1, lhs).sub(this).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__pos__ = function () {
+            return this.clone().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__neg__ = function () {
+            return this.clone().neg().permlock();
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__mul__ = function (rhs) {
+            if (rhs instanceof Spacetime2) {
+                return this.clone().mul(rhs).permlock();
+            }
+            else if (typeof rhs === 'number') {
+                return this.clone().mulByNumber(rhs).permlock();
+            }
+            else if (rhs instanceof Unit) {
+                return this.clone().mulByScalar(1, rhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         */
+        Spacetime2.prototype.__rmul__ = function (lhs) {
+            if (lhs instanceof Spacetime2) {
+                return lhs.clone().mul(this).permlock();
+            }
+            else if (typeof lhs === 'number') {
+                return this.clone().mulByNumber(lhs).permlock();
+            }
+            else if (lhs instanceof Unit) {
+                return this.clone().mulByScalar(1, lhs).permlock();
+            }
+            else {
+                return void 0;
+            }
+        };
+        Spacetime2.zero = Spacetime2.scalar(0).permlock();
+        Spacetime2.one = Spacetime2.scalar(1).permlock();
+        Spacetime2.e0 = Spacetime2.vector(1, 0, 0).permlock();
+        Spacetime2.e1 = Spacetime2.vector(0, 1, 0).permlock();
+        Spacetime2.e2 = Spacetime2.vector(0, 0, 1).permlock();
+        Spacetime2.I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
+        Spacetime2.kilogram = Spacetime2.scalar(1, Unit.KILOGRAM).permlock();
+        Spacetime2.meter = Spacetime2.scalar(1, Unit.METER).permlock();
+        Spacetime2.second = Spacetime2.scalar(1, Unit.SECOND).permlock();
+        Spacetime2.ampere = Spacetime2.scalar(1, Unit.AMPERE).permlock();
+        Spacetime2.kelvin = Spacetime2.scalar(1, Unit.KELVIN).permlock();
+        Spacetime2.mole = Spacetime2.scalar(1, Unit.MOLE).permlock();
+        Spacetime2.candela = Spacetime2.scalar(1, Unit.CANDELA).permlock();
+        return Spacetime2;
+    }(AbstractGeometric));
+
+    /**
+     *
+     */
+    var ForceG21 = /** @class */ (function (_super) {
+        __extends(ForceG21, _super);
+        function ForceG21(body) {
+            return _super.call(this, body) || this;
+        }
+        return ForceG21;
+    }(Force));
+
+    /**
+     *
+     */
+    var TorqueG21 = /** @class */ (function (_super) {
+        __extends(TorqueG21, _super);
+        function TorqueG21(body) {
+            return _super.call(this, body) || this;
+        }
+        return TorqueG21;
+    }(Torque));
+
+    /**
+     * @hidden
+     */
+    var MetricG21 = /** @class */ (function () {
+        function MetricG21() {
+        }
+        MetricG21.prototype.a = function (mv) {
+            return mv.a;
+        };
+        MetricG21.prototype.add = function (lhs, rhs) {
+            return lhs.add(rhs);
+        };
+        MetricG21.prototype.addVector = function (lhs, rhs) {
+            // lhs.addVector(rhs);
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.applyMatrix = function (mv, matrix) {
+            // mv.applyMatrix(matrix);
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.clone = function (source) {
+            return source.clone();
+        };
+        MetricG21.prototype.copy = function (source, target) {
+            // target.copy(source);
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.copyBivector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.copyMatrix = function (m) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.copyScalar = function (a, uom, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.copyVector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.createForce = function (body) {
+            return new ForceG21(body);
+        };
+        MetricG21.prototype.createTorque = function (body) {
+            return new TorqueG21(body);
+        };
+        MetricG21.prototype.direction = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.divByScalar = function (lhs, a, uom) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.ext = function (lhs, rhs) {
+            return lhs.ext(rhs);
+        };
+        MetricG21.prototype.identityMatrix = function () {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.invertMatrix = function (matrix) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.isBivector = function (mv) {
+            return mv.isBivector();
+        };
+        MetricG21.prototype.isScalar = function (mv) {
+            return mv.isScalar();
+        };
+        MetricG21.prototype.isSpinor = function (mv) {
+            return mv.isSpinor();
+        };
+        MetricG21.prototype.isVector = function (mv) {
+            return mv.isVector();
+        };
+        MetricG21.prototype.isZero = function (mv) {
+            return mv.isZero();
+        };
+        MetricG21.prototype.lock = function (mv) {
+            return mv.lock();
+        };
+        MetricG21.prototype.norm = function (mv) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.mul = function (lhs, rhs) {
+            return lhs.mul(rhs);
+        };
+        MetricG21.prototype.mulByNumber = function (lhs, alpha) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.mulByScalar = function (lhs, a, uom) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.mulByVector = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.neg = function (mv) {
+            return mv.neg();
+        };
+        MetricG21.prototype.squaredNorm = function (mv) {
+            return mv.squaredNorm();
+        };
+        MetricG21.prototype.rev = function (mv) {
+            return mv.rev();
+        };
+        MetricG21.prototype.rotate = function (mv, spinor) {
+            return mv.rotate(spinor);
+        };
+        MetricG21.prototype.scalar = function (a, uom) {
+            return Spacetime2.scalar(a, uom);
+        };
+        MetricG21.prototype.scp = function (lhs, rhs) {
+            return lhs.scp(rhs);
+        };
+        MetricG21.prototype.setUom = function (mv, uom) {
+            mv.uom = uom;
+        };
+        MetricG21.prototype.sub = function (lhs, rhs) {
+            return lhs.sub(rhs);
+        };
+        MetricG21.prototype.subScalar = function (lhs, rhs) {
+            return lhs.subScalar(rhs.a, rhs.uom);
+        };
+        MetricG21.prototype.subVector = function (lhs, rhs) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.unlock = function (mv, token) {
+            mv.unlock(token);
+        };
+        MetricG21.prototype.uom = function (mv) {
+            return mv.uom;
+        };
+        MetricG21.prototype.write = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.writeVector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.writeBivector = function (source, target) {
+            throw new Error("Method not implemented.");
+        };
+        MetricG21.prototype.zero = function () {
+            return Spacetime2.zero.clone();
+        };
+        return MetricG21;
+    }());
+
+    /**
+     * The Physics Engine specialized to 2+1 dimensions with a Spacetime metric.
+     */
+    var EngineG21 = /** @class */ (function (_super) {
+        __extends(EngineG21, _super);
+        function EngineG21(options) {
+            return _super.call(this, new MetricG21(), new DynamicsG21(), options) || this;
+        }
+        return EngineG21;
+    }(Engine));
 
     /**
      * @hidden
@@ -11539,9 +14136,6 @@
             case COORD_XYZ$1: {
                 return m.b;
             }
-            default: {
-                throw new Error("index => " + index);
-            }
         }
     }
 
@@ -11614,8 +14208,6 @@
                 m.b = value;
                 break;
             }
-            default:
-                throw new Error("index => " + index);
         }
     }
 
@@ -11732,9 +14324,14 @@
         var b5 = compG3Get(b, 5);
         var b6 = compG3Get(b, 6);
         var b7 = compG3Get(b, 7);
-        for (var i = 0; i < 8; i++) {
-            compG3Set(out, i, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, i));
-        }
+        compG3Set(out, 0, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0));
+        compG3Set(out, 1, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1));
+        compG3Set(out, 2, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2));
+        compG3Set(out, 3, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3));
+        compG3Set(out, 4, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4));
+        compG3Set(out, 5, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5));
+        compG3Set(out, 6, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6));
+        compG3Set(out, 7, extE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7));
         return out;
     }
 
@@ -11893,9 +14490,14 @@
         var b5 = compG3Get(b, 5);
         var b6 = compG3Get(b, 6);
         var b7 = compG3Get(b, 7);
-        for (var i = 0; i < 8; i++) {
-            compG3Set(out, i, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, i));
-        }
+        compG3Set(out, 0, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0));
+        compG3Set(out, 1, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1));
+        compG3Set(out, 2, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2));
+        compG3Set(out, 3, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3));
+        compG3Set(out, 4, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4));
+        compG3Set(out, 5, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5));
+        compG3Set(out, 6, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6));
+        compG3Set(out, 7, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7));
         return out;
     }
 
@@ -12123,9 +14725,14 @@
         var b5 = compG3Get(b, 5);
         var b6 = compG3Get(b, 6);
         var b7 = compG3Get(b, 7);
-        for (var i = 0; i < 8; i++) {
-            compG3Set(out, i, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, i));
-        }
+        compG3Set(out, 0, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0));
+        compG3Set(out, 1, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1));
+        compG3Set(out, 2, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2));
+        compG3Set(out, 3, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3));
+        compG3Set(out, 4, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4));
+        compG3Set(out, 5, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5));
+        compG3Set(out, 6, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6));
+        compG3Set(out, 7, rcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7));
         return out;
     }
 
@@ -12453,11 +15060,11 @@
     /**
      * @hidden
      */
-    var BASIS_LABELS$2 = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
-    BASIS_LABELS$2[COORD_SCALAR] = '1';
-    BASIS_LABELS$2[COORD_X] = 'e1';
-    BASIS_LABELS$2[COORD_Y] = 'e2';
-    BASIS_LABELS$2[COORD_Z] = 'e3';
+    var BASIS_LABELS = ["1", "e1", "e2", "e3", "e12", "e23", "e31", "e123"];
+    BASIS_LABELS[COORD_SCALAR] = '1';
+    BASIS_LABELS[COORD_X] = 'e1';
+    BASIS_LABELS[COORD_Y] = 'e2';
+    BASIS_LABELS[COORD_Z] = 'e3';
     /**
      * @hidden
      */
@@ -12530,7 +15137,7 @@
      * Coordinates corresponding to basis labels.
      * @hidden
      */
-    var coordinates$2 = function coordinates(m) {
+    var coordinates = function coordinates(m) {
         var coords = zero();
         coords[COORD_SCALAR] = m.a;
         coords[COORD_X] = m.x;
@@ -13312,7 +15919,7 @@
                 return true;
             }
             else if (other instanceof Geometric3) {
-                return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+                return arraysEQ8(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
             }
             else {
                 return false;
@@ -14131,7 +16738,7 @@
          */
         Geometric3.prototype.toExponential = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         /**
          * Returns a string representing the number in fixed-point notation.
@@ -14141,7 +16748,7 @@
          */
         Geometric3.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         /**
          * @param precision
@@ -14149,7 +16756,7 @@
          */
         Geometric3.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         /**
          * Returns a string representation of the number.
@@ -14159,7 +16766,7 @@
          */
         Geometric3.prototype.toString = function (radix) {
             var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
         };
         /**
          * Sets this multivector to the result of keeping only the specified grade.
@@ -14523,7 +17130,7 @@
          * @param mv The multivector to be copied.
          */
         Geometric3.copy = function (mv) {
-            return new Geometric3(coordinates$2(mv), mv.uom);
+            return new Geometric3(coordinates(mv), mv.uom);
         };
         Geometric3.dual = function (m) {
             return Geometric3.copy(m).dual();
@@ -14843,28 +17450,37 @@
          *
          * @param attitude  The spinor from which the rotation will be computed.
          */
-        Matrix3.prototype.rotation = function (spinor) {
+        /*
+        rotation(spinor: SpinorE3): this {
             // The correspondence between quaternions and spinors is
             // i <=> -e2^e3, j <=> -e3^e1, k <=> -e1^e2.
-            var x = -spinor.yz;
-            var y = -spinor.zx;
-            var z = -spinor.xy;
-            var α = spinor.a;
-            var x2 = x + x;
-            var y2 = y + y;
-            var z2 = z + z;
-            var xx = x * x2;
-            var xy = x * y2;
-            var xz = x * z2;
-            var yy = y * y2;
-            var yz = y * z2;
-            var zz = z * z2;
-            var wx = α * x2;
-            var wy = α * y2;
-            var wz = α * z2;
-            this.set(1 - yy - zz, xy - wz, xz + wy, xy + wz, 1 - xx - zz, yz - wx, xz - wy, yz + wx, 1 - xx - yy);
+            const x: number = -spinor.yz;
+            const y: number = -spinor.zx;
+            const z: number = -spinor.xy;
+            const α: number = spinor.a;
+
+            const x2 = x + x;
+            const y2 = y + y;
+            const z2 = z + z;
+            const xx = x * x2;
+            const xy = x * y2;
+            const xz = x * z2;
+            const yy = y * y2;
+            const yz = y * z2;
+            const zz = z * z2;
+            const wx = α * x2;
+            const wy = α * y2;
+            const wz = α * z2;
+
+            this.set(
+                1 - yy - zz, xy - wz, xz + wy,
+                xy + wz, 1 - xx - zz, yz - wx,
+                xz - wy, yz + wx, 1 - xx - yy
+            );
+
             return this;
-        };
+        }
+        */
         /**
          * @param i the zero-based index of the row.
          */
@@ -15165,9 +17781,6 @@
         };
         Euclidean3.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
-        };
-        Euclidean3.prototype.one = function () {
-            return Geometric3.scalar(1);
         };
         Euclidean3.prototype.zero = function () {
             return Geometric3.zero.clone();
@@ -20226,2265 +22839,6 @@
     /**
      * @hidden
      */
-    var COORD_0_A$1 = 0;
-    /**
-     * @hidden
-     */
-    var COORD_1_T$1 = 1;
-    /**
-     * @hidden
-     */
-    var COORD_2_X$1 = 2;
-    /**
-     * @hidden
-     */
-    var COORD_3_TX$1 = 3;
-    /**
-     * Coordinates corresponding to basis labels.
-     * @hidden
-     */
-    var coordinates$1 = function (m) {
-        var coords = [0, 0, 0, 0];
-        coords[COORD_0_A$1] = m.a;
-        coords[COORD_1_T$1] = m.t;
-        coords[COORD_2_X$1] = m.x;
-        coords[COORD_3_TX$1] = m.b;
-        return coords;
-    };
-    /**
-     * @hidden
-     */
-    var BASIS_LABELS$1 = ["1", "e0", "e1", "I"];
-    /**
-     *
-     */
-    var Spacetime1 = /** @class */ (function (_super) {
-        __extends(Spacetime1, _super);
-        /**
-         *
-         * @param a
-         * @param t
-         * @param x
-         * @param b
-         * @param uom
-         */
-        function Spacetime1(a, t, x, b, uom) {
-            if (a === void 0) { a = 0; }
-            if (t === void 0) { t = 0; }
-            if (x === void 0) { x = 0; }
-            if (b === void 0) { b = 0; }
-            var _this = _super.call(this, uom) || this;
-            _this.$M00 = a;
-            _this.$M01 = t;
-            _this.$M10 = x;
-            _this.$M11 = b;
-            return _this;
-        }
-        /**
-         * Creates a grade 0 (scalar) multivector with value `a * uom`.
-         * The scalar returned is in the unlocked (mutable) state.
-         * @param a The scaling factor for the unit of measure.
-         * @param uom The optional unit of measure. Equivalent to 1 if omitted.
-         */
-        Spacetime1.scalar = function (a, uom) {
-            return new Spacetime1(a, 0, 0, 0, uom);
-        };
-        Spacetime1.vector = function (t, x, uom) {
-            return new Spacetime1(0, t, x, 0, uom);
-        };
-        Object.defineProperty(Spacetime1.prototype, "a", {
-            get: function () {
-                return this.$M00;
-            },
-            set: function (a) {
-                if (this.isMutable()) {
-                    this.$M00 = a;
-                }
-                else {
-                    throw new Error(readOnly('a').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime1.prototype, "t", {
-            get: function () {
-                return this.$M01;
-            },
-            set: function (t) {
-                if (this.isMutable()) {
-                    this.$M01 = t;
-                }
-                else {
-                    throw new Error(readOnly('t').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime1.prototype, "x", {
-            get: function () {
-                return this.$M10;
-            },
-            set: function (x) {
-                if (this.isMutable()) {
-                    this.$M10 = x;
-                }
-                else {
-                    throw new Error(readOnly('x').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime1.prototype, "b", {
-            get: function () {
-                return this.$M11;
-            },
-            set: function (b) {
-                if (this.isMutable()) {
-                    this.$M11 = b;
-                }
-                else {
-                    throw new Error(readOnly('b').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime1.prototype, "grades", {
-            get: function () {
-                var mask = 0x0;
-                if (this.$M00 !== 0) {
-                    mask += 0x1;
-                }
-                if (this.t !== 0 || this.x !== 0) {
-                    mask += 0x2;
-                }
-                if (this.b !== 0) {
-                    mask += 0x4;
-                }
-                return mask;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Spacetime1.prototype.add = function (rhs, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().add(rhs, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = rhs.a * α;
-                    this.t = rhs.t * α;
-                    this.x = rhs.x * α;
-                    this.b = rhs.b * α;
-                    this.uom = rhs.uom;
-                    return this;
-                }
-                else if (rhs.isZero() || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a += rhs.a * α;
-                    this.t += rhs.t * α;
-                    this.x += rhs.x * α;
-                    this.b += rhs.b * α;
-                    this.uom = Unit.compatible(this.uom, rhs.uom);
-                    return this;
-                }
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.addScalar = function (a, uom, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().addScalar(a, uom, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = a * α;
-                    this.uom = uom;
-                    return this;
-                }
-                else if (a === 0 || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a += a * α;
-                    this.uom = Unit.compatible(this.uom, uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime1.prototype.clone = function () {
-            return new Spacetime1(this.a, this.t, this.x, this.b, this.uom);
-        };
-        Spacetime1.prototype.conj = function () {
-            if (this.isLocked()) {
-                return this.clone().conj().permlock();
-            }
-            else {
-                this.$M00 = this.$M00;
-                this.$M01 = -this.$M01;
-                this.$M10 = -this.$M10;
-                this.$M11 = -this.$M11;
-                return this;
-            }
-        };
-        Spacetime1.prototype.div = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().div(rhs).permlock();
-            }
-            else {
-                return this.mul(rhs.clone().inv().permlock());
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.divByNumber = function (α) {
-            if (this.isLocked()) {
-                return this.clone().divByNumber(α).permlock();
-            }
-            else {
-                this.$M00 /= α;
-                this.$M01 /= α;
-                this.$M10 /= α;
-                this.$M11 /= α;
-                return this;
-            }
-        };
-        Spacetime1.prototype.divByScalar = function (α, uom) {
-            if (this.isLocked()) {
-                return this.clone().divByScalar(α, uom).permlock();
-            }
-            else {
-                this.$M00 /= α;
-                this.$M01 /= α;
-                this.$M10 /= α;
-                this.$M11 /= α;
-                this.uom = Unit.div(this.uom, uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.divByVector = function (v) {
-            if (this.isLocked()) {
-                return this.clone().divByVector(v).permlock();
-            }
-            else {
-                var t = v.t;
-                var x = v.x;
-                return this.mulByVector(v).divByScalar(t * t - x * x, Unit.pow(v.uom, QQ.valueOf(2, 1)));
-            }
-        };
-        Spacetime1.prototype.dual = function () {
-            if (this.isLocked()) {
-                return this.clone().dual().permlock();
-            }
-            else {
-                var M000 = this.$M00;
-                var M001 = this.$M01;
-                var M010 = this.$M10;
-                var M011 = this.$M11;
-                this.$M00 = M011;
-                this.$M01 = M010;
-                this.$M10 = M001;
-                this.$M11 = M000;
-                return this;
-            }
-        };
-        Spacetime1.prototype.equals = function (other) {
-            if (other === this) {
-                return true;
-            }
-            else if (other instanceof Spacetime1) {
-                return Unit.isCompatible(this.uom, other.uom) &&
-                    this.a === other.a &&
-                    this.t === other.t &&
-                    this.x === other.x &&
-                    this.b === other.b;
-            }
-            else {
-                return false;
-            }
-        };
-        Spacetime1.prototype.ext = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().ext(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R000 = rhs.$M00;
-                var R001 = rhs.$M01;
-                var R010 = rhs.$M10;
-                var R011 = rhs.$M11;
-                this.$M00 = L000 * R000;
-                this.$M01 = L000 * R001 + L001 * R000;
-                this.$M10 = L000 * R010 + L010 * R000;
-                this.$M11 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.grade = function (n) {
-            if (this.isLocked()) {
-                return this.clone().grade(n).permlock();
-            }
-            else {
-                // There is no change to the unit of measure.
-                switch (n) {
-                    case 0: {
-                        this.t = 0;
-                        this.x = 0;
-                        this.b = 0;
-                        break;
-                    }
-                    case 1: {
-                        this.a = 0;
-                        this.b = 0;
-                        break;
-                    }
-                    case 2: {
-                        this.a = 0;
-                        this.t = 0;
-                        this.x = 0;
-                        break;
-                    }
-                    default: {
-                        this.a = 0;
-                        this.t = 0;
-                        this.x = 0;
-                        this.b = 0;
-                    }
-                }
-                return this;
-            }
-        };
-        Spacetime1.prototype.inv = function () {
-            if (this.isLocked()) {
-                return this.clone().inv().permlock();
-            }
-            else {
-                var x0 = this.$M00;
-                var x1 = this.$M01;
-                var x2 = this.$M10;
-                var x3 = this.$M11;
-                var A = [
-                    [+x0, +x1, -x2, +x3],
-                    [+x1, +x0, +x3, -x2],
-                    [+x2, +x3, +x0, -x1],
-                    [+x3, +x2, -x1, +x0],
-                ];
-                var b = [1, 0, 0, 0];
-                var X = gauss(A, b);
-                this.a = X[0];
-                this.t = X[1];
-                this.x = X[2];
-                this.b = X[3];
-                this.uom = Unit.inv(this.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.isBivector = function () {
-            return this.a === 0 && this.t === 0 && this.x === 0;
-        };
-        Spacetime1.prototype.isOne = function () {
-            return this.a === 1 && this.t === 0 && this.x === 0 && this.b === 0 && Unit.isOne(this.uom);
-        };
-        Spacetime1.prototype.isScalar = function () {
-            return this.t === 0 && this.x === 0 && this.b === 0;
-        };
-        Spacetime1.prototype.isSpinor = function () {
-            return this.t === 0 && this.x === 0;
-        };
-        Spacetime1.prototype.isVector = function () {
-            return this.a === 0 && this.b === 0;
-        };
-        Spacetime1.prototype.isZero = function () {
-            return this.a === 0 && this.t === 0 && this.x === 0 && this.b === 0;
-        };
-        Spacetime1.prototype.lco = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().lco(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R000 = rhs.$M00;
-                var R001 = rhs.$M01;
-                var R010 = rhs.$M10;
-                var R011 = rhs.$M11;
-                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
-                this.$M01 = L000 * R001 + L010 * R011;
-                this.$M10 = L000 * R010 + L001 * R011;
-                this.$M11 = L000 * R011;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.mul = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().mul(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R000 = rhs.$M00;
-                var R001 = rhs.$M01;
-                var R010 = rhs.$M10;
-                var R011 = rhs.$M11;
-                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
-                this.$M01 = L000 * R001 + L001 * R000 + L010 * R011 - L011 * R010;
-                this.$M10 = L000 * R010 + L010 * R000 + L001 * R011 - L011 * R001;
-                this.$M11 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.mulByNumber = function (a) {
-            if (this.isLocked()) {
-                return this.clone().mulByNumber(a).permlock();
-            }
-            else {
-                this.$M00 *= a;
-                this.$M01 *= a;
-                this.$M10 *= a;
-                this.$M11 *= a;
-                return this;
-            }
-        };
-        Spacetime1.prototype.mulByScalar = function (a, uom) {
-            if (this.isLocked()) {
-                return this.clone().mulByScalar(a, uom).permlock();
-            }
-            else {
-                this.$M00 *= a;
-                this.$M01 *= a;
-                this.$M10 *= a;
-                this.$M11 *= a;
-                this.uom = Unit.mul(this.uom, uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.mulByVector = function (v) {
-            if (this.isLocked()) {
-                return this.clone().mulByVector(v).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R001 = v.t;
-                var R010 = v.x;
-                this.$M00 = L001 * R001 - L010 * R010;
-                this.$M01 = L000 * R001 - L011 * R010;
-                this.$M10 = L000 * R010 - L011 * R001;
-                this.$M11 = L001 * R010 - L010 * R001;
-                this.uom = Unit.mul(this.uom, v.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.neg = function () {
-            if (this.isLocked()) {
-                return this.clone().neg().permlock();
-            }
-            else {
-                this.a = -this.a;
-                this.t = -this.t;
-                this.x = -this.x;
-                this.b = -this.b;
-                return this;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.quaditude = function () {
-            return this.squaredNorm();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.quaditudeNoUnits = function () {
-            var a = this.$M00;
-            var t = this.$M01;
-            var x = this.$M10;
-            var tx = this.$M11;
-            return a * a + t * t - x * x - tx * tx;
-        };
-        Spacetime1.prototype.rco = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().rco(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R000 = rhs.$M00;
-                var R001 = rhs.$M01;
-                var R010 = rhs.$M10;
-                var R011 = rhs.$M11;
-                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
-                this.$M01 = L001 * R000 - L011 * R010;
-                this.$M10 = L010 * R000 - L011 * R001;
-                this.$M11 = L011 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.reflect = function (n) {
-            if (this.isLocked()) {
-                return this.clone().reflect(n).permlock();
-            }
-            else {
-                var t = n.t;
-                var t2 = t * t;
-                var x = n.x;
-                var x2 = x * x;
-                this.$M00 = this.$M00 * (x2 - t2);
-                this.$M01 = -this.$M01 * (t2 + x2);
-                this.$M10 = this.$M10 * (t2 + x2);
-                this.$M11 = -this.$M11 * (t2 + x2);
-                return this;
-            }
-        };
-        Spacetime1.prototype.rev = function () {
-            if (this.isLocked()) {
-                return this.clone().rev().permlock();
-            }
-            else {
-                this.$M00 = this.$M00;
-                this.$M01 = this.$M01;
-                this.$M10 = this.$M10;
-                this.$M11 = -this.$M11;
-                return this;
-            }
-        };
-        Spacetime1.prototype.rotate = function (rotor) {
-            throw new Error("Method not implemented.");
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.scale = function (α) {
-            if (this.isLocked()) {
-                return this.clone().scale(α).permlock();
-            }
-            else {
-                this.$M00 = this.$M00 * α;
-                this.$M01 = this.$M01 * α;
-                this.$M10 = this.$M10 * α;
-                this.$M11 = this.$M11 * α;
-                return this;
-            }
-        };
-        Spacetime1.prototype.scp = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().scp(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M00;
-                var L001 = this.$M01;
-                var L010 = this.$M10;
-                var L011 = this.$M11;
-                var R000 = rhs.$M00;
-                var R001 = rhs.$M01;
-                var R010 = rhs.$M10;
-                var R011 = rhs.$M11;
-                this.$M00 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011;
-                this.$M01 = 0;
-                this.$M10 = 0;
-                this.$M11 = 0;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.squaredNorm = function () {
-            if (this.isLocked()) {
-                return this.clone().squaredNorm().permlock();
-            }
-            else {
-                var a = this.$M00;
-                var t = this.$M01;
-                var x = this.$M10;
-                var tx = this.$M11;
-                this.$M00 = a * a + t * t - x * x - tx * tx;
-                this.$M01 = 0;
-                this.$M10 = 0;
-                this.$M11 = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-        };
-        Spacetime1.prototype.sub = function (rhs, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().sub(rhs, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = -rhs.a * α;
-                    this.t = -rhs.t * α;
-                    this.x = -rhs.x * α;
-                    this.b = -rhs.b * α;
-                    this.uom = rhs.uom;
-                    return this;
-                }
-                else if (rhs.isZero() || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a -= rhs.a * α;
-                    this.t -= rhs.t * α;
-                    this.x -= rhs.x * α;
-                    this.b -= rhs.b * α;
-                    this.uom = Unit.compatible(this.uom, rhs.uom);
-                    return this;
-                }
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.subScalar = function (a, uom, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().subScalar(a, uom, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = -a * α;
-                    this.uom = uom;
-                    return this;
-                }
-                else if (a === 0 || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a -= a * α;
-                    this.uom = Unit.compatible(this.uom, uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime1.prototype.toExponential = function (fractionDigits) {
-            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
-        };
-        Spacetime1.prototype.toFixed = function (fractionDigits) {
-            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
-        };
-        Spacetime1.prototype.toPrecision = function (precision) {
-            var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
-        };
-        Spacetime1.prototype.toString = function (radix) {
-            var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__div__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().div(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().divByNumber(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().divByScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rdiv__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().div(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).div(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime1.scalar(1, lhs).div(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__vbar__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().scp(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().scp(Spacetime1.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rvbar__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().scp(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).scp(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__wedge__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().ext(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                // The outer product with a scalar is scalar multiplication.
-                return this.clone().mulByNumber(rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rwedge__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().ext(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                // The outer product with a scalar is scalar multiplication, and commutes.
-                return this.clone().mulByNumber(lhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__lshift__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().lco(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().lco(Spacetime1.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rlshift__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().lco(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).lco(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rshift__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().rco(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().rco(Spacetime1.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rrshift__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().rco(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).rco(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__bang__ = function () {
-            return this.clone().inv().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__eq__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.equals(rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return this.equals(Spacetime1.scalar(rhs));
-            }
-            else if (rhs instanceof Unit) {
-                return this.equals(Spacetime1.scalar(1, rhs));
-            }
-            else {
-                return false;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__ne__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return !this.equals(rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return !this.equals(Spacetime1.scalar(rhs));
-            }
-            else if (rhs instanceof Unit) {
-                return !this.equals(Spacetime1.scalar(1, rhs));
-            }
-            else {
-                return true;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__tilde__ = function () {
-            return this.clone().rev().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__add__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().add(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().addScalar(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().addScalar(1, rhs, 1).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__radd__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().add(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).add(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime1.scalar(1, lhs).add(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__sub__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().sub(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().subScalar(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().subScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rsub__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().sub(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime1.scalar(lhs).sub(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime1.scalar(1, lhs).sub(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__pos__ = function () {
-            return this.clone().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__neg__ = function () {
-            return this.clone().neg().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__mul__ = function (rhs) {
-            if (rhs instanceof Spacetime1) {
-                return this.clone().mul(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().mulByNumber(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().mulByScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime1.prototype.__rmul__ = function (lhs) {
-            if (lhs instanceof Spacetime1) {
-                return lhs.clone().mul(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return this.clone().mulByNumber(lhs).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return this.clone().mulByScalar(1, lhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        Spacetime1.zero = Spacetime1.scalar(0).permlock();
-        Spacetime1.one = Spacetime1.scalar(1).permlock();
-        Spacetime1.e0 = Spacetime1.vector(1, 0).permlock();
-        Spacetime1.e1 = Spacetime1.vector(0, 1).permlock();
-        Spacetime1.I = new Spacetime1(0, 0, 0, 1).permlock();
-        Spacetime1.kilogram = Spacetime1.scalar(1, Unit.KILOGRAM).permlock();
-        Spacetime1.meter = Spacetime1.scalar(1, Unit.METER).permlock();
-        Spacetime1.second = Spacetime1.scalar(1, Unit.SECOND).permlock();
-        Spacetime1.ampere = Spacetime1.scalar(1, Unit.AMPERE).permlock();
-        Spacetime1.kelvin = Spacetime1.scalar(1, Unit.KELVIN).permlock();
-        Spacetime1.mole = Spacetime1.scalar(1, Unit.MOLE).permlock();
-        Spacetime1.candela = Spacetime1.scalar(1, Unit.CANDELA).permlock();
-        return Spacetime1;
-    }(AbstractGeometric));
-
-    /**
-     * @hidden
-     */
-    var COORD_0_A = 0;
-    /**
-     * @hidden
-     */
-    var COORD_1_T = 1;
-    /**
-     * @hidden
-     */
-    var COORD_2_X = 2;
-    /**
-     * @hidden
-     */
-    var COORD_3_TX = 3;
-    /**
-     * @hidden
-     */
-    var COORD_4_Y = 4;
-    /**
-     * @hidden
-     */
-    var COORD_5_TY = 5;
-    /**
-     * @hidden
-     */
-    var COORD_6_XY = 6;
-    /**
-     * @hidden
-     */
-    var COORD_7_B = 7;
-    /**
-     * Coordinates corresponding to basis labels.
-     * @hidden
-     */
-    var coordinates = function (m) {
-        var coords = [0, 0, 0, 0, 0, 0, 0, 0];
-        coords[COORD_0_A] = m.a;
-        coords[COORD_1_T] = m.t;
-        coords[COORD_2_X] = m.x;
-        coords[COORD_3_TX] = m.tx;
-        coords[COORD_4_Y] = m.y;
-        coords[COORD_5_TY] = m.ty;
-        coords[COORD_6_XY] = m.xy;
-        coords[COORD_7_B] = m.b;
-        return coords;
-    };
-    /**
-     * @hidden
-     */
-    var BASIS_LABELS = ["1", "e0", "e1", "e01", "e2", "e02", "e12", "I"];
-    /**
-     *
-     */
-    var Spacetime2 = /** @class */ (function (_super) {
-        __extends(Spacetime2, _super);
-        function Spacetime2(a, t, x, tx, y, ty, xy, b, uom) {
-            if (a === void 0) { a = 0; }
-            if (t === void 0) { t = 0; }
-            if (x === void 0) { x = 0; }
-            if (tx === void 0) { tx = 0; }
-            if (y === void 0) { y = 0; }
-            if (ty === void 0) { ty = 0; }
-            if (xy === void 0) { xy = 0; }
-            if (b === void 0) { b = 0; }
-            var _this = _super.call(this, uom) || this;
-            _this.$M000 = a;
-            _this.$M001 = t;
-            _this.$M010 = x;
-            _this.$M011 = tx;
-            _this.$M100 = y;
-            _this.$M101 = ty;
-            _this.$M110 = xy;
-            _this.$M111 = b;
-            return _this;
-        }
-        /**
-         * Creates a grade 0 (scalar) multivector with value `a * uom`.
-         * The scalar returned is in the unlocked (mutable) state.
-         * @param a The scaling factor for the unit of measure.
-         * @param uom The optional unit of measure. Equivalent to 1 if omitted.
-         */
-        Spacetime2.scalar = function (a, uom) {
-            return new Spacetime2(a, 0, 0, 0, 0, 0, 0, 0, uom);
-        };
-        Spacetime2.vector = function (t, x, y, uom) {
-            return new Spacetime2(0, t, x, 0, y, 0, 0, 0, uom);
-        };
-        Object.defineProperty(Spacetime2.prototype, "a", {
-            get: function () {
-                return this.$M000;
-            },
-            set: function (a) {
-                if (this.isMutable()) {
-                    this.$M000 = a;
-                }
-                else {
-                    throw new Error(readOnly('a').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "t", {
-            get: function () {
-                return this.$M001;
-            },
-            set: function (t) {
-                if (this.isMutable()) {
-                    this.$M001 = t;
-                }
-                else {
-                    throw new Error(readOnly('t').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "x", {
-            get: function () {
-                return this.$M010;
-            },
-            set: function (x) {
-                if (this.isMutable()) {
-                    this.$M010 = x;
-                }
-                else {
-                    throw new Error(readOnly('x').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "tx", {
-            get: function () {
-                return this.$M011;
-            },
-            set: function (tx) {
-                if (this.isMutable()) {
-                    this.$M011 = tx;
-                }
-                else {
-                    throw new Error(readOnly('tx').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "y", {
-            get: function () {
-                return this.$M100;
-            },
-            set: function (y) {
-                if (this.isMutable()) {
-                    this.$M100 = y;
-                }
-                else {
-                    throw new Error(readOnly('y').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "ty", {
-            get: function () {
-                return this.$M101;
-            },
-            set: function (ty) {
-                if (this.isMutable()) {
-                    this.$M101 = ty;
-                }
-                else {
-                    throw new Error(readOnly('ty').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "xy", {
-            get: function () {
-                return this.$M110;
-            },
-            set: function (xy) {
-                if (this.isMutable()) {
-                    this.$M110 = xy;
-                }
-                else {
-                    throw new Error(readOnly('xy').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "b", {
-            get: function () {
-                return this.$M111;
-            },
-            set: function (b) {
-                if (this.isMutable()) {
-                    this.$M111 = b;
-                }
-                else {
-                    throw new Error(readOnly('b').message);
-                }
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Spacetime2.prototype, "grades", {
-            get: function () {
-                var mask = 0x0;
-                if (this.$M000 !== 0) {
-                    mask += 0x1;
-                }
-                if (this.t !== 0 || this.x !== 0 || this.y !== 0) {
-                    mask += 0x2;
-                }
-                if (this.tx !== 0 || this.ty !== 0 || this.xy !== 0) {
-                    mask += 0x4;
-                }
-                if (this.b !== 0) {
-                    mask += 0x8;
-                }
-                return mask;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Spacetime2.prototype.add = function (rhs, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().add(rhs, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = rhs.a * α;
-                    this.t = rhs.t * α;
-                    this.x = rhs.x * α;
-                    this.tx = rhs.tx * α;
-                    this.y = rhs.y * α;
-                    this.ty = rhs.ty * α;
-                    this.xy = rhs.xy * α;
-                    this.b = rhs.b * α;
-                    this.uom = rhs.uom;
-                    return this;
-                }
-                else if (rhs.isZero() || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a += rhs.a * α;
-                    this.t += rhs.t * α;
-                    this.x += rhs.x * α;
-                    this.tx += rhs.tx * α;
-                    this.y += rhs.y * α;
-                    this.ty += rhs.ty * α;
-                    this.xy += rhs.xy * α;
-                    this.b += rhs.b * α;
-                    this.uom = Unit.compatible(this.uom, rhs.uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime2.prototype.addScalar = function (a, uom, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().addScalar(a, uom, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = a * α;
-                    this.uom = uom;
-                    return this;
-                }
-                else if (a === 0 || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a += a * α;
-                    this.uom = Unit.compatible(this.uom, uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime2.prototype.clone = function () {
-            return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
-        };
-        Spacetime2.prototype.conj = function () {
-            if (this.isLocked()) {
-                return this.clone().conj().permlock();
-            }
-            else {
-                this.$M000 = this.$M000;
-                this.$M001 = -this.$M001;
-                this.$M010 = -this.$M010;
-                this.$M100 = -this.$M100;
-                this.$M011 = -this.$M011;
-                this.$M101 = -this.$M101;
-                this.$M110 = -this.$M110;
-                this.$M111 = this.$M111;
-                return this;
-            }
-        };
-        Spacetime2.prototype.div = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().div(rhs).permlock();
-            }
-            else {
-                return this.mul(rhs.clone().inv().permlock());
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.divByNumber = function (α) {
-            if (this.isLocked()) {
-                return this.clone().divByNumber(α).permlock();
-            }
-            else {
-                this.$M000 /= α;
-                this.$M001 /= α;
-                this.$M010 /= α;
-                this.$M011 /= α;
-                this.$M100 /= α;
-                this.$M101 /= α;
-                this.$M110 /= α;
-                this.$M111 /= α;
-                return this;
-            }
-        };
-        Spacetime2.prototype.divByScalar = function (α, uom) {
-            if (this.isLocked()) {
-                return this.clone().divByScalar(α, uom).permlock();
-            }
-            else {
-                this.$M000 /= α;
-                this.$M001 /= α;
-                this.$M010 /= α;
-                this.$M011 /= α;
-                this.$M100 /= α;
-                this.$M101 /= α;
-                this.$M110 /= α;
-                this.$M111 /= α;
-                this.uom = Unit.div(this.uom, uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.divByVector = function (v) {
-            if (this.isLocked()) {
-                return this.clone().divByVector(v).permlock();
-            }
-            else {
-                var t = v.t;
-                var x = v.x;
-                var y = v.y;
-                return this.mulByVector(v).divByScalar(t * t - x * x - y * y, Unit.pow(v.uom, QQ.valueOf(2, 1)));
-            }
-        };
-        Spacetime2.prototype.dual = function () {
-            if (this.isLocked()) {
-                return this.clone().dual().permlock();
-            }
-            else {
-                var M000 = this.$M000;
-                var M001 = this.$M001;
-                var M010 = this.$M010;
-                var M011 = this.$M011;
-                var M100 = this.$M100;
-                var M101 = this.$M101;
-                var M110 = this.$M110;
-                var M111 = this.$M111;
-                this.$M000 = M111;
-                this.$M001 = M110;
-                this.$M010 = M101;
-                this.$M011 = M100;
-                this.$M100 = -M011;
-                this.$M101 = -M010;
-                this.$M110 = -M001;
-                this.$M111 = -M000;
-                return this;
-            }
-        };
-        Spacetime2.prototype.equals = function (other) {
-            if (other === this) {
-                return true;
-            }
-            else if (other instanceof Spacetime2) {
-                return Unit.isCompatible(this.uom, other.uom) &&
-                    this.a === other.a &&
-                    this.t === other.t &&
-                    this.x === other.x &&
-                    this.tx === other.tx &&
-                    this.y === other.y &&
-                    this.ty === other.ty &&
-                    this.xy === other.xy &&
-                    this.b === other.b;
-            }
-            else {
-                return false;
-            }
-        };
-        Spacetime2.prototype.ext = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().ext(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R000 = rhs.$M000;
-                var R001 = rhs.$M001;
-                var R010 = rhs.$M010;
-                var R011 = rhs.$M011;
-                var R100 = rhs.$M100;
-                var R101 = rhs.$M101;
-                var R110 = rhs.$M110;
-                var R111 = rhs.$M111;
-                this.$M000 = L000 * R000;
-                this.$M001 = L000 * R001 + L001 * R000;
-                this.$M010 = L000 * R010 + L010 * R000;
-                this.$M011 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000;
-                this.$M100 = L000 * R100 + L100 * R000;
-                this.$M101 = L000 * R101 + L001 * R100 - L100 * R001 + L101 * R000;
-                this.$M110 = L000 * R110 + L010 * R100 - L100 * R010 + L110 * R000;
-                this.$M111 = L000 * R111 + L001 * R110 - L010 * R101 + L011 * R100 + L100 * R011 - L101 * R010 + L110 * R001 + L111 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.grade = function (n) {
-            if (this.isLocked()) {
-                return this.clone().grade(n).permlock();
-            }
-            else {
-                // There is no change to the unit of measure.
-                switch (n) {
-                    case 0: {
-                        this.t = 0;
-                        this.x = 0;
-                        this.y = 0;
-                        this.tx = 0;
-                        this.ty = 0;
-                        this.xy = 0;
-                        this.b = 0;
-                        break;
-                    }
-                    case 1: {
-                        this.a = 0;
-                        this.tx = 0;
-                        this.ty = 0;
-                        this.xy = 0;
-                        this.b = 0;
-                        break;
-                    }
-                    case 2: {
-                        this.a = 0;
-                        this.t = 0;
-                        this.x = 0;
-                        this.y = 0;
-                        this.b = 0;
-                        break;
-                    }
-                    case 3: {
-                        this.a = 0;
-                        this.t = 0;
-                        this.x = 0;
-                        this.y = 0;
-                        this.tx = 0;
-                        this.ty = 0;
-                        this.xy = 0;
-                        break;
-                    }
-                    default: {
-                        this.a = 0;
-                        this.t = 0;
-                        this.x = 0;
-                        this.y = 0;
-                        this.tx = 0;
-                        this.ty = 0;
-                        this.xy = 0;
-                        this.b = 0;
-                    }
-                }
-                return this;
-            }
-        };
-        Spacetime2.prototype.inv = function () {
-            if (this.isLocked()) {
-                return this.clone().inv().permlock();
-            }
-            else {
-                var x0 = this.$M000;
-                var x1 = this.$M001;
-                var x2 = this.$M010;
-                var x3 = this.$M011;
-                var x4 = this.$M100;
-                var x5 = this.$M101;
-                var x6 = this.$M110;
-                var x7 = this.$M111;
-                var A = [
-                    [+x0, +x1, -x2, +x3, -x4, +x5, -x6, -x7],
-                    [+x1, +x0, +x3, -x2, +x5, -x4, -x7, -x6],
-                    [+x2, +x3, +x0, -x1, +x6, -x7, -x4, -x5],
-                    [+x3, +x2, -x1, +x0, -x7, +x6, -x5, -x4],
-                    [+x4, +x5, -x6, +x7, +x0, -x1, +x2, +x3],
-                    [+x5, +x4, +x7, -x6, -x1, +x0, +x3, +x2],
-                    [+x6, +x7, +x4, -x5, -x2, +x3, +x0, +x1],
-                    [+x7, +x6, -x5, +x4, +x3, -x2, +x1, +x0]
-                ];
-                var b = [1, 0, 0, 0, 0, 0, 0, 0];
-                var X = gauss(A, b);
-                this.a = X[0];
-                this.t = X[1];
-                this.x = X[2];
-                this.tx = X[3];
-                this.y = X[4];
-                this.ty = X[5];
-                this.xy = X[6];
-                this.b = X[7];
-                this.uom = Unit.inv(this.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.isBivector = function () {
-            return this.a === 0 && this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
-        };
-        Spacetime2.prototype.isOne = function () {
-            return this.a === 1 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0 && Unit.isOne(this.uom);
-        };
-        Spacetime2.prototype.isScalar = function () {
-            return this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
-        };
-        Spacetime2.prototype.isSpinor = function () {
-            return this.t === 0 && this.x === 0 && this.y === 0 && this.b === 0;
-        };
-        Spacetime2.prototype.isVector = function () {
-            return this.a === 0 && this.tx === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
-        };
-        Spacetime2.prototype.isZero = function () {
-            return this.a === 0 && this.t === 0 && this.x === 0 && this.tx === 0 && this.y === 0 && this.ty === 0 && this.xy === 0 && this.b === 0;
-        };
-        Spacetime2.prototype.lco = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().lco(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R000 = rhs.$M000;
-                var R001 = rhs.$M001;
-                var R010 = rhs.$M010;
-                var R011 = rhs.$M011;
-                var R100 = rhs.$M100;
-                var R101 = rhs.$M101;
-                var R110 = rhs.$M110;
-                var R111 = rhs.$M111;
-                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
-                this.$M001 = L000 * R001 + L010 * R011 + L100 * R101 - L110 * R111;
-                this.$M010 = L000 * R010 + L001 * R011 + L100 * R110 - L101 * R111;
-                this.$M011 = L000 * R011 - L100 * R111;
-                this.$M100 = L000 * R100 + L001 * R101 - L010 * R110 + L011 * R111;
-                this.$M101 = L000 * R101 + L010 * R111;
-                this.$M110 = L000 * R110 + L001 * R111;
-                this.$M111 = L000 * R111;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.mul = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().mul(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R000 = rhs.$M000;
-                var R001 = rhs.$M001;
-                var R010 = rhs.$M010;
-                var R011 = rhs.$M011;
-                var R100 = rhs.$M100;
-                var R101 = rhs.$M101;
-                var R110 = rhs.$M110;
-                var R111 = rhs.$M111;
-                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
-                this.$M001 = L000 * R001 + L001 * R000 + L010 * R011 - L011 * R010 + L100 * R101 - L101 * R100 - L110 * R111 - L111 * R110;
-                this.$M010 = L000 * R010 + L010 * R000 + L001 * R011 - L011 * R001 + L100 * R110 - L101 * R111 - L110 * R100 - L111 * R101;
-                this.$M011 = L000 * R011 + L001 * R010 - L010 * R001 + L011 * R000 - L100 * R111 + L101 * R110 - L110 * R101 - L111 * R100;
-                this.$M100 = L000 * R100 + L001 * R101 - L010 * R110 + L011 * R111 + L100 * R000 - L101 * R001 + L110 * R010 + L111 * R011;
-                this.$M101 = L000 * R101 + L001 * R100 + L010 * R111 - L011 * R110 - L100 * R001 + L101 * R000 + L110 * R011 + L111 * R010;
-                this.$M110 = L000 * R110 + L001 * R111 + L010 * R100 - L011 * R101 - L100 * R010 + L101 * R011 + L110 * R000 + L111 * R001;
-                this.$M111 = L000 * R111 + L001 * R110 - L010 * R101 + L011 * R100 + L100 * R011 - L101 * R010 + L110 * R001 + L111 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.mulByNumber = function (a) {
-            if (this.isLocked()) {
-                return this.clone().mulByNumber(a).permlock();
-            }
-            else {
-                this.$M000 *= a;
-                this.$M001 *= a;
-                this.$M010 *= a;
-                this.$M011 *= a;
-                this.$M100 *= a;
-                this.$M101 *= a;
-                this.$M110 *= a;
-                this.$M111 *= a;
-                return this;
-            }
-        };
-        Spacetime2.prototype.mulByScalar = function (a, uom) {
-            if (this.isLocked()) {
-                return this.clone().mulByScalar(a, uom).permlock();
-            }
-            else {
-                this.$M000 *= a;
-                this.$M001 *= a;
-                this.$M010 *= a;
-                this.$M011 *= a;
-                this.$M100 *= a;
-                this.$M101 *= a;
-                this.$M110 *= a;
-                this.$M111 *= a;
-                this.uom = Unit.mul(this.uom, uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.mulByVector = function (v) {
-            if (this.isLocked()) {
-                return this.clone().mulByVector(v).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R001 = v.t;
-                var R010 = v.x;
-                var R100 = v.y;
-                this.$M000 = L001 * R001 - L010 * R010 - L100 * R100;
-                this.$M001 = L000 * R001 - L011 * R010 - L101 * R100;
-                this.$M010 = L000 * R010 - L011 * R001 - L110 * R100;
-                this.$M011 = L001 * R010 - L010 * R001 - L111 * R100;
-                this.$M100 = L000 * R100 - L101 * R001 + L110 * R010;
-                this.$M101 = L001 * R100 - L100 * R001 + L111 * R010;
-                this.$M110 = L010 * R100 - L100 * R010 + L111 * R001;
-                this.$M111 = L011 * R100 - L101 * R010 + L110 * R001;
-                this.uom = Unit.mul(this.uom, v.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.neg = function () {
-            if (this.isLocked()) {
-                return this.clone().neg().permlock();
-            }
-            else {
-                this.a = -this.a;
-                this.t = -this.t;
-                this.x = -this.x;
-                this.tx = -this.tx;
-                this.y = -this.y;
-                this.ty = -this.ty;
-                this.xy = -this.xy;
-                this.b = -this.b;
-                return this;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.quaditude = function () {
-            return this.squaredNorm();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.quaditudeNoUnits = function () {
-            var a = this.$M000;
-            var t = this.$M001;
-            var x = this.$M010;
-            var y = this.$M100;
-            var tx = this.$M011;
-            var ty = this.$M101;
-            var xy = this.$M110;
-            var b = this.$M111;
-            return a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
-        };
-        Spacetime2.prototype.rco = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().rco(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R000 = rhs.$M000;
-                var R001 = rhs.$M001;
-                var R010 = rhs.$M010;
-                var R011 = rhs.$M011;
-                var R100 = rhs.$M100;
-                var R101 = rhs.$M101;
-                var R110 = rhs.$M110;
-                var R111 = rhs.$M111;
-                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
-                this.$M001 = L001 * R000 - L011 * R010 - L101 * R100 - L111 * R110;
-                this.$M010 = L010 * R000 - L011 * R001 - L110 * R100 - L111 * R101;
-                this.$M011 = L011 * R000 - L111 * R100;
-                this.$M100 = L100 * R000 - L101 * R001 + L110 * R010 + L111 * R011;
-                this.$M101 = L101 * R000 + L111 * R010;
-                this.$M110 = L110 * R000 + L111 * R001;
-                this.$M111 = L111 * R000;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.reflect = function (n) {
-            if (this.isLocked()) {
-                return this.clone().reflect(n).permlock();
-            }
-            else {
-                var t = n.t;
-                var t2 = t * t;
-                var x = n.x;
-                var x2 = x * x;
-                var y = n.y;
-                var y2 = y * y;
-                this.$M000 = this.$M000 * (x2 + y2 - t2);
-                this.$M001 = -this.$M001 * (t2 + x2 + y2);
-                this.$M010 = this.$M010 * (t2 + x2 - y2);
-                this.$M100 = this.$M100 * (t2 - x2 + y2);
-                this.$M011 = -this.$M011 * (t2 + x2 - y2);
-                this.$M101 = -this.$M101 * (t2 - x2 + y2);
-                this.$M110 = +this.$M110 * (t2 - x2 - y2);
-                this.$M111 = this.$M111 * (x2 + y2 - t2);
-                return this;
-            }
-        };
-        Spacetime2.prototype.rev = function () {
-            if (this.isLocked()) {
-                return this.clone().rev().permlock();
-            }
-            else {
-                this.$M000 = this.$M000;
-                this.$M001 = this.$M001;
-                this.$M010 = this.$M010;
-                this.$M100 = this.$M100;
-                this.$M011 = -this.$M011;
-                this.$M101 = -this.$M101;
-                this.$M110 = -this.$M110;
-                this.$M111 = -this.$M111;
-                return this;
-            }
-        };
-        Spacetime2.prototype.rotate = function (rotor) {
-            throw new Error("Method not implemented.");
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.scale = function (α) {
-            if (this.isLocked()) {
-                return this.clone().scale(α).permlock();
-            }
-            else {
-                this.$M000 = this.$M000 * α;
-                this.$M001 = this.$M001 * α;
-                this.$M010 = this.$M010 * α;
-                this.$M011 = this.$M011 * α;
-                this.$M100 = this.$M100 * α;
-                this.$M101 = this.$M101 * α;
-                this.$M110 = this.$M110 * α;
-                this.$M111 = this.$M111 * α;
-                return this;
-            }
-        };
-        Spacetime2.prototype.scp = function (rhs) {
-            if (this.isLocked()) {
-                return this.clone().scp(rhs).permlock();
-            }
-            else {
-                var L000 = this.$M000;
-                var L001 = this.$M001;
-                var L010 = this.$M010;
-                var L011 = this.$M011;
-                var L100 = this.$M100;
-                var L101 = this.$M101;
-                var L110 = this.$M110;
-                var L111 = this.$M111;
-                var R000 = rhs.$M000;
-                var R001 = rhs.$M001;
-                var R010 = rhs.$M010;
-                var R011 = rhs.$M011;
-                var R100 = rhs.$M100;
-                var R101 = rhs.$M101;
-                var R110 = rhs.$M110;
-                var R111 = rhs.$M111;
-                this.$M000 = L000 * R000 + L001 * R001 - L010 * R010 + L011 * R011 - L100 * R100 + L101 * R101 - L110 * R110 - L111 * R111;
-                this.$M001 = 0;
-                this.$M010 = 0;
-                this.$M011 = 0;
-                this.$M100 = 0;
-                this.$M101 = 0;
-                this.$M110 = 0;
-                this.$M111 = 0;
-                this.uom = Unit.mul(this.uom, rhs.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.squaredNorm = function () {
-            if (this.isLocked()) {
-                return this.clone().squaredNorm().permlock();
-            }
-            else {
-                var a = this.$M000;
-                var t = this.$M001;
-                var x = this.$M010;
-                var y = this.$M100;
-                var tx = this.$M011;
-                var ty = this.$M101;
-                var xy = this.$M110;
-                var b = this.$M111;
-                this.$M000 = a * a + t * t - x * x - y * y - tx * tx - ty * ty + xy * xy + b * b;
-                this.$M001 = 0;
-                this.$M010 = 0;
-                this.$M011 = 0;
-                this.$M100 = 0;
-                this.$M101 = 0;
-                this.$M110 = 0;
-                this.$M111 = 0;
-                this.uom = Unit.mul(this.uom, this.uom);
-                return this;
-            }
-        };
-        Spacetime2.prototype.sub = function (rhs, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().sub(rhs, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = -rhs.a * α;
-                    this.t = -rhs.t * α;
-                    this.x = -rhs.x * α;
-                    this.tx = -rhs.tx * α;
-                    this.y = -rhs.y * α;
-                    this.ty = -rhs.ty * α;
-                    this.xy = -rhs.xy * α;
-                    this.b = -rhs.b * α;
-                    this.uom = rhs.uom;
-                    return this;
-                }
-                else if (rhs.isZero() || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a -= rhs.a * α;
-                    this.t -= rhs.t * α;
-                    this.x -= rhs.x * α;
-                    this.tx -= rhs.tx * α;
-                    this.y -= rhs.y * α;
-                    this.ty -= rhs.ty * α;
-                    this.xy -= rhs.xy * α;
-                    this.b -= rhs.b * α;
-                    this.uom = Unit.compatible(this.uom, rhs.uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime2.prototype.subScalar = function (a, uom, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return this.clone().subScalar(a, uom, α).permlock();
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = -a * α;
-                    this.uom = uom;
-                    return this;
-                }
-                else if (a === 0 || α === 0) {
-                    return this;
-                }
-                else {
-                    this.a -= a * α;
-                    this.uom = Unit.compatible(this.uom, uom);
-                    return this;
-                }
-            }
-        };
-        Spacetime2.prototype.toExponential = function (fractionDigits) {
-            var coordToString = function (coord) { return coord.toExponential(fractionDigits); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
-        };
-        Spacetime2.prototype.toFixed = function (fractionDigits) {
-            var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
-        };
-        Spacetime2.prototype.toPrecision = function (precision) {
-            var coordToString = function (coord) { return coord.toPrecision(precision); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
-        };
-        Spacetime2.prototype.toString = function (radix) {
-            var coordToString = function (coord) { return coord.toString(radix); };
-            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__div__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().div(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().divByNumber(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().divByScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rdiv__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().div(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).div(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime2.scalar(1, lhs).div(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__vbar__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().scp(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().scp(Spacetime2.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rvbar__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().scp(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).scp(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__wedge__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().ext(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                // The outer product with a scalar is scalar multiplication.
-                return this.clone().mulByNumber(rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rwedge__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().ext(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                // The outer product with a scalar is scalar multiplication, and commutes.
-                return this.clone().mulByNumber(lhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__lshift__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().lco(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().lco(Spacetime2.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rlshift__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().lco(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).lco(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rshift__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().rco(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().rco(Spacetime2.scalar(rhs)).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rrshift__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().rco(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).rco(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__bang__ = function () {
-            return this.clone().inv().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__eq__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.equals(rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return this.equals(Spacetime2.scalar(rhs));
-            }
-            else if (rhs instanceof Unit) {
-                return this.equals(Spacetime2.scalar(1, rhs));
-            }
-            else {
-                return false;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__ne__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return !this.equals(rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return !this.equals(Spacetime2.scalar(rhs));
-            }
-            else if (rhs instanceof Unit) {
-                return !this.equals(Spacetime2.scalar(1, rhs));
-            }
-            else {
-                return true;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__tilde__ = function () {
-            return this.clone().rev().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__add__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().add(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().addScalar(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().addScalar(1, rhs, 1).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__radd__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().add(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).add(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime2.scalar(1, lhs).add(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__sub__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().sub(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().subScalar(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().subScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rsub__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().sub(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return Spacetime2.scalar(lhs).sub(this).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return Spacetime2.scalar(1, lhs).sub(this).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__pos__ = function () {
-            return this.clone().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__neg__ = function () {
-            return this.clone().neg().permlock();
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__mul__ = function (rhs) {
-            if (rhs instanceof Spacetime2) {
-                return this.clone().mul(rhs).permlock();
-            }
-            else if (typeof rhs === 'number') {
-                return this.clone().mulByNumber(rhs).permlock();
-            }
-            else if (rhs instanceof Unit) {
-                return this.clone().mulByScalar(1, rhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * @hidden
-         */
-        Spacetime2.prototype.__rmul__ = function (lhs) {
-            if (lhs instanceof Spacetime2) {
-                return lhs.clone().mul(this).permlock();
-            }
-            else if (typeof lhs === 'number') {
-                return this.clone().mulByNumber(lhs).permlock();
-            }
-            else if (lhs instanceof Unit) {
-                return this.clone().mulByScalar(1, lhs).permlock();
-            }
-            else {
-                return void 0;
-            }
-        };
-        Spacetime2.zero = Spacetime2.scalar(0).permlock();
-        Spacetime2.one = Spacetime2.scalar(1).permlock();
-        Spacetime2.e0 = Spacetime2.vector(1, 0, 0).permlock();
-        Spacetime2.e1 = Spacetime2.vector(0, 1, 0).permlock();
-        Spacetime2.e2 = Spacetime2.vector(0, 0, 1).permlock();
-        Spacetime2.I = new Spacetime2(0, 0, 0, 0, 0, 0, 0, 1).permlock();
-        Spacetime2.kilogram = Spacetime2.scalar(1, Unit.KILOGRAM).permlock();
-        Spacetime2.meter = Spacetime2.scalar(1, Unit.METER).permlock();
-        Spacetime2.second = Spacetime2.scalar(1, Unit.SECOND).permlock();
-        Spacetime2.ampere = Spacetime2.scalar(1, Unit.AMPERE).permlock();
-        Spacetime2.kelvin = Spacetime2.scalar(1, Unit.KELVIN).permlock();
-        Spacetime2.mole = Spacetime2.scalar(1, Unit.MOLE).permlock();
-        Spacetime2.candela = Spacetime2.scalar(1, Unit.CANDELA).permlock();
-        return Spacetime2;
-    }(AbstractGeometric));
-
-    /**
-     * @hidden
-     */
     var AdaptiveStepSolver = /** @class */ (function () {
         function AdaptiveStepSolver(diffEq, energySystem, diffEqSolver, metric) {
             this.energySystem = energySystem;
@@ -22890,6 +23244,8 @@
     exports.Engine1 = Engine1;
     exports.Engine2 = Engine2;
     exports.Engine3 = Engine3;
+    exports.EngineG11 = EngineG11;
+    exports.EngineG21 = EngineG21;
     exports.Euclidean1 = Euclidean1;
     exports.Euclidean2 = Euclidean2;
     exports.Euclidean3 = Euclidean3;

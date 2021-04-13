@@ -34,6 +34,8 @@ const R6 = R5.add(R1);
  */
 const R7 = R6.add(R1);
 
+const basis = [Dimensions.MASS, Dimensions.LENGTH, Dimensions.TIME, Dimensions.ELECTRIC_CHARGE, Dimensions.THERMODYNAMIC_TEMPERATURE, Dimensions.AMOUNT_OF_SUBSTANCE, Dimensions.LUMINOUS_INTENSITY];
+
 describe("Dimensions", function () {
     describe("constructor", function () {
         it("properties match construction arguments", function () {
@@ -305,4 +307,101 @@ describe("Dimensions", function () {
 
         return expect("" + (Dimensions.valueOf(R0, R1, QQ.valueOf(-2, 1), R0, R0, R0, R0))).toBe("length * time ** -2");
     });
+
+    describe("__add__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__add__(base).equals(base.compatible(base))).toBe(true);
+                expect(base.__add__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__radd__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__radd__(base).equals(base.compatible(base))).toBe(true);
+                expect(base.__radd__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__sub__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__sub__(base).equals(base.compatible(base))).toBe(true);
+                expect(base.__sub__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__rsub__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__rsub__(base).equals(base.compatible(base))).toBe(true);
+                expect(base.__rsub__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__mul__", function () {
+        it("", function () {
+            for (const lhs of basis) {
+                for (const rhs of basis) {
+                    expect(lhs.__mul__(rhs).equals(lhs.mul(rhs))).toBe(true);
+                }
+                expect(lhs.__mul__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__rmul__", function () {
+        it("", function () {
+            for (const lhs of basis) {
+                for (const rhs of basis) {
+                    expect(lhs.__rmul__(rhs).equals(rhs.mul(lhs))).toBe(true);
+                }
+                expect(lhs.__rmul__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__div__", function () {
+        it("", function () {
+            for (const lhs of basis) {
+                for (const rhs of basis) {
+                    expect(lhs.__div__(rhs).equals(lhs.div(rhs))).toBe(true);
+                }
+                expect(lhs.__div__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__rdiv__", function () {
+        it("", function () {
+            for (const lhs of basis) {
+                for (const rhs of basis) {
+                    expect(lhs.__rdiv__(rhs).equals(rhs.div(lhs))).toBe(true);
+                }
+                expect(lhs.__rdiv__(void 0)).toBeUndefined();
+            }
+        });
+    });
+
+    describe("__pos__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__pos__().equals(base)).toBe(true);
+            }
+        });
+    });
+
+    describe("__neg__", function () {
+        it("", function () {
+            for (const base of basis) {
+                expect(base.__neg__().equals(base)).toBe(true);
+            }
+        });
+    });
+
 });

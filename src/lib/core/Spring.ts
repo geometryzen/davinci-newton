@@ -79,16 +79,16 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
 
         this.$springConstant = new LockableMeasure(metric, metric.scalar(1));
 
-        this.attach1_ = metric.zero();
+        this.attach1_ = metric.scalar(0);
         this.attach1Lock = metric.lock(this.attach1_);
 
-        this.attach2_ = metric.zero();
+        this.attach2_ = metric.scalar(0);
         this.attach2Lock = metric.lock(this.attach2_);
 
-        this.end1_ = metric.zero();
+        this.end1_ = metric.scalar(0);
         this.end1Lock_ = metric.lock(this.end1_);
 
-        this.end2_ = metric.zero();
+        this.end2_ = metric.scalar(0);
         this.end2Lock_ = metric.lock(this.end2_);
 
         this.F1 = metric.createForce(this.body1);
@@ -99,7 +99,7 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         this.F2.locationCoordType = WORLD;
         this.F2.vectorCoordType = WORLD;
 
-        this.potentialEnergy_ = metric.zero();
+        this.potentialEnergy_ = metric.scalar(0);
         this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
 
         this.$forces = [this.F1, this.F2];

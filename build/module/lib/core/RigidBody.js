@@ -24,17 +24,17 @@ var RigidBody = /** @class */ (function (_super) {
         _this.varsIndex_ = -1;
         mustBeNonNullObject('metric', metric);
         _this.$mass = new LockableMeasure(metric, metric.scalar(1));
-        _this.$charge = new LockableMeasure(metric, metric.zero());
-        _this.$X = metric.zero();
+        _this.$charge = new LockableMeasure(metric, metric.scalar(0));
+        _this.$X = metric.scalar(0);
         _this.$R = metric.scalar(1);
-        _this.$P = metric.zero();
-        _this.$L = metric.zero();
-        _this.$Ω = metric.zero();
-        _this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
-        _this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
-        _this.$worldPoint = metric.zero();
-        _this.Ω_scratch = metric.zero();
-        _this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+        _this.$P = metric.scalar(0);
+        _this.$L = metric.scalar(0);
+        _this.$Ω = metric.scalar(0);
+        _this.$rotationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+        _this.$translationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+        _this.$worldPoint = metric.scalar(0);
+        _this.Ω_scratch = metric.scalar(0);
+        _this.$centerOfMassLocal = new LockableMeasure(metric, metric.scalar(0));
         _this.$inertiaTensorInverse = metric.identityMatrix();
         return _this;
     }

@@ -1,7 +1,7 @@
 import { readOnly } from '../i18n/readOnly';
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from './approx';
-import { arraysEQ } from './arraysEQ';
+import { arraysEQ8 } from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
 import { dotVectorE3 as dotVector } from './dotVectorE3';
 import extG3 from './extG3';
@@ -14,7 +14,7 @@ import isScalarG3 from './isScalarG3';
 import isVectorG3 from './isVectorG3';
 import { isZeroGeometricE3 } from './isZeroGeometricE3';
 import isZeroVectorE3 from './isZeroVectorE3';
-import lcoG3 from './lcoG3';
+import { lcoG3 } from './lcoG3';
 import { maskG3 } from './maskG3';
 import { MatrixLike } from './MatrixLike';
 import { mulE3 } from './mulE3';
@@ -29,9 +29,9 @@ import { squaredNormG3 } from './squaredNormG3';
 import { stringFromCoordinates } from './stringFromCoordinates';
 import { Unit } from './Unit';
 import { VectorE3 as Vector, VectorE3 } from './VectorE3';
-import wedgeXY from './wedgeXY';
-import wedgeYZ from './wedgeYZ';
-import wedgeZX from './wedgeZX';
+import { wedgeXY } from './wedgeXY';
+import { wedgeYZ } from './wedgeYZ';
+import { wedgeZX } from './wedgeZX';
 
 // Symbolic constants for the coordinate indices into the data array.
 /**
@@ -145,7 +145,7 @@ const multivector = function multivector(a: number, x: number, y: number, z: num
 /**
  * @hidden
  */
-const pseudo = function pseudo(b: number): number[] {
+const pseudo = function pseudo(b: number): [number, number, number, number, number, number, number, number] {
     const coords = zero();
     coords[COORD_PSEUDO] = b;
     return coords;
@@ -155,7 +155,7 @@ const pseudo = function pseudo(b: number): number[] {
  * Coordinates corresponding to basis labels.
  * @hidden
  */
-const coordinates = function coordinates(m: GeometricE3): number[] {
+const coordinates = function coordinates(m: GeometricE3): [number, number, number, number, number, number, number, number] {
     const coords = zero();
     coords[COORD_SCALAR] = m.a;
     coords[COORD_X] = m.x;
@@ -209,14 +209,14 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * 
      */
-    private readonly coords_: number[];
+    private readonly coords_: [number, number, number, number, number, number, number, number];
 
     /**
      * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
      * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b]. 
      * @param uom The optional unit of measure.
      */
-    constructor(coords: number[] = zero(), uom?: Unit) {
+    constructor(coords: [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] = zero(), uom?: Unit) {
         super(uom);
         if (coords.length !== 8) {
             throw new Error("coords.length must be 8");
@@ -953,7 +953,7 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
             return true;
         }
         else if (other instanceof Geometric3) {
-            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+            return arraysEQ8(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;

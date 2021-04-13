@@ -13,12 +13,12 @@ var Force = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.body = body;
         var metric = body.metric;
-        _this.location = metric.zero();
+        _this.location = metric.scalar(0);
         _this.$locationCoordType = LOCAL;
-        _this.vector = metric.zero();
+        _this.vector = metric.scalar(0);
         _this.$vectorCoordType = WORLD;
-        _this.$temp1 = metric.zero();
-        _this.$temp2 = metric.zero();
+        _this.$temp1 = metric.scalar(0);
+        _this.$temp2 = metric.scalar(0);
         return _this;
     }
     Object.defineProperty(Force.prototype, "locationCoordType", {

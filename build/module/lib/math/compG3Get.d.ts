@@ -11,4 +11,4 @@ import { GeometricE3 } from '../math/GeometricE3';
  * 6: zx
  * 7: xyz
  */
-export default function compG3Get(m: GeometricE3, index: number): number;
+export declare function compG3Get(m: GeometricE3, index: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7): number;

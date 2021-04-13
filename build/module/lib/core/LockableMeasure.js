@@ -12,7 +12,7 @@ var LockableMeasure = /** @class */ (function () {
         this.metric = metric;
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('initialValue', initialValue);
-        this.$value = metric.zero();
+        this.$value = metric.scalar(0);
         metric.copy(initialValue, this.$value);
         this.lock();
     }

@@ -105,12 +105,6 @@ export interface Metric<T> {
     neg(mv: T): T;
 
     /**
-     * Constructs a multivector representing the number one (1).
-     * The returned multivector is mutable.
-     */
-    one(): T;
-
-    /**
      * squared norm: |A| * |A| = A * rev(A)
      */
     squaredNorm(A: T): T;

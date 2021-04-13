@@ -15,7 +15,7 @@ export class LockableMeasure<T> {
     constructor(private readonly metric: Metric<T>, initialValue: T) {
         mustBeNonNullObject('metric', metric);
         mustBeNonNullObject('initialValue', initialValue);
-        this.$value = metric.zero();
+        this.$value = metric.scalar(0);
         metric.copy(initialValue, this.$value);
         this.lock();
     }

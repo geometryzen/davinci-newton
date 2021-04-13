@@ -1,7 +1,7 @@
 /**
  * @hidden
  */
-export default function compG3Set(m: {
+export declare function compG3Set(m: {
     a: number;
     x: number;
     y: number;
@@ -10,4 +10,4 @@ export default function compG3Set(m: {
     yz: number;
     zx: number;
     b: number;
-}, index: number, value: number): void;
+}, index: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, value: number): void;

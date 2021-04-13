@@ -74,18 +74,18 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
         const b = this.$frictionCoefficient.get();
         const x1 = this.body1.X;
         const x2 = this.body2.X;
-        const e = metric.zero();
+        const e = metric.scalar(0);
         metric.addVector(e, x1);
         metric.subVector(e, x2);
         metric.direction(e);
 
-        const v1 = metric.zero();
+        const v1 = metric.scalar(0);
         metric.copyVector(this.body1.P, v1);
         metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-        const v2 = metric.zero();
+        const v2 = metric.scalar(0);
         metric.copyVector(this.body2.P, v2);
         metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-        const v = metric.zero();
+        const v = metric.scalar(0);
         metric.copyVector(v1, v);
         metric.subVector(v, v2);
 
@@ -111,6 +111,6 @@ export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
     }
     potentialEnergy(): T {
         const metric = this.body1.metric;
-        return metric.zero();
+        return metric.scalar(0);
     }
 }

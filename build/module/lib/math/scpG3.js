@@ -1,7 +1,7 @@
-import get from '../math/compG3Get';
-import set from '../math/compG3Set';
 import { mulE3 } from '../math/mulE3';
 import { Unit } from '../math/Unit';
+import { compG3Get as get } from './compG3Get';
+import { compG3Set as set } from './compG3Set';
 /**
  * @hidden
  * @param a

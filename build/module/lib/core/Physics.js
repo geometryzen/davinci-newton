@@ -65,10 +65,12 @@ var Physics = /** @class */ (function (_super) {
             throw new Error("Dynamics.getVarNames() must contain a time variable.");
         }
         _this.$varsList = new VarsList(varNames);
-        _this.$potentialOffset = metric.zero();
-        _this.$force = metric.zero();
-        _this.$torque = metric.zero();
-        _this.$totalEnergy = metric.zero();
+        _this.$potentialOffset = metric.scalar(0);
+        // Probe to make sure that the multivector we have been given is mutable.
+        metric.setUom(_this.$potentialOffset, void 0);
+        _this.$force = metric.scalar(0);
+        _this.$torque = metric.scalar(0);
+        _this.$totalEnergy = metric.scalar(0);
         _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
         _this.$numVariablesPerBody = dynamics.numVarsPerBody();
         if (_this.$numVariablesPerBody <= 0) {
@@ -476,14 +478,14 @@ var Physics = /** @class */ (function (_super) {
         var metric = this.metric;
         var dynamics = this.dynamics;
         // TODO: This could be a scratch variable.
-        var F = metric.zero();
-        var r = metric.zero();
-        var B = metric.zero();
-        var eΘ = metric.zero();
-        var Fnew = metric.zero();
-        var FnewR = metric.zero();
-        var FnewΘ = metric.zero();
-        var N = metric.zero();
+        var F = metric.scalar(0);
+        var r = metric.scalar(0);
+        var B = metric.scalar(0);
+        var eΘ = metric.scalar(0);
+        var Fnew = metric.scalar(0);
+        var FnewR = metric.scalar(0);
+        var FnewΘ = metric.scalar(0);
+        var N = metric.scalar(0);
         dynamics.getForce(rateOfChangeVals, rateOfChangeUoms, idx, F);
         var X = body.X;
         var P = body.P;
@@ -593,7 +595,7 @@ var Physics = /** @class */ (function (_super) {
         var metric = this.metric;
         metric.unlock(this.$totalEnergy, this.$totalEnergyLock);
         // TODO: Could be more efficient...
-        metric.write(metric.zero(), this.$totalEnergy);
+        metric.write(metric.scalar(0), this.$totalEnergy);
         metric.add(this.$totalEnergy, this.$potentialOffset);
         var bs = this.$bodies;
         var Nb = bs.length;

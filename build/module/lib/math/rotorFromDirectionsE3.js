@@ -1,8 +1,8 @@
 import { dotVectorE3 as dot } from './dotVectorE3';
 import { quadVectorE3 as quad } from './quadVectorE3';
-import wedgeXY from './wedgeXY';
-import wedgeYZ from './wedgeYZ';
-import wedgeZX from './wedgeZX';
+import { wedgeXY } from './wedgeXY';
+import { wedgeYZ } from './wedgeYZ';
+import { wedgeZX } from './wedgeZX';
 /**
  * @hidden
  */

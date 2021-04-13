@@ -3,7 +3,7 @@ import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from "./approx";
-import { arraysEQ } from "./arraysEQ";
+import { arraysEQ4 } from "./arraysEQ";
 import { BivectorE2 as Bivector } from "./BivectorE2";
 import { gauss } from "./gauss";
 import { GeometricE2 as Geometric } from "./GeometricE2";
@@ -304,7 +304,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * 
      */
-    private readonly coords_: number[];
+    private readonly coords_: [number, number, number, number];
 
     /**
      * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
@@ -787,7 +787,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return true;
         }
         else if (other instanceof Geometric2) {
-            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+            return arraysEQ4(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;

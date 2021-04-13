@@ -10,7 +10,7 @@ export class SurfaceConstraint<T> implements GeometricConstraint<T> {
     constructor(private readonly body: ForceBody<T>, private readonly radiusFn: (x: T, radius: T) => void, private readonly rotationFn: (x: T, plane: T) => void, private readonly tangentFn: (x: T, tangent: T) => void) {
         mustBeNonNullObject('body', body);
         const metric = body.metric;
-        this.N = metric.zero();
+        this.N = metric.scalar(0);
     }
     getBody(): ForceBody<T> {
         return this.body;

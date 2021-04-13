@@ -1,5 +1,5 @@
-import get from './compG3Get';
-import set from './compG3Set';
+import { compG3Get as get } from './compG3Get';
+import { compG3Set as set } from './compG3Set';
 import { GeometricE3 } from './GeometricE3';
 import { lcoE3 } from './lcoE3';
 import { Unit } from './Unit';
@@ -11,7 +11,7 @@ import { Unit } from './Unit';
  * @param out 
  * @returns 
  */
-export default function lcoG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {
+export function lcoG3<T extends GeometricE3>(a: GeometricE3, b: GeometricE3, out: T): T {
 
     out.uom = Unit.mul(a.uom, b.uom);
 
@@ -33,9 +33,14 @@ export default function lcoG3<T extends GeometricE3>(a: GeometricE3, b: Geometri
     const b6 = get(b, 6);
     const b7 = get(b, 7);
 
-    for (let i = 0; i < 8; i++) {
-        set(out, i, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, i));
-    }
+    set(out, 0, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 0));
+    set(out, 1, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 1));
+    set(out, 2, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 2));
+    set(out, 3, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 3));
+    set(out, 4, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 4));
+    set(out, 5, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 5));
+    set(out, 6, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 6));
+    set(out, 7, lcoE3(a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3, b4, b5, b6, b7, 7));
 
     return out;
 }

@@ -587,8 +587,15 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    rotate(rotor: Spinor): Spacetime1 {
-        throw new Error("Method not implemented.");
+    rotate(spinor: Spinor): Spacetime1 {
+        if (this.isLocked()) {
+            return this.clone().rotate(spinor).permlock();
+        }
+        else {
+            // const Sa = spinor.a;
+            // const Sb = spinor.b;
+            throw new Error("Method not implemented.");
+        }
     }
 
     /**

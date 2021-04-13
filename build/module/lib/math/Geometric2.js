@@ -4,7 +4,7 @@ import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
 import { AbstractGeometric } from './AbstractGeometric';
 import { approx } from "./approx";
-import { arraysEQ } from "./arraysEQ";
+import { arraysEQ4 } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { isZeroGeometricE2 as isZeroGeometric } from "./isZeroGeometricE2";
 import { isZeroVectorE2 as isZeroVector } from "./isZeroVectorE2";
@@ -660,7 +660,7 @@ var Geometric2 = /** @class */ (function (_super) {
             return true;
         }
         else if (other instanceof Geometric2) {
-            return arraysEQ(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
+            return arraysEQ4(this.coords_, other.coords_) && Unit.isCompatible(this.uom, other.uom);
         }
         else {
             return false;

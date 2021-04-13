@@ -1,8 +1,8 @@
 import { Spring } from './Spring';
 import { Particle } from './Particle';
-import { Euclidean1 } from '../engine1D/Euclidean1';
+import { Euclidean1 } from '../engineG10/Euclidean1';
 import { Geometric1 } from '../math/Geometric1';
-import { Euclidean2 } from '../engine2D/Euclidean2';
+import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Geometric2 } from '../math/Geometric2';
 describe("Spring", function () {
     describe("Potential Energy (Euclidean1)", function () {

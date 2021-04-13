@@ -44,7 +44,7 @@ export class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> 
         this.G = G;
 
         this.$forces = [this.F1, this.F2];
-        this.potentialEnergy_ = metric.zero();
+        this.potentialEnergy_ = metric.scalar(0);
         this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
     }
 

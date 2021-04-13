@@ -33,14 +33,14 @@ export class Force<T> extends AbstractSimObject {
         super();
         const metric = body.metric;
 
-        this.location = metric.zero();
+        this.location = metric.scalar(0);
         this.$locationCoordType = LOCAL;
 
-        this.vector = metric.zero();
+        this.vector = metric.scalar(0);
         this.$vectorCoordType = WORLD;
 
-        this.$temp1 = metric.zero();
-        this.$temp2 = metric.zero();
+        this.$temp1 = metric.scalar(0);
+        this.$temp2 = metric.scalar(0);
     }
 
     /**

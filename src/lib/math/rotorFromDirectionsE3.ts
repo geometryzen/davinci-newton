@@ -4,9 +4,9 @@ import { quadVectorE3 as quad } from './quadVectorE3';
 import { SpinorE3 as Spinor } from './SpinorE3';
 import { Unit } from './Unit';
 import { VectorE3 as Vector } from './VectorE3';
-import wedgeXY from './wedgeXY';
-import wedgeYZ from './wedgeYZ';
-import wedgeZX from './wedgeZX';
+import { wedgeXY } from './wedgeXY';
+import { wedgeYZ } from './wedgeYZ';
+import { wedgeZX } from './wedgeZX';
 
 /**
  * @hidden

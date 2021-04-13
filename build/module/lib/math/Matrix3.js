@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { AbstractMatrix } from './AbstractMatrix';
-import inv3x3 from './inv3x3';
+import { inv3x3 } from './inv3x3';
 import { mul3x3 } from './mul3x3';
 import { Unit } from './Unit';
 /**
@@ -53,28 +53,37 @@ var Matrix3 = /** @class */ (function (_super) {
      *
      * @param attitude  The spinor from which the rotation will be computed.
      */
-    Matrix3.prototype.rotation = function (spinor) {
+    /*
+    rotation(spinor: SpinorE3): this {
         // The correspondence between quaternions and spinors is
         // i <=> -e2^e3, j <=> -e3^e1, k <=> -e1^e2.
-        var x = -spinor.yz;
-        var y = -spinor.zx;
-        var z = -spinor.xy;
-        var α = spinor.a;
-        var x2 = x + x;
-        var y2 = y + y;
-        var z2 = z + z;
-        var xx = x * x2;
-        var xy = x * y2;
-        var xz = x * z2;
-        var yy = y * y2;
-        var yz = y * z2;
-        var zz = z * z2;
-        var wx = α * x2;
-        var wy = α * y2;
-        var wz = α * z2;
-        this.set(1 - yy - zz, xy - wz, xz + wy, xy + wz, 1 - xx - zz, yz - wx, xz - wy, yz + wx, 1 - xx - yy);
+        const x: number = -spinor.yz;
+        const y: number = -spinor.zx;
+        const z: number = -spinor.xy;
+        const α: number = spinor.a;
+
+        const x2 = x + x;
+        const y2 = y + y;
+        const z2 = z + z;
+        const xx = x * x2;
+        const xy = x * y2;
+        const xz = x * z2;
+        const yy = y * y2;
+        const yz = y * z2;
+        const zz = z * z2;
+        const wx = α * x2;
+        const wy = α * y2;
+        const wz = α * z2;
+
+        this.set(
+            1 - yy - zz, xy - wz, xz + wy,
+            xy + wz, 1 - xx - zz, yz - wx,
+            xz - wy, yz + wx, 1 - xx - yy
+        );
+
         return this;
-    };
+    }
+    */
     /**
      * @param i the zero-based index of the row.
      */

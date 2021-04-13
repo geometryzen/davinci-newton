@@ -20,7 +20,7 @@ var ConstantForceLaw = /** @class */ (function (_super) {
         metric.copyVector(value, _this.$force.vector);
         _this.$force.vectorCoordType = valueCoordType;
         _this.$forces = [_this.$force];
-        _this.$potentialEnergy = metric.zero();
+        _this.$potentialEnergy = metric.scalar(0);
         _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
         return _this;
     }

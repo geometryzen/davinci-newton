@@ -45,7 +45,7 @@ var COORD_XYZ = 7;
  * 6: zx
  * 7: xyz
  */
-export default function compG3Get(m, index) {
+export function compG3Get(m, index) {
     switch (index) {
         case COORD_W: {
             return m.a;
@@ -70,9 +70,6 @@ export default function compG3Get(m, index) {
         }
         case COORD_XYZ: {
             return m.b;
-        }
-        default: {
-            throw new Error("index => " + index);
         }
     }
 }

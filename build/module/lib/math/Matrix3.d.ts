@@ -1,5 +1,4 @@
 import { AbstractMatrix } from './AbstractMatrix';
-import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 /**
  *
@@ -34,7 +33,6 @@ export declare class Matrix3 extends AbstractMatrix<Matrix3> {
      *
      * @param attitude  The spinor from which the rotation will be computed.
      */
-    rotation(spinor: SpinorE3): this;
     /**
      * @param i the zero-based index of the row.
      */

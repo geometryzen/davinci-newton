@@ -159,7 +159,7 @@ describe("Geometric3", function () {
         });
         it("should throw Error when coords length is not 8.", function () {
             expect(function () {
-                const mv = new Geometric3([]);
+                const mv = new Geometric3([] as any);
                 mv.toString();
             }).toThrowError("coords.length must be 8");
         });

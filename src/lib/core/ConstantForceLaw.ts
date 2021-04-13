@@ -29,7 +29,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
         this.$force.vectorCoordType = valueCoordType;
         this.$forces = [this.$force];
 
-        this.$potentialEnergy = metric.zero();
+        this.$potentialEnergy = metric.scalar(0);
         this.$potentialEnergyLock = metric.lock(this.$potentialEnergy);
     }
 

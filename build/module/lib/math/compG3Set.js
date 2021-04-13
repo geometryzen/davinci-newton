@@ -33,7 +33,7 @@ var COORD_XYZ = 7;
 /**
  * @hidden
  */
-export default function compG3Set(m, index, value) {
+export function compG3Set(m, index, value) {
     switch (index) {
         case COORD_W: {
             m.a = value;
@@ -67,7 +67,5 @@ export default function compG3Set(m, index, value) {
             m.b = value;
             break;
         }
-        default:
-            throw new Error("index => " + index);
     }
 }

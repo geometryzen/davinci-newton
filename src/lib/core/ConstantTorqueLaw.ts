@@ -30,6 +30,6 @@ export class ConstantTorqueLaw<T> extends AbstractSimObject implements TorqueLaw
     potentialEnergy(): T {
         const metric = this.$body.metric;
         // We don't really want to return a mutable quantity.
-        return metric.zero();
+        return metric.scalar(0);
     }
 }

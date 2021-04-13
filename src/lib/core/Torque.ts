@@ -16,8 +16,8 @@ export abstract class Torque<T> extends AbstractSimObject {
     constructor(private readonly body: ForceBody<T>) {
         super();
         const metric = body.metric;
-        this.bivector = metric.zero();
-        this.$temp1 = metric.zero();
+        this.bivector = metric.scalar(0);
+        this.$temp1 = metric.scalar(0);
     }
 
     /**

@@ -2,7 +2,7 @@ import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { LOCAL, WORLD } from '../model/CoordType';
 import { CoulombLaw } from './CoulombLaw';
-import { Sphere3 } from '../engine3D/Sphere3';
+import { Sphere3 } from '../engineG30/Sphere3';
 
 /**
  * @hidden

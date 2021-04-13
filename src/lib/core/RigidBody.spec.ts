@@ -1,7 +1,7 @@
-import { Euclidean1 } from '../engine1D/Euclidean1';
-import { Euclidean2 } from '../engine2D/Euclidean2';
-import { Block3 } from '../engine3D/Block3';
-import { Euclidean3 } from '../engine3D/Euclidean3';
+import { Euclidean1 } from '../engineG10/Euclidean1';
+import { Euclidean2 } from '../engineG20/Euclidean2';
+import { Block3 } from '../engineG30/Block3';
+import { Euclidean3 } from '../engineG30/Euclidean3';
 import { Geometric1 } from '../math/Geometric1';
 import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';

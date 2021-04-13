@@ -24,7 +24,7 @@ var GravitationLaw = /** @class */ (function (_super) {
         _this.F2.vectorCoordType = WORLD;
         _this.G = G;
         _this.$forces = [_this.F1, _this.F2];
-        _this.potentialEnergy_ = metric.zero();
+        _this.potentialEnergy_ = metric.scalar(0);
         _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
         return _this;
     }

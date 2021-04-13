@@ -67,17 +67,17 @@ var LinearDamper = /** @class */ (function (_super) {
         var b = this.$frictionCoefficient.get();
         var x1 = this.body1.X;
         var x2 = this.body2.X;
-        var e = metric.zero();
+        var e = metric.scalar(0);
         metric.addVector(e, x1);
         metric.subVector(e, x2);
         metric.direction(e);
-        var v1 = metric.zero();
+        var v1 = metric.scalar(0);
         metric.copyVector(this.body1.P, v1);
         metric.divByScalar(v1, metric.a(this.body1.M), metric.uom(this.body1.M));
-        var v2 = metric.zero();
+        var v2 = metric.scalar(0);
         metric.copyVector(this.body2.P, v2);
         metric.divByScalar(v2, metric.a(this.body2.M), metric.uom(this.body2.M));
-        var v = metric.zero();
+        var v = metric.scalar(0);
         metric.copyVector(v1, v);
         metric.subVector(v, v2);
         var f1 = this.F1.vector;
@@ -99,7 +99,7 @@ var LinearDamper = /** @class */ (function (_super) {
     };
     LinearDamper.prototype.potentialEnergy = function () {
         var metric = this.body1.metric;
-        return metric.zero();
+        return metric.scalar(0);
     };
     return LinearDamper;
 }(AbstractSimObject));

@@ -98,17 +98,17 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         super();
         mustBeNonNullObject('metric', metric);
         this.$mass = new LockableMeasure(metric, metric.scalar(1));
-        this.$charge = new LockableMeasure(metric, metric.zero());
-        this.$X = metric.zero();
+        this.$charge = new LockableMeasure(metric, metric.scalar(0));
+        this.$X = metric.scalar(0);
         this.$R = metric.scalar(1);
-        this.$P = metric.zero();
-        this.$L = metric.zero();
-        this.$Ω = metric.zero();
-        this.$rotationalEnergy = new LockableMeasure(metric, metric.zero());
-        this.$translationalEnergy = new LockableMeasure(metric, metric.zero());
-        this.$worldPoint = metric.zero();
-        this.Ω_scratch = metric.zero();
-        this.$centerOfMassLocal = new LockableMeasure(metric, metric.zero());
+        this.$P = metric.scalar(0);
+        this.$L = metric.scalar(0);
+        this.$Ω = metric.scalar(0);
+        this.$rotationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+        this.$translationalEnergy = new LockableMeasure(metric, metric.scalar(0));
+        this.$worldPoint = metric.scalar(0);
+        this.Ω_scratch = metric.scalar(0);
+        this.$centerOfMassLocal = new LockableMeasure(metric, metric.scalar(0));
         this.$inertiaTensorInverse = metric.identityMatrix();
     }
 

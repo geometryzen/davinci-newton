@@ -48,7 +48,7 @@ const COORD_XYZ = 7;
  * 6: zx
  * 7: xyz
  */
-export default function compG3Get(m: GeometricE3, index: number): number {
+export function compG3Get(m: GeometricE3, index: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7): number {
     switch (index) {
         case COORD_W: {
             return m.a;
@@ -73,9 +73,6 @@ export default function compG3Get(m: GeometricE3, index: number): number {
         }
         case COORD_XYZ: {
             return m.b;
-        }
-        default: {
-            throw new Error("index => " + index);
         }
     }
 }

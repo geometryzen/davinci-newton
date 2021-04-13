@@ -1,7 +1,6 @@
 import { AbstractMatrix } from './AbstractMatrix';
-import inv3x3 from './inv3x3';
+import { inv3x3 } from './inv3x3';
 import { mul3x3 } from './mul3x3';
-import { SpinorE3 } from './SpinorE3';
 import { Unit } from './Unit';
 
 /**
@@ -58,6 +57,7 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
      *
      * @param attitude  The spinor from which the rotation will be computed.
      */
+    /*
     rotation(spinor: SpinorE3): this {
         // The correspondence between quaternions and spinors is
         // i <=> -e2^e3, j <=> -e3^e1, k <=> -e1^e2.
@@ -87,6 +87,7 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
 
         return this;
     }
+    */
 
     /**
      * @param i the zero-based index of the row.

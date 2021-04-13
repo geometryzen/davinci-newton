@@ -22,7 +22,7 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
      * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b].
      * @param uom The optional unit of measure.
      */
-    constructor(coords?: number[], uom?: Unit);
+    constructor(coords?: [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number], uom?: Unit);
     /**
      * @hidden
      */

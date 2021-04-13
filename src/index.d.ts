@@ -2350,7 +2350,6 @@ export class Matrix3 implements MatrixLike {
     mul(rhs: Matrix3): this;
     mul2(a: Matrix3, b: Matrix3): this;
     rmul(lhs: Matrix3): this;
-    rotation(spinor: SpinorE3): this;
     row(i: number): number[];
     setElement(row: number, column: number, value: number): void;
     toString(radix?: number): string;

@@ -1,45 +1,27 @@
-import isDefined from '../checks/isDefined';
-import isNull from '../checks/isNull';
-import isUndefined from '../checks/isUndefined';
 
-/**
- * @hidden
- * @param a 
- * @param b 
- * @returns 
- */
-export function arraysEQ(a: any[], b: any[]): boolean {
-  if (isDefined(a)) {
-    if (isDefined(b)) {
-      if (!isNull(a)) {
-        if (!isNull(b)) {
-          const aLen = a.length;
-          const bLen = b.length;
-          if (aLen === bLen) {
-            for (let i = 0; i < aLen; i++) {
-              if (a[i] !== b[i]) {
-                return false;
-              }
-            }
-            return true;
-          }
-          else {
-            return false;
-          }
-        }
-        else {
-          return false;
-        }
-      }
-      else {
-        return isNull(b);
-      }
-    }
-    else {
+export function arraysEQ2(a: [number, number], b: [number, number]): boolean {
+  for (let i = 0; i < 2; i++) {
+    if (a[i] !== b[i]) {
       return false;
     }
   }
-  else {
-    return isUndefined(b);
+  return true;
+}
+
+export function arraysEQ4(a: [number, number, number, number], b: [number, number, number, number]): boolean {
+  for (let i = 0; i < 4; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
   }
+  return true;
+}
+
+export function arraysEQ8(a: [number, number, number, number, number, number, number, number], b: [number, number, number, number, number, number, number, number]): boolean {
+  for (let i = 0; i < 8; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
 }
