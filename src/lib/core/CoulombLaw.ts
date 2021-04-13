@@ -17,7 +17,7 @@ export class CoulombLaw<T> extends AbstractSimObject implements ForceLaw<T> {
 
     private readonly F1: Force<T>;
     private readonly F2: Force<T>;
-    private readonly $forces: Force<T>[] = [];
+    private readonly $forces: Force<T>[];
 
     /**
      * Scratch variable for computing potential energy.

@@ -80,6 +80,9 @@ export class Euclidean3 implements Metric<Geometric3> {
     isZero(mv: Geometric3): boolean {
         return mv.isZero();
     }
+    lco(lhs: Geometric3, rhs: Geometric3): Geometric3 {
+        return lhs.lco(rhs);
+    }
     lock(mv: Geometric3): number {
         return mv.lock();
     }

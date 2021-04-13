@@ -2,7 +2,6 @@ import { MatrixLike } from '../math/MatrixLike';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Charged } from './Charged';
 import { ForceBody } from './ForceBody';
-import { LockableMeasure } from './LockableMeasure';
 import { Massive } from './Massive';
 import { Metric } from './Metric';
 /**
@@ -62,7 +61,7 @@ export declare class RigidBody<T> extends AbstractSimObject implements ForceBody
     /**
      * center of mass in local coordinates.
      */
-    protected $centerOfMassLocal: LockableMeasure<T>;
+    private $centerOfMassLocal;
     /**
      * Scratch variable for rotational energy.
      */

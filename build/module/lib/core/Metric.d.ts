@@ -61,6 +61,7 @@ export interface Metric<T> {
     isSpinor(mv: T): boolean;
     isVector(mv: T): boolean;
     isZero(mv: T): boolean;
+    lco(lhs: T, rhs: T): T;
     /**
      * Used to change the mutability of the multivector from mutable to immutable.
      * An immutable multivector is also described as locked. The number returned is

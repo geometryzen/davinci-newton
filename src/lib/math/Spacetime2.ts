@@ -930,6 +930,27 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    subVector(v: Vector, α = 1): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().subVector(v, α).permlock();
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (v.t === 0 && v.x === 0 && v.y === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.t -= v.t * α;
+            this.x -= v.x * α;
+            this.y -= v.y * α;
+            return this;
+        }
+    }
+
     toExponential(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);

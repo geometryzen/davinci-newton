@@ -14,7 +14,7 @@ export interface ForceBody<T> extends SimObject {
      */
     uuid: string;
     /**
-     * mass (scalar)
+     * mass (scalar). In the case of relativistic systems, this is the rest mass.
      */
     M: T;
     /**

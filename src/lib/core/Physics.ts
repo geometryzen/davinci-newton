@@ -4,23 +4,23 @@ import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
 import { contains } from '../util/contains';
 import remove from '../util/remove';
-import { Dynamics } from './Dynamics';
+import { toName } from '../util/toName';
+import { isValidName } from '../util/validName';
+import { checkBodyAngularVelocityUnits } from './checkBodyAngularVelocityUnits';
+import { checkBodyKinematicUnits } from './checkBodyKinematicUnits';
 import { EnergySystem } from './EnergySystem';
 import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
-import { TorqueLaw } from './TorqueLaw';
 import { GeometricConstraint } from './GeometricConstraint';
+import { Kinematics } from './Kinematics';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
 import { Simulation } from './Simulation';
-import { VarsList } from './VarsList';
 import { Torque } from './Torque';
+import { TorqueLaw } from './TorqueLaw';
 import { varNamesContainsTime } from './varNamesContainsTime';
-import { isValidName } from '../util/validName';
-import { toName } from '../util/toName';
-import { checkBodyKinematicUnits } from './checkBodyKinematicUnits';
-import { checkBodyAngularVelocityUnits } from './checkBodyAngularVelocityUnits';
+import { VarsList } from './VarsList';
 
 
 /**
@@ -91,13 +91,13 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor(public readonly metric: Metric<T>, private readonly dynamics: Dynamics<T>) {
+    constructor(public readonly metric: Metric<T>, private readonly kinematics: Kinematics<T>) {
         super();
         mustBeNonNullObject('metric', metric);
-        mustBeNonNullObject('dynamics', dynamics);
-        const varNames = dynamics.getVarNames();
+        mustBeNonNullObject('kinematics', kinematics);
+        const varNames = kinematics.getVarNames();
         if (!varNamesContainsTime(varNames)) {
-            throw new Error("Dynamics.getVarNames() must contain a time variable.");
+            throw new Error("kinematics.getVarNames() must contain a time variable.");
         }
         this.$varsList = new VarsList(varNames);
         this.$potentialOffset = metric.scalar(0);
@@ -107,9 +107,9 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         this.$torque = metric.scalar(0);
         this.$totalEnergy = metric.scalar(0);
         this.$totalEnergyLock = metric.lock(this.$totalEnergy);
-        this.$numVariablesPerBody = dynamics.numVarsPerBody();
+        this.$numVariablesPerBody = kinematics.numVarsPerBody();
         if (this.$numVariablesPerBody <= 0) {
-            throw new Error("Dynamics.numVarsPerBody() must define at least one variable per body.");
+            throw new Error("kinematics.numVarsPerBody() must define at least one variable per body.");
         }
     }
     getVariableName(idx: number): string {
@@ -144,15 +144,15 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     addBody(body: ForceBody<T>): void {
         mustBeNonNullObject('body', body);
         if (!contains(this.$bodies, body)) {
-            const dynamics = this.dynamics;
+            const kinematics = this.kinematics;
             // create variables in vars array for this body
             const names = [];
             for (let k = 0; k < this.$numVariablesPerBody; k++) {
-                const name = dynamics.getOffsetName(k);
+                const name = kinematics.getOffsetName(k);
                 if (isValidName(toName(name))) {
                     names.push(name);
                 } else {
-                    throw new Error(`Body kinematic variable name, '${name}', returned by Dynamics.getOffsetName(${k}) is not a valid name.`);
+                    throw new Error(`Body kinematic variable name, '${name}', returned by kinematics.getOffsetName(${k}) is not a valid name.`);
                 }
             }
             body.varsIndex = this.$varsList.addVariables(names);
@@ -262,7 +262,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
 
 
     private discontinuousChangeToEnergy(): void {
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
         this.$varsList.incrSequence(...dynamics.discontinuousEnergyVars());
     }
 
@@ -271,7 +271,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
     private updateBodiesFromStateVariables(vars: number[], units: Unit[], uomTime: Unit): void {
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
         const bodies = this.$bodies;
         const N = bodies.length;
         for (let i = 0; i < N; i++) {
@@ -331,7 +331,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
      */
     evaluate(state: number[], stateUnits: Unit[], rateOfChangeVals: number[], rateOfChangeUoms: Unit[], Δt: number, uomTime?: Unit): void {
         const metric = this.metric;
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
         // Move objects so that rigid body objects know their current state.
         this.updateBodiesFromStateVariables(state, stateUnits, uomTime);
         const bodies = this.$bodies;
@@ -413,7 +413,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
 
         const metric = this.metric;
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
 
         // The rate of change of momentum is force.
         // dP/dt = F
@@ -483,7 +483,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
 
         const metric = this.metric;
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
 
         // The rate of change of angular momentum is torque.
         // dL/dt = T
@@ -537,7 +537,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
 
         const metric = this.metric;
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
 
         // TODO: This could be a scratch variable.
         const F = metric.scalar(0);
@@ -610,7 +610,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
     private updateVarsFromBody(body: ForceBody<T>): void {
         const idx = body.varsIndex;
         if (idx > -1) {
-            this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
+            this.kinematics.updateVarsFromBody(body, idx, this.$varsList);
         }
     }
 
@@ -624,7 +624,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         const vars = varsList.getValues();
         const units = varsList.getUnits();
         this.updateBodiesFromStateVariables(vars, units, uomTime);
-        const dynamics = this.dynamics;
+        const dynamics = this.kinematics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     }
 

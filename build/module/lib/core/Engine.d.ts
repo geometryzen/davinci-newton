@@ -1,8 +1,8 @@
 import { Unit } from '../math/Unit';
-import { Dynamics } from './Dynamics';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 import { GeometricConstraint } from './GeometricConstraint';
+import { Kinematics } from './Kinematics';
 import { Metric } from './Metric';
 import { TorqueLaw } from './TorqueLaw';
 import { VarsList } from './VarsList';
@@ -24,7 +24,7 @@ export declare class Engine<T> {
      * @param dynamics
      * @param options
      */
-    constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
+    constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
     /**
      * Returns the state variables of the system.
      */

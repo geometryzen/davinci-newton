@@ -1,7 +1,7 @@
 import { EnergySystem } from "../core/EnergySystem";
 import { Physics } from "../core/Physics";
 import { Geometric1 } from "../math/Geometric1";
-import { Dynamics1 } from "./Dynamics1";
+import { KinematicsG10 } from "./KinematicsG10";
 import { Euclidean1 } from "./Euclidean1";
 
 /**
@@ -9,6 +9,6 @@ import { Euclidean1 } from "./Euclidean1";
  */
 export class Physics1 extends Physics<Geometric1> implements EnergySystem<Geometric1> {
     constructor() {
-        super(new Euclidean1(), new Dynamics1());
+        super(new Euclidean1(), new KinematicsG10());
     }
 }

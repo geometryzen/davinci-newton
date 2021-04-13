@@ -1,8 +1,12 @@
+import { FaradayLaw } from "../core/FaradayLaw";
 import { Spacetime1 } from "../math/Spacetime1";
 import { EngineG11 } from "./EngineG11";
 import { ParticleG11 } from "./ParticleG11";
 
+const zero = Spacetime1.zero;
 const e0 = Spacetime1.e0;
+const e1 = Spacetime1.e1;
+const e01 = e0.mul(e1);
 
 describe("EngineG11", function () {
     describe("constructor", function () {
@@ -36,22 +40,57 @@ describe("EngineG11", function () {
 
             const bead = new ParticleG11();
 
+            // The bead is initially spatially at rest.
+            // This implies that it is moving through time.
             bead.P = e0;
 
-            console.log(`bead.X=${bead.X}`);
-            console.log(`bead.P=${bead.P}`);
+            expect(bead.X.equals(zero)).toBeTrue();
+            expect(bead.P.equals(e0)).toBeTrue();
 
             engine.addBody(bead);
 
-            console.log(`bead.X=${bead.X}`);
-            console.log(`bead.P=${bead.P}`);
+            const steps = 1024;
+            for (let i = 0; i < steps; i++) {
+                engine.advance(1 / steps);
+            }
 
-            engine.advance(0.001);
+            // The bead ends up at e0.
+            expect(bead.X.equals(e0)).toBeTrue();
+            // The linear momentum does not change.
+            expect(bead.P.equals(e0)).toBeTrue();
+        });
+    });
+    describe("FaradayLaw", function () {
+        it("the bead should advance in time if no spatial momentum.", function () {
+            const engine = new EngineG11();
 
-            console.log(`bead.X=${bead.X}`);
-            console.log(`bead.P=${bead.P}`);
+            const bead = new ParticleG11();
 
-            expect(true).toBe(true);
+            // The bead is initially spatially at rest.
+            // This implies that it is moving through time.
+            bead.P = e0;
+
+            expect(bead.X.equals(zero)).toBeTrue();
+            expect(bead.P.equals(e0)).toBeTrue();
+
+            engine.addBody(bead);
+
+            const faradayLaw = new FaradayLaw(bead, function (X: Spacetime1) { return e01; });
+            expect(faradayLaw).toBeDefined();
+
+            engine.addForceLaw(faradayLaw);
+
+            const steps = 1024 * 4;
+            for (let i = 0; i < steps; i++) {
+                engine.advance(1 / steps);
+            }
+            // console.log(`bead.X=>${bead.X}`);
+            // console.log(`bead.P=>${bead.P}`);
+            // The bead ends up at e0.
+            // expect(bead.X.equals(e0)).toBeTrue();
+            // The linear momentum does no change.
+            // expect(bead.P.equals(e0)).toBeTrue();
+            expect(true).toBeTrue();
         });
     });
 });

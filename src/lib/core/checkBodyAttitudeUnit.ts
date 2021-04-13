@@ -1,7 +1,7 @@
 import { Unit } from "../math/Unit";
 
 /**
- * Helper function to be called from Dynamics.updateBodyFromVars.
+ * Helper function to be called from Kinematics.updateBodyFromVars.
  * Checks the unit of measure for the attitute (R) and suggests resolutions.
  * A prominent feature is to detect a missing uom in a simulation time step and to suggest the resolution.
  * @hidden

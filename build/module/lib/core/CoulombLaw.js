@@ -13,7 +13,6 @@ var CoulombLaw = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.body1_ = body1_;
         _this.body2_ = body2_;
-        _this.$forces = [];
         _this.metric = body1_.metric;
         var metric = _this.metric;
         _this.F1 = metric.createForce(_this.body1_);

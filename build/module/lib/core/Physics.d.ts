@@ -1,14 +1,14 @@
 import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
-import { Dynamics } from './Dynamics';
 import { EnergySystem } from './EnergySystem';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
-import { TorqueLaw } from './TorqueLaw';
 import { GeometricConstraint } from './GeometricConstraint';
+import { Kinematics } from './Kinematics';
 import { Metric } from './Metric';
 import { SimList } from './SimList';
 import { Simulation } from './Simulation';
+import { TorqueLaw } from './TorqueLaw';
 import { VarsList } from './VarsList';
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
@@ -17,7 +17,7 @@ import { VarsList } from './VarsList';
  */
 export declare class Physics<T> extends AbstractSubject implements Simulation, EnergySystem<T> {
     readonly metric: Metric<T>;
-    private readonly dynamics;
+    private readonly kinematics;
     /**
      *
      */
@@ -78,7 +78,7 @@ export declare class Physics<T> extends AbstractSubject implements Simulation, E
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor(metric: Metric<T>, dynamics: Dynamics<T>);
+    constructor(metric: Metric<T>, kinematics: Kinematics<T>);
     getVariableName(idx: number): string;
     /**
      * Determines whether calculated forces will be added to the simulation list.

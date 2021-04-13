@@ -37,7 +37,7 @@ export const INDEX_RESERVED_LAST = 4;
  * Each state variable is a pair consisting of (number, Unit). This decomposition allows the solvers (integrators) to treat the whole
  * system as a single particle in a large vector space.
  */
-export interface Dynamics<T> {
+export interface Kinematics<T> {
     /**
      * The rate of change of position is the velocity.
      * dX/dt = V = P / M

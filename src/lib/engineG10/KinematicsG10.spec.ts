@@ -1,18 +1,18 @@
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
-import { Dynamics1 } from "./Dynamics1";
+import { KinematicsG10 } from "./KinematicsG10";
 import { Particle1 } from "./Particle1";
 
-describe("Dynamics1", function () {
+describe("KinematicsG10", function () {
     describe("constructor", function () {
         it("should be defined.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             expect(dynamics).toBeDefined();
         });
     });
     describe("getVarNames", function () {
         it("", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const varNames = dynamics.getVarNames();
             expect(varNames).toBeDefined();
             expect(Array.isArray(varNames));
@@ -21,7 +21,7 @@ describe("Dynamics1", function () {
     });
     describe("numVarsPerBody() method", function () {
         it("should return an integer which is greater than zero.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const numVarsPerBody = dynamics.numVarsPerBody();
             expect(typeof numVarsPerBody).toBe('number');
             expect(numVarsPerBody > 0).toBe(true);
@@ -29,7 +29,7 @@ describe("Dynamics1", function () {
     });
     describe("discontinuousEnergyVars", function () {
         it("", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const vars = dynamics.discontinuousEnergyVars();
             expect(vars).toBeDefined();
             expect(Array.isArray(vars)).toBe(true);
@@ -37,7 +37,7 @@ describe("Dynamics1", function () {
     });
     describe("getOffsetName() method", function () {
         it("should be callable.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const name = dynamics.getOffsetName(0);
             expect(name).toBeDefined();
             expect(typeof name).toBe('string');
@@ -45,7 +45,7 @@ describe("Dynamics1", function () {
     });
     describe("updateBodyFromVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const body = new Particle1(M, Q);
@@ -58,7 +58,7 @@ describe("Dynamics1", function () {
     });
     describe("setPositionRateOfChangeVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const body = new Particle1(M, Q);
@@ -71,7 +71,7 @@ describe("Dynamics1", function () {
     });
     describe("setAttitudeRateOfChangeVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const body = new Particle1(M, Q);
@@ -84,7 +84,7 @@ describe("Dynamics1", function () {
     });
     describe("zeroLinearMomentumVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const body = new Particle1(M, Q);
@@ -97,7 +97,7 @@ describe("Dynamics1", function () {
     });
     describe("zeroAngularMomentumVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const body = new Particle1(M, Q);
@@ -110,7 +110,7 @@ describe("Dynamics1", function () {
     });
     describe("addForceToRateOfChangeLinearMomentumVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const force = new Geometric1();
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];
@@ -121,7 +121,7 @@ describe("Dynamics1", function () {
     });
     describe("addTorqueToRateOfChangeAngularMomentumVars() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const torque = new Geometric1();
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];
@@ -132,7 +132,7 @@ describe("Dynamics1", function () {
     });
     describe("getForce() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const force = new Geometric1();
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];
@@ -142,7 +142,7 @@ describe("Dynamics1", function () {
     });
     describe("setForce() method", function () {
         it("should work.", function () {
-            const dynamics = new Dynamics1();
+            const dynamics = new KinematicsG10();
             const force = new Geometric1();
             const rateOfChangeVals: number[] = [];
             const rateOfChangeUoms: Unit[] = [];

@@ -1,5 +1,5 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Dynamics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
+import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { VarsList } from "../core/VarsList";
@@ -61,7 +61,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
 /**
  * @hidden
  */
-export class Dynamics1 implements Dynamics<Geometric1> {
+export class KinematicsG10 implements Kinematics<Geometric1> {
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric1>, uomTime: Unit): void {
         const P = body.P;
         const M = body.M;

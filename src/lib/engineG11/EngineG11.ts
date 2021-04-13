@@ -1,6 +1,6 @@
 import { Engine, EngineOptions } from "../core/Engine";
 import { Spacetime1 } from "../math/Spacetime1";
-import { DynamicsG11 } from "./DynamicsG11";
+import { KinematicsG11 } from "./KinematicsG11";
 import { MetricG11 } from "./MetricG11";
 
 /**
@@ -8,6 +8,6 @@ import { MetricG11 } from "./MetricG11";
  */
 export class EngineG11 extends Engine<Spacetime1> {
     constructor(options?: EngineOptions) {
-        super(new MetricG11(), new DynamicsG11(), options);
+        super(new MetricG11(), new KinematicsG11(), options);
     }
 }

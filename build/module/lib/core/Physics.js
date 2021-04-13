@@ -5,13 +5,13 @@ import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
 import { contains } from '../util/contains';
 import remove from '../util/remove';
-import { SimList } from './SimList';
-import { VarsList } from './VarsList';
-import { varNamesContainsTime } from './varNamesContainsTime';
-import { isValidName } from '../util/validName';
 import { toName } from '../util/toName';
-import { checkBodyKinematicUnits } from './checkBodyKinematicUnits';
+import { isValidName } from '../util/validName';
 import { checkBodyAngularVelocityUnits } from './checkBodyAngularVelocityUnits';
+import { checkBodyKinematicUnits } from './checkBodyKinematicUnits';
+import { SimList } from './SimList';
+import { varNamesContainsTime } from './varNamesContainsTime';
+import { VarsList } from './VarsList';
 /**
  * The Physics engine computes the derivatives of the kinematic variables X, R, P, J for each body,
  * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
@@ -22,10 +22,10 @@ var Physics = /** @class */ (function (_super) {
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    function Physics(metric, dynamics) {
+    function Physics(metric, kinematics) {
         var _this = _super.call(this) || this;
         _this.metric = metric;
-        _this.dynamics = dynamics;
+        _this.kinematics = kinematics;
         /**
          *
          */
@@ -59,10 +59,10 @@ var Physics = /** @class */ (function (_super) {
          */
         _this.$showTorques = false;
         mustBeNonNullObject('metric', metric);
-        mustBeNonNullObject('dynamics', dynamics);
-        var varNames = dynamics.getVarNames();
+        mustBeNonNullObject('kinematics', kinematics);
+        var varNames = kinematics.getVarNames();
         if (!varNamesContainsTime(varNames)) {
-            throw new Error("Dynamics.getVarNames() must contain a time variable.");
+            throw new Error("kinematics.getVarNames() must contain a time variable.");
         }
         _this.$varsList = new VarsList(varNames);
         _this.$potentialOffset = metric.scalar(0);
@@ -72,9 +72,9 @@ var Physics = /** @class */ (function (_super) {
         _this.$torque = metric.scalar(0);
         _this.$totalEnergy = metric.scalar(0);
         _this.$totalEnergyLock = metric.lock(_this.$totalEnergy);
-        _this.$numVariablesPerBody = dynamics.numVarsPerBody();
+        _this.$numVariablesPerBody = kinematics.numVarsPerBody();
         if (_this.$numVariablesPerBody <= 0) {
-            throw new Error("Dynamics.numVarsPerBody() must define at least one variable per body.");
+            throw new Error("kinematics.numVarsPerBody() must define at least one variable per body.");
         }
         return _this;
     }
@@ -115,16 +115,16 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.addBody = function (body) {
         mustBeNonNullObject('body', body);
         if (!contains(this.$bodies, body)) {
-            var dynamics = this.dynamics;
+            var kinematics = this.kinematics;
             // create variables in vars array for this body
             var names = [];
             for (var k = 0; k < this.$numVariablesPerBody; k++) {
-                var name_1 = dynamics.getOffsetName(k);
+                var name_1 = kinematics.getOffsetName(k);
                 if (isValidName(toName(name_1))) {
                     names.push(name_1);
                 }
                 else {
-                    throw new Error("Body kinematic variable name, '" + name_1 + "', returned by Dynamics.getOffsetName(" + k + ") is not a valid name.");
+                    throw new Error("Body kinematic variable name, '" + name_1 + "', returned by kinematics.getOffsetName(" + k + ") is not a valid name.");
                 }
             }
             body.varsIndex = this.$varsList.addVariables(names);
@@ -224,7 +224,7 @@ var Physics = /** @class */ (function (_super) {
     };
     Physics.prototype.discontinuousChangeToEnergy = function () {
         var _a;
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         (_a = this.$varsList).incrSequence.apply(_a, dynamics.discontinuousEnergyVars());
     };
     /**
@@ -232,7 +232,7 @@ var Physics = /** @class */ (function (_super) {
      * Also takes care of updating auxiliary variables, which are also mutable.
      */
     Physics.prototype.updateBodiesFromStateVariables = function (vars, units, uomTime) {
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         var bodies = this.$bodies;
         var N = bodies.length;
         for (var i = 0; i < N; i++) {
@@ -286,7 +286,7 @@ var Physics = /** @class */ (function (_super) {
      */
     Physics.prototype.evaluate = function (state, stateUnits, rateOfChangeVals, rateOfChangeUoms, Δt, uomTime) {
         var metric = this.metric;
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         // Move objects so that rigid body objects know their current state.
         this.updateBodiesFromStateVariables(state, stateUnits, uomTime);
         var bodies = this.$bodies;
@@ -364,7 +364,7 @@ var Physics = /** @class */ (function (_super) {
             return;
         }
         var metric = this.metric;
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         // The rate of change of momentum is force.
         // dP/dt = F
         forceApp.computeForce(this.$force);
@@ -428,7 +428,7 @@ var Physics = /** @class */ (function (_super) {
             return;
         }
         var metric = this.metric;
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         // The rate of change of angular momentum is torque.
         // dL/dt = T
         torqueApp.computeTorque(this.$torque);
@@ -476,7 +476,7 @@ var Physics = /** @class */ (function (_super) {
             return;
         }
         var metric = this.metric;
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         // TODO: This could be a scratch variable.
         var F = metric.scalar(0);
         var r = metric.scalar(0);
@@ -541,7 +541,7 @@ var Physics = /** @class */ (function (_super) {
     Physics.prototype.updateVarsFromBody = function (body) {
         var idx = body.varsIndex;
         if (idx > -1) {
-            this.dynamics.updateVarsFromBody(body, idx, this.$varsList);
+            this.kinematics.updateVarsFromBody(body, idx, this.$varsList);
         }
     };
     /**
@@ -554,7 +554,7 @@ var Physics = /** @class */ (function (_super) {
         var vars = varsList.getValues();
         var units = varsList.getUnits();
         this.updateBodiesFromStateVariables(vars, units, uomTime);
-        var dynamics = this.dynamics;
+        var dynamics = this.kinematics;
         dynamics.epilog(this.$bodies, this.$forceLaws, this.$potentialOffset, varsList);
     };
     Object.defineProperty(Physics.prototype, "bodies", {

@@ -74,7 +74,7 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
     /**
      * center of mass in local coordinates.
      */
-    protected $centerOfMassLocal: LockableMeasure<T>;
+    private $centerOfMassLocal: LockableMeasure<T>;
 
     /**
      * Scratch variable for rotational energy.

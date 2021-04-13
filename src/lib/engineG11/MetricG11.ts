@@ -4,6 +4,7 @@ import { Metric } from "../core/Metric";
 import { Matrix0 } from "../math/Matrix0";
 import { MatrixLike } from "../math/MatrixLike";
 import { Spacetime1 } from "../math/Spacetime1";
+import { ForceG11 } from "./ForceG11";
 
 export class MetricG11 implements Metric<Spacetime1> {
     a(mv: Spacetime1): number {
@@ -39,10 +40,15 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     copyVector(source: Spacetime1, target: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
+        target.a = source.a;
+        target.t = source.t;
+        target.x = source.x;
+        target.b = source.b;
+        target.uom = source.uom;
+        return target;
     }
     createForce(body: ForceBody<Spacetime1>): Force<Spacetime1> {
-        throw new Error("Method not implemented.");
+        return new ForceG11(body);
     }
     createTorque(body: ForceBody<Spacetime1>): Torque<Spacetime1> {
         throw new Error("Method not implemented.");
@@ -54,7 +60,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     ext(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return lhs.ext(rhs);
     }
     identityMatrix(): MatrixLike {
         return new Matrix0(new Float32Array([]));
@@ -75,7 +81,10 @@ export class MetricG11 implements Metric<Spacetime1> {
         return mv.isVector();
     }
     isZero(mv: Spacetime1): boolean {
-        throw new Error("Method not implemented.");
+        return mv.isZero();
+    }
+    lco(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
+        return lhs.lco(rhs);
     }
     lock(mv: Spacetime1): number {
         return mv.lock();
@@ -90,7 +99,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     mulByScalar(lhs: Spacetime1, a: number, uom?: Unit): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return lhs.mulByScalar(a, uom);
     }
     mulByVector(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         throw new Error("Method not implemented.");
@@ -120,10 +129,11 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     subScalar(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
+        // return lhs.subScalar(rhs.a,rhs.uom);
         throw new Error("Method not implemented.");
     }
     subVector(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return lhs.subVector(rhs);
     }
     unlock(mv: Spacetime1, token: number): void {
         mv.unlock(token);

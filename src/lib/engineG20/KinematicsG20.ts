@@ -1,5 +1,5 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Dynamics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
+import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { VarsList } from "../core/VarsList";
@@ -77,7 +77,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
 /**
  * @hidden
  */
-export class Dynamics2 implements Dynamics<Geometric2> {
+export class KinematicsG20 implements Kinematics<Geometric2> {
     numVarsPerBody(): number {
         // Each body is described by 7 kinematic components.
         // 2 position
@@ -147,19 +147,60 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         varsList.setValueContinuous(INDEX_TOTAL_LINEAR_MOMENTUM_Y, Py);
         varsList.setValueContinuous(INDEX_TOTAL_ANGULAR_MOMENTUM_XY, Lxy);
     }
+    updateBodyFromVars(vars: number[], uoms: Unit[], idx: number, body: ForceBody<Geometric2>, uomTime: Unit): void {
+        body.X.a = 0;
+        body.X.x = vars[idx + OFFSET_POSITION_X];
+        body.X.y = vars[idx + OFFSET_POSITION_Y];
+        body.X.b = 0;
+        body.X.uom = uoms[idx + OFFSET_POSITION_X];
+
+        body.R.a = vars[idx + OFFSET_ATTITUDE_A];
+        body.R.x = 0;
+        body.R.y = 0;
+        body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
+        checkBodyAttitudeUnit(uoms[idx + OFFSET_ATTITUDE_XY], uomTime);
+        body.R.uom = uoms[idx + OFFSET_ATTITUDE_XY];
+
+        // Keep the attitude as close to 1 as possible.
+        const R = body.R;
+        const magR = Math.sqrt(R.a * R.a + R.b * R.b);
+        body.R.a = body.R.a / magR;
+        body.R.b = body.R.b / magR;
+
+        body.P.a = 0;
+        body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
+        body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
+        body.P.b = 0;
+        body.P.uom = uoms[idx + OFFSET_LINEAR_MOMENTUM_X];
+
+        body.L.a = 0;
+        body.L.x = 0;
+        body.L.y = 0;
+        body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
+        if (!Unit.isOne(body.L.uom)) {
+            if (Unit.isOne(uoms[idx + OFFSET_ANGULAR_MOMENTUM_XY])) {
+                throw new Error("Overwriting Angular Momentum Units!");
+            }
+        }
+        body.L.uom = uoms[idx + OFFSET_ANGULAR_MOMENTUM_XY];
+
+        body.updateAngularVelocity();
+    }
     updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void {
         const X = body.X;
         const R = body.R;
+        const P = body.P;
+        const L = body.L;
 
         if (!Unit.isOne(R.uom)) {
             throw new Error(`R.uom should be one, but was ${R.uom}`);
         }
 
         vars.setValueJump(OFFSET_POSITION_X + idx, X.x);
-        vars.setUnit(OFFSET_POSITION_Y + idx, X.uom);
+        vars.setUnit(OFFSET_POSITION_X + idx, X.uom);
 
         vars.setValueJump(OFFSET_POSITION_Y + idx, X.y);
-        vars.setUnit(OFFSET_POSITION_X + idx, X.uom);
+        vars.setUnit(OFFSET_POSITION_Y + idx, X.uom);
 
         vars.setValueJump(OFFSET_ATTITUDE_A + idx, R.a);
         vars.setUnit(OFFSET_ATTITUDE_A + idx, R.uom);
@@ -167,14 +208,14 @@ export class Dynamics2 implements Dynamics<Geometric2> {
         vars.setValueJump(OFFSET_ATTITUDE_XY + idx, R.b);
         vars.setUnit(OFFSET_ATTITUDE_XY + idx, R.uom);
 
-        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.x);
-        vars.setUnit(OFFSET_LINEAR_MOMENTUM_X + idx, body.P.uom);
+        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_X + idx, P.x);
+        vars.setUnit(OFFSET_LINEAR_MOMENTUM_X + idx, P.uom);
 
-        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.y);
-        vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y + idx, body.P.uom);
+        vars.setValueJump(OFFSET_LINEAR_MOMENTUM_Y + idx, P.y);
+        vars.setUnit(OFFSET_LINEAR_MOMENTUM_Y + idx, P.uom);
 
-        vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.b);
-        vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, body.L.uom);
+        vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, L.b);
+        vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, L.uom);
     }
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2, uomTime: Unit): void {
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
@@ -210,45 +251,6 @@ export class Dynamics2 implements Dynamics<Geometric2> {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Tb + torque.b;
-    }
-    updateBodyFromVars(vars: number[], units: Unit[], idx: number, body: ForceBody<Geometric2>, uomTime: Unit): void {
-        body.X.a = 0;
-        body.X.x = vars[idx + OFFSET_POSITION_X];
-        body.X.y = vars[idx + OFFSET_POSITION_Y];
-        body.X.b = 0;
-        body.X.uom = units[idx + OFFSET_POSITION_X];
-
-        body.R.a = vars[idx + OFFSET_ATTITUDE_A];
-        body.R.x = 0;
-        body.R.y = 0;
-        body.R.b = vars[idx + OFFSET_ATTITUDE_XY];
-        checkBodyAttitudeUnit(units[idx + OFFSET_ATTITUDE_XY], uomTime);
-        body.R.uom = units[idx + OFFSET_ATTITUDE_XY];
-
-        // Keep the attitude as close to 1 as possible.
-        const R = body.R;
-        const magR = Math.sqrt(R.a * R.a + R.b * R.b);
-        body.R.a = body.R.a / magR;
-        body.R.b = body.R.b / magR;
-
-        body.P.a = 0;
-        body.P.x = vars[idx + OFFSET_LINEAR_MOMENTUM_X];
-        body.P.y = vars[idx + OFFSET_LINEAR_MOMENTUM_Y];
-        body.P.b = 0;
-        body.P.uom = units[idx + OFFSET_LINEAR_MOMENTUM_X];
-
-        body.L.a = 0;
-        body.L.x = 0;
-        body.L.y = 0;
-        body.L.b = vars[idx + OFFSET_ANGULAR_MOMENTUM_XY];
-        if (!Unit.isOne(body.L.uom)) {
-            if (Unit.isOne(units[idx + OFFSET_ANGULAR_MOMENTUM_XY])) {
-                throw new Error("Overwriting Angular Momentum Units!");
-            }
-        }
-        body.L.uom = units[idx + OFFSET_ANGULAR_MOMENTUM_XY];
-
-        body.updateAngularVelocity();
     }
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric2>) {
         const P = body.P;

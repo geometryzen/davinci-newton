@@ -169,6 +169,9 @@ export class Euclidean1 implements Metric<Geometric1> {
     isZero(mv: Geometric1): boolean {
         return mv.isZero();
     }
+    lco(lhs: Geometric1, rhs: Geometric1): Geometric1 {
+        return lhs.lco(rhs);
+    }
     lock(mv: Geometric1): number {
         return mv.lock();
     }

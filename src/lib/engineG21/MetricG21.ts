@@ -79,6 +79,9 @@ export class MetricG21 implements Metric<Spacetime2> {
     isZero(mv: Spacetime2): boolean {
         return mv.isZero();
     }
+    lco(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
+        return lhs.lco(rhs);
+    }
     lock(mv: Spacetime2): number {
         return mv.lock();
     }

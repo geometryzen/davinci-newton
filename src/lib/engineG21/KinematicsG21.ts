@@ -1,11 +1,11 @@
-import { Dynamics } from "../core/Dynamics";
+import { Kinematics } from "../core/Kinematics";
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { VarsList } from "../core/VarsList";
 import { Spacetime2 } from "../math/Spacetime2";
 import { Unit } from "../math/Unit";
 
-export class DynamicsG21 implements Dynamics<Spacetime2> {
+export class KinematicsG21 implements Kinematics<Spacetime2> {
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime2>, uomTime: Unit): void {
         throw new Error("Method not implemented.");
     }

@@ -2431,112 +2431,7 @@ export interface Metric<T> {
     zero(): T;
 }
 
-export class Euclidean1 implements Metric<Geometric1> {
-    a(mv: Geometric1): number;
-    add(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    addVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    applyMatrix(mv: Geometric1, matrix: MatrixLike): Geometric1;
-    copy(source: Geometric1, target: Geometric1): Geometric1;
-    copyBivector(source: Geometric1, target: Geometric1): Geometric1;
-    copyScalar(a: number, uom: Unit, target: Geometric1): Geometric1;
-    copyVector(source: Geometric1, target: Geometric1): Geometric1;
-    direction(mv: Geometric1): Geometric1;
-    divByScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1;
-    ext(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    isZero(mv: Geometric1): boolean;
-    lock(mv: Geometric1): number;
-    magnitude(mv: Geometric1): Geometric1;
-    mulByNumber(lhs: Geometric1, alpha: number): Geometric1;
-    mulByScalar(lhs: Geometric1, a: number, uom: Unit): Geometric1;
-    mulByVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    neg(mv: Geometric1): Geometric1;
-    quaditude(mv: Geometric1): Geometric1;
-    rev(mv: Geometric1): Geometric1;
-    rotate(mv: Geometric1, spinor: Geometric1): Geometric1;
-    scalar(a: number, uom?: Unit): Geometric1;
-    scp(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    setUom(mv: Geometric1, uom: Unit): void;
-    sub(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    subScalar(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    subVector(lhs: Geometric1, rhs: Geometric1): Geometric1;
-    unlock(mv: Geometric1, token: number): void;
-    uom(mv: Geometric1): Unit;
-    write(source: Geometric1, target: Geometric1): void;
-    writeVector(source: Geometric1, target: Geometric1): void;
-    zero(): Geometric1;
-}
-
-export class Euclidean2 implements Metric<Geometric2> {
-    a(mv: Geometric2): number;
-    add(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    addVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    applyMatrix(mv: Geometric2, matrix: MatrixLike): Geometric2;
-    copy(source: Geometric2, target: Geometric2): Geometric2;
-    copyBivector(source: Geometric2, target: Geometric2): Geometric2;
-    copyScalar(a: number, uom: Unit, target: Geometric2): Geometric2;
-    copyVector(source: Geometric2, target: Geometric2): Geometric2;
-    direction(mv: Geometric2): Geometric2;
-    divByScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2;
-    ext(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    isZero(mv: Geometric2): boolean;
-    lock(mv: Geometric2): number;
-    magnitude(mv: Geometric2): Geometric2;
-    mulByNumber(lhs: Geometric2, alpha: number): Geometric2;
-    mulByScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2;
-    mulByVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    neg(mv: Geometric2): Geometric2;
-    quaditude(mv: Geometric2): Geometric2;
-    rev(mv: Geometric2): Geometric2;
-    rotate(mv: Geometric2, spinor: Geometric2): Geometric2;
-    scalar(a: number, uom?: Unit): Geometric2;
-    scp(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    setUom(mv: Geometric2, uom: Unit): void;
-    sub(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    subScalar(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    subVector(lhs: Geometric2, rhs: Geometric2): Geometric2;
-    unlock(mv: Geometric2, token: number): void;
-    uom(mv: Geometric2): Unit;
-    write(source: Geometric2, target: Geometric2): void;
-    writeVector(source: Geometric2, target: Geometric2): void;
-    zero(): Geometric2;
-}
-
-export class Euclidean3 implements Metric<Geometric3> {
-    a(mv: Geometric3): number;
-    add(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    addVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    applyMatrix(mv: Geometric3, matrix: MatrixLike): Geometric3;
-    copy(source: Geometric3, target: Geometric3): Geometric3;
-    copyBivector(source: Geometric3, target: Geometric3): Geometric3;
-    copyScalar(a: number, uom: Unit, target: Geometric3): Geometric3;
-    copyVector(source: Geometric3, target: Geometric3): Geometric3;
-    direction(mv: Geometric3): Geometric3;
-    divByScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3;
-    ext(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    isZero(mv: Geometric3): boolean;
-    lock(mv: Geometric3): number;
-    magnitude(mv: Geometric3): Geometric3;
-    mulByNumber(lhs: Geometric3, alpha: number): Geometric3;
-    mulByScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3;
-    mulByVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    neg(mv: Geometric3): Geometric3;
-    quaditude(mv: Geometric3): Geometric3;
-    rev(mv: Geometric3): Geometric3;
-    rotate(mv: Geometric3, spinor: Geometric3): Geometric3;
-    scalar(a: number, uom?: Unit): Geometric3;
-    scp(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    setUom(mv: Geometric3, uom: Unit): void;
-    sub(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    subScalar(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    subVector(lhs: Geometric3, rhs: Geometric3): Geometric3;
-    unlock(mv: Geometric3, token: number): void;
-    uom(mv: Geometric3): Unit;
-    write(source: Geometric3, target: Geometric3): void;
-    writeVector(source: Geometric3, target: Geometric3): void;
-    zero(): Geometric3;
-}
-
-export interface Dynamics<T> {
+export interface Kinematics<T> {
     /**
      * The rate of change of position is the velocity.
      * dX/dt = V = P / M
@@ -2577,54 +2472,6 @@ export interface Dynamics<T> {
     addForce(rateOfChange: number[], idx: number, force: T): void;
     addTorque(rateOfChange: number[], idx: number, torque: T): void;
     epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
-    discontinuousEnergyVariables(): number[];
-    getOffsetName(offset: number): string;
-    getVarNames(): string[];
-    numVariablesPerBody(): number;
-}
-
-export class Dynamics1 implements Dynamics<Geometric1> {
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric1>): void;
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric1>): void;
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric1>): void;
-    updateVarsFromBody(body: ForceBody<Geometric1>, idx: number, vars: VarsList): void;
-    addForce(rateOfChange: number[], idx: number, force: Geometric1): void;
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric1): void;
-    epilog(bodies: ForceBody<Geometric1>[], forceLaws: ForceLaw<Geometric1>[], potentialOffset: Geometric1, vars: VarsList): void;
-    discontinuousEnergyVariables(): number[];
-    getOffsetName(offset: number): string;
-    getVarNames(): string[];
-    numVariablesPerBody(): number;
-}
-
-export class Dynamics2 implements Dynamics<Geometric2> {
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void;
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric2>): void;
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric2>): void;
-    updateVarsFromBody(body: ForceBody<Geometric2>, idx: number, vars: VarsList): void;
-    addForce(rateOfChange: number[], idx: number, force: Geometric2): void;
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric2): void;
-    epilog(bodies: ForceBody<Geometric2>[], forceLaws: ForceLaw<Geometric2>[], potentialOffset: Geometric2, vars: VarsList): void;
-    discontinuousEnergyVariables(): number[];
-    getOffsetName(offset: number): string;
-    getVarNames(): string[];
-    numVariablesPerBody(): number;
-}
-
-export class Dynamics3 implements Dynamics<Geometric3> {
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<Geometric3>): void;
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
-    updateBody(vars: number[], idx: number, body: ForceBody<Geometric3>): void;
-    updateVarsFromBody(body: ForceBody<Geometric3>, idx: number, vars: VarsList): void;
-    addForce(rateOfChange: number[], idx: number, force: Geometric3): void;
-    addTorque(rateOfChange: number[], idx: number, torque: Geometric3): void;
-    epilog(bodies: ForceBody<Geometric3>[], forceLaws: ForceLaw<Geometric3>[], potentialOffset: Geometric3, vars: VarsList): void;
     discontinuousEnergyVariables(): number[];
     getOffsetName(offset: number): string;
     getVarNames(): string[];
@@ -2880,6 +2727,17 @@ export class Particle3 extends Particle<Geometric3> {
 }
 
 /**
+ * An physical object with no internal structure living in Spacetime1 - G(1,1).
+ */
+export class ParticleG11 extends Particle<Spacetime1> {
+    /**
+     * @param M the mass of the particle. Defaults to 1 (dimensionless).
+     * @param Q the electric charge of the particle. Defaults to 1 (dimensionless).
+     */
+    constructor(M?: Spacetime1, Q?: Spacetime1);
+}
+
+/**
  * A solid sphere of uniform density.
  */
 export class Sphere3 extends RigidBody<Geometric3> {
@@ -3090,7 +2948,7 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
     /**
      * Constructs a Physics engine for 3D simulations.
      */
-    constructor(metric: Metric<T>, dynamics: Dynamics<T>);
+    constructor(metric: Metric<T>, dynamics: Kinematics<T>);
 
     /**
      * 
@@ -3174,7 +3032,7 @@ export class Engine<T> {
      * @param dynamics 
      * @param options 
      */
-    constructor(metric: Metric<T>, dynamics: Dynamics<T>, options?: Partial<EngineOptions>);
+    constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
     /**
      * The state variables of the system.
      */
@@ -3256,7 +3114,7 @@ export class Engine<T> {
  */
 export class Engine1 extends Engine<Geometric1> {
     /**
-     * Constructs and instance of Engine using the Geometric1 multivector.
+     * Constructs an instance of Engine using the Geometric1 multivector.
      * @param options Specify the integration algorithm, and adaptive step sizing.
      */
     constructor(options?: Partial<EngineOptions>);
@@ -3267,7 +3125,7 @@ export class Engine1 extends Engine<Geometric1> {
  */
 export class Engine2 extends Engine<Geometric2> {
     /**
-     * Constructs and instance of Engine using the Geometric2 multivector.
+     * Constructs an instance of Engine using the Geometric2 multivector.
      * @param options Specify the integration algorithm, and adaptive step sizing.
      */
     constructor(options?: Partial<EngineOptions>);
@@ -3278,7 +3136,23 @@ export class Engine2 extends Engine<Geometric2> {
  */
 export class Engine3 extends Engine<Geometric3> {
     /**
-     * Constructs and instance of Engine using the Geometric3 multivector.
+     * Constructs an instance of Engine using the Geometric3 multivector.
+     * @param options Specify the integration algorithm, and adaptive step sizing.
+     */
+    constructor(options?: Partial<EngineOptions>);
+}
+
+export class EngineG11 extends Engine<Spacetime1> {
+    /**
+     * Constructs an instance of Engine using the Spacetime1 multivector.
+     * @param options Specify the integration algorithm, and adaptive step sizing.
+     */
+    constructor(options?: Partial<EngineOptions>);
+}
+
+export class EngineG21 extends Engine<Spacetime2> {
+    /**
+     * Constructs an instance of Engine using the Spacetime2 multivector.
      * @param options Specify the integration algorithm, and adaptive step sizing.
      */
     constructor(options?: Partial<EngineOptions>);
@@ -3586,6 +3460,15 @@ export class CoulombLaw<T> implements ForceLaw<T> {
     updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;
+}
+
+export class FaradayLaw<T> implements ForceLaw<T> {
+    forces: Force<T>[];
+    constructor(body: RigidBody<T>, field: (position: T) => T);
+    updateForces(): Force<T>[];
+    disconnect(): void;
+    potentialEnergy(): T;
+    expireTime: number;
 }
 
 export class GravitationLaw<T> implements ForceLaw<T> {

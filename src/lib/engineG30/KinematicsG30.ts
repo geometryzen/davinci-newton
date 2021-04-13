@@ -1,5 +1,5 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Dynamics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Dynamics';
+import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from '../core/ForceBody';
 import { ForceLaw } from '../core/ForceLaw';
 import { VarsList } from '../core/VarsList';
@@ -120,7 +120,7 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
 /**
  * @hidden
  */
-export class Dynamics3 implements Dynamics<Geometric3> {
+export class KinematicsG30 implements Kinematics<Geometric3> {
     numVarsPerBody(): number {
         return 13;
     }

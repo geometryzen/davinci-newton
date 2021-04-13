@@ -5,7 +5,7 @@ import { Particle1 } from '../engineG10/Particle1';
 import { Block2 } from '../engineG20/Block2';
 import { ConstantForceLaw2 } from '../engineG20/ConstantForceLaw2';
 import { Disc2 } from '../engineG20/Disc2';
-import { Dynamics2 } from '../engineG20/Dynamics2';
+import { KinematicsG20 } from '../engineG20/KinematicsG20';
 import { Engine2 } from '../engineG20/Engine2';
 import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Force2 } from '../engineG20/Force2';
@@ -15,7 +15,7 @@ import { Polygon2 } from '../engineG20/Polygon2';
 import { Spring2 } from '../engineG20/Spring2';
 import { SurfaceConstraint2 } from '../engineG20/SurfaceConstraint2';
 import { Block3 } from '../engineG30/Block3';
-import { Dynamics3 } from '../engineG30/Dynamics3';
+import { KinematicsG30 } from '../engineG30/KinematicsG30';
 import { Euclidean3 } from '../engineG30/Euclidean3';
 import { Particle3 } from '../engineG30/Particle3';
 import { SurfaceConstraint3 } from '../engineG30/SurfaceConstraint3';
@@ -95,7 +95,7 @@ describe("engine", function () {
     describe("static", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
@@ -130,7 +130,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
@@ -151,7 +151,7 @@ describe("engine", function () {
     describe("constant velocity", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
@@ -179,7 +179,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
@@ -208,7 +208,7 @@ describe("engine", function () {
     describe("constant force", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
@@ -310,7 +310,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
@@ -361,7 +361,7 @@ describe("engine", function () {
     describe("constant torque", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
@@ -385,7 +385,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
@@ -462,7 +462,7 @@ describe("engine", function () {
     describe("spring force", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const block1 = new Block2(Geometric2.scalar(1, Unit.METER), Geometric2.scalar(1, Unit.METER));
@@ -520,7 +520,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const block = new Block3(Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER), Geometric3.scalar(1, Unit.METER));
@@ -549,7 +549,7 @@ describe("engine", function () {
     describe("constraints", function () {
         it("Euclidean2D", function () {
             const metric = new Euclidean2();
-            const dynamics = new Dynamics2();
+            const dynamics = new KinematicsG20();
             const engine = new Engine(metric, dynamics);
 
             const dimensionless = true;
@@ -593,7 +593,7 @@ describe("engine", function () {
         });
         it("Euclidean3D", function () {
             const metric = new Euclidean3();
-            const dynamics = new Dynamics3();
+            const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
             const dimensionless = true;
