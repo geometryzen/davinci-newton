@@ -88,7 +88,9 @@ export class Force<T> extends AbstractSimObject {
                 metric.copyVector(this.location, position);
                 // We could subtract the body center-of-mass in body coordinates here.
                 // Instead we assume that it is always zero.
-                metric.rotate(position, this.body.R);
+                if (!metric.isOne(this.body.R)) {
+                    metric.rotate(position, this.body.R);
+                }
                 metric.addVector(position, this.body.X);
                 break;
             }

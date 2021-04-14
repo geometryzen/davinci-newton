@@ -72,6 +72,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     isBivector(mv: Geometric2): boolean {
         return mv.isBivector();
     }
+    isOne(mv: Geometric2): boolean {
+        return mv.isOne();
+    }
     isScalar(mv: Geometric2): boolean {
         return mv.isScalar();
     }
@@ -110,6 +113,9 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     squaredNorm(mv: Geometric2): Geometric2 {
         return mv.squaredNorm();
+    }
+    rco(lhs: Geometric2, rhs: Geometric2): Geometric2 {
+        return lhs.rco(rhs);
     }
     rev(mv: Geometric2): Geometric2 {
         return mv.rev();

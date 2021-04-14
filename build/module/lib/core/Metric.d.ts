@@ -57,6 +57,7 @@ export interface Metric<T> {
      */
     invertMatrix(matrix: MatrixLike): MatrixLike;
     isBivector(mv: T): boolean;
+    isOne(mv: T): boolean;
     isScalar(mv: T): boolean;
     isSpinor(mv: T): boolean;
     isVector(mv: T): boolean;
@@ -80,6 +81,7 @@ export interface Metric<T> {
      * squared norm: |A| * |A| = A * rev(A)
      */
     squaredNorm(A: T): T;
+    rco(lhs: T, rhs: T): T;
     rev(mv: T): T;
     rotate(mv: T, spinor: T): T;
     /**

@@ -19,6 +19,8 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
      */
     addScalar(a: F, uom?: Unit, α?: number): M;
 
+    addVector(vector: V, α?: number): M;
+
     /**
      * Makes a copy of this multivector.
      * The resulting multivector is mutable (unlocked).

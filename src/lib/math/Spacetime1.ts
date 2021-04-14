@@ -219,6 +219,31 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    /**
+     * @hidden
+     * @param v 
+     * @param α 
+     * @returns 
+     */
+    addVector(v: Vector, α = 1): Spacetime1 {
+        if (this.isLocked()) {
+            return this.clone().addVector(v, α).permlock();
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (v.t === 0 && v.x === 0) {
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.t += v.t * α;
+            this.x += v.x * α;
+            return this;
+        }
+    }
     clone(): Spacetime1 {
         return new Spacetime1(this.a, this.t, this.x, this.b, this.uom);
     }
@@ -697,6 +722,12 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+    /**
+     * @hidden
+     * @param v 
+     * @param α 
+     * @returns 
+     */
     subVector(v: Vector, α = 1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().subVector(v, α).permlock();

@@ -1,3 +1,4 @@
+import { ConstantForceLaw } from "../core/ConstantForceLaw";
 import { FaradayLaw } from "../core/FaradayLaw";
 import { Spacetime1 } from "../math/Spacetime1";
 import { EngineG11 } from "./EngineG11";
@@ -75,6 +76,40 @@ describe("EngineG11", function () {
 
             engine.addBody(bead);
 
+            const constantForceLaw = new ConstantForceLaw(bead, e1);
+            expect(constantForceLaw).toBeDefined();
+
+            engine.addForceLaw(constantForceLaw);
+
+            const steps = 1024 * 4;
+            for (let i = 0; i < steps; i++) {
+                engine.advance(1 / steps);
+            }
+            // console.log(`bead.X=>${bead.X}`);
+            // console.log(`bead.P=>${bead.P}`);
+            // console.log(`|bead.P|^2=>${bead.P.squaredNorm()}`);
+            // The bead ends up at e0.
+            // expect(bead.X.equals(e0)).toBeTrue();
+            // The linear momentum does no change.
+            // expect(bead.P.equals(e0)).toBeTrue();
+            expect(true).toBeTrue();
+        });
+    });
+    describe("FaradayLaw", function () {
+        it("the bead should advance in time if no spatial momentum.", function () {
+            const engine = new EngineG11();
+
+            const bead = new ParticleG11();
+
+            // The bead is initially spatially at rest.
+            // This implies that it is moving through time.
+            bead.P = e0;
+
+            expect(bead.X.equals(zero)).toBeTrue();
+            expect(bead.P.equals(e0)).toBeTrue();
+
+            engine.addBody(bead);
+
             const faradayLaw = new FaradayLaw(bead, function (X: Spacetime1) { return e01; });
             expect(faradayLaw).toBeDefined();
 
@@ -84,6 +119,9 @@ describe("EngineG11", function () {
             for (let i = 0; i < steps; i++) {
                 engine.advance(1 / steps);
             }
+            // console.log(`bead.X=>${bead.X}`);
+            // console.log(`bead.P=>${bead.P}`);
+            // console.log(`|bead.P|^2=>${bead.P.squaredNorm()}`);
             // console.log(`bead.X=>${bead.X}`);
             // console.log(`bead.P=>${bead.P}`);
             // The bead ends up at e0.

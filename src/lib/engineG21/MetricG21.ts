@@ -67,6 +67,9 @@ export class MetricG21 implements Metric<Spacetime2> {
     isBivector(mv: Spacetime2): boolean {
         return mv.isBivector();
     }
+    isOne(mv: Spacetime2): boolean {
+        return mv.isOne();
+    }
     isScalar(mv: Spacetime2): boolean {
         return mv.isScalar();
     }
@@ -105,6 +108,9 @@ export class MetricG21 implements Metric<Spacetime2> {
     }
     squaredNorm(mv: Spacetime2): Spacetime2 {
         return mv.squaredNorm();
+    }
+    rco(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
+        return lhs.rco(rhs);
     }
     rev(mv: Spacetime2): Spacetime2 {
         return mv.rev();

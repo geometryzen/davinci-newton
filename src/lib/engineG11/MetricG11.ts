@@ -14,7 +14,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     addVector(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return lhs.addVector(rhs);
     }
     applyMatrix(mv: Spacetime1, matrix: MatrixLike): Spacetime1 {
         throw new Error("Method not implemented.");
@@ -71,6 +71,9 @@ export class MetricG11 implements Metric<Spacetime1> {
     isBivector(mv: Spacetime1): boolean {
         throw new Error("Method not implemented.");
     }
+    isOne(mv: Spacetime1): boolean {
+        return mv.isOne();
+    }
     isScalar(mv: Spacetime1): boolean {
         return mv.isScalar();
     }
@@ -109,6 +112,9 @@ export class MetricG11 implements Metric<Spacetime1> {
     }
     squaredNorm(A: Spacetime1): Spacetime1 {
         throw new Error("Method not implemented.");
+    }
+    rco(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
+        return lhs.rco(rhs);
     }
     rev(mv: Spacetime1): Spacetime1 {
         throw new Error("Method not implemented.");

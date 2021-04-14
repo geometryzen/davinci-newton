@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-13';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.90';
+            this.VERSION = '1.0.91';
         }
         return Newton;
     }());
@@ -5132,7 +5132,9 @@
                     metric.copyVector(this.location, position);
                     // We could subtract the body center-of-mass in body coordinates here.
                     // Instead we assume that it is always zero.
-                    metric.rotate(position, this.body.R);
+                    if (!metric.isOne(this.body.R)) {
+                        metric.rotate(position, this.body.R);
+                    }
                     metric.addVector(position, this.body.X);
                     break;
                 }
@@ -7871,6 +7873,9 @@
         Euclidean1.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
+        Euclidean1.prototype.isOne = function (mv) {
+            return mv.isOne();
+        };
         Euclidean1.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
@@ -7959,6 +7964,9 @@
         };
         Euclidean1.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
+        };
+        Euclidean1.prototype.rco = function (lhs, rhs) {
+            return lhs.rco(rhs);
         };
         Euclidean1.prototype.rev = function (mv) {
             if (mv.isMutable()) {
@@ -8904,6 +8912,32 @@
                 }
             }
         };
+        /**
+         * @hidden
+         * @param v
+         * @param α
+         * @returns
+         */
+        Spacetime1.prototype.addVector = function (v, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().addVector(v, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = v.uom;
+                }
+                else if (v.t === 0 && v.x === 0) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, v.uom);
+                }
+                this.t += v.t * α;
+                this.x += v.x * α;
+                return this;
+            }
+        };
         Spacetime1.prototype.clone = function () {
             return new Spacetime1(this.a, this.t, this.x, this.b, this.uom);
         };
@@ -9374,6 +9408,12 @@
                 }
             }
         };
+        /**
+         * @hidden
+         * @param v
+         * @param α
+         * @returns
+         */
         Spacetime1.prototype.subVector = function (v, α) {
             if (α === void 0) { α = 1; }
             if (this.isLocked()) {
@@ -9754,7 +9794,7 @@
             throw new Error("Method not implemented.");
         };
         MetricG11.prototype.addVector = function (lhs, rhs) {
-            throw new Error("Method not implemented.");
+            return lhs.addVector(rhs);
         };
         MetricG11.prototype.applyMatrix = function (mv, matrix) {
             throw new Error("Method not implemented.");
@@ -9811,6 +9851,9 @@
         MetricG11.prototype.isBivector = function (mv) {
             throw new Error("Method not implemented.");
         };
+        MetricG11.prototype.isOne = function (mv) {
+            return mv.isOne();
+        };
         MetricG11.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
@@ -9849,6 +9892,9 @@
         };
         MetricG11.prototype.squaredNorm = function (A) {
             throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.rco = function (lhs, rhs) {
+            return lhs.rco(rhs);
         };
         MetricG11.prototype.rev = function (mv) {
             throw new Error("Method not implemented.");
@@ -12012,6 +12058,9 @@
         Euclidean2.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
+        Euclidean2.prototype.isOne = function (mv) {
+            return mv.isOne();
+        };
         Euclidean2.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
@@ -12050,6 +12099,9 @@
         };
         Euclidean2.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
+        };
+        Euclidean2.prototype.rco = function (lhs, rhs) {
+            return lhs.rco(rhs);
         };
         Euclidean2.prototype.rev = function (mv) {
             return mv.rev();
@@ -13165,6 +13217,33 @@
                 }
             }
         };
+        /**
+         * @hidden
+         * @param v
+         * @param α
+         * @returns
+         */
+        Spacetime2.prototype.addVector = function (v, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return this.clone().addVector(v, α).permlock();
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = v.uom;
+                }
+                else if (v.t === 0 && v.x === 0 && v.y === 0) {
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, v.uom);
+                }
+                this.t += v.t * α;
+                this.x += v.x * α;
+                this.y += v.y * α;
+                return this;
+            }
+        };
         Spacetime2.prototype.clone = function () {
             return new Spacetime2(this.a, this.t, this.x, this.tx, this.y, this.ty, this.xy, this.b, this.uom);
         };
@@ -13800,6 +13879,12 @@
                 }
             }
         };
+        /**
+         * @hidden
+         * @param v
+         * @param α
+         * @returns
+         */
         Spacetime2.prototype.subVector = function (v, α) {
             if (α === void 0) { α = 1; }
             if (this.isLocked()) {
@@ -14246,6 +14331,9 @@
         MetricG21.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
+        MetricG21.prototype.isOne = function (mv) {
+            return mv.isOne();
+        };
         MetricG21.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
@@ -14284,6 +14372,9 @@
         };
         MetricG21.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
+        };
+        MetricG21.prototype.rco = function (lhs, rhs) {
+            return lhs.rco(rhs);
         };
         MetricG21.prototype.rev = function (mv) {
             return mv.rev();
@@ -17989,6 +18080,9 @@
         Euclidean3.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
+        Euclidean3.prototype.isOne = function (mv) {
+            return mv.isOne();
+        };
         Euclidean3.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
@@ -18027,6 +18121,9 @@
         };
         Euclidean3.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
+        };
+        Euclidean3.prototype.rco = function (lhs, rhs) {
+            return lhs.rco(rhs);
         };
         Euclidean3.prototype.rev = function (mv) {
             return mv.rev();
