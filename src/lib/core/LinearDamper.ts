@@ -8,7 +8,7 @@ import { LockableMeasure } from './LockableMeasure';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 
 /**
- * @hidden
+ *
  */
 export class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
     /**

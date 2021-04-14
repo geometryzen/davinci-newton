@@ -2829,6 +2829,10 @@ export class Sphere3 extends RigidBody<Geometric3> {
     constructor(radius?: GeometricE3);
 }
 
+/**
+ * 0 => LOCAL
+ * 1 => WORLD
+ */
 export type CoordType = 0 | 1;
 
 /**
@@ -3243,33 +3247,6 @@ export class EngineG21 extends Engine<Spacetime2> {
 }
 
 /**
- * The Physics1 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
- * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
- * It uses Geometric1 to provide the Geometric Algebra of Euclidean Line with a 1,0 metric.
- */
-export class Physics1 extends Physics<Geometric1> implements EnergySystem<Geometric1> {
-    constructor();
-}
-
-/**
- * The Physics2 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
- * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
- * It uses Geometric2 to provide the Geometric Algebra of Euclidean Plane with a 2,0 metric.
- */
-export class Physics2 extends Physics<Geometric2> implements EnergySystem<Geometric2> {
-    constructor();
-}
-
-/**
- * The Physics3 engine computes the derivatives of the kinematic variables X, R, P, L for each body,
- * based upon the state of the system and the known forces, torques, masses, and moments of inertia.
- * It uses Geometric3 to provide the Geometric Algebra of Euclidean Space with a 3,0 metric.
- */
-export class Physics3 extends Physics<Geometric3> implements EnergySystem<Geometric3> {
-    constructor();
-}
-
-/**
  * The Euler algorithm uses the rate of change values at the
  * beginning of the step in order to perform the integration.
  */
@@ -3488,14 +3465,23 @@ export class ConstantForceLaw<T> implements ForceLaw<T> {
     potentialEnergy(): T;
 }
 
+/**
+ * @deprecated Use ConstantForceLaw.
+ */
 export class ConstantForceLaw1 extends ConstantForceLaw<Geometric1> {
     constructor(body: ForceBody<Geometric1>, vector: Geometric1, vectorCoordType?: CoordType);
 }
 
+/**
+ * @deprecated Use ConstantForceLaw.
+ */
 export class ConstantForceLaw2 extends ConstantForceLaw<Geometric2> {
     constructor(body: ForceBody<Geometric2>, vector: Geometric2, vectorCoordType?: CoordType);
 }
 
+/**
+ * @deprecated Use ConstantForceLaw.
+ */
 export class ConstantForceLaw3 extends ConstantForceLaw<Geometric3> {
     constructor(body: ForceBody<Geometric3>, vector: Geometric3, vectorCoordType?: CoordType);
 }
@@ -3509,14 +3495,23 @@ export class ConstantTorqueLaw<T> implements TorqueLaw<T> {
     potentialEnergy(): T;
 }
 
+/**
+ * @deprecated Use ConstantTorqueLaw.
+ */
 export class ConstantTorqueLaw1 extends ConstantTorqueLaw<Geometric1> {
     constructor(body: ForceBody<Geometric1>, value: Geometric1);
 }
 
+/**
+ * @deprecated Use ConstantTorqueLaw.
+ */
 export class ConstantTorqueLaw2 extends ConstantTorqueLaw<Geometric2> {
     constructor(body: ForceBody<Geometric2>, value: Geometric2);
 }
 
+/**
+ * @deprecated Use ConstantTorqueLaw.
+ */
 export class ConstantTorqueLaw3 extends ConstantTorqueLaw<Geometric3> {
     constructor(body: ForceBody<Geometric3>, value: Geometric3, valueCoordType?: CoordType);
 }
@@ -3561,7 +3556,7 @@ export class GravitationLaw<T> implements ForceLaw<T> {
      */
     readonly forces: Force<T>[];
     /**
-    * The proportionality constant, Newton's constant.
+    * The proportionality constant, Newton's constant or Universal Gravitational constant.
     * The default value is one (1).
     */
     public G: T;
@@ -3572,7 +3567,7 @@ export class GravitationLaw<T> implements ForceLaw<T> {
     /**
      * 
      */
-    constructor(body1_: RigidBody<T>, body2_: RigidBody<T>, G: T);
+    constructor(body1: RigidBody<T>, body2: RigidBody<T>);
     /**
      * Computes the forces due to the gravitational interaction.
      * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
@@ -3656,21 +3651,21 @@ export class Spring<T> implements ForceLaw<T> {
 }
 
 /**
- *
+ * @deprecated Use Spring.
  */
 export class Spring1 extends Spring<Geometric1> {
     constructor(body1: RigidBody<Geometric1>, body2: RigidBody<Geometric1>);
 }
 
 /**
- *
+ * @deprecated Use Spring.
  */
 export class Spring2 extends Spring<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
 
 /**
- *
+ * @deprecated Use Spring.
  */
 export class Spring3 extends Spring<Geometric3> {
     constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>);
@@ -3699,14 +3694,23 @@ export class LinearDamper<T> implements ForceLaw<T> {
     potentialEnergy(): T;
 }
 
+/**
+ * @deprecated Use LinearDamper.
+ */
 export class LinearDamper1 extends LinearDamper<Geometric1> {
     constructor(body1: RigidBody<Geometric1>, body2: RigidBody<Geometric1>);
 }
 
+/**
+ * @deprecated Use LinearDamper.
+ */
 export class LinearDamper2 extends LinearDamper<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }
 
+/**
+ * @deprecated Use LinearDamper.
+ */
 export class LinearDamper3 extends LinearDamper<Geometric2> {
     constructor(body1: RigidBody<Geometric2>, body2: RigidBody<Geometric2>);
 }

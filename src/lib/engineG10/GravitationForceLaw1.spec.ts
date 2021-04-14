@@ -1,6 +1,6 @@
+import { GravitationLaw } from "../core/GravitationLaw";
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
-import { GravitationForceLaw1 } from "./GravitationForceLaw1";
 import { Particle1 } from "./Particle1";
 
 describe("GravitationForceLaw1", function () {
@@ -14,7 +14,8 @@ describe("GravitationForceLaw1", function () {
         const body2 = new Particle1(m2, q2);
         body2.X = new Geometric1([0, 4], Unit.METER);
         const G = new Geometric1([4, 0], Unit.NEWTON.div(Unit.KILOGRAM).div(Unit.KILOGRAM).mul(Unit.METER).mul(Unit.METER));
-        const forceLaw = new GravitationForceLaw1(body1, body2, G);
+        const forceLaw = new GravitationLaw(body1, body2);
+        forceLaw.G = G;
         const U = forceLaw.potentialEnergy();
         expect(U.a).toBe(-6);
         expect(U.x).toBe(0);
@@ -32,7 +33,8 @@ describe("GravitationForceLaw1", function () {
         const body2 = new Particle1(m2, q2);
         body2.X = new Geometric1([0, 4], Unit.METER);
         const G = new Geometric1([4, 0], Unit.NEWTON.div(Unit.KILOGRAM).div(Unit.KILOGRAM).mul(Unit.METER).mul(Unit.METER));
-        const forceLaw = new GravitationForceLaw1(body1, body2, G);
+        const forceLaw = new GravitationLaw(body1, body2);
+        forceLaw.G = G;
         const forces = forceLaw.updateForces();
         expect(forces.length).toBe(2);
         const f1 = forces[0];

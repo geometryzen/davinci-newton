@@ -26,7 +26,7 @@ class Newton {
         this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
         this.LAST_MODIFIED = '2021-04-14';
         this.NAMESPACE = 'NEWTON';
-        this.VERSION = '1.0.92';
+        this.VERSION = '1.0.93';
     }
 }
 

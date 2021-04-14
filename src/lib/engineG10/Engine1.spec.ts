@@ -1,12 +1,12 @@
+import { ConstantForceLaw } from "../core/ConstantForceLaw";
+import { GravitationLaw } from "../core/GravitationLaw";
+import { Spring } from "../core/Spring";
 import { VarsList } from "../core/VarsList";
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
 import { Block1 } from "./Block1";
-import { ConstantForceLaw1 } from "./ConstantForceLaw1";
 import { Engine1 } from "./Engine1";
-import { GravitationForceLaw1 } from "./GravitationForceLaw1";
 import { Particle1 } from "./Particle1";
-import { Spring1 } from "./Spring1";
 import { SurfaceConstraint1 } from "./SurfaceConstraint1";
 
 describe("Engine1", function () {
@@ -69,7 +69,7 @@ describe("Engine1", function () {
             const bead = new Particle1(M, Q);
             engine.addBody(bead);
             const F = new Geometric1();
-            const forceLaw = new ConstantForceLaw1(bead, F);
+            const forceLaw = new ConstantForceLaw(bead, F);
             engine.addForceLaw(forceLaw);
             expect(true).toBe(true);
         });
@@ -82,7 +82,7 @@ describe("Engine1", function () {
             const bead = new Particle1(M, Q);
             engine.addBody(bead);
             const F = new Geometric1();
-            const forceLaw = new ConstantForceLaw1(bead, F);
+            const forceLaw = new ConstantForceLaw(bead, F);
             engine.addForceLaw(forceLaw);
             const Δt = Math.random();
             engine.advance(Δt);
@@ -97,7 +97,7 @@ describe("Engine1", function () {
             const bead = new Particle1(M, Q);
             engine.addBody(bead);
             const F = new Geometric1();
-            const forceLaw = new ConstantForceLaw1(bead, F);
+            const forceLaw = new ConstantForceLaw(bead, F);
             engine.addForceLaw(forceLaw);
             const radiusFn = function (x: Geometric1, radius: Geometric1) {
                 // Do nothing yet.
@@ -124,7 +124,7 @@ describe("Engine1", function () {
             const wall = new Particle1(M, Q);
             engine.addBody(bead);
             engine.addBody(wall);
-            const forceLaw = new Spring1(bead, wall);
+            const forceLaw = new Spring(bead, wall);
             engine.addForceLaw(forceLaw);
             const Δt = Math.random();
             engine.advance(Δt);
@@ -134,14 +134,13 @@ describe("Engine1", function () {
     describe("GravitationLaw", function () {
         it("should be callable.", function () {
             const engine = new Engine1();
-            const G = new Geometric1();
             const M = new Geometric1();
             const Q = new Geometric1();
             const bead = new Particle1(M, Q);
             const wall = new Particle1(M, Q);
             engine.addBody(bead);
             engine.addBody(wall);
-            const forceLaw = new GravitationForceLaw1(bead, wall, G);
+            const forceLaw = new GravitationLaw(bead, wall);
             engine.addForceLaw(forceLaw);
             const Δt = Math.random();
             engine.advance(Δt);
@@ -158,7 +157,7 @@ describe("Engine1", function () {
             const wall = new Particle1(M, Q);
             engine.addBody(block);
             engine.addBody(wall);
-            const forceLaw = new Spring1(block, wall);
+            const forceLaw = new Spring(block, wall);
             engine.addForceLaw(forceLaw);
             const Δt = Math.random();
             engine.advance(Δt);
@@ -175,7 +174,7 @@ describe("Engine1", function () {
             const wall = new Particle1(M, Q);
             engine.addBody(block);
             engine.addBody(wall);
-            const forceLaw = new Spring1(block, wall);
+            const forceLaw = new Spring(block, wall);
             engine.addForceLaw(forceLaw);
             const Δt = Math.random();
             engine.advance(Δt);

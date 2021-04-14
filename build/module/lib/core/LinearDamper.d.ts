@@ -3,7 +3,7 @@ import { Force } from "./Force";
 import { ForceBody } from "./ForceBody";
 import { ForceLaw } from "./ForceLaw";
 /**
- * @hidden
+ *
  */
 export declare class LinearDamper<T> extends AbstractSimObject implements ForceLaw<T> {
     private readonly body1;

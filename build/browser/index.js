@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-14';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.92';
+            this.VERSION = '1.0.93';
         }
         return Newton;
     }());
@@ -125,23 +125,26 @@
     }());
 
     /**
-     * @hidden
+     *
      */
     var ConstantForceLaw = /** @class */ (function (_super) {
         __extends(ConstantForceLaw, _super);
         /**
          *
+         * @param body the body that the force acts upon.
+         * @param vector the force vector.
+         * @param vectorCoordType 0 => LOCAL, 1 => WORLD.
          */
-        function ConstantForceLaw($body, value, valueCoordType) {
-            if (valueCoordType === void 0) { valueCoordType = WORLD; }
+        function ConstantForceLaw(body, vector, vectorCoordType) {
+            if (vectorCoordType === void 0) { vectorCoordType = WORLD; }
             var _this = _super.call(this) || this;
-            _this.$body = $body;
+            _this.body = body;
             _this.$forces = [];
-            var metric = _this.$body.metric;
-            _this.$force = metric.createForce(_this.$body);
+            var metric = _this.body.metric;
+            _this.$force = metric.createForce(_this.body);
             _this.$force.locationCoordType = LOCAL;
-            metric.copyVector(value, _this.$force.vector);
-            _this.$force.vectorCoordType = valueCoordType;
+            metric.copyVector(vector, _this.$force.vector);
+            _this.$force.vectorCoordType = vectorCoordType;
             _this.$forces = [_this.$force];
             _this.$potentialEnergy = metric.scalar(0);
             _this.$potentialEnergyLock = metric.lock(_this.$potentialEnergy);
@@ -159,7 +162,7 @@
                 return this.$force.location;
             },
             set: function (location) {
-                var metric = this.$body.metric;
+                var metric = this.body.metric;
                 metric.copyVector(location, this.$force.location);
             },
             enumerable: false,
@@ -170,7 +173,7 @@
                 return this.$force.vector;
             },
             set: function (vector) {
-                var metric = this.$body.metric;
+                var metric = this.body.metric;
                 metric.copyVector(vector, this.$force.vector);
             },
             enumerable: false,
@@ -193,7 +196,7 @@
          */
         ConstantForceLaw.prototype.potentialEnergy = function () {
             // TODO: Why do we do this initialization to zero then return a locked object?
-            var metric = this.$body.metric;
+            var metric = this.body.metric;
             metric.unlock(this.$potentialEnergy, this.$potentialEnergyLock);
             // metric.se
             // this.potentialEnergy_.a = 0;
@@ -204,7 +207,7 @@
     }(AbstractSimObject));
 
     /**
-     * @hidden
+     *
      */
     var ConstantTorqueLaw = /** @class */ (function (_super) {
         __extends(ConstantTorqueLaw, _super);
@@ -5215,109 +5218,6 @@
     /**
      * @hidden
      */
-    var GravitationLaw = /** @class */ (function (_super) {
-        __extends(GravitationLaw, _super);
-        /**
-         *
-         */
-        function GravitationLaw(body1_, body2_, G) {
-            var _this = _super.call(this) || this;
-            _this.body1_ = body1_;
-            _this.body2_ = body2_;
-            _this.$forces = [];
-            _this.metric = body1_.metric;
-            var metric = _this.metric;
-            _this.F1 = metric.createForce(_this.body1_);
-            _this.F1.locationCoordType = WORLD;
-            _this.F1.vectorCoordType = WORLD;
-            _this.F2 = metric.createForce(_this.body2_);
-            _this.F2.locationCoordType = WORLD;
-            _this.F2.vectorCoordType = WORLD;
-            _this.G = G;
-            _this.$forces = [_this.F1, _this.F2];
-            _this.potentialEnergy_ = metric.scalar(0);
-            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-            return _this;
-        }
-        Object.defineProperty(GravitationLaw.prototype, "forces", {
-            get: function () {
-                return this.$forces;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * Computes the forces due to the gravitational interaction.
-         * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
-         */
-        GravitationLaw.prototype.updateForces = function () {
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            var metric = this.metric;
-            // The direction of the force is computed such that masses always attract each other.
-            metric.copyVector(this.body2_.X, numer);
-            metric.subVector(numer, this.body1_.X);
-            metric.copyVector(numer, denom);
-            metric.squaredNorm(denom);
-            metric.direction(numer);
-            metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
-            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-            metric.copyVector(numer, this.F1.vector);
-            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
-            metric.copyVector(this.F1.vector, this.F2.vector);
-            metric.neg(this.F2.vector);
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            return this.$forces;
-        };
-        /**
-         *
-         */
-        GravitationLaw.prototype.disconnect = function () {
-            // Does nothing
-        };
-        /**
-         * Computes the potential energy of the gravitational interaction.
-         * U = -G m1 m2 / r, where
-         * r is the center-of-mass to center-of-mass separation of m1 and m2.
-         */
-        GravitationLaw.prototype.potentialEnergy = function () {
-            var metric = this.metric;
-            // Unlock the variable that we will use for the result.
-            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            // The numerator of the potential energy formula is -G * m1 * m2.
-            metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
-            metric.mulByScalar(numer, metric.a(this.body1_.M), metric.uom(this.body1_.M));
-            metric.mulByScalar(numer, metric.a(this.body2_.M), metric.uom(this.body2_.M));
-            metric.neg(numer);
-            // The denominator is |r1 - r2|.
-            metric.copyVector(this.body1_.X, denom);
-            metric.subVector(denom, this.body2_.X);
-            metric.norm(denom);
-            // Combine the numerator and denominator.
-            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
-            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            // We're done. Lock down the result.
-            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-            return this.potentialEnergy_;
-        };
-        return GravitationLaw;
-    }(AbstractSimObject));
-
-    /**
-     * @hidden
-     */
     var LockableMeasure = /** @class */ (function () {
         /**
          *
@@ -5378,8 +5278,123 @@
         }
     }
 
+    var G_UOM = Unit.NEWTON.mul(Unit.METER).mul(Unit.METER).div(Unit.KILOGRAM).div(Unit.KILOGRAM);
     /**
-     * @hidden
+     *
+     */
+    var GravitationLaw = /** @class */ (function (_super) {
+        __extends(GravitationLaw, _super);
+        /**
+         *
+         */
+        function GravitationLaw(body1, body2) {
+            var _this = _super.call(this) || this;
+            _this.body1 = body1;
+            _this.body2 = body2;
+            _this.$forces = [];
+            _this.metric = body1.metric;
+            var metric = _this.metric;
+            _this.F1 = metric.createForce(_this.body1);
+            _this.F1.locationCoordType = WORLD;
+            _this.F1.vectorCoordType = WORLD;
+            _this.F2 = metric.createForce(_this.body2);
+            _this.F2.locationCoordType = WORLD;
+            _this.F2.vectorCoordType = WORLD;
+            _this.$G = new LockableMeasure(metric, metric.scalar(1));
+            _this.$forces = [_this.F1, _this.F2];
+            _this.potentialEnergy_ = metric.scalar(0);
+            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+            return _this;
+        }
+        Object.defineProperty(GravitationLaw.prototype, "G", {
+            get: function () {
+                return this.$G.get();
+            },
+            set: function (G) {
+                mustBeDimensionlessOrCorrectUnits('G', G, G_UOM, this.metric);
+                this.$G.set(G);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(GravitationLaw.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Computes the forces due to the gravitational interaction.
+         * F = G * m1 * m2 * direction(r2 - r1) / quadrance(r2 - r1)
+         */
+        GravitationLaw.prototype.updateForces = function () {
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            var metric = this.metric;
+            // The direction of the force is computed such that masses always attract each other.
+            metric.copyVector(this.body2.X, numer);
+            metric.subVector(numer, this.body1.X);
+            metric.copyVector(numer, denom);
+            metric.squaredNorm(denom);
+            metric.direction(numer);
+            metric.mulByScalar(numer, metric.a(this.G), metric.uom(this.G));
+            metric.mulByScalar(numer, metric.a(this.body1.M), metric.uom(this.body1.M));
+            metric.mulByScalar(numer, metric.a(this.body2.M), metric.uom(this.body2.M));
+            metric.copyVector(numer, this.F1.vector);
+            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
+            metric.copyVector(this.F1.vector, this.F2.vector);
+            metric.neg(this.F2.vector);
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1.X, this.F1.location);
+            metric.copyVector(this.body2.X, this.F2.location);
+            return this.$forces;
+        };
+        /**
+         *
+         */
+        GravitationLaw.prototype.disconnect = function () {
+            // Does nothing
+        };
+        /**
+         * Computes the potential energy of the gravitational interaction.
+         * U = -G m1 m2 / r, where
+         * r is the center-of-mass to center-of-mass separation of m1 and m2.
+         */
+        GravitationLaw.prototype.potentialEnergy = function () {
+            var metric = this.metric;
+            // Unlock the variable that we will use for the result.
+            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            // The numerator of the potential energy formula is -G * m1 * m2.
+            metric.copyScalar(metric.a(this.G), metric.uom(this.G), numer);
+            metric.mulByScalar(numer, metric.a(this.body1.M), metric.uom(this.body1.M));
+            metric.mulByScalar(numer, metric.a(this.body2.M), metric.uom(this.body2.M));
+            metric.neg(numer);
+            // The denominator is |r1 - r2|.
+            metric.copyVector(this.body1.X, denom);
+            metric.subVector(denom, this.body2.X);
+            metric.norm(denom);
+            // Combine the numerator and denominator.
+            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
+            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1.X, this.F1.location);
+            metric.copyVector(this.body2.X, this.F2.location);
+            // We're done. Lock down the result.
+            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+            return this.potentialEnergy_;
+        };
+        return GravitationLaw;
+    }(AbstractSimObject));
+
+    /**
+     *
      */
     var LinearDamper = /** @class */ (function (_super) {
         __extends(LinearDamper, _super);
@@ -5901,7 +5916,7 @@
     }(RigidBody));
 
     /**
-     * @hidden
+     *
      */
     var Spring = /** @class */ (function (_super) {
         __extends(Spring, _super);
@@ -8125,6 +8140,10 @@
         return Block1;
     }(RigidBody1));
 
+    /**
+     * @deprecated Use ConstantForceLaw.
+     * @hidden
+     */
     var ConstantForceLaw1 = /** @class */ (function (_super) {
         __extends(ConstantForceLaw1, _super);
         function ConstantForceLaw1(body, vector, vectorCoordType) {
@@ -8134,6 +8153,10 @@
         return ConstantForceLaw1;
     }(ConstantForceLaw));
 
+    /**
+     * @deprecated Use ConstantTorqueLaw.
+     * @hidden
+     */
     var ConstantTorqueLaw1 = /** @class */ (function (_super) {
         __extends(ConstantTorqueLaw1, _super);
         function ConstantTorqueLaw1(body, value) {
@@ -8479,12 +8502,15 @@
     }(Engine));
 
     /**
-     *
+     * @deprecated Use LinearDamper.
+     * @hidden
      */
     var LinearDamper1 = /** @class */ (function (_super) {
         __extends(LinearDamper1, _super);
         function LinearDamper1(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("LinearDamper1 is deprecated. Please use LinearDamper instead.");
+            return _this;
         }
         return LinearDamper1;
     }(LinearDamper));
@@ -8503,7 +8529,7 @@
     }(Particle));
 
     /**
-     *
+     * @hidden
      */
     var Physics1 = /** @class */ (function (_super) {
         __extends(Physics1, _super);
@@ -8514,12 +8540,15 @@
     }(Physics));
 
     /**
-     *
+     * @deprecated Use Spring.
+     * @hidden
      */
     var Spring1 = /** @class */ (function (_super) {
         __extends(Spring1, _super);
         function Spring1(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("Spring1 is deprecated. Please use Spring instead.");
+            return _this;
         }
         return Spring1;
     }(Spring));
@@ -12308,6 +12337,10 @@
         return Block2;
     }(RigidBody2));
 
+    /**
+     * @deprecated Use ConstantForceLaw.
+     * @hidden
+     */
     var ConstantForceLaw2 = /** @class */ (function (_super) {
         __extends(ConstantForceLaw2, _super);
         function ConstantForceLaw2(body, vector, vectorCoordType) {
@@ -12317,6 +12350,10 @@
         return ConstantForceLaw2;
     }(ConstantForceLaw));
 
+    /**
+     * @deprecated Use ConstantTorqueLaw.
+     * @hidden
+     */
     var ConstantTorqueLaw2 = /** @class */ (function (_super) {
         __extends(ConstantTorqueLaw2, _super);
         function ConstantTorqueLaw2(body, value) {
@@ -12704,21 +12741,30 @@
         return Engine2;
     }(Engine));
 
+    /**
+     * @deprecated Use GravitationLaw.
+     * @hidden
+     */
     var GravitationForceLaw2 = /** @class */ (function (_super) {
         __extends(GravitationForceLaw2, _super);
         function GravitationForceLaw2(body1, body2) {
-            return _super.call(this, body1, body2, Geometric2.one) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("GravitationForceLaw2 is deprecated. Please use GravitationLaw instead.");
+            return _this;
         }
         return GravitationForceLaw2;
     }(GravitationLaw));
 
     /**
-     *
+     * @deprecated Use LinearDamper.
+     * @hidden
      */
     var LinearDamper2 = /** @class */ (function (_super) {
         __extends(LinearDamper2, _super);
         function LinearDamper2(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("LinearDamper2 is deprecated. Please use LinearDamper instead.");
+            return _this;
         }
         return LinearDamper2;
     }(LinearDamper));
@@ -12737,7 +12783,7 @@
     }(Particle));
 
     /**
-     *
+     * @hidden
      */
     var Physics2 = /** @class */ (function (_super) {
         __extends(Physics2, _super);
@@ -12879,12 +12925,15 @@
     }(RigidBody2));
 
     /**
-     *
+     * @deprecated Use Spring.
+     * @hidden
      */
     var Spring2 = /** @class */ (function (_super) {
         __extends(Spring2, _super);
         function Spring2(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("Spring2 is deprecated. Please use Spring instead.");
+            return _this;
         }
         return Spring2;
     }(Spring));
@@ -18352,6 +18401,10 @@
         return Block3;
     }(RigidBody));
 
+    /**
+     * @deprecated Use ConstantForceLaw.
+     * @hidden
+     */
     var ConstantForceLaw3 = /** @class */ (function (_super) {
         __extends(ConstantForceLaw3, _super);
         function ConstantForceLaw3(body, vector, vectorCoordType) {
@@ -18361,6 +18414,10 @@
         return ConstantForceLaw3;
     }(ConstantForceLaw));
 
+    /**
+     * @deprecated Use ConstantTorqueLaw.
+     * @hidden
+     */
     var ConstantTorqueLaw3 = /** @class */ (function (_super) {
         __extends(ConstantTorqueLaw3, _super);
         function ConstantTorqueLaw3(body, value, valueCoordType) {
@@ -18846,21 +18903,30 @@
         return Engine3;
     }(Engine));
 
+    /**
+     * @deprecated Use GravitationLaw.
+     * @hidden
+     */
     var GravitationForceLaw3 = /** @class */ (function (_super) {
         __extends(GravitationForceLaw3, _super);
         function GravitationForceLaw3(body1, body2) {
-            return _super.call(this, body1, body2, Geometric3.one) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("GravitationForceLaw3 is deprecated. Please use GravitationLaw instead.");
+            return _this;
         }
         return GravitationForceLaw3;
     }(GravitationLaw));
 
     /**
-     *
+     * @deprecated Use LinearDamper.
+     * @hidden
      */
     var LinearDamper3 = /** @class */ (function (_super) {
         __extends(LinearDamper3, _super);
         function LinearDamper3(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("LinearDamper3 is deprecated. Please use LinearDamper instead.");
+            return _this;
         }
         return LinearDamper3;
     }(LinearDamper));
@@ -18879,7 +18945,7 @@
     }(Particle));
 
     /**
-     *
+     * @hidden
      */
     var Physics3 = /** @class */ (function (_super) {
         __extends(Physics3, _super);
@@ -18967,12 +19033,15 @@
     }(RigidBody));
 
     /**
-     *
+     * @deprecated Use Spring.
+     * @hidden
      */
     var Spring3 = /** @class */ (function (_super) {
         __extends(Spring3, _super);
         function Spring3(body1, body2) {
-            return _super.call(this, body1, body2) || this;
+            var _this = _super.call(this, body1, body2) || this;
+            console.warn("Spring3 is deprecated. Please use Spring instead.");
+            return _this;
         }
         return Spring3;
     }(Spring));

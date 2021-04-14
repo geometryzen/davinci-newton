@@ -5,7 +5,7 @@ import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 
 /**
- * @hidden
+ *
  */
 export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T> {
     /**
@@ -18,15 +18,18 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
 
     /**
      * 
+     * @param body the body that the force acts upon.
+     * @param vector the force vector.
+     * @param vectorCoordType 0 => LOCAL, 1 => WORLD.
      */
-    constructor(private $body: ForceBody<T>, value: T, valueCoordType: CoordType = WORLD) {
+    constructor(private body: ForceBody<T>, vector: T, vectorCoordType: CoordType = WORLD) {
         super();
-        const metric = this.$body.metric;
-        this.$force = metric.createForce(this.$body);
+        const metric = this.body.metric;
+        this.$force = metric.createForce(this.body);
 
         this.$force.locationCoordType = LOCAL;
-        metric.copyVector(value, this.$force.vector);
-        this.$force.vectorCoordType = valueCoordType;
+        metric.copyVector(vector, this.$force.vector);
+        this.$force.vectorCoordType = vectorCoordType;
         this.$forces = [this.$force];
 
         this.$potentialEnergy = metric.scalar(0);
@@ -41,7 +44,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
         return this.$force.location;
     }
     set location(location: T) {
-        const metric = this.$body.metric;
+        const metric = this.body.metric;
         metric.copyVector(location, this.$force.location);
     }
 
@@ -49,7 +52,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
         return this.$force.vector;
     }
     set vector(vector: T) {
-        const metric = this.$body.metric;
+        const metric = this.body.metric;
         metric.copyVector(vector, this.$force.vector);
     }
 
@@ -72,7 +75,7 @@ export class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T
      */
     potentialEnergy(): T {
         // TODO: Why do we do this initialization to zero then return a locked object?
-        const metric = this.$body.metric;
+        const metric = this.body.metric;
         metric.unlock(this.$potentialEnergy, this.$potentialEnergyLock);
         // metric.se
         // this.potentialEnergy_.a = 0;

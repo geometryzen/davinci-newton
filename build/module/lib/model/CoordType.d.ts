@@ -1,5 +1,6 @@
 /**
  * @hidden
+ * 0 = LOCAL, 1 = WORLD.
  */
 export declare type CoordType = 0 | 1;
 /**

@@ -1,18 +1,18 @@
 import { AbstractSimObject } from '../objects/AbstractSimObject';
-import { Massive } from './Massive';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
+import { Massive } from './Massive';
 /**
- * @hidden
+ *
  */
 export declare class GravitationLaw<T> extends AbstractSimObject implements ForceLaw<T> {
-    private body1_;
-    private body2_;
+    private body1;
+    private body2;
     /**
-     * The proportionality constant, Newton's constant.
+     * The proportionality constant, Universal gravitational constant or Newton's constant.
      * The default value is one (1).
      */
-    G: T;
+    private readonly $G;
     private readonly F1;
     private readonly F2;
     private readonly $forces;
@@ -25,7 +25,9 @@ export declare class GravitationLaw<T> extends AbstractSimObject implements Forc
     /**
      *
      */
-    constructor(body1_: Massive<T>, body2_: Massive<T>, G: T);
+    constructor(body1: Massive<T>, body2: Massive<T>);
+    get G(): T;
+    set G(G: T);
     get forces(): Force<T>[];
     /**
      * Computes the forces due to the gravitational interaction.

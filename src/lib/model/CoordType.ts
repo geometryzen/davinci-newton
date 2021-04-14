@@ -15,6 +15,7 @@
 
 /**
  * @hidden
+ * 0 = LOCAL, 1 = WORLD.
  */
 export type CoordType = 0 | 1;
 

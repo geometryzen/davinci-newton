@@ -1,11 +1,34 @@
 # davinci-newton
-A 1D, 2D, and 3D Physics Engine using Geometric Algebra, and Units of Measure.
+A Physics Engine using Geometric Algebra, and Units of Measure.
+
+The following metrics are supported:
+
+<table>
+    <tr>
+        <th>Description</th><th>Algebra</th><th>class</th>
+    </tr>
+    <tr>
+        <td>Euclidean 1D</td><td>G(1,0)</td><td>Engine1</td>
+    </tr>
+    <tr>
+        <td>Euclidean 2D</td><td>G(2,0)</td><td>Engine2</td>
+    </tr>
+    <tr>
+        <td>Euclidean 3D</td><td>G(3,0)</td><td>Engine3</td>
+    </tr>
+    <tr>
+        <td>Spacetime 1D</td><td>G(1,1)</td><td>EngineG11</td>
+    </tr>
+    <tr>
+        <td>Spacetime 2D</td><td>G(2,1)</td><td>EngineG21</td>
+    </tr>
+</table>
 
 # Getting Started
 
 The following code illustrates the basic flow. For working examples see [STEMCstudio](https://www.stemcstudio.com/examples).
 
-## Constructing the core simulation using the `Physics3` engine.
+## Constructing the core simulation using the `Engine3` Euclidean 3D or G(3,0) Physics engine.
 
 This example incorporates units of measure.
 

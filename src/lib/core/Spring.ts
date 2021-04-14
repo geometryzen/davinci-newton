@@ -10,7 +10,7 @@ import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrec
 import { RigidBody } from './RigidBody';
 
 /**
- * @hidden
+ *
  */
 export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     /**

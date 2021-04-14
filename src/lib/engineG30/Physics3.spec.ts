@@ -1,4 +1,5 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
+import { Spring } from '../core/Spring';
 import { Geometric3 as G3 } from '../math/Geometric3';
 // import { EulerMethod } from '../solvers/EulerMethod';
 // import { ModifiedEuler } from '../solvers/ModifiedEuler';
@@ -7,7 +8,6 @@ import { RungeKutta } from '../solvers/RungeKutta';
 import { DefaultAdvanceStrategy } from '../strategy/DefaultAdvanceStrategy';
 import { Block3 } from './Block3';
 import { Physics3 } from './Physics3';
-import { Spring3 } from './Spring3';
 
 describe("Physics3", function () {
     it("should be backwards compatible.", function () {
@@ -58,7 +58,7 @@ describe("Physics3", function () {
         state.addBody(block2);
         state.showForces = true;
 
-        const spring = new Spring3(block1, block2);
+        const spring = new Spring(block1, block2);
         spring.restLength = G3.scalar(1).mul(m);
         spring.stiffness = G3.scalar(1).mul(N).divByScalar(m.a, m.uom);
         // state.addForceLaw(spring);

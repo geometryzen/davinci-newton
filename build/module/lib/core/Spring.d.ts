@@ -4,7 +4,7 @@ import { ForceLaw } from './ForceLaw';
 import { Metric } from './Metric';
 import { RigidBody } from './RigidBody';
 /**
- * @hidden
+ *
  */
 export declare class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
     private readonly body1;

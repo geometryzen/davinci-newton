@@ -38,12 +38,13 @@ describe("GravitationLaw", function () {
     body1.X = Geometric3.vector(-1, 0, 0, METER);
     body2.X = Geometric3.vector(+1, 0, 0, METER);
 
-    const gravity = new GravitationLaw(body1, body2, G);
+    const gravitationLaw = new GravitationLaw(body1, body2);
+    gravitationLaw.G = G;
     const m1 = body1.M.a;
     const m2 = body2.M.a;
     const r = Math.abs(body1.X.x - body2.X.x);
     it("potentialEnergy", function () {
-        const pe = gravity.potentialEnergy();
+        const pe = gravitationLaw.potentialEnergy();
         expect(pe.a).toBe(-G.a * m1 * m2 / r);
         expect(pe.uom.multiplier).toBe(1);
         expect(pe.uom.multiplier).toBe(1);
@@ -53,7 +54,7 @@ describe("GravitationLaw", function () {
         expect(pe.uom.dimensions.Q.numer).toBe(0);
     });
     it("updateForces", function () {
-        const forces = gravity.updateForces();
+        const forces = gravitationLaw.updateForces();
         const force1 = forces[0];
         const force2 = forces[1];
         expect(force1.F.x).toBe(+G.a * m1 * m2 / (r * r));

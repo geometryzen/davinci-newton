@@ -5,7 +5,7 @@ import { AbstractSimObject } from "../objects/AbstractSimObject";
 import { LockableMeasure } from './LockableMeasure';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 /**
- * @hidden
+ *
  */
 var LinearDamper = /** @class */ (function (_super) {
     __extends(LinearDamper, _super);

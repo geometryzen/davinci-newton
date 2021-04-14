@@ -4,10 +4,10 @@ import { Force } from './Force';
 import { ForceBody } from './ForceBody';
 import { ForceLaw } from './ForceLaw';
 /**
- * @hidden
+ *
  */
 export declare class ConstantForceLaw<T> extends AbstractSimObject implements ForceLaw<T> {
-    private $body;
+    private body;
     /**
      * The attachment point to the body in body coordinates.
      */
@@ -17,8 +17,11 @@ export declare class ConstantForceLaw<T> extends AbstractSimObject implements Fo
     private $potentialEnergyLock;
     /**
      *
+     * @param body the body that the force acts upon.
+     * @param vector the force vector.
+     * @param vectorCoordType 0 => LOCAL, 1 => WORLD.
      */
-    constructor($body: ForceBody<T>, value: T, valueCoordType?: CoordType);
+    constructor(body: ForceBody<T>, vector: T, vectorCoordType?: CoordType);
     get forces(): Force<T>[];
     get location(): T;
     set location(location: T);

@@ -3,20 +3,17 @@ import { Engine1 } from '../engineG10/Engine1';
 import { Force1 } from '../engineG10/Force1';
 import { Particle1 } from '../engineG10/Particle1';
 import { Block2 } from '../engineG20/Block2';
-import { ConstantForceLaw2 } from '../engineG20/ConstantForceLaw2';
 import { Disc2 } from '../engineG20/Disc2';
-import { KinematicsG20 } from '../engineG20/KinematicsG20';
 import { Engine2 } from '../engineG20/Engine2';
 import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Force2 } from '../engineG20/Force2';
-import { LinearDamper2 } from '../engineG20/LinearDamper2';
+import { KinematicsG20 } from '../engineG20/KinematicsG20';
 import { Particle2 } from '../engineG20/Particle2';
 import { Polygon2 } from '../engineG20/Polygon2';
-import { Spring2 } from '../engineG20/Spring2';
 import { SurfaceConstraint2 } from '../engineG20/SurfaceConstraint2';
 import { Block3 } from '../engineG30/Block3';
-import { KinematicsG30 } from '../engineG30/KinematicsG30';
 import { Euclidean3 } from '../engineG30/Euclidean3';
+import { KinematicsG30 } from '../engineG30/KinematicsG30';
 import { Particle3 } from '../engineG30/Particle3';
 import { SurfaceConstraint3 } from '../engineG30/SurfaceConstraint3';
 import { Geometric1 } from '../math/Geometric1';
@@ -28,6 +25,7 @@ import { ConstantTorqueLaw } from './ConstantTorqueLaw';
 import { Engine } from './Engine';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
+import { LinearDamper } from './LinearDamper';
 import { Spring } from './Spring';
 
 /**
@@ -727,9 +725,9 @@ describe("engine", function () {
             expect(block.Ω.b).toBe(0);
             expect(block.Ω.uom).toBe(Unit.INV_SECOND);
 
-            const f1 = new ConstantForceLaw2(block, N.mulByNumber(1.0).mulByVector(e2), 1);
-            const f2 = new ConstantForceLaw2(block, N.mulByNumber(-0.7).mulByVector(e2), 1);
-            const f3 = new ConstantForceLaw2(block, N.mulByNumber(-0.3).mulByVector(e2), 1);
+            const f1 = new ConstantForceLaw(block, N.mulByNumber(1.0).mulByVector(e2), 1);
+            const f2 = new ConstantForceLaw(block, N.mulByNumber(-0.7).mulByVector(e2), 1);
+            const f3 = new ConstantForceLaw(block, N.mulByNumber(-0.3).mulByVector(e2), 1);
 
             f2.location = m.mulByNumber(-2).mulByVector(e1);
             f3.location = m.mulByNumber(2).mulByVector(e1);
@@ -787,16 +785,16 @@ describe("engine", function () {
             support.M = kg.mulByNumber(100000000); // TODO: Try working with infinity
             support.X = e2.mul(support.height).divByNumber(2).add(hangPoint);
 
-            const spring = new Spring2(support, ball);
+            const spring = new Spring(support, ball);
             spring.restLength = SPRING_L;
             spring.stiffness = SPRING_K;
             spring.attach1 = e2.mul(support.height).divByNumber(2).neg();
 
-            const damper = new LinearDamper2(support, ball);
+            const damper = new LinearDamper(support, ball);
             damper.b = N.mulByNumber(1).mul(s).div(m);
 
-            const ropeForce = new ConstantForceLaw2(ball, ROPE_FORCE);
-            const gravForce = new ConstantForceLaw2(ball, g.mul(ball.M));
+            const ropeForce = new ConstantForceLaw(ball, ROPE_FORCE);
+            const gravForce = new ConstantForceLaw(ball, g.mul(ball.M));
 
             sim.addBody(ball);
             sim.addBody(support);

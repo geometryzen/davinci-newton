@@ -5,7 +5,7 @@ import { Torque } from "./Torque";
 import { TorqueLaw } from "./TorqueLaw";
 
 /**
- * @hidden
+ *
  */
 export class ConstantTorqueLaw<T> extends AbstractSimObject implements TorqueLaw<T> {
     private readonly $torque: Torque<T>;
