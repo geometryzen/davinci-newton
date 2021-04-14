@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Spring2 | davinci-newton</title>
+	<title>ConstantTorqueLaw | davinci-newton</title>
 	<meta name="description" content="Documentation for davinci-newton">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">:root {
@@ -2704,53 +2704,26 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class="current tsd-kind-class">
-			<a href="spring2.html" class="tsd-kind-icon">Spring2</a>
+		<li class="current tsd-kind-class tsd-has-type-parameter">
+			<a href="constanttorquelaw.html" class="tsd-kind-icon">Constant<wbr>Torque<wbr>Law</a>
 			<ul>
-				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<a href="spring2.html#constructor" class="tsd-kind-icon">constructor</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="spring2.html#metric" class="tsd-kind-icon">metric</a>
+				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
+					<a href="constanttorquelaw.html#constructor" class="tsd-kind-icon">constructor</a>
 				</li>
 				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#attach1" class="tsd-kind-icon">attach1</a>
-				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#attach2" class="tsd-kind-icon">attach2</a>
+					<a href="constanttorquelaw.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
 				</li>
 				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-					<a href="spring2.html#end1" class="tsd-kind-icon">end1</a>
+					<a href="constanttorquelaw.html#torques" class="tsd-kind-icon">torques</a>
 				</li>
-				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-					<a href="spring2.html#end2" class="tsd-kind-icon">end2</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="constanttorquelaw.html#disconnect" class="tsd-kind-icon">disconnect</a>
 				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="constanttorquelaw.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
 				</li>
-				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-					<a href="spring2.html#forces" class="tsd-kind-icon">forces</a>
-				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#k" class="tsd-kind-icon">k</a>
-				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#restlength" class="tsd-kind-icon">rest<wbr>Length</a>
-				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#springconstant" class="tsd-kind-icon">spring<wbr>Constant</a>
-				</li>
-				<li class=" tsd-kind-accessor tsd-parent-kind-class">
-					<a href="spring2.html#stiffness" class="tsd-kind-icon">stiffness</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="spring2.html#disconnect" class="tsd-kind-icon">disconnect</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="spring2.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a href="spring2.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="constanttorquelaw.html#updatetorques" class="tsd-kind-icon">update<wbr>Torques</a>
 				</li>
 			</ul>
 		</li>
@@ -2758,17 +2731,31 @@ img {
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
+		<section class="tsd-panel tsd-type-parameters">
+			<h3>Type parameters</h3>
+			<ul class="tsd-type-parameters">
+				<li>
+					<h4>T</h4>
+				</li>
+			</ul>
+		</section>
 		<section class="tsd-panel tsd-hierarchy">
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
 				<li>
-					<span class="tsd-signature-type">Spring</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>
+					<span class="tsd-signature-type">AbstractSimObject</span>
 					<ul class="tsd-hierarchy">
 						<li>
-							<span class="target">Spring2</span>
+							<span class="target">ConstantTorqueLaw</span>
 						</li>
 					</ul>
 				</li>
+			</ul>
+		</section>
+		<section class="tsd-panel">
+			<h3>Implements</h3>
+			<ul class="tsd-hierarchy">
+				<li><span class="tsd-signature-type">TorqueLaw</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -2778,36 +2765,22 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Constructors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="spring2.html#constructor" class="tsd-kind-icon">constructor</a></li>
-						</ul>
-					</section>
-					<section class="tsd-index-section tsd-is-inherited">
-						<h3>Properties</h3>
-						<ul class="tsd-index-list">
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="spring2.html#metric" class="tsd-kind-icon">metric</a></li>
+							<li class="tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite"><a href="constanttorquelaw.html#constructor" class="tsd-kind-icon">constructor</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
 						<h3>Accessors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#attach1" class="tsd-kind-icon">attach1</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#attach2" class="tsd-kind-icon">attach2</a></li>
-							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="spring2.html#end1" class="tsd-kind-icon">end1</a></li>
-							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="spring2.html#end2" class="tsd-kind-icon">end2</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
-							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="spring2.html#forces" class="tsd-kind-icon">forces</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#k" class="tsd-kind-icon">k</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#restlength" class="tsd-kind-icon">rest<wbr>Length</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#springconstant" class="tsd-kind-icon">spring<wbr>Constant</a></li>
-							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="spring2.html#stiffness" class="tsd-kind-icon">stiffness</a></li>
+							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="constanttorquelaw.html#expiretime" class="tsd-kind-icon">expire<wbr>Time</a></li>
+							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="constanttorquelaw.html#torques" class="tsd-kind-icon">torques</a></li>
 						</ul>
 					</section>
-					<section class="tsd-index-section tsd-is-inherited">
+					<section class="tsd-index-section ">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring2.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring2.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="spring2.html#updateforces" class="tsd-kind-icon">update<wbr>Forces</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="constanttorquelaw.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="constanttorquelaw.html#potentialenergy" class="tsd-kind-icon">potential<wbr>Energy</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="constanttorquelaw.html#updatetorques" class="tsd-kind-icon">update<wbr>Torques</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2815,148 +2788,45 @@ img {
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Constructors</h2>
-			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
-				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Spring2<span class="tsd-signature-symbol">(</span>body1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span>, body2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="spring2.html" class="tsd-signature-type" data-tsd-kind="Class">Spring2</a></li>
+				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter tsd-is-overwrite">
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Constant<wbr>Torque<wbr>Law&lt;T&gt;<span class="tsd-signature-symbol">(</span>$body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, valueCoordType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CoordType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="constanttorquelaw.html" class="tsd-signature-type" data-tsd-kind="Class">ConstantTorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Overrides Spring&lt;Geometric2&gt;.constructor</p>
+							<p>Overrides AbstractSimObject.constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/engineG20/Spring2.ts#L8">lib/engineG20/Spring2.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/core/ConstantTorqueLaw.ts#L12">lib/core/ConstantTorqueLaw.ts:12</a></li>
 							</ul>
 						</aside>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>body1: <span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>$body: <span class="tsd-signature-type">ForceBody</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
-								<h5>body2: <span class="tsd-signature-type">RigidBody</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>value: <span class="tsd-signature-type">T</span></h5>
+							</li>
+							<li>
+								<h5>valueCoordType: <span class="tsd-signature-type">CoordType</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="spring2.html" class="tsd-signature-type" data-tsd-kind="Class">Spring2</a></h4>
+						<h4 class="tsd-returns-title">Returns <a href="constanttorquelaw.html" class="tsd-signature-type" data-tsd-kind="Class">ConstantTorqueLaw</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
-			</section>
-		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="metric" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> metric</h3>
-				<div class="tsd-signature tsd-kind-icon">metric<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Metric</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span></div>
-				<aside class="tsd-sources">
-					<p>Inherited from Spring.metric</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L66">lib/core/Spring.ts:66</a></li>
-					</ul>
-				</aside>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Accessors</h2>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="attach1" class="tsd-anchor"></a>
-				<h3>attach1</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> attach1<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> attach1<span class="tsd-signature-symbol">(</span>attach1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L167">lib/core/Spring.ts:167</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L170">lib/core/Spring.ts:170</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>attach1: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="attach2" class="tsd-anchor"></a>
-				<h3>attach2</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> attach2<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> attach2<span class="tsd-signature-symbol">(</span>attach2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L176">lib/core/Spring.ts:176</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L179">lib/core/Spring.ts:179</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>attach2: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-				<a name="end1" class="tsd-anchor"></a>
-				<h3>end1</h3>
-				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> end1<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L185">lib/core/Spring.ts:185</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-				<a name="end2" class="tsd-anchor"></a>
-				<h3>end2</h3>
-				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> end2<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L192">lib/core/Spring.ts:192</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
 				<a name="expiretime" class="tsd-anchor"></a>
 				<h3>expire<wbr>Time</h3>
@@ -2968,7 +2838,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/objects/AbstractSimObject.ts#L37">lib/objects/AbstractSimObject.ts:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -2976,7 +2846,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/objects/AbstractSimObject.ts#L40">lib/objects/AbstractSimObject.ts:40</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2990,204 +2860,76 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-				<a name="forces" class="tsd-anchor"></a>
-				<h3>forces</h3>
+				<a name="torques" class="tsd-anchor"></a>
+				<h3>torques</h3>
 				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> torques<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Torque</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L108">lib/core/Spring.ts:108</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/core/ConstantTorqueLaw.ts#L21">lib/core/ConstantTorqueLaw.ts:21</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="k" class="tsd-anchor"></a>
-				<h3>k</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> k<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> k<span class="tsd-signature-symbol">(</span>k<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L122">lib/core/Spring.ts:122</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L125">lib/core/Spring.ts:125</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>k: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="restlength" class="tsd-anchor"></a>
-				<h3>rest<wbr>Length</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> restLength<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> restLength<span class="tsd-signature-symbol">(</span>restLength<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L112">lib/core/Spring.ts:112</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L115">lib/core/Spring.ts:115</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>restLength: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="springconstant" class="tsd-anchor"></a>
-				<h3>spring<wbr>Constant</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> springConstant<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> springConstant<span class="tsd-signature-symbol">(</span>springConstant<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L130">lib/core/Spring.ts:130</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L133">lib/core/Spring.ts:133</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>springConstant: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
-				<a name="stiffness" class="tsd-anchor"></a>
-				<h3>stiffness</h3>
-				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> stiffness<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
-					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> stiffness<span class="tsd-signature-symbol">(</span>stiffness<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L138">lib/core/Spring.ts:138</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
-					</li>
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L141">lib/core/Spring.ts:141</a></li>
-							</ul>
-						</aside>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>stiffness: <span class="tsd-signature-type">T</span></h5>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Torque</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
 		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Methods</h2>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="disconnect" class="tsd-anchor"></a>
 				<h3>disconnect</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 					<li class="tsd-signature tsd-kind-icon">disconnect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Spring.disconnect</p>
+							<p>Implementation of TorqueLaw.disconnect</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L235">lib/core/Spring.ts:235</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/core/ConstantTorqueLaw.ts#L27">lib/core/ConstantTorqueLaw.ts:27</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="potentialenergy" class="tsd-anchor"></a>
 				<h3>potential<wbr>Energy</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">potential<wbr>Energy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a></li>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">potential<wbr>Energy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Spring.potentialEnergy</p>
+							<p>Implementation of TorqueLaw.potentialEnergy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L242">lib/core/Spring.ts:242</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/core/ConstantTorqueLaw.ts#L30">lib/core/ConstantTorqueLaw.ts:30</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-				<a name="updateforces" class="tsd-anchor"></a>
-				<h3>update<wbr>Forces</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<li class="tsd-signature tsd-kind-icon">update<wbr>Forces<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="updatetorques" class="tsd-anchor"></a>
+				<h3>update<wbr>Torques</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Torques<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Torque</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Inherited from Spring.updateForces</p>
+							<p>Implementation of TorqueLaw.updateTorques</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Spring.ts#L202">lib/core/Spring.ts:202</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/903498c/src/lib/core/ConstantTorqueLaw.ts#L24">lib/core/ConstantTorqueLaw.ts:24</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Force</span><span class="tsd-signature-symbol">&lt;</span><a href="geometric2.html" class="tsd-signature-type" data-tsd-kind="Class">Geometric2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Torque</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 					</li>
 				</ul>
 			</section>
