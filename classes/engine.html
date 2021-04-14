@@ -2710,6 +2710,9 @@ img {
 				<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter">
 					<a href="engine.html#constructor" class="tsd-kind-icon">constructor</a>
 				</li>
+				<li class=" tsd-kind-accessor tsd-parent-kind-class">
+					<a href="engine.html#speedoflight" class="tsd-kind-icon">speed<wbr>OfLight</a>
+				</li>
 				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 					<a href="engine.html#varslist" class="tsd-kind-icon">vars<wbr>List</a>
 				</li>
@@ -2811,6 +2814,7 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Accessors</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="engine.html#speedoflight" class="tsd-kind-icon">speed<wbr>OfLight</a></li>
 							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="engine.html#varslist" class="tsd-kind-icon">vars<wbr>List</a></li>
 						</ul>
 					</section>
@@ -2841,13 +2845,13 @@ img {
 				<a name="constructor" class="tsd-anchor"></a>
 				<h3>constructor</h3>
 				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">new <wbr>Engine&lt;T&gt;<span class="tsd-signature-symbol">(</span>metric<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Metric</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, dynamics<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Kinematics</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">EngineOptions</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="engine.html" class="tsd-signature-type" data-tsd-kind="Class">Engine</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">new <wbr>Engine&lt;T&gt;<span class="tsd-signature-symbol">(</span>metric<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Metric</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, kinematics<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Kinematics</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">EngineOptions</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="engine.html" class="tsd-signature-type" data-tsd-kind="Class">Engine</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L34">lib/core/Engine.ts:34</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L34">lib/core/Engine.ts:34</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2862,7 +2866,7 @@ img {
 								<h5>metric: <span class="tsd-signature-type">Metric</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
-								<h5>dynamics: <span class="tsd-signature-type">Kinematics</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>kinematics: <span class="tsd-signature-type">Kinematics</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">EngineOptions</span><span class="tsd-signature-symbol">&gt;</span></h5>
@@ -2877,6 +2881,52 @@ img {
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Accessors</h2>
+			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+				<a name="speedoflight" class="tsd-anchor"></a>
+				<h3>speed<wbr>OfLight</h3>
+				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> speedOfLight<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> speedOfLight<span class="tsd-signature-symbol">(</span>speedOfLight<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L51">lib/core/Engine.ts:51</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The speed of light.
+									For dimensionless simulations this will default to 1.
+								For S.I. Units, the speed of light may be set.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L54">lib/core/Engine.ts:54</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The speed of light.
+									For dimensionless simulations this will default to 1.
+								For S.I. Units, the speed of light may be set.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>speedOfLight: <span class="tsd-signature-type">T</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 				<a name="varslist" class="tsd-anchor"></a>
 				<h3>vars<wbr>List</h3>
@@ -2887,7 +2937,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L50">lib/core/Engine.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L61">lib/core/Engine.ts:61</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2912,7 +2962,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L60">lib/core/Engine.ts:60</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L71">lib/core/Engine.ts:71</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2945,7 +2995,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L120">lib/core/Engine.ts:120</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L131">lib/core/Engine.ts:131</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2977,7 +3027,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L142">lib/core/Engine.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L153">lib/core/Engine.ts:153</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3010,7 +3060,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L80">lib/core/Engine.ts:80</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L91">lib/core/Engine.ts:91</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3041,7 +3091,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L100">lib/core/Engine.ts:100</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L111">lib/core/Engine.ts:111</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3072,7 +3122,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L163">lib/core/Engine.ts:163</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L174">lib/core/Engine.ts:174</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3109,7 +3159,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L70">lib/core/Engine.ts:70</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L81">lib/core/Engine.ts:81</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3140,7 +3190,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L130">lib/core/Engine.ts:130</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L141">lib/core/Engine.ts:141</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3171,7 +3221,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L152">lib/core/Engine.ts:152</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L163">lib/core/Engine.ts:163</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3202,7 +3252,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L90">lib/core/Engine.ts:90</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L101">lib/core/Engine.ts:101</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3233,7 +3283,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L109">lib/core/Engine.ts:109</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L120">lib/core/Engine.ts:120</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3264,7 +3314,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L181">lib/core/Engine.ts:181</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L192">lib/core/Engine.ts:192</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
@@ -3282,7 +3332,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/b458519/src/lib/core/Engine.ts#L173">lib/core/Engine.ts:173</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/448a9f7/src/lib/core/Engine.ts#L184">lib/core/Engine.ts:184</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
