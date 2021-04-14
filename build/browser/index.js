@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-14';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.94';
+            this.VERSION = '1.0.95';
         }
         return Newton;
     }());
@@ -5044,6 +5044,26 @@
         Engine.prototype.totalEnergy = function () {
             return this.physics.totalEnergy();
         };
+        Object.defineProperty(Engine.prototype, "showForces", {
+            get: function () {
+                return this.physics.showForces;
+            },
+            set: function (showForces) {
+                this.physics.showForces = showForces;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Engine.prototype, "showTorques", {
+            get: function () {
+                return this.physics.showTorques;
+            },
+            set: function (showTorques) {
+                this.physics.showTorques = showTorques;
+            },
+            enumerable: false,
+            configurable: true
+        });
         return Engine;
     }());
 
@@ -8624,11 +8644,11 @@
         __extends(Spacetime1, _super);
         /**
          *
-         * @param a
-         * @param t
-         * @param x
-         * @param b
-         * @param uom
+         * @param a the coordinate of this multivector corresponding to the one scalar. Default is zero.
+         * @param t the coordinate of this multivector corresponding to the e0 basis vector. Default is zero..
+         * @param x the coordinate of this multivector corresponding to the e1 basis vector. Default is zero.
+         * @param b the coordinate of this multivector corresponding to the I pseudoscalar. Default is zero.
+         * @param uom the optional unit of measure for this multivector.
          */
         function Spacetime1(a, t, x, b, uom) {
             if (a === void 0) { a = 0; }
@@ -8651,6 +8671,13 @@
         Spacetime1.scalar = function (a, uom) {
             return new Spacetime1(a, 0, 0, 0, uom);
         };
+        /**
+         * Creates a grade 1 (vector) multivector with a value (t * e0 + x * e1) * uom.
+         * The value returned is in the unlocked (mutable) state.
+         * @param t the coordinate corresponding to the e0 basis vector.
+         * @param x  the coordinate corresponding to the e1 basis vector.
+         * @param uom  the optional unit of measure. Equivalent to 1 if omitted.
+         */
         Spacetime1.vector = function (t, x, uom) {
             return new Spacetime1(0, t, x, 0, uom);
         };
@@ -9628,9 +9655,33 @@
                 return void 0;
             }
         };
+        /**
+         * The scalar value 0.
+         *
+         * This scalar is permanently locked (immutable).
+         */
         Spacetime1.zero = Spacetime1.scalar(0).permlock();
+        /**
+         * The scalar value 1.
+         *
+         * This scalar is permanently locked (immutable).
+         */
         Spacetime1.one = Spacetime1.scalar(1).permlock();
+        /**
+         * The vector in the Time direction.
+         *
+         * e0 * e0 = 1
+         *
+         * This vector is permanently locked (immutable).
+         */
         Spacetime1.e0 = Spacetime1.vector(1, 0).permlock();
+        /**
+         * The vector in the Space direction.
+         *
+         * e1 * e1 = -1
+         *
+         * This vector is permanently locked (immutable).
+         */
         Spacetime1.e1 = Spacetime1.vector(0, 1).permlock();
         Spacetime1.I = new Spacetime1(0, 0, 0, 1).permlock();
         Spacetime1.kilogram = Spacetime1.scalar(1, Unit.KILOGRAM).permlock();

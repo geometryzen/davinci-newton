@@ -2153,10 +2153,34 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     static wedge(a: Geometric3, b: Geometric3): Geometric3;
 }
 
-export declare class Spacetime1 {
+export class Spacetime1 {
+    /**
+     * The scalar value 0.
+     * 
+     * This scalar is permanently locked (immutable).
+     */
     static readonly zero: Spacetime1;
+    /**
+     * The scalar value 1.
+     * 
+     * This scalar is permanently locked (immutable).
+     */
     static readonly one: Spacetime1;
+    /**
+     * The vector in the Time direction.
+     * 
+     * e0 * e0 = 1
+     * 
+     * This vector is permanently locked (immutable).
+     */
     static readonly e0: Spacetime1;
+    /**
+     * The vector in the Space direction.
+     * 
+     * e1 * e1 = -1
+     * 
+     * This vector is permanently locked (immutable).
+     */
     static readonly e1: Spacetime1;
     static readonly I: Spacetime1;
     static readonly kilogram: Spacetime1;
@@ -2166,28 +2190,53 @@ export declare class Spacetime1 {
     static readonly kelvin: Spacetime1;
     static readonly mole: Spacetime1;
     static readonly candela: Spacetime1;
+    static readonly coulomb: Spacetime1;
+    static readonly newton: Spacetime1;
+    static readonly joule: Spacetime1;
+
     /**
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.
-     * @param a The scaling factor for the unit of measure.
-     * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+     * @param a the scaling factor for the unit of measure.
+     * @param uom the optional unit of measure. Equivalent to 1 if omitted.
      */
     static scalar(a: number, uom?: Unit): Spacetime1;
+
+    /**
+     * Creates a grade 1 (vector) multivector with a value (t * e0 + x * e1) * uom.
+     * The value returned is in the unlocked (mutable) state.
+     * @param t the coordinate corresponding to the e0 basis vector.
+     * @param x  the coordinate corresponding to the e1 basis vector.
+     * @param uom  the optional unit of measure. Equivalent to 1 if omitted.
+     */
     static vector(t: number, x: number, uom?: Unit): Spacetime1;
+
     /**
      *
-     * @param a
-     * @param t
-     * @param x
-     * @param b
-     * @param uom
+     * @param a the coordinate of this multivector corresponding to the one scalar.
+     * @param t the coordinate of this multivector corresponding to the e0 basis vector.
+     * @param x the coordinate of this multivector corresponding to the e1 basis vector.
+     * @param b the coordinate of this multivector corresponding to the I pseudoscalar.
+     * @param uom the optional unit of measure for this multivector.
      */
     constructor(a?: number, t?: number, x?: number, b?: number, uom?: Unit);
+    /**
+     * The coordinate of this multivector corresponding to the one scalar.
+     */
     a: number;
+    /**
+     * The coordinate of this multivector corresponding to the e0 basis vector.
+     */
     t: number;
+    /**
+     * The coordinate of this multivector corresponding to the e1 basis vector.
+     */
     x: number;
+    /**
+     * The coordinate of this multivector corresponding to the I pseudoscalar.
+     */
     b: number;
-    readonly grades;
+    readonly grades: number;
     add(rhs: Spacetime1, α?: number): Spacetime1;
     addScalar(a: number, uom?: Unit, α?: number): Spacetime1;
     clone(): Spacetime1;
@@ -2228,7 +2277,7 @@ export declare class Spacetime1 {
     toString(radix?: number): string;
 }
 
-export declare class Spacetime2 {
+export class Spacetime2 {
     static readonly zero: Spacetime2;
     static readonly one: Spacetime2;
     static readonly e0: Spacetime2;
@@ -3215,9 +3264,20 @@ export class Engine<T> {
     constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
 
     /**
+     * Determines whether calculated forces will be added to the simulation list.
+     */
+    showForces: boolean;
+
+    /**
+     * Determines whether calculated torques will be added to the simulation list.
+     */
+    showTorques: boolean;
+
+    /**
      * 
      */
     readonly bodies: ForceBody<T>[];
+
     /**
      * 
      */

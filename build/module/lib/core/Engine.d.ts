@@ -112,4 +112,8 @@ export declare class Engine<T> {
      * @returns The total energy (kinetic and potential) of the system.
      */
     totalEnergy(): T;
+    get showForces(): boolean;
+    set showForces(showForces: boolean);
+    get showTorques(): boolean;
+    set showTorques(showTorques: boolean);
 }

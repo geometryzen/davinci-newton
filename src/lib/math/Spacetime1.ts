@@ -63,9 +63,33 @@ const BASIS_LABELS: ['1', 'e0', 'e1', 'I'] = ["1", "e0", "e1", "I"];
  *
  */
 export class Spacetime1 extends AbstractGeometric implements GradeMasked, GeometricM11, GeometricNumber<Spacetime1, Spacetime1, Spinor, Vector, number>, GeometricOperators<Spacetime1> {
+    /**
+     * The scalar value 0.
+     * 
+     * This scalar is permanently locked (immutable).
+     */
     static readonly zero = Spacetime1.scalar(0).permlock();
+    /**
+     * The scalar value 1.
+     * 
+     * This scalar is permanently locked (immutable).
+     */
     static readonly one = Spacetime1.scalar(1).permlock();
+    /**
+     * The vector in the Time direction.
+     * 
+     * e0 * e0 = 1
+     * 
+     * This vector is permanently locked (immutable).
+     */
     static readonly e0 = Spacetime1.vector(1, 0).permlock();
+    /**
+     * The vector in the Space direction.
+     * 
+     * e1 * e1 = -1
+     * 
+     * This vector is permanently locked (immutable).
+     */
     static readonly e1 = Spacetime1.vector(0, 1).permlock();
     static readonly I = new Spacetime1(0, 0, 0, 1).permlock();
     static readonly kilogram = Spacetime1.scalar(1, Unit.KILOGRAM).permlock();
@@ -87,9 +111,18 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
     static scalar(a: number, uom?: Unit): Spacetime1 {
         return new Spacetime1(a, 0, 0, 0, uom);
     }
+
+    /**
+     * Creates a grade 1 (vector) multivector with a value (t * e0 + x * e1) * uom.
+     * The value returned is in the unlocked (mutable) state.
+     * @param t the coordinate corresponding to the e0 basis vector.
+     * @param x  the coordinate corresponding to the e1 basis vector.
+     * @param uom  the optional unit of measure. Equivalent to 1 if omitted.
+     */
     static vector(t: number, x: number, uom?: Unit): Spacetime1 {
         return new Spacetime1(0, t, x, 0, uom);
     }
+
     /**
      * a
      */
@@ -106,13 +139,14 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
      * tx
      */
     private $M11: number;
+
     /**
-     * 
-     * @param a 
-     * @param t 
-     * @param x 
-     * @param b 
-     * @param uom 
+     *
+     * @param a the coordinate of this multivector corresponding to the one scalar. Default is zero.
+     * @param t the coordinate of this multivector corresponding to the e0 basis vector. Default is zero..
+     * @param x the coordinate of this multivector corresponding to the e1 basis vector. Default is zero.
+     * @param b the coordinate of this multivector corresponding to the I pseudoscalar. Default is zero.
+     * @param uom the optional unit of measure for this multivector.
      */
     constructor(a = 0, t = 0, x = 0, b = 0, uom?: Unit) {
         super(uom);

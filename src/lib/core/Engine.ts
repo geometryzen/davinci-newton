@@ -201,4 +201,18 @@ export class Engine<T> {
     totalEnergy(): T {
         return this.physics.totalEnergy();
     }
+
+    get showForces(): boolean {
+        return this.physics.showForces;
+    }
+    set showForces(showForces: boolean) {
+        this.physics.showForces = showForces;
+    }
+
+    get showTorques(): boolean {
+        return this.physics.showTorques;
+    }
+    set showTorques(showTorques: boolean) {
+        this.physics.showTorques = showTorques;
+    }
 }

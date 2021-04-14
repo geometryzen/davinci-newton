@@ -181,6 +181,26 @@ var Engine = /** @class */ (function () {
     Engine.prototype.totalEnergy = function () {
         return this.physics.totalEnergy();
     };
+    Object.defineProperty(Engine.prototype, "showForces", {
+        get: function () {
+            return this.physics.showForces;
+        },
+        set: function (showForces) {
+            this.physics.showForces = showForces;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Engine.prototype, "showTorques", {
+        get: function () {
+            return this.physics.showTorques;
+        },
+        set: function (showTorques) {
+            this.physics.showTorques = showTorques;
+        },
+        enumerable: false,
+        configurable: true
+    });
     return Engine;
 }());
 export { Engine };
