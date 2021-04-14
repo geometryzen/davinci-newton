@@ -12,12 +12,18 @@ import { Torque3 } from "./Torque3";
 /**
  * @hidden
  */
-export class Euclidean3 implements Metric<Geometric3> {
+export class MetricG30 implements Metric<Geometric3> {
+    get e0(): Geometric3 {
+        return void 0;
+    }
     a(mv: Geometric3): number {
         return mv.a;
     }
     add(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         return lhs.add(rhs);
+    }
+    addScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3 {
+        return lhs.addScalar(a, uom);
     }
     addVector(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         return lhs.addVector(rhs);
@@ -132,9 +138,9 @@ export class Euclidean3 implements Metric<Geometric3> {
         // TODO: Could generalize to subtracting a fraction...
         return lhs.sub(rhs);
     }
-    subScalar(lhs: Geometric3, rhs: Geometric3): Geometric3 {
+    subScalar(lhs: Geometric3, a: number, uom?: Unit): Geometric3 {
         // TODO: Could generalize to subtracting a fraction...
-        return lhs.subScalar(rhs.a, rhs.uom);
+        return lhs.subScalar(a, uom);
     }
     subVector(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         // TODO: Could generalize to subtracting a fraction...
@@ -157,8 +163,5 @@ export class Euclidean3 implements Metric<Geometric3> {
     }
     writeBivector(source: Geometric3, target: Geometric3): void {
         source.writeBivector(target);
-    }
-    zero(): Geometric3 {
-        return Geometric3.zero.clone();
     }
 }

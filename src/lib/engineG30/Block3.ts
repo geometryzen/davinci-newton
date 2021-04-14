@@ -16,7 +16,7 @@ import { Geometric3 } from '../math/Geometric3';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
 import { RigidBody } from '../core/RigidBody';
-import { Euclidean3 } from './Euclidean3';
+import { MetricG30 } from './MetricG30';
 
 /**
  * A rectangular block of constant density.
@@ -44,7 +44,7 @@ export class Block3 extends RigidBody<Geometric3> {
      * 
      */
     constructor(width = Geometric3.one, height = Geometric3.one, depth = Geometric3.one) {
-        super(new Euclidean3());
+        super(new MetricG30());
 
         if (!(width instanceof Geometric3)) {
             throw new Error("width must be a Geometric3.");

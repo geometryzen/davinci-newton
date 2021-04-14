@@ -20,7 +20,7 @@ import { GenericEvent } from '../util/GenericEvent';
 import { Memorizable } from '../util/Memorizable';
 import { ParameterBoolean } from '../util/ParameterBoolean';
 import { ParameterNumber } from '../util/ParameterNumber';
-import remove from '../util/remove';
+import { remove } from '../util/remove';
 import { veryDifferent } from '../util/veryDifferent';
 import { AlignH } from './AlignH';
 import { AlignV } from './AlignV';

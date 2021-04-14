@@ -11,6 +11,7 @@ import { GeometricConstraint } from './GeometricConstraint';
 import { Kinematics } from './Kinematics';
 import { Metric } from './Metric';
 import { Physics } from './Physics';
+import { SimList } from './SimList';
 import { TorqueLaw } from './TorqueLaw';
 import { VarsList } from './VarsList';
 
@@ -55,11 +56,19 @@ export class Engine<T> {
         this.kinematics.speedOfLight = speedOfLight;
     }
 
+    get bodies(): ForceBody<T>[] {
+        return this.physics.bodies;
+    }
+
     /**
      * Returns the state variables of the system.
      */
     get varsList(): VarsList {
         return this.physics.varsList;
+    }
+
+    get simList(): SimList {
+        return this.physics.simList;
     }
 
     /**

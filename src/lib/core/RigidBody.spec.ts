@@ -1,7 +1,7 @@
-import { Euclidean1 } from '../engineG10/Euclidean1';
+import { MetricG10 } from '../engineG10/MetricG10';
 import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Block3 } from '../engineG30/Block3';
-import { Euclidean3 } from '../engineG30/Euclidean3';
+import { MetricG30 } from '../engineG30/MetricG30';
 import { Geometric1 } from '../math/Geometric1';
 import { Geometric2 } from '../math/Geometric2';
 import { Geometric3 } from '../math/Geometric3';
@@ -16,7 +16,7 @@ const MOTION = Unit.KILOGRAM.mul(Unit.METER).div(Unit.SECOND);
 describe("RigidBody", function () {
     describe("constructor", function () {
         it("should initialize X to zero", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.X.x).toBe(0);
             expect(body.X.y).toBe(0);
@@ -24,7 +24,7 @@ describe("RigidBody", function () {
             expect(body.X.isZero()).toBeTruthy();
         });
         it("should initialize R to one", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.R.a).toBe(1);
             expect(body.R.xy).toBe(0);
@@ -33,7 +33,7 @@ describe("RigidBody", function () {
             expect(body.R.isOne()).toBeTruthy();
         });
         it("should initialize P to zero", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.P.x).toBe(0);
             expect(body.P.y).toBe(0);
@@ -41,7 +41,7 @@ describe("RigidBody", function () {
             expect(body.P.isZero()).toBeTruthy();
         });
         it("should initialize L to zero", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.L.xy).toBe(0);
             expect(body.L.yz).toBe(0);
@@ -49,12 +49,12 @@ describe("RigidBody", function () {
             expect(body.L.isZero()).toBeTruthy();
         });
         it("should initialize M to one", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.M.a).toBe(1);
         });
         it("should initialize Ω to zero", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.Ω.xy).toBe(0);
             expect(body.Ω.yz).toBe(0);
@@ -62,7 +62,7 @@ describe("RigidBody", function () {
             expect(body.Ω.isZero()).toBeTruthy();
         });
         it("should initialize I to one", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             expect(body.I.getElement(0, 0)).toBe(1);
             expect(body.I.getElement(0, 1)).toBe(0);
@@ -78,7 +78,7 @@ describe("RigidBody", function () {
     describe("localToWorld", function () {
         it("should depend correctly on X, R, centerOfMassLocal, localPoint", function () {
             // x = rotate((localPoint - centerOfMassLocal), R) + X
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const body = new RigidBody(metric);
             body.X.copyVector({ x: Math.random(), y: Math.random(), z: Math.random(), uom: Unit.METER });
             // We'll use a rotation of 90 degrees counter clockwise (from above) in the xy plane.
@@ -182,7 +182,7 @@ describe("RigidBody", function () {
     });
     describe("M", function () {
         it("(in 1D) must be a scalar", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const e1 = Geometric1.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -198,7 +198,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a scalar in assignment to property M (mass), but was e1.");
         });
         it("(in 3D) must be a scalar", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const e1 = Geometric3.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -208,7 +208,7 @@ describe("RigidBody", function () {
     });
     describe("Q", function () {
         it("(in 1D) must be a scalar", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const e1 = Geometric1.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -224,7 +224,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a scalar in assignment to property Q (electric charge), but was e1.");
         });
         it("(in 3D) must be a scalar", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const e1 = Geometric3.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -234,7 +234,7 @@ describe("RigidBody", function () {
     });
     describe("X", function () {
         it("(in 1D) must be a vector", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = Geometric1.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -250,7 +250,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a vector in assignment to property X (position), but was 1.");
         });
         it("(in 3D) must be a vector", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const one = Geometric3.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -260,7 +260,7 @@ describe("RigidBody", function () {
     });
     describe("R", function () {
         it("(in 1D) must be a spinor", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const e1 = Geometric1.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -276,7 +276,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a spinor in assignment to property R (attitude), but was e1.");
         });
         it("(in 3D) must be a spinor", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const e1 = Geometric3.e1;
             const body = new RigidBody(metric);
             expect(function () {
@@ -286,7 +286,7 @@ describe("RigidBody", function () {
     });
     describe("P", function () {
         it("(in 1D) must be a vector", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = Geometric1.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -302,7 +302,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a vector in assignment to property P (linear momentum), but was 1.");
         });
         it("(in 3D) must be a vector", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const one = Geometric3.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -312,7 +312,7 @@ describe("RigidBody", function () {
     });
     describe("L", function () {
         it("(in 1D) must be a bivector", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = Geometric1.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -328,7 +328,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a bivector in assignment to property L (angular momentum), but was 1.");
         });
         it("(in 3D) must be a bivector", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const one = Geometric3.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -338,7 +338,7 @@ describe("RigidBody", function () {
     });
     describe("Ω", function () {
         it("(in 1D) must be a bivector", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = Geometric1.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -354,7 +354,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a bivector in assignment to property Ω (angular velocity), but was 1.");
         });
         it("(in 3D) must be a bivector", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const one = Geometric3.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -364,7 +364,7 @@ describe("RigidBody", function () {
     });
     describe("centerOfMassLocal", function () {
         it("(in 1D) must be a vector", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = Geometric1.one;
             const body = new RigidBody(metric);
             expect(function () {
@@ -380,7 +380,7 @@ describe("RigidBody", function () {
             }).toThrowError("measure must be a vector in assignment to property centerOfMassLocal, but was 1.");
         });
         it("(in 3D) must be a vector", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const one = Geometric3.one;
             const body = new RigidBody(metric);
             expect(function () {

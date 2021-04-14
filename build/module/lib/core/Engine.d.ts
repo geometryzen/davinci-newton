@@ -4,6 +4,7 @@ import { ForceLaw } from './ForceLaw';
 import { GeometricConstraint } from './GeometricConstraint';
 import { Kinematics } from './Kinematics';
 import { Metric } from './Metric';
+import { SimList } from './SimList';
 import { TorqueLaw } from './TorqueLaw';
 import { VarsList } from './VarsList';
 /**
@@ -33,10 +34,12 @@ export declare class Engine<T> {
      */
     get speedOfLight(): T;
     set speedOfLight(speedOfLight: T);
+    get bodies(): ForceBody<T>[];
     /**
      * Returns the state variables of the system.
      */
     get varsList(): VarsList;
+    get simList(): SimList;
     /**
      * Adds a body to the system.
      * The state variables of the body will become part of the state vector of the system.

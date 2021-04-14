@@ -16,7 +16,7 @@ import { RigidBody } from '../core/RigidBody';
 import { Geometric3 } from '../math/Geometric3';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { Euclidean3 } from './Euclidean3';
+import { MetricG30 } from './MetricG30';
 
 /**
  * A solid sphere of constant density.
@@ -33,7 +33,7 @@ export class Sphere3 extends RigidBody<Geometric3> {
      * 
      */
     constructor(radius = Geometric3.one) {
-        super(new Euclidean3());
+        super(new MetricG30());
         this.radius_ = Geometric3.fromScalar(radius);
         this.radiusLock_ = this.radius_.lock();
 

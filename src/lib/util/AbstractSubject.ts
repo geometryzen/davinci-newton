@@ -22,7 +22,7 @@ import { Parameter } from './Parameter';
 import { ParameterBoolean } from './ParameterBoolean';
 import { ParameterNumber } from './ParameterNumber';
 import { ParameterString } from './ParameterString';
-import remove from './remove';
+import { remove } from './remove';
 import { Subject } from './Subject';
 import { SubjectEvent } from './SubjectEvent';
 

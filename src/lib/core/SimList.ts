@@ -2,7 +2,7 @@ import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { AbstractSubject } from '../util/AbstractSubject';
 import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
-import remove from '../util/remove';
+import { remove } from '../util/remove';
 import { SimObject } from './SimObject';
 
 /**
@@ -23,7 +23,7 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    private elements_: SimObject[] = [];
+    private $elements: SimObject[] = [];
 
     /**
      * 
@@ -35,14 +35,11 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    add(simObject: SimObject): void {
-        for (let i = 0; i < arguments.length; i++) {
-            const element = <SimObject>arguments[i];
-            mustBeNonNullObject('element', element);
-            if (!contains(this.elements_, element)) {
-                this.elements_.push(element);
-                this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
-            }
+    add(element: SimObject): void {
+        mustBeNonNullObject('element', element);
+        if (!contains(this.$elements, element)) {
+            this.$elements.push(element);
+            this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
         }
     }
 
@@ -50,14 +47,14 @@ export class SimList extends AbstractSubject {
      * 
      */
     forEach(callBack: (simObject: SimObject, index: number) => any): void {
-        return this.elements_.forEach(callBack);
+        return this.$elements.forEach(callBack);
     }
 
     /**
      * 
      */
     remove(simObject: SimObject): void {
-        if (remove(this.elements_, simObject)) {
+        if (remove(this.$elements, simObject)) {
             this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simObject));
         }
     }
@@ -68,10 +65,10 @@ export class SimList extends AbstractSubject {
      * @param time the current simulation time
      */
     removeTemporary(time: number): void {
-        for (let i = this.elements_.length - 1; i >= 0; i--) {
-            const simobj = this.elements_[i];
+        for (let i = this.$elements.length - 1; i >= 0; i--) {
+            const simobj = this.$elements[i];
             if (simobj.expireTime < time) {
-                this.elements_.splice(i, 1);
+                this.$elements.splice(i, 1);
                 this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simobj));
             }
         }

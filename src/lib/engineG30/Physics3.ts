@@ -1,7 +1,7 @@
 import { EnergySystem } from "../core/EnergySystem";
 import { Physics } from "../core/Physics";
 import { Geometric3 } from "../math/Geometric3";
-import { Euclidean3 } from "./Euclidean3";
+import { MetricG30 } from "./MetricG30";
 import { KinematicsG30 } from "./KinematicsG30";
 
 /**
@@ -9,6 +9,6 @@ import { KinematicsG30 } from "./KinematicsG30";
  */
 export class Physics3 extends Physics<Geometric3> implements EnergySystem<Geometric3> {
     constructor() {
-        super(new Euclidean3(), new KinematicsG30());
+        super(new MetricG30(), new KinematicsG30());
     }
 }

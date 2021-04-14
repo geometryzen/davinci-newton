@@ -38,12 +38,26 @@ var Engine = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Engine.prototype, "bodies", {
+        get: function () {
+            return this.physics.bodies;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Engine.prototype, "varsList", {
         /**
          * Returns the state variables of the system.
          */
         get: function () {
             return this.physics.varsList;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Engine.prototype, "simList", {
+        get: function () {
+            return this.physics.simList;
         },
         enumerable: false,
         configurable: true

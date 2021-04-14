@@ -1,13 +1,13 @@
 import { Spring } from './Spring';
 import { Particle } from './Particle';
-import { Euclidean1 } from '../engineG10/Euclidean1';
+import { MetricG10 } from '../engineG10/MetricG10';
 import { Geometric1 } from '../math/Geometric1';
 import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Geometric2 } from '../math/Geometric2';
 describe("Spring", function () {
     describe("Potential Energy (Euclidean1)", function () {
         it("should be zero at the rest length separation.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
 
             const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
             Alice.X = Geometric1.vector(-0.5);
@@ -17,7 +17,7 @@ describe("Spring", function () {
             expect(spring.potentialEnergy().a).toBe(0);
         });
         it("should be increase when stretched.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
 
             const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
             Alice.X = Geometric1.vector(-1);
@@ -27,7 +27,7 @@ describe("Spring", function () {
             expect(spring.potentialEnergy().a).toBe(0.5);
         });
         it("should be increase when compressed.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
 
             const Alice = new Particle(Geometric1.scalar(1), Geometric1.scalar(0), metric);
             Alice.X = Geometric1.vector(-0.25);

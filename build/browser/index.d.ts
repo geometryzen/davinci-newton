@@ -2361,12 +2361,19 @@ export class Matrix3 implements MatrixLike {
  */
 export interface Metric<T> {
     /**
+     * 
+     */
+    readonly e0: T;
+
+    /**
      * Returns the scalar component of the multivector.
      * @param mv The multivector for which the scalar component is required.
      */
     a(mv: T): number;
 
     add(lhs: T, rhs: T): T;
+
+    addScalar(lhs: T, a: number, uom?: Unit): T;
 
     addVector(lhs: T, rhs: T): T;
 
@@ -2403,6 +2410,7 @@ export interface Metric<T> {
      * @param body The body that the force will be applied to.
      */
     createForce(body: ForceBody<T>): Force<T>;
+
     /**
      * 
      * @param body The body that the torque will be applied to.
@@ -2484,7 +2492,7 @@ export interface Metric<T> {
 
     sub(lhs: T, rhs: T): T;
 
-    subScalar(lhs: T, rhs: T): T;
+    subScalar(lhs: T, a: number, uom?: Unit): T;
 
     subVector(lhs: T, rhs: T): T;
 
@@ -2502,59 +2510,149 @@ export interface Metric<T> {
     writeVector(source: T, target: T): void;
 
     writeBivector(source: T, target: T): void;
-    /**
-     * Constructs a multivector representing the number zero (0).
-     * The returned multivector is mutable.
-     */
-    zero(): T;
 }
 
+/**
+ * A handle-body pattern abstraction of the conversion of the multivector to the system state vector.
+ * An implementation of this interface provides the mapping from a specific multivector implementation to a vector of state variables.
+ * Each state variable is a pair consisting of (number, Unit). This decomposition allows the solvers (integrators) to treat the whole
+ * system as a single particle in a large vector space.
+ */
 export interface Kinematics<T> {
     /**
-     * The rate of change of position is the velocity.
+     * 
+     */
+    speedOfLight: T;
+    /**
+     * The rate of change of position is the velocity (non-relativistic).
      * dX/dt = V = P / M
+     * In the relativistic case,
+     * dX/dt = P / sqrt(M * M + P * P), where P is the spatial part of the energy-momentum spacetime vector, M is the rest mass.
      * 
-     * @param rateOfChange 
-     * @param idx 
-     * @param body 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output) 
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input)
      */
-    setPositionRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
+    /**
+     * Let Ω(t) be the (bivector) angular velocity.
+     * Let R(t) be the (spinor) attitude of the rigid body. 
+     * The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
+     * requiring the geometric product of Ω and R.
+     * Ω and R are auxiliary and primary variables that have already been computed.
+     * 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output) 
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input)
+     */
+    setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param rateOfChange 
-     * @param idx 
-     * @param body 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input)
      */
-    setAttitudeRateOfChange(rateOfChange: number[], idx: number, body: ForceBody<T>): void;
+    zeroLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param rateOfChange
-     * @param idx 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output)
+     * @param idx (input)
+     * @param body (input)
+     * @param uomTime (input) 
      */
-    zeroLinearMomentum(rateOfChange: number[], idx: number): void;
+    zeroAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param rateOfChange
-     * @param idx 
+     * @param stateVals (input)
+     * @param stateUoms (input)
+     * @param idx (input)
+     * @param body (output)
+     * @param uomTime (input)
      */
-    zeroAngularMomentum(rateOfChange: number[], idx: number): void;
+    updateBodyFromVars(stateVals: number[], stateUoms: Unit[], idx: number, body: ForceBody<T>, uomTime: Unit): void;
     /**
      * 
-     * @param vars 
-     * @param idx 
-     * @param body 
+     * @param body (input)
+     * @param idx (input)
+     * @param vars (output)
      */
-    updateBody(vars: number[], idx: number, body: ForceBody<T>): void;
     updateVarsFromBody(body: ForceBody<T>, idx: number, vars: VarsList): void;
-
-    addForce(rateOfChange: number[], idx: number, force: T): void;
-    addTorque(rateOfChange: number[], idx: number, torque: T): void;
+    /**
+     * Adds the specified force to the rateOfChange variables for Linear Momentum.
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
+     * @param idx (input)
+     * @param force (input)
+     * @param uomTime (input)
+     */
+    addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T, uomTime: Unit): void;
+    /**
+     * 
+     * @param rateOfChangeVals (input)
+     * @param rateOfChangeUoms (input)
+     * @param idx (input)
+     * @param force (output)
+     */
+    getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T): void;
+    /**
+     * 
+     * @param rateOfChangeVals (output)
+     * @param rateOfChangeUoms (output) 
+     * @param idx (input)
+     * @param force (input)
+     */
+    setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T): void;
+    /**
+     * Adds the specified torque to the rateOfChange variables for AngularMomentum.
+     * @param rateOfChangeVals (input/output)
+     * @param rateOfChangeUoms (input/output)
+     * @param idx (input)
+     * @param torque (input)
+     * @param uomTime (input)
+     */
+    addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: T, uomTime: Unit): void;
+    /**
+     * Called by the Physics Engine during the epilog.
+     * @param bodies (input) Provides intrinsic kinetic energy.
+     * @param forceLaws (input) Provides potential energy.
+     * @param potentialOffset  (input) Provides a an offset in the potential energy.
+     * @param vars (output) The list of variables containing the summary variables to be updated.
+     */
     epilog(bodies: ForceBody<T>[], forceLaws: ForceLaw<T>[], potentialOffset: T, vars: VarsList): void;
-    discontinuousEnergyVariables(): number[];
+    /**
+     * Called by the Physics Engine to determine the indices of all the variables that are affected by a
+     * discontinuous change to the energy of the system. i.e., an "intervention" where the bodies in the
+     * system are changed independently of the differential equations that are implemented by the Physics Engine.
+     * @returns The indices into the variables list.
+     */
+    discontinuousEnergyVars(): number[];
+    /**
+     * Used by the Physics engine when adding a body to the system.
+     * Returns the name of the kinematic variable at the specified index which
+     * ranges over [0, numVarsPerBody - 1].
+     * 
+     * The name must be valid (isValidName) after having being munged (toName).
+     */
     getOffsetName(offset: number): string;
+    /**
+     * Used by the Physics class constructor to create a list of variables.
+     * One of the names returned must be the (case-sensitive) "TIME" variable.
+     */
     getVarNames(): string[];
-    numVariablesPerBody(): number;
+    /**
+     * Use by the Physics engine to add the correct number of variables for each body added.
+     * The number of variables must be at least one.
+     */
+    numVarsPerBody(): number;
 }
+
 
 /**
  * 
@@ -3015,7 +3113,7 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
     /**
      * 
      */
-    simList: SimList;
+    readonly simList: SimList;
 
     /**
      * 
@@ -3025,7 +3123,7 @@ export class Physics<T> implements Simulation, EnergySystem<T> {
     /**
      * 
      */
-    varsList: VarsList;
+    readonly varsList: VarsList;
 
     /**
      * Constructs a Physics engine for 3D simulations.
@@ -3115,16 +3213,28 @@ export class Engine<T> {
      * @param options 
      */
     constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
+
     /**
-     * The speed of light is for use in the special-relativity domain.
-     * Default is 1 (dimensionless).
-     * When using S.I. Units, this constant may be set appropriately.
+     * 
      */
+    readonly bodies: ForceBody<T>[];
+    /**
+     * 
+     */
+    readonly simList: SimList;
+
+    /**
+    * The speed of light is for use in the special-relativity domain.
+    * Default is 1 (dimensionless).
+    * When using S.I. Units, this constant may be set appropriately.
+    */
     speedOfLight: T;
+
     /**
      * The state variables of the system.
      */
     readonly varsList: VarsList;
+
     /**
      * Adds a body to the system.
      * The state variables of the body will become part of the state vector of the system.
@@ -3132,12 +3242,14 @@ export class Engine<T> {
      * @param body The body to be added to the system.
      */
     addBody(body: ForceBody<T>): void;
+
     /**
      * Adds a geometric constraint to the system.
      * Geometric constraints are applied after the force and torques have been computed and before drift forces and torques are applied.
      * @param geometry The geometric constraint to be added to the system.
      */
     addConstraint(geometry: GeometricConstraint<T>): void;
+
     /**
      * Adds a force law that is designed to compensate for numerical drift in the system.
      * A drift law is usually small and may take the form of a spring and/or damping force.
@@ -3145,51 +3257,61 @@ export class Engine<T> {
      * @param driftLaw The drift force law to be applied.
      */
     addDriftLaw(driftLaw: ForceLaw<T>): void;
+
     /**
      * Adds a force law to the system.
      * @param forceLaw The force law to be added to the system.
      */
     addForceLaw(forceLaw: ForceLaw<T>): void;
+
     /**
      * Adds a torque law to the system.
      * @param torqueLaw The torque law to be added to the system.
      */
     addTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.
      * @param Δt The time interval.
      * @param uomTime The optional unit of measure for the time interval.
      */
     advance(Δt: number, uomTime?: Unit): void;
+
     /**
      * Removes a body from the system.
      * @param body The body to be removed from the system.
      */
     removeBody(body: ForceBody<T>): void;
+
     /**
      * Removes a geometric constraint from the system.
      * @param geometry The geometric constraint to be removed from the system.
      */
     removeConstraint(geometry: GeometricConstraint<T>): void;
+
     /**
      * Removes a force law that is designed to compensate for numerical drift in the system.
      * @param driftLaw The drift force law to be removed.
      */
     removeDriftLaw(driftLaw: ForceLaw<T>): void;
+
     /**
      * Removes a force law from the system.
      * @param forceLaw The force law to be removed.
      */
     removeForceLaw(forceLaw: ForceLaw<T>): void;
+
     /**
      * Removes a torque law from the system.
      * @param torqueLaw The torque law to be removed from the system.
      */
     removeTorqueLaw(torqueLaw: TorqueLaw<T>): void;
+
     /**
      * The total energy (kinetic and potential) of the system.
      */
     totalEnergy(): T;
+
     /**
      * Updates the state vector of the simulation from the states of the bodies in the system.
      * It is necessary to call this method after an intervention which changes the state of a body in the system.

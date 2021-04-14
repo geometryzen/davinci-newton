@@ -634,24 +634,24 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
-    divByScalar(α: number, uom?: Unit): Geometric1 {
+    divByScalar(a: number, uom?: Unit): Geometric1 {
         if (this.isLocked()) {
-            return lock(this.clone().divByScalar(α, uom));
+            return lock(this.clone().divByScalar(a, uom));
         }
         else {
             this.uom = Unit.div(this.uom, uom);
-            this.a /= α;
-            this.x /= α;
+            this.a /= a;
+            this.x /= a;
             return this;
         }
     }
-    scale(α: number): Geometric1 {
+    scale(a: number): Geometric1 {
         if (this.isMutable()) {
-            this.a = this.a * α;
-            this.x = this.x * α;
+            this.a = this.a * a;
+            this.x = this.x * a;
             return this;
         } else {
-            return lock(copy(this).scale(α));
+            return lock(copy(this).scale(a));
         }
     }
     reflect(n: Vector): Geometric1 {

@@ -1,18 +1,18 @@
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
-import { Euclidean1 } from "./Euclidean1";
+import { MetricG10 } from "./MetricG10";
 import { Particle1 } from "./Particle1";
 
-describe("Euclidean1", function () {
+describe("MetricG10", function () {
     describe("constructor", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             expect(metric).toBeDefined();
         });
     });
     describe("zero", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const zero = metric.scalar(0);
             expect(zero).toBeDefined();
         });
@@ -20,25 +20,25 @@ describe("Euclidean1", function () {
     describe("lock", function () {
         it("should be defined.", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const token = metric.lock(mv);
             expect(typeof token).toBe('number');
         });
     });
     describe("scalar", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const one = metric.scalar(1);
             expect(one).toBeDefined();
         });
         it("should be effective in setting the scalar coordinate of a multivector.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const a = Math.random();
             const mv = metric.scalar(a);
             expect(metric.a(mv)).toBe(a);
         });
         it("should be effective in setting the unit of measure of a multivector.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const a = Math.random();
             const mv = metric.scalar(a, Unit.KELVIN);
             expect(metric.uom(mv)).toBe(Unit.KELVIN);
@@ -46,7 +46,7 @@ describe("Euclidean1", function () {
     });
     describe("identityMatrix", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const I = metric.identityMatrix();
             expect(I).toBeDefined();
             expect(I.dimensions).toBe(0);
@@ -57,7 +57,7 @@ describe("Euclidean1", function () {
     describe("uom", function () {
         it("should be defined.", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const uom = metric.uom(mv);
             expect(Unit.isOne(uom)).toBe(true);
         });
@@ -65,7 +65,7 @@ describe("Euclidean1", function () {
     describe("unlock", function () {
         it("should work.", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const token = metric.lock(mv);
             metric.unlock(mv, token);
             expect(true).toBe(true);
@@ -77,7 +77,7 @@ describe("Euclidean1", function () {
             const uom = Unit.CANDELA;
             const source = new Geometric1([a, 0], uom);
             const target = new Geometric1([Math.random(), Math.random()], Unit.MOLE);
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const result = metric.copy(source, target);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
@@ -93,7 +93,7 @@ describe("Euclidean1", function () {
             const a = Math.random();
             const uom = Unit.CANDELA;
             const target = new Geometric1([Math.random(), Math.random()], Unit.MOLE);
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const result = metric.copyScalar(a, uom, target);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
@@ -105,14 +105,14 @@ describe("Euclidean1", function () {
     describe("a", function () {
         it("should be defined.", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const a = metric.a(mv);
             expect(typeof a === 'number').toBe(true);
         });
     });
     describe("createForce", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const M = new Geometric1();
             const Q = new Geometric1();
             const bead = new Particle1(M, Q);
@@ -122,7 +122,7 @@ describe("Euclidean1", function () {
     });
     describe("copyVector", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const source = new Geometric1();
             const target = new Geometric1();
             const result = metric.copyVector(source, target);
@@ -132,7 +132,7 @@ describe("Euclidean1", function () {
     });
     describe("writeVector", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const source = new Geometric1();
             const target = new Geometric1();
             metric.writeVector(source, target);
@@ -141,7 +141,7 @@ describe("Euclidean1", function () {
     });
     describe("isZero", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const source = new Geometric1();
             const result = metric.isZero(source);
             expect(typeof result === 'boolean').toBe(true);
@@ -149,7 +149,7 @@ describe("Euclidean1", function () {
     });
     describe("rotate", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1();
             const spinor = new Geometric1();
             const result = metric.rotate(mv, spinor);
@@ -159,7 +159,7 @@ describe("Euclidean1", function () {
     });
     describe("addVector", function () {
         it("lhs.isMutable", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -176,7 +176,7 @@ describe("Euclidean1", function () {
             expect(result === rhs).toBe(false);
         });
         it("lhs.isLocked", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -196,7 +196,7 @@ describe("Euclidean1", function () {
     });
     describe("subVector", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.subVector(lhs, rhs);
@@ -206,7 +206,7 @@ describe("Euclidean1", function () {
     });
     describe("ext", function () {
         it("lhs.isMutable", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -226,7 +226,7 @@ describe("Euclidean1", function () {
             expect(rhs.uom).toBe(Unit.SECOND);
         });
         it("lhs.isLocked", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -257,7 +257,7 @@ describe("Euclidean1", function () {
     });
     describe("write", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const source = new Geometric1();
             const target = new Geometric1();
             metric.write(source, target);
@@ -266,7 +266,7 @@ describe("Euclidean1", function () {
     });
     describe("mul", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.mul(lhs, rhs);
@@ -276,7 +276,7 @@ describe("Euclidean1", function () {
     });
     describe("neg", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1();
             const result = metric.neg(mv);
             expect(result).toBeDefined();
@@ -285,7 +285,7 @@ describe("Euclidean1", function () {
     });
     describe("direction", function () {
         it("this.isMutable", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1([0, 5], Unit.METER);
             const result = metric.direction(mv);
             expect(result).toBeDefined();
@@ -297,7 +297,7 @@ describe("Euclidean1", function () {
             expect(result.isMutable()).toBe(true);
         });
         it("this.isLocked", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1([0, 5], Unit.METER);
             mv.lock();
             const result = metric.clone(mv);
@@ -316,7 +316,7 @@ describe("Euclidean1", function () {
     });
     describe("mulByVector", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.mulByVector(lhs, rhs);
@@ -326,7 +326,7 @@ describe("Euclidean1", function () {
     });
     describe("divByScalar", function () {
         it("lhs isMutable", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -349,7 +349,7 @@ describe("Euclidean1", function () {
             expect(result.isMutable()).toBe(true);
         });
         it("lhs isLocked", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -375,7 +375,7 @@ describe("Euclidean1", function () {
     });
     describe("scp", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.scp(lhs, rhs);
@@ -385,7 +385,7 @@ describe("Euclidean1", function () {
     });
     describe("magnitude", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1();
             const result = metric.norm(mv);
             expect(result).toBeDefined();
@@ -394,17 +394,17 @@ describe("Euclidean1", function () {
     });
     describe("subScalar", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
-            const result = metric.subScalar(lhs, rhs);
+            const result = metric.subScalar(lhs, rhs.a, rhs.uom);
             expect(result).toBeDefined();
             expect(result instanceof Geometric1).toBe(true);
         });
     });
     describe("mulByScalar", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.mulByScalar(lhs, metric.a(rhs), metric.uom(rhs));
@@ -414,7 +414,7 @@ describe("Euclidean1", function () {
     });
     describe("squaredNorm", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1();
             const result = metric.squaredNorm(mv);
             expect(result).toBeDefined();
@@ -423,7 +423,7 @@ describe("Euclidean1", function () {
     });
     describe("add", function () {
         it("lhs.isMutable", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -440,7 +440,7 @@ describe("Euclidean1", function () {
             expect(result === rhs).toBe(false);
         });
         it("lhs.isLocked", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const La = Math.random();
             const Lx = Math.random();
             const Ra = Math.random();
@@ -460,7 +460,7 @@ describe("Euclidean1", function () {
     });
     describe("copyBivector", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const source = new Geometric1();
             const target = new Geometric1();
             const result = metric.copyBivector(source, target);
@@ -470,7 +470,7 @@ describe("Euclidean1", function () {
     });
     describe("rev", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const mv = new Geometric1();
             const result = metric.rev(mv);
             expect(result).toBeDefined();
@@ -479,7 +479,7 @@ describe("Euclidean1", function () {
     });
     describe("mulByNumber", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.mulByNumber(lhs, metric.a(rhs));
@@ -489,7 +489,7 @@ describe("Euclidean1", function () {
     });
     describe("sub", function () {
         it("should be defined.", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const lhs = new Geometric1();
             const rhs = new Geometric1();
             const result = metric.sub(lhs, rhs);
@@ -500,7 +500,7 @@ describe("Euclidean1", function () {
     describe("setUom", function () {
         it("should be defined.", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             metric.setUom(mv, Unit.KELVIN);
             expect(true).toBe(true);
         });
@@ -508,7 +508,7 @@ describe("Euclidean1", function () {
     describe("uom followed by setUom", function () {
         it("should return the unit from setUom().", function () {
             const mv = new Geometric1();
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             metric.setUom(mv, Unit.KELVIN);
             const uom = metric.uom(mv);
             expect(Unit.isOne(uom)).toBe(false);
@@ -517,7 +517,7 @@ describe("Euclidean1", function () {
     });
     describe("invertMatric", function () {
         it("should ...", function () {
-            const metric = new Euclidean1();
+            const metric = new MetricG10();
             const m = metric.identityMatrix();
             const inv = metric.invertMatrix(m);
             expect(inv).toBeDefined();

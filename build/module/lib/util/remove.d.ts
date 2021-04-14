@@ -5,4 +5,4 @@
  * @param x Object to remove.
  * @return True if an element was removed.
  */
-export default function remove<T>(xs: T[], x: T): boolean;
+export declare function remove<T>(xs: T[], x: T): boolean;

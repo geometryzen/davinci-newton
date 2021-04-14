@@ -46,6 +46,14 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
     set speedOfLight(speedOfLight: Spacetime1) {
         this.$speedOfLight = speedOfLight;
     }
+    /**
+     * 
+     * @param rateOfChangeVals the ordinary rate of change, dx / dt, as opposed to the proper rate of change, dx / dτ. 
+     * @param rateOfChangeUoms 
+     * @param idx 
+     * @param body 
+     * @param uomTime 
+     */
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
         const P = body.P;
         const M = body.M;

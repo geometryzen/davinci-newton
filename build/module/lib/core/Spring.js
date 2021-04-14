@@ -179,7 +179,7 @@ var Spring = /** @class */ (function (_super) {
         metric.copyVector(this.F1.location, this.F1.vector); // vector contains F1.location
         metric.subVector(this.F1.vector, this.F2.location); // vector contains (F1.location - F2.location)
         metric.norm(this.F1.vector); // vector contains |F1.location - F2.location|
-        metric.subScalar(this.F1.vector, this.restLength); // vector contains (|F1.loc - F2.loc| - restLength)
+        metric.subScalar(this.F1.vector, metric.a(this.restLength), metric.uom(this.restLength)); // vector contains (|F1.loc - F2.loc| - restLength)
         // 2. Multiply by the stiffness.
         metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
         // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.

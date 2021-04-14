@@ -272,27 +272,27 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden
      */
-    divByNumber(α: number): Spacetime1 {
+    divByNumber(a: number): Spacetime1 {
         if (this.isLocked()) {
-            return this.clone().divByNumber(α).permlock();
+            return this.clone().divByNumber(a).permlock();
         }
         else {
-            this.$M00 /= α;
-            this.$M01 /= α;
-            this.$M10 /= α;
-            this.$M11 /= α;
+            this.$M00 /= a;
+            this.$M01 /= a;
+            this.$M10 /= a;
+            this.$M11 /= a;
             return this;
         }
     }
-    divByScalar(α: number, uom?: Unit): Spacetime1 {
+    divByScalar(a: number, uom?: Unit): Spacetime1 {
         if (this.isLocked()) {
-            return this.clone().divByScalar(α, uom).permlock();
+            return this.clone().divByScalar(a, uom).permlock();
         }
         else {
-            this.$M00 /= α;
-            this.$M01 /= α;
-            this.$M10 /= α;
-            this.$M11 /= α;
+            this.$M00 /= a;
+            this.$M01 /= a;
+            this.$M10 /= a;
+            this.$M11 /= a;
             this.uom = Unit.div(this.uom, uom);
             return this;
         }

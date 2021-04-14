@@ -19,7 +19,7 @@ import find from './find';
 import { ParameterBoolean } from './ParameterBoolean';
 import { ParameterNumber } from './ParameterNumber';
 import { ParameterString } from './ParameterString';
-import remove from './remove';
+import { remove } from './remove';
 /**
  * @hidden
  */

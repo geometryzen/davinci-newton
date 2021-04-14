@@ -431,10 +431,10 @@ export declare class Geometric2 extends AbstractGeometric implements GradeMasked
      * <code>this ⟼ this / (α * uom)</code>
      * </p>
      *
-     * @param α The scalar dividend.
+     * @param a The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom: Unit): Geometric2;
+    divByScalar(a: number, uom: Unit): Geometric2;
     /**
      * @param m
      * @returns this ^ m

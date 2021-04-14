@@ -27,7 +27,10 @@ function lock(mv: Geometric1): Geometric1 {
 /**
  * @hidden
  */
-export class Euclidean1 implements Metric<Geometric1> {
+export class MetricG10 implements Metric<Geometric1> {
+    get e0(): Geometric1 {
+        return void 0;
+    }
     a(mv: Geometric1): number {
         return mv.a;
     }
@@ -43,6 +46,9 @@ export class Euclidean1 implements Metric<Geometric1> {
             const uom = Unit.compatible(lhs.uom, rhs.uom);
             return new Geometric1([a, x], uom);
         }
+    }
+    addScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1 {
+        return lhs.addScalar(a, uom);
     }
     addVector(lhs: Geometric1, rhs: Geometric1): Geometric1 {
         if (lhs.isMutable()) {
@@ -292,13 +298,13 @@ export class Euclidean1 implements Metric<Geometric1> {
             return lock(this.sub(copy(lhs), rhs));
         }
     }
-    subScalar(lhs: Geometric1, rhs: Geometric1): Geometric1 {
+    subScalar(lhs: Geometric1, a: number, uom?: Unit): Geometric1 {
         if (lhs.isMutable()) {
-            lhs.a = lhs.a - rhs.a;
-            lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
+            lhs.a = lhs.a - a;
+            lhs.uom = Unit.compatible(lhs.uom, uom);
             return lhs;
         } else {
-            return lock(this.subScalar(copy(lhs), rhs));
+            return lock(this.subScalar(copy(lhs), a, uom));
         }
     }
     subVector(lhs: Geometric1, rhs: Geometric1): Geometric1 {
@@ -333,8 +339,5 @@ export class Euclidean1 implements Metric<Geometric1> {
         target.a = 0;
         target.x = 0;
         target.uom = source.uom;
-    }
-    zero(): Geometric1 {
-        return new Geometric1();
     }
 }

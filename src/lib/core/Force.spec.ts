@@ -1,4 +1,4 @@
-import { Euclidean3 } from "../engineG30/Euclidean3";
+import { MetricG30 } from "../engineG30/MetricG30";
 import { Geometric3 } from "../math/Geometric3";
 import { Unit } from "../math/Unit";
 import { Force } from "./Force";
@@ -7,19 +7,19 @@ import { Particle } from "./Particle";
 describe("Force", function () {
     describe("constructor", function () {
         it("should work.", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             expect(force).toBeDefined();
         });
         it("locationCoordType should default to LOCAL (the force acts on a point in the body).", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             expect(force.locationCoordType === 0).toBe(true);
         });
         it("vectorCoordType should default to WORLD (the force is usually external).", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             expect(force.vectorCoordType === 1).toBe(true);
@@ -27,7 +27,7 @@ describe("Force", function () {
     });
     describe("locationCoordType", function () {
         it("may be set to LOCAL or WORLD only.", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             force.locationCoordType = 0;
@@ -41,7 +41,7 @@ describe("Force", function () {
     });
     describe("vectorCoordType", function () {
         it("may be set to LOCAL or WORLD only.", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             force.vectorCoordType = 0;
@@ -56,7 +56,7 @@ describe("Force", function () {
     describe("computePosition", function () {
         describe("when vectorCoordType is LOCAL", function () {
             it("should depend on body.X and body.R", function () {
-                const metric = new Euclidean3();
+                const metric = new MetricG30();
                 const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
                 const x = Math.random();
                 const y = Math.random();
@@ -81,7 +81,7 @@ describe("Force", function () {
         });
         describe("when vectorCoordType is WORLD", function () {
             it("should be the same as the location property.", function () {
-                const metric = new Euclidean3();
+                const metric = new MetricG30();
                 const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
                 const force = new Force(bead);
                 force.vectorCoordType = 1;
@@ -104,7 +104,7 @@ describe("Force", function () {
     describe("computeForce", function () {
         describe("vectorCoordType is LOCAL", function () {
             it("should depend on body.R", function () {
-                const metric = new Euclidean3();
+                const metric = new MetricG30();
                 const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
                 const x = Math.random();
                 const y = Math.random();
@@ -130,7 +130,7 @@ describe("Force", function () {
         });
         describe("vectorCoordType is WORLD", function () {
             it("should be the same as the vector property.", function () {
-                const metric = new Euclidean3();
+                const metric = new MetricG30();
                 const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
                 const force = new Force(bead);
                 force.vectorCoordType = 1;
@@ -152,7 +152,7 @@ describe("Force", function () {
     });
     describe("F", function () {
         it("", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             const F = force.F;
@@ -163,7 +163,7 @@ describe("Force", function () {
     });
     describe("X", function () {
         it("", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const bead = new Particle(Geometric3.scalar(1), Geometric3.scalar(1), metric);
             const force = new Force(bead);
             const X = force.x;

@@ -9,11 +9,18 @@ import { Torque } from "./Torque";
  */
 export interface Metric<T> {
     /**
+     * Returns the time direction for relativistic metrics.
+     * The returned vector is locked.
+     * Non-relativistic metrics should return undefined.
+     */
+    readonly e0: T;
+    /**
      * Returns the scalar component of the multivector.
      * @param mv The multivector for which the scalar component is required.
      */
     a(mv: T): number;
     add(lhs: T, rhs: T): T;
+    addScalar(lhs: T, a: number, uom?: Unit): T;
     addVector(lhs: T, rhs: T): T;
     /**
      * TODO: Describe semantics of how this is expected to change the multivector argument.
@@ -94,7 +101,7 @@ export interface Metric<T> {
     scp(lhs: T, rhs: T): T;
     setUom(mv: T, uom: Unit): void;
     sub(lhs: T, rhs: T): T;
-    subScalar(lhs: T, rhs: T): T;
+    subScalar(lhs: T, a: number, uom?: Unit): T;
     subVector(lhs: T, rhs: T): T;
     unlock(mv: T, token: number): void;
     uom(mv: T): Unit;
@@ -106,9 +113,4 @@ export interface Metric<T> {
      */
     writeVector(source: T, target: T): void;
     writeBivector(source: T, target: T): void;
-    /**
-     * Constructs a multivector representing the number zero (0).
-     * The returned multivector is mutable.
-     */
-    zero(): T;
 }

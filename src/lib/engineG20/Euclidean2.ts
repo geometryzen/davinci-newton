@@ -14,11 +14,17 @@ import { Torque2 } from "./Torque2";
  * @hidden
  */
 export class Euclidean2 implements Metric<Geometric2> {
+    get e0(): Geometric2 {
+        return void 0;
+    }
     a(mv: Geometric2): number {
         return mv.a;
     }
     add(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         return lhs.add(rhs);
+    }
+    addScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2 {
+        return lhs.addScalar(a, uom);
     }
     addVector(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         return lhs.addVector(rhs);
@@ -136,8 +142,8 @@ export class Euclidean2 implements Metric<Geometric2> {
         // TODO: Could generalize to subtracting a fraction...
         return lhs.sub(rhs, 1);
     }
-    subScalar(lhs: Geometric2, rhs: Geometric2): Geometric2 {
-        return lhs.subScalar(rhs.a, rhs.uom, 1);
+    subScalar(lhs: Geometric2, a: number, uom?: Unit): Geometric2 {
+        return lhs.subScalar(a, uom);
     }
     subVector(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         // TODO: Could generalize to subtracting a fraction...
@@ -160,8 +166,5 @@ export class Euclidean2 implements Metric<Geometric2> {
     }
     writeBivector(source: Geometric2, target: Geometric2): void {
         source.writeBivector(target);
-    }
-    zero(): Geometric2 {
-        return Geometric2.zero.clone();
     }
 }

@@ -342,35 +342,35 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
     /**
      * @hidden
      */
-    divByNumber(α: number): Spacetime2 {
+    divByNumber(a: number): Spacetime2 {
         if (this.isLocked()) {
-            return this.clone().divByNumber(α).permlock();
+            return this.clone().divByNumber(a).permlock();
         }
         else {
-            this.$M000 /= α;
-            this.$M001 /= α;
-            this.$M010 /= α;
-            this.$M011 /= α;
-            this.$M100 /= α;
-            this.$M101 /= α;
-            this.$M110 /= α;
-            this.$M111 /= α;
+            this.$M000 /= a;
+            this.$M001 /= a;
+            this.$M010 /= a;
+            this.$M011 /= a;
+            this.$M100 /= a;
+            this.$M101 /= a;
+            this.$M110 /= a;
+            this.$M111 /= a;
             return this;
         }
     }
-    divByScalar(α: number, uom?: Unit): Spacetime2 {
+    divByScalar(a: number, uom?: Unit): Spacetime2 {
         if (this.isLocked()) {
-            return this.clone().divByScalar(α, uom).permlock();
+            return this.clone().divByScalar(a, uom).permlock();
         }
         else {
-            this.$M000 /= α;
-            this.$M001 /= α;
-            this.$M010 /= α;
-            this.$M011 /= α;
-            this.$M100 /= α;
-            this.$M101 /= α;
-            this.$M110 /= α;
-            this.$M111 /= α;
+            this.$M000 /= a;
+            this.$M001 /= a;
+            this.$M010 /= a;
+            this.$M011 /= a;
+            this.$M100 /= a;
+            this.$M101 /= a;
+            this.$M110 /= a;
+            this.$M111 /= a;
             this.uom = Unit.div(this.uom, uom);
             return this;
         }

@@ -1,6 +1,6 @@
 import { Particle } from "../core/Particle";
 import { Geometric3 } from "../math/Geometric3";
-import { Euclidean3 } from "./Euclidean3";
+import { MetricG30 } from "./MetricG30";
 
 export class Particle3 extends Particle<Geometric3> {
     /**
@@ -9,6 +9,6 @@ export class Particle3 extends Particle<Geometric3> {
      * @param Q The charge of the particle. Default is 1 (dimensionless).
      */
     constructor(M: Geometric3, Q: Geometric3) {
-        super(M, Q, new Euclidean3());
+        super(M, Q, new MetricG30());
     }
 }

@@ -20,7 +20,7 @@ import clone from '../util/clone';
 import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import isEmpty from '../util/isEmpty';
-import remove from '../util/remove';
+import { remove } from '../util/remove';
 import { veryDifferent } from '../util/veryDifferent';
 import { ScreenRect } from './ScreenRect';
 /**

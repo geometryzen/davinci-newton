@@ -1247,19 +1247,19 @@ var Geometric2 = /** @class */ (function (_super) {
      * <code>this ⟼ this / (α * uom)</code>
      * </p>
      *
-     * @param α The scalar dividend.
+     * @param a The scalar dividend.
      * @param uom The unit of measure.
      */
-    Geometric2.prototype.divByScalar = function (α, uom) {
+    Geometric2.prototype.divByScalar = function (a, uom) {
         if (this.isLocked()) {
-            return lock(this.clone().divByScalar(α, uom));
+            return lock(this.clone().divByScalar(a, uom));
         }
         else {
             this.uom = Unit.div(this.uom, uom);
-            this.a /= α;
-            this.x /= α;
-            this.y /= α;
-            this.b /= α;
+            this.a /= a;
+            this.x /= a;
+            this.y /= a;
+            this.b /= a;
             return this;
         }
     };

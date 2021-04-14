@@ -7,11 +7,17 @@ import { Spacetime1 } from "../math/Spacetime1";
 import { ForceG11 } from "./ForceG11";
 
 export class MetricG11 implements Metric<Spacetime1> {
+    get e0(): Spacetime1 {
+        return Spacetime1.e0;
+    }
     a(mv: Spacetime1): number {
         return mv.a;
     }
     add(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         throw new Error("Method not implemented.");
+    }
+    addScalar(lhs: Spacetime1, a: number, uom?: Unit): Spacetime1 {
+        return lhs.addScalar(a, uom);
     }
     addVector(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         return lhs.addVector(rhs);
@@ -57,7 +63,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     divByScalar(lhs: Spacetime1, a: number, uom?: Unit): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return lhs.divByScalar(a, uom);
     }
     ext(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         return lhs.ext(rhs);
@@ -108,10 +114,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     neg(mv: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
-    }
-    squaredNorm(A: Spacetime1): Spacetime1 {
-        throw new Error("Method not implemented.");
+        return mv.neg();
     }
     rco(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         return lhs.rco(rhs);
@@ -131,10 +134,13 @@ export class MetricG11 implements Metric<Spacetime1> {
     setUom(mv: Spacetime1, uom: Unit): void {
         mv.uom = uom;
     }
+    squaredNorm(mv: Spacetime1): Spacetime1 {
+        return mv.squaredNorm();
+    }
     sub(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
         throw new Error("Method not implemented.");
     }
-    subScalar(lhs: Spacetime1, rhs: Spacetime1): Spacetime1 {
+    subScalar(lhs: Spacetime1, a: number, uom?: Unit): Spacetime1 {
         // return lhs.subScalar(rhs.a,rhs.uom);
         throw new Error("Method not implemented.");
     }
@@ -155,8 +161,5 @@ export class MetricG11 implements Metric<Spacetime1> {
     }
     writeBivector(source: Spacetime1, target: Spacetime1): void {
         throw new Error("Method not implemented.");
-    }
-    zero(): Spacetime1 {
-        return Spacetime1.zero.clone();
     }
 }

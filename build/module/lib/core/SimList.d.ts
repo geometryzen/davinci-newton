@@ -15,7 +15,7 @@ export declare class SimList extends AbstractSubject {
     /**
      *
      */
-    private elements_;
+    private $elements;
     /**
      *
      */
@@ -23,7 +23,7 @@ export declare class SimList extends AbstractSubject {
     /**
      *
      */
-    add(simObject: SimObject): void;
+    add(element: SimObject): void;
     /**
      *
      */

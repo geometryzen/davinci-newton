@@ -1,6 +1,6 @@
 import { Block3 } from '../engineG30/Block3';
 import { KinematicsG30 } from '../engineG30/KinematicsG30';
-import { Euclidean3 } from '../engineG30/Euclidean3';
+import { MetricG30 } from '../engineG30/MetricG30';
 import { Geometric3 } from '../math/Geometric3';
 import { Unit } from '../math/Unit';
 import { Physics } from './Physics';
@@ -9,7 +9,7 @@ describe("Physics", function () {
     describe("Ω calculation", function () {
         it("calculated using (1/2) Ω * L(Ω) should be same as (1/2) ω * L(ω)", function () {
             // Not actually using this yet, other than to test construction.
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const sim = new Physics(metric, dynamics);
             const body = new Block3(Geometric3.scalar(1), Geometric3.scalar(2), Geometric3.scalar(3));

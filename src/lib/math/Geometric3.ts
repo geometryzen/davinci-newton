@@ -853,26 +853,26 @@ export class Geometric3 extends AbstractGeometric implements GradeMasked, Geomet
 
     /**
      * <p>
-     * <code>this ⟼ this / (α * uom)</code>
+     * <code>this ⟼ this / (a * uom)</code>
      * </p>
      *
-     * @param α The scalar dividend.
+     * @param a The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom?: Unit): Geometric3 {
+    divByScalar(a: number, uom?: Unit): Geometric3 {
         if (this.isLocked()) {
-            return lock(this.clone().divByScalar(α, uom));
+            return lock(this.clone().divByScalar(a, uom));
         }
         else {
             this.uom = Unit.div(this.uom, uom);
-            this.a /= α;
-            this.x /= α;
-            this.y /= α;
-            this.z /= α;
-            this.yz /= α;
-            this.zx /= α;
-            this.xy /= α;
-            this.b /= α;
+            this.a /= a;
+            this.x /= a;
+            this.y /= a;
+            this.z /= a;
+            this.yz /= a;
+            this.zx /= a;
+            this.xy /= a;
+            this.b /= a;
             return this;
         }
     }

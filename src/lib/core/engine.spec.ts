@@ -12,7 +12,7 @@ import { Particle2 } from '../engineG20/Particle2';
 import { Polygon2 } from '../engineG20/Polygon2';
 import { SurfaceConstraint2 } from '../engineG20/SurfaceConstraint2';
 import { Block3 } from '../engineG30/Block3';
-import { Euclidean3 } from '../engineG30/Euclidean3';
+import { MetricG30 } from '../engineG30/MetricG30';
 import { KinematicsG30 } from '../engineG30/KinematicsG30';
 import { Particle3 } from '../engineG30/Particle3';
 import { SurfaceConstraint3 } from '../engineG30/SurfaceConstraint3';
@@ -127,7 +127,7 @@ describe("engine", function () {
             expect(block.X.b).toBe(0);
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
@@ -176,7 +176,7 @@ describe("engine", function () {
             expect(block.X.b).toBe(0);
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
@@ -307,7 +307,7 @@ describe("engine", function () {
 
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
@@ -382,7 +382,7 @@ describe("engine", function () {
             engine.advance(1, Unit.SECOND);
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
@@ -517,7 +517,7 @@ describe("engine", function () {
             // expect(block1.X.y).toBe(0);
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 
@@ -590,7 +590,7 @@ describe("engine", function () {
             expect(true).toBe(true);
         });
         it("Euclidean3D", function () {
-            const metric = new Euclidean3();
+            const metric = new MetricG30();
             const dynamics = new KinematicsG30();
             const engine = new Engine(metric, dynamics);
 

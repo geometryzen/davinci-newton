@@ -6,7 +6,7 @@ import removeAt from './removeAt';
  * @param x Object to remove.
  * @return True if an element was removed.
  */
-export default function remove(xs, x) {
+export function remove(xs, x) {
     var i = xs.indexOf(x);
     var rv;
     if ((rv = i >= 0)) {

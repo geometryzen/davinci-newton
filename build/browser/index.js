@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-14';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.93';
+            this.VERSION = '1.0.94';
         }
         return Newton;
     }());
@@ -3574,33 +3574,30 @@
             /**
              *
              */
-            _this.elements_ = [];
+            _this.$elements = [];
             return _this;
         }
         /**
          *
          */
-        SimList.prototype.add = function (simObject) {
-            for (var i = 0; i < arguments.length; i++) {
-                var element = arguments[i];
-                mustBeNonNullObject('element', element);
-                if (!contains(this.elements_, element)) {
-                    this.elements_.push(element);
-                    this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
-                }
+        SimList.prototype.add = function (element) {
+            mustBeNonNullObject('element', element);
+            if (!contains(this.$elements, element)) {
+                this.$elements.push(element);
+                this.broadcast(new GenericEvent(this, SimList.OBJECT_ADDED, element));
             }
         };
         /**
          *
          */
         SimList.prototype.forEach = function (callBack) {
-            return this.elements_.forEach(callBack);
+            return this.$elements.forEach(callBack);
         };
         /**
          *
          */
         SimList.prototype.remove = function (simObject) {
-            if (remove(this.elements_, simObject)) {
+            if (remove(this.$elements, simObject)) {
                 this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simObject));
             }
         };
@@ -3610,10 +3607,10 @@
          * @param time the current simulation time
          */
         SimList.prototype.removeTemporary = function (time) {
-            for (var i = this.elements_.length - 1; i >= 0; i--) {
-                var simobj = this.elements_[i];
+            for (var i = this.$elements.length - 1; i >= 0; i--) {
+                var simobj = this.$elements[i];
                 if (simobj.expireTime < time) {
-                    this.elements_.splice(i, 1);
+                    this.$elements.splice(i, 1);
                     this.broadcast(new GenericEvent(this, SimList.OBJECT_REMOVED, simobj));
                 }
             }
@@ -4904,12 +4901,26 @@
             enumerable: false,
             configurable: true
         });
+        Object.defineProperty(Engine.prototype, "bodies", {
+            get: function () {
+                return this.physics.bodies;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Object.defineProperty(Engine.prototype, "varsList", {
             /**
              * Returns the state variables of the system.
              */
             get: function () {
                 return this.physics.varsList;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(Engine.prototype, "simList", {
+            get: function () {
+                return this.physics.simList;
             },
             enumerable: false,
             configurable: true
@@ -5039,7 +5050,7 @@
     var FaradayLaw = /** @class */ (function (_super) {
         __extends(FaradayLaw, _super);
         /**
-         * force = Q * (v << F), where Q is the body charge, v is the body velocity, F is the Faraday field at the body location.
+         * force = Q * (v << F), where Q is the body charge, v is the ordinary spacetime velocity, F is the Faraday field at the body location.
          * @param body the body upon which the field acts.
          * @param field the Faraday field. This field that has a bivector value.
          */
@@ -5062,14 +5073,28 @@
             configurable: true
         });
         FaradayLaw.prototype.updateForces = function () {
+            // The forces are ordinary, dp/dt, as opposed to proper (Minkowski) dp/dτ.
+            // This means that we must use the ordinary velocity to calculate the force.
+            // Force = Q * (v << F), where Q is electric charge, v is ordinary velocity.
             var body = this.body;
             var metric = body.metric;
+            var m = metric.a(body.M);
+            var e0 = metric.e0;
             var X = body.X;
             var Q = body.Q;
             var F = this.field(X);
             metric.copy(body.P, this.force.vector); // vector => P
-            metric.lco(this.force.vector, F); // vector => P << F
-            metric.mulByScalar(this.force.vector, metric.a(Q), metric.uom(Q)); // vector => Q * (P << F)
+            metric.ext(this.force.vector, e0); // vector => P ^ e0
+            metric.rco(this.force.vector, e0); // vector => (P ^ e0) >> e0
+            metric.squaredNorm(this.force.vector); // vector => |(P ^ e0) >> e0|**2
+            metric.neg(this.force.vector); // vector => -|(P ^ e0) >> e0|**2
+            metric.addScalar(this.force.vector, 1); // vector => 1 - |(P ^ e0) >> e0|**2
+            metric.addScalar(this.force.vector, m * m);
+            var mass = Math.sqrt(metric.a(this.force.vector));
+            metric.copy(body.P, this.force.vector); // vector => P
+            metric.divByScalar(this.force.vector, mass); // vector => v
+            metric.lco(this.force.vector, F); // vector => v << F
+            metric.mulByScalar(this.force.vector, metric.a(Q), metric.uom(Q)); // vector => Q * (v << F)
             return this.$forces;
         };
         FaradayLaw.prototype.disconnect = function () {
@@ -6089,7 +6114,7 @@
             metric.copyVector(this.F1.location, this.F1.vector); // vector contains F1.location
             metric.subVector(this.F1.vector, this.F2.location); // vector contains (F1.location - F2.location)
             metric.norm(this.F1.vector); // vector contains |F1.location - F2.location|
-            metric.subScalar(this.F1.vector, this.restLength); // vector contains (|F1.loc - F2.loc| - restLength)
+            metric.subScalar(this.F1.vector, metric.a(this.restLength), metric.uom(this.restLength)); // vector contains (|F1.loc - F2.loc| - restLength)
             // 2. Multiply by the stiffness.
             metric.mulByScalar(this.F1.vector, metric.a(this.stiffness), metric.uom(this.stiffness));
             // 3. Multiply by the direction (temporarily in F2 vector) to complete the F1 vector.
@@ -6996,25 +7021,25 @@
                 return this;
             }
         };
-        Geometric1.prototype.divByScalar = function (α, uom) {
+        Geometric1.prototype.divByScalar = function (a, uom) {
             if (this.isLocked()) {
-                return lock$3(this.clone().divByScalar(α, uom));
+                return lock$3(this.clone().divByScalar(a, uom));
             }
             else {
                 this.uom = Unit.div(this.uom, uom);
-                this.a /= α;
-                this.x /= α;
+                this.a /= a;
+                this.x /= a;
                 return this;
             }
         };
-        Geometric1.prototype.scale = function (α) {
+        Geometric1.prototype.scale = function (a) {
             if (this.isMutable()) {
-                this.a = this.a * α;
-                this.x = this.x * α;
+                this.a = this.a * a;
+                this.x = this.x * a;
                 return this;
             }
             else {
-                return lock$3(copy$1(this).scale(α));
+                return lock$3(copy$1(this).scale(a));
             }
         };
         Geometric1.prototype.reflect = function (n) {
@@ -7764,13 +7789,20 @@
     /**
      * @hidden
      */
-    var Euclidean1 = /** @class */ (function () {
-        function Euclidean1() {
+    var MetricG10 = /** @class */ (function () {
+        function MetricG10() {
         }
-        Euclidean1.prototype.a = function (mv) {
+        Object.defineProperty(MetricG10.prototype, "e0", {
+            get: function () {
+                return void 0;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        MetricG10.prototype.a = function (mv) {
             return mv.a;
         };
-        Euclidean1.prototype.add = function (lhs, rhs) {
+        MetricG10.prototype.add = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 lhs.a = lhs.a + rhs.a;
                 lhs.x = lhs.x + rhs.x;
@@ -7784,7 +7816,10 @@
                 return new Geometric1([a, x], uom);
             }
         };
-        Euclidean1.prototype.addVector = function (lhs, rhs) {
+        MetricG10.prototype.addScalar = function (lhs, a, uom) {
+            return lhs.addScalar(a, uom);
+        };
+        MetricG10.prototype.addVector = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 lhs.x = lhs.x + rhs.x;
                 lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
@@ -7797,7 +7832,7 @@
                 return new Geometric1([a, x], uom);
             }
         };
-        Euclidean1.prototype.applyMatrix = function (mv, matrix) {
+        MetricG10.prototype.applyMatrix = function (mv, matrix) {
             if (mv.isMutable()) {
                 if (mv.isZero()) {
                     if (Unit.isOne(matrix.uom)) {
@@ -7816,46 +7851,46 @@
                 throw new Error("mv must be defined in Metric.applyMatrix(mv, matrix)");
             }
         };
-        Euclidean1.prototype.clone = function (source) {
+        MetricG10.prototype.clone = function (source) {
             return source.clone();
         };
-        Euclidean1.prototype.copy = function (source, target) {
+        MetricG10.prototype.copy = function (source, target) {
             target.a = source.a;
             target.x = source.x;
             target.uom = source.uom;
             return target;
         };
-        Euclidean1.prototype.copyBivector = function (source, target) {
+        MetricG10.prototype.copyBivector = function (source, target) {
             target.a = 0;
             target.x = 0;
             target.uom = source.uom;
             return target;
         };
-        Euclidean1.prototype.copyMatrix = function (m) {
+        MetricG10.prototype.copyMatrix = function (m) {
             if (m.dimensions !== 0) {
                 throw new Error("matrix dimensions must be 0.");
             }
             return new Matrix0(new Float32Array([]), m.uom);
         };
-        Euclidean1.prototype.copyScalar = function (a, uom, target) {
+        MetricG10.prototype.copyScalar = function (a, uom, target) {
             target.a = a;
             target.x = 0;
             target.uom = uom;
             return target;
         };
-        Euclidean1.prototype.copyVector = function (source, target) {
+        MetricG10.prototype.copyVector = function (source, target) {
             target.a = 0;
             target.x = source.x;
             target.uom = source.uom;
             return target;
         };
-        Euclidean1.prototype.createForce = function (body) {
+        MetricG10.prototype.createForce = function (body) {
             return new Force1(body);
         };
-        Euclidean1.prototype.createTorque = function (body) {
+        MetricG10.prototype.createTorque = function (body) {
             return new Torque1(body);
         };
-        Euclidean1.prototype.direction = function (mv) {
+        MetricG10.prototype.direction = function (mv) {
             if (mv.isMutable()) {
                 var a = mv.a;
                 var x = mv.x;
@@ -7869,7 +7904,7 @@
                 return this.direction(copy(mv));
             }
         };
-        Euclidean1.prototype.divByScalar = function (lhs, a, uom) {
+        MetricG10.prototype.divByScalar = function (lhs, a, uom) {
             if (lhs.isMutable()) {
                 lhs.a = lhs.a / a;
                 lhs.x = lhs.x / a;
@@ -7880,7 +7915,7 @@
                 return lock$2(this.divByScalar(copy(lhs), a, uom));
             }
         };
-        Euclidean1.prototype.ext = function (lhs, rhs) {
+        MetricG10.prototype.ext = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 var La = lhs.a;
                 var Lx = lhs.x;
@@ -7895,40 +7930,40 @@
                 return lock$2(this.ext(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.identityMatrix = function () {
+        MetricG10.prototype.identityMatrix = function () {
             return new Matrix0(new Float32Array([]));
         };
-        Euclidean1.prototype.invertMatrix = function (m) {
+        MetricG10.prototype.invertMatrix = function (m) {
             return new Matrix0(new Float32Array([]), Unit.div(Unit.ONE, m.uom));
         };
-        Euclidean1.prototype.isBivector = function (mv) {
+        MetricG10.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
-        Euclidean1.prototype.isOne = function (mv) {
+        MetricG10.prototype.isOne = function (mv) {
             return mv.isOne();
         };
-        Euclidean1.prototype.isScalar = function (mv) {
+        MetricG10.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
-        Euclidean1.prototype.isSpinor = function (mv) {
+        MetricG10.prototype.isSpinor = function (mv) {
             return mv.isSpinor();
         };
-        Euclidean1.prototype.isVector = function (mv) {
+        MetricG10.prototype.isVector = function (mv) {
             return mv.isVector();
         };
-        Euclidean1.prototype.isZero = function (mv) {
+        MetricG10.prototype.isZero = function (mv) {
             return mv.isZero();
         };
-        Euclidean1.prototype.lco = function (lhs, rhs) {
+        MetricG10.prototype.lco = function (lhs, rhs) {
             return lhs.lco(rhs);
         };
-        Euclidean1.prototype.lock = function (mv) {
+        MetricG10.prototype.lock = function (mv) {
             return mv.lock();
         };
-        Euclidean1.prototype.norm = function (mv) {
+        MetricG10.prototype.norm = function (mv) {
             return mv.magnitude();
         };
-        Euclidean1.prototype.mul = function (lhs, rhs) {
+        MetricG10.prototype.mul = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 var La = lhs.a;
                 var Lx = lhs.x;
@@ -7945,7 +7980,7 @@
                 return lock$2(this.mul(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.mulByNumber = function (lhs, alpha) {
+        MetricG10.prototype.mulByNumber = function (lhs, alpha) {
             if (lhs.isMutable()) {
                 var La = lhs.a;
                 var Lx = lhs.x;
@@ -7959,7 +7994,7 @@
                 return lock$2(this.mulByNumber(copy(lhs), alpha));
             }
         };
-        Euclidean1.prototype.mulByScalar = function (lhs, a, uom) {
+        MetricG10.prototype.mulByScalar = function (lhs, a, uom) {
             if (lhs.isMutable()) {
                 lhs.a = lhs.a * a;
                 lhs.x = lhs.x * a;
@@ -7970,7 +8005,7 @@
                 return lock$2(this.mulByScalar(copy(lhs), a, uom));
             }
         };
-        Euclidean1.prototype.mulByVector = function (lhs, rhs) {
+        MetricG10.prototype.mulByVector = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 var a = lhs.x * rhs.x;
                 var x = lhs.a * rhs.x;
@@ -7983,7 +8018,7 @@
                 return lock$2(this.mulByVector(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.neg = function (mv) {
+        MetricG10.prototype.neg = function (mv) {
             if (mv.isMutable()) {
                 mv.a = -mv.a;
                 mv.x = -mv.x;
@@ -7993,13 +8028,13 @@
                 throw new Error('Method not implemented.');
             }
         };
-        Euclidean1.prototype.squaredNorm = function (mv) {
+        MetricG10.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
         };
-        Euclidean1.prototype.rco = function (lhs, rhs) {
+        MetricG10.prototype.rco = function (lhs, rhs) {
             return lhs.rco(rhs);
         };
-        Euclidean1.prototype.rev = function (mv) {
+        MetricG10.prototype.rev = function (mv) {
             if (mv.isMutable()) {
                 return mv;
             }
@@ -8007,7 +8042,7 @@
                 return lock$2(this.rev(copy(mv)));
             }
         };
-        Euclidean1.prototype.rotate = function (mv, spinor) {
+        MetricG10.prototype.rotate = function (mv, spinor) {
             if (mv.isMutable()) {
                 // TODO: Assert that the spinor is 1.
                 return mv;
@@ -8016,10 +8051,10 @@
                 return lock$2(this.rotate(copy(mv), spinor));
             }
         };
-        Euclidean1.prototype.scalar = function (a, uom) {
+        MetricG10.prototype.scalar = function (a, uom) {
             return new Geometric1([a, 0], uom);
         };
-        Euclidean1.prototype.scp = function (lhs, rhs) {
+        MetricG10.prototype.scp = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 var La = lhs.a;
                 var Lx = lhs.x;
@@ -8034,10 +8069,10 @@
                 return lock$2(this.scp(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.setUom = function (mv, uom) {
+        MetricG10.prototype.setUom = function (mv, uom) {
             mv.uom = uom;
         };
-        Euclidean1.prototype.sub = function (lhs, rhs) {
+        MetricG10.prototype.sub = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 lhs.a = lhs.a - rhs.a;
                 lhs.x = lhs.x - rhs.x;
@@ -8048,17 +8083,17 @@
                 return lock$2(this.sub(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.subScalar = function (lhs, rhs) {
+        MetricG10.prototype.subScalar = function (lhs, a, uom) {
             if (lhs.isMutable()) {
-                lhs.a = lhs.a - rhs.a;
-                lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
+                lhs.a = lhs.a - a;
+                lhs.uom = Unit.compatible(lhs.uom, uom);
                 return lhs;
             }
             else {
-                return lock$2(this.subScalar(copy(lhs), rhs));
+                return lock$2(this.subScalar(copy(lhs), a, uom));
             }
         };
-        Euclidean1.prototype.subVector = function (lhs, rhs) {
+        MetricG10.prototype.subVector = function (lhs, rhs) {
             if (lhs.isMutable()) {
                 lhs.x = lhs.x - rhs.x;
                 lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
@@ -8068,18 +8103,18 @@
                 return lock$2(this.subVector(copy(lhs), rhs));
             }
         };
-        Euclidean1.prototype.unlock = function (mv, token) {
+        MetricG10.prototype.unlock = function (mv, token) {
             mv.unlock(token);
         };
-        Euclidean1.prototype.uom = function (mv) {
+        MetricG10.prototype.uom = function (mv) {
             return mv.uom;
         };
-        Euclidean1.prototype.write = function (source, target) {
+        MetricG10.prototype.write = function (source, target) {
             target.a = source.a;
             target.x = source.x;
             target.uom = source.uom;
         };
-        Euclidean1.prototype.writeVector = function (source, target) {
+        MetricG10.prototype.writeVector = function (source, target) {
             target.a = 0;
             target.x = source.x;
             target.uom = source.uom;
@@ -8087,21 +8122,18 @@
         /**
          * This doesn't happen in 1D because there are no bivectors.
          */
-        Euclidean1.prototype.writeBivector = function (source, target) {
+        MetricG10.prototype.writeBivector = function (source, target) {
             target.a = 0;
             target.x = 0;
             target.uom = source.uom;
         };
-        Euclidean1.prototype.zero = function () {
-            return new Geometric1();
-        };
-        return Euclidean1;
+        return MetricG10;
     }());
 
     var RigidBody1 = /** @class */ (function (_super) {
         __extends(RigidBody1, _super);
         function RigidBody1() {
-            return _super.call(this, new Euclidean1()) || this;
+            return _super.call(this, new MetricG10()) || this;
         }
         return RigidBody1;
     }(RigidBody));
@@ -8496,7 +8528,7 @@
     var Engine1 = /** @class */ (function (_super) {
         __extends(Engine1, _super);
         function Engine1(options) {
-            return _super.call(this, new Euclidean1(), new KinematicsG10(), options) || this;
+            return _super.call(this, new MetricG10(), new KinematicsG10(), options) || this;
         }
         return Engine1;
     }(Engine));
@@ -8523,7 +8555,7 @@
          * @param Q The charge of the particle. Default is 1 (dimensionless).
          */
         function Particle1(M, Q) {
-            return _super.call(this, M ? M : Geometric1.one, Q ? Q : Geometric1.one, new Euclidean1()) || this;
+            return _super.call(this, M ? M : Geometric1.one, Q ? Q : Geometric1.one, new MetricG10()) || this;
         }
         return Particle1;
     }(Particle));
@@ -8534,7 +8566,7 @@
     var Physics1 = /** @class */ (function (_super) {
         __extends(Physics1, _super);
         function Physics1() {
-            return _super.call(this, new Euclidean1(), new KinematicsG10()) || this;
+            return _super.call(this, new MetricG10(), new KinematicsG10()) || this;
         }
         return Physics1;
     }(Physics));
@@ -8802,27 +8834,27 @@
         /**
          * @hidden
          */
-        Spacetime1.prototype.divByNumber = function (α) {
+        Spacetime1.prototype.divByNumber = function (a) {
             if (this.isLocked()) {
-                return this.clone().divByNumber(α).permlock();
+                return this.clone().divByNumber(a).permlock();
             }
             else {
-                this.$M00 /= α;
-                this.$M01 /= α;
-                this.$M10 /= α;
-                this.$M11 /= α;
+                this.$M00 /= a;
+                this.$M01 /= a;
+                this.$M10 /= a;
+                this.$M11 /= a;
                 return this;
             }
         };
-        Spacetime1.prototype.divByScalar = function (α, uom) {
+        Spacetime1.prototype.divByScalar = function (a, uom) {
             if (this.isLocked()) {
-                return this.clone().divByScalar(α, uom).permlock();
+                return this.clone().divByScalar(a, uom).permlock();
             }
             else {
-                this.$M00 /= α;
-                this.$M01 /= α;
-                this.$M10 /= α;
-                this.$M11 /= α;
+                this.$M00 /= a;
+                this.$M01 /= a;
+                this.$M10 /= a;
+                this.$M11 /= a;
                 this.uom = Unit.div(this.uom, uom);
                 return this;
             }
@@ -9657,6 +9689,14 @@
             enumerable: false,
             configurable: true
         });
+        /**
+         *
+         * @param rateOfChangeVals the ordinary rate of change, dx / dt, as opposed to the proper rate of change, dx / dτ.
+         * @param rateOfChangeUoms
+         * @param idx
+         * @param body
+         * @param uomTime
+         */
         KinematicsG11.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
             var P = body.P;
             var M = body.M;
@@ -9853,11 +9893,21 @@
     var MetricG11 = /** @class */ (function () {
         function MetricG11() {
         }
+        Object.defineProperty(MetricG11.prototype, "e0", {
+            get: function () {
+                return Spacetime1.e0;
+            },
+            enumerable: false,
+            configurable: true
+        });
         MetricG11.prototype.a = function (mv) {
             return mv.a;
         };
         MetricG11.prototype.add = function (lhs, rhs) {
             throw new Error("Method not implemented.");
+        };
+        MetricG11.prototype.addScalar = function (lhs, a, uom) {
+            return lhs.addScalar(a, uom);
         };
         MetricG11.prototype.addVector = function (lhs, rhs) {
             return lhs.addVector(rhs);
@@ -9903,7 +9953,7 @@
             throw new Error("Method not implemented.");
         };
         MetricG11.prototype.divByScalar = function (lhs, a, uom) {
-            throw new Error("Method not implemented.");
+            return lhs.divByScalar(a, uom);
         };
         MetricG11.prototype.ext = function (lhs, rhs) {
             return lhs.ext(rhs);
@@ -9954,10 +10004,7 @@
             throw new Error("Method not implemented.");
         };
         MetricG11.prototype.neg = function (mv) {
-            throw new Error("Method not implemented.");
-        };
-        MetricG11.prototype.squaredNorm = function (A) {
-            throw new Error("Method not implemented.");
+            return mv.neg();
         };
         MetricG11.prototype.rco = function (lhs, rhs) {
             return lhs.rco(rhs);
@@ -9977,10 +10024,13 @@
         MetricG11.prototype.setUom = function (mv, uom) {
             mv.uom = uom;
         };
+        MetricG11.prototype.squaredNorm = function (mv) {
+            return mv.squaredNorm();
+        };
         MetricG11.prototype.sub = function (lhs, rhs) {
             throw new Error("Method not implemented.");
         };
-        MetricG11.prototype.subScalar = function (lhs, rhs) {
+        MetricG11.prototype.subScalar = function (lhs, a, uom) {
             // return lhs.subScalar(rhs.a,rhs.uom);
             throw new Error("Method not implemented.");
         };
@@ -10001,9 +10051,6 @@
         };
         MetricG11.prototype.writeBivector = function (source, target) {
             throw new Error("Method not implemented.");
-        };
-        MetricG11.prototype.zero = function () {
-            return Spacetime1.zero.clone();
         };
         return MetricG11;
     }());
@@ -11381,19 +11428,19 @@
          * <code>this ⟼ this / (α * uom)</code>
          * </p>
          *
-         * @param α The scalar dividend.
+         * @param a The scalar dividend.
          * @param uom The unit of measure.
          */
-        Geometric2.prototype.divByScalar = function (α, uom) {
+        Geometric2.prototype.divByScalar = function (a, uom) {
             if (this.isLocked()) {
-                return lock$1(this.clone().divByScalar(α, uom));
+                return lock$1(this.clone().divByScalar(a, uom));
             }
             else {
                 this.uom = Unit.div(this.uom, uom);
-                this.a /= α;
-                this.x /= α;
-                this.y /= α;
-                this.b /= α;
+                this.a /= a;
+                this.x /= a;
+                this.y /= a;
+                this.b /= a;
                 return this;
             }
         };
@@ -12066,11 +12113,21 @@
     var Euclidean2 = /** @class */ (function () {
         function Euclidean2() {
         }
+        Object.defineProperty(Euclidean2.prototype, "e0", {
+            get: function () {
+                return void 0;
+            },
+            enumerable: false,
+            configurable: true
+        });
         Euclidean2.prototype.a = function (mv) {
             return mv.a;
         };
         Euclidean2.prototype.add = function (lhs, rhs) {
             return lhs.add(rhs);
+        };
+        Euclidean2.prototype.addScalar = function (lhs, a, uom) {
+            return lhs.addScalar(a, uom);
         };
         Euclidean2.prototype.addVector = function (lhs, rhs) {
             return lhs.addVector(rhs);
@@ -12188,8 +12245,8 @@
             // TODO: Could generalize to subtracting a fraction...
             return lhs.sub(rhs, 1);
         };
-        Euclidean2.prototype.subScalar = function (lhs, rhs) {
-            return lhs.subScalar(rhs.a, rhs.uom, 1);
+        Euclidean2.prototype.subScalar = function (lhs, a, uom) {
+            return lhs.subScalar(a, uom);
         };
         Euclidean2.prototype.subVector = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
@@ -12212,9 +12269,6 @@
         };
         Euclidean2.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
-        };
-        Euclidean2.prototype.zero = function () {
-            return Geometric2.zero.clone();
         };
         return Euclidean2;
     }());
@@ -13320,35 +13374,35 @@
         /**
          * @hidden
          */
-        Spacetime2.prototype.divByNumber = function (α) {
+        Spacetime2.prototype.divByNumber = function (a) {
             if (this.isLocked()) {
-                return this.clone().divByNumber(α).permlock();
+                return this.clone().divByNumber(a).permlock();
             }
             else {
-                this.$M000 /= α;
-                this.$M001 /= α;
-                this.$M010 /= α;
-                this.$M011 /= α;
-                this.$M100 /= α;
-                this.$M101 /= α;
-                this.$M110 /= α;
-                this.$M111 /= α;
+                this.$M000 /= a;
+                this.$M001 /= a;
+                this.$M010 /= a;
+                this.$M011 /= a;
+                this.$M100 /= a;
+                this.$M101 /= a;
+                this.$M110 /= a;
+                this.$M111 /= a;
                 return this;
             }
         };
-        Spacetime2.prototype.divByScalar = function (α, uom) {
+        Spacetime2.prototype.divByScalar = function (a, uom) {
             if (this.isLocked()) {
-                return this.clone().divByScalar(α, uom).permlock();
+                return this.clone().divByScalar(a, uom).permlock();
             }
             else {
-                this.$M000 /= α;
-                this.$M001 /= α;
-                this.$M010 /= α;
-                this.$M011 /= α;
-                this.$M100 /= α;
-                this.$M101 /= α;
-                this.$M110 /= α;
-                this.$M111 /= α;
+                this.$M000 /= a;
+                this.$M001 /= a;
+                this.$M010 /= a;
+                this.$M011 /= a;
+                this.$M100 /= a;
+                this.$M101 /= a;
+                this.$M110 /= a;
+                this.$M111 /= a;
                 this.uom = Unit.div(this.uom, uom);
                 return this;
             }
@@ -14382,11 +14436,21 @@
     var MetricG21 = /** @class */ (function () {
         function MetricG21() {
         }
+        Object.defineProperty(MetricG21.prototype, "e0", {
+            get: function () {
+                return Spacetime2.e0;
+            },
+            enumerable: false,
+            configurable: true
+        });
         MetricG21.prototype.a = function (mv) {
             return mv.a;
         };
         MetricG21.prototype.add = function (lhs, rhs) {
             return lhs.add(rhs);
+        };
+        MetricG21.prototype.addScalar = function (lhs, a, uom) {
+            return lhs.addScalar(a, uom);
         };
         MetricG21.prototype.addVector = function (lhs, rhs) {
             // lhs.addVector(rhs);
@@ -14502,8 +14566,8 @@
         MetricG21.prototype.sub = function (lhs, rhs) {
             return lhs.sub(rhs);
         };
-        MetricG21.prototype.subScalar = function (lhs, rhs) {
-            return lhs.subScalar(rhs.a, rhs.uom);
+        MetricG21.prototype.subScalar = function (lhs, a, uom) {
+            return lhs.subScalar(a, uom);
         };
         MetricG21.prototype.subVector = function (lhs, rhs) {
             throw new Error("Method not implemented.");
@@ -14522,9 +14586,6 @@
         };
         MetricG21.prototype.writeBivector = function (source, target) {
             throw new Error("Method not implemented.");
-        };
-        MetricG21.prototype.zero = function () {
-            return Spacetime2.zero.clone();
         };
         return MetricG21;
     }());
@@ -16311,26 +16372,26 @@
         };
         /**
          * <p>
-         * <code>this ⟼ this / (α * uom)</code>
+         * <code>this ⟼ this / (a * uom)</code>
          * </p>
          *
-         * @param α The scalar dividend.
+         * @param a The scalar dividend.
          * @param uom The unit of measure.
          */
-        Geometric3.prototype.divByScalar = function (α, uom) {
+        Geometric3.prototype.divByScalar = function (a, uom) {
             if (this.isLocked()) {
-                return lock(this.clone().divByScalar(α, uom));
+                return lock(this.clone().divByScalar(a, uom));
             }
             else {
                 this.uom = Unit.div(this.uom, uom);
-                this.a /= α;
-                this.x /= α;
-                this.y /= α;
-                this.z /= α;
-                this.yz /= α;
-                this.zx /= α;
-                this.xy /= α;
-                this.b /= α;
+                this.a /= a;
+                this.x /= a;
+                this.y /= a;
+                this.z /= a;
+                this.yz /= a;
+                this.zx /= a;
+                this.xy /= a;
+                this.b /= a;
                 return this;
             }
         };
@@ -18130,158 +18191,165 @@
     /**
      * @hidden
      */
-    var Euclidean3 = /** @class */ (function () {
-        function Euclidean3() {
+    var MetricG30 = /** @class */ (function () {
+        function MetricG30() {
         }
-        Euclidean3.prototype.a = function (mv) {
+        Object.defineProperty(MetricG30.prototype, "e0", {
+            get: function () {
+                return void 0;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        MetricG30.prototype.a = function (mv) {
             return mv.a;
         };
-        Euclidean3.prototype.add = function (lhs, rhs) {
+        MetricG30.prototype.add = function (lhs, rhs) {
             return lhs.add(rhs);
         };
-        Euclidean3.prototype.addVector = function (lhs, rhs) {
+        MetricG30.prototype.addScalar = function (lhs, a, uom) {
+            return lhs.addScalar(a, uom);
+        };
+        MetricG30.prototype.addVector = function (lhs, rhs) {
             return lhs.addVector(rhs);
         };
-        Euclidean3.prototype.applyMatrix = function (mv, matrix) {
+        MetricG30.prototype.applyMatrix = function (mv, matrix) {
             throw new Error("applyMatrix(mv, matrix) method not implemented.");
         };
-        Euclidean3.prototype.clone = function (source) {
+        MetricG30.prototype.clone = function (source) {
             return source.clone();
         };
-        Euclidean3.prototype.copy = function (source, target) {
+        MetricG30.prototype.copy = function (source, target) {
             return target.copy(source);
         };
-        Euclidean3.prototype.copyBivector = function (source, target) {
+        MetricG30.prototype.copyBivector = function (source, target) {
             return target.copyBivector(source);
         };
-        Euclidean3.prototype.copyMatrix = function (m) {
+        MetricG30.prototype.copyMatrix = function (m) {
             if (m.dimensions !== 3) {
                 throw new Error("matrix dimensions must be 3.");
             }
             return new Mat3(m);
         };
-        Euclidean3.prototype.copyVector = function (source, target) {
+        MetricG30.prototype.copyVector = function (source, target) {
             return target.copyVector(source);
         };
-        Euclidean3.prototype.copyScalar = function (a, uom, target) {
+        MetricG30.prototype.copyScalar = function (a, uom, target) {
             return target.copyScalar(a, uom);
         };
-        Euclidean3.prototype.createForce = function (body) {
+        MetricG30.prototype.createForce = function (body) {
             return new Force3(body);
         };
-        Euclidean3.prototype.createTorque = function (body) {
+        MetricG30.prototype.createTorque = function (body) {
             return new Torque3(body);
         };
-        Euclidean3.prototype.direction = function (mv) {
+        MetricG30.prototype.direction = function (mv) {
             return mv.direction();
         };
-        Euclidean3.prototype.divByScalar = function (lhs, a, uom) {
+        MetricG30.prototype.divByScalar = function (lhs, a, uom) {
             return lhs.divByScalar(a, uom);
         };
-        Euclidean3.prototype.identityMatrix = function () {
+        MetricG30.prototype.identityMatrix = function () {
             return new Mat3(Matrix3.one());
         };
-        Euclidean3.prototype.invertMatrix = function (m) {
+        MetricG30.prototype.invertMatrix = function (m) {
             var I = Matrix3.zero().copy(m).inv();
             return new Mat3(I);
         };
-        Euclidean3.prototype.isBivector = function (mv) {
+        MetricG30.prototype.isBivector = function (mv) {
             return mv.isBivector();
         };
-        Euclidean3.prototype.isOne = function (mv) {
+        MetricG30.prototype.isOne = function (mv) {
             return mv.isOne();
         };
-        Euclidean3.prototype.isScalar = function (mv) {
+        MetricG30.prototype.isScalar = function (mv) {
             return mv.isScalar();
         };
-        Euclidean3.prototype.isSpinor = function (mv) {
+        MetricG30.prototype.isSpinor = function (mv) {
             return mv.isSpinor();
         };
-        Euclidean3.prototype.isVector = function (mv) {
+        MetricG30.prototype.isVector = function (mv) {
             return mv.isVector();
         };
-        Euclidean3.prototype.isZero = function (mv) {
+        MetricG30.prototype.isZero = function (mv) {
             return mv.isZero();
         };
-        Euclidean3.prototype.lco = function (lhs, rhs) {
+        MetricG30.prototype.lco = function (lhs, rhs) {
             return lhs.lco(rhs);
         };
-        Euclidean3.prototype.lock = function (mv) {
+        MetricG30.prototype.lock = function (mv) {
             return mv.lock();
         };
-        Euclidean3.prototype.norm = function (mv) {
+        MetricG30.prototype.norm = function (mv) {
             return mv.magnitude();
         };
-        Euclidean3.prototype.mul = function (lhs, rhs) {
+        MetricG30.prototype.mul = function (lhs, rhs) {
             return lhs.mul(rhs);
         };
-        Euclidean3.prototype.mulByNumber = function (lhs, alpha) {
+        MetricG30.prototype.mulByNumber = function (lhs, alpha) {
             return lhs.mulByNumber(alpha);
         };
-        Euclidean3.prototype.mulByScalar = function (lhs, a, uom) {
+        MetricG30.prototype.mulByScalar = function (lhs, a, uom) {
             return lhs.mulByScalar(a, uom);
         };
-        Euclidean3.prototype.mulByVector = function (lhs, rhs) {
+        MetricG30.prototype.mulByVector = function (lhs, rhs) {
             return lhs.mulByVector(rhs);
         };
-        Euclidean3.prototype.neg = function (mv) {
+        MetricG30.prototype.neg = function (mv) {
             return mv.neg();
         };
-        Euclidean3.prototype.squaredNorm = function (mv) {
+        MetricG30.prototype.squaredNorm = function (mv) {
             return mv.squaredNorm();
         };
-        Euclidean3.prototype.rco = function (lhs, rhs) {
+        MetricG30.prototype.rco = function (lhs, rhs) {
             return lhs.rco(rhs);
         };
-        Euclidean3.prototype.rev = function (mv) {
+        MetricG30.prototype.rev = function (mv) {
             return mv.rev();
         };
-        Euclidean3.prototype.rotate = function (mv, spinor) {
+        MetricG30.prototype.rotate = function (mv, spinor) {
             return mv.rotate(spinor);
         };
-        Euclidean3.prototype.scalar = function (a, uom) {
+        MetricG30.prototype.scalar = function (a, uom) {
             return Geometric3.scalar(a, uom);
         };
-        Euclidean3.prototype.scp = function (lhs, rhs) {
+        MetricG30.prototype.scp = function (lhs, rhs) {
             return lhs.scp(rhs);
         };
-        Euclidean3.prototype.setUom = function (mv, uom) {
+        MetricG30.prototype.setUom = function (mv, uom) {
             mv.uom = uom;
         };
-        Euclidean3.prototype.sub = function (lhs, rhs) {
+        MetricG30.prototype.sub = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
             return lhs.sub(rhs);
         };
-        Euclidean3.prototype.subScalar = function (lhs, rhs) {
+        MetricG30.prototype.subScalar = function (lhs, a, uom) {
             // TODO: Could generalize to subtracting a fraction...
-            return lhs.subScalar(rhs.a, rhs.uom);
+            return lhs.subScalar(a, uom);
         };
-        Euclidean3.prototype.subVector = function (lhs, rhs) {
+        MetricG30.prototype.subVector = function (lhs, rhs) {
             // TODO: Could generalize to subtracting a fraction...
             return lhs.subVector(rhs);
         };
-        Euclidean3.prototype.unlock = function (mv, token) {
+        MetricG30.prototype.unlock = function (mv, token) {
             mv.unlock(token);
         };
-        Euclidean3.prototype.uom = function (mv) {
+        MetricG30.prototype.uom = function (mv) {
             return mv.uom;
         };
-        Euclidean3.prototype.ext = function (lhs, rhs) {
+        MetricG30.prototype.ext = function (lhs, rhs) {
             return lhs.ext(rhs);
         };
-        Euclidean3.prototype.write = function (source, target) {
+        MetricG30.prototype.write = function (source, target) {
             source.write(target);
         };
-        Euclidean3.prototype.writeVector = function (source, target) {
+        MetricG30.prototype.writeVector = function (source, target) {
             source.writeVector(target);
         };
-        Euclidean3.prototype.writeBivector = function (source, target) {
+        MetricG30.prototype.writeBivector = function (source, target) {
             source.writeBivector(target);
         };
-        Euclidean3.prototype.zero = function () {
-            return Geometric3.zero.clone();
-        };
-        return Euclidean3;
+        return MetricG30;
     }());
 
     // Copyright 2017-2021 David Holmes.  All Rights Reserved.
@@ -18297,7 +18365,7 @@
             if (width === void 0) { width = Geometric3.one; }
             if (height === void 0) { height = Geometric3.one; }
             if (depth === void 0) { depth = Geometric3.one; }
-            var _this = _super.call(this, new Euclidean3()) || this;
+            var _this = _super.call(this, new MetricG30()) || this;
             if (!(width instanceof Geometric3)) {
                 throw new Error("width must be a Geometric3.");
             }
@@ -18438,7 +18506,7 @@
         function Cylinder3(radius, height) {
             if (radius === void 0) { radius = Geometric3.one; }
             if (height === void 0) { height = Geometric3.one; }
-            var _this = _super.call(this, new Euclidean3()) || this;
+            var _this = _super.call(this, new MetricG30()) || this;
             _this.radius_ = Geometric3.copy(radius);
             _this.radiusLock_ = _this.radius_.lock();
             _this.height_ = Geometric3.copy(height);
@@ -18898,7 +18966,7 @@
     var Engine3 = /** @class */ (function (_super) {
         __extends(Engine3, _super);
         function Engine3(options) {
-            return _super.call(this, new Euclidean3(), new KinematicsG30(), options) || this;
+            return _super.call(this, new MetricG30(), new KinematicsG30(), options) || this;
         }
         return Engine3;
     }(Engine));
@@ -18939,7 +19007,7 @@
          * @param Q The charge of the particle. Default is 1 (dimensionless).
          */
         function Particle3(M, Q) {
-            return _super.call(this, M, Q, new Euclidean3()) || this;
+            return _super.call(this, M, Q, new MetricG30()) || this;
         }
         return Particle3;
     }(Particle));
@@ -18950,7 +19018,7 @@
     var Physics3 = /** @class */ (function (_super) {
         __extends(Physics3, _super);
         function Physics3() {
-            return _super.call(this, new Euclidean3(), new KinematicsG30()) || this;
+            return _super.call(this, new MetricG30(), new KinematicsG30()) || this;
         }
         return Physics3;
     }(Physics));
@@ -18961,7 +19029,7 @@
     var RigidBody3 = /** @class */ (function (_super) {
         __extends(RigidBody3, _super);
         function RigidBody3() {
-            return _super.call(this, new Euclidean3()) || this;
+            return _super.call(this, new MetricG30()) || this;
         }
         return RigidBody3;
     }(RigidBody));
@@ -18977,7 +19045,7 @@
          */
         function Sphere3(radius) {
             if (radius === void 0) { radius = Geometric3.one; }
-            var _this = _super.call(this, new Euclidean3()) || this;
+            var _this = _super.call(this, new MetricG30()) || this;
             _this.radius_ = Geometric3.fromScalar(radius);
             _this.radiusLock_ = _this.radius_.lock();
             if (Unit.isOne(radius.uom)) ;
@@ -23770,9 +23838,8 @@
     exports.Engine3 = Engine3;
     exports.EngineG11 = EngineG11;
     exports.EngineG21 = EngineG21;
-    exports.Euclidean1 = Euclidean1;
     exports.Euclidean2 = Euclidean2;
-    exports.Euclidean3 = Euclidean3;
+    exports.Euclidean3 = MetricG30;
     exports.EulerMethod = EulerMethod;
     exports.FaradayLaw = FaradayLaw;
     exports.Force = Force;
@@ -23798,6 +23865,7 @@
     exports.LinearDamper3 = LinearDamper3;
     exports.Matrix1 = Matrix1;
     exports.Matrix3 = Matrix3;
+    exports.MetricG10 = MetricG10;
     exports.ModifiedEuler = ModifiedEuler;
     exports.Particle = Particle;
     exports.Particle1 = Particle1;

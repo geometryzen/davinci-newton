@@ -4,7 +4,7 @@ import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
 import { contains } from '../util/contains';
-import remove from '../util/remove';
+import { remove } from '../util/remove';
 import { toName } from '../util/toName';
 import { isValidName } from '../util/validName';
 import { checkBodyAngularVelocityUnits } from './checkBodyAngularVelocityUnits';

@@ -21,7 +21,7 @@ import { contains } from '../util/contains';
 import { GenericEvent } from '../util/GenericEvent';
 import isEmpty from '../util/isEmpty';
 import { Memorizable } from '../util/Memorizable';
-import remove from '../util/remove';
+import { remove } from '../util/remove';
 import { veryDifferent } from '../util/veryDifferent';
 import { LabView } from './LabView';
 import { ScreenRect } from './ScreenRect';

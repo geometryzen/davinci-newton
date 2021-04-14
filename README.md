@@ -1,5 +1,5 @@
 # davinci-newton
-A Physics Engine using Geometric Algebra, and Units of Measure.
+A Physics Engine for research using Geometric Algebra, and optional Units of Measure.
 
 The following metrics are supported:
 
@@ -37,7 +37,7 @@ import {
     Block3,
     Engine3,
     Geometric3,
-    Spring3
+    Spring
 } from 'davinci-newton'
 
 //
@@ -77,7 +77,7 @@ sim.addBody(block2)
 //
 // Add forces
 //
-const spring = new Spring3(block1, block2)
+const spring = new Spring(block1, block2)
 spring.restLength = 1 * m
 spring.stiffness = 1 * kg / (s * s)
 sim.addForceLaw(spring)

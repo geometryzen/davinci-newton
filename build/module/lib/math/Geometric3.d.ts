@@ -202,13 +202,13 @@ export declare class Geometric3 extends AbstractGeometric implements GradeMasked
     divByNumber(α: number): Geometric3;
     /**
      * <p>
-     * <code>this ⟼ this / (α * uom)</code>
+     * <code>this ⟼ this / (a * uom)</code>
      * </p>
      *
-     * @param α The scalar dividend.
+     * @param a The scalar dividend.
      * @param uom The unit of measure.
      */
-    divByScalar(α: number, uom?: Unit): Geometric3;
+    divByScalar(a: number, uom?: Unit): Geometric3;
     divByVector(v: VectorE3): Geometric3;
     /**
      * @hidden

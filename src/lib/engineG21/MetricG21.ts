@@ -10,11 +10,17 @@ import { TorqueG21 } from "./TorqueG21";
  * @hidden
  */
 export class MetricG21 implements Metric<Spacetime2> {
+    get e0(): Spacetime2 {
+        return Spacetime2.e0;
+    }
     a(mv: Spacetime2): number {
         return mv.a;
     }
     add(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
         return lhs.add(rhs);
+    }
+    addScalar(lhs: Spacetime2, a: number, uom?: Unit): Spacetime2 {
+        return lhs.addScalar(a, uom);
     }
     addVector(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
         // lhs.addVector(rhs);
@@ -130,8 +136,8 @@ export class MetricG21 implements Metric<Spacetime2> {
     sub(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
         return lhs.sub(rhs);
     }
-    subScalar(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
-        return lhs.subScalar(rhs.a, rhs.uom);
+    subScalar(lhs: Spacetime2, a: number, uom?: Unit): Spacetime2 {
+        return lhs.subScalar(a, uom);
     }
     subVector(lhs: Spacetime2, rhs: Spacetime2): Spacetime2 {
         throw new Error("Method not implemented.");
@@ -150,8 +156,5 @@ export class MetricG21 implements Metric<Spacetime2> {
     }
     writeBivector(source: Spacetime2, target: Spacetime2): void {
         throw new Error("Method not implemented.");
-    }
-    zero(): Spacetime2 {
-        return Spacetime2.zero.clone();
     }
 }

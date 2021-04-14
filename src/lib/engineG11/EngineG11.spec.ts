@@ -149,25 +149,31 @@ describe("EngineG11", function () {
         it("", function () {
             const engine = new EngineG11();
 
-            const bead = new ParticleG11();
+            const beadOne = new ParticleG11();
+            const beadTwo = new ParticleG11();
 
             // The bead is initially spatially at rest.
             // This implies that it is moving through time.
-            bead.P = e0;
+            beadOne.P = e0;
+            beadTwo.P = e0;
 
-            expect(bead.X.equals(zero)).toBeTrue();
-            expect(bead.P.equals(e0)).toBeTrue();
+            expect(beadOne.X.equals(zero)).toBeTrue();
+            expect(beadOne.P.equals(e0)).toBeTrue();
 
-            engine.addBody(bead);
+            engine.addBody(beadOne);
+            engine.addBody(beadTwo);
 
-            const faradayLaw = new FaradayLaw(bead, function (X: Spacetime1) { return e01; });
-            expect(faradayLaw).toBeDefined();
+            const forceOne = new FaradayLaw(beadOne, function (X: Spacetime1) { return e01; });
+            engine.addForceLaw(forceOne);
 
-            engine.addForceLaw(faradayLaw);
+            const forceTwo = new ConstantForceLaw(beadTwo, e1);
+            engine.addForceLaw(forceTwo);
 
             const steps = 1024 * 4;
             for (let i = 0; i < steps; i++) {
                 engine.advance(1 / steps);
+                // console.log(`beadOne.X=>${beadOne.X}`);
+                // console.log(`beadTwo.X=>${beadTwo.X}`);
             }
             expect(true).toBeTrue();
         });
