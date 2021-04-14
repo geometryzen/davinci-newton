@@ -35,13 +35,24 @@ export class Engine<T> {
     /**
      * 
      * @param metric 
-     * @param dynamics 
+     * @param kinematics 
      * @param options 
      */
-    constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>) {
-        this.physics = new Physics(metric, dynamics);
+    constructor(metric: Metric<T>, private readonly kinematics: Kinematics<T>, options?: Partial<EngineOptions>) {
+        this.physics = new Physics(metric, kinematics);
         const rk4 = new RungeKutta(this.physics);
         this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
+    }
+    /**
+     * The speed of light.
+     * For dimensionless simulations this will default to 1.
+     * For S.I. Units, the speed of light may be set.
+     */
+    get speedOfLight(): T {
+        return this.kinematics.speedOfLight;
+    }
+    set speedOfLight(speedOfLight: T) {
+        this.kinematics.speedOfLight = speedOfLight;
     }
 
     /**

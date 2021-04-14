@@ -78,6 +78,13 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class KinematicsG20 implements Kinematics<Geometric2> {
+    private $speedOfLight = Geometric2.one;
+    get speedOfLight(): Geometric2 {
+        return this.$speedOfLight;
+    }
+    set speedOfLight(speedOfLight: Geometric2) {
+        this.$speedOfLight = speedOfLight;
+    }
     numVarsPerBody(): number {
         // Each body is described by 7 kinematic components.
         // 2 position

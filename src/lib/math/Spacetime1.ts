@@ -75,6 +75,9 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
     static readonly kelvin = Spacetime1.scalar(1, Unit.KELVIN).permlock();
     static readonly mole = Spacetime1.scalar(1, Unit.MOLE).permlock();
     static readonly candela = Spacetime1.scalar(1, Unit.CANDELA).permlock();
+    static readonly coulomb = Spacetime1.scalar(1, Unit.COULOMB).permlock();
+    static readonly newton = Spacetime1.scalar(1, Unit.NEWTON).permlock();
+    static readonly joule = Spacetime1.scalar(1, Unit.JOULE).permlock();
     /**
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.

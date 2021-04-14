@@ -6,6 +6,13 @@ import { Spacetime2 } from "../math/Spacetime2";
 import { Unit } from "../math/Unit";
 
 export class KinematicsG21 implements Kinematics<Spacetime2> {
+    private $speedOfLight = Spacetime2.one;
+    get speedOfLight(): Spacetime2 {
+        return this.$speedOfLight;
+    }
+    set speedOfLight(speedOfLight: Spacetime2) {
+        this.$speedOfLight = speedOfLight;
+    }
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime2>, uomTime: Unit): void {
         throw new Error("Method not implemented.");
     }

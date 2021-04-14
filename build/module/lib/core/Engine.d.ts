@@ -16,15 +16,23 @@ export interface EngineOptions {
  * A generic Physics Engine that may be specialized to a metric.
  */
 export declare class Engine<T> {
+    private readonly kinematics;
     private readonly physics;
     private readonly strategy;
     /**
      *
      * @param metric
-     * @param dynamics
+     * @param kinematics
      * @param options
      */
-    constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
+    constructor(metric: Metric<T>, kinematics: Kinematics<T>, options?: Partial<EngineOptions>);
+    /**
+     * The speed of light.
+     * For dimensionless simulations this will default to 1.
+     * For S.I. Units, the speed of light may be set.
+     */
+    get speedOfLight(): T;
+    set speedOfLight(speedOfLight: T);
     /**
      * Returns the state variables of the system.
      */

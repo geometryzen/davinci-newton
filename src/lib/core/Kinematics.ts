@@ -39,8 +39,14 @@ export const INDEX_RESERVED_LAST = 4;
  */
 export interface Kinematics<T> {
     /**
-     * The rate of change of position is the velocity.
+     * 
+     */
+    speedOfLight: T;
+    /**
+     * The rate of change of position is the velocity (non-relativistic).
      * dX/dt = V = P / M
+     * In the relativistic case,
+     * dX/dt = P / sqrt(M * M + P * P), where P is the spatial part of the energy-momentum spacetime vector, M is the rest mass.
      * 
      * @param rateOfChangeVals (output)
      * @param rateOfChangeUoms (output) 

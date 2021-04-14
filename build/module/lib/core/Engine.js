@@ -14,14 +14,30 @@ var Engine = /** @class */ (function () {
     /**
      *
      * @param metric
-     * @param dynamics
+     * @param kinematics
      * @param options
      */
-    function Engine(metric, dynamics, options) {
-        this.physics = new Physics(metric, dynamics);
+    function Engine(metric, kinematics, options) {
+        this.kinematics = kinematics;
+        this.physics = new Physics(metric, kinematics);
         var rk4 = new RungeKutta(this.physics);
         this.strategy = new DefaultAdvanceStrategy(this.physics, rk4);
     }
+    Object.defineProperty(Engine.prototype, "speedOfLight", {
+        /**
+         * The speed of light.
+         * For dimensionless simulations this will default to 1.
+         * For S.I. Units, the speed of light may be set.
+         */
+        get: function () {
+            return this.kinematics.speedOfLight;
+        },
+        set: function (speedOfLight) {
+            this.kinematics.speedOfLight = speedOfLight;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Engine.prototype, "varsList", {
         /**
          * Returns the state variables of the system.

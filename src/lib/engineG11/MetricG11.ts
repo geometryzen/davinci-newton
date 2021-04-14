@@ -69,7 +69,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         throw new Error("Method not implemented.");
     }
     isBivector(mv: Spacetime1): boolean {
-        throw new Error("Method not implemented.");
+        return mv.isBivector();
     }
     isOne(mv: Spacetime1): boolean {
         return mv.isOne();
@@ -78,7 +78,7 @@ export class MetricG11 implements Metric<Spacetime1> {
         return mv.isScalar();
     }
     isSpinor(mv: Spacetime1): boolean {
-        throw new Error("Method not implemented.");
+        return mv.isSpinor();
     }
     isVector(mv: Spacetime1): boolean {
         return mv.isVector();

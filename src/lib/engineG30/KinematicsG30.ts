@@ -121,6 +121,13 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class KinematicsG30 implements Kinematics<Geometric3> {
+    private $speedOfLight = Geometric3.one;
+    get speedOfLight(): Geometric3 {
+        return this.$speedOfLight;
+    }
+    set speedOfLight(speedOfLight: Geometric3) {
+        this.$speedOfLight = speedOfLight;
+    }
     numVarsPerBody(): number {
         return 13;
     }

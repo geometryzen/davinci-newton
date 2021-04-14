@@ -62,6 +62,13 @@ const DISCONTINUOUS_ENERGY_VARIABLES = [
  * @hidden
  */
 export class KinematicsG10 implements Kinematics<Geometric1> {
+    private $speedOfLight = Geometric1.one;
+    get speedOfLight(): Geometric1 {
+        return this.$speedOfLight;
+    }
+    set speedOfLight(speedOfLight: Geometric1) {
+        this.$speedOfLight = speedOfLight;
+    }
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric1>, uomTime: Unit): void {
         const P = body.P;
         const M = body.M;

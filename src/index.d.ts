@@ -3112,6 +3112,12 @@ export class Engine<T> {
      */
     constructor(metric: Metric<T>, dynamics: Kinematics<T>, options?: Partial<EngineOptions>);
     /**
+     * The speed of light is for use in the special-relativity domain.
+     * Default is 1 (dimensionless).
+     * When using S.I. Units, this constant may be set appropriately.
+     */
+    speedOfLight: T;
+    /**
      * The state variables of the system.
      */
     readonly varsList: VarsList;

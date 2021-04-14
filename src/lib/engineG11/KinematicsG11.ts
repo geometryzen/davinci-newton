@@ -1,10 +1,11 @@
 import { checkBodyAttitudeUnit } from "../core/checkBodyAttitudeUnit";
-import { Kinematics } from "../core/Kinematics";
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
+import { Kinematics } from "../core/Kinematics";
 import { VarsList } from "../core/VarsList";
 import { Spacetime1 } from "../math/Spacetime1";
 import { Unit } from "../math/Unit";
+
 /**
  * @hidden
  */
@@ -35,20 +36,25 @@ export const OFFSET_LINEAR_MOMENTUM_X = 5;
 export const OFFSET_ANGULAR_MOMENTUM_B = 6;
 
 export class KinematicsG11 implements Kinematics<Spacetime1> {
+    private $speedOfLight = Spacetime1.one;
+    constructor() {
+        // TODO
+    }
+    get speedOfLight(): Spacetime1 {
+        return this.$speedOfLight;
+    }
+    set speedOfLight(speedOfLight: Spacetime1) {
+        this.$speedOfLight = speedOfLight;
+    }
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
         const P = body.P;
         const M = body.M;
-        /**
-         * The rest mass.
-         */
-        const m0 = M.a;
-        const px = P.x;
-        /**
-         * The relativistic mass.
-         */
-        const m = Math.sqrt(m0 * m0 + px * px);
-        rateOfChangeVals[idx + OFFSET_POSITION_T] = P.t / m;
-        rateOfChangeVals[idx + OFFSET_POSITION_X] = P.x / m;
+        const m = M.a;
+        const c = this.$speedOfLight.a;
+        const βm = P.x / c;
+        const mass = Math.sqrt(m * m + βm * βm);
+        rateOfChangeVals[idx + OFFSET_POSITION_T] = P.t / mass;
+        rateOfChangeVals[idx + OFFSET_POSITION_X] = P.x / mass;
         const uom = Unit.div(P.uom, M.uom);
         rateOfChangeUoms[idx + OFFSET_POSITION_T] = uom;
         rateOfChangeUoms[idx + OFFSET_POSITION_X] = uom;
