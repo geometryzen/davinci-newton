@@ -1,5 +1,5 @@
 # davinci-newton
-A Physics Engine for research using Geometric Algebra, and optional Units of Measure.
+A Physics Engine for research and education using Geometric Algebra, and Units of Measure (optional).
 
 The following metrics are supported:
 

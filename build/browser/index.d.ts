@@ -400,46 +400,46 @@ export class VarsList {
 
 export interface Scalar {
     a: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface Pseudo {
     b: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface VectorE1 {
     x: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface VectorE2 {
     x: number;
     y: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface VectorE3 {
     x: number;
     y: number;
     z: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface BivectorE1 {
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface BivectorE2 {
     xy: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface BivectorE3 {
     yz: number;
     zx: number;
     xy: number;
-    uom?: Unit;
+    uom: Unit;
 }
 
 export interface SpinorE1 extends Scalar, BivectorE1 {
@@ -568,7 +568,7 @@ export interface GeometricNumber<I, M, S, V> extends LinearNumber<I, M, S, V> {
 }
 
 /**
- * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
+ * A mutable and lockable multivector in 1D with a Euclidean metric and unit of measure.
  */
 export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geometric1, SpinorE1, VectorE1> {
 
@@ -576,7 +576,7 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      * Constructs a new scalar from a number and a unit of measure.
      * The multivector (scalar) is mutable (unlocked).
      * @param a The coordinate corresponding to the scalar component of the multivector. 
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      */
     static scalar(a: number, uom?: Unit): Geometric1;
 
@@ -584,7 +584,7 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      * Constructs a new vector from Cartesian coordinates and a unit of measure.
      * The multivector (vector) is mutable (unlocked).
      * @param x The coordinate corresponding to the e1 basis vector.
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      */
     static vector(x: number, uom?: Unit): Geometric1;
 
@@ -695,9 +695,9 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      */
     x: number;
     /**
-     * The optional unit of measure of this multivector. If undefined then it is equivalent to one.
+     * The unit of measure of this multivector. If undefined then it is equivalent to one.
      */
-    uom?: Unit;
+    uom: Unit;
     /**
      * The grades that are present in this multivector.
      * This is a bitmask describing the grades that are non-zero in this multivector.
@@ -705,9 +705,9 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      */
     readonly grades: number;
     /**
-     * Constructs a mutable instance of Geometric1 from coordinates and an optional unit of measure.
+     * Constructs a mutable instance of Geometric1 from coordinates and a unit of measure.
      * @param coords The 2 coordinates are in the order [a, x]. 
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      */
     constructor(coords?: [a: number, x: number], uom?: Unit);
     add(rhs: Geometric1, α?: number): Geometric1;
@@ -765,11 +765,11 @@ export class Geometric1 implements GeometricE1, GeometricNumber<GeometricE1, Geo
      * Unlocks this multivector (allowing mutation),
      * using a token that was obtained from a preceding lock method call.
      */
-    unlock(token: number): void;
+    unlock(token: number): this;
 }
 
 /**
- * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
+ * A mutable and lockable multivector in 2D with a Euclidean metric and unit of measure.
  */
 export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geometric2, SpinorE2, VectorE2> {
     /**
@@ -798,14 +798,14 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     b: number;
 
     /**
-     * The optional unit of measure.
+     * The unit of measure.
      */
-    uom?: Unit;
+    uom: Unit;
 
     /**
-     * Constructs a mutable instance of Geometric2 from coordinates and an optional unit of measure.
+     * Constructs a mutable instance of Geometric2 from coordinates and a unit of measure.
      * @param coords The 4 coordinates are in the order [a, x, y, b]. 
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      */
     constructor(coords?: [a: number, x: number, y: number, b: number], uom?: Unit);
     isScalar(): boolean;
@@ -834,7 +834,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * Adds a scalar to this multivector.
      * 
      * @param a The scalar component value.
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      * @param α The fraction of a that should be added.
      */
     addScalar(a: number, uom?: Unit, α?: number): Geometric2;
@@ -1208,7 +1208,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * Subtracts a scalar from this multivector.
      * 
      * @param a The scalar component value.
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      * @param α The fraction of a that should be subtracted.
      */
     subScalar(a: number, uom?: Unit, α?: number): Geometric2;
@@ -1244,7 +1244,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
     /**
      * 
      */
-    unlock(token: number): void;
+    unlock(token: number): this;
 
     /**
      * Sets this Geometric2 to have the specified cartesian coordinates and unit of measure.
@@ -1259,7 +1259,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
      * 
      * @param x The cartesian x coordinate corresponding to the e1 basis vector.
      * @param y The cartesian y coordinate corresponding to the e2 basis vector.
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      * @returns this Geometric2.
      * @throws An Error if this Geometric2 is not mutable.
      */
@@ -1475,7 +1475,7 @@ export class Geometric2 implements GeometricE2, GeometricNumber<GeometricE2, Geo
 }
 
 /**
- * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
+ * A mutable and lockable multivector in 3D with a Euclidean metric and unit of measure.
  */
 export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geometric3, SpinorE3, VectorE3> {
     /**
@@ -1519,14 +1519,14 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     b: number;
 
     /**
-     * The optional unit of measure.
+     * The unit of measure.
      */
-    uom?: Unit;
+    uom: Unit;
 
     /**
-     * Constructs a mutable instance of Geometric3 from coordinates and an optional unit of measure.
+     * Constructs a mutable instance of Geometric3 from coordinates and a unit of measure.
      * @param coords The 8 coordinates are in the order [a, x, y, z, xy, yz, zx, b]. 
-     * @param uom The optional unit of measure.
+     * @param uom The unit of measure.
      */
     constructor(coords?: [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number], uom?: Unit);
     isScalar(): boolean;
@@ -1939,7 +1939,7 @@ export class Geometric3 implements GeometricE3, GeometricNumber<GeometricE3, Geo
     /**
      * 
      */
-    unlock(token: number): boolean;
+    unlock(token: number): this;
 
     /**
      * 
@@ -2198,7 +2198,7 @@ export class Spacetime1 {
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.
      * @param a the scaling factor for the unit of measure.
-     * @param uom the optional unit of measure. Equivalent to 1 if omitted.
+     * @param uom the unit of measure. Equivalent to 1 if omitted.
      */
     static scalar(a: number, uom?: Unit): Spacetime1;
 
@@ -2207,7 +2207,7 @@ export class Spacetime1 {
      * The value returned is in the unlocked (mutable) state.
      * @param t the coordinate corresponding to the e0 basis vector.
      * @param x  the coordinate corresponding to the e1 basis vector.
-     * @param uom  the optional unit of measure. Equivalent to 1 if omitted.
+     * @param uom  the unit of measure. Equivalent to 1 if omitted.
      */
     static vector(t: number, x: number, uom?: Unit): Spacetime1;
 
@@ -2217,7 +2217,7 @@ export class Spacetime1 {
      * @param t the coordinate of this multivector corresponding to the e0 basis vector.
      * @param x the coordinate of this multivector corresponding to the e1 basis vector.
      * @param b the coordinate of this multivector corresponding to the I pseudoscalar.
-     * @param uom the optional unit of measure for this multivector.
+     * @param uom the unit of measure for this multivector.
      */
     constructor(a?: number, t?: number, x?: number, b?: number, uom?: Unit);
     /**
@@ -2236,6 +2236,10 @@ export class Spacetime1 {
      * The coordinate of this multivector corresponding to the I pseudoscalar.
      */
     b: number;
+    /**
+     * The unit of measure.
+     */
+    uom: Unit;
     readonly grades: number;
     add(rhs: Spacetime1, α?: number): Spacetime1;
     addScalar(a: number, uom?: Unit, α?: number): Spacetime1;
@@ -2244,30 +2248,35 @@ export class Spacetime1 {
     div(rhs: Spacetime1): Spacetime1;
     divByNumber(α: number): Spacetime1;
     divByScalar(α: number, uom?: Unit): Spacetime1;
-    divByVector(v: { t: number; x: number; uom?: Unit; }): Spacetime1;
+    divByVector(v: { t: number; x: number; uom?: Unit }): Spacetime1;
     dual(): Spacetime1;
     equals(other: unknown): boolean;
     ext(rhs: Spacetime1): Spacetime1;
     grade(n: number): Spacetime1;
     inv(): Spacetime1;
     isBivector(): boolean;
+    isLocked(): boolean;
+    isMutable(): boolean;
     isOne(): boolean;
     isScalar(): boolean;
     isSpinor(): boolean;
     isVector(): boolean;
     isZero(): boolean;
     lco(rhs: Spacetime1): Spacetime1;
+    lock(): number;
     mul(rhs: Spacetime1): Spacetime1;
     mulByNumber(a: number): Spacetime1;
-    mulByScalar(a: number, uom: Unit): Spacetime1;
-    mulByVector(v: { t: number; x: number; uom?: Unit; }): Spacetime1;
+    mulByScalar(a: number, uom?: Unit): Spacetime1;
+    mulByVector(v: { t: number; x: number; uom?: Unit }): Spacetime1;
     neg(): Spacetime1;
+    permlock(): this;
     rco(rhs: Spacetime1): Spacetime1;
-    reflect(n: { t: number; x: number; uom?: Unit; }): Spacetime1;
+    reflect(n: { t: number; x: number; uom?: Unit }): Spacetime1;
     rev(): Spacetime1;
-    rotate(rotor: { a: number; b: number; uom?: Unit; }): Spacetime1;
+    rotate(rotor: { a: number; b: number; uom?: Unit }): Spacetime1;
     scale(α: number): Spacetime1;
     scp(rhs: Spacetime1): Spacetime1;
+    sqrt(): Spacetime1;
     squaredNorm(): Spacetime1;
     sub(rhs: Spacetime1, α?: number): Spacetime1;
     subScalar(a: number, uom?: Unit, α?: number): Spacetime1;
@@ -2275,6 +2284,7 @@ export class Spacetime1 {
     toFixed(fractionDigits?: number): string;
     toPrecision(precision?: number): string;
     toString(radix?: number): string;
+    unlock(token: number): this;
 }
 
 export class Spacetime2 {
@@ -2295,7 +2305,7 @@ export class Spacetime2 {
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.
      * @param a The scaling factor for the unit of measure.
-     * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+     * @param uom The unit of measure. Equivalent to 1 if omitted.
      */
     static scalar(a: number, uom?: Unit): Spacetime2;
     static vector(t: number, x: number, y: number, uom?: Unit): Spacetime2;
@@ -2308,6 +2318,7 @@ export class Spacetime2 {
     ty: number;
     xy: number;
     b: number;
+    uom: Unit;
     readonly grades: number;
     add(rhs: Spacetime2, α?: number): Spacetime2;
     addScalar(a: number, uom?: Unit, α?: number): Spacetime2;
@@ -2316,30 +2327,35 @@ export class Spacetime2 {
     div(rhs: Spacetime2): Spacetime2;
     divByNumber(α: number): Spacetime2;
     divByScalar(α: number, uom?: Unit): Spacetime2;
-    divByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    divByVector(v: { t: number; x: number; y: number; uom?: Unit }): Spacetime2;
     dual(): Spacetime2;
     equals(other: unknown): boolean;
     ext(rhs: Spacetime2): Spacetime2;
     grade(n: number): Spacetime2;
     inv(): Spacetime2;
     isBivector(): boolean;
+    isLocked(): boolean;
+    isMutable(): boolean;
     isOne(): boolean;
     isScalar(): boolean;
     isSpinor(): boolean;
     isVector(): boolean;
     isZero(): boolean;
     lco(rhs: Spacetime2): Spacetime2;
+    lock(): number;
     mul(rhs: Spacetime2): Spacetime2;
     mulByNumber(a: number): Spacetime2;
     mulByScalar(a: number, uom: Unit): Spacetime2;
-    mulByVector(v: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    mulByVector(v: { t: number; x: number; y: number; uom?: Unit }): Spacetime2;
     neg(): Spacetime2;
+    permlock(): this;
     rco(rhs: Spacetime2): Spacetime2;
-    reflect(n: { t: number; x: number; y: number; uom?: Unit; }): Spacetime2;
+    reflect(n: { t: number; x: number; y: number; uom?: Unit }): Spacetime2;
     rev(): Spacetime2;
-    rotate(rotor: { a: number; tx: number; ty: number; xy: number; uom?: Unit; }): Spacetime2;
+    rotate(rotor: { a: number; tx: number; ty: number; xy: number; uom?: Unit }): Spacetime2;
     scale(α: number): Spacetime2;
     scp(rhs: Spacetime2): Spacetime2;
+    sqrt(): Spacetime1;
     squaredNorm(): Spacetime2;
     sub(rhs: Spacetime2, α?: number): Spacetime2;
     subScalar(a: number, uom?: Unit, α?: number): Spacetime2;
@@ -2347,6 +2363,7 @@ export class Spacetime2 {
     toFixed(fractionDigits?: number): string;
     toPrecision(precision?: number): string;
     toString(radix?: number): string;
+    unlock(token: number): this;
 }
 
 /**
@@ -2354,18 +2371,18 @@ export class Spacetime2 {
  */
 export interface MatrixLike {
     readonly dimensions: number;
-    uom?: Unit;
+    uom: Unit;
     getElement(row: number, column: number): number;
 }
 
 /**
- * A mutable 1x1 matrix with an optional unit of measure.
+ * A mutable 1x1 matrix with an unit of measure.
  */
 export class Matrix1 implements MatrixLike {
     static one(): Matrix1;
     static zero(): Matrix1;
     readonly dimensions: number;
-    uom?: Unit;
+    uom: Unit;
     /**
      * Constructs a mutable 1x1 matrix.
      * @param elements 
@@ -2377,13 +2394,13 @@ export class Matrix1 implements MatrixLike {
 }
 
 /**
- * A mutable 3x3 matrix with an optional unit of measure.
+ * A mutable 3x3 matrix with an unit of measure.
  */
 export class Matrix3 implements MatrixLike {
     static one(): Matrix3;
     static zero(): Matrix3;
     readonly dimensions: number;
-    uom?: Unit;
+    uom: Unit;
     elements: Float32Array;
     modified: boolean;
     /**
@@ -2531,7 +2548,7 @@ export interface Metric<T> {
      * Creates a grade 0 (scalar) multivector with value `a * uom`.
      * The scalar returned is in the unlocked (mutable) state.
      * @param a The scaling factor for the unit of measure.
-     * @param uom The optional unit of measure. Equivalent to 1 if omitted.
+     * @param uom The unit of measure. Equivalent to 1 if omitted.
      */
     scalar(a: number, uom?: Unit): T;
 
@@ -3052,6 +3069,20 @@ export class Force3 extends Force<Geometric3> {
     constructor(body: ForceBody<Geometric3>);
 }
 
+/**
+ *
+ */
+export class ForceG11 extends Force<Spacetime1> {
+    constructor(body: ForceBody<Spacetime1>);
+}
+
+/**
+ *
+ */
+export class ForceG21 extends Force<Spacetime2> {
+    constructor(body: ForceBody<Spacetime2>);
+}
+
 export interface ForceLaw<T> extends SimObject {
     /**
      * The forces which are being applied to the bodies.
@@ -3333,7 +3364,7 @@ export class Engine<T> {
     /**
      * Advances the Physics model by the specified time interval, Δt * uomTime.
      * @param Δt The time interval.
-     * @param uomTime The optional unit of measure for the time interval.
+     * @param uomTime The unit of measure for the time interval.
      */
     advance(Δt: number, uomTime?: Unit): void;
 

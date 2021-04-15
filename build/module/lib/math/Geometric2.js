@@ -2,7 +2,7 @@ import { __extends } from "tslib";
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
-import { AbstractGeometric } from './AbstractGeometric';
+import { AbstractMeasure } from './AbstractMeasure';
 import { approx } from "./approx";
 import { arraysEQ4 } from "./arraysEQ";
 import { gauss } from "./gauss";
@@ -912,7 +912,7 @@ var Geometric2 = /** @class */ (function (_super) {
     };
     Geometric2.prototype.sqrt = function () {
         if (this.isLocked()) {
-            return lock(this.clone().sqrt());
+            return this.clone().sqrt().permlock();
         }
         else {
             this.a = Math.sqrt(this.a);
@@ -1858,5 +1858,5 @@ var Geometric2 = /** @class */ (function (_super) {
      */
     Geometric2.joule = lock(new Geometric2(scalar(1), Unit.JOULE));
     return Geometric2;
-}(AbstractGeometric));
+}(AbstractMeasure));
 export { Geometric2 };

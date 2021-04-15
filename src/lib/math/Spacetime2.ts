@@ -1,5 +1,5 @@
 import { readOnly } from "../i18n/readOnly";
-import { AbstractGeometric } from "./AbstractGeometric";
+import { AbstractMeasure } from "./AbstractMeasure";
 import { gauss } from "./gauss";
 import { GeometricM21 } from "./GeometricM21";
 import { GeometricNumber } from "./GeometricNumber";
@@ -69,7 +69,7 @@ const BASIS_LABELS: ['1', 'e0', 'e1', 'e01', 'e2', 'e02', 'e12', 'I'] = ["1", "e
 /**
  *
  */
-export class Spacetime2 extends AbstractGeometric implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector, number>, GeometricOperators<Spacetime2> {
+export class Spacetime2 extends AbstractMeasure implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector, number>, GeometricOperators<Spacetime2> {
     static readonly zero = Spacetime2.scalar(0).permlock();
     static readonly one = Spacetime2.scalar(1).permlock();
     static readonly e0 = Spacetime2.vector(1, 0, 0).permlock();
@@ -878,6 +878,28 @@ export class Spacetime2 extends AbstractGeometric implements GradeMasked, Geomet
             this.$M111 = 0;
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
+        }
+    }
+    sqrt(): Spacetime2 {
+        if (this.isLocked()) {
+            return this.clone().sqrt().permlock();
+        }
+        else {
+            if (this.isScalar()) {
+                this.$M000 = Math.sqrt(this.$M000);
+                this.$M001 = 0;
+                this.$M010 = 0;
+                this.$M011 = 0;
+                this.$M100 = 0;
+                this.$M101 = 0;
+                this.$M110 = 0;
+                this.$M111 = 0;
+                this.uom = Unit.sqrt(this.uom);
+                return this;
+            }
+            else {
+                throw new Error(`Target of sqrt() method must be a scalar, but was ${this}`);
+            }
         }
     }
     squaredNorm(): Spacetime2 {

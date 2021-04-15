@@ -8,7 +8,11 @@ import { Unit } from "./Unit";
  */
 const UNLOCKED = -1 * Math.random();
 
-export abstract class AbstractGeometric {
+/**
+ * Abstract base class providing a unit of measure and locking capabilities.
+ * @hidden
+ */
+export abstract class AbstractMeasure {
     private $unit: Unit;
 
     /**
@@ -67,12 +71,13 @@ export abstract class AbstractGeometric {
      * Unlocks this multivector (allowing mutation),
      * using a token that was obtained from a preceding lock method call.
      */
-    unlock(token: number): void {
+    unlock(token: number): this {
         if (this.lock_ === UNLOCKED) {
             throw new Error("not locked");
         }
         else if (this.lock_ === token) {
             this.lock_ = UNLOCKED;
+            return this;
         }
         else {
             throw new Error("unlock denied");

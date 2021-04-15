@@ -1,3 +1,4 @@
+import { AbstractMeasure } from './AbstractMeasure';
 import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 /**
@@ -7,12 +8,11 @@ import { Unit } from './Unit';
  */
 export declare class AbstractMatrix<T extends {
     elements: Float32Array;
-}> implements MatrixLike {
+}> extends AbstractMeasure implements MatrixLike {
     private _elements;
     private _length;
     private _dimensions;
     modified: boolean;
-    uom: Unit;
     /**
      * @param elements
      * @param dimensions

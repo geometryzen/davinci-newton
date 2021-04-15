@@ -1,5 +1,5 @@
 import { readOnly } from '../i18n/readOnly';
-import { AbstractGeometric } from './AbstractGeometric';
+import { AbstractMeasure } from './AbstractMeasure';
 import { approx } from './approx';
 import { arraysEQ8 } from './arraysEQ';
 import { BivectorE3 } from './BivectorE3';
@@ -204,7 +204,7 @@ const cosines: number[] = [];
 /**
  * A mutable and lockable multivector in 3D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric3 extends AbstractGeometric implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, number>, GeometricOperators<Geometric3> {
+export class Geometric3 extends AbstractMeasure implements GradeMasked, GeometricE3, GeometricNumber<Geometric3, Geometric3, Spinor, Vector, number>, GeometricOperators<Geometric3> {
 
     /**
      * 

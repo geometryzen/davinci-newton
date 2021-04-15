@@ -120,7 +120,11 @@ export interface GeometricNumber<I, M, S, V, F> extends LinearNumber<I, M, S, V,
     subScalar(a: F, uom?: Unit, α?: number): M;
     subVector(vector: V, α?: number): M;
     /**
-     * squared norm, scp(x, rev(x))
+     * Square Root.
+     */
+    sqrt(): M;
+    /**
+     * Squared norm: ||x||**2 = scp(x, rev(x))
      */
     squaredNorm(): M;
 }

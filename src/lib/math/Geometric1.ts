@@ -1,5 +1,5 @@
 import { readOnly } from "../i18n/readOnly";
-import { AbstractGeometric } from "./AbstractGeometric";
+import { AbstractMeasure } from "./AbstractMeasure";
 import { arraysEQ2 } from "./arraysEQ";
 import { gauss } from "./gauss";
 import { GeometricE1 as Geometric } from "./GeometricE1";
@@ -88,7 +88,7 @@ BASIS_LABELS[COORD_X] = 'e1';
 /**
  * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric1 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector, number>, GeometricOperators<Geometric1> {
+export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector, number>, GeometricOperators<Geometric1> {
     static scalar(a: number, uom?: Unit): Geometric1 {
         return new Geometric1([a, 0], uom);
     }
@@ -208,8 +208,52 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
         }
         return mask;
     }
-    clone(): Geometric1 {
-        return copy(this);
+
+    add(M: Geometric1, α = 1): Geometric1 {
+        if (this.isLocked()) {
+            return lock(this.clone().add(M, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.a = M.a * α;
+                this.x = M.x * α;
+                this.uom = M.uom;
+                return this;
+            }
+            else if (M.isZero()) {
+                // α has no effect because M is zero.
+                return this;
+            }
+            else {
+                this.a += M.a * α;
+                this.x += M.x * α;
+                this.uom = Unit.compatible(this.uom, M.uom);
+                return this;
+            }
+        }
+    }
+
+    /**
+     * @hidden 
+     */
+    addVector(v: Vector, α = 1): Geometric1 {
+        if (this.isLocked()) {
+            return lock(this.clone().addVector(v, α));
+        }
+        else {
+            if (this.isZero()) {
+                this.uom = v.uom;
+            }
+            else if (v.x === 0) {
+                // α has no effect because v is zero.
+                return this;
+            }
+            else {
+                this.uom = Unit.compatible(this.uom, v.uom);
+            }
+            this.x += v.x * α;
+            return this;
+        }
     }
 
     /**
@@ -239,6 +283,11 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             }
         }
     }
+
+    clone(): Geometric1 {
+        return copy(this);
+    }
+
     conj(): Geometric1 {
         if (this.isLocked()) {
             return lock(this.clone().conj());
@@ -248,6 +297,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+
     copy(rhs: Geometric1): Geometric1 {
         if (this.isMutable()) {
             this.a = rhs.a;
@@ -557,6 +607,19 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
 
         return this;
     }
+
+    sqrt(): Geometric1 {
+        if (this.isLocked()) {
+            return this.clone().sqrt().permlock();
+        }
+        else {
+            this.a = Math.sqrt(this.a);
+            this.x = 0;
+            this.uom = Unit.sqrt(this.uom);
+            return this;
+        }
+    }
+
     squaredNorm(): Geometric1 {
         if (this.isMutable()) {
             this.a = this.quaditudeNoUnits();
@@ -565,51 +628,6 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         } else {
             return lock(this.clone().quaditude());
-        }
-    }
-    add(M: Geometric1, α = 1): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().add(M, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.a = M.a * α;
-                this.x = M.x * α;
-                this.uom = M.uom;
-                return this;
-            }
-            else if (M.isZero()) {
-                // α has no effect because M is zero.
-                return this;
-            }
-            else {
-                this.a += M.a * α;
-                this.x += M.x * α;
-                this.uom = Unit.compatible(this.uom, M.uom);
-                return this;
-            }
-        }
-    }
-    /**
-     * @hidden 
-     */
-    addVector(v: Vector, α = 1): Geometric1 {
-        if (this.isLocked()) {
-            return lock(this.clone().addVector(v, α));
-        }
-        else {
-            if (this.isZero()) {
-                this.uom = v.uom;
-            }
-            else if (v.x === 0) {
-                // α has no effect because v is zero.
-                return this;
-            }
-            else {
-                this.uom = Unit.compatible(this.uom, v.uom);
-            }
-            this.x += v.x * α;
-            return this;
         }
     }
     /**
@@ -1130,6 +1148,7 @@ export class Geometric1 extends AbstractGeometric implements GradeMasked, Geomet
             throw new Error(readOnly('x').message);
         }
     }
+
     get b(): number {
         return this.coords[COORD_X];
     }

@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { readOnly } from '../i18n/readOnly';
-import { AbstractGeometric } from './AbstractGeometric';
+import { AbstractMeasure } from './AbstractMeasure';
 import { approx } from './approx';
 import { arraysEQ8 } from './arraysEQ';
 import { dotVectorE3 as dotVector } from './dotVectorE3';
@@ -2328,5 +2328,5 @@ var Geometric3 = /** @class */ (function (_super) {
      */
     Geometric3.joule = lock(new Geometric3(scalar(1), Unit.JOULE));
     return Geometric3;
-}(AbstractGeometric));
+}(AbstractMeasure));
 export { Geometric3 };

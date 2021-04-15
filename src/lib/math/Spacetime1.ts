@@ -1,5 +1,5 @@
 import { readOnly } from "../i18n/readOnly";
-import { AbstractGeometric } from "./AbstractGeometric";
+import { AbstractMeasure } from "./AbstractMeasure";
 import { gauss } from "./gauss";
 import { GeometricNumber } from "./GeometricNumber";
 import { GeometricOperators } from "./GeometricOperators";
@@ -62,7 +62,7 @@ const BASIS_LABELS: ['1', 'e0', 'e1', 'I'] = ["1", "e0", "e1", "I"];
 /**
  *
  */
-export class Spacetime1 extends AbstractGeometric implements GradeMasked, GeometricM11, GeometricNumber<Spacetime1, Spacetime1, Spinor, Vector, number>, GeometricOperators<Spacetime1> {
+export class Spacetime1 extends AbstractMeasure implements GradeMasked, GeometricM11, GeometricNumber<Spacetime1, Spacetime1, Spinor, Vector, number>, GeometricOperators<Spacetime1> {
     /**
      * The scalar value 0.
      * 
@@ -694,6 +694,24 @@ export class Spacetime1 extends AbstractGeometric implements GradeMasked, Geomet
             this.$M11 = 0;
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
+        }
+    }
+    sqrt(): Spacetime1 {
+        if (this.isLocked()) {
+            return this.clone().sqrt().permlock();
+        }
+        else {
+            if (this.isScalar()) {
+                this.$M00 = Math.sqrt(this.$M00);
+                this.$M01 = 0;
+                this.$M10 = 0;
+                this.$M11 = 0;
+                this.uom = Unit.sqrt(this.uom);
+                return this;
+            }
+            else {
+                throw new Error(`Target of sqrt() method must be a scalar, but was ${this}`);
+            }
         }
     }
     squaredNorm(): Spacetime1 {

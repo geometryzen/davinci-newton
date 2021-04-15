@@ -1,5 +1,6 @@
 import { mustBeDefined } from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
+import { AbstractMeasure } from './AbstractMeasure';
 import { MatrixLike } from './MatrixLike';
 import { Unit } from './Unit';
 
@@ -19,25 +20,24 @@ function checkElementsLength(elements: Float32Array, length: number): void {
  * The underlying data storage is a <code>Float32Array</code>.
  * @hidden
  */
-export class AbstractMatrix<T extends { elements: Float32Array }> implements MatrixLike {
+export class AbstractMatrix<T extends { elements: Float32Array }> extends AbstractMeasure implements MatrixLike {
 
     private _elements: Float32Array;
     private _length: number;
     private _dimensions: number;
     public modified: boolean;
-    public uom: Unit;
 
     /**
      * @param elements
      * @param dimensions
      */
     constructor(elements: Float32Array, dimensions: number, uom: Unit) {
+        super(uom);
         this._elements = mustBeDefined('elements', elements);
         this._dimensions = mustBeInteger('dimensions', dimensions);
         this._length = dimensions * dimensions;
         checkElementsLength(elements, this._length);
         this.modified = false;
-        this.uom = Unit.mustBeUnit('uom', uom);
     }
 
     get dimensions(): number {

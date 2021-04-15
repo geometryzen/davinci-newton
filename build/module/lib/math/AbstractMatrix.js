@@ -1,6 +1,7 @@
+import { __extends } from "tslib";
 import { mustBeDefined } from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
-import { Unit } from './Unit';
+import { AbstractMeasure } from './AbstractMeasure';
 /**
  * @hidden
  * @param elements
@@ -16,18 +17,20 @@ function checkElementsLength(elements, length) {
  * The underlying data storage is a <code>Float32Array</code>.
  * @hidden
  */
-var AbstractMatrix = /** @class */ (function () {
+var AbstractMatrix = /** @class */ (function (_super) {
+    __extends(AbstractMatrix, _super);
     /**
      * @param elements
      * @param dimensions
      */
     function AbstractMatrix(elements, dimensions, uom) {
-        this._elements = mustBeDefined('elements', elements);
-        this._dimensions = mustBeInteger('dimensions', dimensions);
-        this._length = dimensions * dimensions;
-        checkElementsLength(elements, this._length);
-        this.modified = false;
-        this.uom = Unit.mustBeUnit('uom', uom);
+        var _this = _super.call(this, uom) || this;
+        _this._elements = mustBeDefined('elements', elements);
+        _this._dimensions = mustBeInteger('dimensions', dimensions);
+        _this._length = dimensions * dimensions;
+        checkElementsLength(elements, _this._length);
+        _this.modified = false;
+        return _this;
     }
     Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
         get: function () {
@@ -96,5 +99,5 @@ var AbstractMatrix = /** @class */ (function () {
         this.elements[row + column * this._dimensions] = value;
     };
     return AbstractMatrix;
-}());
+}(AbstractMeasure));
 export { AbstractMatrix };

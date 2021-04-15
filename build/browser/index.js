@@ -15,7 +15,7 @@
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
             this.LAST_MODIFIED = '2021-04-14';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.95';
+            this.VERSION = '1.0.96';
         }
         return Newton;
     }());
@@ -6257,19 +6257,23 @@
      * @hidden
      */
     var UNLOCKED = -1 * Math.random();
-    var AbstractGeometric = /** @class */ (function () {
+    /**
+     * Abstract base class providing a unit of measure and locking capabilities.
+     * @hidden
+     */
+    var AbstractMeasure = /** @class */ (function () {
         /**
          *
          * @param uom
          */
-        function AbstractGeometric(uom) {
+        function AbstractMeasure(uom) {
             /**
              *
              */
             this.lock_ = UNLOCKED;
             this.$unit = uom;
         }
-        Object.defineProperty(AbstractGeometric.prototype, "uom", {
+        Object.defineProperty(AbstractMeasure.prototype, "uom", {
             get: function () {
                 return this.$unit;
             },
@@ -6289,17 +6293,17 @@
          * If the multivector is in the unlocked state then it is mutable.
          * If the multivector is in the locked state then it is immutable.
          */
-        AbstractGeometric.prototype.isLocked = function () {
+        AbstractMeasure.prototype.isLocked = function () {
             return this.lock_ !== UNLOCKED;
         };
-        AbstractGeometric.prototype.isMutable = function () {
+        AbstractMeasure.prototype.isMutable = function () {
             return this.lock_ === UNLOCKED;
         };
         /**
          * Locks this multivector (preventing any further mutation),
          * and returns a token that may be used to unlock it.
          */
-        AbstractGeometric.prototype.lock = function () {
+        AbstractMeasure.prototype.lock = function () {
             if (this.lock_ !== UNLOCKED) {
                 throw new Error("already locked");
             }
@@ -6312,22 +6316,23 @@
          * Unlocks this multivector (allowing mutation),
          * using a token that was obtained from a preceding lock method call.
          */
-        AbstractGeometric.prototype.unlock = function (token) {
+        AbstractMeasure.prototype.unlock = function (token) {
             if (this.lock_ === UNLOCKED) {
                 throw new Error("not locked");
             }
             else if (this.lock_ === token) {
                 this.lock_ = UNLOCKED;
+                return this;
             }
             else {
                 throw new Error("unlock denied");
             }
         };
-        AbstractGeometric.prototype.permlock = function () {
+        AbstractMeasure.prototype.permlock = function () {
             this.lock();
             return this;
         };
-        return AbstractGeometric;
+        return AbstractMeasure;
     }());
 
     function arraysEQ2(a, b) {
@@ -6612,8 +6617,52 @@
             enumerable: false,
             configurable: true
         });
-        Geometric1.prototype.clone = function () {
-            return copy$1(this);
+        Geometric1.prototype.add = function (M, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return lock$3(this.clone().add(M, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.a = M.a * α;
+                    this.x = M.x * α;
+                    this.uom = M.uom;
+                    return this;
+                }
+                else if (M.isZero()) {
+                    // α has no effect because M is zero.
+                    return this;
+                }
+                else {
+                    this.a += M.a * α;
+                    this.x += M.x * α;
+                    this.uom = Unit.compatible(this.uom, M.uom);
+                    return this;
+                }
+            }
+        };
+        /**
+         * @hidden
+         */
+        Geometric1.prototype.addVector = function (v, α) {
+            if (α === void 0) { α = 1; }
+            if (this.isLocked()) {
+                return lock$3(this.clone().addVector(v, α));
+            }
+            else {
+                if (this.isZero()) {
+                    this.uom = v.uom;
+                }
+                else if (v.x === 0) {
+                    // α has no effect because v is zero.
+                    return this;
+                }
+                else {
+                    this.uom = Unit.compatible(this.uom, v.uom);
+                }
+                this.x += v.x * α;
+                return this;
+            }
         };
         /**
          * Adds a multiple of a scalar to this multivector.
@@ -6642,6 +6691,9 @@
                     return this;
                 }
             }
+        };
+        Geometric1.prototype.clone = function () {
+            return copy$1(this);
         };
         Geometric1.prototype.conj = function () {
             if (this.isLocked()) {
@@ -6960,6 +7012,17 @@
             this.uom = Unit.mul(a.uom, b.uom);
             return this;
         };
+        Geometric1.prototype.sqrt = function () {
+            if (this.isLocked()) {
+                return this.clone().sqrt().permlock();
+            }
+            else {
+                this.a = Math.sqrt(this.a);
+                this.x = 0;
+                this.uom = Unit.sqrt(this.uom);
+                return this;
+            }
+        };
         Geometric1.prototype.squaredNorm = function () {
             if (this.isMutable()) {
                 this.a = this.quaditudeNoUnits();
@@ -6969,53 +7032,6 @@
             }
             else {
                 return lock$3(this.clone().quaditude());
-            }
-        };
-        Geometric1.prototype.add = function (M, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return lock$3(this.clone().add(M, α));
-            }
-            else {
-                if (this.isZero()) {
-                    this.a = M.a * α;
-                    this.x = M.x * α;
-                    this.uom = M.uom;
-                    return this;
-                }
-                else if (M.isZero()) {
-                    // α has no effect because M is zero.
-                    return this;
-                }
-                else {
-                    this.a += M.a * α;
-                    this.x += M.x * α;
-                    this.uom = Unit.compatible(this.uom, M.uom);
-                    return this;
-                }
-            }
-        };
-        /**
-         * @hidden
-         */
-        Geometric1.prototype.addVector = function (v, α) {
-            if (α === void 0) { α = 1; }
-            if (this.isLocked()) {
-                return lock$3(this.clone().addVector(v, α));
-            }
-            else {
-                if (this.isZero()) {
-                    this.uom = v.uom;
-                }
-                else if (v.x === 0) {
-                    // α has no effect because v is zero.
-                    return this;
-                }
-                else {
-                    this.uom = Unit.compatible(this.uom, v.uom);
-                }
-                this.x += v.x * α;
-                return this;
             }
         };
         /**
@@ -7619,7 +7635,7 @@
          */
         Geometric1.joule = lock$3(new Geometric1(scalar$2(1), Unit.JOULE));
         return Geometric1;
-    }(AbstractGeometric));
+    }(AbstractMeasure));
 
     /**
      * @hidden
@@ -7681,18 +7697,20 @@
      * The underlying data storage is a <code>Float32Array</code>.
      * @hidden
      */
-    var AbstractMatrix = /** @class */ (function () {
+    var AbstractMatrix = /** @class */ (function (_super) {
+        __extends(AbstractMatrix, _super);
         /**
          * @param elements
          * @param dimensions
          */
         function AbstractMatrix(elements, dimensions, uom) {
-            this._elements = mustBeDefined('elements', elements);
-            this._dimensions = mustBeInteger('dimensions', dimensions);
-            this._length = dimensions * dimensions;
-            checkElementsLength(elements, this._length);
-            this.modified = false;
-            this.uom = Unit.mustBeUnit('uom', uom);
+            var _this = _super.call(this, uom) || this;
+            _this._elements = mustBeDefined('elements', elements);
+            _this._dimensions = mustBeInteger('dimensions', dimensions);
+            _this._length = dimensions * dimensions;
+            checkElementsLength(elements, _this._length);
+            _this.modified = false;
+            return _this;
         }
         Object.defineProperty(AbstractMatrix.prototype, "dimensions", {
             get: function () {
@@ -7761,7 +7779,7 @@
             this.elements[row + column * this._dimensions] = value;
         };
         return AbstractMatrix;
-    }());
+    }(AbstractMeasure));
 
     var Matrix0 = /** @class */ (function (_super) {
         __extends(Matrix0, _super);
@@ -9237,6 +9255,24 @@
                 return this;
             }
         };
+        Spacetime1.prototype.sqrt = function () {
+            if (this.isLocked()) {
+                return this.clone().sqrt().permlock();
+            }
+            else {
+                if (this.isScalar()) {
+                    this.$M00 = Math.sqrt(this.$M00);
+                    this.$M01 = 0;
+                    this.$M10 = 0;
+                    this.$M11 = 0;
+                    this.uom = Unit.sqrt(this.uom);
+                    return this;
+                }
+                else {
+                    throw new Error("Target of sqrt() method must be a scalar, but was " + this);
+                }
+            }
+        };
         Spacetime1.prototype.squaredNorm = function () {
             if (this.isLocked()) {
                 return this.clone().squaredNorm().permlock();
@@ -9695,7 +9731,7 @@
         Spacetime1.newton = Spacetime1.scalar(1, Unit.NEWTON).permlock();
         Spacetime1.joule = Spacetime1.scalar(1, Unit.JOULE).permlock();
         return Spacetime1;
-    }(AbstractGeometric));
+    }(AbstractMeasure));
 
     /**
      * @hidden
@@ -11144,7 +11180,7 @@
         };
         Geometric2.prototype.sqrt = function () {
             if (this.isLocked()) {
-                return lock$1(this.clone().sqrt());
+                return this.clone().sqrt().permlock();
             }
             else {
                 this.a = Math.sqrt(this.a);
@@ -12090,7 +12126,7 @@
          */
         Geometric2.joule = lock$1(new Geometric2(scalar$1(1), Unit.JOULE));
         return Geometric2;
-    }(AbstractGeometric));
+    }(AbstractMeasure));
 
     var Matrix1 = /** @class */ (function (_super) {
         __extends(Matrix1, _super);
@@ -13949,6 +13985,28 @@
                 return this;
             }
         };
+        Spacetime2.prototype.sqrt = function () {
+            if (this.isLocked()) {
+                return this.clone().sqrt().permlock();
+            }
+            else {
+                if (this.isScalar()) {
+                    this.$M000 = Math.sqrt(this.$M000);
+                    this.$M001 = 0;
+                    this.$M010 = 0;
+                    this.$M011 = 0;
+                    this.$M100 = 0;
+                    this.$M101 = 0;
+                    this.$M110 = 0;
+                    this.$M111 = 0;
+                    this.uom = Unit.sqrt(this.uom);
+                    return this;
+                }
+                else {
+                    throw new Error("Target of sqrt() method must be a scalar, but was " + this);
+                }
+            }
+        };
         Spacetime2.prototype.squaredNorm = function () {
             if (this.isLocked()) {
                 return this.clone().squaredNorm().permlock();
@@ -14395,7 +14453,7 @@
         Spacetime2.mole = Spacetime2.scalar(1, Unit.MOLE).permlock();
         Spacetime2.candela = Spacetime2.scalar(1, Unit.CANDELA).permlock();
         return Spacetime2;
-    }(AbstractGeometric));
+    }(AbstractMeasure));
 
     var KinematicsG21 = /** @class */ (function () {
         function KinematicsG21() {
@@ -17927,7 +17985,7 @@
          */
         Geometric3.joule = lock(new Geometric3(scalar(1), Unit.JOULE));
         return Geometric3;
-    }(AbstractGeometric));
+    }(AbstractMeasure));
 
     /**
      * Computes the determinant of a 3x3 (square) matrix where the elements are assumed to be in column-major order.
@@ -23897,6 +23955,8 @@
     exports.Force1 = Force1;
     exports.Force2 = Force2;
     exports.Force3 = Force3;
+    exports.ForceG11 = ForceG11;
+    exports.ForceG21 = ForceG21;
     exports.Geometric1 = Geometric1;
     exports.Geometric2 = Geometric2;
     exports.Geometric3 = Geometric3;

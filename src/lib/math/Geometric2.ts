@@ -1,7 +1,7 @@
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { notImplemented } from '../i18n/notImplemented';
 import { readOnly } from "../i18n/readOnly";
-import { AbstractGeometric } from './AbstractGeometric';
+import { AbstractMeasure } from './AbstractMeasure';
 import { approx } from "./approx";
 import { arraysEQ4 } from "./arraysEQ";
 import { BivectorE2 as Bivector } from "./BivectorE2";
@@ -135,7 +135,7 @@ function lock(m: Geometric2): Geometric2 {
 /**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-export class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, number>, GeometricOperators<Geometric2> {
+export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, number>, GeometricOperators<Geometric2> {
 
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
@@ -1045,9 +1045,10 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+
     sqrt(): Geometric2 {
         if (this.isLocked()) {
-            return lock(this.clone().sqrt());
+            return this.clone().sqrt().permlock();
         }
         else {
             this.a = Math.sqrt(this.a);
@@ -1058,6 +1059,7 @@ export class Geometric2 extends AbstractGeometric implements GradeMasked, Geomet
             return this;
         }
     }
+
     squaredNorm(): Geometric2 {
         return this.quaditude();
     }

@@ -1,4 +1,4 @@
-import { AbstractGeometric } from './AbstractGeometric';
+import { AbstractMeasure } from './AbstractMeasure';
 import { BivectorE2 as Bivector } from "./BivectorE2";
 import { GeometricE2 as Geometric } from "./GeometricE2";
 import { GeometricNumber } from './GeometricNumber';
@@ -11,7 +11,7 @@ import { VectorE2 as Vector } from "./VectorE2";
 /**
  * A mutable and lockable multivector in 2D with a Euclidean metric and optional unit of measure.
  */
-export declare class Geometric2 extends AbstractGeometric implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, number>, GeometricOperators<Geometric2> {
+export declare class Geometric2 extends AbstractMeasure implements GradeMasked, Geometric, GeometricNumber<Geometric2, Geometric2, Spinor, Vector, number>, GeometricOperators<Geometric2> {
     /**
      * Creates a grade 0 (scalar) multivector with value `alpha * uom`.
      * The scalar returned is in the unlocked (mutable) state.
