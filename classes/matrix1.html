@@ -2713,14 +2713,14 @@ img {
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a href="matrix1.html#modified" class="tsd-kind-icon">modified</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a href="matrix1.html#uom" class="tsd-kind-icon">uom</a>
-				</li>
 				<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 					<a href="matrix1.html#dimensions" class="tsd-kind-icon">dimensions</a>
 				</li>
 				<li class=" tsd-kind-accessor tsd-parent-kind-class">
 					<a href="matrix1.html#elements" class="tsd-kind-icon">elements</a>
+				</li>
+				<li class=" tsd-kind-accessor tsd-parent-kind-class">
+					<a href="matrix1.html#uom" class="tsd-kind-icon">uom</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="matrix1.html#copy" class="tsd-kind-icon">copy</a>
@@ -2729,10 +2729,25 @@ img {
 					<a href="matrix1.html#getelement" class="tsd-kind-icon">get<wbr>Element</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="matrix1.html#islocked" class="tsd-kind-icon">is<wbr>Locked</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="matrix1.html#ismutable" class="tsd-kind-icon">is<wbr>Mutable</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="matrix1.html#isone" class="tsd-kind-icon">is<wbr>One</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="matrix1.html#lock" class="tsd-kind-icon">lock</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="matrix1.html#permlock" class="tsd-kind-icon">permlock</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a href="matrix1.html#setelement" class="tsd-kind-icon">set<wbr>Element</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a href="matrix1.html#unlock" class="tsd-kind-icon">unlock</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a href="matrix1.html#one" class="tsd-kind-icon">one</a>
@@ -2773,7 +2788,6 @@ img {
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#modified" class="tsd-kind-icon">modified</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#uom" class="tsd-kind-icon">uom</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -2781,6 +2795,7 @@ img {
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="matrix1.html#dimensions" class="tsd-kind-icon">dimensions</a></li>
 							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="matrix1.html#elements" class="tsd-kind-icon">elements</a></li>
+							<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="matrix1.html#uom" class="tsd-kind-icon">uom</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -2788,8 +2803,13 @@ img {
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#copy" class="tsd-kind-icon">copy</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#getelement" class="tsd-kind-icon">get<wbr>Element</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#islocked" class="tsd-kind-icon">is<wbr>Locked</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#ismutable" class="tsd-kind-icon">is<wbr>Mutable</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#isone" class="tsd-kind-icon">is<wbr>One</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#lock" class="tsd-kind-icon">lock</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#permlock" class="tsd-kind-icon">permlock</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#setelement" class="tsd-kind-icon">set<wbr>Element</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="matrix1.html#unlock" class="tsd-kind-icon">unlock</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="matrix1.html#one" class="tsd-kind-icon">one</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="matrix1.html#zero" class="tsd-kind-icon">zero</a></li>
 						</ul>
@@ -2810,7 +2830,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Overrides AbstractMatrix&lt;Matrix1&gt;.constructor</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/Matrix1.ts#L12">lib/math/Matrix1.ts:12</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/Matrix1.ts#L12">lib/math/Matrix1.ts:12</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2839,18 +2859,7 @@ img {
 				<aside class="tsd-sources">
 					<p>Inherited from AbstractMatrix.modified</p>
 					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L27">lib/math/AbstractMatrix.ts:27</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-				<a name="uom" class="tsd-anchor"></a>
-				<h3>uom</h3>
-				<div class="tsd-signature tsd-kind-icon">uom<span class="tsd-signature-symbol">:</span> <a href="unit.html" class="tsd-signature-type" data-tsd-kind="Class">Unit</a></div>
-				<aside class="tsd-sources">
-					<p>Inherited from AbstractMatrix.uom</p>
-					<ul>
-						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L28">lib/math/AbstractMatrix.ts:28</a></li>
+						<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L28">lib/math/AbstractMatrix.ts:28</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2867,7 +2876,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L43">lib/math/AbstractMatrix.ts:43</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L43">lib/math/AbstractMatrix.ts:43</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -2885,7 +2894,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L47">lib/math/AbstractMatrix.ts:47</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L47">lib/math/AbstractMatrix.ts:47</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Float32Array</span></h4>
@@ -2893,13 +2902,45 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L50">lib/math/AbstractMatrix.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L50">lib/math/AbstractMatrix.ts:50</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>elements: <span class="tsd-signature-type">Float32Array</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+				<a name="uom" class="tsd-anchor"></a>
+				<h3>uom</h3>
+				<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> uom<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="unit.html" class="tsd-signature-type" data-tsd-kind="Class">Unit</a></li>
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> uom<span class="tsd-signature-symbol">(</span>uom<span class="tsd-signature-symbol">: </span><a href="unit.html" class="tsd-signature-type" data-tsd-kind="Class">Unit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:30</li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <a href="unit.html" class="tsd-signature-type" data-tsd-kind="Class">Unit</a></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:34</li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>uom: <a href="unit.html" class="tsd-signature-type" data-tsd-kind="Class">Unit</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2920,7 +2961,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractMatrix.copy</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L55">lib/math/AbstractMatrix.ts:55</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L55">lib/math/AbstractMatrix.ts:55</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2944,7 +2985,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractMatrix.getElement</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L72">lib/math/AbstractMatrix.ts:72</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L72">lib/math/AbstractMatrix.ts:72</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2972,6 +3013,49 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="islocked" class="tsd-anchor"></a>
+				<h3>is<wbr>Locked</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">is<wbr>Locked<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from AbstractMatrix.isLocked</p>
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:48</li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Determines whether this multivector is locked.
+									If the multivector is in the unlocked state then it is mutable.
+								If the multivector is in the locked state then it is immutable.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="ismutable" class="tsd-anchor"></a>
+				<h3>is<wbr>Mutable</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">is<wbr>Mutable<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from AbstractMatrix.isMutable</p>
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:52</li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 				<a name="isone" class="tsd-anchor"></a>
 				<h3>is<wbr>One</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
@@ -2982,7 +3066,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractMatrix.isOne</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L79">lib/math/AbstractMatrix.ts:79</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L79">lib/math/AbstractMatrix.ts:79</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2991,6 +3075,48 @@ img {
 							</div>
 						</div>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="lock" class="tsd-anchor"></a>
+				<h3>lock</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">lock<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from AbstractMatrix.lock</p>
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:60</li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Locks this multivector (preventing any further mutation),
+								and returns a token that may be used to unlock it.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="permlock" class="tsd-anchor"></a>
+				<h3>permlock</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">permlock<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from AbstractMatrix.permlock</p>
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:87</li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></h4>
 					</li>
 				</ul>
 			</section>
@@ -3005,7 +3131,7 @@ img {
 						<aside class="tsd-sources">
 							<p>Inherited from AbstractMatrix.setElement</p>
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/AbstractMatrix.ts#L103">lib/math/AbstractMatrix.ts:103</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/AbstractMatrix.ts#L103">lib/math/AbstractMatrix.ts:103</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3033,6 +3159,36 @@ img {
 					</li>
 				</ul>
 			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+				<a name="unlock" class="tsd-anchor"></a>
+				<h3>unlock</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<li class="tsd-signature tsd-kind-icon">unlock<span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Inherited from AbstractMatrix.unlock</p>
+							<ul>
+								<li>Defined in lib/math/AbstractMeasure.ts:74</li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Unlocks this multivector (allowing mutation),
+								using a token that was obtained from a preceding lock method call.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>token: <span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 				<a name="one" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagStatic">Static</span> one</h3>
@@ -3043,7 +3199,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/Matrix1.ts#L6">lib/math/Matrix1.ts:6</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/Matrix1.ts#L6">lib/math/Matrix1.ts:6</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></h4>
@@ -3060,7 +3216,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/63d36b4/src/lib/math/Matrix1.ts#L10">lib/math/Matrix1.ts:10</a></li>
+								<li>Defined in <a href="https://github.com/geometryzen/davinci-newton/blob/3270621/src/lib/math/Matrix1.ts#L10">lib/math/Matrix1.ts:10</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="matrix1.html" class="tsd-signature-type" data-tsd-kind="Class">Matrix1</a></h4>
