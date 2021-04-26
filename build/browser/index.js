@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-04-14';
+            this.LAST_MODIFIED = '2021-04-25';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.96';
+            this.VERSION = '1.0.97';
         }
         return Newton;
     }());
@@ -9785,6 +9785,10 @@
          * @param uomTime
          */
         KinematicsG11.prototype.setPositionRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // We're essentially converting from momentum and rest-mass to ordinary velocity.
+            // Interestingly, this requires that we know the space-time split of the momentum.
+            // Here we work in coordinates, but the same thing could be done if we know e0.
+            // Using a mutable scratch variable, we could do these calculations in a coordinate-free manner.
             var P = body.P;
             var M = body.M;
             var m = M.a;
@@ -9798,6 +9802,7 @@
             rateOfChangeUoms[idx + OFFSET_POSITION_X$2] = uom;
         };
         KinematicsG11.prototype.setAttitudeRateOfChangeVars = function (rateOfChangeVals, rateOfChangeUoms, idx, body, uomTime) {
+            // TODO: Review the theory to see if this needs to be modified for relativity.
             // Let Ω(t) be the (bivector) angular velocity.
             // Let R(t) be the (spinor) attitude of the rigid body. 
             // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -9923,10 +9928,12 @@
             rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X$2] = Fx + force.x;
         };
         KinematicsG11.prototype.getForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
-            throw new Error("Method not implemented.");
+            // Use when applying geometric constraints.
+            throw new Error("getForce method not implemented.");
         };
         KinematicsG11.prototype.setForce = function (rateOfChangeVals, rateOfChangeUoms, idx, force) {
-            throw new Error("Method not implemented.");
+            // Use when applying geometric constraints.
+            throw new Error("setForce method not implemented.");
         };
         KinematicsG11.prototype.addTorqueToRateOfChangeAngularMomentumVars = function (rateOfChangeVals, rateOfChangeUoms, idx, torque, uomTime) {
             var Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_B];

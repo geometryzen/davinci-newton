@@ -528,6 +528,74 @@ describe("Spacetime2", function () {
             }
         });
     });
+    describe("addVector", function () {
+        it("e0 + e1", function () {
+            const m = e0.addVector(e1);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(1);
+            expect(m.x).toBe(1);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("e0 + 0", function () {
+            const m = e0.addVector(zero);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 + e0", function () {
+            const m = zero.addVector(e0);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 + e0 * 0.5", function () {
+            const m = zero.addVector(e0, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0.5);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 + e1 * 0.5", function () {
+            const m = zero.addVector(e1, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0.5);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 + e2 * 0.5", function () {
+            const m = zero.addVector(e2, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0.5);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+    });
     describe("div", function () {
         it("", function () {
             checkEQ(one.div(one), one);
@@ -2237,6 +2305,74 @@ describe("Spacetime2", function () {
                 checkEQ(blade.subScalar(zero.a, zero.uom), blade.sub(zero));
                 checkEQ(blade.subScalar(one.a, one.uom, 0.5), blade.sub(one.mulByNumber(0.5)));
             }
+        });
+    });
+    describe("subVector", function () {
+        it("e0 - e1", function () {
+            const m = e0.subVector(e1);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(1);
+            expect(m.x).toBe(-1);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("e0 - 0", function () {
+            const m = e0.subVector(zero);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 - e0", function () {
+            const m = zero.subVector(e0);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(-1);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 - e0 * 0.5", function () {
+            const m = zero.subVector(e0, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(-0.5);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 - e1 * 0.5", function () {
+            const m = zero.subVector(e1, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(-0.5);
+            expect(m.y).toBe(0);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
+        });
+        it("0 - e2 * 0.5", function () {
+            const m = zero.subVector(e2, 0.5);
+            expect(m.a).toBe(0);
+            expect(m.t).toBe(0);
+            expect(m.x).toBe(0);
+            expect(m.y).toBe(-0.5);
+            expect(m.tx).toBe(0);
+            expect(m.ty).toBe(0);
+            expect(m.xy).toBe(0);
+            expect(m.b).toBe(0);
         });
     });
     describe("statics", function () {

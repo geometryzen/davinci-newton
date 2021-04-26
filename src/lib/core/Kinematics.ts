@@ -113,7 +113,7 @@ export interface Kinematics<T> {
      */
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T, uomTime: Unit): void;
     /**
-     * 
+     * Use when applying geometric constraints.
      * @param rateOfChangeVals (input)
      * @param rateOfChangeUoms (input)
      * @param idx (input)
@@ -121,7 +121,7 @@ export interface Kinematics<T> {
      */
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: T): void;
     /**
-     * 
+     * Used when applying geometric constraints.
      * @param rateOfChangeVals (output)
      * @param rateOfChangeUoms (output) 
      * @param idx (input)

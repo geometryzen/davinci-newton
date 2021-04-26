@@ -82,10 +82,10 @@ describe("EngineG11", function () {
 
             // The bead is initially spatially at rest.
             // This implies that it is moving through time.
-            bead.P = e0;
+            bead.P = bead.M.mulByVector(e0);    // making use of the fact that M is immutable.
 
             expect(bead.X.equals(zero)).toBeTrue();
-            expect(bead.P.equals(e0)).toBeTrue();
+            expect(bead.P.equals(e0)).toBeTrue();   // only passes because M is dimensionless.
 
             engine.addBody(bead);
 
@@ -111,7 +111,7 @@ describe("EngineG11", function () {
             const c = meter.div(second).mulByNumber(3e8);
             const M = kilogram;
             const Q = Spacetime1.coulomb;
-            const E = M.mul(c).mul(c);
+            const E = M.mul(c).mul(c); // M is locked because kilogram is locked.
             // Scale up the force so that (FT/mc) is same as dimensionless example. 
             const F = Spacetime1.newton.mulByVector(e1).mulByNumber(3e8);
             const engine = new EngineG11();
@@ -120,10 +120,16 @@ describe("EngineG11", function () {
             const bead = new ParticleG11(M, Q);
 
             // The bead is initially spatially at rest.
-            // This implies that it is moving through time.
+            // It is important here to set the initial spacetime velocity correctly.
+            // The ordinary velocity (dx/dt) always has a time component of unity.
+            // Since the bead is spatially at rest, the propery velocity η = (dx/dτ) is also e0.
+            // The momentum is related to the proper velocity by
+            // p = rest-mass * η
             // TODO: Do a better job of bootstrapping quantities that are zero.
             bead.X = meter.mulByNumber(0); // TODO: Bootstrap
             bead.R = one;
+            // This appears to be correct in this dimensioned example.
+            // E = M * c * c => P = M * c * e0 
             bead.P = E.div(c).mulByVector(e0);
             bead.L = Spacetime1.joule.mul(second).mulByNumber(0);
 
@@ -153,9 +159,13 @@ describe("EngineG11", function () {
             const beadTwo = new ParticleG11();
 
             // The bead is initially spatially at rest.
-            // This implies that it is moving through time.
-            beadOne.P = e0;
-            beadTwo.P = e0;
+            // It is important here to set the initial spacetime velocity correctly.
+            // The ordinary velocity (dx/dt) always has a time component of unity.
+            // Since the bead is spatially at rest, the propery velocity η = (dx/dτ) is also e0.
+            // The momentum is related to the proper velocity by
+            // p = rest-mass * η
+            beadOne.P = beadOne.M.mulByVector(e0); // making use of the fact that M is immutable.
+            beadTwo.P = beadTwo.M.mulByVector(e0);
 
             expect(beadOne.X.equals(zero)).toBeTrue();
             expect(beadOne.P.equals(e0)).toBeTrue();
@@ -166,6 +176,7 @@ describe("EngineG11", function () {
             const forceOne = new FaradayLaw(beadOne, function (X: Spacetime1) { return e01; });
             engine.addForceLaw(forceOne);
 
+            // This won't even be close. We are missing a force that acts in the e0 direction.
             const forceTwo = new ConstantForceLaw(beadTwo, e1);
             engine.addForceLaw(forceTwo);
 
@@ -175,6 +186,7 @@ describe("EngineG11", function () {
                 // console.log(`beadOne.X=>${beadOne.X}`);
                 // console.log(`beadTwo.X=>${beadTwo.X}`);
             }
+            // TODO: We might check that the bead motion asymptotically approaches the speed of light.
             expect(true).toBeTrue();
         });
     });

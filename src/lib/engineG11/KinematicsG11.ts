@@ -55,6 +55,10 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
      * @param uomTime 
      */
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
+        // We're essentially converting from momentum and rest-mass to ordinary velocity.
+        // Interestingly, this requires that we know the space-time split of the momentum.
+        // Here we work in coordinates, but the same thing could be done if we know e0.
+        // Using a mutable scratch variable, we could do these calculations in a coordinate-free manner.
         const P = body.P;
         const M = body.M;
         const m = M.a;
@@ -68,6 +72,7 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
         rateOfChangeUoms[idx + OFFSET_POSITION_X] = uom;
     }
     setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
+        // TODO: Review the theory to see if this needs to be modified for relativity.
         // Let Ω(t) be the (bivector) angular velocity.
         // Let R(t) be the (spinor) attitude of the rigid body. 
         // The rate of change of attitude is given by: dR/dt = -(1/2) Ω R,
@@ -207,10 +212,12 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
     }
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Spacetime1): void {
-        throw new Error("Method not implemented.");
+        // Use when applying geometric constraints.
+        throw new Error("getForce method not implemented.");
     }
     setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Spacetime1): void {
-        throw new Error("Method not implemented.");
+        // Use when applying geometric constraints.
+        throw new Error("setForce method not implemented.");
     }
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Spacetime1, uomTime: Unit): void {
         const Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_B];
