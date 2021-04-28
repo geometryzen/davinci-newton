@@ -4,11 +4,64 @@ import { QQ } from '../math/QQ';
  * <p>
  * The Unit class represents the units for a measure.
  * </p>
+ * <p>
+ * It is important to note that the <code>Unit.ONE</code> value is considered to be equivalent to the absence
+ * of a <code>Unit</code> instance or <code>undefined</code>. For this reason, it is convenient to use the
+ * <code>static</code> methods when comparing or computing with the <code>Unit</code> class.
+ * </p>
  */
 export declare class Unit {
     readonly multiplier: number;
     readonly dimensions: Dimensions;
     readonly labels: string[];
+    /**
+     * @param uom The unit of measure.
+     * @returns `true` if the uom is one or if it is undefined.
+     */
+    static isOne(uom: Unit | undefined): boolean;
+    /**
+     * @param uom The unit of measure that must be dimensionless.
+     */
+    static assertDimensionless(uom: Unit | undefined): void;
+    /**
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
+    static compatible(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
+    static isCompatible(lhs: Unit | undefined, rhs: Unit | undefined): boolean;
+    /**
+     * @param lhs
+     * @param rhs
+     * @returns
+     */
+    static mul(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
+    /**
+     * @param lhs
+     * @param rhs
+     */
+    static div(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
+    /**
+     * Computes the multiplicative inverse of the specified unit of measure.
+     */
+    static inv(uom: Unit): Unit;
+    /**
+     *
+     */
+    static mustBeUnit(name: string, uom: Unit): Unit;
+    /**
+     * Computes the value of the unit of measure raised to the specified power.
+     */
+    static pow(uom: Unit, exponent: QQ): Unit | undefined;
+    /**
+     * @param uom
+     * @returns
+     */
+    static sqrt(uom: Unit): Unit | undefined;
+    /**
+     * Constructs a Unit.
+     */
+    static valueOf(multiplier: number, dimensions: Dimensions, labels: string[]): Unit;
     /**
      * Internal symbolic constant to improve code readability.
      * May be undefined or an instance of Unit.
@@ -115,85 +168,82 @@ export declare class Unit {
     private constructor();
     private compatible;
     /**
+     * Computes the unit equal to `this / rhs`.
+     */
+    div(rhs: Unit): Unit;
+    /**
      * @returns true if this and rhs have the same dimensions.
      */
     private isCompatible;
-    /**
-     *
-     */
-    __add__(rhs: Unit): Unit | undefined;
-    __radd__(lhs: Unit): Unit | undefined;
-    __sub__(rhs: Unit): Unit;
-    __rsub__(lhs: Unit): Unit;
+    isOne(): boolean;
+    private inv;
     /**
      * Computes the unit equal to `this * rhs`.
      */
     mul(rhs: Unit): Unit;
-    __mul__(rhs: number | Unit): Unit;
-    __rmul__(lhs: number | Unit): Unit;
-    /**
-     * Computes the unit equal to `this / rhs`.
-     */
-    div(rhs: Unit): Unit;
-    __div__(rhs: number | Unit): Unit;
-    __rdiv__(lhs: number | Unit): Unit;
-    private pow;
-    private inv;
     private neg;
-    isOne(): boolean;
+    private pow;
     private sqrt;
     toExponential(fractionDigits?: number, compact?: boolean): string;
     toFixed(fractionDigits?: number, compact?: boolean): string;
     toPrecision(precision?: number, compact?: boolean): string;
     toString(radix?: number, compact?: boolean): string;
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    __add__(rhs: Unit): Unit | undefined;
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    __radd__(lhs: Unit): Unit | undefined;
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    __sub__(rhs: Unit): Unit;
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    __rsub__(lhs: Unit): Unit;
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    __mul__(rhs: number | Unit): Unit;
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    __rmul__(lhs: number | Unit): Unit;
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    __div__(rhs: number | Unit): Unit;
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    __rdiv__(lhs: number | Unit): Unit;
+    /**
+     * @hidden
+     * @returns
+     */
     __pos__(): Unit;
+    /**
+     * @hidden
+     * @returns
+     */
     __neg__(): Unit;
-    /**
-     * @param uom The unit of measure.
-     * @returns `true` if the uom is one or if it is undefined.
-     */
-    static isOne(uom: Unit | undefined): boolean;
-    /**
-     * @param uom The unit of measure that must be dimensionless.
-     */
-    static assertDimensionless(uom: Unit | undefined): void;
-    /**
-     * @param lhs
-     * @param rhs
-     * @returns
-     */
-    static compatible(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
-    static isCompatible(lhs: Unit | undefined, rhs: Unit | undefined): boolean;
-    /**
-     * @param lhs
-     * @param rhs
-     * @returns
-     */
-    static mul(lhs: Unit | undefined, rhs: Unit | undefined): Unit | undefined;
-    /**
-     * @param lhs
-     * @param rhs
-     */
-    static div(lhs: Unit | undefined, rhs: Unit | undefined): Unit;
-    /**
-     * Computes the multiplicative inverse of the specified unit of measure.
-     */
-    static inv(uom: Unit): Unit;
-    /**
-     *
-     */
-    static mustBeUnit(name: string, uom: Unit): Unit;
-    /**
-     * Computes the value of the unit of measure raised to the specified power.
-     */
-    static pow(uom: Unit, exponent: QQ): Unit | undefined;
-    /**
-     * @param uom
-     * @returns
-     */
-    static sqrt(uom: Unit): Unit | undefined;
-    /**
-     * Constructs a Unit.
-     */
-    static valueOf(multiplier: number, dimensions: Dimensions, labels: string[]): Unit;
 }

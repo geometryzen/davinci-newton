@@ -1,5 +1,13 @@
 import { reduceToLowestForm } from "./reduceToLowestForm";
+/**
+ * Register for avoiding temporary object creation.
+ * It contains the numerator and denominator values.
+ */
 var tempND = [0, 0];
+/**
+ * A cache of QQ values for reducing object creation.
+ * QQ is immutable and so it is safe to reuse existing instances.
+ */
 var entries = [];
 /**
  * The QQ class represents a rational number, ℚ.
@@ -9,7 +17,6 @@ var entries = [];
  * The numerator and denominator are reduced to their lowest form.
  *
  * Construct new instances using the static <code>valueOf</code> method.
- * @hidden
  */
 var QQ = /** @class */ (function () {
     /**
@@ -180,6 +187,7 @@ var QQ = /** @class */ (function () {
         return "" + this.numer_.toString(radix) + "/" + this.denom_.toString(radix) + "";
     };
     /**
+     * @hidden
      * @returns this + rhs
      */
     QQ.prototype.__add__ = function (rhs) {
@@ -191,6 +199,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns lhs + this
      */
     QQ.prototype.__radd__ = function (lhs) {
@@ -202,6 +211,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns this - rhs
      */
     QQ.prototype.__sub__ = function (rhs) {
@@ -213,6 +223,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns lhs - this
      */
     QQ.prototype.__rsub__ = function (lhs) {
@@ -224,6 +235,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns this * rhs
      */
     QQ.prototype.__mul__ = function (rhs) {
@@ -235,6 +247,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns lhs * this
      */
     QQ.prototype.__rmul__ = function (lhs) {
@@ -246,6 +259,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns this / rhs
      */
     QQ.prototype.__div__ = function (rhs) {
@@ -257,6 +271,7 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns lhs / this
      */
     QQ.prototype.__rdiv__ = function (lhs) {
@@ -268,12 +283,14 @@ var QQ = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns +this
      */
     QQ.prototype.__pos__ = function () {
         return this;
     };
     /**
+     * @hidden
      * @returns -this
      */
     QQ.prototype.__neg__ = function () {

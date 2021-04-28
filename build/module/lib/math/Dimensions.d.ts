@@ -14,7 +14,6 @@ export declare function getDimensionsChecking(): DimensionsChecking;
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
- * @hidden
  */
 export declare class Dimensions {
     /**
@@ -133,12 +132,33 @@ export declare class Dimensions {
      * Velocity squared
      */
     static readonly VELOCITY_SQUARED: Dimensions;
+    /**
+     * The exponent of the mass dimension.
+     */
     readonly M: QQ;
+    /**
+     * The exponent of the length dimension.
+     */
     readonly L: QQ;
+    /**
+     * The exponent of the time dimension.
+     */
     readonly T: QQ;
+    /**
+     * The exponent of the electric charge dimension.
+     */
     readonly Q: QQ;
+    /**
+     * The exponent of the temperature dimension.
+     */
     readonly temperature: QQ;
+    /**
+     * The exponent of the amount dimension.
+     */
     readonly amount: QQ;
+    /**
+     * The exponent of the intensity dimension.
+     */
     readonly intensity: QQ;
     private readonly summary_;
     /**
@@ -207,54 +227,58 @@ export declare class Dimensions {
      */
     toString(): string;
     /**
+     * @hidden
      * @returns this + rhs
      */
     __add__(rhs: Dimensions): Dimensions;
     /**
+     * @hidden
      * @returns lhs + this
      */
     __radd__(lhs: Dimensions): Dimensions;
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
     __sub__(rhs: Dimensions): Dimensions;
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
     __rsub__(lhs: Dimensions): Dimensions;
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
     __mul__(rhs: Dimensions): Dimensions;
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
     __rmul__(lhs: Dimensions): Dimensions;
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
     __div__(rhs: Dimensions): Dimensions;
     /**
+     * @hidden
      * @param lhs
      * @returns
      */
     __rdiv__(lhs: Dimensions): Dimensions;
     /**
+     * @hidden
      * @returns
      */
     __pos__(): Dimensions;
     /**
-     *
+     * @hidden
      * @returns
      */
     __neg__(): Dimensions;

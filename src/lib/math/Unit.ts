@@ -241,304 +241,13 @@ function div(lhs: Unit, rhs: Unit): Unit {
  * <p>
  * The Unit class represents the units for a measure.
  * </p>
+ * <p>
+ * It is important to note that the <code>Unit.ONE</code> value is considered to be equivalent to the absence
+ * of a <code>Unit</code> instance or <code>undefined</code>. For this reason, it is convenient to use the
+ * <code>static</code> methods when comparing or computing with the <code>Unit</code> class.
+ * </p>
  */
 export class Unit {
-  /**
-   * Internal symbolic constant to improve code readability.
-   * May be undefined or an instance of Unit.
-   */
-  public static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
-
-  /**
-   * Unit of mass.
-   * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
-   */
-  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI);
-
-  /**
-   * Unit of length.
-   * The meter is the length of the path travelled by light in vacuum during a time interval of 1/299 792 458 of a second.
-   */
-  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI);
-
-  /**
-   * Unit of time.
-   * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
-   */
-  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI);
-
-  /**
-   * Unit of electric charge.
-   * 
-   */
-  public static readonly COULOMB = new Unit(1, Dimensions.ELECTRIC_CHARGE, SYMBOLS_SI);
-
-  /**
-   * Unit of electric current.
-   * The ampere is that constant current which,
-   * if maintained in two straight parallel conductors of infinite length,
-   * of negligible circular cross-section,
-   * and placed 1 meter apart in vacuum,
-   * would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
-   */
-  public static readonly AMPERE = new Unit(1, Dimensions.ELECTRIC_CURRENT, SYMBOLS_SI);
-
-  /**
-   * Unit of thermodynamic temperature.
-   * The kelvin, unit of thermodynamic temperature, is the fraction 1/273.16 of the thermodynamic temperature of the triple point of water.
-   */
-  public static readonly KELVIN = new Unit(1, Dimensions.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
-
-  /**
-   * Unit of amount of substance.
-   * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
-   * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
-   */
-  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
-
-  /**
-   * Unit of luminous intensity.
-   * The candela is the luminous intensity, in a given direction,
-   * of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1/683 watt per steradian.
-   */
-  public static readonly CANDELA = new Unit(1, Dimensions.LUMINOUS_INTENSITY, SYMBOLS_SI);
-
-  private static readonly COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
-  private static readonly ELECTRIC_FIELD = new Unit(1, Dimensions.ELECTRIC_FIELD, SYMBOLS_SI);
-
-  /**
-   * 
-   */
-  public static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
-
-  /**
-   * 
-   */
-  public static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
-
-  /**
-   * The unit of angular momentum.
-   */
-  public static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
-  private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI);
-  private static readonly METER_CUBED = new Unit(1, Dimensions.VOLUME, SYMBOLS_SI);
-  private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI);
-  private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI);
-  private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI);
-  /**
-   * The unit of angular velocity.
-   */
-  public static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
-  /**
-   * The unit of moment of inertia.
-   */
-  public static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
-  /**
-   * The unit of linear momentum.
-   */
-  public static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
-  private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
-  private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
-  /**
-   * The unit for a Spring constant, N/m.
-   */
-  public static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
-  /**
-   * The unit for a Friction Coefficient, Ns/m.
-   */
-  public static readonly FRICTION_COEFFICIENT = new Unit(1, Dimensions.FRICTION_COEFFICIENT, SYMBOLS_SI);
-  /**
-   * 
-   */
-  private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
-  private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
-  private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
-
-  /**
-   * @param multiplier
-   * @param dimensions
-   * @param labels The label strings to use for each dimension.
-   */
-  private constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[]) {
-    if (labels.length !== 7) {
-      throw new Error("Expecting 7 elements in the labels array.");
-    }
-    this.multiplier = multiplier;
-    this.dimensions = dimensions;
-    this.labels = labels;
-  }
-
-  private compatible(rhs: Unit): this | never {
-    if (rhs instanceof Unit) {
-      try {
-        this.dimensions.compatible(rhs.dimensions);
-      } catch (e) {
-        const cause = (e instanceof Error) ? e.message : `${e}`;
-        throw new Error(`${this} is not compatible with ${rhs}. Cause: ${cause}`);
-      }
-      return this;
-    }
-    else {
-      throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-    }
-  }
-
-  /**
-   * @returns true if this and rhs have the same dimensions.
-   */
-  private isCompatible(rhs: Unit): boolean {
-    if (rhs instanceof Unit) {
-      return this.dimensions.equals(rhs.dimensions);
-    }
-    else {
-      throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-    }
-  }
-
-  /**
-   *
-   */
-  public __add__(rhs: Unit): Unit | undefined {
-    if (rhs instanceof Unit) {
-      return add(this, rhs);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  public __radd__(lhs: Unit): Unit | undefined {
-    if (lhs instanceof Unit) {
-      return add(lhs, this);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  public __sub__(rhs: Unit) {
-    if (rhs instanceof Unit) {
-      return sub(this, rhs);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  public __rsub__(lhs: Unit) {
-    if (lhs instanceof Unit) {
-      return sub(lhs, this);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  /**
-   * Computes the unit equal to `this * rhs`.
-   */
-  public mul(rhs: Unit): Unit {
-    return mul(this, rhs);
-  }
-
-  public __mul__(rhs: number | Unit) {
-    if (rhs instanceof Unit) {
-      return mul(this, rhs);
-    }
-    else if (typeof rhs === 'number') {
-      return scale(rhs, this);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  public __rmul__(lhs: number | Unit) {
-    if (lhs instanceof Unit) {
-      return mul(lhs, this);
-    }
-    else if (typeof lhs === 'number') {
-      return scale(lhs, this);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  /**
-   * Computes the unit equal to `this / rhs`.
-   */
-  public div(rhs: Unit): Unit {
-    return div(this, rhs);
-  }
-
-  public __div__(rhs: number | Unit) {
-    if (rhs instanceof Unit) {
-      return div(this, rhs);
-    }
-    else if (typeof rhs === 'number') {
-      return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  public __rdiv__(lhs: number | Unit) {
-    if (lhs instanceof Unit) {
-      return div(lhs, this);
-    }
-    else if (typeof lhs === 'number') {
-      return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
-    }
-    else {
-      return void 0;
-    }
-  }
-
-  private pow(exponent: QQ): Unit {
-    return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
-  }
-
-  private inv(): Unit {
-    return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
-  }
-
-  private neg(): Unit {
-    return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
-  }
-
-  public isOne(): boolean {
-    return this.dimensions.isOne() && (this.multiplier === 1);
-  }
-
-  private sqrt(): Unit {
-    return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
-  }
-
-  public toExponential(fractionDigits?: number, compact?: boolean): string {
-    return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
-  }
-
-  public toFixed(fractionDigits?: number, compact?: boolean): string {
-    return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
-  }
-
-  public toPrecision(precision?: number, compact?: boolean): string {
-    return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
-  }
-
-  public toString(radix?: number, compact?: boolean): string {
-    return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
-  }
-
-  __pos__(): Unit {
-    return this;
-  }
-
-  __neg__(): Unit {
-    return this.neg();
-  }
 
   /**
    * @param uom The unit of measure.
@@ -801,5 +510,347 @@ export class Unit {
     entries.push(value);
     // console.warn(`Unit cache size = ${entries.length}`);
     return value;
+  }
+
+  /**
+   * Internal symbolic constant to improve code readability.
+   * May be undefined or an instance of Unit.
+   */
+  public static readonly ONE: Unit = new Unit(1, Dimensions.ONE, SYMBOLS_SI);
+
+  /**
+   * Unit of mass.
+   * The kilogram is the unit of mass; it is equal to the mass of the international prototype of the kilogram.
+   */
+  public static readonly KILOGRAM = new Unit(1, Dimensions.MASS, SYMBOLS_SI);
+
+  /**
+   * Unit of length.
+   * The meter is the length of the path travelled by light in vacuum during a time interval of 1/299 792 458 of a second.
+   */
+  public static readonly METER = new Unit(1, Dimensions.LENGTH, SYMBOLS_SI);
+
+  /**
+   * Unit of time.
+   * The second is the duration of 9 192 631 770 periods of the radiation corresponding to the transition between the two hyperfine levels of the ground state of the cesium 133 atom.
+   */
+  public static readonly SECOND = new Unit(1, Dimensions.TIME, SYMBOLS_SI);
+
+  /**
+   * Unit of electric charge.
+   * 
+   */
+  public static readonly COULOMB = new Unit(1, Dimensions.ELECTRIC_CHARGE, SYMBOLS_SI);
+
+  /**
+   * Unit of electric current.
+   * The ampere is that constant current which,
+   * if maintained in two straight parallel conductors of infinite length,
+   * of negligible circular cross-section,
+   * and placed 1 meter apart in vacuum,
+   * would produce between these conductors a force equal to 2 x 10<sup>-7</sup> newton per meter of length.
+   */
+  public static readonly AMPERE = new Unit(1, Dimensions.ELECTRIC_CURRENT, SYMBOLS_SI);
+
+  /**
+   * Unit of thermodynamic temperature.
+   * The kelvin, unit of thermodynamic temperature, is the fraction 1/273.16 of the thermodynamic temperature of the triple point of water.
+   */
+  public static readonly KELVIN = new Unit(1, Dimensions.THERMODYNAMIC_TEMPERATURE, SYMBOLS_SI);
+
+  /**
+   * Unit of amount of substance.
+   * 1. The mole is the amount of substance of a system which contains as many elementary entities as there are atoms in 0.012 kilogram of carbon 12; its symbol is "mol."
+   * 2. When the mole is used, the elementary entities must be specified and may be atoms, molecules, ions, electrons, other particles, or specified groups of such particles.
+   */
+  public static readonly MOLE = new Unit(1, Dimensions.AMOUNT_OF_SUBSTANCE, SYMBOLS_SI);
+
+  /**
+   * Unit of luminous intensity.
+   * The candela is the luminous intensity, in a given direction,
+   * of a source that emits monochromatic radiation of frequency 540 x 10<sup>12</sup> hertz and that has a radiant intensity in that direction of 1/683 watt per steradian.
+   */
+  public static readonly CANDELA = new Unit(1, Dimensions.LUMINOUS_INTENSITY, SYMBOLS_SI);
+
+  private static readonly COULOMB_SQUARED_PER_NEWTON = new Unit(1, Dimensions.ELECTRIC_PERMITTIVITY_TIMES_AREA, SYMBOLS_SI);
+  private static readonly ELECTRIC_FIELD = new Unit(1, Dimensions.ELECTRIC_FIELD, SYMBOLS_SI);
+
+  /**
+   * 
+   */
+  public static readonly NEWTON = new Unit(1, Dimensions.FORCE, SYMBOLS_SI);
+
+  /**
+   * 
+   */
+  public static readonly JOULE = new Unit(1, Dimensions.ENERGY_OR_TORQUE, SYMBOLS_SI);
+
+  /**
+   * The unit of angular momentum.
+   */
+  public static readonly JOULE_SECOND = new Unit(1, Dimensions.ANGULAR_MOMENTUM, SYMBOLS_SI);
+  private static readonly METER_SQUARED = new Unit(1, Dimensions.AREA, SYMBOLS_SI);
+  private static readonly METER_CUBED = new Unit(1, Dimensions.VOLUME, SYMBOLS_SI);
+  private static readonly SECOND_SQUARED = new Unit(1, Dimensions.TIME_SQUARED, SYMBOLS_SI);
+  private static readonly INV_KILOGRAM = new Unit(1, Dimensions.INV_MASS, SYMBOLS_SI);
+  private static readonly INV_METER = new Unit(1, Dimensions.INV_LENGTH, SYMBOLS_SI);
+  /**
+   * The unit of angular velocity.
+   */
+  public static readonly INV_SECOND = new Unit(1, Dimensions.INV_TIME, SYMBOLS_SI);
+  /**
+   * The unit of moment of inertia.
+   */
+  public static readonly KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.MOMENT_OF_INERTIA, SYMBOLS_SI);
+  /**
+   * The unit of linear momentum.
+   */
+  public static readonly KILOGRAM_METER_PER_SECOND = new Unit(1, Dimensions.MOMENTUM, SYMBOLS_SI);
+  private static readonly KILOGRAM_SQUARED_METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.MOMENTUM_SQUARED, SYMBOLS_SI);
+  private static readonly INV_KILOGRAM_METER_SQUARED = new Unit(1, Dimensions.INV_MOMENT_OF_INERTIA, SYMBOLS_SI);
+  /**
+   * The unit for a Spring constant, N/m.
+   */
+  public static readonly STIFFNESS = new Unit(1, Dimensions.STIFFNESS, SYMBOLS_SI);
+  /**
+   * The unit for a Friction Coefficient, Ns/m.
+   */
+  public static readonly FRICTION_COEFFICIENT = new Unit(1, Dimensions.FRICTION_COEFFICIENT, SYMBOLS_SI);
+  /**
+   * 
+   */
+  private static readonly METER_PER_SECOND = new Unit(1, Dimensions.VELOCITY, SYMBOLS_SI);
+  private static readonly METER_SQUARED_PER_SECOND = new Unit(1, Dimensions.RATE_OF_CHANGE_OF_AREA, SYMBOLS_SI);
+  private static readonly METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
+
+  /**
+   * @param multiplier
+   * @param dimensions
+   * @param labels The label strings to use for each dimension.
+   */
+  private constructor(public readonly multiplier: number, public readonly dimensions: Dimensions, public readonly labels: string[]) {
+    if (labels.length !== 7) {
+      throw new Error("Expecting 7 elements in the labels array.");
+    }
+    this.multiplier = multiplier;
+    this.dimensions = dimensions;
+    this.labels = labels;
+  }
+
+  private compatible(rhs: Unit): this | never {
+    if (rhs instanceof Unit) {
+      try {
+        this.dimensions.compatible(rhs.dimensions);
+      } catch (e) {
+        const cause = (e instanceof Error) ? e.message : `${e}`;
+        throw new Error(`${this} is not compatible with ${rhs}. Cause: ${cause}`);
+      }
+      return this;
+    }
+    else {
+      throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+    }
+  }
+
+  /**
+   * Computes the unit equal to `this / rhs`.
+   */
+  public div(rhs: Unit): Unit {
+    return div(this, rhs);
+  }
+
+  /**
+   * @returns true if this and rhs have the same dimensions.
+   */
+  private isCompatible(rhs: Unit): boolean {
+    if (rhs instanceof Unit) {
+      return this.dimensions.equals(rhs.dimensions);
+    }
+    else {
+      throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+    }
+  }
+
+  public isOne(): boolean {
+    return this.dimensions.isOne() && (this.multiplier === 1);
+  }
+
+  private inv(): Unit {
+    return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
+  }
+
+  /**
+   * Computes the unit equal to `this * rhs`.
+   */
+  public mul(rhs: Unit): Unit {
+    return mul(this, rhs);
+  }
+
+  private neg(): Unit {
+    return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
+  }
+
+  private pow(exponent: QQ): Unit {
+    return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
+  }
+
+  private sqrt(): Unit {
+    return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
+  }
+
+  public toExponential(fractionDigits?: number, compact?: boolean): string {
+    return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
+  }
+
+  public toFixed(fractionDigits?: number, compact?: boolean): string {
+    return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
+  }
+
+  public toPrecision(precision?: number, compact?: boolean): string {
+    return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
+  }
+
+  public toString(radix?: number, compact?: boolean): string {
+    return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
+  }
+
+  /**
+   * @hidden
+   * @param rhs 
+   * @returns 
+   */
+  public __add__(rhs: Unit): Unit | undefined {
+    if (rhs instanceof Unit) {
+      return add(this, rhs);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param lhs 
+   * @returns 
+   */
+  public __radd__(lhs: Unit): Unit | undefined {
+    if (lhs instanceof Unit) {
+      return add(lhs, this);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param rhs 
+   * @returns 
+   */
+  public __sub__(rhs: Unit) {
+    if (rhs instanceof Unit) {
+      return sub(this, rhs);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param lhs 
+   * @returns 
+   */
+  public __rsub__(lhs: Unit) {
+    if (lhs instanceof Unit) {
+      return sub(lhs, this);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param rhs 
+   * @returns 
+   */
+  public __mul__(rhs: number | Unit) {
+    if (rhs instanceof Unit) {
+      return mul(this, rhs);
+    }
+    else if (typeof rhs === 'number') {
+      return scale(rhs, this);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param lhs 
+   * @returns 
+   */
+  public __rmul__(lhs: number | Unit) {
+    if (lhs instanceof Unit) {
+      return mul(lhs, this);
+    }
+    else if (typeof lhs === 'number') {
+      return scale(lhs, this);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param rhs 
+   * @returns 
+   */
+  public __div__(rhs: number | Unit) {
+    if (rhs instanceof Unit) {
+      return div(this, rhs);
+    }
+    else if (typeof rhs === 'number') {
+      return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @param lhs 
+   * @returns 
+   */
+  public __rdiv__(lhs: number | Unit) {
+    if (lhs instanceof Unit) {
+      return div(lhs, this);
+    }
+    else if (typeof lhs === 'number') {
+      return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
+    }
+    else {
+      return void 0;
+    }
+  }
+
+  /**
+   * @hidden
+   * @returns 
+   */
+  __pos__(): Unit {
+    return this;
+  }
+
+  /**
+   * @hidden
+   * @returns 
+   */
+  __neg__(): Unit {
+    return this.neg();
   }
 }

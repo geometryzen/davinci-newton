@@ -3,17 +3,15 @@ import { Charged } from './Charged';
 import { Force } from './Force';
 import { ForceLaw } from './ForceLaw';
 /**
- *
+ * The Electric Force (Coulomb's Law)
  */
 export declare class CoulombLaw<T> extends AbstractSimObject implements ForceLaw<T> {
-    private body1_;
-    private body2_;
+    private readonly body1;
+    private readonly body2;
     /**
-     * The proportionality constant, Coulomb's constant.
-     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
-     * The default value is one (1).
+     * The constant of proportionality.
      */
-    k: T;
+    private readonly $k;
     private readonly F1;
     private readonly F2;
     private readonly $forces;
@@ -26,7 +24,14 @@ export declare class CoulombLaw<T> extends AbstractSimObject implements ForceLaw
     /**
      *
      */
-    constructor(body1_: Charged<T>, body2_: Charged<T>, k: T);
+    constructor(body1: Charged<T>, body2: Charged<T>, k?: T);
+    /**
+     * The proportionality constant, Coulomb's constant.
+     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
+     * The default value is one (1).
+     */
+    get k(): T;
+    set k(k: T);
     get forces(): Force<T>[];
     /**
      * Computes the forces due to the Coulomb interaction.

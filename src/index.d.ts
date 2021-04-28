@@ -3730,7 +3730,7 @@ export class ConstantTorqueLaw3 extends ConstantTorqueLaw<Geometric3> {
 }
 
 /**
- * 
+ * The Electric Force (Coulomb's Law).
  */
 export class CoulombLaw<T> implements ForceLaw<T> {
     /**
@@ -3738,9 +3738,11 @@ export class CoulombLaw<T> implements ForceLaw<T> {
      */
     readonly forces: Force<T>[];
     /**
-    *
-    */
-    k: Geometric3;
+     * The proportionality constant, Coulomb's constant.
+     * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
+     * The default value is one (1).
+     */
+    k: T;
     /**
      * 
      */
@@ -3748,7 +3750,7 @@ export class CoulombLaw<T> implements ForceLaw<T> {
     /**
      * 
      */
-    constructor(body1: RigidBody<T>, body2: RigidBody<T>, G?: T);
+    constructor(body1: RigidBody<T>, body2: RigidBody<T>, k?: T);
     updateForces(): Force<T>[];
     disconnect(): void;
     potentialEnergy(): T;

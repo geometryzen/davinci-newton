@@ -6,7 +6,6 @@
  * The numerator and denominator are reduced to their lowest form.
  *
  * Construct new instances using the static <code>valueOf</code> method.
- * @hidden
  */
 export declare class QQ {
     /**
@@ -83,42 +82,52 @@ export declare class QQ {
      */
     toString(radix?: number): string;
     /**
+     * @hidden
      * @returns this + rhs
      */
     __add__(rhs: QQ): QQ;
     /**
+     * @hidden
      * @returns lhs + this
      */
     __radd__(lhs: QQ): QQ;
     /**
+     * @hidden
      * @returns this - rhs
      */
     __sub__(rhs: QQ): QQ;
     /**
+     * @hidden
      * @returns lhs - this
      */
     __rsub__(lhs: QQ): QQ;
     /**
+     * @hidden
      * @returns this * rhs
      */
     __mul__(rhs: QQ): QQ;
     /**
+     * @hidden
      * @returns lhs * this
      */
     __rmul__(lhs: QQ): QQ;
     /**
+     * @hidden
      * @returns this / rhs
      */
     __div__(rhs: QQ): QQ;
     /**
+     * @hidden
      * @returns lhs / this
      */
     __rdiv__(lhs: QQ): QQ;
     /**
+     * @hidden
      * @returns +this
      */
     __pos__(): this;
     /**
+     * @hidden
      * @returns -this
      */
     __neg__(): QQ;

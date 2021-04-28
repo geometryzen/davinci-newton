@@ -68,7 +68,6 @@ export function getDimensionsChecking() {
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
- * @hidden
  */
 var Dimensions = /** @class */ (function () {
     /**
@@ -243,6 +242,7 @@ var Dimensions = /** @class */ (function () {
         }).join(" * ");
     };
     /**
+     * @hidden
      * @returns this + rhs
      */
     Dimensions.prototype.__add__ = function (rhs) {
@@ -254,6 +254,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns lhs + this
      */
     Dimensions.prototype.__radd__ = function (lhs) {
@@ -265,7 +266,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -278,7 +279,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -291,7 +292,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -304,7 +305,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -317,7 +318,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -330,6 +331,7 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -342,13 +344,14 @@ var Dimensions = /** @class */ (function () {
         }
     };
     /**
+     * @hidden
      * @returns
      */
     Dimensions.prototype.__pos__ = function () {
         return this;
     };
     /**
-     *
+     * @hidden
      * @returns
      */
     Dimensions.prototype.__neg__ = function () {

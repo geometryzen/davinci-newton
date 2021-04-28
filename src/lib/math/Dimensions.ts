@@ -80,7 +80,6 @@ export function getDimensionsChecking(): DimensionsChecking {
 /**
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
- * @hidden
  */
 export class Dimensions {
 
@@ -226,13 +225,35 @@ export class Dimensions {
      */
     public static readonly VELOCITY_SQUARED = new Dimensions(R0, R2, M2, R0, R0, R0, R0, DimensionsSummary.VELOCITY_SQUARED);
 
+    /**
+     * The exponent of the mass dimension.
+     */
     public readonly M: QQ;
+    /**
+     * The exponent of the length dimension.
+     */
     public readonly L: QQ;
+    /**
+     * The exponent of the time dimension.
+     */
     public readonly T: QQ;
+    /**
+     * The exponent of the electric charge dimension.
+     */
     public readonly Q: QQ;
+    /**
+     * The exponent of the temperature dimension.
+     */
     public readonly temperature: QQ;
+    /**
+     * The exponent of the amount dimension.
+     */
     public readonly amount: QQ;
+    /**
+     * The exponent of the intensity dimension.
+     */
     public readonly intensity: QQ;
+
     private readonly summary_: DimensionsSummary;
 
     /**
@@ -413,6 +434,7 @@ export class Dimensions {
     }
 
     /**
+     * @hidden
      * @returns this + rhs
      */
     __add__(rhs: Dimensions): Dimensions {
@@ -425,6 +447,7 @@ export class Dimensions {
     }
 
     /**
+     * @hidden
      * @returns lhs + this
      */
     __radd__(lhs: Dimensions): Dimensions {
@@ -437,7 +460,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -451,7 +474,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -465,7 +488,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -479,7 +502,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -493,7 +516,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @param rhs
      * @returns
      */
@@ -507,6 +530,7 @@ export class Dimensions {
     }
 
     /**
+     * @hidden
      * @param lhs
      * @returns
      */
@@ -520,6 +544,7 @@ export class Dimensions {
     }
 
     /**
+     * @hidden
      * @returns
      */
     __pos__(): Dimensions {
@@ -527,7 +552,7 @@ export class Dimensions {
     }
 
     /**
-     *
+     * @hidden
      * @returns
      */
     __neg__(): Dimensions {

@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-04-25';
+            this.LAST_MODIFIED = '2021-04-28';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.98';
+            this.VERSION = '1.0.99';
         }
         return Newton;
     }());
@@ -243,180 +243,6 @@
     }(AbstractSimObject));
 
     /**
-     *
-     */
-    var CoulombLaw = /** @class */ (function (_super) {
-        __extends(CoulombLaw, _super);
-        /**
-         *
-         */
-        function CoulombLaw(body1_, body2_, k) {
-            var _this = _super.call(this) || this;
-            _this.body1_ = body1_;
-            _this.body2_ = body2_;
-            _this.metric = body1_.metric;
-            var metric = _this.metric;
-            _this.F1 = metric.createForce(_this.body1_);
-            _this.F1.locationCoordType = WORLD;
-            _this.F1.vectorCoordType = WORLD;
-            _this.F2 = metric.createForce(_this.body2_);
-            _this.F2.locationCoordType = WORLD;
-            _this.F2.vectorCoordType = WORLD;
-            _this.k = k;
-            _this.$forces = [_this.F1, _this.F2];
-            _this.potentialEnergy_ = metric.scalar(0);
-            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
-            return _this;
-        }
-        Object.defineProperty(CoulombLaw.prototype, "forces", {
-            get: function () {
-                return this.$forces;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        /**
-         * Computes the forces due to the Coulomb interaction.
-         * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
-         */
-        CoulombLaw.prototype.updateForces = function () {
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            var metric = this.metric;
-            // The direction of the force is computed such that like charges repel each other.
-            metric.copyVector(this.body1_.X, numer);
-            metric.subVector(numer, this.body2_.X);
-            metric.copyVector(numer, denom);
-            metric.squaredNorm(denom);
-            metric.direction(numer);
-            metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
-            metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
-            metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
-            metric.copyVector(numer, this.F1.vector);
-            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
-            metric.copyVector(this.F1.vector, this.F2.vector);
-            metric.neg(this.F2.vector);
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            return this.$forces;
-        };
-        /**
-         *
-         */
-        CoulombLaw.prototype.disconnect = function () {
-            // Does nothing
-        };
-        /**
-         * Computes the potential energy of the gravitational interaction.
-         * U = k q1 q2 / r, where
-         * r is the center to center separation of m1 and m2.
-         */
-        CoulombLaw.prototype.potentialEnergy = function () {
-            var metric = this.metric;
-            // Unlock the variable that we will use for the result.
-            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
-            // We can use the F1.location and F2.location as temporary variables
-            // as long as we restore their contents.
-            var numer = this.F1.location;
-            var denom = this.F2.location;
-            // The numerator of the potential energy formula is k * Q1 * Q2.
-            metric.copyScalar(metric.a(this.k), metric.uom(this.k), numer);
-            metric.mulByScalar(numer, metric.a(this.body1_.Q), metric.uom(this.body1_.Q));
-            metric.mulByScalar(numer, metric.a(this.body2_.Q), metric.uom(this.body2_.Q));
-            // The denominator is |r1 - r2|.
-            metric.copyVector(this.body1_.X, denom);
-            metric.subVector(denom, this.body2_.X);
-            metric.norm(denom);
-            // Combine the numerator and denominator.
-            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
-            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
-            // Restore the contents of the location variables.
-            metric.copyVector(this.body1_.X, this.F1.location);
-            metric.copyVector(this.body2_.X, this.F2.location);
-            // We're done. Lock down the result.
-            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
-            return this.potentialEnergy_;
-        };
-        return CoulombLaw;
-    }(AbstractSimObject));
-
-    /**
-     * @hidden
-     */
-    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
-        if (!condition) {
-            doesNotSatisfy(name, messageBuilder, contextBuilder);
-        }
-    }
-    /**
-     * @hidden
-     * @param name
-     * @param messageBuilder
-     * @param contextBuilder
-     */
-    function doesNotSatisfy(name, messageBuilder, contextBuilder) {
-        var message = messageBuilder ? messageBuilder() : "satisfy some condition";
-        var context = contextBuilder ? " in " + contextBuilder() : "";
-        throw new Error(name + " must " + message + context + ".");
-    }
-
-    /**
-     * @hidden
-     */
-    function isNull (x) {
-        return x === null;
-    }
-
-    /**
-     * @hidden
-     */
-    function isObject(x) {
-        return (typeof x === 'object');
-    }
-
-    /**
-     * @hidden
-     */
-    function beObject() {
-        return "be a non-null `object`";
-    }
-    /**
-     * @hidden
-     */
-    function mustBeNonNullObject(name, value, contextBuilder) {
-        mustSatisfy(name, isObject(value) && !isNull(value), beObject, contextBuilder);
-        return value;
-    }
-
-    /**
-     * @hidden
-     */
-    function isNumber(x) {
-        return (typeof x === 'number');
-    }
-
-    /**
-     * @hidden
-     */
-    function beANumber() {
-        return "be a `number`";
-    }
-    /**
-     * @hidden
-     * @param name
-     * @param value
-     * @param contextBuilder
-     * @returns
-     */
-    function mustBeNumber(name, value, contextBuilder) {
-        mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
-        return value;
-    }
-
-    /**
      * @hidden
      */
     function isUndefined(arg) {
@@ -472,7 +298,15 @@
         out[1] = d / g;
     }
 
+    /**
+     * Register for avoiding temporary object creation.
+     * It contains the numerator and denominator values.
+     */
     var tempND = [0, 0];
+    /**
+     * A cache of QQ values for reducing object creation.
+     * QQ is immutable and so it is safe to reuse existing instances.
+     */
     var entries$2 = [];
     /**
      * The QQ class represents a rational number, ℚ.
@@ -482,7 +316,6 @@
      * The numerator and denominator are reduced to their lowest form.
      *
      * Construct new instances using the static <code>valueOf</code> method.
-     * @hidden
      */
     var QQ = /** @class */ (function () {
         /**
@@ -653,6 +486,7 @@
             return "" + this.numer_.toString(radix) + "/" + this.denom_.toString(radix) + "";
         };
         /**
+         * @hidden
          * @returns this + rhs
          */
         QQ.prototype.__add__ = function (rhs) {
@@ -664,6 +498,7 @@
             }
         };
         /**
+         * @hidden
          * @returns lhs + this
          */
         QQ.prototype.__radd__ = function (lhs) {
@@ -675,6 +510,7 @@
             }
         };
         /**
+         * @hidden
          * @returns this - rhs
          */
         QQ.prototype.__sub__ = function (rhs) {
@@ -686,6 +522,7 @@
             }
         };
         /**
+         * @hidden
          * @returns lhs - this
          */
         QQ.prototype.__rsub__ = function (lhs) {
@@ -697,6 +534,7 @@
             }
         };
         /**
+         * @hidden
          * @returns this * rhs
          */
         QQ.prototype.__mul__ = function (rhs) {
@@ -708,6 +546,7 @@
             }
         };
         /**
+         * @hidden
          * @returns lhs * this
          */
         QQ.prototype.__rmul__ = function (lhs) {
@@ -719,6 +558,7 @@
             }
         };
         /**
+         * @hidden
          * @returns this / rhs
          */
         QQ.prototype.__div__ = function (rhs) {
@@ -730,6 +570,7 @@
             }
         };
         /**
+         * @hidden
          * @returns lhs / this
          */
         QQ.prototype.__rdiv__ = function (lhs) {
@@ -741,12 +582,14 @@
             }
         };
         /**
+         * @hidden
          * @returns +this
          */
         QQ.prototype.__pos__ = function () {
             return this;
         };
         /**
+         * @hidden
          * @returns -this
          */
         QQ.prototype.__neg__ = function () {
@@ -1521,7 +1364,6 @@
     /**
      * Keeps track of the dimensions of a physical quantity using seven rational exponents.
      * Each of the exponents corresponds to a dimension in the S.I. system of units.
-     * @hidden
      */
     var Dimensions = /** @class */ (function () {
         /**
@@ -1696,6 +1538,7 @@
             }).join(" * ");
         };
         /**
+         * @hidden
          * @returns this + rhs
          */
         Dimensions.prototype.__add__ = function (rhs) {
@@ -1707,6 +1550,7 @@
             }
         };
         /**
+         * @hidden
          * @returns lhs + this
          */
         Dimensions.prototype.__radd__ = function (lhs) {
@@ -1718,7 +1562,7 @@
             }
         };
         /**
-         *
+         * @hidden
          * @param rhs
          * @returns
          */
@@ -1731,7 +1575,7 @@
             }
         };
         /**
-         *
+         * @hidden
          * @param lhs
          * @returns
          */
@@ -1744,7 +1588,7 @@
             }
         };
         /**
-         *
+         * @hidden
          * @param rhs
          * @returns
          */
@@ -1757,7 +1601,7 @@
             }
         };
         /**
-         *
+         * @hidden
          * @param lhs
          * @returns
          */
@@ -1770,7 +1614,7 @@
             }
         };
         /**
-         *
+         * @hidden
          * @param rhs
          * @returns
          */
@@ -1783,6 +1627,7 @@
             }
         };
         /**
+         * @hidden
          * @param lhs
          * @returns
          */
@@ -1795,13 +1640,14 @@
             }
         };
         /**
+         * @hidden
          * @returns
          */
         Dimensions.prototype.__pos__ = function () {
             return this;
         };
         /**
-         *
+         * @hidden
          * @returns
          */
         Dimensions.prototype.__neg__ = function () {
@@ -2207,6 +2053,11 @@
      * <p>
      * The Unit class represents the units for a measure.
      * </p>
+     * <p>
+     * It is important to note that the <code>Unit.ONE</code> value is considered to be equivalent to the absence
+     * of a <code>Unit</code> instance or <code>undefined</code>. For this reason, it is convenient to use the
+     * <code>static</code> methods when comparing or computing with the <code>Unit</code> class.
+     * </p>
      */
     var Unit = /** @class */ (function () {
         /**
@@ -2225,156 +2076,6 @@
             this.dimensions = dimensions;
             this.labels = labels;
         }
-        Unit.prototype.compatible = function (rhs) {
-            if (rhs instanceof Unit) {
-                try {
-                    this.dimensions.compatible(rhs.dimensions);
-                }
-                catch (e) {
-                    var cause = (e instanceof Error) ? e.message : "" + e;
-                    throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
-                }
-                return this;
-            }
-            else {
-                throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-            }
-        };
-        /**
-         * @returns true if this and rhs have the same dimensions.
-         */
-        Unit.prototype.isCompatible = function (rhs) {
-            if (rhs instanceof Unit) {
-                return this.dimensions.equals(rhs.dimensions);
-            }
-            else {
-                throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-            }
-        };
-        /**
-         *
-         */
-        Unit.prototype.__add__ = function (rhs) {
-            if (rhs instanceof Unit) {
-                return add(this, rhs);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.__radd__ = function (lhs) {
-            if (lhs instanceof Unit) {
-                return add(lhs, this);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.__sub__ = function (rhs) {
-            if (rhs instanceof Unit) {
-                return sub(this, rhs);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.__rsub__ = function (lhs) {
-            if (lhs instanceof Unit) {
-                return sub(lhs, this);
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * Computes the unit equal to `this * rhs`.
-         */
-        Unit.prototype.mul = function (rhs) {
-            return mul(this, rhs);
-        };
-        Unit.prototype.__mul__ = function (rhs) {
-            if (rhs instanceof Unit) {
-                return mul(this, rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return scale(rhs, this);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.__rmul__ = function (lhs) {
-            if (lhs instanceof Unit) {
-                return mul(lhs, this);
-            }
-            else if (typeof lhs === 'number') {
-                return scale(lhs, this);
-            }
-            else {
-                return void 0;
-            }
-        };
-        /**
-         * Computes the unit equal to `this / rhs`.
-         */
-        Unit.prototype.div = function (rhs) {
-            return div(this, rhs);
-        };
-        Unit.prototype.__div__ = function (rhs) {
-            if (rhs instanceof Unit) {
-                return div(this, rhs);
-            }
-            else if (typeof rhs === 'number') {
-                return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.__rdiv__ = function (lhs) {
-            if (lhs instanceof Unit) {
-                return div(lhs, this);
-            }
-            else if (typeof lhs === 'number') {
-                return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
-            }
-            else {
-                return void 0;
-            }
-        };
-        Unit.prototype.pow = function (exponent) {
-            return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
-        };
-        Unit.prototype.inv = function () {
-            return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
-        };
-        Unit.prototype.neg = function () {
-            return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
-        };
-        Unit.prototype.isOne = function () {
-            return this.dimensions.isOne() && (this.multiplier === 1);
-        };
-        Unit.prototype.sqrt = function () {
-            return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
-        };
-        Unit.prototype.toExponential = function (fractionDigits, compact) {
-            return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
-        };
-        Unit.prototype.toFixed = function (fractionDigits, compact) {
-            return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
-        };
-        Unit.prototype.toPrecision = function (precision, compact) {
-            return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
-        };
-        Unit.prototype.toString = function (radix, compact) {
-            return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
-        };
-        Unit.prototype.__pos__ = function () {
-            return this;
-        };
-        Unit.prototype.__neg__ = function () {
-            return this.neg();
-        };
         /**
          * @param uom The unit of measure.
          * @returns `true` if the uom is one or if it is undefined.
@@ -2625,6 +2326,201 @@
             // console.warn(`Unit cache size = ${entries.length}`);
             return value;
         };
+        Unit.prototype.compatible = function (rhs) {
+            if (rhs instanceof Unit) {
+                try {
+                    this.dimensions.compatible(rhs.dimensions);
+                }
+                catch (e) {
+                    var cause = (e instanceof Error) ? e.message : "" + e;
+                    throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
+                }
+                return this;
+            }
+            else {
+                throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+            }
+        };
+        /**
+         * Computes the unit equal to `this / rhs`.
+         */
+        Unit.prototype.div = function (rhs) {
+            return div(this, rhs);
+        };
+        /**
+         * @returns true if this and rhs have the same dimensions.
+         */
+        Unit.prototype.isCompatible = function (rhs) {
+            if (rhs instanceof Unit) {
+                return this.dimensions.equals(rhs.dimensions);
+            }
+            else {
+                throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+            }
+        };
+        Unit.prototype.isOne = function () {
+            return this.dimensions.isOne() && (this.multiplier === 1);
+        };
+        Unit.prototype.inv = function () {
+            return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
+        };
+        /**
+         * Computes the unit equal to `this * rhs`.
+         */
+        Unit.prototype.mul = function (rhs) {
+            return mul(this, rhs);
+        };
+        Unit.prototype.neg = function () {
+            return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
+        };
+        Unit.prototype.pow = function (exponent) {
+            return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
+        };
+        Unit.prototype.sqrt = function () {
+            return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
+        };
+        Unit.prototype.toExponential = function (fractionDigits, compact) {
+            return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
+        };
+        Unit.prototype.toFixed = function (fractionDigits, compact) {
+            return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
+        };
+        Unit.prototype.toPrecision = function (precision, compact) {
+            return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
+        };
+        Unit.prototype.toString = function (radix, compact) {
+            return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
+        };
+        /**
+         * @hidden
+         * @param rhs
+         * @returns
+         */
+        Unit.prototype.__add__ = function (rhs) {
+            if (rhs instanceof Unit) {
+                return add(this, rhs);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param lhs
+         * @returns
+         */
+        Unit.prototype.__radd__ = function (lhs) {
+            if (lhs instanceof Unit) {
+                return add(lhs, this);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param rhs
+         * @returns
+         */
+        Unit.prototype.__sub__ = function (rhs) {
+            if (rhs instanceof Unit) {
+                return sub(this, rhs);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param lhs
+         * @returns
+         */
+        Unit.prototype.__rsub__ = function (lhs) {
+            if (lhs instanceof Unit) {
+                return sub(lhs, this);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param rhs
+         * @returns
+         */
+        Unit.prototype.__mul__ = function (rhs) {
+            if (rhs instanceof Unit) {
+                return mul(this, rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return scale(rhs, this);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param lhs
+         * @returns
+         */
+        Unit.prototype.__rmul__ = function (lhs) {
+            if (lhs instanceof Unit) {
+                return mul(lhs, this);
+            }
+            else if (typeof lhs === 'number') {
+                return scale(lhs, this);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param rhs
+         * @returns
+         */
+        Unit.prototype.__div__ = function (rhs) {
+            if (rhs instanceof Unit) {
+                return div(this, rhs);
+            }
+            else if (typeof rhs === 'number') {
+                return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @param lhs
+         * @returns
+         */
+        Unit.prototype.__rdiv__ = function (lhs) {
+            if (lhs instanceof Unit) {
+                return div(lhs, this);
+            }
+            else if (typeof lhs === 'number') {
+                return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
+            }
+            else {
+                return void 0;
+            }
+        };
+        /**
+         * @hidden
+         * @returns
+         */
+        Unit.prototype.__pos__ = function () {
+            return this;
+        };
+        /**
+         * @hidden
+         * @returns
+         */
+        Unit.prototype.__neg__ = function () {
+            return this.neg();
+        };
         /**
          * Internal symbolic constant to improve code readability.
          * May be undefined or an instance of Unit.
@@ -2725,6 +2621,268 @@
         Unit.METER_SQUARED_PER_SECOND_SQUARED = new Unit(1, Dimensions.VELOCITY_SQUARED, SYMBOLS_SI);
         return Unit;
     }());
+
+    /**
+     * @hidden
+     */
+    function mustSatisfy(name, condition, messageBuilder, contextBuilder) {
+        if (!condition) {
+            doesNotSatisfy(name, messageBuilder, contextBuilder);
+        }
+    }
+    /**
+     * @hidden
+     * @param name
+     * @param messageBuilder
+     * @param contextBuilder
+     */
+    function doesNotSatisfy(name, messageBuilder, contextBuilder) {
+        var message = messageBuilder ? messageBuilder() : "satisfy some condition";
+        var context = contextBuilder ? " in " + contextBuilder() : "";
+        throw new Error(name + " must " + message + context + ".");
+    }
+
+    /**
+     * @hidden
+     */
+    function isNull (x) {
+        return x === null;
+    }
+
+    /**
+     * @hidden
+     */
+    function isObject(x) {
+        return (typeof x === 'object');
+    }
+
+    /**
+     * @hidden
+     */
+    function beObject() {
+        return "be a non-null `object`";
+    }
+    /**
+     * @hidden
+     */
+    function mustBeNonNullObject(name, value, contextBuilder) {
+        mustSatisfy(name, isObject(value) && !isNull(value), beObject, contextBuilder);
+        return value;
+    }
+
+    /**
+     * @hidden
+     */
+    var LockableMeasure = /** @class */ (function () {
+        /**
+         *
+         * @param metric
+         * @param initialValue A value that is copied.
+         */
+        function LockableMeasure(metric, initialValue) {
+            this.metric = metric;
+            mustBeNonNullObject('metric', metric);
+            mustBeNonNullObject('initialValue', initialValue);
+            this.$value = metric.scalar(0);
+            metric.copy(initialValue, this.$value);
+            this.lock();
+        }
+        LockableMeasure.prototype.get = function () {
+            return this.$value;
+        };
+        /**
+         * 1. Asserts that the value is defined and not null.
+         * 2. Unlocks the `this` value.
+         * 3. Copies the value to the `this` value.
+         * 4. Locks the `this` value.
+         *
+         * @param value The value to be set into `this` value.
+         */
+        LockableMeasure.prototype.set = function (value) {
+            mustBeNonNullObject('value', value);
+            this.metric.copy(value, this.unlock());
+            this.lock();
+        };
+        LockableMeasure.prototype.lock = function () {
+            var value = this.$value;
+            this.$lock = this.metric.lock(value);
+            return value;
+        };
+        LockableMeasure.prototype.unlock = function () {
+            var value = this.$value;
+            this.metric.unlock(value, this.$lock);
+            return value;
+        };
+        return LockableMeasure;
+    }());
+
+    /**
+     * @hidden
+     * @param name
+     * @param value
+     * @param unit
+     * @param metric
+     * @returns
+     */
+    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
+        if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
+            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
+        }
+        else {
+            return value;
+        }
+    }
+
+    /**
+     * The S.I. unit for 1 / (4 π ε0), i.e. N * m^2 / (C^2).
+     */
+    var kUnitSI = Unit.NEWTON.mul(Unit.METER).mul(Unit.METER).div(Unit.COULOMB).div(Unit.COULOMB);
+    /**
+     * The Electric Force (Coulomb's Law)
+     */
+    var CoulombLaw = /** @class */ (function (_super) {
+        __extends(CoulombLaw, _super);
+        /**
+         *
+         */
+        function CoulombLaw(body1, body2, k) {
+            var _this = _super.call(this) || this;
+            _this.body1 = body1;
+            _this.body2 = body2;
+            _this.metric = body1.metric;
+            var metric = _this.metric;
+            _this.F1 = metric.createForce(_this.body1);
+            _this.F1.locationCoordType = WORLD;
+            _this.F1.vectorCoordType = WORLD;
+            _this.F2 = metric.createForce(_this.body2);
+            _this.F2.locationCoordType = WORLD;
+            _this.F2.vectorCoordType = WORLD;
+            if (k) {
+                _this.$k = new LockableMeasure(metric, k);
+            }
+            else {
+                _this.$k = new LockableMeasure(metric, metric.scalar(1));
+            }
+            _this.$forces = [_this.F1, _this.F2];
+            _this.potentialEnergy_ = metric.scalar(0);
+            _this.potentialEnergyLock_ = metric.lock(_this.potentialEnergy_);
+            return _this;
+        }
+        Object.defineProperty(CoulombLaw.prototype, "k", {
+            /**
+             * The proportionality constant, Coulomb's constant.
+             * The approximate value in SI units is 9 x 10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>.
+             * The default value is one (1).
+             */
+            get: function () {
+                return this.$k.get();
+            },
+            set: function (k) {
+                mustBeDimensionlessOrCorrectUnits('k', k, kUnitSI, this.body1.metric);
+                this.$k.set(k);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(CoulombLaw.prototype, "forces", {
+            get: function () {
+                return this.$forces;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        /**
+         * Computes the forces due to the Coulomb interaction.
+         * F = k * q1 * q2 * direction(r2 - r1) / quadrance(r2 - r1)
+         */
+        CoulombLaw.prototype.updateForces = function () {
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            var metric = this.metric;
+            // The direction of the force is computed such that like charges repel each other.
+            metric.copyVector(this.body1.X, numer);
+            metric.subVector(numer, this.body2.X);
+            metric.copyVector(numer, denom);
+            metric.squaredNorm(denom);
+            metric.direction(numer);
+            metric.mulByScalar(numer, metric.a(this.k), metric.uom(this.k));
+            metric.mulByScalar(numer, metric.a(this.body1.Q), metric.uom(this.body1.Q));
+            metric.mulByScalar(numer, metric.a(this.body2.Q), metric.uom(this.body2.Q));
+            metric.copyVector(numer, this.F1.vector);
+            metric.divByScalar(this.F1.vector, metric.a(denom), metric.uom(denom));
+            metric.copyVector(this.F1.vector, this.F2.vector);
+            metric.neg(this.F2.vector);
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1.X, this.F1.location);
+            metric.copyVector(this.body2.X, this.F2.location);
+            return this.$forces;
+        };
+        /**
+         *
+         */
+        CoulombLaw.prototype.disconnect = function () {
+            // Does nothing
+        };
+        /**
+         * Computes the potential energy of the gravitational interaction.
+         * U = k q1 q2 / r, where
+         * r is the center to center separation of m1 and m2.
+         */
+        CoulombLaw.prototype.potentialEnergy = function () {
+            var metric = this.metric;
+            // Unlock the variable that we will use for the result.
+            metric.unlock(this.potentialEnergy_, this.potentialEnergyLock_);
+            // We can use the F1.location and F2.location as temporary variables
+            // as long as we restore their contents.
+            var numer = this.F1.location;
+            var denom = this.F2.location;
+            // The numerator of the potential energy formula is k * Q1 * Q2.
+            metric.copyScalar(metric.a(this.k), metric.uom(this.k), numer);
+            metric.mulByScalar(numer, metric.a(this.body1.Q), metric.uom(this.body1.Q));
+            metric.mulByScalar(numer, metric.a(this.body2.Q), metric.uom(this.body2.Q));
+            // The denominator is |r1 - r2|.
+            metric.copyVector(this.body1.X, denom);
+            metric.subVector(denom, this.body2.X);
+            metric.norm(denom);
+            // Combine the numerator and denominator.
+            metric.copyScalar(metric.a(numer), metric.uom(numer), this.potentialEnergy_);
+            metric.divByScalar(this.potentialEnergy_, metric.a(denom), metric.uom(denom));
+            // Restore the contents of the location variables.
+            metric.copyVector(this.body1.X, this.F1.location);
+            metric.copyVector(this.body2.X, this.F2.location);
+            // We're done. Lock down the result.
+            this.potentialEnergyLock_ = metric.lock(this.potentialEnergy_);
+            return this.potentialEnergy_;
+        };
+        return CoulombLaw;
+    }(AbstractSimObject));
+
+    /**
+     * @hidden
+     */
+    function isNumber(x) {
+        return (typeof x === 'number');
+    }
+
+    /**
+     * @hidden
+     */
+    function beANumber() {
+        return "be a `number`";
+    }
+    /**
+     * @hidden
+     * @param name
+     * @param value
+     * @param contextBuilder
+     * @returns
+     */
+    function mustBeNumber(name, value, contextBuilder) {
+        mustSatisfy(name, isNumber(value), beANumber, contextBuilder);
+        return value;
+    }
 
     /**
      * @hidden
@@ -5259,69 +5417,6 @@
         });
         return Force;
     }(AbstractSimObject));
-
-    /**
-     * @hidden
-     */
-    var LockableMeasure = /** @class */ (function () {
-        /**
-         *
-         * @param metric
-         * @param initialValue A value that is copied.
-         */
-        function LockableMeasure(metric, initialValue) {
-            this.metric = metric;
-            mustBeNonNullObject('metric', metric);
-            mustBeNonNullObject('initialValue', initialValue);
-            this.$value = metric.scalar(0);
-            metric.copy(initialValue, this.$value);
-            this.lock();
-        }
-        LockableMeasure.prototype.get = function () {
-            return this.$value;
-        };
-        /**
-         * 1. Asserts that the value is defined and not null.
-         * 2. Unlocks the `this` value.
-         * 3. Copies the value to the `this` value.
-         * 4. Locks the `this` value.
-         *
-         * @param value The value to be set into `this` value.
-         */
-        LockableMeasure.prototype.set = function (value) {
-            mustBeNonNullObject('value', value);
-            this.metric.copy(value, this.unlock());
-            this.lock();
-        };
-        LockableMeasure.prototype.lock = function () {
-            var value = this.$value;
-            this.$lock = this.metric.lock(value);
-            return value;
-        };
-        LockableMeasure.prototype.unlock = function () {
-            var value = this.$value;
-            this.metric.unlock(value, this.$lock);
-            return value;
-        };
-        return LockableMeasure;
-    }());
-
-    /**
-     * @hidden
-     * @param name
-     * @param value
-     * @param unit
-     * @param metric
-     * @returns
-     */
-    function mustBeDimensionlessOrCorrectUnits(name, value, unit, metric) {
-        if (!Unit.isOne(metric.uom(value)) && !Unit.isCompatible(metric.uom(value), unit)) {
-            throw new Error(name + " unit of measure, " + metric.uom(value) + ", must be compatible with " + unit);
-        }
-        else {
-            return value;
-        }
-    }
 
     var G_UOM = Unit.NEWTON.mul(Unit.METER).mul(Unit.METER).div(Unit.KILOGRAM).div(Unit.KILOGRAM);
     /**

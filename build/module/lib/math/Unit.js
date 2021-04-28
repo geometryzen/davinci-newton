@@ -225,6 +225,11 @@ function div(lhs, rhs) {
  * <p>
  * The Unit class represents the units for a measure.
  * </p>
+ * <p>
+ * It is important to note that the <code>Unit.ONE</code> value is considered to be equivalent to the absence
+ * of a <code>Unit</code> instance or <code>undefined</code>. For this reason, it is convenient to use the
+ * <code>static</code> methods when comparing or computing with the <code>Unit</code> class.
+ * </p>
  */
 var Unit = /** @class */ (function () {
     /**
@@ -243,156 +248,6 @@ var Unit = /** @class */ (function () {
         this.dimensions = dimensions;
         this.labels = labels;
     }
-    Unit.prototype.compatible = function (rhs) {
-        if (rhs instanceof Unit) {
-            try {
-                this.dimensions.compatible(rhs.dimensions);
-            }
-            catch (e) {
-                var cause = (e instanceof Error) ? e.message : "" + e;
-                throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
-            }
-            return this;
-        }
-        else {
-            throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-        }
-    };
-    /**
-     * @returns true if this and rhs have the same dimensions.
-     */
-    Unit.prototype.isCompatible = function (rhs) {
-        if (rhs instanceof Unit) {
-            return this.dimensions.equals(rhs.dimensions);
-        }
-        else {
-            throw new Error("Illegal Argument for Unit.compatible: " + rhs);
-        }
-    };
-    /**
-     *
-     */
-    Unit.prototype.__add__ = function (rhs) {
-        if (rhs instanceof Unit) {
-            return add(this, rhs);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.__radd__ = function (lhs) {
-        if (lhs instanceof Unit) {
-            return add(lhs, this);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.__sub__ = function (rhs) {
-        if (rhs instanceof Unit) {
-            return sub(this, rhs);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.__rsub__ = function (lhs) {
-        if (lhs instanceof Unit) {
-            return sub(lhs, this);
-        }
-        else {
-            return void 0;
-        }
-    };
-    /**
-     * Computes the unit equal to `this * rhs`.
-     */
-    Unit.prototype.mul = function (rhs) {
-        return mul(this, rhs);
-    };
-    Unit.prototype.__mul__ = function (rhs) {
-        if (rhs instanceof Unit) {
-            return mul(this, rhs);
-        }
-        else if (typeof rhs === 'number') {
-            return scale(rhs, this);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.__rmul__ = function (lhs) {
-        if (lhs instanceof Unit) {
-            return mul(lhs, this);
-        }
-        else if (typeof lhs === 'number') {
-            return scale(lhs, this);
-        }
-        else {
-            return void 0;
-        }
-    };
-    /**
-     * Computes the unit equal to `this / rhs`.
-     */
-    Unit.prototype.div = function (rhs) {
-        return div(this, rhs);
-    };
-    Unit.prototype.__div__ = function (rhs) {
-        if (rhs instanceof Unit) {
-            return div(this, rhs);
-        }
-        else if (typeof rhs === 'number') {
-            return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.__rdiv__ = function (lhs) {
-        if (lhs instanceof Unit) {
-            return div(lhs, this);
-        }
-        else if (typeof lhs === 'number') {
-            return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
-        }
-        else {
-            return void 0;
-        }
-    };
-    Unit.prototype.pow = function (exponent) {
-        return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
-    };
-    Unit.prototype.inv = function () {
-        return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
-    };
-    Unit.prototype.neg = function () {
-        return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
-    };
-    Unit.prototype.isOne = function () {
-        return this.dimensions.isOne() && (this.multiplier === 1);
-    };
-    Unit.prototype.sqrt = function () {
-        return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
-    };
-    Unit.prototype.toExponential = function (fractionDigits, compact) {
-        return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
-    };
-    Unit.prototype.toFixed = function (fractionDigits, compact) {
-        return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
-    };
-    Unit.prototype.toPrecision = function (precision, compact) {
-        return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
-    };
-    Unit.prototype.toString = function (radix, compact) {
-        return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
-    };
-    Unit.prototype.__pos__ = function () {
-        return this;
-    };
-    Unit.prototype.__neg__ = function () {
-        return this.neg();
-    };
     /**
      * @param uom The unit of measure.
      * @returns `true` if the uom is one or if it is undefined.
@@ -645,6 +500,201 @@ var Unit = /** @class */ (function () {
         entries.push(value);
         // console.warn(`Unit cache size = ${entries.length}`);
         return value;
+    };
+    Unit.prototype.compatible = function (rhs) {
+        if (rhs instanceof Unit) {
+            try {
+                this.dimensions.compatible(rhs.dimensions);
+            }
+            catch (e) {
+                var cause = (e instanceof Error) ? e.message : "" + e;
+                throw new Error(this + " is not compatible with " + rhs + ". Cause: " + cause);
+            }
+            return this;
+        }
+        else {
+            throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+        }
+    };
+    /**
+     * Computes the unit equal to `this / rhs`.
+     */
+    Unit.prototype.div = function (rhs) {
+        return div(this, rhs);
+    };
+    /**
+     * @returns true if this and rhs have the same dimensions.
+     */
+    Unit.prototype.isCompatible = function (rhs) {
+        if (rhs instanceof Unit) {
+            return this.dimensions.equals(rhs.dimensions);
+        }
+        else {
+            throw new Error("Illegal Argument for Unit.compatible: " + rhs);
+        }
+    };
+    Unit.prototype.isOne = function () {
+        return this.dimensions.isOne() && (this.multiplier === 1);
+    };
+    Unit.prototype.inv = function () {
+        return Unit.valueOf(1 / this.multiplier, this.dimensions.inv(), this.labels);
+    };
+    /**
+     * Computes the unit equal to `this * rhs`.
+     */
+    Unit.prototype.mul = function (rhs) {
+        return mul(this, rhs);
+    };
+    Unit.prototype.neg = function () {
+        return Unit.valueOf(-this.multiplier, this.dimensions, this.labels);
+    };
+    Unit.prototype.pow = function (exponent) {
+        return Unit.valueOf(Math.pow(this.multiplier, exponent.numer / exponent.denom), this.dimensions.pow(exponent), this.labels);
+    };
+    Unit.prototype.sqrt = function () {
+        return Unit.valueOf(Math.sqrt(this.multiplier), this.dimensions.sqrt(), this.labels);
+    };
+    Unit.prototype.toExponential = function (fractionDigits, compact) {
+        return unitString(this.multiplier, this.multiplier.toExponential(fractionDigits), this.dimensions, this.labels, compact);
+    };
+    Unit.prototype.toFixed = function (fractionDigits, compact) {
+        return unitString(this.multiplier, this.multiplier.toFixed(fractionDigits), this.dimensions, this.labels, compact);
+    };
+    Unit.prototype.toPrecision = function (precision, compact) {
+        return unitString(this.multiplier, this.multiplier.toPrecision(precision), this.dimensions, this.labels, compact);
+    };
+    Unit.prototype.toString = function (radix, compact) {
+        return unitString(this.multiplier, this.multiplier.toString(radix), this.dimensions, this.labels, compact);
+    };
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    Unit.prototype.__add__ = function (rhs) {
+        if (rhs instanceof Unit) {
+            return add(this, rhs);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    Unit.prototype.__radd__ = function (lhs) {
+        if (lhs instanceof Unit) {
+            return add(lhs, this);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    Unit.prototype.__sub__ = function (rhs) {
+        if (rhs instanceof Unit) {
+            return sub(this, rhs);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    Unit.prototype.__rsub__ = function (lhs) {
+        if (lhs instanceof Unit) {
+            return sub(lhs, this);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    Unit.prototype.__mul__ = function (rhs) {
+        if (rhs instanceof Unit) {
+            return mul(this, rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return scale(rhs, this);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    Unit.prototype.__rmul__ = function (lhs) {
+        if (lhs instanceof Unit) {
+            return mul(lhs, this);
+        }
+        else if (typeof lhs === 'number') {
+            return scale(lhs, this);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param rhs
+     * @returns
+     */
+    Unit.prototype.__div__ = function (rhs) {
+        if (rhs instanceof Unit) {
+            return div(this, rhs);
+        }
+        else if (typeof rhs === 'number') {
+            return Unit.valueOf(this.multiplier / rhs, this.dimensions, this.labels);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @param lhs
+     * @returns
+     */
+    Unit.prototype.__rdiv__ = function (lhs) {
+        if (lhs instanceof Unit) {
+            return div(lhs, this);
+        }
+        else if (typeof lhs === 'number') {
+            return Unit.valueOf(lhs / this.multiplier, this.dimensions.inv(), this.labels);
+        }
+        else {
+            return void 0;
+        }
+    };
+    /**
+     * @hidden
+     * @returns
+     */
+    Unit.prototype.__pos__ = function () {
+        return this;
+    };
+    /**
+     * @hidden
+     * @returns
+     */
+    Unit.prototype.__neg__ = function () {
+        return this.neg();
     };
     /**
      * Internal symbolic constant to improve code readability.
