@@ -86,6 +86,13 @@ BASIS_LABELS[COORD_A] = '1';
 BASIS_LABELS[COORD_X] = 'e1';
 
 /**
+ * @hidden
+ */
+const BASIS_LABELS_LaTeX: [string, string] = ["1", "e_{1}"];
+BASIS_LABELS_LaTeX[COORD_A] = '1';
+BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+
+/**
  * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
  */
 export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometric, GeometricNumber<Geometric1, Geometric1, Spinor, Vector, number>, GeometricOperators<Geometric1> {
@@ -741,6 +748,10 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     toFixed(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+    toLaTeX(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
     toPrecision(precision?: number): string {
         const coordToString = function (coord: number): string { return coord.toPrecision(precision); };

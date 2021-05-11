@@ -60,6 +60,11 @@ interface GeometricM11 extends Vector, Spinor {
 const BASIS_LABELS: ['1', 'e0', 'e1', 'I'] = ["1", "e0", "e1", "I"];
 
 /**
+ * @hidden
+ */
+const BASIS_LABELS_LaTeX: ['1', 'e_{0}', 'e_{1}', 'I'] = ["1", "e_{0}", "e_{1}", "I"];
+
+/**
  *
  */
 export class Spacetime1 extends AbstractMeasure implements GradeMasked, GeometricM11, GeometricNumber<Spacetime1, Spacetime1, Spinor, Vector, number>, GeometricOperators<Spacetime1> {
@@ -810,6 +815,10 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     toFixed(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+    toLaTeX(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
     toPrecision(precision?: number): string {
         const coordToString = function (coord: number): string { return coord.toPrecision(precision); };

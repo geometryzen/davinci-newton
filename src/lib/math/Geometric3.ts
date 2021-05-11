@@ -79,6 +79,15 @@ BASIS_LABELS[COORD_Z] = 'e3';
 /**
  * @hidden
  */
+const BASIS_LABELS_LaTeX = ["1", "e_{1}", "e_{2}", "e_{3}", "e_{12}", "e_{23}", "e_{31}", "e_{123}"];
+BASIS_LABELS_LaTeX[COORD_SCALAR] = '1';
+BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+BASIS_LABELS_LaTeX[COORD_Y] = 'e_{2}';
+BASIS_LABELS_LaTeX[COORD_Z] = 'e_{3}';
+
+/**
+ * @hidden
+ */
 const zero = function zero(): [a: number, x: number, y: number, z: number, xy: number, yz: number, zx: number, b: number] {
     return [0, 0, 0, 0, 0, 0, 0, 0];
 };
@@ -1850,6 +1859,11 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
     toFixed(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+
+    toLaTeX(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
 
     /**

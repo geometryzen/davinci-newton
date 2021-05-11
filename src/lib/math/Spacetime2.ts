@@ -67,6 +67,11 @@ const coordinates = function (m: GeometricM21): [a: number, t: number, x: number
 const BASIS_LABELS: ['1', 'e0', 'e1', 'e01', 'e2', 'e02', 'e12', 'I'] = ["1", "e0", "e1", "e01", "e2", "e02", "e12", "I"];
 
 /**
+ * @hidden
+ */
+const BASIS_LABELS_LaTeX: ['1', 'e_{0}', 'e_{1}', 'e_{01}', 'e_{2}', 'e_{02}', 'e_{12}', 'I'] = ["1", "e_{0}", "e_{1}", "e_{01}", "e_{2}", "e_{02}", "e_{12}", "I"];
+
+/**
  *
  */
 export class Spacetime2 extends AbstractMeasure implements GradeMasked, GeometricM21, GeometricNumber<Spacetime2, Spacetime2, Spinor, Vector, number>, GeometricOperators<Spacetime2> {
@@ -1012,6 +1017,10 @@ export class Spacetime2 extends AbstractMeasure implements GradeMasked, Geometri
     toFixed(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+    toLaTeX(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
     toPrecision(precision?: number): string {
         const coordToString = function (coord: number): string { return coord.toPrecision(precision); };

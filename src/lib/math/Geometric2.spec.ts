@@ -1078,6 +1078,26 @@ describe("Geometric2", function () {
             checkEQ(e12.scale(x), e12.mul(Geometric2.scalar(x)));
         });
     });
+    describe("scp", function () {
+        it("", function () {
+            checkEQ(one.scp(one), one);
+            checkEQ(one.scp(e1), zero);
+            checkEQ(one.scp(e2), zero);
+            checkEQ(one.scp(I), zero);
+            checkEQ(e1.scp(one), zero);
+            checkEQ(e1.scp(e1), one);
+            checkEQ(e1.scp(e2), zero);
+            checkEQ(e1.scp(I), zero);
+            checkEQ(e2.scp(one), zero);
+            checkEQ(e2.scp(e1), zero);
+            checkEQ(e2.scp(e2), one);
+            checkEQ(e2.scp(I), zero);
+            checkEQ(I.scp(one), zero);
+            checkEQ(I.scp(e1), zero);
+            checkEQ(I.scp(e2), zero);
+            checkEQ(I.scp(I), one.neg());
+        });
+    });
     describe("toExponential", function () {
         it("zero is scalar(0)", function () {
             const M = Geometric2.zero;

@@ -50,6 +50,15 @@ BASIS_LABELS[COORD_B] = 'e12';
 /**
  * @hidden
  */
+const BASIS_LABELS_LaTeX = ["1", "e_{1}", "e_{2}", "I"];
+BASIS_LABELS_LaTeX[COORD_A] = '1';
+BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+BASIS_LABELS_LaTeX[COORD_Y] = 'e_{2}';
+BASIS_LABELS_LaTeX[COORD_B] = 'I';
+
+/**
+ * @hidden
+ */
 const zero = function (): [a: number, x: number, y: number, b: number] {
     return [0, 0, 0, 0];
 };
@@ -1749,7 +1758,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
         const b2 = b.y;
         const b3 = b.b;
 
-        const s = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+        const s = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
 
         this.a = s;
         this.x = 0;
@@ -1870,6 +1879,11 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     toFixed(fractionDigits?: number): string {
         const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    }
+
+    toLaTeX(radix?: number): string {
+        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
 
     /**

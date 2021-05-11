@@ -40,6 +40,14 @@ BASIS_LABELS[COORD_B] = 'e12';
 /**
  * @hidden
  */
+var BASIS_LABELS_LaTeX = ["1", "e_{1}", "e_{2}", "I"];
+BASIS_LABELS_LaTeX[COORD_A] = '1';
+BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+BASIS_LABELS_LaTeX[COORD_Y] = 'e_{2}';
+BASIS_LABELS_LaTeX[COORD_B] = 'I';
+/**
+ * @hidden
+ */
 var zero = function () {
     return [0, 0, 0, 0];
 };
@@ -1587,7 +1595,7 @@ var Geometric2 = /** @class */ (function (_super) {
         var b1 = b.x;
         var b2 = b.y;
         var b3 = b.b;
-        var s = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+        var s = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
         this.a = s;
         this.x = 0;
         this.y = 0;
@@ -1704,6 +1712,10 @@ var Geometric2 = /** @class */ (function (_super) {
     Geometric2.prototype.toFixed = function (fractionDigits) {
         var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    };
+    Geometric2.prototype.toLaTeX = function (radix) {
+        var coordToString = function (coord) { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     };
     /**
      * @param precision

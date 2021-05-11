@@ -68,6 +68,14 @@ BASIS_LABELS[COORD_Z] = 'e3';
 /**
  * @hidden
  */
+var BASIS_LABELS_LaTeX = ["1", "e_{1}", "e_{2}", "e_{3}", "e_{12}", "e_{23}", "e_{31}", "e_{123}"];
+BASIS_LABELS_LaTeX[COORD_SCALAR] = '1';
+BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+BASIS_LABELS_LaTeX[COORD_Y] = 'e_{2}';
+BASIS_LABELS_LaTeX[COORD_Z] = 'e_{3}';
+/**
+ * @hidden
+ */
 var zero = function zero() {
     return [0, 0, 0, 0, 0, 0, 0, 0];
 };
@@ -1749,6 +1757,10 @@ var Geometric3 = /** @class */ (function (_super) {
     Geometric3.prototype.toFixed = function (fractionDigits) {
         var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+    };
+    Geometric3.prototype.toLaTeX = function (radix) {
+        var coordToString = function (coord) { return coord.toString(radix); };
+        return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     };
     /**
      * @param precision

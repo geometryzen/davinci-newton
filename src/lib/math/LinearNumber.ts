@@ -33,6 +33,7 @@ export interface LinearNumber<I, M, S, V, F> {
   sub(rhs: I, α?: F): M;
   toExponential(fractionDigits?: number): string;
   toFixed(fractionDigits?: number): string;
+  toLaTeX(radix?: number): string;
   toPrecision(precision?: number): string;
   toString(radix?: number): string;
 }

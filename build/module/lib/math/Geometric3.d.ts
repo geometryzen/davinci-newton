@@ -448,6 +448,7 @@ export declare class Geometric3 extends AbstractMeasure implements GradeMasked, 
      * @returns
      */
     toFixed(fractionDigits?: number): string;
+    toLaTeX(radix?: number): string;
     /**
      * @param precision
      * @returns

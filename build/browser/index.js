@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-04-28';
+            this.LAST_MODIFIED = '2021-05-10';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.99';
+            this.VERSION = '1.0.100';
         }
         return Newton;
     }());
@@ -6665,6 +6665,12 @@
     BASIS_LABELS$4[COORD_A$1] = '1';
     BASIS_LABELS$4[COORD_X$4] = 'e1';
     /**
+     * @hidden
+     */
+    var BASIS_LABELS_LaTeX$4 = ["1", "e_{1}"];
+    BASIS_LABELS_LaTeX$4[COORD_A$1] = '1';
+    BASIS_LABELS_LaTeX$4[COORD_X$4] = 'e_{1}';
+    /**
      * A mutable and lockable multivector in 1D with a Euclidean metric and optional unit of measure.
      */
     var Geometric1 = /** @class */ (function (_super) {
@@ -7241,6 +7247,10 @@
         Geometric1.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
             return stringFromCoordinates(coordinates$4(this), coordToString, BASIS_LABELS$4, this.uom);
+        };
+        Geometric1.prototype.toLaTeX = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$4(this), coordToString, BASIS_LABELS_LaTeX$4, this.uom);
         };
         Geometric1.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
@@ -8751,6 +8761,10 @@
      */
     var BASIS_LABELS$3 = ["1", "e0", "e1", "I"];
     /**
+     * @hidden
+     */
+    var BASIS_LABELS_LaTeX$3 = ["1", "e_{0}", "e_{1}", "I"];
+    /**
      *
      */
     var Spacetime1 = /** @class */ (function (_super) {
@@ -9469,6 +9483,10 @@
         Spacetime1.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
             return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS$3, this.uom);
+        };
+        Spacetime1.prototype.toLaTeX = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$3(this), coordToString, BASIS_LABELS_LaTeX$3, this.uom);
         };
         Spacetime1.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
@@ -10407,6 +10425,14 @@
     BASIS_LABELS$2[COORD_X$3] = 'e1';
     BASIS_LABELS$2[COORD_Y$3] = 'e2';
     BASIS_LABELS$2[COORD_B] = 'e12';
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS_LaTeX$2 = ["1", "e_{1}", "e_{2}", "I"];
+    BASIS_LABELS_LaTeX$2[COORD_A] = '1';
+    BASIS_LABELS_LaTeX$2[COORD_X$3] = 'e_{1}';
+    BASIS_LABELS_LaTeX$2[COORD_Y$3] = 'e_{2}';
+    BASIS_LABELS_LaTeX$2[COORD_B] = 'I';
     /**
      * @hidden
      */
@@ -11957,7 +11983,7 @@
             var b1 = b.x;
             var b2 = b.y;
             var b3 = b.b;
-            var s = a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+            var s = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
             this.a = s;
             this.x = 0;
             this.y = 0;
@@ -12074,6 +12100,10 @@
         Geometric2.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
             return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS$2, this.uom);
+        };
+        Geometric2.prototype.toLaTeX = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$2(this), coordToString, BASIS_LABELS_LaTeX$2, this.uom);
         };
         /**
          * @param precision
@@ -13274,6 +13304,10 @@
      */
     var BASIS_LABELS$1 = ["1", "e0", "e1", "e01", "e2", "e02", "e12", "I"];
     /**
+     * @hidden
+     */
+    var BASIS_LABELS_LaTeX$1 = ["1", "e_{0}", "e_{1}", "e_{01}", "e_{2}", "e_{02}", "e_{12}", "I"];
+    /**
      *
      */
     var Spacetime2 = /** @class */ (function (_super) {
@@ -14224,6 +14258,10 @@
         Spacetime2.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
             return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS$1, this.uom);
+        };
+        Spacetime2.prototype.toLaTeX = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates$1(this), coordToString, BASIS_LABELS_LaTeX$1, this.uom);
         };
         Spacetime2.prototype.toPrecision = function (precision) {
             var coordToString = function (coord) { return coord.toPrecision(precision); };
@@ -15824,6 +15862,14 @@
     BASIS_LABELS[COORD_X] = 'e1';
     BASIS_LABELS[COORD_Y] = 'e2';
     BASIS_LABELS[COORD_Z] = 'e3';
+    /**
+     * @hidden
+     */
+    var BASIS_LABELS_LaTeX = ["1", "e_{1}", "e_{2}", "e_{3}", "e_{12}", "e_{23}", "e_{31}", "e_{123}"];
+    BASIS_LABELS_LaTeX[COORD_SCALAR] = '1';
+    BASIS_LABELS_LaTeX[COORD_X] = 'e_{1}';
+    BASIS_LABELS_LaTeX[COORD_Y] = 'e_{2}';
+    BASIS_LABELS_LaTeX[COORD_Z] = 'e_{3}';
     /**
      * @hidden
      */
@@ -17508,6 +17554,10 @@
         Geometric3.prototype.toFixed = function (fractionDigits) {
             var coordToString = function (coord) { return coord.toFixed(fractionDigits); };
             return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
+        };
+        Geometric3.prototype.toLaTeX = function (radix) {
+            var coordToString = function (coord) { return coord.toString(radix); };
+            return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
         };
         /**
          * @param precision
