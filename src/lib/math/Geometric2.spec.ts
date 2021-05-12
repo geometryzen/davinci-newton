@@ -749,6 +749,29 @@ describe("Geometric2", function () {
             expect(e12.isSpinor()).toBe(true);
         });
     });
+    describe("lco", function () {
+        it("", function () {
+            checkEQ(one.lco(one), one);
+            checkEQ(one.lco(e1), e1);
+            checkEQ(one.lco(e2), e2);
+            checkEQ(one.lco(I), I);
+
+            checkEQ(e1.lco(one), zero);
+            checkEQ(e1.lco(e1), one);
+            checkEQ(e1.lco(e2), zero);
+            checkEQ(e1.lco(I), e2);
+            
+            checkEQ(e2.lco(one), zero);
+            checkEQ(e2.lco(e1), zero);
+            checkEQ(e2.lco(e2), one);
+            checkEQ(e2.lco(I), e1.neg());
+
+            checkEQ(I.lco(one), zero);
+            checkEQ(I.lco(e1), zero);
+            checkEQ(I.lco(e2), zero);
+            checkEQ(I.lco(I), one.neg());
+        });
+    });
     describe("norm", function () {
         it("zero is scalar(0)", function () {
             const M = Geometric2.zero;
@@ -856,6 +879,29 @@ describe("Geometric2", function () {
             expect(M.x).toBe(2);
             expect(M.y).toBe(3);
             expect(M.b).toBe(4);
+        });
+    });
+    describe("rco", function () {
+        it("", function () {
+            checkEQ(one.rco(one), one);
+            checkEQ(one.rco(e1), zero);
+            checkEQ(one.rco(e2), zero);
+            checkEQ(one.rco(I), zero);
+
+            checkEQ(e1.rco(one), e1);
+            checkEQ(e1.rco(e1), one);
+            checkEQ(e1.rco(e2), zero);
+            checkEQ(e1.rco(I), zero);
+            
+            checkEQ(e2.rco(one), e2);
+            checkEQ(e2.rco(e1), zero);
+            checkEQ(e2.rco(e2), one);
+            checkEQ(e2.rco(I), zero);
+            
+            checkEQ(I.rco(one), I);
+            checkEQ(I.rco(e1), e2.neg());
+            checkEQ(I.rco(e2), e1);
+            checkEQ(I.rco(I), one.neg());
         });
     });
     describe("reflect", function () {

@@ -13,9 +13,9 @@
          */
         function Newton() {
             this.GITHUB = 'https://github.com/geometryzen/davinci-newton';
-            this.LAST_MODIFIED = '2021-05-10';
+            this.LAST_MODIFIED = '2021-05-12';
             this.NAMESPACE = 'NEWTON';
-            this.VERSION = '1.0.100';
+            this.VERSION = '1.0.101';
         }
         return Newton;
     }());
@@ -11135,18 +11135,18 @@
          * @hidden
          */
         Geometric2.prototype.lco2 = function (lhs, rhs) {
-            var a0 = lhs.a;
-            var a1 = lhs.x;
-            var a2 = lhs.y;
-            var a3 = lhs.b;
-            var b0 = rhs.a;
-            var b1 = rhs.x;
-            var b2 = rhs.y;
-            var b3 = rhs.b;
-            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-            this.x = a0 * b1 - a2 * b3;
-            this.y = a0 * b2 + a1 * b3;
-            this.b = a0 * b3;
+            var La = lhs.a;
+            var Lx = lhs.x;
+            var Ly = lhs.y;
+            var Lb = lhs.b;
+            var Ra = rhs.a;
+            var Rx = rhs.x;
+            var Ry = rhs.y;
+            var Rb = rhs.b;
+            this.a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
+            this.x = La * Rx - Ly * Rb;
+            this.y = La * Ry + Lx * Rb;
+            this.b = La * Rb;
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
         };
@@ -11170,18 +11170,18 @@
          * @hidden
          */
         Geometric2.prototype.rco2 = function (lhs, rhs) {
-            var a0 = lhs.a;
-            var a1 = lhs.x;
-            var a2 = lhs.y;
-            var a3 = lhs.b;
-            var b0 = rhs.a;
-            var b1 = rhs.x;
-            var b2 = rhs.y;
-            var b3 = rhs.b;
-            this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-            this.x = -a1 * b0 - a3 * b2;
-            this.y = -a2 * b0 + a3 * b1;
-            this.b = a3 * b0;
+            var La = lhs.a;
+            var Lx = lhs.x;
+            var Ly = lhs.y;
+            var Lb = lhs.b;
+            var Ra = rhs.a;
+            var Rx = rhs.x;
+            var Ry = rhs.y;
+            var Rb = rhs.b;
+            this.a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
+            this.x = Lx * Ra + Lb * Ry;
+            this.y = Ly * Ra - Lb * Rx;
+            this.b = Lb * Ra;
             this.uom = Unit.mul(this.uom, rhs.uom);
             return this;
         };

@@ -877,18 +877,18 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @hidden
      */
     lco2(lhs: Geometric, rhs: Geometric): this {
-        const a0 = lhs.a;
-        const a1 = lhs.x;
-        const a2 = lhs.y;
-        const a3 = lhs.b;
-        const b0 = rhs.a;
-        const b1 = rhs.x;
-        const b2 = rhs.y;
-        const b3 = rhs.b;
-        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-        this.x = a0 * b1 - a2 * b3;
-        this.y = a0 * b2 + a1 * b3;
-        this.b = a0 * b3;
+        const La = lhs.a;
+        const Lx = lhs.x;
+        const Ly = lhs.y;
+        const Lb = lhs.b;
+        const Ra = rhs.a;
+        const Rx = rhs.x;
+        const Ry = rhs.y;
+        const Rb = rhs.b;
+        this.a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
+        this.x = La * Rx - Ly * Rb;
+        this.y = La * Ry + Lx * Rb;
+        this.b = La * Rb;
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
@@ -913,18 +913,18 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @hidden
      */
     rco2(lhs: Geometric, rhs: Geometric): this {
-        const a0 = lhs.a;
-        const a1 = lhs.x;
-        const a2 = lhs.y;
-        const a3 = lhs.b;
-        const b0 = rhs.a;
-        const b1 = rhs.x;
-        const b2 = rhs.y;
-        const b3 = rhs.b;
-        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-        this.x = - a1 * b0 - a3 * b2;
-        this.y = - a2 * b0 + a3 * b1;
-        this.b = a3 * b0;
+        const La = lhs.a;
+        const Lx = lhs.x;
+        const Ly = lhs.y;
+        const Lb = lhs.b;
+        const Ra = rhs.a;
+        const Rx = rhs.x;
+        const Ry = rhs.y;
+        const Rb = rhs.b;
+        this.a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
+        this.x = Lx * Ra + Lb * Ry;
+        this.y = Ly * Ra - Lb * Rx;
+        this.b = Lb * Ra;
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
