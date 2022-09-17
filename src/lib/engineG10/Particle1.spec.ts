@@ -14,13 +14,13 @@ describe("Particle1", function () {
             const particle = new Particle1();
             expect(particle).toBeDefined();
 
-            expect(particle.M.a).toBe(1, "particle.M.a");
-            expect(particle.M.x).toBe(0, "particle.M.x");
-            expect(Unit.isOne(particle.M.uom)).toBe(true, "particle.M.uom");
+            expect(particle.M.a).toBe(1);
+            expect(particle.M.x).toBe(0);
+            expect(Unit.isOne(particle.M.uom)).toBe(true);
 
-            expect(particle.Q.a).toBe(1, "particle.Q.a");
-            expect(particle.Q.x).toBe(0, "particle.Q.x");
-            expect(Unit.isOne(particle.Q.uom)).toBe(true, "particle.Q.uom");
+            expect(particle.Q.a).toBe(1);
+            expect(particle.Q.x).toBe(0);
+            expect(Unit.isOne(particle.Q.uom)).toBe(true);
         });
     });
 });

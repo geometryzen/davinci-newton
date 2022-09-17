@@ -1,6 +1,7 @@
-import { Kinematics } from "../core/Kinematics";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
+import { Kinematics } from "../core/Kinematics";
 import { VarsList } from "../core/VarsList";
 import { Spacetime2 } from "../math/Spacetime2";
 import { Unit } from "../math/Unit";

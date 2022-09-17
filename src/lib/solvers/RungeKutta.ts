@@ -95,17 +95,20 @@ export class RungeKutta implements DiffEqSolver {
                 try {
                     if (k1vals[i] !== 0) {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
-                    } else {
+                    }
+                    else {
                         inuoms[i] = uom;
                     }
-                } catch (e) {
+                }
+                catch (e) {
                     const cause = (e instanceof Error) ? e.message : `${e}`;
                     throw new Error(`${system.getVariableName(i)}. Cause: ${cause}`);
                     // It would be good to translate the index into a variable name.
                     // system.getVariableName(i);
                     // throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                 }
-            } else {
+            }
+            else {
                 inuoms[i] = uom;
             }
             invals[i] = stateVals[i] + k1vals[i] * stepSize / 2;
@@ -120,13 +123,16 @@ export class RungeKutta implements DiffEqSolver {
                 try {
                     if (k2vals[i] !== 0) {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
-                    } else {
+                    }
+                    else {
                         inuoms[i] = uom;
                     }
-                } catch (e) {
+                }
+                catch (e) {
                     throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k2vals[${i}]=${k2vals[i]}, k2uoms[${i}]=${k2uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                 }
-            } else {
+            }
+            else {
                 inuoms[i] = uom;
             }
             invals[i] = stateVals[i] + k2vals[i] * stepSize / 2;
@@ -141,14 +147,17 @@ export class RungeKutta implements DiffEqSolver {
                 try {
                     if (k3vals[i] !== 0) {
                         inuoms[i] = Unit.compatible(stateUoms[i], uom);
-                    } else {
+                    }
+                    else {
                         // inuoms[i] = stateUoms[i];
                         inuoms[i] = uom;
                     }
-                } catch (e) {
+                }
+                catch (e) {
                     throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k3vals[${i}]=${k3vals[i]}, k3uoms[${i}]=${k3uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                 }
-            } else {
+            }
+            else {
                 inuoms[i] = uom;
             }
             invals[i] = stateVals[i] + k3vals[i] * stepSize;
@@ -162,14 +171,17 @@ export class RungeKutta implements DiffEqSolver {
                 try {
                     if (k4vals[i] !== 0) {
                         stateUoms[i] = Unit.compatible(stateUoms[i], uom);
-                    } else {
+                    }
+                    else {
                         // Do nothing.
                         stateUoms[i] = uom;
                     }
-                } catch (e) {
+                }
+                catch (e) {
                     throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k4vals[${i}]=${k4vals[i]}, k4uoms[${i}]=${k4uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
                 }
-            } else {
+            }
+            else {
                 stateUoms[i] = uom;
             }
             stateVals[i] += (k1vals[i] + 2 * k2vals[i] + 2 * k3vals[i] + k4vals[i]) * stepSize / 6;

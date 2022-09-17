@@ -605,7 +605,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     __mul__(rhs: Geometric2 | number | Unit): Geometric2 {
         if (rhs instanceof Geometric2) {
             return lock(this.clone().mul(rhs));
-        } else if (typeof rhs === 'number') {
+        }
+        else if (typeof rhs === 'number') {
             return lock(this.clone().mulByNumber(rhs));
         }
         else if (rhs instanceof Unit) {
@@ -739,7 +740,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
         else {
             if (isScalar(rhs)) {
                 return this.divByScalar(rhs.a, rhs.uom);
-            } else {
+            }
+            else {
                 return this.mul(Geometric2.copy(rhs).inv());
             }
         }
@@ -1355,7 +1357,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             }
             this.uom = void 0;
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().direction());
         }
     }
@@ -1372,7 +1375,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             this.b = -a / β;
             this.uom = Unit.div(this.uom, uom);
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().divByPseudo(β, uom));
         }
     }
@@ -1408,18 +1412,18 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             return lock(this.clone().ext(m));
         }
         else {
-            const a0 = this.a;
-            const a1 = this.x;
-            const a2 = this.y;
-            const a3 = this.b;
-            const b0 = m.a;
-            const b1 = m.x;
-            const b2 = m.y;
-            const b3 = m.b;
-            this.a = a0 * b0;
-            this.x = a0 * b1 + a1 * b0;
-            this.y = a0 * b2 + a2 * b0;
-            this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+            const La = this.a;
+            const Lx = this.x;
+            const Ly = this.y;
+            const Lb = this.b;
+            const Ra = m.a;
+            const Rx = m.x;
+            const Ry = m.y;
+            const Rb = m.b;
+            this.a = La * Ra;
+            this.x = La * Rx + Lx * Ra;
+            this.y = La * Ry + Ly * Ra;
+            this.b = La * Rb + Lx * Ry - Ly * Rx + Lb * Ra;
             this.uom = Unit.mul(this.uom, m.uom);
             return this;
         }
@@ -1482,7 +1486,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     isSpinor(): boolean {
         if (Unit.isOne(this.uom)) {
             return this.x === 0 && this.y === 0;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -1542,18 +1547,18 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @hidden
      */
     mul2(lhs: Geometric, rhs: Geometric): this {
-        const a0 = lhs.a;
-        const a1 = lhs.x;
-        const a2 = lhs.y;
-        const a3 = lhs.b;
-        const b0 = rhs.a;
-        const b1 = rhs.x;
-        const b2 = rhs.y;
-        const b3 = rhs.b;
-        this.a = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
-        this.x = a0 * b1 + a1 * b0 - a2 * b3 + a3 * b2;
-        this.y = a0 * b2 + a1 * b3 + a2 * b0 - a3 * b1;
-        this.b = a0 * b3 + a1 * b2 - a2 * b1 + a3 * b0;
+        const La = lhs.a;
+        const Lx = lhs.x;
+        const Ly = lhs.y;
+        const Lb = lhs.b;
+        const Ra = rhs.a;
+        const Rx = rhs.x;
+        const Ry = rhs.y;
+        const Rb = rhs.b;
+        this.a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
+        this.x = La * Rx + Lx * Ra - Ly * Rb + Lb * Ry;
+        this.y = La * Ry + Lx * Rb + Ly * Ra - Lb * Rx;
+        this.b = La * Rb + Lx * Ry - Ly * Rx + Lb * Ra;
         this.uom = Unit.mul(this.uom, rhs.uom);
         return this;
     }
@@ -1694,7 +1699,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             this.b = -this.b;
             // The unit of measure is unchanged.
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().rev());
         }
     }
@@ -1747,24 +1753,24 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden
      */
-    scp2(a: Geometric, b: Geometric): this {
-        const a0 = a.a;
-        const a1 = a.x;
-        const a2 = a.y;
-        const a3 = a.b;
+    scp2(lhs: Geometric, rhs: Geometric): this {
+        const La = lhs.a;
+        const Lx = lhs.x;
+        const Ly = lhs.y;
+        const Lb = lhs.b;
 
-        const b0 = b.a;
-        const b1 = b.x;
-        const b2 = b.y;
-        const b3 = b.b;
+        const Ra = rhs.a;
+        const Rx = rhs.x;
+        const Ry = rhs.y;
+        const Rb = rhs.b;
 
-        const s = a0 * b0 + a1 * b1 + a2 * b2 - a3 * b3;
+        const a = La * Ra + Lx * Rx + Ly * Ry - Lb * Rb;
 
-        this.a = s;
+        this.a = a;
         this.x = 0;
         this.y = 0;
         this.b = 0;
-        this.uom = Unit.mul(a.uom, b.uom);
+        this.uom = Unit.mul(lhs.uom, rhs.uom);
 
         return this;
     }
@@ -1823,7 +1829,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
                 this.a = - a * α;
                 this.uom = uom;
                 return this;
-            } else if (a === 0 || α === 0) {
+            }
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
@@ -1940,7 +1947,8 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             this.b = 0;
             this.uom = uom;
             return this;
-        } else {
+        }
+        else {
             throw new Error("Unable to mutate this locked Geometric2.");
         }
     }

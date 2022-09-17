@@ -29,11 +29,11 @@ class MockSystem implements DiffEqSolverSystem {
      */
     evaluate(state: number[], stateUnits: Unit[], rateOfChange: number[], rateOfChangeUnits: Unit[], Δt: number, uomTime?: Unit): void {
         const N = this.rateOfChange.length;
-        expect(state.length).toBe(N, "state.length should be N.");
-        expect(stateUnits.length).toBe(N, "stateUnits.length should be N.");
-        expect(rateOfChange.length).toBe(N, "rateOfChange.length should be N.");
-        expect(rateOfChangeUnits.length).toBe(N, "rateOfChangeUnits.length should be N.");
-        expect(typeof Δt === 'number').toBe(true, "Δt should be a number");
+        expect(state.length).toBe(N);
+        expect(stateUnits.length).toBe(N);
+        expect(rateOfChange.length).toBe(N);
+        expect(rateOfChangeUnits.length).toBe(N);
+        expect(typeof Δt === 'number').toBe(true);
         for (let i = 0; i < N; i++) {
             rateOfChange[i] = this.rateOfChange[i];
             rateOfChangeUnits[i] = this.rateOfChangeUnits[i];

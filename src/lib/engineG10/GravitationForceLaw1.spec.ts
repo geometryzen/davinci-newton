@@ -39,7 +39,7 @@ describe("GravitationForceLaw1", function () {
         expect(forces.length).toBe(2);
         const f1 = forces[0];
         expect(f1.F.a).toBe(0);
-        expect(f1.F.x).toBe(1.5, "f1.F.x");
+        expect(f1.F.x).toBe(1.5);
         expect(f1.F.uom).toBe(Unit.NEWTON);
         const f2 = forces[1];
         expect(f2.F.a).toBe(0);

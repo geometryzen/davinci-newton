@@ -1,4 +1,5 @@
 import { Geometric1, lock } from "./Geometric1";
+import { ignoreNegativeZero } from "./ignoreNegativeZero";
 import { Unit } from "./Unit";
 
 /**
@@ -38,11 +39,11 @@ const meter = Geometric1.meter;
  * @hidden
  */
 function checkEQ(result: Geometric1, comp: Geometric1): void {
-    expect(result.a).toBe(comp.a, `a, result=${result.a}, comp=${comp.a}`);
-    expect(result.x).toBe(comp.x, `x, result=${result.x}, comp=${comp.x}`);
-    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
-    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
-    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+    expect(ignoreNegativeZero(result.a)).toBe(ignoreNegativeZero(comp.a));
+    expect(ignoreNegativeZero(result.x)).toBe(ignoreNegativeZero(comp.x));
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true);
+    expect(result.isLocked()).toBe(comp.isLocked());
+    expect(result.isMutable()).toBe(comp.isMutable());
 }
 
 describe("Geometric1", function () {
@@ -353,21 +354,21 @@ describe("Geometric1", function () {
     describe("equals", function () {
         it("blades", function () {
             for (const blade of blades) {
-                expect(blade.equals(blade)).toBeTrue();
+                expect(blade.equals(blade)).toBe(true);
             }
         });
         it("units", function () {
-            expect(meter.equals(meter)).toBeTrue();
-            expect(kilogram.equals(kilogram)).toBeTrue();
-            expect(meter.equals(kilogram)).toBeFalse();
+            expect(meter.equals(meter)).toBe(true);
+            expect(kilogram.equals(kilogram)).toBe(true);
+            expect(meter.equals(kilogram)).toBe(false);
         });
         it("otherwise", function () {
-            expect(one.equals(0)).toBeFalse();
-            expect(one.equals("0")).toBeFalse();
-            expect(one.equals(false)).toBeFalse();
-            expect(one.equals(1)).toBeFalse();
-            expect(one.equals("1")).toBeFalse();
-            expect(one.equals(true)).toBeFalse();
+            expect(one.equals(0)).toBe(false);
+            expect(one.equals("0")).toBe(false);
+            expect(one.equals(false)).toBe(false);
+            expect(one.equals(1)).toBe(false);
+            expect(one.equals("1")).toBe(false);
+            expect(one.equals(true)).toBe(false);
         });
     });
     describe("isLocked", function () {

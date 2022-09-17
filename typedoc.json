@@ -1,8 +1,9 @@
 {
     "entryPoints": [
-        "./src/index.ts"
+        "src/index.ts"
     ],
     "out": "docs",
+    "exclude": "src/**/*.spec.ts",
     "excludePrivate": true,
-    "theme": "minimal"
+    "theme": "default"
 }

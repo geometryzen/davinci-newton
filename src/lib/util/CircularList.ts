@@ -247,7 +247,8 @@ class CircularListIterator<T> implements HistoryIterator<T> {
         if (this.first_) {
             // first 'nextPoint' does nothing except clear this flag
             this.first_ = false;
-        } else {
+        }
+        else {
             if (this.index_ + 1 > this.cList_.getEndIndex()) {
                 throw new Error('cannot iterate past end of list');
             }
@@ -263,7 +264,8 @@ class CircularListIterator<T> implements HistoryIterator<T> {
         if (this.first_) {
             // first 'previousPoint' does nothing except clear this flag
             this.first_ = false;
-        } else {
+        }
+        else {
             if (this.index_ - 1 < this.cList_.getStartIndex()) {
                 throw new Error('cannot iterate prior to start of list');
             }

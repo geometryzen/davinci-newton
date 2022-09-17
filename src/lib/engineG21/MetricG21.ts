@@ -1,8 +1,9 @@
-import { Unit, Force, Torque } from "../..";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Force, Torque, Unit } from "../..";
 import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
-import { Spacetime2 } from "../math/Spacetime2";
 import { MatrixLike } from "../math/MatrixLike";
+import { Spacetime2 } from "../math/Spacetime2";
 import { ForceG21 } from "./ForceG21";
 import { TorqueG21 } from "./TorqueG21";
 

@@ -1,3 +1,4 @@
+import { ignoreNegativeZero } from "./ignoreNegativeZero";
 import { Spacetime2 } from "./Spacetime2";
 import { Unit } from "./Unit";
 
@@ -57,17 +58,17 @@ const blades = [one, e0, e1, e01, e2, e02, e12, I];
  * @hidden
  */
 function checkEQ(result: Spacetime2, comp: Spacetime2): void {
-    expect(result.a).toBe(comp.a, `000 1: result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.t).toBe(comp.t, `001 e0: result.t=${result.t}, comp.t=${comp.t}`);
-    expect(result.x).toBe(comp.x, `010 e1: result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.tx).toBe(comp.tx, `011 e01: result.tx=${result.tx}, comp.tx=${comp.tx}`);
-    expect(result.y).toBe(comp.y, `100 e2: result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.ty).toBe(comp.ty, `101 e02: result.ty=${result.ty}, comp.ty=${comp.ty}`);
-    expect(result.xy).toBe(comp.xy, `110 e12: result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.b).toBe(comp.b, `111 I: result.b=${result.b}, comp.b=${comp.b}`);
-    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
-    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
-    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+    expect(ignoreNegativeZero(result.a)).toBe(ignoreNegativeZero(comp.a));
+    expect(ignoreNegativeZero(result.t)).toBe(ignoreNegativeZero(comp.t));
+    expect(ignoreNegativeZero(result.x)).toBe(ignoreNegativeZero(comp.x));
+    expect(ignoreNegativeZero(result.tx)).toBe(ignoreNegativeZero(comp.tx));
+    expect(ignoreNegativeZero(result.y)).toBe(ignoreNegativeZero(comp.y));
+    expect(ignoreNegativeZero(result.ty)).toBe(ignoreNegativeZero(comp.ty));
+    expect(ignoreNegativeZero(result.xy)).toBe(ignoreNegativeZero(comp.xy));
+    expect(ignoreNegativeZero(result.b)).toBe(ignoreNegativeZero(comp.b));
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true);
+    expect(result.isLocked()).toBe(comp.isLocked());
+    expect(result.isMutable()).toBe(comp.isMutable());
 }
 
 describe("Spacetime2", function () {
@@ -385,25 +386,25 @@ describe("Spacetime2", function () {
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.add(rhs);
             // sum should be correct.
-            expect(sum.a).toBe(La + Ra, "a");
-            expect(sum.t).toBe(Lt + Rt, "t");
-            expect(sum.x).toBe(Lx + Rx, "x");
-            expect(sum.tx).toBe(Ltx + Rtx, "tx");
-            expect(sum.y).toBe(Ly + Ry, "y");
-            expect(sum.ty).toBe(Lty + Rty, "ty");
-            expect(sum.xy).toBe(Lxy + Rxy, "xy");
-            expect(sum.b).toBe(Lb + Rb, "b");
+            expect(sum.a).toBe(La + Ra);
+            expect(sum.t).toBe(Lt + Rt);
+            expect(sum.x).toBe(Lx + Rx);
+            expect(sum.tx).toBe(Ltx + Rtx);
+            expect(sum.y).toBe(Ly + Ry);
+            expect(sum.ty).toBe(Lty + Rty);
+            expect(sum.xy).toBe(Lxy + Rxy);
+            expect(sum.b).toBe(Lb + Rb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
         it("lhs zero", function () {
             const lhs = new Spacetime2();
@@ -417,25 +418,25 @@ describe("Spacetime2", function () {
             const Rb = Math.random();
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.add(rhs);
-            expect(sum.a).toBe(Ra, "a");
-            expect(sum.t).toBe(Rt, "t");
-            expect(sum.x).toBe(Rx, "x");
-            expect(sum.tx).toBe(Rtx, "tx");
-            expect(sum.y).toBe(Ry, "y");
-            expect(sum.ty).toBe(Rty, "ty");
-            expect(sum.xy).toBe(Rxy, "xy");
-            expect(sum.b).toBe(Rb, "b");
+            expect(sum.a).toBe(Ra);
+            expect(sum.t).toBe(Rt);
+            expect(sum.x).toBe(Rx);
+            expect(sum.tx).toBe(Rtx);
+            expect(sum.y).toBe(Ry);
+            expect(sum.ty).toBe(Rty);
+            expect(sum.xy).toBe(Rxy);
+            expect(sum.b).toBe(Rb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
         it("rhs zero", function () {
             const La = Math.random();
@@ -449,25 +450,25 @@ describe("Spacetime2", function () {
             const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
             const rhs = new Spacetime2();
             const sum = lhs.add(rhs);
-            expect(sum.a).toBe(La, "a");
-            expect(sum.t).toBe(Lt, "t");
-            expect(sum.x).toBe(Lx, "x");
-            expect(sum.tx).toBe(Ltx, "tx");
-            expect(sum.y).toBe(Ly, "y");
-            expect(sum.ty).toBe(Lty, "ty");
-            expect(sum.xy).toBe(Lxy, "xy");
-            expect(sum.b).toBe(Lb, "b");
+            expect(sum.a).toBe(La);
+            expect(sum.t).toBe(Lt);
+            expect(sum.x).toBe(Lx);
+            expect(sum.tx).toBe(Ltx);
+            expect(sum.y).toBe(Ly);
+            expect(sum.ty).toBe(Lty);
+            expect(sum.xy).toBe(Lxy);
+            expect(sum.b).toBe(Lb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(0, "a");
-            expect(rhs.t).toBe(0, "t");
-            expect(rhs.x).toBe(0, "x");
-            expect(rhs.tx).toBe(0, "tx");
-            expect(rhs.y).toBe(0, "y");
-            expect(rhs.ty).toBe(0, "ty");
-            expect(rhs.xy).toBe(0, "xy");
-            expect(rhs.b).toBe(0, "b");
+            expect(rhs.a).toBe(0);
+            expect(rhs.t).toBe(0);
+            expect(rhs.x).toBe(0);
+            expect(rhs.tx).toBe(0);
+            expect(rhs.y).toBe(0);
+            expect(rhs.ty).toBe(0);
+            expect(rhs.xy).toBe(0);
+            expect(rhs.b).toBe(0);
         });
         it("lhs locked", function () {
             const La = Math.random();
@@ -489,33 +490,33 @@ describe("Spacetime2", function () {
             const Rb = Math.random();
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.add(rhs);
-            expect(sum.a).toBe(La + Ra, "a");
-            expect(sum.t).toBe(Lt + Rt, "t");
-            expect(sum.x).toBe(Lx + Rx, "x");
-            expect(sum.tx).toBe(Ltx + Rtx, "tx");
-            expect(sum.y).toBe(Ly + Ry, "y");
-            expect(sum.ty).toBe(Lty + Rty, "ty");
-            expect(sum.xy).toBe(Lxy + Rxy, "xy");
-            expect(sum.b).toBe(Lb + Rb, "b");
-            expect(sum === lhs).toBeFalse();
+            expect(sum.a).toBe(La + Ra);
+            expect(sum.t).toBe(Lt + Rt);
+            expect(sum.x).toBe(Lx + Rx);
+            expect(sum.tx).toBe(Ltx + Rtx);
+            expect(sum.y).toBe(Ly + Ry);
+            expect(sum.ty).toBe(Lty + Rty);
+            expect(sum.xy).toBe(Lxy + Rxy);
+            expect(sum.b).toBe(Lb + Rb);
+            expect(sum === lhs).toBe(false);
             // lhs should not be modified.
-            expect(lhs.a).toBe(La, "a");
-            expect(lhs.t).toBe(Lt, "t");
-            expect(lhs.x).toBe(Lx, "x");
-            expect(lhs.tx).toBe(Ltx, "tx");
-            expect(lhs.y).toBe(Ly, "y");
-            expect(lhs.ty).toBe(Lty, "ty");
-            expect(lhs.xy).toBe(Lxy, "xy");
-            expect(lhs.b).toBe(Lb, "b");
+            expect(lhs.a).toBe(La);
+            expect(lhs.t).toBe(Lt);
+            expect(lhs.x).toBe(Lx);
+            expect(lhs.tx).toBe(Ltx);
+            expect(lhs.y).toBe(Ly);
+            expect(lhs.ty).toBe(Lty);
+            expect(lhs.xy).toBe(Lxy);
+            expect(lhs.b).toBe(Lb);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
     });
     describe("addScalar", function () {
@@ -642,31 +643,31 @@ describe("Spacetime2", function () {
     describe("equals", function () {
         it("identity", function () {
             for (const blade of blades) {
-                expect(blade.equals(blade)).toBeTrue();
-                expect(blade.clone().equals(blade)).toBeTrue();
+                expect(blade.equals(blade)).toBe(true);
+                expect(blade.clone().equals(blade)).toBe(true);
             }
         });
         it("coords", function () {
             for (const lhs of blades) {
                 for (const rhs of blades) {
                     if (lhs.scp(rhs).isZero()) {
-                        expect(lhs.equals(rhs)).toBeFalse();
+                        expect(lhs.equals(rhs)).toBe(false);
                     }
                 }
             }
         });
         it("units", function () {
-            expect(meter.equals(meter)).toBeTrue();
-            expect(kilogram.equals(kilogram)).toBeTrue();
-            expect(meter.equals(kilogram)).toBeFalse();
+            expect(meter.equals(meter)).toBe(true);
+            expect(kilogram.equals(kilogram)).toBe(true);
+            expect(meter.equals(kilogram)).toBe(false);
         });
         it("otherwise", function () {
-            expect(one.equals(0)).toBeFalse();
-            expect(one.equals("0")).toBeFalse();
-            expect(one.equals(false)).toBeFalse();
-            expect(one.equals(1)).toBeFalse();
-            expect(one.equals("1")).toBeFalse();
-            expect(one.equals(true)).toBeFalse();
+            expect(one.equals(0)).toBe(false);
+            expect(one.equals("0")).toBe(false);
+            expect(one.equals(false)).toBe(false);
+            expect(one.equals(1)).toBe(false);
+            expect(one.equals("1")).toBe(false);
+            expect(one.equals(true)).toBe(false);
         });
     });
     describe("dual", function () {
@@ -710,94 +711,94 @@ describe("Spacetime2", function () {
     });
     describe("constants", function () {
         it("zero", function () {
-            expect(zero.isZero()).toBeTrue();
-            expect(zero.isOne()).toBeFalse();
-            expect(Unit.isOne(zero.uom)).toBeTrue();
+            expect(zero.isZero()).toBe(true);
+            expect(zero.isOne()).toBe(false);
+            expect(Unit.isOne(zero.uom)).toBe(true);
             expect(zero.toString()).toBe("0");
-            expect(zero.isScalar()).toBeTrue();
-            expect(zero.isSpinor()).toBeTrue();
-            expect(zero.isVector()).toBeTrue();
-            expect(zero.isBivector()).toBeTrue();
+            expect(zero.isScalar()).toBe(true);
+            expect(zero.isSpinor()).toBe(true);
+            expect(zero.isVector()).toBe(true);
+            expect(zero.isBivector()).toBe(true);
         });
         it("one", function () {
-            expect(one.isZero()).toBeFalse();
-            expect(one.isOne()).toBeTrue();
-            expect(Unit.isOne(one.uom)).toBeTrue();
+            expect(one.isZero()).toBe(false);
+            expect(one.isOne()).toBe(true);
+            expect(Unit.isOne(one.uom)).toBe(true);
             expect(one.toString()).toBe("1");
-            expect(one.isScalar()).toBeTrue();
-            expect(one.isSpinor()).toBeTrue();
-            expect(one.isVector()).toBeFalse();
-            expect(one.isBivector()).toBeFalse();
+            expect(one.isScalar()).toBe(true);
+            expect(one.isSpinor()).toBe(true);
+            expect(one.isVector()).toBe(false);
+            expect(one.isBivector()).toBe(false);
         });
         it("e0", function () {
-            expect(e0.isZero()).toBeFalse();
-            expect(e0.isOne()).toBeFalse();
-            expect(Unit.isOne(e0.uom)).toBeTrue();
+            expect(e0.isZero()).toBe(false);
+            expect(e0.isOne()).toBe(false);
+            expect(Unit.isOne(e0.uom)).toBe(true);
             expect(e0.toString()).toBe("e0");
-            expect(e0.isScalar()).toBeFalse();
-            expect(e0.isSpinor()).toBeFalse();
-            expect(e0.isVector()).toBeTrue();
-            expect(e0.isBivector()).toBeFalse();
+            expect(e0.isScalar()).toBe(false);
+            expect(e0.isSpinor()).toBe(false);
+            expect(e0.isVector()).toBe(true);
+            expect(e0.isBivector()).toBe(false);
         });
         it("e1", function () {
-            expect(e1.isZero()).toBeFalse();
-            expect(e1.isOne()).toBeFalse();
-            expect(Unit.isOne(e1.uom)).toBeTrue();
+            expect(e1.isZero()).toBe(false);
+            expect(e1.isOne()).toBe(false);
+            expect(Unit.isOne(e1.uom)).toBe(true);
             expect(e1.toString()).toBe("e1");
-            expect(e1.isScalar()).toBeFalse();
-            expect(e1.isSpinor()).toBeFalse();
-            expect(e1.isVector()).toBeTrue();
-            expect(e1.isBivector()).toBeFalse();
+            expect(e1.isScalar()).toBe(false);
+            expect(e1.isSpinor()).toBe(false);
+            expect(e1.isVector()).toBe(true);
+            expect(e1.isBivector()).toBe(false);
         });
         it("e01", function () {
-            expect(e01.isZero()).toBeFalse();
-            expect(e01.isOne()).toBeFalse();
-            expect(Unit.isOne(e01.uom)).toBeTrue();
+            expect(e01.isZero()).toBe(false);
+            expect(e01.isOne()).toBe(false);
+            expect(Unit.isOne(e01.uom)).toBe(true);
             expect(e01.toString()).toBe("e01");
-            expect(e01.isScalar()).toBeFalse();
-            expect(e01.isSpinor()).toBeTrue();
-            expect(e01.isVector()).toBeFalse();
-            expect(e01.isBivector()).toBeTrue();
+            expect(e01.isScalar()).toBe(false);
+            expect(e01.isSpinor()).toBe(true);
+            expect(e01.isVector()).toBe(false);
+            expect(e01.isBivector()).toBe(true);
         });
         it("e2", function () {
-            expect(e2.isZero()).toBeFalse();
-            expect(e2.isOne()).toBeFalse();
-            expect(Unit.isOne(e2.uom)).toBeTrue();
+            expect(e2.isZero()).toBe(false);
+            expect(e2.isOne()).toBe(false);
+            expect(Unit.isOne(e2.uom)).toBe(true);
             expect(e2.toString()).toBe("e2");
-            expect(e2.isScalar()).toBeFalse();
-            expect(e2.isSpinor()).toBeFalse();
-            expect(e2.isVector()).toBeTrue();
-            expect(e2.isBivector()).toBeFalse();
+            expect(e2.isScalar()).toBe(false);
+            expect(e2.isSpinor()).toBe(false);
+            expect(e2.isVector()).toBe(true);
+            expect(e2.isBivector()).toBe(false);
         });
         it("e02", function () {
-            expect(e02.isZero()).toBeFalse();
-            expect(e02.isOne()).toBeFalse();
-            expect(Unit.isOne(e02.uom)).toBeTrue();
+            expect(e02.isZero()).toBe(false);
+            expect(e02.isOne()).toBe(false);
+            expect(Unit.isOne(e02.uom)).toBe(true);
             expect(e02.toString()).toBe("e02");
-            expect(e02.isScalar()).toBeFalse();
-            expect(e02.isSpinor()).toBeTrue();
-            expect(e02.isVector()).toBeFalse();
-            expect(e02.isBivector()).toBeTrue();
+            expect(e02.isScalar()).toBe(false);
+            expect(e02.isSpinor()).toBe(true);
+            expect(e02.isVector()).toBe(false);
+            expect(e02.isBivector()).toBe(true);
         });
         it("e12", function () {
-            expect(e12.isZero()).toBeFalse();
-            expect(e12.isOne()).toBeFalse();
-            expect(Unit.isOne(e12.uom)).toBeTrue();
+            expect(e12.isZero()).toBe(false);
+            expect(e12.isOne()).toBe(false);
+            expect(Unit.isOne(e12.uom)).toBe(true);
             expect(e12.toString()).toBe("e12");
-            expect(e12.isScalar()).toBeFalse();
-            expect(e12.isSpinor()).toBeTrue();
-            expect(e12.isVector()).toBeFalse();
-            expect(e12.isBivector()).toBeTrue();
+            expect(e12.isScalar()).toBe(false);
+            expect(e12.isSpinor()).toBe(true);
+            expect(e12.isVector()).toBe(false);
+            expect(e12.isBivector()).toBe(true);
         });
         it("I", function () {
-            expect(I.isZero()).toBeFalse();
-            expect(I.isOne()).toBeFalse();
-            expect(Unit.isOne(I.uom)).toBeTrue();
+            expect(I.isZero()).toBe(false);
+            expect(I.isOne()).toBe(false);
+            expect(Unit.isOne(I.uom)).toBe(true);
             expect(I.toString()).toBe("I");
-            expect(I.isScalar()).toBeFalse();
-            expect(I.isSpinor()).toBeFalse();
-            expect(I.isVector()).toBeFalse();
-            expect(I.isBivector()).toBeFalse();
+            expect(I.isScalar()).toBe(false);
+            expect(I.isSpinor()).toBe(false);
+            expect(I.isVector()).toBe(false);
+            expect(I.isBivector()).toBe(false);
         });
     });
     describe("mul", function () {
@@ -2164,25 +2165,25 @@ describe("Spacetime2", function () {
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.sub(rhs);
             // sum should be correct.
-            expect(sum.a).toBe(La - Ra, "a");
-            expect(sum.t).toBe(Lt - Rt, "t");
-            expect(sum.x).toBe(Lx - Rx, "x");
-            expect(sum.tx).toBe(Ltx - Rtx, "tx");
-            expect(sum.y).toBe(Ly - Ry, "y");
-            expect(sum.ty).toBe(Lty - Rty, "ty");
-            expect(sum.xy).toBe(Lxy - Rxy, "xy");
-            expect(sum.b).toBe(Lb - Rb, "b");
+            expect(sum.a).toBe(La - Ra);
+            expect(sum.t).toBe(Lt - Rt);
+            expect(sum.x).toBe(Lx - Rx);
+            expect(sum.tx).toBe(Ltx - Rtx);
+            expect(sum.y).toBe(Ly - Ry);
+            expect(sum.ty).toBe(Lty - Rty);
+            expect(sum.xy).toBe(Lxy - Rxy);
+            expect(sum.b).toBe(Lb - Rb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
         it("lhs zero", function () {
             const lhs = new Spacetime2();
@@ -2196,25 +2197,25 @@ describe("Spacetime2", function () {
             const Rb = Math.random();
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(-Ra, "a");
-            expect(sum.t).toBe(-Rt, "t");
-            expect(sum.x).toBe(-Rx, "x");
-            expect(sum.tx).toBe(-Rtx, "tx");
-            expect(sum.y).toBe(-Ry, "y");
-            expect(sum.ty).toBe(-Rty, "ty");
-            expect(sum.xy).toBe(-Rxy, "xy");
-            expect(sum.b).toBe(-Rb, "b");
+            expect(sum.a).toBe(-Ra);
+            expect(sum.t).toBe(-Rt);
+            expect(sum.x).toBe(-Rx);
+            expect(sum.tx).toBe(-Rtx);
+            expect(sum.y).toBe(-Ry);
+            expect(sum.ty).toBe(-Rty);
+            expect(sum.xy).toBe(-Rxy);
+            expect(sum.b).toBe(-Rb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
         it("rhs zero", function () {
             const La = Math.random();
@@ -2228,25 +2229,25 @@ describe("Spacetime2", function () {
             const lhs = new Spacetime2(La, Lt, Lx, Ltx, Ly, Lty, Lxy, Lb);
             const rhs = new Spacetime2();
             const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(La, "a");
-            expect(sum.t).toBe(Lt, "t");
-            expect(sum.x).toBe(Lx, "x");
-            expect(sum.tx).toBe(Ltx, "tx");
-            expect(sum.y).toBe(Ly, "y");
-            expect(sum.ty).toBe(Lty, "ty");
-            expect(sum.xy).toBe(Lxy, "xy");
-            expect(sum.b).toBe(Lb, "b");
+            expect(sum.a).toBe(La);
+            expect(sum.t).toBe(Lt);
+            expect(sum.x).toBe(Lx);
+            expect(sum.tx).toBe(Ltx);
+            expect(sum.y).toBe(Ly);
+            expect(sum.ty).toBe(Lty);
+            expect(sum.xy).toBe(Lxy);
+            expect(sum.b).toBe(Lb);
             // sum should be same as lhs.
-            expect(sum === lhs).toBeTrue();
+            expect(sum === lhs).toBe(true);
             // rhs should not be modified.
-            expect(rhs.a).toBe(0, "a");
-            expect(rhs.t).toBe(0, "t");
-            expect(rhs.x).toBe(0, "x");
-            expect(rhs.tx).toBe(0, "tx");
-            expect(rhs.y).toBe(0, "y");
-            expect(rhs.ty).toBe(0, "ty");
-            expect(rhs.xy).toBe(0, "xy");
-            expect(rhs.b).toBe(0, "b");
+            expect(rhs.a).toBe(0);
+            expect(rhs.t).toBe(0);
+            expect(rhs.x).toBe(0);
+            expect(rhs.tx).toBe(0);
+            expect(rhs.y).toBe(0);
+            expect(rhs.ty).toBe(0);
+            expect(rhs.xy).toBe(0);
+            expect(rhs.b).toBe(0);
         });
         it("lhs locked", function () {
             const La = Math.random();
@@ -2268,33 +2269,33 @@ describe("Spacetime2", function () {
             const Rb = Math.random();
             const rhs = new Spacetime2(Ra, Rt, Rx, Rtx, Ry, Rty, Rxy, Rb);
             const sum = lhs.sub(rhs);
-            expect(sum.a).toBe(La - Ra, "a");
-            expect(sum.t).toBe(Lt - Rt, "t");
-            expect(sum.x).toBe(Lx - Rx, "x");
-            expect(sum.tx).toBe(Ltx - Rtx, "tx");
-            expect(sum.y).toBe(Ly - Ry, "y");
-            expect(sum.ty).toBe(Lty - Rty, "ty");
-            expect(sum.xy).toBe(Lxy - Rxy, "xy");
-            expect(sum.b).toBe(Lb - Rb, "b");
-            expect(sum === lhs).toBeFalse();
+            expect(sum.a).toBe(La - Ra);
+            expect(sum.t).toBe(Lt - Rt);
+            expect(sum.x).toBe(Lx - Rx);
+            expect(sum.tx).toBe(Ltx - Rtx);
+            expect(sum.y).toBe(Ly - Ry);
+            expect(sum.ty).toBe(Lty - Rty);
+            expect(sum.xy).toBe(Lxy - Rxy);
+            expect(sum.b).toBe(Lb - Rb);
+            expect(sum === lhs).toBe(false);
             // lhs should not be modified.
-            expect(lhs.a).toBe(La, "a");
-            expect(lhs.t).toBe(Lt, "t");
-            expect(lhs.x).toBe(Lx, "x");
-            expect(lhs.tx).toBe(Ltx, "tx");
-            expect(lhs.y).toBe(Ly, "y");
-            expect(lhs.ty).toBe(Lty, "ty");
-            expect(lhs.xy).toBe(Lxy, "xy");
-            expect(lhs.b).toBe(Lb, "b");
+            expect(lhs.a).toBe(La);
+            expect(lhs.t).toBe(Lt);
+            expect(lhs.x).toBe(Lx);
+            expect(lhs.tx).toBe(Ltx);
+            expect(lhs.y).toBe(Ly);
+            expect(lhs.ty).toBe(Lty);
+            expect(lhs.xy).toBe(Lxy);
+            expect(lhs.b).toBe(Lb);
             // rhs should not be modified.
-            expect(rhs.a).toBe(Ra, "a");
-            expect(rhs.t).toBe(Rt, "t");
-            expect(rhs.x).toBe(Rx, "x");
-            expect(rhs.tx).toBe(Rtx, "tx");
-            expect(rhs.y).toBe(Ry, "y");
-            expect(rhs.ty).toBe(Rty, "ty");
-            expect(rhs.xy).toBe(Rxy, "xy");
-            expect(rhs.b).toBe(Rb, "b");
+            expect(rhs.a).toBe(Ra);
+            expect(rhs.t).toBe(Rt);
+            expect(rhs.x).toBe(Rx);
+            expect(rhs.tx).toBe(Rtx);
+            expect(rhs.y).toBe(Ry);
+            expect(rhs.ty).toBe(Rty);
+            expect(rhs.xy).toBe(Rxy);
+            expect(rhs.b).toBe(Rb);
         });
     });
     describe("subScalar", function () {
@@ -2764,7 +2765,7 @@ describe("Spacetime2", function () {
                 expect(lhs.__eq__(1)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
-                expect(lhs.__eq__("1" as any)).toBe(false);
+                expect(lhs.__eq__("1" as unknown as Unit)).toBe(false);
             }
         });
         it("", function () {
@@ -2783,7 +2784,7 @@ describe("Spacetime2", function () {
                 expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
-                expect(lhs.__ne__("1" as any)).toBe(true);
+                expect(lhs.__ne__("1" as unknown as Unit)).toBe(true);
             }
         });
     });

@@ -1,4 +1,5 @@
 import { Geometric2 } from "./Geometric2";
+import { ignoreNegativeZero } from "./ignoreNegativeZero";
 import { Unit } from "./Unit";
 
 const zero = Geometric2.zero;
@@ -16,14 +17,14 @@ const kilogram = Geometric2.kilogram;
  * @hidden
  */
 function checkEQ(result: Geometric2, comp: Geometric2): void {
-    expect(result.a).toBe(comp.a, `result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.x).toBe(comp.x, `result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.y).toBe(comp.y, `result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.xy).toBe(comp.xy, `result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.b).toBe(comp.b, `result.b=${result.b}, comp.b=${comp.b}`);
-    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
-    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
-    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+    expect(result.a).toBe(comp.a);
+    expect(result.x).toBe(comp.x);
+    expect(ignoreNegativeZero(result.y)).toBe(ignoreNegativeZero(comp.y));
+    expect(ignoreNegativeZero(result.xy)).toBe(ignoreNegativeZero(comp.xy));
+    expect(ignoreNegativeZero(result.b)).toBe(ignoreNegativeZero(comp.b));
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true);
+    expect(result.isLocked()).toBe(comp.isLocked());
+    expect(result.isMutable()).toBe(comp.isMutable());
 }
 
 describe("Geometric2", function () {
@@ -629,21 +630,21 @@ describe("Geometric2", function () {
     describe("equals", function () {
         it("blades", function () {
             for (const blade of blades) {
-                expect(blade.equals(blade)).toBeTrue();
+                expect(blade.equals(blade)).toBe(true);
             }
         });
         it("units", function () {
-            expect(meter.equals(meter)).toBeTrue();
-            expect(kilogram.equals(kilogram)).toBeTrue();
-            expect(meter.equals(kilogram)).toBeFalse();
+            expect(meter.equals(meter)).toBe(true);
+            expect(kilogram.equals(kilogram)).toBe(true);
+            expect(meter.equals(kilogram)).toBe(false);
         });
         it("otherwise", function () {
-            expect(one.equals(0)).toBeFalse();
-            expect(one.equals("0")).toBeFalse();
-            expect(one.equals(false)).toBeFalse();
-            expect(one.equals(1)).toBeFalse();
-            expect(one.equals("1")).toBeFalse();
-            expect(one.equals(true)).toBeFalse();
+            expect(one.equals(0)).toBe(false);
+            expect(one.equals("0")).toBe(false);
+            expect(one.equals(false)).toBe(false);
+            expect(one.equals(1)).toBe(false);
+            expect(one.equals("1")).toBe(false);
+            expect(one.equals(true)).toBe(false);
         });
     });
 
@@ -760,7 +761,7 @@ describe("Geometric2", function () {
             checkEQ(e1.lco(e1), one);
             checkEQ(e1.lco(e2), zero);
             checkEQ(e1.lco(I), e2);
-            
+
             checkEQ(e2.lco(one), zero);
             checkEQ(e2.lco(e1), zero);
             checkEQ(e2.lco(e2), one);
@@ -892,12 +893,12 @@ describe("Geometric2", function () {
             checkEQ(e1.rco(e1), one);
             checkEQ(e1.rco(e2), zero);
             checkEQ(e1.rco(I), zero);
-            
+
             checkEQ(e2.rco(one), e2);
             checkEQ(e2.rco(e1), zero);
             checkEQ(e2.rco(e2), one);
             checkEQ(e2.rco(I), zero);
-            
+
             checkEQ(I.rco(one), I);
             checkEQ(I.rco(e1), e2.neg());
             checkEQ(I.rco(e2), e1);
@@ -992,7 +993,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("(e1, e1)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -1001,7 +1002,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("(e2, e2)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -1010,7 +1011,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("on locked should not mutate and should return the rotor.", function () {
             const a = Math.random();
@@ -1029,7 +1030,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
         });
         it("static", function () {
             const R = Geometric2.rotorFromDirections(e1, e2);
@@ -1037,7 +1038,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
         });
         it("result should be independent of |b| and |a|.", function () {
             const R = Geometric2.rotorFromDirections(e1.mulByNumber(0.5), e2.mulByNumber(2));
@@ -1045,7 +1046,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
         });
     });
     describe("rotorFromVectorToVector", function () {
@@ -1056,7 +1057,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("(e1, e1)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -1065,7 +1066,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("(e2, e2)", function () {
             const m = new Geometric2([Math.random(), Math.random(), Math.random(), Math.random()]);
@@ -1074,7 +1075,7 @@ describe("Geometric2", function () {
             expect(m.x).toBe(0);
             expect(m.y).toBe(0);
             expect(m.b).toBe(0);
-            expect(Unit.isOne(m.uom)).toBeTrue();
+            expect(Unit.isOne(m.uom)).toBe(true);
         });
         it("on locked should not mutate and should return the rotor.", function () {
             const a = Math.random();
@@ -1093,7 +1094,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
         });
         it("static", function () {
             const R = Geometric2.rotorFromVectorToVector(e1, e2);
@@ -1101,7 +1102,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-0.7071067811865475);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
         });
         it("scaling", function () {
             const R = Geometric2.rotorFromVectorToVector(e1.mulByNumber(0.5), e2.mulByNumber(2));
@@ -1109,7 +1110,7 @@ describe("Geometric2", function () {
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.b).toBe(-1.414213562373095);
-            expect(Unit.isOne(R.uom)).toBeTrue();
+            expect(Unit.isOne(R.uom)).toBe(true);
             const rotated = e1.rotate(R);
             expect(rotated.x).toBe(0);
             expect(rotated.y).toBe(3.999999999999999);

@@ -1,4 +1,5 @@
-import { Unit, Force, Torque } from "../..";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Force, Torque, Unit } from "../..";
 import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
 import { Matrix0 } from "../math/Matrix0";

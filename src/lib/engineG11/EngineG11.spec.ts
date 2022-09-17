@@ -50,8 +50,8 @@ describe("EngineG11", function () {
             // This implies that it is moving through time.
             bead.P = e0;
 
-            expect(bead.X.equals(zero)).toBeTrue();
-            expect(bead.P.equals(e0)).toBeTrue();
+            expect(bead.X.equals(zero)).toBe(true);
+            expect(bead.P.equals(e0)).toBe(true);
 
             engine.addBody(bead);
 
@@ -61,9 +61,9 @@ describe("EngineG11", function () {
             }
 
             // The bead ends up at e0.
-            expect(bead.X.equals(e0)).toBeTrue();
+            expect(bead.X.equals(e0)).toBe(true);
             // The linear momentum does not change.
-            expect(bead.P.equals(e0)).toBeTrue();
+            expect(bead.P.equals(e0)).toBe(true);
         });
     });
     //
@@ -84,8 +84,8 @@ describe("EngineG11", function () {
             // This implies that it is moving through time.
             bead.P = bead.M.mulByVector(e0);    // making use of the fact that M is immutable.
 
-            expect(bead.X.equals(zero)).toBeTrue();
-            expect(bead.P.equals(e0)).toBeTrue();   // only passes because M is dimensionless.
+            expect(bead.X.equals(zero)).toBe(true);
+            expect(bead.P.equals(e0)).toBe(true);   // only passes because M is dimensionless.
 
             engine.addBody(bead);
 
@@ -167,8 +167,8 @@ describe("EngineG11", function () {
             beadOne.P = beadOne.M.mulByVector(e0); // making use of the fact that M is immutable.
             beadTwo.P = beadTwo.M.mulByVector(e0);
 
-            expect(beadOne.X.equals(zero)).toBeTrue();
-            expect(beadOne.P.equals(e0)).toBeTrue();
+            expect(beadOne.X.equals(zero)).toBe(true);
+            expect(beadOne.P.equals(e0)).toBe(true);
 
             engine.addBody(beadOne);
             engine.addBody(beadTwo);
@@ -187,7 +187,7 @@ describe("EngineG11", function () {
                 // console.log(`beadTwo.X=>${beadTwo.X}`);
             }
             // TODO: We might check that the bead motion asymptotically approaches the speed of light.
-            expect(true).toBeTrue();
+            expect(true).toBe(true);
         });
     });
 });

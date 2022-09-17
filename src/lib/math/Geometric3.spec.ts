@@ -1,5 +1,6 @@
 import { BivectorE3 } from './BivectorE3';
 import { Geometric3 } from './Geometric3';
+import { ignoreNegativeZero } from './ignoreNegativeZero';
 import { Unit } from './Unit';
 import { VectorE3 } from './VectorE3';
 
@@ -129,17 +130,17 @@ const PRECISION = 12;
  * @hidden
  */
 function checkEQ(result: Geometric3, comp: Geometric3): void {
-    expect(result.a).toBe(comp.a, `result.a=${result.a}, comp.a=${comp.a}`);
-    expect(result.x).toBe(comp.x, `result.x=${result.x}, comp.x=${comp.x}`);
-    expect(result.y).toBe(comp.y, `result.y=${result.y}, comp.y=${comp.y}`);
-    expect(result.z).toBe(comp.z, `result.z=${result.z}, comp.t=${comp.z}`);
-    expect(result.xy).toBe(comp.xy, `result.xy=${result.xy}, comp.xy=${comp.xy}`);
-    expect(result.yz).toBe(comp.yz, `result.yz=${result.yz}, comp.yz=${comp.yz}`);
-    expect(result.zx).toBe(comp.zx, `result.zx=${result.zx}, comp.zx=${comp.zx}`);
-    expect(result.b).toBe(comp.b, `result.b=${result.b}, comp.b=${comp.b}`);
-    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true, `uom, result=${result.uom}, comp=${comp.uom}`);
-    expect(result.isLocked()).toBe(comp.isLocked(), `isLocked, result=${result.isLocked()}, comp=${comp.isLocked()}`);
-    expect(result.isMutable()).toBe(comp.isMutable(), `isMutable, result=${result.isMutable()}, comp=${comp.isMutable()}`);
+    expect(result.a).toBe(comp.a);
+    expect(result.x).toBe(comp.x);
+    expect(result.y).toBe(comp.y);
+    expect(result.z).toBe(comp.z);
+    expect(ignoreNegativeZero(result.xy)).toBe(ignoreNegativeZero(comp.xy));
+    expect(ignoreNegativeZero(result.yz)).toBe(ignoreNegativeZero(comp.yz));
+    expect(ignoreNegativeZero(result.zx)).toBe(ignoreNegativeZero(comp.zx));
+    expect(ignoreNegativeZero(result.b)).toBe(ignoreNegativeZero(comp.b));
+    expect(Unit.isCompatible(result.uom, comp.uom)).toBe(true);
+    expect(result.isLocked()).toBe(comp.isLocked());
+    expect(result.isMutable()).toBe(comp.isMutable());
 }
 
 describe("Geometric3", function () {
@@ -159,7 +160,7 @@ describe("Geometric3", function () {
         });
         it("should throw Error when coords length is not 8.", function () {
             expect(function () {
-                const mv = new Geometric3([] as any);
+                const mv = new Geometric3([] as unknown as [number, number, number, number, number, number, number, number]);
                 mv.toString();
             }).toThrowError("coords.length must be 8");
         });
@@ -613,21 +614,21 @@ describe("Geometric3", function () {
     describe("equals", function () {
         it("blades", function () {
             for (const blade of blades) {
-                expect(blade.equals(blade)).toBeTrue();
+                expect(blade.equals(blade)).toBe(true);
             }
         });
         it("units", function () {
-            expect(meter.equals(meter)).toBeTrue();
-            expect(kilogram.equals(kilogram)).toBeTrue();
-            expect(meter.equals(kilogram)).toBeFalse();
+            expect(meter.equals(meter)).toBe(true);
+            expect(kilogram.equals(kilogram)).toBe(true);
+            expect(meter.equals(kilogram)).toBe(false);
         });
         it("otherwise", function () {
-            expect(one.equals(0)).toBeFalse();
-            expect(one.equals("0")).toBeFalse();
-            expect(one.equals(false)).toBeFalse();
-            expect(one.equals(1)).toBeFalse();
-            expect(one.equals("1")).toBeFalse();
-            expect(one.equals(true)).toBeFalse();
+            expect(one.equals(0)).toBe(false);
+            expect(one.equals("0")).toBe(false);
+            expect(one.equals(false)).toBe(false);
+            expect(one.equals(1)).toBe(false);
+            expect(one.equals("1")).toBe(false);
+            expect(one.equals(true)).toBe(false);
         });
     });
 
@@ -1937,7 +1938,7 @@ describe("Geometric3", function () {
         });
         it("(+e3, +e2)", function () {
             const R = Geometric3.rotorFromDirections(e3, e2);
-            expect(R.a).toBe(cosPIdiv4, 15);
+            expect(R.a).toBe(cosPIdiv4);
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.z).toBe(0);
@@ -1947,7 +1948,7 @@ describe("Geometric3", function () {
         });
         it("(+e3, -e2)", function () {
             const R = Geometric3.rotorFromDirections(e3, e2.clone().neg());
-            expect(R.a).toBe(cosPIdiv4, 15);
+            expect(R.a).toBe(cosPIdiv4);
             expect(R.x).toBe(0);
             expect(R.y).toBe(0);
             expect(R.z).toBe(0);
@@ -2119,7 +2120,7 @@ describe("Geometric3", function () {
                 expect(lhs.__eq__(1)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
-                expect(lhs.__eq__("1" as any)).toBe(false);
+                expect(lhs.__eq__("1" as unknown as Unit)).toBe(false);
             }
         });
         it("", function () {
@@ -2138,7 +2139,7 @@ describe("Geometric3", function () {
                 expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
-                expect(lhs.__ne__("1" as any)).toBe(true);
+                expect(lhs.__ne__("1" as unknown as Unit)).toBe(true);
             }
         });
     });

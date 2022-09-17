@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { RigidBody } from '../core/RigidBody';
 import { Geometric3 } from '../math/Geometric3';
 import { Matrix3 } from '../math/Matrix3';
 import { Unit } from '../math/Unit';
-import { RigidBody } from '../core/RigidBody';
 import { MetricG30 } from './MetricG30';
 
 /**
@@ -69,7 +69,8 @@ export class Block3 extends RigidBody<Geometric3> {
 
         if (Unit.isOne(width.uom) && Unit.isOne(height.uom) && Unit.isOne(depth.uom)) {
             // dimensionless
-        } else {
+        }
+        else {
             this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
             // this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;
