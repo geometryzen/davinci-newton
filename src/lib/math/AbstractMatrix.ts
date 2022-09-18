@@ -61,7 +61,7 @@ export class AbstractMatrix<T extends { elements: Float32Array }> extends Abstra
             }
         }
         this.uom = source.uom;
-        return <T><any>this;
+        return <T><unknown>this;
     }
 
     /**

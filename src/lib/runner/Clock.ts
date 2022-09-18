@@ -122,7 +122,9 @@ export class Clock extends AbstractSubject {
      * 
      */
     private scheduleAllClockTasks(): void {
-        this.tasks_.forEach((task) => { this.scheduleTask(task); });
+        this.tasks_.forEach((task) => {
+            this.scheduleTask(task);
+        });
     }
 
     /**

@@ -957,7 +957,7 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
      * @param other
      * @returns
      */
-    equals(other: any): boolean {
+    equals(other: unknown): boolean {
         if (other === this) {
             return true;
         }
@@ -1040,7 +1040,8 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
     isSpinor(): boolean {
         if (Unit.isOne(this.uom)) {
             return this.x === 0 && this.y === 0 && this.z === 0 && this.b === 0;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -1761,7 +1762,8 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
                 this.a = - a * α;
                 this.uom = uom;
                 return this;
-            } else if (a === 0 || α === 0) {
+            }
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
@@ -1846,7 +1848,9 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toExponential(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toExponential(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
@@ -1857,12 +1861,16 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toFixed(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toFixed(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
     toLaTeX(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
 
@@ -1871,7 +1879,9 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toPrecision(precision?: number): string {
-        const coordToString = function (coord: number): string { return coord.toPrecision(precision); };
+        const coordToString = function (coord: number): string {
+            return coord.toPrecision(precision);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
@@ -1882,7 +1892,9 @@ export class Geometric3 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toString(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 

@@ -166,7 +166,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     set a(a: number) {
         if (this.isMutable()) {
             this.$M00 = a;
-        } else {
+        }
+        else {
             throw new Error(readOnly('a').message);
         }
     }
@@ -176,7 +177,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     set t(t: number) {
         if (this.isMutable()) {
             this.$M01 = t;
-        } else {
+        }
+        else {
             throw new Error(readOnly('t').message);
         }
     }
@@ -186,7 +188,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     set x(x: number) {
         if (this.isMutable()) {
             this.$M10 = x;
-        } else {
+        }
+        else {
             throw new Error(readOnly('x').message);
         }
     }
@@ -196,7 +199,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     set b(b: number) {
         if (this.isMutable()) {
             this.$M11 = b;
-        } else {
+        }
+        else {
             throw new Error(readOnly('b').message);
         }
     }
@@ -216,7 +220,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     add(rhs: Spacetime1, α = 1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().add(rhs, α).permlock();
-        } else {
+        }
+        else {
             if (this.isZero()) {
                 this.a = rhs.a * α;
                 this.t = rhs.t * α;
@@ -294,7 +299,7 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
             return this.clone().conj().permlock();
         }
         else {
-            this.$M00 = this.$M00;
+            // this.$M00 = +this.$M00;
             this.$M01 = -this.$M01;
             this.$M10 = -this.$M10;
             this.$M11 = -this.$M11;
@@ -304,7 +309,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     div(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().div(rhs).permlock();
-        } else {
+        }
+        else {
             return this.mul(rhs.clone().inv().permlock());
         }
     }
@@ -381,7 +387,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     ext(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().ext(rhs).permlock();
-        } else {
+        }
+        else {
             const L000 = this.$M00;
             const L001 = this.$M01;
             const L010 = this.$M10;
@@ -486,7 +493,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     lco(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().lco(rhs).permlock();
-        } else {
+        }
+        else {
             const L000 = this.$M00;
             const L001 = this.$M01;
             const L010 = this.$M10;
@@ -508,7 +516,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     mul(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().mul(rhs).permlock();
-        } else {
+        }
+        else {
             const L000 = this.$M00;
             const L001 = this.$M01;
             const L010 = this.$M10;
@@ -579,7 +588,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     neg(): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().neg().permlock();
-        } else {
+        }
+        else {
             this.a = -this.a;
             this.t = -this.t;
             this.x = -this.x;
@@ -608,7 +618,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     rco(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().rco(rhs).permlock();
-        } else {
+        }
+        else {
             const L000 = this.$M00;
             const L001 = this.$M01;
             const L010 = this.$M10;
@@ -630,7 +641,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     reflect(n: Vector): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().reflect(n).permlock();
-        } else {
+        }
+        else {
             const t = n.t;
             const t2 = t * t;
             const x = n.x;
@@ -647,9 +659,9 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
             return this.clone().rev().permlock();
         }
         else {
-            this.$M00 = this.$M00;
-            this.$M01 = this.$M01;
-            this.$M10 = this.$M10;
+            // this.$M00 = +this.$M00;
+            // this.$M01 = +this.$M01;
+            // this.$M10 = +this.$M10;
             this.$M11 = -this.$M11;
             return this;
         }
@@ -671,7 +683,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     scale(α: number): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().scale(α).permlock();
-        } else {
+        }
+        else {
             this.$M00 = this.$M00 * α;
             this.$M01 = this.$M01 * α;
             this.$M10 = this.$M10 * α;
@@ -682,7 +695,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     scp(rhs: Spacetime1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().scp(rhs).permlock();
-        } else {
+        }
+        else {
             const L000 = this.$M00;
             const L001 = this.$M01;
             const L010 = this.$M10;
@@ -722,7 +736,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     squaredNorm(): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().squaredNorm().permlock();
-        } else {
+        }
+        else {
             const a = this.$M00;
             const t = this.$M01;
             const x = this.$M10;
@@ -738,7 +753,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     sub(rhs: Spacetime1, α = 1): Spacetime1 {
         if (this.isLocked()) {
             return this.clone().sub(rhs, α).permlock();
-        } else {
+        }
+        else {
             if (this.isZero()) {
                 this.a = -rhs.a * α;
                 this.t = -rhs.t * α;
@@ -772,7 +788,8 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
                 this.a = - a * α;
                 this.uom = uom;
                 return this;
-            } else if (a === 0 || α === 0) {
+            }
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
@@ -809,23 +826,33 @@ export class Spacetime1 extends AbstractMeasure implements GradeMasked, Geometri
     }
 
     toExponential(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toExponential(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toFixed(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toFixed(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toLaTeX(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
     toPrecision(precision?: number): string {
-        const coordToString = function (coord: number): string { return coord.toPrecision(precision); };
+        const coordToString = function (coord: number): string {
+            return coord.toPrecision(precision);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toString(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     /**

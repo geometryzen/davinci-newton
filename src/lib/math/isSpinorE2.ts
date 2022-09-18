@@ -8,7 +8,7 @@ import { SpinorE2 } from './SpinorE2';
  * The argument must be a non-null object and must support the a, and xy numeric properties.
  * @hidden
  */
-export function isSpinorE2(v: any): v is SpinorE2 {
+export function isSpinorE2(v: unknown): v is SpinorE2 {
     if (isObject(v) && !isNull(v)) {
         return isNumber((<SpinorE2>v).a) && isNumber((<SpinorE2>v).xy);
     }

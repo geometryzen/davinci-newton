@@ -12,6 +12,7 @@ export function gcd(a: number, b: number): number {
         a = b;
         b = temp;
     }
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         a %= b;
         if (a === 0) {

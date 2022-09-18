@@ -8,7 +8,7 @@ import { BivectorE3 } from './BivectorE3';
  * The argument must be a non-null object and must support the yz, zx, and xy numeric properties.
  * @hidden
  */
-export default function isBivectorE3(v: any): v is BivectorE3 {
+export default function isBivectorE3(v: unknown): v is BivectorE3 {
     if (isObject(v) && !isNull(v)) {
         return isNumber((<BivectorE3>v).xy) && isNumber((<BivectorE3>v).yz) && isNumber((<BivectorE3>v).zx);
     }

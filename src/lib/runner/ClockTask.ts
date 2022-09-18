@@ -26,7 +26,7 @@ export class ClockTask {
     /**
      * 
      */
-    constructor(private time_: number, private callBack_: () => any) {
+    constructor(private time_: number, private callBack_: () => unknown) {
         // Do nothing yet.
     }
 

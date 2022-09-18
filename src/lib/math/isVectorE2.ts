@@ -9,7 +9,7 @@ import { VectorE2 } from './VectorE2';
  * @deprecated Do not use this because it could accept types that have scalar and bivector components.
  * @hidden
  */
-export function isVectorE2(v: any): v is VectorE2 {
+export function isVectorE2(v: unknown): v is VectorE2 {
     if (isObject(v) && !isNull(v)) {
         return isNumber((<VectorE2>v).x) && isNumber((<VectorE2>v).y);
     }

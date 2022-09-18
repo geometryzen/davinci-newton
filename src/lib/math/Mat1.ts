@@ -16,7 +16,8 @@ export class Mat1 implements MatrixLike {
     getElement(row: number, column: number): number {
         if (row === 0 && column === 0) {
             return this.value;
-        } else {
+        }
+        else {
             throw new Error('row and column must both be zero.');
         }
     }

@@ -137,7 +137,10 @@ export class Matrix3 extends AbstractMatrix<Matrix3> {
     toString(radix?: number): string {
         const text: string[] = [];
         for (let i = 0; i < this.dimensions; i++) {
-            text.push(this.row(i).map(function (element: number, index: number) { return element.toString(radix); }).join(' '));
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            text.push(this.row(i).map(function (element: number, index: number) {
+                return element.toString(radix);
+            }).join(' '));
         }
         return text.join('\n');
     }

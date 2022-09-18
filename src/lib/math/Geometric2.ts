@@ -619,7 +619,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden
      */
-    __rmul__(lhs: any): Geometric2 {
+    __rmul__(lhs: Geometric2 | number): Geometric2 {
         if (lhs instanceof Geometric2) {
             return lock(Geometric2.copy(lhs).mul(this));
         }
@@ -730,7 +730,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
         return this;
     }
     /**
-     * @param m The multivector dividend.
+     * @param rhs The multivector dividend.
      * @returns this / m;
      */
     div(rhs: Geometric): Geometric2 {
@@ -750,6 +750,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     div2(a: Spinor, b: Spinor): Geometric2 {
         throw new Error(notImplemented('div2').message);
     }
@@ -1004,6 +1005,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
             return this;
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rotorFromFrameToFrame(es: Vector[], fs: Vector[]): Geometric2 {
         throw new Error(notImplemented('rotorFromFrameToFrame').message);
     }
@@ -1013,6 +1015,7 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @param B The (unit) bivector generating the rotation.
      * @param θ The rotation angle in radians when the rotor is applied on both sides as R * M * ~R
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rotorFromGeneratorAngle(B: Bivector, θ: number): Geometric2 {
         throw new Error(notImplemented('rotorFromGeneratorAngle').message);
     }
@@ -1873,7 +1876,9 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toExponential(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toExponential(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
@@ -1884,12 +1889,16 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toFixed(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toFixed(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
     toLaTeX(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
 
@@ -1898,7 +1907,9 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toPrecision(precision?: number): string {
-        const coordToString = function (coord: number): string { return coord.toPrecision(precision); };
+        const coordToString = function (coord: number): string {
+            return coord.toPrecision(precision);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
@@ -1909,7 +1920,9 @@ export class Geometric2 extends AbstractMeasure implements GradeMasked, Geometri
      * @returns
      */
     toString(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
 
