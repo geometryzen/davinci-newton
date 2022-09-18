@@ -60,10 +60,12 @@ export class EulerMethod implements DiffEqSolver {
             try {
                 if (stateVals[i] !== 0) {
                     stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
-                } else {
+                }
+                else {
                     stateUoms[i] = Unit.mul(k1uoms[i], uomStep);
                 }
-            } catch (e) {
+            }
+            catch (e) {
                 throw new Error(`i=${i}, stateVals[${i}]=${stateVals[i]}, stateUoms[${i}]=${stateUoms[i]}, k1vals[${i}]=${k1vals[i]}, k1uoms[${i}]=${k1uoms[i]}, uomStep=${uomStep}. Cause: ${e}`);
             }
             stateVals[i] += k1vals[i] * stepSize;

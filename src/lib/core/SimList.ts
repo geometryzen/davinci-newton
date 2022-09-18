@@ -46,7 +46,7 @@ export class SimList extends AbstractSubject {
     /**
      * 
      */
-    forEach(callBack: (simObject: SimObject, index: number) => any): void {
+    forEach(callBack: (simObject: SimObject, index: number) => unknown): void {
         return this.$elements.forEach(callBack);
     }
 

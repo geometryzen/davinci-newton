@@ -1,7 +1,7 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
+import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY, Kinematics } from '../core/Kinematics';
 import { VarsList } from "../core/VarsList";
 import { Geometric1 } from "../math/Geometric1";
 import { Unit } from "../math/Unit";
@@ -69,6 +69,7 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
     set speedOfLight(speedOfLight: Geometric1) {
         this.$speedOfLight = speedOfLight;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Geometric1>, uomTime: Unit): void {
         const P = body.P;
         const M = body.M;
@@ -92,7 +93,8 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
             if (!Unit.isOne(uom)) {
                 throw new Error(`Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
             }
-        } else {
+        }
+        else {
             if (!Unit.isCompatible(uom, Unit.INV_SECOND)) {
                 throw new Error(`Ω unit of measure should be ${Unit.div(Unit.ONE, uomTime)}. L.uom=${L.uom}, Ω.uom=${Ω.uom}, R.uom=${R.uom}, uomTime=${uomTime}`);
             }
@@ -100,9 +102,11 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
         // Fix it up for now...
         if (Unit.isOne(uomTime)) {
             rateOfChangeUoms[idx + OFFSET_ATTITUDE_A] = Unit.ONE;
-        } else if (Unit.isCompatible(uomTime, Unit.SECOND)) {
+        }
+        else if (Unit.isCompatible(uomTime, Unit.SECOND)) {
             rateOfChangeUoms[idx + OFFSET_ATTITUDE_A] = Unit.INV_SECOND;
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ATTITUDE_A] = Unit.div(Unit.ONE, uomTime);
         }
     }
@@ -170,9 +174,11 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
         body.L.uom = units[idx + OFFSET_ANGULAR_MOMENTUM];
         if (Unit.isOne(uomTime)) {
             body.L.uom = Unit.ONE;
-        } else if (Unit.isCompatible(uomTime, Unit.SECOND)) {
+        }
+        else if (Unit.isCompatible(uomTime, Unit.SECOND)) {
             body.L.uom = Unit.JOULE_SECOND;
-        } else {
+        }
+        else {
             throw new Error();
         }
 
@@ -198,12 +204,14 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM + idx, 0);
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM + idx, body.L.uom);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric1, uomTime: Unit): void {
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
 
         if (Fx !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
@@ -216,6 +224,7 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = force.x;
         rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric1, uomTime: Unit): void {
         rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM] = torque.uom;
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM] = 0;
@@ -223,7 +232,8 @@ export class KinematicsG10 implements Kinematics<Geometric1> {
     epilog(bodies: ForceBody<Geometric1>[], forceLaws: ForceLaw<Geometric1>[], potentialOffset: Geometric1, vars: VarsList): void {
         if (potentialOffset instanceof Geometric1) {
             // TODO: Check that it is a scalar and either dimensionless or energy units.
-        } else {
+        }
+        else {
             throw new Error("potentialOffset must be defined in epilog(bodies, forceLaws, potentialOffset, vars).");
         }
 

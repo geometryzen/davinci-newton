@@ -173,7 +173,10 @@ describe("EngineG11", function () {
             engine.addBody(beadOne);
             engine.addBody(beadTwo);
 
-            const forceOne = new FaradayLaw(beadOne, function (X: Spacetime1) { return e01; });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const forceOne = new FaradayLaw(beadOne, function (X: Spacetime1) {
+                return e01;
+            });
             engine.addForceLaw(forceOne);
 
             // This won't even be close. We are missing a force that acts in the e0 direction.

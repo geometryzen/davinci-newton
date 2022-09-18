@@ -1,6 +1,6 @@
 /**
  * @hidden
  */
-export default function isBoolean(x: any): x is boolean {
+export default function isBoolean(x: unknown): x is boolean {
     return (typeof x === 'boolean');
 }

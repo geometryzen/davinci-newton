@@ -13,7 +13,8 @@ function beAnArray(): string {
 export function mustBeArray<T>(name: string, value: T[], contextBuilder?: () => string): T[] {
     if (Array.isArray(value)) {
         return value;
-    } else {
+    }
+    else {
         doesNotSatisfy(name, beAnArray, contextBuilder);
     }
 }

@@ -1,5 +1,5 @@
-import mustSatisfy from '../checks/mustSatisfy';
 import isUndefined from '../checks/isUndefined';
+import mustSatisfy from '../checks/mustSatisfy';
 
 /**
  * @hidden
@@ -11,7 +11,7 @@ function beUndefined() {
 /**
  * @hidden
  */
-export default function (name: string, value: any, contextBuilder?: () => string): any {
+export default function (name: string, value: unknown, contextBuilder?: () => string): unknown {
     mustSatisfy(name, isUndefined(value), beUndefined, contextBuilder);
     return value;
 }

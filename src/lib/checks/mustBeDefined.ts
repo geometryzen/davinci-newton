@@ -1,5 +1,5 @@
-import mustSatisfy from '../checks/mustSatisfy';
 import isDefined from '../checks/isDefined';
+import mustSatisfy from '../checks/mustSatisfy';
 
 /**
  * @hidden
@@ -11,7 +11,7 @@ function beDefined() {
 /**
  * @hidden
  */
-export function mustBeDefined(name: string, value: any, contextBuilder?: () => string): any {
+export function mustBeDefined<T>(name: string, value: T, contextBuilder?: () => string): T {
     mustSatisfy(name, isDefined(value), beDefined, contextBuilder);
     return value;
 }

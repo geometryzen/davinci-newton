@@ -366,7 +366,8 @@ export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Mas
         this.metric.rotate(this.$worldPoint, this.R);
         try {
             this.metric.addVector(this.$worldPoint, this.X);
-        } catch (e) {
+        }
+        catch (e) {
             const cause = (e instanceof Error) ? e.message : `${e}`;
             throw new Error(`${this.$worldPoint} + ${this.X} is not allowed. Cause: ${cause}`);
         }

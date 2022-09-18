@@ -27,11 +27,13 @@ export class Particle<T> extends RigidBody<T> {
             if (!Unit.isOne(metric.uom(this.Ω))) {
                 metric.setUom(this.Ω, Unit.ONE);
             }
-        } else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
+        }
+        else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
             if (!Unit.isCompatible(metric.uom(this.Ω), Unit.INV_SECOND)) {
                 metric.setUom(this.Ω, Unit.INV_SECOND);
             }
-        } else {
+        }
+        else {
             throw new Error(`updateAngularVelocity() body.L.uom=${metric.uom(this.L)}, body.Ω.uom=${metric.uom(this.Ω)}`);
         }
     }
@@ -45,11 +47,13 @@ export class Particle<T> extends RigidBody<T> {
             if (!Unit.isOne(this.Iinv.uom)) {
                 this.Iinv.uom = Unit.ONE;
             }
-        } else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
+        }
+        else if (Unit.isCompatible(metric.uom(this.L), Unit.JOULE_SECOND)) {
             if (!Unit.isCompatible(this.Iinv.uom, Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED))) {
                 this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             }
-        } else {
+        }
+        else {
             throw new Error(`updateInertiaTensor() body.L.uom=${metric.uom(this.L)}, body.Ω.uom=${metric.uom(this.Ω)}`);
         }
     }

@@ -6,7 +6,8 @@
 export function varNamesContainsTime(varNames: string[]): boolean {
     if (Array.isArray(varNames)) {
         return (varNames.indexOf('TIME') >= 0);
-    } else {
+    }
+    else {
         throw new Error("varNames must be an array.");
     }
 }

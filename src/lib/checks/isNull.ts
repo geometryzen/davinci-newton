@@ -1,6 +1,6 @@
 /**
  * @hidden
  */
-export default function (x: any): x is null {
-  return x === null;
+export default function (x: unknown): x is null {
+    return x === null;
 }

@@ -1,6 +1,6 @@
 /**
  * @hidden
  */
-export default function isNumber(x: any): x is number {
+export default function isNumber(x: unknown): x is number {
     return (typeof x === 'number');
 }

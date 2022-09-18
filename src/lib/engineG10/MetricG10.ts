@@ -40,7 +40,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x + rhs.x;
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             const a = lhs.a + rhs.a;
             const x = lhs.x + rhs.x;
             const uom = Unit.compatible(lhs.uom, rhs.uom);
@@ -55,7 +56,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x + rhs.x;
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             const a = lhs.a;
             const x = lhs.x + rhs.x;
             const uom = Unit.compatible(lhs.uom, rhs.uom);
@@ -67,14 +69,17 @@ export class MetricG10 implements Metric<Geometric1> {
             if (mv.isZero()) {
                 if (Unit.isOne(matrix.uom)) {
                     return mv;
-                } else {
+                }
+                else {
                     mv.uom = Unit.mul(matrix.uom, mv.uom);
                     return mv;
                 }
-            } else {
+            }
+            else {
                 throw new Error(`applyMatrix(mv=Geometric1([${mv.a}, ${mv.x}], mv.uom), matrix=dimensions=${matrix.dimensions} Method not implemented.`);
             }
-        } else {
+        }
+        else {
             throw new Error("mv must be defined in Metric.applyMatrix(mv, matrix)");
         }
     }
@@ -126,7 +131,8 @@ export class MetricG10 implements Metric<Geometric1> {
             mv.x = x / s;
             mv.uom = Unit.ONE;
             return mv;
-        } else {
+        }
+        else {
             return this.direction(copy(mv));
         }
     }
@@ -136,7 +142,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x / a;
             lhs.uom = Unit.div(lhs.uom, uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.divByScalar(copy(lhs), a, uom));
         }
     }
@@ -150,7 +157,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = La * Rx + Lx * Ra;
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.ext(copy(lhs), rhs));
         }
     }
@@ -199,7 +207,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = x;
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.mul(copy(lhs), rhs));
         }
     }
@@ -212,7 +221,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.a = a;
             lhs.x = x;
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.mulByNumber(copy(lhs), alpha));
         }
     }
@@ -222,7 +232,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x * a;
             lhs.uom = Unit.mul(lhs.uom, uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.mulByScalar(copy(lhs), a, uom));
         }
     }
@@ -234,7 +245,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = x;
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.mulByVector(copy(lhs), rhs));
         }
     }
@@ -243,7 +255,8 @@ export class MetricG10 implements Metric<Geometric1> {
             mv.a = -mv.a;
             mv.x = -mv.x;
             return mv;
-        } else {
+        }
+        else {
             throw new Error('Method not implemented.');
         }
     }
@@ -256,7 +269,8 @@ export class MetricG10 implements Metric<Geometric1> {
     rev(mv: Geometric1): Geometric1 {
         if (mv.isMutable()) {
             return mv;
-        } else {
+        }
+        else {
             return lock(this.rev(copy(mv)));
         }
     }
@@ -264,7 +278,8 @@ export class MetricG10 implements Metric<Geometric1> {
         if (mv.isMutable()) {
             // TODO: Assert that the spinor is 1.
             return mv;
-        } else {
+        }
+        else {
             return lock(this.rotate(copy(mv), spinor));
         }
     }
@@ -281,7 +296,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = 0;
             lhs.uom = Unit.mul(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.scp(copy(lhs), rhs));
         }
     }
@@ -294,7 +310,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x - rhs.x;
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.sub(copy(lhs), rhs));
         }
     }
@@ -303,7 +320,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.a = lhs.a - a;
             lhs.uom = Unit.compatible(lhs.uom, uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.subScalar(copy(lhs), a, uom));
         }
     }
@@ -312,7 +330,8 @@ export class MetricG10 implements Metric<Geometric1> {
             lhs.x = lhs.x - rhs.x;
             lhs.uom = Unit.compatible(lhs.uom, rhs.uom);
             return lhs;
-        } else {
+        }
+        else {
             return lock(this.subVector(copy(lhs), rhs));
         }
     }

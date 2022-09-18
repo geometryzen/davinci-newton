@@ -67,7 +67,8 @@ export class ModifiedEuler implements DiffEqSolver {
         for (let i = 0; i < N; i++) {
             if (stateVals[i] !== 0) {
                 inuoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k1uoms[i], uomStep));
-            } else {
+            }
+            else {
                 inuoms[i] = Unit.mul(k1uoms[i], uomStep);
             }
             invals[i] = stateVals[i] + k1vals[i] * stepSize;
@@ -78,10 +79,12 @@ export class ModifiedEuler implements DiffEqSolver {
             if (stateVals[i] !== 0) {
                 if (k2vals[i] !== 0) {
                     stateUoms[i] = Unit.compatible(stateUoms[i], Unit.mul(k2uoms[i], uomStep));
-                } else {
+                }
+                else {
                     // Do nothing.
                 }
-            } else {
+            }
+            else {
                 stateUoms[i] = Unit.mul(k2uoms[i], uomStep);
             }
             stateVals[i] += (k1vals[i] + k2vals[i]) * stepSize / 2;

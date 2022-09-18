@@ -151,7 +151,8 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
                 const name = kinematics.getOffsetName(k);
                 if (isValidName(toName(name))) {
                     names.push(name);
-                } else {
+                }
+                else {
                     throw new Error(`Body kinematic variable name, '${name}', returned by kinematics.getOffsetName(${k}) is not a valid name.`);
                 }
             }
@@ -526,6 +527,7 @@ export class Physics<T> extends AbstractSubject implements Simulation, EnergySys
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private applyConstraint(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], constraint: GeometricConstraint<T>, Δt: number, uomTime?: Unit): void {
         const body = constraint.getBody();
         if (!(contains(this.$bodies, body))) {

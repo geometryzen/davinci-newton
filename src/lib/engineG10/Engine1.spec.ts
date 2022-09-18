@@ -99,12 +99,15 @@ describe("Engine1", function () {
             const F = new Geometric1();
             const forceLaw = new ConstantForceLaw(bead, F);
             engine.addForceLaw(forceLaw);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const radiusFn = function (x: Geometric1, radius: Geometric1) {
                 // Do nothing yet.
             };
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const rotationFn = function (x: Geometric1, plane: Geometric1) {
                 // Do nothing yet.
             };
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const tangentFn = function (x: Geometric1, tangent: Geometric1) {
                 // Do nothing yet.
             };

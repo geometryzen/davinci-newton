@@ -39,6 +39,7 @@ export class Engine<T> {
      * @param kinematics 
      * @param options 
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(metric: Metric<T>, private readonly kinematics: Kinematics<T>, options?: Partial<EngineOptions>) {
         this.physics = new Physics(metric, kinematics);
         const rk4 = new RungeKutta(this.physics);

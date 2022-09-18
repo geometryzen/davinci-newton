@@ -172,6 +172,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * @param indexes  the indexes of the variables;
      * if no index given then all variable's sequence numbers are incremented
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     incrSequence(...indexes: number[]) {
         if (arguments.length === 0) {
             // increment sequence number on all variables
@@ -182,6 +183,7 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         else {
             // increment sequence number only on specified variables
             for (let i = 0, n = arguments.length; i < n; i++) {
+                // eslint-disable-next-line prefer-rest-params
                 const idx = arguments[i];
                 this.checkIndex_(idx);
                 this.$variables[idx].incrSequence();
@@ -304,7 +306,8 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
         const variable = this.$variables[index];
         if (variable) {
             variable.setValueJump(value);
-        } else {
+        }
+        else {
             throw new Error(`index is invalid in setValueJump(index=${index}, value=${value}).`);
         }
     }
@@ -466,8 +469,10 @@ export class VarsList extends AbstractSubject implements GraphVarsList {
      * Indicates the specified Variables are being automatically computed.
      * @param indexes  the indexes of the variables
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setComputed(...indexes: number[]) {
         for (let i = 0, n = arguments.length; i < n; i++) {
+            // eslint-disable-next-line prefer-rest-params
             const idx = arguments[i];
             this.checkIndex_(idx);
             this.$variables[idx].setComputed(true);

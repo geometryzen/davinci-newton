@@ -15,10 +15,12 @@ export function checkBodyAttitudeUnit(uom: Unit, uomTime: Unit): void {
             if (Unit.isOne(uom.mul(Unit.SECOND))) {
                 // Providing a time uom would fix the issue.
                 throw new Error(`body.R.uom should be one, but was ${uom}. The unit of measure for the time step appears to be missing. Consider adding a time step unit of measure of ${Unit.SECOND}.`);
-            } else {
+            }
+            else {
                 throw new Error(`body.R.uom should be one, but was ${uom}.`);
             }
-        } else {
+        }
+        else {
             throw new Error(`checkBodyAttitudeUnit(uom=${uom},uomTime=${uomTime}): body.R.uom should be one, but was ${uom}.`);
         }
     }

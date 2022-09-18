@@ -16,7 +16,8 @@ export class Block1 extends RigidBody1 {
 
         if (Unit.isOne(metric.uom(width))) {
             // dimensionless
-        } else {
+        }
+        else {
             this.M = metric.scalar(metric.a(this.M), Unit.KILOGRAM);
             this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             metric.setUom(this.X, Unit.METER);

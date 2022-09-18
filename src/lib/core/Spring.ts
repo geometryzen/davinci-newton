@@ -152,7 +152,8 @@ export class Spring<T> extends AbstractSimObject implements ForceLaw<T> {
         }
         try {
             this.body1.localPointToWorldPoint(this.attach1_, x);
-        } catch (e) {
+        }
+        catch (e) {
             throw new Error(`localPointToWorldPoint(attach1=${this.attach1_}). Cause: ${e}`);
         }
     }

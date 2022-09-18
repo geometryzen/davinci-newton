@@ -72,7 +72,8 @@ export function checkBodyKinematicUnits<T>(body: ForceBody<T>, metric: Metric<T>
         checkDimensionless(P, 'P', metric);
         checkDimensionless(L, 'L', metric);
         checkDimensionless(Ω, 'Ω', metric);
-    } else if (Unit.isCompatible(uomTime, TIME)) {
+    }
+    else if (Unit.isCompatible(uomTime, TIME)) {
         checkUnit(M, 'M', metric, MASS);
         checkUnit(X, 'X', metric, LENGTH);
         checkUnit(R, 'R', metric, ONE);
