@@ -29,6 +29,7 @@ export class Euclidean2 implements Metric<Geometric2> {
     addVector(lhs: Geometric2, rhs: Geometric2): Geometric2 {
         return lhs.addVector(rhs);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     applyMatrix(mv: Geometric2, matrix: MatrixLike): Geometric2 {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     }

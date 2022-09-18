@@ -49,7 +49,8 @@ export class Cylinder3 extends RigidBody<Geometric3> {
 
         if (Unit.isOne(radius.uom) && Unit.isOne(height.uom)) {
             // dimensionless
-        } else {
+        }
+        else {
             this.M = Geometric3.scalar(this.M.a, Unit.KILOGRAM);
             this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;

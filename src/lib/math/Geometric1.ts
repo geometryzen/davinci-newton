@@ -311,7 +311,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.x = rhs.x;
             this.uom = rhs.uom;
             return this;
-        } else {
+        }
+        else {
             return lock(copy(this).copy(rhs));
         }
     }
@@ -378,11 +379,13 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
         else {
             if (isScalar(rhs)) {
                 return this.divByScalar(rhs.a, rhs.uom);
-            } else {
+            }
+            else {
                 return this.mul(copy(rhs).inv());
             }
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     divByVector(rhs: Vector): Geometric1 {
         throw new Error("Method not implemented.");
     }
@@ -436,7 +439,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     isSpinor(): boolean {
         if (Unit.isOne(this.uom)) {
             return this.coords[COORD_X] === 0;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -535,7 +539,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.x = +this.x;
             // The unit of measure is unchanged.
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().rev());
         }
     }
@@ -548,7 +553,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.x = 0;
             this.uom = Unit.mul(this.uom, this.uom);
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().quaditude());
         }
     }
@@ -578,7 +584,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
                 this.a = - a * α;
                 this.uom = uom;
                 return this;
-            } else if (a === 0 || α === 0) {
+            }
+            else if (a === 0 || α === 0) {
                 return this;
             }
             else {
@@ -633,7 +640,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.x = 0;
             this.uom = Unit.mul(this.uom, this.uom);
             return this;
-        } else {
+        }
+        else {
             return lock(this.clone().quaditude());
         }
     }
@@ -675,7 +683,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.a = this.a * a;
             this.x = this.x * a;
             return this;
-        } else {
+        }
+        else {
             return lock(copy(this).scale(a));
         }
     }
@@ -742,23 +751,33 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
         }
     }
     toExponential(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toExponential(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toExponential(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toFixed(fractionDigits?: number): string {
-        const coordToString = function (coord: number): string { return coord.toFixed(fractionDigits); };
+        const coordToString = function (coord: number): string {
+            return coord.toFixed(fractionDigits);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toLaTeX(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS_LaTeX, this.uom);
     }
     toPrecision(precision?: number): string {
-        const coordToString = function (coord: number): string { return coord.toPrecision(precision); };
+        const coordToString = function (coord: number): string {
+            return coord.toPrecision(precision);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     toString(radix?: number): string {
-        const coordToString = function (coord: number): string { return coord.toString(radix); };
+        const coordToString = function (coord: number): string {
+            return coord.toString(radix);
+        };
         return stringFromCoordinates(coordinates(this), coordToString, BASIS_LABELS, this.uom);
     }
     zero(): Geometric1 {
@@ -767,14 +786,15 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
             this.x = 0;
             this.uom = Unit.ONE;
             return this;
-        } else {
+        }
+        else {
             return lock(copy(this).zero());
         }
     }
     /**
      * @hidden 
      */
-    __div__(rhs: any): Geometric1 {
+    __div__(rhs: unknown): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().div(rhs));
         }
@@ -805,7 +825,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rdiv__(lhs: any): Geometric1 {
+    __rdiv__(lhs: unknown): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).div(this));
         }
@@ -819,7 +839,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __vbar__(rhs: any): Geometric1 {
+    __vbar__(rhs: unknown): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).scp(rhs));
         }
@@ -833,7 +853,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rvbar__(lhs: any): Geometric1 {
+    __rvbar__(lhs: unknown): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).scp(this));
         }
@@ -847,7 +867,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __wedge__(rhs: any): Geometric1 {
+    __wedge__(rhs: unknown): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).ext(rhs));
         }
@@ -862,7 +882,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rwedge__(lhs: any): Geometric1 {
+    __rwedge__(lhs: Geometric1 | number): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).ext(this));
         }
@@ -877,7 +897,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __lshift__(rhs: any): Geometric1 {
+    __lshift__(rhs: Geometric1 | number): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).lco(rhs));
         }
@@ -891,7 +911,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rlshift__(lhs: any): Geometric1 {
+    __rlshift__(lhs: Geometric1 | number): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).lco(this));
         }
@@ -905,7 +925,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rshift__(rhs: any): Geometric1 {
+    __rshift__(rhs: Geometric1 | number): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(copy(this).rco(rhs));
         }
@@ -919,7 +939,7 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     /**
      * @hidden 
      */
-    __rrshift__(lhs: any): Geometric1 {
+    __rrshift__(lhs: Geometric1 | number): Geometric1 {
         if (lhs instanceof Geometric1) {
             return lock(copy(lhs).rco(this));
         }
@@ -1099,7 +1119,8 @@ export class Geometric1 extends AbstractMeasure implements GradeMasked, Geometri
     __mul__(rhs: Geometric1 | number | Unit): Geometric1 {
         if (rhs instanceof Geometric1) {
             return lock(this.clone().mul(rhs));
-        } else if (typeof rhs === 'number') {
+        }
+        else if (typeof rhs === 'number') {
             return lock(this.clone().mulByNumber(rhs));
         }
         else if (rhs instanceof Unit) {

@@ -312,6 +312,15 @@ export class DisplayAxes implements DisplayObject {
     }
 
     /**
+     * Set the color to draw the graph axes with.
+     * @param color the color to draw the graph axes with
+     */
+    set color(color: string) {
+        this.drawColor_ = color;
+        this.needRedraw_ = true;
+    }
+
+    /**
      * Returns the font to draw the graph axes with.
      * @return the font to draw the graph axes with
      */
@@ -326,8 +335,26 @@ export class DisplayAxes implements DisplayObject {
         return this.hLabel_;
     }
 
+    /**
+     * Sets the label shown next to the horizontal axis.
+     */
+    set hAxisLabel(hAxisLabel: string) {
+        this.hLabel_ = hAxisLabel;
+        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
+        this.needRedraw_ = true;
+    }
+
     get hAxisScale(): Unit {
         return this.hScale_;
+    }
+
+    /**
+     * Sets the scale used for the horizontal axis.
+     */
+    set hAxisScale(hAxisScale: Unit) {
+        this.hScale_ = hAxisScale;
+        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
+        this.needRedraw_ = true;
     }
 
     /**
@@ -390,8 +417,26 @@ export class DisplayAxes implements DisplayObject {
         return this.vLabel_;
     }
 
+    /**
+     * Sets the name shown next to the vertical axis.
+     */
+    set vAxisLabel(vAxisLabel: string) {
+        this.vLabel_ = vAxisLabel;
+        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
+        this.needRedraw_ = true;
+    }
+
     get vAxisScale(): Unit {
         return this.vScale_;
+    }
+
+    /**
+     * Sets the scale used for the horizontal axis.
+     */
+    set vAxisScale(vAxisScale: Unit) {
+        this.vScale_ = vAxisScale;
+        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
+        this.needRedraw_ = true;
     }
 
     /**
@@ -403,11 +448,29 @@ export class DisplayAxes implements DisplayObject {
     }
 
     /**
+     * Sets the horizontal axis alignment: whether it should appear at bottom, top or middle of the
+     * simulation rectangle.
+     */
+    set hAxisAlign(alignment: AlignV) {
+        this.hAxisAlign_ = alignment;
+        this.needRedraw_ = true;
+    }
+
+    /**
      * Returns the Y-axis alignment : whether it should appear at left, right or middle of
      * the simulation rectangle.
      */
     get vAxisAlign(): AlignH {
         return this.vAxisAlign_;
+    }
+
+    /**
+     * Sets the vertical axis alignment: whether it should appear at left, right or middle of the
+     * simulation rectangle.
+     */
+    set vAxisAlign(alignment: AlignH) {
+        this.vAxisAlign_ = alignment;
+        this.needRedraw_ = true;
     }
 
     getZIndex(): number {
@@ -426,15 +489,7 @@ export class DisplayAxes implements DisplayObject {
         return this.needRedraw_;
     }
 
-    /**
-     * Set the color to draw the graph axes with.
-     * @param color the color to draw the graph axes with
-     */
-    set color(color: string) {
-        this.drawColor_ = color;
-        this.needRedraw_ = true;
-    }
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setDragable(dragable: boolean): void {
         // Do nothing.
     }
@@ -449,66 +504,12 @@ export class DisplayAxes implements DisplayObject {
     }
 
     /**
-     * Sets the label shown next to the horizontal axis.
-     */
-    set hAxisLabel(hAxisLabel: string) {
-        this.hLabel_ = hAxisLabel;
-        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
-        this.needRedraw_ = true;
-    }
-
-    /**
-     * Sets the scale used for the horizontal axis.
-     */
-    set hAxisScale(hAxisScale: Unit) {
-        this.hScale_ = hAxisScale;
-        this.hLabelScaleCache_ = makeLabelScale(this.hLabel_, this.hScale_);
-        this.needRedraw_ = true;
-    }
-
-    /**
      * Sets the bounding rectangle for this DisplayAxes in simulation coordinates; this
      * determines the numbering scale shown.
      * @param simRect the bounding rectangle for this DisplayAxes in simulation coordinates.
      */
     setSimRect(simRect: DoubleRect): void {
         this.simRect_ = simRect;
-        this.needRedraw_ = true;
-    }
-
-    /**
-     * Sets the name shown next to the vertical axis.
-     */
-    set vAxisLabel(vAxisLabel: string) {
-        this.vLabel_ = vAxisLabel;
-        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
-        this.needRedraw_ = true;
-    }
-
-    /**
-     * Sets the scale used for the horizontal axis.
-     */
-    set vAxisScale(vAxisScale: Unit) {
-        this.vScale_ = vAxisScale;
-        this.vLabelScaleCache_ = makeLabelScale(this.vLabel_, this.vScale_);
-        this.needRedraw_ = true;
-    }
-
-    /**
-     * Sets the horizontal axis alignment: whether it should appear at bottom, top or middle of the
-     * simulation rectangle.
-     */
-    set hAxisAlign(alignment: AlignV) {
-        this.hAxisAlign_ = alignment;
-        this.needRedraw_ = true;
-    }
-
-    /**
-     * Sets the vertical axis alignment: whether it should appear at left, right or middle of the
-     * simulation rectangle.
-     */
-    set vAxisAlign(alignment: AlignH) {
-        this.vAxisAlign_ = alignment;
         this.needRedraw_ = true;
     }
 

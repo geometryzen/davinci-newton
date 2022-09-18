@@ -206,6 +206,34 @@ export class AutoScale extends AbstractSubject implements Memorizable, Observer 
     get active(): boolean {
         return this.isActive_;
     }
+    /**
+     * Sets whether this AutoScale is active.  When not active, the range rectangle
+     * is not updated and the SimView's simulation rectangle is not modified. When changed
+     * to be active, this will also call {@link #reset}.
+     * 
+     * The AutoScale must be enabled in order to become active, see `enabled`.
+     * If not enabled, then this method can only make the AutoScale inactive.
+     * @param value whether this AutoScale should be active
+     */
+    set active(value: boolean) {
+        if (this.isActive_ !== value) {
+            if (value) {
+                if (this.enabled_) {
+                    this.reset();
+                    this.simView_.addMemo(this);
+                    this.setComputed(true);
+                    this.isActive_ = true;
+                    this.broadcast(new GenericEvent(this, AutoScale.ACTIVE, this.isActive_));
+                }
+            }
+            else {
+                this.simView_.removeMemo(this);
+                this.setComputed(false);
+                this.isActive_ = false;
+                this.broadcast(new GenericEvent(this, AutoScale.ACTIVE, this.isActive_));
+            }
+        }
+    }
 
     /**
      * Returns which axis should be auto scaled.
@@ -215,11 +243,37 @@ export class AutoScale extends AbstractSubject implements Memorizable, Observer 
     }
 
     /**
+     * Set which axis to auto scale.
+     */
+    set axisChoice(value: AxisChoice) {
+        if (value === AxisChoice.VERTICAL || value === AxisChoice.HORIZONTAL || value === AxisChoice.BOTH) {
+            this.axisChoice_ = value;
+            this.broadcastParameter(AutoScale.AXIS);
+        }
+        else {
+            throw new Error('unknown ' + value);
+        }
+    }
+
+    /**
      * Returns whether is AutoScale is enabled.  See `enabled`.
      * @return whether is AutoScale is enabled
      */
     get enabled(): boolean {
         return this.enabled_;
+    }
+
+    /**
+     * Sets whether this AutoScale is enabled. The AutoScale must be enabled in order
+     * to be active.  See `active`.
+     * @param value whether this AutoScale should be enabled
+     */
+    set enabled(enabled: boolean) {
+        if (this.enabled_ !== enabled) {
+            this.enabled_ = enabled;
+            this.active = enabled;
+            this.broadcast(new GenericEvent(this, AutoScale.ENABLED, this.enabled_));
+        }
     }
 
     /**
@@ -238,6 +292,22 @@ export class AutoScale extends AbstractSubject implements Memorizable, Observer 
      */
     get timeWindow(): number {
         return this.timeWindow_;
+    }
+
+    /**
+     * Sets length of time to include in the range rectangle for a *time graph*,
+     * and sets the AutoScale to be active.
+     * @param timeWindow length of time to include in the range rectangle
+     */
+    set timeWindow(timeWindow: number) {
+        if (veryDifferent(timeWindow, this.timeWindow_)) {
+            this.timeWindow_ = timeWindow;
+            this.reset();
+            // this fixes following bug: click pan-zoom control which makes AutoScale inactive;
+            // then change the time window, but nothing happens.
+            this.active = true;
+            this.broadcastParameter(AutoScale.TIME_WINDOW);
+        }
     }
 
     memorize(): void {
@@ -350,48 +420,6 @@ export class AutoScale extends AbstractSubject implements Memorizable, Observer 
     }
 
     /**
-     * Sets whether this AutoScale is active.  When not active, the range rectangle
-     * is not updated and the SimView's simulation rectangle is not modified. When changed
-     * to be active, this will also call {@link #reset}.
-     * 
-     * The AutoScale must be enabled in order to become active, see `enabled`.
-     * If not enabled, then this method can only make the AutoScale inactive.
-     * @param value whether this AutoScale should be active
-     */
-    set active(value: boolean) {
-        if (this.isActive_ !== value) {
-            if (value) {
-                if (this.enabled_) {
-                    this.reset();
-                    this.simView_.addMemo(this);
-                    this.setComputed(true);
-                    this.isActive_ = true;
-                    this.broadcast(new GenericEvent(this, AutoScale.ACTIVE, this.isActive_));
-                }
-            }
-            else {
-                this.simView_.removeMemo(this);
-                this.setComputed(false);
-                this.isActive_ = false;
-                this.broadcast(new GenericEvent(this, AutoScale.ACTIVE, this.isActive_));
-            }
-        }
-    }
-
-    /**
-     * Set which axis to auto scale.
-     */
-    set axisChoice(value: AxisChoice) {
-        if (value === AxisChoice.VERTICAL || value === AxisChoice.HORIZONTAL || value === AxisChoice.BOTH) {
-            this.axisChoice_ = value;
-            this.broadcastParameter(AutoScale.AXIS);
-        }
-        else {
-            throw new Error('unknown ' + value);
-        }
-    }
-
-    /**
      * Marks the SimView's Parameters as to whether they are automatically computed
      * depending on whether this AutoScale is active.
      * @param value whether this AutoScale is computing the Parameter values
@@ -402,35 +430,6 @@ export class AutoScale extends AbstractSubject implements Memorizable, Observer 
             const p = this.simView_.getParameter(name);
             p.setComputed(value);
         });
-    }
-
-    /**
-     * Sets whether this AutoScale is enabled. The AutoScale must be enabled in order
-     * to be active.  See `active`.
-     * @param value whether this AutoScale should be enabled
-     */
-    set enabled(enabled: boolean) {
-        if (this.enabled_ !== enabled) {
-            this.enabled_ = enabled;
-            this.active = enabled;
-            this.broadcast(new GenericEvent(this, AutoScale.ENABLED, this.enabled_));
-        }
-    }
-
-    /**
-     * Sets length of time to include in the range rectangle for a *time graph*,
-     * and sets the AutoScale to be active.
-     * @param timeWindow length of time to include in the range rectangle
-     */
-    set timeWindow(timeWindow: number) {
-        if (veryDifferent(timeWindow, this.timeWindow_)) {
-            this.timeWindow_ = timeWindow;
-            this.reset();
-            // this fixes following bug: click pan-zoom control which makes AutoScale inactive;
-            // then change the time window, but nothing happens.
-            this.active = true;
-            this.broadcastParameter(AutoScale.TIME_WINDOW);
-        }
     }
 
     /**

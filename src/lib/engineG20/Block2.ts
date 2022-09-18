@@ -55,7 +55,8 @@ export class Block2 extends RigidBody2 {
 
         if (Unit.isOne(width.uom) && Unit.isOne(height.uom)) {
             // dimensionless
-        } else {
+        }
+        else {
             this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
             this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
             this.X.uom = Unit.METER;

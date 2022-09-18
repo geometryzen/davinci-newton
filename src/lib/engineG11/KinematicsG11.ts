@@ -54,6 +54,7 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
      * @param body 
      * @param uomTime 
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setPositionRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
         // We're essentially converting from momentum and rest-mass to ordinary velocity.
         // Interestingly, this requires that we know the space-time split of the momentum.
@@ -71,6 +72,7 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
         rateOfChangeUoms[idx + OFFSET_POSITION_T] = uom;
         rateOfChangeUoms[idx + OFFSET_POSITION_X] = uom;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setAttitudeRateOfChangeVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, body: ForceBody<Spacetime1>, uomTime: Unit): void {
         // TODO: Review the theory to see if this needs to be modified for relativity.
         // Let Ω(t) be the (bivector) angular velocity.
@@ -197,6 +199,7 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_B + idx, L.b);
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM_B + idx, L.uom);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Spacetime1, uomTime: Unit): void {
         const Ft = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_T];
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
@@ -204,30 +207,36 @@ export class KinematicsG11 implements Kinematics<Spacetime1> {
         if (Ft !== 0 || Fx !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_T] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_T], force.uom);
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_T] = force.uom;
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_T] = Ft + force.t;
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Spacetime1): void {
         // Use when applying geometric constraints.
         throw new Error("getForce method not implemented.");
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setForce(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Spacetime1): void {
         // Use when applying geometric constraints.
         throw new Error("setForce method not implemented.");
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Spacetime1, uomTime: Unit): void {
         const Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_B];
         if (Tb !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_B] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_B], torque.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_B] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_B] = Tb + torque.b;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     epilog(bodies: ForceBody<Spacetime1>[], forceLaws: ForceLaw<Spacetime1>[], potentialOffset: Spacetime1, vars: VarsList): void {
         // throw new Error("Method not implemented.");
     }

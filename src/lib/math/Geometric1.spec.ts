@@ -953,7 +953,7 @@ describe("Geometric1", function () {
                 expect(lhs.__eq__(1)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.ONE)).toBe(lhs.equals(one));
                 expect(lhs.__eq__(Unit.METER)).toBe(lhs.equals(meter));
-                expect(lhs.__eq__("1" as any)).toBe(false);
+                expect(lhs.__eq__("1" as unknown as Unit)).toBe(false);
             }
         });
         it("", function () {
@@ -972,7 +972,7 @@ describe("Geometric1", function () {
                 expect(lhs.__ne__(1)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.ONE)).toBe(!lhs.equals(one));
                 expect(lhs.__ne__(Unit.METER)).toBe(!lhs.equals(meter));
-                expect(lhs.__ne__("1" as any)).toBe(true);
+                expect(lhs.__ne__("1" as unknown as Unit)).toBe(true);
             }
         });
     });

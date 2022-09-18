@@ -9,6 +9,7 @@ import { Geometric3 } from "../math/Geometric3";
 export class GravitationForceLaw3 extends GravitationLaw<Geometric3> {
     constructor(body1: Massive<Geometric3>, body2: Massive<Geometric3>) {
         super(body1, body2);
+        // eslint-disable-next-line no-console
         console.warn("GravitationForceLaw3 is deprecated. Please use GravitationLaw instead.");
     }
 }

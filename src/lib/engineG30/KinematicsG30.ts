@@ -1,7 +1,7 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from '../core/ForceBody';
 import { ForceLaw } from '../core/ForceLaw';
+import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY, Kinematics } from '../core/Kinematics';
 import { VarsList } from '../core/VarsList';
 import { Geometric3 } from "../math/Geometric3";
 import { Unit } from '../math/Unit';
@@ -241,11 +241,13 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM_YZ + idx, body.L.uom);
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM_ZX + idx, body.L.uom);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric3, uomTime: Unit): void {
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
         if (Fx !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X] = Fx + force.x;
@@ -253,7 +255,8 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         const Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
         if (Fy !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = Fy + force.y;
@@ -261,7 +264,8 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         const Fz = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z];
         if (Fz !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
         }
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = Fz + force.z;
@@ -282,11 +286,13 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.z;
         rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Z] = force.uom;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric3, uomTime: Unit): void {
         const Tyz = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ];
         if (Tyz !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ], torque.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_YZ] = Tyz + torque.yz;
@@ -294,7 +300,8 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         const Tzx = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX];
         if (Tzx !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX], torque.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_ZX] = Tzx + torque.zx;
@@ -302,7 +309,8 @@ export class KinematicsG30 implements Kinematics<Geometric3> {
         const Txy = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY];
         if (Txy !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY], torque.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Txy + torque.xy;

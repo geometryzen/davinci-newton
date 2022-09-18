@@ -1,7 +1,7 @@
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
-import { Kinematics, INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY } from '../core/Kinematics';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
+import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY, Kinematics } from '../core/Kinematics';
 import { VarsList } from "../core/VarsList";
 import { Geometric2 } from "../math/Geometric2";
 import { Unit } from '../math/Unit';
@@ -224,6 +224,7 @@ export class KinematicsG20 implements Kinematics<Geometric2> {
         vars.setValueJump(OFFSET_ANGULAR_MOMENTUM_XY + idx, L.b);
         vars.setUnit(OFFSET_ANGULAR_MOMENTUM_XY + idx, L.uom);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addForceToRateOfChangeLinearMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, force: Geometric2, uomTime: Unit): void {
         const Fx = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_X];
         const Fy = rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y];
@@ -231,7 +232,8 @@ export class KinematicsG20 implements Kinematics<Geometric2> {
         if (Fx !== 0 || Fy !== 0) {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X], force.uom);
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y], force.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_X] = force.uom;
             rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
         }
@@ -250,11 +252,13 @@ export class KinematicsG20 implements Kinematics<Geometric2> {
         rateOfChangeVals[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.y;
         rateOfChangeUoms[idx + OFFSET_LINEAR_MOMENTUM_Y] = force.uom;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addTorqueToRateOfChangeAngularMomentumVars(rateOfChangeVals: number[], rateOfChangeUoms: Unit[], idx: number, torque: Geometric2, uomTime: Unit): void {
         const Tb = rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY];
         if (Tb !== 0) {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Unit.compatible(rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY], torque.uom);
-        } else {
+        }
+        else {
             rateOfChangeUoms[idx + OFFSET_ANGULAR_MOMENTUM_XY] = torque.uom;
         }
         rateOfChangeVals[idx + OFFSET_ANGULAR_MOMENTUM_XY] = Tb + torque.b;

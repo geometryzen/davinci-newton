@@ -28,6 +28,7 @@ export class MetricG30 implements Metric<Geometric3> {
     addVector(lhs: Geometric3, rhs: Geometric3): Geometric3 {
         return lhs.addVector(rhs);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     applyMatrix(mv: Geometric3, matrix: MatrixLike): Geometric3 {
         throw new Error("applyMatrix(mv, matrix) method not implemented.");
     }

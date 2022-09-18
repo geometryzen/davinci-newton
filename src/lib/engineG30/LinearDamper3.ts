@@ -9,6 +9,7 @@ import { Geometric3 } from "../math/Geometric3";
 export class LinearDamper3 extends LinearDamper<Geometric3> {
     constructor(body1: RigidBody<Geometric3>, body2: RigidBody<Geometric3>) {
         super(body1, body2);
+        // eslint-disable-next-line no-console
         console.warn("LinearDamper3 is deprecated. Please use LinearDamper instead.");
     }
 }

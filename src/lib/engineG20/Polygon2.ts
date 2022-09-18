@@ -28,10 +28,13 @@ export class Polygon2 extends RigidBody2 {
         }
         this.X = X;
 
-        if (points.every(function (point) { return Unit.isOne(point.uom); })) {
+        if (points.every(function (point) {
+            return Unit.isOne(point.uom);
+        })) {
             // dimensionless
             this.updateInertiaTensor();
-        } else {
+        }
+        else {
             // Changing the mass will trigger an update of the inertia tensor.
             this.M = Geometric2.scalar(this.M.a, Unit.KILOGRAM);
             this.Iinv.uom = Unit.div(Unit.ONE, Unit.KILOGRAM_METER_SQUARED);
@@ -113,7 +116,8 @@ function mustBeAtLeastThreePoints(xs: Geometric2[]): void {
     const N = xs.length;
     if (N >= 3) {
         // Test for non-collinear?
-    } else {
+    }
+    else {
         throw new Error("must be at least 3 points.");
     }
 }

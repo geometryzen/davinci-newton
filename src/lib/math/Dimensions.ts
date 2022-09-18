@@ -418,10 +418,12 @@ export class Dimensions {
         const stringify = function (rational: QQ, label: string): string {
             if (rational.numer === 0) {
                 return null;
-            } else if (rational.denom === 1) {
+            }
+            else if (rational.denom === 1) {
                 if (rational.numer === 1) {
                     return "" + label;
-                } else {
+                }
+                else {
                     return "" + label + " ** " + rational.numer;
                 }
             }

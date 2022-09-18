@@ -77,8 +77,12 @@ describe("Polygon2", function () {
             const point2 = e1.add(e2.mulByNumber(2)).mul(meter);
             const point3 = e2.mulByNumber(2).mul(meter);
             const points = [point0, point1, point2, point3];
-            expect(points.every(function (point) { return Unit.isOne(point.uom); })).toBe(false);
-            expect(points.some(function (point) { return Unit.isOne(point.uom); })).toBe(false);
+            expect(points.every(function (point) {
+                return Unit.isOne(point.uom);
+            })).toBe(false);
+            expect(points.some(function (point) {
+                return Unit.isOne(point.uom);
+            })).toBe(false);
             const body = new Polygon2(points);
             // Polygon2 should auto-detect that we are using units of measure.
             expect(body.M.uom).toBe(Unit.KILOGRAM);
