@@ -39,7 +39,8 @@ export class ParameterNumber implements Parameter {
     private upperLimit_: number;
     // private choices_: string[];
     // private values_: number[];
-    constructor(subject: Subject, name: string, getter: () => number, setter: (value: number) => any, choices?: string[], values?: number[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(subject: Subject, name: string, getter: () => number, setter: (value: number) => unknown, choices?: string[], values?: number[]) {
         this.subject_ = subject;
         this.name_ = validName(toName(name));
         this.getter_ = getter;
@@ -69,6 +70,7 @@ export class ParameterNumber implements Parameter {
         return this.name_ === toName(name);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setComputed(value: boolean): void {
         // this.isComputed_ = value;
     }
@@ -94,6 +96,7 @@ export class ParameterNumber implements Parameter {
      * @param signifDigits suggested number of significant digits to show
      * @return this Parameter for chaining setters
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSignifDigits(signifDigits: number): this {
         // this.signifDigits_ = signifDigits;
         return this;

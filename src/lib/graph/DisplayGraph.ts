@@ -295,6 +295,7 @@ export class DisplayGraph implements DisplayObject {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setDragable(dragable: boolean): void {
         // Do nothing.
     }

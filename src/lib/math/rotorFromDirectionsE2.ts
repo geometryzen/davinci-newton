@@ -7,12 +7,12 @@ import { VectorE2 as Vector } from './VectorE2';
 /**
  * @hidden
  */
- const sqrt = Math.sqrt;
+const sqrt = Math.sqrt;
 
 /**
  * @hidden
  */
- interface Output extends Spinor {
+interface Output extends Spinor {
     versor(a: Readonly<Vector>, b: Readonly<Vector>): Output;
     addScalar(a: number, uom?: Unit, α?: number): Output;
     divByScalar(α: number, uom?: Unit): Output;
@@ -38,9 +38,9 @@ export function rotorFromDirectionsE2(a: Readonly<Vector>, b: Readonly<Vector>, 
     const dotBA = dot(b, a);
     const denom = sqrt(2 * (quadB * quadA + BA * dotBA));
     if (denom !== 0) {
-        m = m.versor(b, a);
-        m = m.addScalar(BA, void 0, 1);
-        m = m.divByScalar(denom);
+        m.versor(b, a);
+        m.addScalar(BA, void 0, 1);
+        m.divByScalar(denom);
     }
     else {
         // The denominator is zero when |a||b| + a << b = 0.

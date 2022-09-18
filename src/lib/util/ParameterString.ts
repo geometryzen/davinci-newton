@@ -38,7 +38,8 @@ export class ParameterString implements Parameter {
     // private choices_: string[];
     // private values_: string[];
     // private inputFunction_: (value: string) => string;
-    constructor(subject: Subject, name: string, getter: () => string, setter: (value: string) => any, choices?: string[], values?: string[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(subject: Subject, name: string, getter: () => string, setter: (value: string) => unknown, choices?: string[], values?: string[]) {
         this.subject_ = subject;
         this.name_ = validName(toName(name));
         this.getter_ = getter;
@@ -67,6 +68,7 @@ export class ParameterString implements Parameter {
         return this.name_ === toName(name);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setComputed(value: boolean): void {
         // this.isComputed_ = value;
     }

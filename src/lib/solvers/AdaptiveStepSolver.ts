@@ -1,8 +1,8 @@
 import { DiffEqSolver } from '../core/DiffEqSolver';
+import { EnergySystem } from '../core/EnergySystem';
 import { Metric } from '../core/Metric';
 import { Simulation } from '../core/Simulation';
 import { Unit } from '../math/Unit';
-import { EnergySystem } from '../core/EnergySystem';
 
 /**
  * @hidden
@@ -109,14 +109,6 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
     }
 
     /**
-     * Returns the tolerance used to decide if sufficient accuracy has been achieved.
-     * Default is 1E-6.
-     */
-    get tolerance(): number {
-        return this.tolerance_;
-    }
-
-    /**
      * Whether to use second order differences for deciding when to reduce the step size.
      * The first difference is the change in energy of the system over a time step.
      * We can only use first differences when the energy of the system is constant.
@@ -128,6 +120,14 @@ export class AdaptiveStepSolver<T> implements DiffEqSolver {
      */
     set secondDiff(value: boolean) {
         this.secondDiff_ = value;
+    }
+
+    /**
+     * Returns the tolerance used to decide if sufficient accuracy has been achieved.
+     * Default is 1E-6.
+     */
+    get tolerance(): number {
+        return this.tolerance_;
     }
 
     /**

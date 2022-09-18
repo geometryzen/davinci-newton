@@ -13,7 +13,7 @@ import { Metric } from './Metric';
 import { mustBeDimensionlessOrCorrectUnits } from './mustBeDimensionlessOrCorrectUnits';
 
 /**
- * @hidden
+ *
  */
 export class RigidBody<T> extends AbstractSimObject implements ForceBody<T>, Massive<T>, Charged<T> {
     /**

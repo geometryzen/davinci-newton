@@ -1,6 +1,6 @@
 import { ForceBody } from './ForceBody';
 /**
- * @hidden
+ * A ForceBody with a mass property, M.
  */
 export interface Massive<T> extends ForceBody<T> {
     M: T;

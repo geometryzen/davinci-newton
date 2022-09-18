@@ -29,7 +29,8 @@ export class ParameterBoolean implements Parameter {
     // private isComputed_: boolean;
     // private choices_: string[];
     // private values_: boolean[];
-    constructor(subject: Subject, name: string, getter: () => boolean, setter: (value: boolean) => any, choices?: string[], values?: boolean[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(subject: Subject, name: string, getter: () => boolean, setter: (value: boolean) => unknown, choices?: string[], values?: boolean[]) {
         this.subject_ = subject;
         this.name_ = validName(toName(name));
         // this.getter_ = getter;
@@ -47,6 +48,7 @@ export class ParameterBoolean implements Parameter {
     nameEquals(name: string): boolean {
         return this.name_ === toName(name);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setComputed(value: boolean): void {
         // this.isComputed_ = value;
     }

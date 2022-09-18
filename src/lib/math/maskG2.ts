@@ -1,7 +1,7 @@
 import isNumber from '../checks/isNumber';
 import isObject from '../checks/isObject';
-import { GradeMasked } from './GradeMasked';
 import { GeometricE2 } from './GeometricE2';
+import { GradeMasked } from './GradeMasked';
 import { Unit } from './Unit';
 
 /**
@@ -18,9 +18,9 @@ const scratch: GeometricE2 = { a: 0, x: 0, y: 0, xy: 0, b: 0, uom: ONE };
  * "Promotes" the argument to a GeometricE2.
  * @hidden
  */
-export function maskG2(arg: any): GeometricE2 {
-    const duck = <GradeMasked>arg;
-    if (isObject(arg) && 'grades' in arg) {
+export function maskG2(arg: GeometricE2 | number): GeometricE2 {
+    const duck = <GradeMasked>(arg as unknown);
+    if (isObject(arg) && 'grades' in (arg as GeometricE2)) {
         const g = <GeometricE2>arg;
         if (duck.grades & 0x1) {
             scratch.a = g.a;

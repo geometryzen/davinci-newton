@@ -1,7 +1,7 @@
 import { Unit } from './Unit';
 
 /**
- * @hidden
+ *
  */
 export interface BivectorE2 {
     xy: number;

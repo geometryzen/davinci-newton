@@ -6,6 +6,7 @@ class MockSystem implements DiffEqSolverSystem {
     constructor(private readonly state: number[], private readonly units: Unit[], private readonly rateOfChange: number[], private readonly rateOfChangeUnits: Unit[], public readonly stateEnd: number[], public readonly unitsEnd: Unit[]) {
 
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getVariableName(idx: number): string {
         throw new Error("Method not implemented.");
     }
@@ -27,6 +28,7 @@ class MockSystem implements DiffEqSolverSystem {
      * @param Δt 
      * @param uomTime 
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     evaluate(state: number[], stateUnits: Unit[], rateOfChange: number[], rateOfChangeUnits: Unit[], Δt: number, uomTime?: Unit): void {
         const N = this.rateOfChange.length;
         expect(state.length).toBe(N);
