@@ -5,6 +5,7 @@ export { CoulombLaw } from './lib/core/CoulombLaw';
 export { Engine } from './lib/core/Engine';
 export { FaradayLaw } from './lib/core/FaradayLaw';
 export { Force } from './lib/core/Force';
+export { ForceLaw } from './lib/core/ForceLaw';
 export { GravitationLaw } from './lib/core/GravitationLaw';
 export { LinearDamper } from './lib/core/LinearDamper';
 export { Particle } from './lib/core/Particle';

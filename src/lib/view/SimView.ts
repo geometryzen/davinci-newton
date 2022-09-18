@@ -183,6 +183,16 @@ export class SimView extends AbstractSubject implements LabView {
         return this.horizAlign_;
     }
 
+    /**
+     * Sets the horizontal alignment to use when aligning the SimView's
+     * simulation rectangle within its screen rectangle.
+     */
+    set hAxisAlign(alignHoriz: AlignH) {
+        this.horizAlign_ = alignHoriz;
+        this.realign();
+        this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
+    }
+
     getMemos() {
         return clone(this.memorizables_);
     }
@@ -208,6 +218,16 @@ export class SimView extends AbstractSubject implements LabView {
      */
     get vAxisAlign(): AlignV {
         return this.verticalAlign_;
+    }
+
+    /**
+     * Sets the vertical alignment to use when aligning the SimView's
+     * simulation rectangle within its screen rectangle.
+     */
+    set vAxisAlign(alignVert: AlignV) {
+        this.verticalAlign_ = alignVert;
+        this.realign();
+        this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
     }
 
     /**
@@ -385,16 +405,6 @@ export class SimView extends AbstractSubject implements LabView {
     }
 
     /**
-     * Sets the horizontal alignment to use when aligning the SimView's
-     * simulation rectangle within its screen rectangle.
-     */
-    set hAxisAlign(alignHoriz: AlignH) {
-        this.horizAlign_ = alignHoriz;
-        this.realign();
-        this.broadcastParameter(SimView.PARAM_NAME_HORIZONTAL_ALIGN);
-    }
-
-    /**
      * Sets whether the width and height of the simulation rectangle scale together; if
      * true then changing one causes the other to change proportionally.
      * @param {boolean} value whether width and height scale together
@@ -407,16 +417,6 @@ export class SimView extends AbstractSubject implements LabView {
             }
             this.broadcastParameter(SimView.PARAM_NAME_SCALE_TOGETHER);
         }
-    }
-
-    /**
-     * Sets the vertical alignment to use when aligning the SimView's
-     * simulation rectangle within its screen rectangle.
-     */
-    set vAxisAlign(alignVert: AlignV) {
-        this.verticalAlign_ = alignVert;
-        this.realign();
-        this.broadcastParameter(SimView.PARAM_NAME_VERTICAL_ALIGN);
     }
 
     /**

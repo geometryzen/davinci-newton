@@ -327,17 +327,17 @@ export class CoordMap {
      * @param obj the object of interest
      * @return true if the object is likely a CoordMap
      */
-    static isDuckType(obj: any): obj is CoordMap {
+    static isDuckType(obj: unknown): obj is CoordMap {
         if (obj instanceof CoordMap) {
             return true;
         }
-        return obj.getAffineTransform !== undefined
-            && obj.simToScreenX !== undefined
-            && obj.simToScreenY !== undefined
-            && obj.screenToSimX !== undefined
-            && obj.screenToSimY !== undefined
-            && obj.getScaleX !== undefined
-            && obj.getScaleY !== undefined;
+        return (obj as CoordMap).getAffineTransform !== undefined
+            && (obj as CoordMap).simToScreenX !== undefined
+            && (obj as CoordMap).simToScreenY !== undefined
+            && (obj as CoordMap).screenToSimX !== undefined
+            && (obj as CoordMap).screenToSimY !== undefined
+            && (obj as CoordMap).getScaleX !== undefined
+            && (obj as CoordMap).getScaleY !== undefined;
     }
 
     /**

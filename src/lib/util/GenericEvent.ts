@@ -29,7 +29,8 @@ export class GenericEvent implements SubjectEvent {
     /**
      * 
      */
-    constructor(private subject_: Subject, name: string, _value?: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(private subject_: Subject, name: string, _value?: unknown) {
         this.name_ = validName(toName(name));
     }
 

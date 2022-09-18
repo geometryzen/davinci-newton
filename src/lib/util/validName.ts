@@ -33,7 +33,8 @@ export function validName(text: string): string {
 export function isValidName(text: string): boolean {
     if (text.match(/^[A-Z_][A-Z_0-9]*$/)) {
         return true;
-    } else {
+    }
+    else {
         return false;
     }
 }

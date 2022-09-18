@@ -71,17 +71,17 @@ export class ScreenRect {
      * @param obj the object of interest
      * @return true if the object is likely a ScreenRect
      */
-    static isDuckType(obj: any): obj is ScreenRect {
+    static isDuckType(obj: unknown): obj is ScreenRect {
         if (obj instanceof ScreenRect) {
             return true;
         }
-        return obj.getLeft !== undefined
-            && obj.getTop !== undefined
-            && obj.getWidth !== undefined
-            && obj.getHeight !== undefined
-            && obj.isEmpty !== undefined
-            && obj.equals !== undefined
-            && obj.nearEqual !== undefined;
+        return (obj as ScreenRect).getLeft !== undefined
+            && (obj as ScreenRect).getTop !== undefined
+            && (obj as ScreenRect).getWidth !== undefined
+            && (obj as ScreenRect).getHeight !== undefined
+            && (obj as ScreenRect).isEmpty !== undefined
+            && (obj as ScreenRect).equals !== undefined
+            && (obj as ScreenRect).nearEqual !== undefined;
     }
 
     /**

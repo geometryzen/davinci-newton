@@ -23,12 +23,12 @@ import { SubjectEvent } from './SubjectEvent';
  */
 export class GenericObserver implements Observer {
     private subject_: Subject;
-    private observeFn_: (event: SubjectEvent) => any;
+    private observeFn_: (event: SubjectEvent) => unknown;
     /**
      * @param subject the Subject to observe
      * @param observeFn  function to execute when a SubjectEvent is broadcast by Subject
      */
-    constructor(subject: Subject, observeFn: (event: SubjectEvent) => any) {
+    constructor(subject: Subject, observeFn: (event: SubjectEvent) => unknown) {
         this.subject_ = subject;
         subject.addObserver(this);
         this.observeFn_ = observeFn;

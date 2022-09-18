@@ -65,16 +65,16 @@ export class DoubleRect {
      * @param obj the object of interest
      * @return true if the object is likely a DoubleRect
      */
-    static isDuckType(obj: any): obj is DoubleRect {
+    static isDuckType(obj: unknown): obj is DoubleRect {
         if (obj instanceof DoubleRect) {
             return true;
         }
-        return obj.getLeft !== undefined
-            && obj.getRight !== undefined
-            && obj.getTop !== undefined
-            && obj.getBottom !== undefined
-            && obj.translate !== undefined
-            && obj.scale !== undefined;
+        return (obj as DoubleRect).getLeft !== undefined
+            && (obj as DoubleRect).getRight !== undefined
+            && (obj as DoubleRect).getTop !== undefined
+            && (obj as DoubleRect).getBottom !== undefined
+            && (obj as DoubleRect).translate !== undefined
+            && (obj as DoubleRect).scale !== undefined;
     }
 
     /**
@@ -135,14 +135,16 @@ export class DoubleRect {
      * @param obj the object to compare to
      * @return `true` if the object is a DoubleRect with the same coordinates.
      */
-    equals(obj: any): boolean {
-        if (obj === this)
+    equals(obj: unknown): boolean {
+        if (obj === this) {
             return true;
+        }
         if (obj instanceof DoubleRect) {
             // WARNING:  this is different to Double.equals for NaN and +0.0/-0.0.
             return obj.getLeft() === this.left_ && obj.getRight() === this.right_ &&
                 obj.getBottom() === this.bottom_ && obj.getTop() === this.top_;
-        } else {
+        }
+        else {
             return false;
         }
     }
