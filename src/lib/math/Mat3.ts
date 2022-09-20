@@ -1,6 +1,5 @@
-import { Matrix3 } from './Matrix3';
+import { Matrix3, Unit } from '@geometryzen/multivectors';
 import { MatrixLike } from './MatrixLike';
-import { Unit } from './Unit';
 
 /**
  * @hidden

@@ -1,8 +1,7 @@
+import { Geometric3, Unit } from '@geometryzen/multivectors';
 import { Block3 } from '../engineG30/Block3';
 import { KinematicsG30 } from '../engineG30/KinematicsG30';
 import { MetricG30 } from '../engineG30/MetricG30';
-import { Geometric3 } from '../math/Geometric3';
-import { Unit } from '../math/Unit';
 import { Physics } from './Physics';
 
 describe("Physics", function () {

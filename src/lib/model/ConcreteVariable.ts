@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Unit } from '@geometryzen/multivectors';
 import { VarsList } from '../core/VarsList';
-import { Unit } from '../math/Unit';
 import { toName } from '../util/toName';
 import { validName } from '../util/validName';
 import { Variable } from './Variable';

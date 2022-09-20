@@ -1,5 +1,5 @@
+import { Geometric2 } from '@geometryzen/multivectors';
 import { ForceLaw } from '../core/ForceLaw';
-import { Geometric2 } from '../math/Geometric2';
 
 /**
  * @hidden

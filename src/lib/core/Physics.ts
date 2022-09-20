@@ -1,6 +1,6 @@
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeBoolean } from '../checks/mustBeBoolean';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
-import { Unit } from '../math/Unit';
 import { AbstractSubject } from '../util/AbstractSubject';
 import { contains } from '../util/contains';
 import { remove } from '../util/remove';

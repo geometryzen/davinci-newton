@@ -1,6 +1,5 @@
-import { Geometric2 } from '../math/Geometric2';
+import { Geometric2, Unit } from '@geometryzen/multivectors';
 import { Matrix1 } from '../math/Matrix1';
-import { Unit } from '../math/Unit';
 import { RigidBody2 } from './RigidBody2';
 
 /**

@@ -1,9 +1,8 @@
-import { Spring } from './Spring';
-import { Particle } from './Particle';
+import { Geometric1, Geometric2 } from '@geometryzen/multivectors';
 import { MetricG10 } from '../engineG10/MetricG10';
-import { Geometric1 } from '../math/Geometric1';
 import { Euclidean2 } from '../engineG20/Euclidean2';
-import { Geometric2 } from '../math/Geometric2';
+import { Particle } from './Particle';
+import { Spring } from './Spring';
 describe("Spring", function () {
     describe("Potential Energy (Euclidean1)", function () {
         it("should be zero at the rest length separation.", function () {

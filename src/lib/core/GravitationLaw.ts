@@ -1,4 +1,4 @@
-import { Unit } from '../math/Unit';
+import { Unit } from '@geometryzen/multivectors';
 import { WORLD } from '../model/CoordType';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { Force } from './Force';

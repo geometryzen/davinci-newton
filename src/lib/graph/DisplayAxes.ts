@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Unit } from '@geometryzen/multivectors';
 import isDefined from '../checks/isDefined';
-import { Unit } from '../math/Unit';
 import { AlignH } from '../view/AlignH';
 import { AlignV } from '../view/AlignV';
 import { CoordMap } from '../view/CoordMap';

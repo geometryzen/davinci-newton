@@ -1,5 +1,5 @@
+import { Unit } from "@geometryzen/multivectors";
 import { DiffEqSolverSystem } from "../core/DiffEqSolverSystem";
-import { Unit } from "../math/Unit";
 import { RungeKutta } from "./RungeKutta";
 
 /**

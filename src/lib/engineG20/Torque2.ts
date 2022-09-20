@@ -1,6 +1,6 @@
+import { Geometric2 } from "@geometryzen/multivectors";
 import { ForceBody } from "../core/ForceBody";
 import { Torque } from "../core/Torque";
-import { Geometric2 } from "../math/Geometric2";
 
 /**
  *

@@ -1,8 +1,8 @@
+import { Geometric1 } from "@geometryzen/multivectors";
 import { EnergySystem } from "../core/EnergySystem";
 import { Physics } from "../core/Physics";
-import { Geometric1 } from "../math/Geometric1";
-import { MetricG10 } from "./MetricG10";
 import { KinematicsG10 } from "./KinematicsG10";
+import { MetricG10 } from "./MetricG10";
 
 /**
  * @hidden

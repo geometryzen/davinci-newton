@@ -1,5 +1,5 @@
+import { Geometric3 } from "@geometryzen/multivectors";
 import { RigidBody } from "../core/RigidBody";
-import { Geometric3 } from "../math/Geometric3";
 import { MetricG30 } from "./MetricG30";
 
 /**

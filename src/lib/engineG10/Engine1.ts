@@ -1,5 +1,5 @@
+import { Geometric1 } from "@geometryzen/multivectors";
 import { Engine, EngineOptions } from "../core/Engine";
-import { Geometric1 } from "../math/Geometric1";
 import { KinematicsG10 } from "./KinematicsG10";
 import { MetricG10 } from "./MetricG10";
 

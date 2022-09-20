@@ -1,8 +1,8 @@
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { Simulation } from '../core/Simulation';
-import { Unit } from '../math/Unit';
 import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 
 /**

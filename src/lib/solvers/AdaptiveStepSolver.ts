@@ -1,8 +1,8 @@
+import { Unit } from '@geometryzen/multivectors';
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { EnergySystem } from '../core/EnergySystem';
 import { Metric } from '../core/Metric';
 import { Simulation } from '../core/Simulation';
-import { Unit } from '../math/Unit';
 
 /**
  * @hidden

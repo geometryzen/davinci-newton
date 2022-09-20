@@ -1,5 +1,5 @@
+import { Geometric2 } from "@geometryzen/multivectors";
 import { RigidBody } from "../core/RigidBody";
-import { Geometric2 } from "../math/Geometric2";
 import { Euclidean2 } from "./Euclidean2";
 
 /**

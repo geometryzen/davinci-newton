@@ -1,6 +1,5 @@
+import { Geometric1, Unit } from "@geometryzen/multivectors";
 import { GravitationLaw } from "../core/GravitationLaw";
-import { Geometric1 } from "../math/Geometric1";
-import { Unit } from "../math/Unit";
 import { Particle1 } from "./Particle1";
 
 describe("GravitationForceLaw1", function () {

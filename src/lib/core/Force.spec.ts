@@ -1,6 +1,5 @@
+import { Geometric3, Unit } from "@geometryzen/multivectors";
 import { MetricG30 } from "../engineG30/MetricG30";
-import { Geometric3 } from "../math/Geometric3";
-import { Unit } from "../math/Unit";
 import { Force } from "./Force";
 import { Particle } from "./Particle";
 

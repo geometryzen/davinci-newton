@@ -1,5 +1,4 @@
-import { Geometric1 } from "../math/Geometric1";
-import { Unit } from "../math/Unit";
+import { Geometric1, Unit } from "@geometryzen/multivectors";
 import { Particle1 } from "./Particle1";
 
 describe("Particle1", function () {

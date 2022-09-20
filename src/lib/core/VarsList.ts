@@ -1,7 +1,7 @@
+import { Unit } from '@geometryzen/multivectors';
 import isNumber from '../checks/isNumber';
 import isString from '../checks/isString';
 import { GraphVarsList } from '../graph/GraphVarsList';
-import { Unit } from '../math/Unit';
 import { ConcreteVariable } from '../model/ConcreteVariable';
 import { Variable } from '../model/Variable';
 import { AbstractSubject } from '../util/AbstractSubject';

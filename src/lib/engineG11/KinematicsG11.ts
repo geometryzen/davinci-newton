@@ -1,10 +1,9 @@
+import { Spacetime1, Unit } from "@geometryzen/multivectors";
 import { checkBodyAttitudeUnit } from "../core/checkBodyAttitudeUnit";
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { Kinematics } from "../core/Kinematics";
 import { VarsList } from "../core/VarsList";
-import { Spacetime1 } from "../math/Spacetime1";
-import { Unit } from "../math/Unit";
 
 /**
  * @hidden

@@ -1,11 +1,10 @@
+import { Geometric1, Unit } from '@geometryzen/multivectors';
 import { Force } from '../core/Force';
 import { ForceBody } from '../core/ForceBody';
 import { Metric } from '../core/Metric';
 import { Torque } from '../core/Torque';
-import { Geometric1 } from '../math/Geometric1';
 import { Matrix0 } from '../math/Matrix0';
 import { MatrixLike } from '../math/MatrixLike';
-import { Unit } from '../math/Unit';
 import { Force1 } from './Force1';
 import { Torque1 } from './Torque1';
 

@@ -1,10 +1,9 @@
+import { Geometric2, Unit } from "@geometryzen/multivectors";
 import { checkBodyAttitudeUnit } from '../core/checkBodyAttitudeUnit';
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { INDEX_POTENTIAL_ENERGY, INDEX_RESERVED_LAST, INDEX_ROTATIONAL_KINETIC_ENERGY, INDEX_TOTAL_ENERGY, INDEX_TRANSLATIONAL_KINETIC_ENERGY, Kinematics } from '../core/Kinematics';
 import { VarsList } from "../core/VarsList";
-import { Geometric2 } from "../math/Geometric2";
-import { Unit } from '../math/Unit';
 
 /**
  * @hidden

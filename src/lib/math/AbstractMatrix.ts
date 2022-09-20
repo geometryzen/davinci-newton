@@ -1,8 +1,8 @@
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeDefined } from '../checks/mustBeDefined';
 import mustBeInteger from '../checks/mustBeInteger';
 import { AbstractMeasure } from './AbstractMeasure';
 import { MatrixLike } from './MatrixLike';
-import { Unit } from './Unit';
 
 /**
  * @hidden

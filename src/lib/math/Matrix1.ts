@@ -1,5 +1,5 @@
+import { Unit } from "@geometryzen/multivectors";
 import { AbstractMatrix } from "./AbstractMatrix";
-import { Unit } from "./Unit";
 
 export class Matrix1 extends AbstractMatrix<Matrix1> {
 

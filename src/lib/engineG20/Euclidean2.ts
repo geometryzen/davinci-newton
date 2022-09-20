@@ -2,11 +2,11 @@ import { Force } from "../core/Force";
 import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
 import { Torque } from "../core/Torque";
-import { Geometric2 } from "../math/Geometric2";
+import { Geometric2 } from "@geometryzen/multivectors";
 import { Mat1 } from "../math/Mat1";
 import { Matrix1 } from "../math/Matrix1";
 import { MatrixLike } from "../math/MatrixLike";
-import { Unit } from "../math/Unit";
+import { Unit } from "@geometryzen/multivectors";
 import { Force2 } from "./Force2";
 import { Torque2 } from "./Torque2";
 

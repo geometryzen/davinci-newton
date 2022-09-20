@@ -1,6 +1,6 @@
+import { Geometric2 } from "@geometryzen/multivectors";
 import { LinearDamper } from "../core/LinearDamper";
 import { RigidBody } from "../core/RigidBody";
-import { Geometric2 } from "../math/Geometric2";
 
 /**
  * @deprecated Use LinearDamper.

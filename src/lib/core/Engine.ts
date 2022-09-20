@@ -1,6 +1,6 @@
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { mustBeNumber } from '../checks/mustBeNumber';
-import { Unit } from '../math/Unit';
 import { AdvanceStrategy } from '../runner/AdvanceStrategy';
 import { RungeKutta } from '../solvers/RungeKutta';
 import { DefaultAdvanceStrategy } from '../strategy/DefaultAdvanceStrategy';

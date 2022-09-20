@@ -1,7 +1,7 @@
+import { Geometric2 } from "@geometryzen/multivectors";
 import { Engine, EngineOptions } from "../core/Engine";
-import { Geometric2 } from "../math/Geometric2";
-import { KinematicsG20 } from "./KinematicsG20";
 import { Euclidean2 } from "./Euclidean2";
+import { KinematicsG20 } from "./KinematicsG20";
 
 /**
  * The Physics Engine specialized to 2 dimensions with a Euclidean metric.

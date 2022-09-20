@@ -1,6 +1,6 @@
+import { Geometric1 } from "@geometryzen/multivectors";
 import { RigidBody } from "../core/RigidBody";
 import { Spring } from "../core/Spring";
-import { Geometric1 } from "../math/Geometric1";
 
 /**
  * @deprecated Use Spring.

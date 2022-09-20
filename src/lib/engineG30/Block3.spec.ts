@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Geometric3 } from '../math/Geometric3';
-import { Unit } from '../math/Unit';
+import { Geometric3, Unit } from '@geometryzen/multivectors';
 import { Block3 } from './Block3';
 
 const KILOGRAM = Unit.KILOGRAM;

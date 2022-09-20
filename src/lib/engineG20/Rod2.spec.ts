@@ -1,4 +1,4 @@
-import { Geometric2 } from "../math/Geometric2";
+import { Geometric2 } from "@geometryzen/multivectors";
 import { Rod2 } from "./Rod2";
 
 describe("Rod2", function () {

@@ -1,6 +1,6 @@
+import { Spacetime2 } from "@geometryzen/multivectors";
 import { ForceBody } from "../core/ForceBody";
 import { Torque } from "../core/Torque";
-import { Spacetime2 } from "../math/Spacetime2";
 
 /**
  *

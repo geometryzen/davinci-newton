@@ -1,6 +1,5 @@
+import { Geometric2, Unit } from "@geometryzen/multivectors";
 import { Euclidean2 } from "../engineG20/Euclidean2";
-import { Geometric2 } from "../math/Geometric2";
-import { Unit } from "../math/Unit";
 import { LinearDamper } from "./LinearDamper";
 import { Particle } from "./Particle";
 

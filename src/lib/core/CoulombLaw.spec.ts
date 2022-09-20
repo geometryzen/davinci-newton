@@ -1,8 +1,6 @@
+import { Geometric2, Geometric3, Unit } from '@geometryzen/multivectors';
 import { Particle2 } from '../engineG20/Particle2';
 import { Sphere3 } from '../engineG30/Sphere3';
-import { Geometric2 } from '../math/Geometric2';
-import { Geometric3 } from '../math/Geometric3';
-import { Unit } from '../math/Unit';
 import { LOCAL, WORLD } from '../model/CoordType';
 import { CoulombLaw } from './CoulombLaw';
 

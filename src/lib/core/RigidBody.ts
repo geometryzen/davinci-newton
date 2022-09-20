@@ -1,8 +1,8 @@
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeFunction } from '../checks/mustBeFunction';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { mustBeNumber } from '../checks/mustBeNumber';
 import { MatrixLike } from '../math/MatrixLike';
-import { Unit } from '../math/Unit';
 import { AbstractSimObject } from '../objects/AbstractSimObject';
 import { assertConsistentUnits } from './assertConsistentUnits';
 import { Charged } from './Charged';

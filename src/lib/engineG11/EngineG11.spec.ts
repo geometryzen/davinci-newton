@@ -1,7 +1,6 @@
+import { Spacetime1, Unit } from "@geometryzen/multivectors";
 import { ConstantForceLaw } from "../core/ConstantForceLaw";
 import { FaradayLaw } from "../core/FaradayLaw";
-import { Spacetime1 } from "../math/Spacetime1";
-import { Unit } from "../math/Unit";
 import { EngineG11 } from "./EngineG11";
 import { ParticleG11 } from "./ParticleG11";
 

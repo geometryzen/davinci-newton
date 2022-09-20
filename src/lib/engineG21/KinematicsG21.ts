@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Spacetime2, Unit } from "@geometryzen/multivectors";
 import { ForceBody } from "../core/ForceBody";
 import { ForceLaw } from "../core/ForceLaw";
 import { Kinematics } from "../core/Kinematics";
 import { VarsList } from "../core/VarsList";
-import { Spacetime2 } from "../math/Spacetime2";
-import { Unit } from "../math/Unit";
 
 export class KinematicsG21 implements Kinematics<Spacetime2> {
     private $speedOfLight = Spacetime2.one;

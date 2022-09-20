@@ -1,11 +1,8 @@
+import { Geometric1, Geometric2, Geometric3, Unit } from '@geometryzen/multivectors';
 import { MetricG10 } from '../engineG10/MetricG10';
 import { Euclidean2 } from '../engineG20/Euclidean2';
 import { Block3 } from '../engineG30/Block3';
 import { MetricG30 } from '../engineG30/MetricG30';
-import { Geometric1 } from '../math/Geometric1';
-import { Geometric2 } from '../math/Geometric2';
-import { Geometric3 } from '../math/Geometric3';
-import { Unit } from '../math/Unit';
 import { RigidBody } from './RigidBody';
 
 /**

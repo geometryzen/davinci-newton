@@ -1,6 +1,6 @@
+import { Geometric1 } from "@geometryzen/multivectors";
 import { GravitationLaw } from "../core/GravitationLaw";
 import { Massive } from "../core/Massive";
-import { Geometric1 } from "../math/Geometric1";
 
 /**
  * @deprecated Use GravitationLaw.

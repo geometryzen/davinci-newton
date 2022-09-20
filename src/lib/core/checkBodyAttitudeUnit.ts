@@ -1,4 +1,4 @@
-import { Unit } from "../math/Unit";
+import { Unit } from "@geometryzen/multivectors";
 
 /**
  * Helper function to be called from Kinematics.updateBodyFromVars.

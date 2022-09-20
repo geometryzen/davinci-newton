@@ -1,6 +1,6 @@
+import { Geometric2 } from "@geometryzen/multivectors";
 import { ConstantTorqueLaw } from "../core/ConstantTorqueLaw";
 import { ForceBody } from "../core/ForceBody";
-import { Geometric2 } from "../math/Geometric2";
 import { WORLD } from "../model/CoordType";
 
 /**

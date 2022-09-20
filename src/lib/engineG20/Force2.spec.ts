@@ -1,4 +1,4 @@
-import { Geometric2 } from "../math/Geometric2";
+import { Geometric2 } from "@geometryzen/multivectors";
 import { Force2 } from "./Force2";
 import { Particle2 } from "./Particle2";
 

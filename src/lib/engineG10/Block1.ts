@@ -1,6 +1,5 @@
+import { Geometric1, Unit } from "@geometryzen/multivectors";
 import { LockableMeasure } from "../core/LockableMeasure";
-import { Geometric1 } from "../math/Geometric1";
-import { Unit } from "../math/Unit";
 import { RigidBody1 } from "./RigidBody1";
 
 export class Block1 extends RigidBody1 {

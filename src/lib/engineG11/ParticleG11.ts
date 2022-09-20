@@ -1,5 +1,5 @@
+import { Spacetime1 } from "@geometryzen/multivectors";
 import { Particle } from "../core/Particle";
-import { Spacetime1 } from "../math/Spacetime1";
 import { MetricG11 } from "./MetricG11";
 
 export class ParticleG11 extends Particle<Spacetime1> {

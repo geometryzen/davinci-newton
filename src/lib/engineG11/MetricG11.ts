@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Spacetime1 } from "@geometryzen/multivectors";
 import { Force, Torque, Unit } from "../..";
 import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
 import { Matrix0 } from "../math/Matrix0";
 import { MatrixLike } from "../math/MatrixLike";
-import { Spacetime1 } from "../math/Spacetime1";
 import { ForceG11 } from "./ForceG11";
 
 export class MetricG11 implements Metric<Spacetime1> {

@@ -1,6 +1,6 @@
+import { Geometric3 as G3 } from '@geometryzen/multivectors';
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { Spring } from '../core/Spring';
-import { Geometric3 as G3 } from '../math/Geometric3';
 // import { EulerMethod } from '../solvers/EulerMethod';
 // import { ModifiedEuler } from '../solvers/ModifiedEuler';
 // import { ConstantEnergySolver } from '../solvers/ConstantEnergySolver';

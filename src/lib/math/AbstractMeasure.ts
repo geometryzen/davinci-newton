@@ -1,5 +1,5 @@
+import { Unit } from "@geometryzen/multivectors";
 import { readOnly } from "../i18n/readOnly";
-import { Unit } from "./Unit";
 
 /**
  * Sentinel value to indicate that the Geometric is not locked.

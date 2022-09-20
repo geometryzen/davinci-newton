@@ -1,9 +1,8 @@
+import { Geometric1, Unit } from "@geometryzen/multivectors";
 import { ConstantForceLaw } from "../core/ConstantForceLaw";
 import { GravitationLaw } from "../core/GravitationLaw";
 import { Spring } from "../core/Spring";
 import { VarsList } from "../core/VarsList";
-import { Geometric1 } from "../math/Geometric1";
-import { Unit } from "../math/Unit";
 import { Block1 } from "./Block1";
 import { Engine1 } from "./Engine1";
 import { Particle1 } from "./Particle1";

@@ -1,4 +1,4 @@
-import { Unit } from "../math/Unit";
+import { Unit } from "@geometryzen/multivectors";
 import { ForceBody } from "./ForceBody";
 import { ForceLaw } from "./ForceLaw";
 import { VarsList } from "./VarsList";

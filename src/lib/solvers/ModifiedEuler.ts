@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Unit } from '@geometryzen/multivectors';
 import { mustBeNonNullObject } from '../checks/mustBeNonNullObject';
 import { DiffEqSolver } from '../core/DiffEqSolver';
 import { DiffEqSolverSystem } from '../core/DiffEqSolverSystem';
-import { Unit } from '../math/Unit';
 import { zeroArray } from '../util/zeroArray';
 
 /**

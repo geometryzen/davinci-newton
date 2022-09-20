@@ -1,5 +1,5 @@
+import { Unit } from "@geometryzen/multivectors";
 import { MatrixLike } from "../math/MatrixLike";
-import { Unit } from "../math/Unit";
 import { Force } from "./Force";
 import { ForceBody } from "./ForceBody";
 import { Torque } from "./Torque";

@@ -1,5 +1,4 @@
-import { Geometric2 } from "../math/Geometric2";
-import { Unit } from "../math/Unit";
+import { Geometric2, Unit } from "@geometryzen/multivectors";
 import { Polygon2 } from "./Polygon2";
 
 /**

@@ -1,5 +1,5 @@
+import { Spacetime2 } from "@geometryzen/multivectors";
 import { Engine, EngineOptions } from "../core/Engine";
-import { Spacetime2 } from "../math/Spacetime2";
 import { KinematicsG21 } from "./KinematicsG21";
 import { MetricG21 } from "./MetricG21";
 

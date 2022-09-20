@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Spacetime2 } from "@geometryzen/multivectors";
 import { Force, Torque, Unit } from "../..";
 import { ForceBody } from "../core/ForceBody";
 import { Metric } from "../core/Metric";
 import { MatrixLike } from "../math/MatrixLike";
-import { Spacetime2 } from "../math/Spacetime2";
 import { ForceG21 } from "./ForceG21";
 import { TorqueG21 } from "./TorqueG21";
 

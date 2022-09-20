@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Geometric3, Matrix3, Unit } from '@geometryzen/multivectors';
 import { RigidBody } from '../core/RigidBody';
-import { Geometric3 } from '../math/Geometric3';
-import { Matrix3 } from '../math/Matrix3';
-import { Unit } from '../math/Unit';
 import { MetricG30 } from './MetricG30';
 
 /**

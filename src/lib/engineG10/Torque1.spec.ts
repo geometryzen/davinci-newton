@@ -1,5 +1,4 @@
-import { Geometric1 } from "../math/Geometric1";
-import { Unit } from "../math/Unit";
+import { Geometric1, Unit } from "@geometryzen/multivectors";
 import { Block1 } from "./Block1";
 import { Torque1 } from "./Torque1";
 
