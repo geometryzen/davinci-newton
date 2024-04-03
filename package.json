@@ -62,7 +62,6 @@
     ],
     "scripts": {
         "build": "npm run clean && rollup -c",
-        "test": "jest",
         "check": "npx package-check",
         "clean": "rm -rf dist",
         "coverage": "npm run test -- --coverage",
@@ -72,7 +71,9 @@
         "lint": "eslint . --ext .ts",
         "dev": "rollup -c -w",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run build && npm run pages"
+        "prepublishOnly": "npm run build && npm run pages",
+        "release": "release-it",
+        "test": "jest"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^25.0.7",
